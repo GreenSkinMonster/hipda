@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="forums">
+        <item>Discovery</item>
+        <item>Buy &amp; Sell</item>
+        <item>Geek Talks</item>
+        <item>E-INK</item>
+        <item>疑似机器人</item>
+    </string-array>
+
+    <integer-array name="forums_id">
+        <item>2</item>
+        <item>6</item>
+        <item>7</item>
+        <item>59</item>
+        <item>57</item>
+    </integer-array>
+
+    <string name="login_success">"欢迎您回来"</string>
+    <string name="default_tail_text">"HiPDA"</string>
+    <string name="default_tail_url">"http://www.hi-pda.com/forum/viewthread.php?tid=1408844"</string>
+    
+    <item type="id" name="avatar_tag_uid"/>
+    <item type="id" name="avatar_tag_username"/>
+
+</resources>

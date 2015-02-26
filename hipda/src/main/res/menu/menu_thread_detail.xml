@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_goto"
+        android:icon="?icon_goto_page"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_goto_page"/>
+    <item
+        android:id="@+id/action_reply"
+        android:icon="?icon_reply"
+        android:title="@string/action_reply"/>
+    <item
+        android:id="@+id/action_refresh_detail"
+        android:icon="?icon_refresh"
+        android:title="@string/action_refresh"/>
+    <item
+        android:id="@+id/action_add_favorite"
+        android:title="@string/action_add_favorite"/>
+    <item
+        android:id="@+id/action_remove_favorite"
+        android:title="@string/action_remove_favorite"/>
+    <item
+        android:id="@+id/action_only_author"
+        android:title="@string/action_only_author"/>
+    <item
+        android:id="@+id/action_open_url"
+        android:icon="?icon_website"
+        android:title="@string/action_open_url"/>
+
+</menu>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">HiPDA</string>
+    <string name="action_refresh">刷新</string>
+    <string name="action_reply">回复</string>
+    <string name="action_search">搜索帖子</string>
+    <string name="action_goto_page">跳到指定页</string>
+    <string name="action_quote">引用</string>
+    <string name="action_copy">复制</string>
+    <string name="action_only_author">只看楼主</string>
+    <string name="action_open_url">浏览器打开</string>
+    <string name="action_thread_list_settings">帖子设置</string>
+    <string name="action_upload_img">上传图片</string>
+    <string name="action_add_favorite">添加收藏</string>
+    <string name="action_remove_favorite">删除收藏</string>
+    <string name="action_send_sms">发短消息</string>
+    <string name="iv_avatar">头像</string>
+    <string name="iv_thread_indicator">帖子在此</string>
+    <string name="action_send">发送</string>
+    <string name="title_fragment_simple_myreply">我的回复</string>
+    <string name="title_fragment_simple_sms">短消息</string>
+    <string name="title_fragment_simple_notify">帖子消息</string>
+    <string name="title_fragment_simple_search">搜索</string>
+    <string name="title_fragment_simple_favorites">收藏</string>
+    <string name="iv_drawer_color_block"></string>
+    <string name="iv_drawer_icon"></string>
+    <string name="txt_quick_mark"></string>
+    <string name="txt_quick_hint">回复</string>
+    <string name="ib_quick_send">发送</string>
+    <string name="iv_item_indicator">simple list item indicator</string>
+    <string name="btn_pageup">page up</string>
+    <string name="btn_pagedown">page down</string>
+    <string name="btn_close_image_popup">close image view</string>
+    <string name="iv_item_emoji">emoji</string>
+
+    <!-- Pull to refresh related -->
+    <string name="header_hint_refresh_normal">下拉加载前一页</string>
+    <string name="header_hint_refresh_ready">松手加载前一页</string>
+    <string name="header_hint_refresh_loading">加载中</string>
+    <string name="header_hint_refresh_time"></string>
+    <string name="footer_hint_load_normal">点击加载下一页</string>
+    <string name="footer_hint_load_ready">松手加载下一页</string>
+    <string name="hint_subject">主题</string>
+
+</resources>

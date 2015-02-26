@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_title"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
+    android:background="@drawable/border"
+    android:clickable="true"
+    android:padding="2dp" >
+
+<!--     <ImageView -->
+<!--         android:id="@+id/iv_thread_detail_title" -->
+<!--         android:layout_width="32dp" -->
+<!--         android:layout_height="32dp" -->
+<!--         android:contentDescription="@string/iv_thread_indicator" -->
+<!--         android:src="@drawable/google_speaker" /> -->
+
+    <TextView
+        android:id="@+id/thread_detail_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:gravity="center"
+        android:text=""
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="?detail_background"
+        android:visibility="visible" >
+    </TextView>
+
+</LinearLayout>

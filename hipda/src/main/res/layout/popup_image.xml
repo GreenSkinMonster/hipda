@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popup_image"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/hipda"
+        android:padding="4dp" >
+
+        <!-- http://stackoverflow.com/questions/13026717/unable-to-give-margin-or-padding-for-webview-in-frame-layout -->
+
+        <WebView
+            android:id="@+id/wv_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_download_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/btn_close_image_popup"
+        android:src="?icon_download" />
+
+</FrameLayout>

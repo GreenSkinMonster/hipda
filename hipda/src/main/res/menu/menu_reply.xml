@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_upload_img"
+        android:icon="?icon_upload_img"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_upload_img"/>
+    <item
+        android:id="@+id/action_post"
+        android:icon="?icon_send"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_send"/>
+
+</menu>
