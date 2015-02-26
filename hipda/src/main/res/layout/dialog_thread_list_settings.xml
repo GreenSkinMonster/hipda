@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <Switch
+        android:id="@+id/sw_show_stick_threads"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/pref_title_show_stick_threads" />
+
+    <Switch
+        android:id="@+id/sw_sort_by_post_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/pref_title_sort_by_post_time" />
+
+    <Switch
+        android:id="@+id/sw_load_pic_on_mobile_network"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/pref_title_load_img_without_wifi" />
+
+    <Switch
+        android:id="@+id/sw_prefetch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/pref_title_prefetch" />
+
+</LinearLayout>

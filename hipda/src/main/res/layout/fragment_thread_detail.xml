@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?detail_background" >
+
+    <include
+        android:id="@+id/inc_quick_reply"
+        android:layout_alignParentBottom="true"
+        layout="@layout/view_quick_reply"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/thread_detail_tipbar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/hipda"
+        android:gravity="center"
+        android:textColor="@android:color/primary_text_dark"
+        android:visibility="visible" >
+    </TextView>
+
+    <net.jejer.hipda.ui.XListView
+        android:id="@+id/lv_thread_details"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:clickable="true" >
+    </net.jejer.hipda.ui.XListView>
+
+    <ImageView
+        android:id="@+id/btn_detail_pageup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="40dp"
+        android:contentDescription="@string/btn_pageup"
+        android:src="@drawable/jejer_up"
+        android:visibility="gone" >
+    </ImageView>
+
+    <ImageView
+        android:id="@+id/btn_detail_pagedown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginRight="15dp"
+        android:contentDescription="@string/btn_pagedown"
+        android:src="@drawable/jejer_down"
+        android:visibility="gone" >
+    </ImageView>
+
+</RelativeLayout>

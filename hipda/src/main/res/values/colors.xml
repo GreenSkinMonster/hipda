@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="blue" type="color">#FF33B5E5</item>
+    <item name="purple" type="color">#FFAA66CC</item>
+    <item name="green" type="color">#FF99CC00</item>
+    <item name="orange" type="color">#FFFFBB33</item>
+    <item name="red" type="color">#FFFF4444</item>
+    <item name="darkblue" type="color">#FF0099CC</item>
+    <item name="darkpurple" type="color">#FF9933CC</item>
+    <item name="darkgreen" type="color">#FF669900</item>
+    <item name="darkorange" type="color">#FFFF8800</item>
+    <item name="darkred" type="color">#FFCC0000</item>
+    <item name="white" type="color">#FFFFFFFF</item>
+    <item name="black" type="color">#FF000000</item>
+
+    <integer-array name="androidcolors">
+        <item>@color/blue</item>
+        <item>@color/purple</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+        <item>@color/red</item>
+        <item>@color/darkblue</item>
+        <item>@color/darkpurple</item>
+        <item>@color/darkgreen</item>
+        <item>@color/darkorange</item>
+        <item>@color/darkred</item>
+    </integer-array>
+
+    <item name="hipda" type="color">#33B6EA</item>
+    <item name="day_background" type="color">#E8E8E8</item>
+    <item name="day_list_item_background" type="color">#FFFFFF</item>
+    <item name="day_detail_background" type="color">#FFFFFF</item>
+    <item name="day_img_background" type="color">#F0F0F0</item>
+    <item name="day_replybarbackground" type="color">#E8E8E8</item>
+    <item name="night_background" type="color">#1C1D1E</item>
+    <item name="night_list_item_background" type="color">#2C2E30</item>
+    <item name="night_detail_background" type="color">#1C1D1E</item>
+    <item name="night_img_background" type="color">#2B2C2D</item>
+    <item name="night_replybarbackground" type="color">#000000</item>
+
+</resources>

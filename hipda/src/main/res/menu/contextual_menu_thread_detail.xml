@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_reply"
+        android:icon="?icon_reply"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_reply"/>
+    <item
+        android:id="@+id/action_quote"
+        android:icon="?icon_quote"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_quote"/>
+    <item
+        android:id="@+id/action_copy"
+        android:icon="?icon_copy"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_copy"/>
+
+</menu>

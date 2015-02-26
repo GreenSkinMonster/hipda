@@ -1,0 +1,71 @@
+<resources>
+
+    <string name="title_fragment_settings">设置</string>
+
+    <!-- Account settings -->
+    <string name="pref_category_account">账户信息</string>
+    <string name="pref_title_username">用户名</string>
+    <string name="pref_title_password">密码</string>
+    <string name="pref_title_login_question">安全提问</string>
+    <string name="pref_title_login_answer">回答</string>
+
+    <string-array name="pref_login_question_list_titles">
+        <item>无</item>
+        <item>母亲的名字</item>
+        <item>爷爷的名字</item>
+        <item>父亲出生的城市</item>
+        <item>您其中一位老师的名字</item>
+        <item>您个人计算机的型号</item>
+        <item>您最喜欢的餐馆名称</item>
+        <item>驾驶执照的最后四位数字</item>
+    </string-array>
+    <string-array name="pref_login_question_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="pref_post_textsize_adjust_titles">
+        <item>-3</item>
+        <item>-2</item>
+        <item>-1</item>
+        <item>0</item>
+        <item>+1</item>
+        <item>+2</item>
+        <item>+3</item>
+        <item>+4</item>
+    </string-array>
+    <string-array name="pref_post_textsize_adjust_values">
+        <item>-3</item>
+        <item>-2</item>
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string name="pref_category_tail">小尾巴</string>
+    <string name="pref_category_ui">UI</string>
+
+    <!-- General settings -->
+    <string name="pref_category_general">其他</string>
+    <string name="pref_title_load_img_without_wifi">移动网络加载图片</string>
+    <string name="pref_title_prefetch">预加载</string>
+    <string name="pref_title_show_stick_threads">显示置顶帖</string>
+    <string name="pref_title_sort_by_post_time">发帖时间排序</string>
+    <string name="pref_title_add_tail">添加小尾巴</string>
+    <string name="pref_title_tail_text">尾巴文字</string>
+    <string name="pref_title_tail_url">尾巴链接</string>
+    <string name="pref_title_encode_utf8">使用UTF8编码</string>
+    <string name="pref_title_eink_optimization">EINK优化</string>
+    <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
+    <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
+    <string name="pref_title_about">关于HiPDA</string>
+
+</resources>

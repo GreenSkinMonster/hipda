@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="left_menu">
+        <item>论坛</item>
+        <item>搜索</item>
+        <item>我的回复</item>
+        <item>我的收藏</item>
+        <item>短消息</item>
+        <item>帖子消息</item>
+        <item>发表新帖</item>
+        <item>设置</item>
+        <item>切换主题</item>
+    </string-array>
+
+</resources>

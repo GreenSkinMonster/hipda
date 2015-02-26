@@ -1,0 +1,122 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?background" >
+
+    <LinearLayout
+        android:id="@+id/layout_post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="bottom"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/et_additional"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/hipda"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:inputType="none"
+            android:text=""
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/sp_fid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/et_subject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:hint="@string/hint_subject"
+            android:inputType="none"
+            android:singleLine="true"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/et_reply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:inputType="textMultiLine"
+            android:minLines="6"
+            android:singleLine="false"
+            android:textSize="16sp" />
+
+        <TabHost
+            android:id="@+id/th_emoji"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <TabWidget
+                    android:id="@android:id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                </TabWidget>
+
+                <FrameLayout
+                    android:id="@android:id/tabcontent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp" >
+
+                    <net.jejer.hipda.ui.ExpandableHeightGridView
+                        android:id="@+id/tab1_emoji"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnWidth="40dp"
+                        android:gravity="center"
+                        android:horizontalSpacing="2dp"
+                        android:isScrollContainer="false"
+                        android:numColumns="auto_fit"
+                        android:stretchMode="columnWidth"
+                        android:verticalSpacing="2dp" >
+                    </net.jejer.hipda.ui.ExpandableHeightGridView>
+
+                    <net.jejer.hipda.ui.ExpandableHeightGridView
+                        android:id="@+id/tab2_emoji"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnWidth="40dp"
+                        android:gravity="center"
+                        android:horizontalSpacing="2dp"
+                        android:isScrollContainer="false"
+                        android:numColumns="auto_fit"
+                        android:stretchMode="columnWidth"
+                        android:verticalSpacing="2dp" >
+                    </net.jejer.hipda.ui.ExpandableHeightGridView>
+
+                    <net.jejer.hipda.ui.ExpandableHeightGridView
+                        android:id="@+id/tab3_emoji"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnWidth="40dp"
+                        android:gravity="center"
+                        android:horizontalSpacing="2dp"
+                        android:isScrollContainer="false"
+                        android:numColumns="auto_fit"
+                        android:stretchMode="columnWidth"
+                        android:verticalSpacing="2dp" >
+                    </net.jejer.hipda.ui.ExpandableHeightGridView>
+                </FrameLayout>
+            </LinearLayout>
+        </TabHost>
+    </LinearLayout>
+
+</ScrollView>

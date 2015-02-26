@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="themeName" format="string" />
+    <attr name="background" format="color" />
+    <attr name="list_item_background" format="color" />
+    <attr name="detail_background" format="color" />
+    <attr name="img_background" format="color" />
+    <attr name="replyBarBackground" format="color" />
+    <attr name="icon_refresh" format="reference" />
+    <attr name="icon_send" format="reference" />
+    <attr name="icon_reply" format="reference" />
+    <attr name="icon_quote" format="reference" />
+    <attr name="icon_website" format="reference" />
+    <attr name="icon_goto_page" format="reference" />
+    <attr name="icon_settings" format="reference" />
+    <attr name="icon_download" format="reference" />
+    <attr name="icon_copy" format="reference" />
+    <attr name="icon_upload_img" format="reference" />
+    <attr name="icon_search" format="reference" />
+    <attr name="icon_send_sms" format="reference" />
+
+</resources>

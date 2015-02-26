@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_refresh_list"
+        android:icon="?icon_refresh"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_refresh"/>
+    <item
+        android:id="@+id/action_thread_list_settings"
+        android:icon="?icon_settings"
+        android:title="@string/action_thread_list_settings"/>
+    <!-- <item -->
+    <!-- android:id="@+id/action_new_thread" -->
+    <!-- android:icon="@drawable/ic_action_edit" -->
+    <!-- android:title="@string/action_new_thread"/> -->
+
+</menu>

@@ -1,0 +1,104 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="?list_item_background"
+    android:paddingBottom="4dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical" >
+
+        <FrameLayout
+            android:layout_width="3dp"
+            android:layout_height="12dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="4dp"
+            android:background="@color/hipda" >
+        </FrameLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text=""
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tv_title"
+            android:padding="4dp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/hipda" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/tv_title"
+            android:padding="4dp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="?android:textColorSecondary" />
+
+        <TextView
+            android:id="@+id/tv_viewcounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_title"
+            android:layout_toLeftOf="@+id/tv_time"
+            android:drawableLeft="@drawable/tapatalk_view_icon"
+            android:paddingBottom="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="4dp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="?android:textColorSecondary" />
+
+        <LinearLayout
+            android:id="@+id/ll_replycounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_title"
+            android:layout_toLeftOf="@+id/tv_viewcounter"
+            android:gravity="center_vertical" >
+
+            <ImageView
+                android:id="@+id/iv_image_indicator"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_margin="4dp"
+                android:contentDescription="@string/iv_thread_indicator"
+                android:src="@drawable/twitter_ic_bottom_bar_gallery_active"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_replycounter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/tapatalk_topic_icon"
+                android:paddingBottom="4dp"
+                android:paddingRight="4dp"
+                android:paddingTop="4dp"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="?android:textColorSecondary" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>
