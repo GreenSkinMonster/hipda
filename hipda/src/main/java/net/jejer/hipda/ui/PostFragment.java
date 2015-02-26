@@ -249,9 +249,9 @@ public class PostFragment extends Fragment {
 				Toast.makeText(getActivity(), "主题字数必须大于5", Toast.LENGTH_LONG).show();
 				return true;
 			}
-			ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-			ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", replyText);
-			clipboard.setPrimaryClip(clip);
+			//ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+			//ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", replyText);
+			//clipboard.setPrimaryClip(clip);
 			new PostAsyncTask(getActivity(), mMode, mPrePostInfo).execute(replyText, mTid, mPid, mFid, subjectText);
 
 			// Close SoftKeyboard

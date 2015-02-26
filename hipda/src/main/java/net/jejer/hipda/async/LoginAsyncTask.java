@@ -93,7 +93,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, Boolean> {
 
 		// Step3 do login and get auth
 		if (!fail) {
-			fail = loginStep3(formhash);
+			fail = !loginStep3(formhash);
 		}
 
 
@@ -130,31 +130,40 @@ public class LoginAsyncTask extends AsyncTask<String, Void, Boolean> {
 	private String loginStep2() {
 		HttpGet req = new HttpGet(HiUtils.LoginStep2);
 
-		String rstStr = null;
 		try {
 			HttpResponse rsp = client.execute(req, localContext);
-			HttpEntity rsp_ent = (HttpEntity)rsp.getEntity();
-			rstStr = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
+
+            if(rsp.getStatusLine().getStatusCode() != 200) {
+                mErrorMsg = "无法访问HiPDA,错误代码("+rsp.getStatusLine().getStatusCode()+")";
+                return "";
+            }
+
+			HttpEntity rsp_ent = rsp.getEntity();
+			String rstStr = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
+
+            Document doc = Jsoup.parse(rstStr);
+
+            Elements elements = doc.select("input[name=formhash]");
+            Element element = elements.first();
+
+            if (element == null) {
+                Elements alartES = doc.select("div.alert_info");
+                if (alartES.size() > 0) {
+                    mErrorMsg = alartES.first().text();
+                } else {
+                    mErrorMsg = "Can NOT get formhash";
+                }
+                return "";
+            }
+            return element.attr("value");
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+            mErrorMsg = "无法访问HiPDA,请检查网络";
 			e.printStackTrace();
 		}
 
-		//Log.v(LOG_TAG, mRspStr);
-		Document doc = Jsoup.parse(rstStr);
-		Elements elements = doc.select("input[name=formhash]");
-		Element element = elements.first();
+        return "";
 
-		if (element == null) {
-			Elements alartES = doc.select("div.alert_info");
-			if (alartES.size() > 0) {
-				mErrorMsg = alartES.first().text();
-			} else {
-				mErrorMsg = "Can NOT get formhash";
-			}
-			return "";
-		}
-		return element.attr("value");
 	}
 
 	private boolean loginStep3(String formhash) {

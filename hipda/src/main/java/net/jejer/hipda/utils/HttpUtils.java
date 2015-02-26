@@ -22,7 +22,7 @@ public class HttpUtils {
 		StringBuilder sb = new StringBuilder();
 		try {
 			for (String key : params.keySet()) {
-				if (key == "base") {
+				if ("base".equals(key)) {
 					sb.insert(0, params.get(key)+"?");
 				}
 				else {

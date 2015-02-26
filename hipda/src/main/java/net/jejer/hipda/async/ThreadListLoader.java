@@ -73,7 +73,7 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
 			}
 			count++;
 			//Log.v(LOG_TAG, "try count = " + String.valueOf(count));
-		} while (!getOk && count < 3);
+		} while (!getOk && count < 0);
 
 		if (!getOk) {
 			return null;

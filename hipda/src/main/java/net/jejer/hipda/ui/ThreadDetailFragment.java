@@ -151,9 +151,9 @@ public class ThreadDetailFragment extends Fragment {
 				if (replyText.length() < 5) {
 					Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
 				} else {
-					ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
-					ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", replyText);
-					clipboard.setPrimaryClip(clip);
+					//ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
+					//ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", replyText);
+					//clipboard.setPrimaryClip(clip);
 					mReplyTextTv.setText("");
 					quickReply.setVisibility(View.INVISIBLE);
 					new PostAsyncTask(getActivity(), PostAsyncTask.MODE_REPLY_THREAD, null).execute(replyText, mTid, "", "", "");
