@@ -9,6 +9,7 @@ public class ThreadBean {
 	
 	private String mAuthor;
 	private String mAuthorId;
+	private String mAvatarUrl;
 	private String mLastPost;
 	
 	private String mCountCmts;
@@ -76,7 +77,6 @@ public class ThreadBean {
 		this.mAuthorId = mAuthorId;
 	}
 
-
 	public String getLastPost() {
 		return mLastPost;
 	}
@@ -133,4 +133,17 @@ public class ThreadBean {
 	public void setHavePic(Boolean mHavePic) {
 		this.mHavePic = mHavePic;
 	}
+
+	public String getAvatarUrl() {
+		return mAvatarUrl;
+	}
+
+	public void setAvatarUrl(String avatarUrl) {
+		if (avatarUrl.contains("noavatar")) {
+			this.mAvatarUrl = "";
+		} else {
+			this.mAvatarUrl = avatarUrl.replaceAll("middle", "small");
+		}
+	}
+
 }

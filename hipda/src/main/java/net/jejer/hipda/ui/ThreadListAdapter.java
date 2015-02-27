@@ -9,7 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.toolbox.NetworkImageView;
+
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.ThreadBean;
 
 public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
@@ -21,7 +25,6 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 	public ThreadListAdapter(Context context, int resource,
 			List<ThreadBean> objects) {
 		super(context, resource, objects);
-		// TODO Auto-generated constructor stub
 		mInflater = LayoutInflater.from(context);
 		//mCtx = context;
 		//threads = objects;
@@ -40,7 +43,8 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 			holder = (ViewHolder)convertView.getTag();
 		}
 
-		holder.tv_author = (TextView) convertView.findViewById(R.id.tv_author);  
+		holder.avatar = (NetworkImageView) convertView.findViewById(R.id.iv_avatar);
+		holder.tv_author = (TextView) convertView.findViewById(R.id.tv_author);
 		holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);  
 		holder.tv_viewcounter = (TextView) convertView.findViewById(R.id.tv_viewcounter);  
 		holder.tv_replycounter = (TextView) convertView.findViewById(R.id.tv_replycounter);  
@@ -64,10 +68,18 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 			holder.iv_image_indicator.setVisibility(View.GONE);
 		}
 
+		holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
+		holder.avatar.setDefaultImageResId(R.drawable.google_user);
+		holder.avatar.setErrorImageResId(R.drawable.google_user);
+		holder.avatar.setTag(R.id.avatar_tag_uid, thread.getAuthorId());
+		holder.avatar.setTag(R.id.avatar_tag_username, thread.getAuthor());
+		//holder.avatar.setOnClickListener(mAvatarListener);
+
 		return convertView;
 	}
 
 	private static class ViewHolder {
+		NetworkImageView avatar;
 		TextView tv_title;
 		TextView tv_author;
 		TextView tv_viewcounter;
