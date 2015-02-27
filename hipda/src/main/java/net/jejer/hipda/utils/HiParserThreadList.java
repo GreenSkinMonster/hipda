@@ -66,8 +66,10 @@ public class HiParserThreadList {
 
 			String userLink = authorciteAES.first().attr("href");
 			if (userLink.length() < "space.php?uid=".length()) { continue; }
-			String authorId = userLink.substring("space.php?uid=".length());
-			thread.setAuthorId(authorId);
+            String authorId = HttpUtils.getMiddleString(userLink, "uid=", "&");
+            thread.setAuthorId(authorId);
+
+            thread.setAvatarUrl(AvatarHelper.get(authorId));
 
 			Elements threadCreateTimeES = authorES.first().select("em");
 			if (threadCreateTimeES.size() == 0) { continue; }

@@ -101,7 +101,8 @@ public class HiParserThreadDetail {
 				detail.setAvatarUrl("noavatar"); 
 			} else {
 				detail.setAvatarUrl(avatarES.first().attr("src"));
-			}
+                AvatarHelper.put(uid, detail.getAvatarUrl());
+            }
 
 			//content
 			Contents content = detail.getContents();
