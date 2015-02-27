@@ -34,8 +34,8 @@ import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
-public class LoginAsyncTask extends AsyncTask<String, Void, Boolean> {
-	private final static String LOG_TAG = "LOGIN_TASK";
+public class LoginAsyncTask extends AsyncTask<String, Void, Integer> {
+    private final static String LOG_TAG = "LOGIN_TASK";
 
 	private Context mCtx;
 	private Handler mHandler;
@@ -46,13 +46,17 @@ public class LoginAsyncTask extends AsyncTask<String, Void, Boolean> {
 
 	private String mErrorMsg = "";
 
+    private final static int SUCCESS = 0;
+    private final static int FAIL_RETRY = 1;
+    private final static int FAIL_ABORT = 9;
+
 	public LoginAsyncTask(Context ctx, Handler handler) {
 		mCtx = ctx;
 		mHandler = handler;
 	}
 
 	@Override
-	protected Boolean doInBackground(String... arg0) {
+    protected Integer doInBackground(String... arg0) {
 
 		// Update UI
 		if (mHandler != null) {
@@ -62,81 +66,40 @@ public class LoginAsyncTask extends AsyncTask<String, Void, Boolean> {
 		}
 
 		cookieStore = new BasicCookieStore();
-		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);		
+        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
-		boolean fail = false;
-
-
-//		// Step1 get cdb_sid from cookie
-//		String cdb_sid = null;
-//		loginStep1();
-//		List<Cookie> cookies = cookieStore.getCookies();
-//		for (Cookie cookie : cookies) {
-//			if (cookie.getName().equals("cdb_sid")) {
-//				cdb_sid = cookie.getValue();
-//				fail = false;
-//			}
-//		}
-//		if (cdb_sid == null) {
-//			mErrorMsg = "无法访问HiPDA,请检查网络";
-//			fail = true;
-//		}
+        int status = FAIL_ABORT;
 
 		// Step2 get formhash
-		String formhash = null;
-		if (!fail) {
-			formhash = loginStep2();
-			if (formhash.equals("")) {
-				fail = true;
-			}
-		}
+        String formhash = loginStep2();
 
 		// Step3 do login and get auth
-		if (!fail) {
-			fail = !loginStep3(formhash);
-		}
+        if (formhash != null && formhash.length() > 0) {
+            status = loginStep3(formhash);
+        }
 
 
 		HttpUtils.saveAuth(mCtx, cookieStore);
 		client.close();
 
 		// Update UI
-		if (fail && mHandler != null) {
-			Message msg = Message.obtain();
-			msg.what = ThreadListFragment.STAGE_ERROR;
+        if (status != SUCCESS && mHandler != null) {
+            Message msg = Message.obtain();
+            msg.what = ThreadListFragment.STAGE_ERROR;
 			Bundle b = new Bundle();
 			b.putString(ThreadListFragment.STAGE_ERROR_KEY, mErrorMsg);
 			msg.setData(b);
 			mHandler.sendMessage(msg);
 		}
 
-		return fail;
-	}
-
-//	private void loginStep1() {
-//		HttpGet req = new HttpGet(HiUtils.LoginStep1);
-//
-//		try {
-//			client.execute(req, localContext);
-//			//HttpResponse rsp = client.execute(req, localContext);
-//			//HttpEntity rsp_ent = (HttpEntity)rsp.getEntity();
-//			//rstStr = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+        return status;
+    }
 
 	private String loginStep2() {
 		HttpGet req = new HttpGet(HiUtils.LoginStep2);
 
 		try {
 			HttpResponse rsp = client.execute(req, localContext);
-
-            if(rsp.getStatusLine().getStatusCode() != 200) {
-                mErrorMsg = "无法访问HiPDA,错误代码("+rsp.getStatusLine().getStatusCode()+")";
-                return "";
-            }
 
 			HttpEntity rsp_ent = rsp.getEntity();
 			String rstStr = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
@@ -159,16 +122,16 @@ public class LoginAsyncTask extends AsyncTask<String, Void, Boolean> {
 
 		} catch (IOException e) {
             mErrorMsg = "无法访问HiPDA,请检查网络";
-			e.printStackTrace();
-		}
+            Log.e(LOG_TAG, "network error in loginStep2", e);
+        }
 
         return "";
 
 	}
 
-	private boolean loginStep3(String formhash) {
-		HttpPost req = new HttpPost(HiUtils.LoginStep3);
-		Map<String, String> post_param = new HashMap<String, String>();
+    private int loginStep3(String formhash) {
+        HttpPost req = new HttpPost(HiUtils.LoginStep3);
+        Map<String, String> post_param = new HashMap<String, String>();
 		post_param.put("m_formhash", formhash);
 		post_param.put("referer", "http://www.hi-pda.com/forum/index.php");
 		post_param.put("loginfield", "username");
@@ -178,41 +141,48 @@ public class LoginAsyncTask extends AsyncTask<String, Void, Boolean> {
 		post_param.put("answer", HiSettingsHelper.getInstance().getSecAnswer());
 		post_param.put("cookietime", "2592000");
 
-		Log.v(LOG_TAG, HttpUtils.buildHttpString(post_param));
+        //Log.v(LOG_TAG, HttpUtils.buildHttpString(post_param));
 
 		try {
 			StringEntity entity = new StringEntity(HttpUtils.buildHttpString(post_param), HiSettingsHelper.getInstance().getEncode());
 			entity.setContentType("application/x-www-form-urlencoded");
 			req.setEntity(entity);
 		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return false;
-		}
+            Log.e(LOG_TAG, "encoding error", e1);
+            return FAIL_RETRY;
+        }
 
-		String rspStr = null;
+        String rspStr;
 
 		try {
 			HttpResponse rsp = client.execute(req, localContext);
-			HttpEntity rsp_ent = (HttpEntity)rsp.getEntity();
-			rspStr = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
-			Log.v(LOG_TAG, rspStr);
+            HttpEntity rsp_ent = rsp.getEntity();
+            rspStr = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
+            Log.v(LOG_TAG, rspStr);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
+            Log.e(LOG_TAG, "network error", e);
+            return FAIL_RETRY;
+        }
 
-		// response is not HTML, skip parse
-		if (rspStr.contains(mCtx.getString(R.string.login_success))) {
-			Log.v(LOG_TAG, "Login success!");
-			return true;
-		} else {
-			Log.e(LOG_TAG, "Login FAIL");
-			mErrorMsg = "登录失败, 请检查账户信息";
-			return false;
-		}
-	}
+        // response is in XML format
+        if (rspStr.contains(mCtx.getString(R.string.login_success))) {
+            Log.v(LOG_TAG, "Login success!");
+            return SUCCESS;
+        } else if (rspStr.contains(mCtx.getString(R.string.login_fail))) {
+            Log.e(LOG_TAG, "Login FAIL");
+            int msgIndex = rspStr.indexOf(mCtx.getString(R.string.login_fail));
+            int msgIndexEnd = rspStr.indexOf("次", msgIndex) + 1;
+            if (msgIndexEnd > msgIndex) {
+                mErrorMsg = rspStr.substring(msgIndex, msgIndexEnd);
+            } else {
+                mErrorMsg = "登录失败,请检查账户信息";
+            }
+            return FAIL_ABORT;
+        } else {
+            mErrorMsg = "登录失败,未知错误";
+            return FAIL_RETRY;
+        }
+    }
 
 	public static boolean checkLoggedin(Handler handler, Document doc) {
 		Elements error = doc.select("div.alert_error");
@@ -229,4 +199,8 @@ public class LoginAsyncTask extends AsyncTask<String, Void, Boolean> {
 		}
 		return true;
 	}
+
+    public static boolean checkLoggedin(String mRsp) {
+        return !mRsp.contains("您还未登录");
+    }
 }
