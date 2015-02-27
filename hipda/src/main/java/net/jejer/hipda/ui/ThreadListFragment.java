@@ -156,6 +156,9 @@ public class ThreadListFragment extends Fragment {
 		getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
 		getActivity().getActionBar().setSelectedNavigationItem(mForumSelect==-1?0:mForumSelect);
 
+		//refresh unkown avatars
+		mThreadListAdapter.refreshAvatars();
+
 		super.onCreateOptionsMenu(menu,inflater);
 	}
 
