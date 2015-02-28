@@ -4,14 +4,6 @@
     android:orientation="horizontal"
     android:padding="4dp" >
 
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/iv_avatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:contentDescription="@string/iv_avatar"
-        android:padding="4dp"
-        android:src="@drawable/google_user" />
-
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -40,11 +32,19 @@
                 android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@+id/floor" >
 
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/iv_avatar"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:contentDescription="@string/iv_avatar"
+                    android:padding="4dp"
+                    android:src="@drawable/google_user"/>
+
                 <TextView
                     android:id="@+id/author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_toRightOf="@+id/iv_avatar"
                     android:layout_alignParentTop="true"
                     android:padding="4dp"
                     android:text=""
@@ -59,16 +59,24 @@
                     android:layout_alignParentTop="true"
                     android:padding="4dp"
                     android:text="" />
-
-                <TextView
-                    android:id="@+id/post_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/author"
-                    android:padding="4dp"
-                    android:text="" />
             </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/post_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_centerHorizontal="true"
+                android:text=""
+                android:textColor="#4e797979"/>
         </RelativeLayout>
 
         <LinearLayout
@@ -76,7 +84,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="4dp" >
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp">
         </LinearLayout>
     </LinearLayout>
 

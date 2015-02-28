@@ -71,7 +71,11 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 		holder.author.setText(detail.getAuthor());  
 		holder.time.setText(detail.getTimePost());
 		holder.floor.setText(detail.getFloor()+"#");
-		holder.postStatus.setText(detail.getPostStatus());
+		String postStaus = detail.getPostStatus();
+		if (postStaus != null && postStaus.length() > 0)
+			holder.postStatus.setText(postStaus);
+		else
+			holder.postStatus.setVisibility(View.GONE);
 		holder.avatar.setImageUrl(detail.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
 		holder.avatar.setDefaultImageResId(R.drawable.google_user);
 		holder.avatar.setErrorImageResId(R.drawable.google_user);
@@ -88,7 +92,12 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setFragmentManager(mFragmentManager);
 				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17+HiSettingsHelper.getInstance().getPostTextsizeAdj());
 				tv.setMovementMethod(LinkMovementMethod.getInstance());
-				tv.setText(content.getContent());
+				//dirty hack, remove two <br> after poststatus
+				String cnt = content.getContent();
+				if (postStaus != null && postStaus.length() > 0 && cnt.startsWith("<br><br>")) {
+					cnt = cnt.substring("<br><br>".length());
+				}
+				tv.setText(cnt);
 				//setAutoLinkMask have conflict with setMovementMethod
 				//tv.setAutoLinkMask(Linkify.WEB_URLS);
 				tv.setFocusable(false);
