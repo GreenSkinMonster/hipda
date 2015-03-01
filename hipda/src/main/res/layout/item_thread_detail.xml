@@ -19,11 +19,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:padding="4dp"
+                android:layout_alignParentBottom="true"
+                android:padding="2dp"
                 android:text=""
                 android:textColor="@color/hipda"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <RelativeLayout
@@ -45,7 +45,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/iv_avatar"
-                    android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true"
                     android:padding="4dp"
                     android:text=""
                     android:textSize="16sp"
@@ -56,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true"
                     android:padding="4dp"
                     android:text="" />
             </RelativeLayout>

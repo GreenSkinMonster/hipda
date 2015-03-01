@@ -4,6 +4,7 @@ import net.jejer.hipda.async.HiStringRequest;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
+import net.jejer.hipda.cache.AvatarUrlCache;
 import net.jejer.hipda.ui.NotifyHelper;
 import net.jejer.hipda.ui.ThreadListFragment;
 
@@ -69,7 +70,7 @@ public class HiParserThreadList {
             String authorId = HttpUtils.getMiddleString(userLink, "uid=", "&");
             thread.setAuthorId(authorId);
 
-            thread.setAvatarUrl(AvatarHelper.get(authorId));
+            thread.setAvatarUrl(AvatarUrlCache.get(authorId));
 
 			Elements threadCreateTimeES = authorES.first().select("em");
 			if (threadCreateTimeES.size() == 0) { continue; }

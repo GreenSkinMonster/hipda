@@ -13,6 +13,7 @@ import android.util.Log;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.DetailBean.Contents;
+import net.jejer.hipda.cache.AvatarUrlCache;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadListFragment;
 
@@ -101,7 +102,7 @@ public class HiParserThreadDetail {
 				detail.setAvatarUrl("noavatar"); 
 			} else {
 				detail.setAvatarUrl(avatarES.first().attr("src"));
-                AvatarHelper.put(uid, detail.getAvatarUrl());
+                AvatarUrlCache.put(uid, detail.getAvatarUrl());
             }
 
 			//content
@@ -112,7 +113,13 @@ public class HiParserThreadDetail {
 				details.add(detail);
 				continue; 
 			}
-			Element postmessageE = postmessageES.first();
+
+            Element postmessageE = postmessageES.first();
+            if (postmessageE.childNodeSize() == 0) {
+                content.addText("[[无内容]]");
+                details.add(detail);
+                continue;
+            }
 
 			//post status
 			Elements poststatusES = postmessageE.select("i.pstatus");

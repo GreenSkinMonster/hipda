@@ -1,4 +1,4 @@
-package net.jejer.hipda.utils;
+package net.jejer.hipda.cache;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,16 +8,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AvatarHelper {
+public class AvatarUrlCache {
 
-	private final static String LOG_TAG = AvatarHelper.class.getSimpleName();
+    private final static String LOG_TAG = AvatarUrlCache.class.getSimpleName();
 
 	private final static String PREFS_NAME = "AvatarPrefsFile";
-	private static SharedPreferences avatarPrefs;
+
+    private static SharedPreferences avatarPrefs;
 	private static LinkedHashMap<String, String> avatarMap;
 	private static Context mCtx;
 
-	public static void init(Context ctx) {
+
+    public static void init(Context ctx) {
 		mCtx = ctx;
 		load();
 	}
@@ -31,8 +33,8 @@ public class AvatarHelper {
 			for (Map.Entry<String, ?> entry : keys.entrySet()) {
 				avatarMap.put(entry.getKey(), entry.getValue().toString());
 			}
-			Log.v(LOG_TAG, "loaded avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
-		}
+            Log.v(LOG_TAG, "load avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
+        }
 	}
 
 	public static void put(String uid, String url) {
@@ -56,8 +58,8 @@ public class AvatarHelper {
 				prefsWriter.putString(key, avatarMap.get(key));
 			}
 			prefsWriter.commit();
-			Log.v(LOG_TAG, "saved avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
-		}
+            Log.v(LOG_TAG, "save avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
+        }
 	}
 
 }

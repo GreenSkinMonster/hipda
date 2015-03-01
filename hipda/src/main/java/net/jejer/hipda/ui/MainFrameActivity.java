@@ -5,7 +5,7 @@ import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.utils.AvatarHelper;
+import net.jejer.hipda.cache.AvatarUrlCache;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -42,7 +42,7 @@ public class MainFrameActivity extends Activity {
 			setTheme(R.style.ThemeNight);
 		}
 
-        AvatarHelper.init(this);
+        AvatarUrlCache.init(this);
 
 		// Init Volley
 		VolleyHelper.getInstance().init(this);
@@ -140,7 +140,7 @@ public class MainFrameActivity extends Activity {
 		if (popFragment(true) == false) {
 			mQuit++;
 			if (mQuit == 1) {
-                AvatarHelper.save();
+                AvatarUrlCache.save();
                 Toast.makeText(this, "再按一次退出HiPDA", Toast.LENGTH_LONG).show();
 			} else {
 				finish();

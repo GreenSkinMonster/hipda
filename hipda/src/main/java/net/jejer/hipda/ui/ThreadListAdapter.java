@@ -17,7 +17,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.ThreadBean;
-import net.jejer.hipda.utils.AvatarHelper;
+import net.jejer.hipda.cache.AvatarUrlCache;
 
 public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
@@ -89,9 +89,9 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 		boolean changed = false;
 		for (int i = 0; i < getCount(); i++) {
 			ThreadBean thread = getItem(i);
-			if ((thread.getAvatarUrl() == null || thread.getAvatarUrl().length() == 0) && AvatarHelper.get(thread.getAuthorId()).length() > 0) {
-				thread.setAvatarUrl(AvatarHelper.get(thread.getAuthorId()));
-				ViewHolder holder = holders.get(i);
+            if ((thread.getAvatarUrl() == null || thread.getAvatarUrl().length() == 0) && AvatarUrlCache.get(thread.getAuthorId()).length() > 0) {
+                thread.setAvatarUrl(AvatarUrlCache.get(thread.getAuthorId()));
+                ViewHolder holder = holders.get(i);
 				if (holder != null) {
 					holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
 					changed = true;
