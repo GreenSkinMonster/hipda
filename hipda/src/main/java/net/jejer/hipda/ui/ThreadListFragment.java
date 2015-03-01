@@ -1,19 +1,10 @@
 package net.jejer.hipda.ui;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.jejer.hipda.R;
-import net.jejer.hipda.async.ThreadListLoader;
-import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.bean.ThreadBean;
-import net.jejer.hipda.bean.ThreadListBean;
-import net.jejer.hipda.utils.HiUtils;
 import android.app.ActionBar;
+import android.app.ActionBar.OnNavigationListener;
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.ActionBar.OnNavigationListener;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
@@ -36,6 +27,17 @@ import android.widget.ListView;
 import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import net.jejer.hipda.R;
+import net.jejer.hipda.async.ThreadListLoader;
+import net.jejer.hipda.async.VolleyHelper;
+import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.ThreadBean;
+import net.jejer.hipda.bean.ThreadListBean;
+import net.jejer.hipda.utils.HiUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ThreadListFragment extends Fragment {
@@ -210,9 +212,16 @@ public class ThreadListFragment extends Fragment {
 
 	public class OnScrollCallback implements AbsListView.OnScrollListener {
 
+        int mLastVisibleItem = 0;
+        int mVisibleItemCount = 0;
+
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
+
+            mLastVisibleItem = firstVisibleItem;
+            mVisibleItemCount = visibleItemCount;
+
 			if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
 
 				if (!mInloading) {
@@ -227,8 +236,15 @@ public class ThreadListFragment extends Fragment {
 		}
 
 		@Override
-		public void onScrollStateChanged(AbsListView view, int scrollState) {
-		}
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            if (scrollState == SCROLL_STATE_IDLE) {
+                //Log.v(LOG_TAG, "scrollState = " + scrollState + ", VisibleItem=" + mLastVisibleItem + ", mVisibleItemCount=" + mVisibleItemCount);
+                mThreadListAdapter.markAvatars(mLastVisibleItem, mVisibleItemCount);
+                mThreadListAdapter.refreshAvatars();
+            }
+        }
+
+
 
 	}
 	private class OnItemClickCallback implements AdapterView.OnItemClickListener {
