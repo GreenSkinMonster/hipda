@@ -84,24 +84,42 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 		return convertView;
 	}
 
-	public void refreshAvatars() {
-		long start = System.currentTimeMillis();
-		boolean changed = false;
-		for (int i = 0; i < getCount(); i++) {
-			ThreadBean thread = getItem(i);
-            if ((thread.getAvatarUrl() == null || thread.getAvatarUrl().length() == 0) && AvatarUrlCache.get(thread.getAuthorId()).length() > 0) {
-                thread.setAvatarUrl(AvatarUrlCache.get(thread.getAuthorId()));
-                ViewHolder holder = holders.get(i);
-				if (holder != null) {
-					holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
-					changed = true;
-				}
-			}
-		}
-		Log.v("ThreadListAdapter", "refreshAvatars size=" + getCount() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
-		if (changed)
-			notifyDataSetChanged();
-	}
+    public void markAvatars(int startPostion, int count) {
+        if (count > 0 && startPostion >= 0) {
+            for (int i = startPostion; i < startPostion + count; i++) {
+                if (i < getCount()) {
+                    ThreadBean thread = getItem(i);
+                    AvatarUrlCache.getInstance().markDirty(thread.getAuthorId());
+                }
+            }
+        }
+        AvatarUrlCache.getInstance().fetchAvatarUrls(this);
+    }
+
+    public void refreshAvatars() {
+        if (AvatarUrlCache.getInstance().isUpdated()) {
+            AvatarUrlCache.getInstance().setUpdated(false);
+            boolean uiNeedNotify = false;
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < getCount(); i++) {
+                ThreadBean thread = getItem(i);
+                if (thread.getAvatarUrl().length() == 0
+                        && AvatarUrlCache.getInstance().get(thread.getAuthorId()).length() > 0) {
+                    thread.setAvatarUrl(AvatarUrlCache.getInstance().get(thread.getAuthorId()));
+                    ViewHolder holder = holders.get(i);
+                    if (holder != null
+                            && !thread.getAvatarUrl().equals(holder.avatar.getImageURL())) {
+                        holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
+                        uiNeedNotify = true;
+                    }
+                }
+            }
+            if (uiNeedNotify) {
+                notifyDataSetChanged();
+            }
+            Log.v("ThreadListAdapter", "refreshAvatars size=" + getCount() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
+        }
+    }
 
 	private static class ViewHolder {
 		NetworkImageView avatar;
