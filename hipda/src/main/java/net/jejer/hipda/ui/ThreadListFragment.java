@@ -30,7 +30,6 @@ import android.widget.TextView;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.ThreadListLoader;
-import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
@@ -159,7 +158,9 @@ public class ThreadListFragment extends Fragment {
 		getActivity().getActionBar().setSelectedNavigationItem(mForumSelect==-1?0:mForumSelect);
 
 		//refresh unkown avatars
-		mThreadListAdapter.refreshAvatars();
+        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+            mThreadListAdapter.refreshAvatars();
+        }
 
 		super.onCreateOptionsMenu(menu,inflater);
 	}
@@ -235,12 +236,14 @@ public class ThreadListFragment extends Fragment {
 			}
 		}
 
-		@Override
+        @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
             if (scrollState == SCROLL_STATE_IDLE) {
                 //Log.v(LOG_TAG, "scrollState = " + scrollState + ", VisibleItem=" + mLastVisibleItem + ", mVisibleItemCount=" + mVisibleItemCount);
-                mThreadListAdapter.markAvatars(mLastVisibleItem, mVisibleItemCount);
-                mThreadListAdapter.refreshAvatars();
+                if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+                    mThreadListAdapter.markAvatars(mLastVisibleItem, mVisibleItemCount);
+                    mThreadListAdapter.refreshAvatars();
+                }
             }
         }
 
@@ -373,6 +376,7 @@ public class ThreadListFragment extends Fragment {
 		final Switch sPrefetch = (Switch)viewlayout.findViewById(R.id.sw_prefetch);
 		final Switch sShowStickThreads = (Switch)viewlayout.findViewById(R.id.sw_show_stick_threads);
 		final Switch sSortByPostTime = (Switch)viewlayout.findViewById(R.id.sw_sort_by_post_time);
+        final Switch sShowThreadListAvatar = (Switch) viewlayout.findViewById(R.id.sw_threadlist_avatar);
 
 		sShowPicOnMobileNetwork.setChecked(HiSettingsHelper.getInstance().isLoadImgOnMobileNwk());
 		sShowPicOnMobileNetwork.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
@@ -380,7 +384,14 @@ public class ThreadListFragment extends Fragment {
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				HiSettingsHelper.getInstance().setLoadImgOnMobileNwk(arg1);
 			}});
-		sPrefetch.setChecked(HiSettingsHelper.getInstance().isPreFetch());
+        sShowThreadListAvatar.setChecked(HiSettingsHelper.getInstance().isShowThreadListAvatar());
+        sShowThreadListAvatar.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+                HiSettingsHelper.getInstance().setShowThreadListAvatar(arg1);
+            }
+        });
+        sPrefetch.setChecked(HiSettingsHelper.getInstance().isPreFetch());
 		sPrefetch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {

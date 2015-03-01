@@ -1,8 +1,5 @@
 package net.jejer.hipda.ui;
 
-import java.util.HashMap;
-import java.util.List;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,8 +13,12 @@ import com.android.volley.toolbox.NetworkImageView;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.VolleyHelper;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.cache.AvatarUrlCache;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
@@ -74,8 +75,13 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 			holder.iv_image_indicator.setVisibility(View.GONE);
 		}
 
-		holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
-		holder.avatar.setDefaultImageResId(R.drawable.google_user);
+        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+            holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
+        } else {
+            holder.avatar.setImageUrl("", VolleyHelper.getInstance().getAvatarLoader());
+            holder.avatar.setVisibility(View.GONE);
+        }
+        holder.avatar.setDefaultImageResId(R.drawable.google_user);
 		holder.avatar.setErrorImageResId(R.drawable.google_user);
 		holder.avatar.setTag(R.id.avatar_tag_uid, thread.getAuthorId());
 		holder.avatar.setTag(R.id.avatar_tag_username, thread.getAuthor());

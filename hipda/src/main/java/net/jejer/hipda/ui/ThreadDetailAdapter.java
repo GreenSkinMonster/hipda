@@ -1,6 +1,17 @@
 package net.jejer.hipda.ui;
 
-import java.util.List;
+import android.app.FragmentManager;
+import android.content.Context;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -14,19 +25,10 @@ import net.jejer.hipda.bean.ContentQuote;
 import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import android.app.FragmentManager;
-import android.content.Context;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
+
+import java.util.List;
+
 //import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 	//private final String LOG_TAG = getClass().getSimpleName();
@@ -76,8 +78,14 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 			holder.postStatus.setText(postStaus);
 		else
 			holder.postStatus.setVisibility(View.GONE);
-		holder.avatar.setImageUrl(detail.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
-		holder.avatar.setDefaultImageResId(R.drawable.google_user);
+
+        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+            holder.avatar.setImageUrl(detail.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
+        } else {
+            holder.avatar.setImageUrl("", VolleyHelper.getInstance().getAvatarLoader());
+            holder.avatar.setVisibility(View.GONE);
+        }
+        holder.avatar.setDefaultImageResId(R.drawable.google_user);
 		holder.avatar.setErrorImageResId(R.drawable.google_user);
 		holder.avatar.setTag(R.id.avatar_tag_uid, detail.getUid());
 		holder.avatar.setTag(R.id.avatar_tag_username, detail.getAuthor());

@@ -107,7 +107,7 @@ public class AvatarUrlCache {
             for (String key : keys) {
                 prefsWriter.putString(key, avatarMap.get(key));
             }
-            prefsWriter.commit();
+            prefsWriter.apply();
             lastSaveTime = System.currentTimeMillis();
             Log.v(LOG_TAG, "save avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
         }
