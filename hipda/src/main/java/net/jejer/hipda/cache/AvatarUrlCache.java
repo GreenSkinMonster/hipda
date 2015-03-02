@@ -6,6 +6,7 @@ import android.util.Log;
 
 import net.jejer.hipda.async.AvatarUrlTask;
 import net.jejer.hipda.ui.ThreadListAdapter;
+import net.jejer.hipda.utils.HiUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,36 +16,37 @@ import java.util.Set;
 
 public class AvatarUrlCache {
 
-    private final static String LOG_TAG = AvatarUrlCache.class.getSimpleName();
+	private final static String LOG_TAG = AvatarUrlCache.class.getSimpleName();
 
 	private final static String PREFS_NAME = "AvatarPrefsFile";
+	private final static String AVATAR_URL_PREFIX = HiUtils.BaseUrl + "uc_server/data/avatar";
 
-    private SharedPreferences avatarPrefs;
-    private LinkedHashMap<String, String> avatarMap;
-    private Context mCtx;
+	private SharedPreferences avatarPrefs;
+	private LinkedHashMap<String, String> avatarMap;
+	private Context mCtx;
 
-    private Collection<String> mDirtyUids = new ArrayList<String>();
-    private boolean mUpdated = false;
-    private long lastSaveTime = 0;
-
-
-    private static AvatarUrlCache ourInstance = new AvatarUrlCache();
-
-    public static AvatarUrlCache getInstance() {
-        return ourInstance;
-    }
-
-    private AvatarUrlCache() {
-    }
+	private Collection<String> mDirtyUids = new ArrayList<String>();
+	private boolean mUpdated = false;
+	private long lastSaveTime = 0;
 
 
-    public void init(Context ctx) {
-        mCtx = ctx;
+	private static AvatarUrlCache ourInstance = new AvatarUrlCache();
+
+	public static AvatarUrlCache getInstance() {
+		return ourInstance;
+	}
+
+	private AvatarUrlCache() {
+	}
+
+
+	public void init(Context ctx) {
+		mCtx = ctx;
 		load();
 	}
 
-    private void load() {
-        if (avatarPrefs == null) {
+	private void load() {
+		if (avatarPrefs == null) {
 			long start = System.currentTimeMillis();
 			avatarPrefs = mCtx.getSharedPreferences(PREFS_NAME, 0);
 			Map<String, ?> keys = avatarPrefs.getAll();
@@ -52,65 +54,74 @@ public class AvatarUrlCache {
 			for (Map.Entry<String, ?> entry : keys.entrySet()) {
 				avatarMap.put(entry.getKey(), entry.getValue().toString());
 			}
-            Log.v(LOG_TAG, "load avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
-        }
+			Log.v(LOG_TAG, "load avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
+		}
 	}
 
-    public void put(String uid, String url) {
-        if (!avatarMap.containsKey(uid) || !avatarMap.get(uid).equals(url)) {
-            avatarMap.put(uid, url);
-            mDirtyUids.remove(uid);
-            mUpdated = true;
-            save();
-        }
-    }
+	public void put(String uid, String url) {
+		if (!avatarMap.containsKey(uid) || !avatarMap.get(uid).equals(url)) {
+			if (url == null)
+				url = "";
+			if (url.startsWith(AVATAR_URL_PREFIX)) {
+				url = url.substring(AVATAR_URL_PREFIX.length());
+			}
+			avatarMap.put(uid, url);
+			mDirtyUids.remove(uid);
+			mUpdated = true;
+			save();
+		}
+	}
 
-    public String get(String uid) {
-        if (!avatarMap.containsKey(uid)) {
-            return "";
-        }
-        return avatarMap.get(uid);
-    }
+	public String get(String uid) {
+		if (!avatarMap.containsKey(uid)) {
+			return "";
+		}
+		String url = avatarMap.get(uid);
+		if (url.startsWith("/")) {
+			url = AVATAR_URL_PREFIX + url;
+		}
+		return url;
+	}
 
-    public void markDirty(String uid) {
-        if (!avatarMap.containsKey(uid) && !mDirtyUids.contains(uid)) {
-            mDirtyUids.add(uid);
-        }
-    }
+	public void markDirty(String uid) {
+		if (!avatarMap.containsKey(uid) && !mDirtyUids.contains(uid)) {
+			mDirtyUids.add(uid);
+		}
+	}
 
-    public void fetchAvatarUrls(ThreadListAdapter threadListAdapter) {
-        if (mDirtyUids.size() > 0) {
-            Collection<String> temp = new ArrayList<String>();
-            temp.addAll(mDirtyUids);
-            mDirtyUids.clear();
-            new AvatarUrlTask(mCtx, threadListAdapter, temp).execute();
-        }
-    }
+	public void fetchAvatarUrls(ThreadListAdapter threadListAdapter) {
+		if (mDirtyUids.size() > 0) {
+			Collection<String> temp = new ArrayList<String>();
+			temp.addAll(mDirtyUids);
+			mDirtyUids.clear();
+			//new AvatarUrlTask(mCtx, threadListAdapter, temp).execute();
+		}
+	}
 
-    public boolean contains(String uid) {
-        return avatarMap.containsKey(uid);
-    }
+	public boolean contains(String uid) {
+		return avatarMap.containsKey(uid);
+	}
 
-    public boolean isUpdated() {
-        return mUpdated;
-    }
+	public boolean isUpdated() {
+		return mUpdated;
+	}
 
-    public void setUpdated(boolean updated) {
-        mUpdated = updated;
-    }
+	public void setUpdated(boolean updated) {
+		mUpdated = updated;
+	}
 
-    private void save() {
-        long start = System.currentTimeMillis();
-        if (start - lastSaveTime > 30 * 1000) {
-            Set<String> keys = avatarMap.keySet();
-            SharedPreferences.Editor prefsWriter = avatarPrefs.edit();
-            for (String key : keys) {
-                prefsWriter.putString(key, avatarMap.get(key));
-            }
-            prefsWriter.apply();
-            lastSaveTime = System.currentTimeMillis();
-            Log.v(LOG_TAG, "save avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
-        }
-    }
+	private void save() {
+		long start = System.currentTimeMillis();
+		if (start - lastSaveTime > 30 * 1000) {
+			Set<String> keys = avatarMap.keySet();
+			SharedPreferences.Editor prefsWriter = avatarPrefs.edit();
+			for (String key : keys) {
+				prefsWriter.putString(key, avatarMap.get(key));
+			}
+			prefsWriter.apply();
+			lastSaveTime = System.currentTimeMillis();
+			Log.v(LOG_TAG, "save avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
+		}
+	}
 
 }

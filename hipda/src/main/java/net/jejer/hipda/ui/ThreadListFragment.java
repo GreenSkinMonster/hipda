@@ -98,27 +98,27 @@ public class ThreadListFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "onCreateView");
 		View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
-		mThreadListView = (ListView)view.findViewById(R.id.lv_threads);
-		mTipBar = (TextView)view.findViewById(R.id.thread_list_tipbar);
+		mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
+		mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
 		mTipBar.setVisibility(View.INVISIBLE);
 		mTipBar.bringToFront();
 
 		if (HiSettingsHelper.getInstance().isEinkOptimization()) {
-			ImageView mBtnPageup = (ImageView)view.findViewById(R.id.btn_list_pageup);
+			ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_list_pageup);
 			mBtnPageup.setVisibility(View.VISIBLE);
 			mBtnPageup.setOnClickListener(new ImageView.OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					int index = mThreadListView.getFirstVisiblePosition()-mThreadListView.getChildCount()+1;
-					mThreadListView.setSelection(index<0?0:index);
+					int index = mThreadListView.getFirstVisiblePosition() - mThreadListView.getChildCount() + 1;
+					mThreadListView.setSelection(index < 0 ? 0 : index);
 				}
 			});
 
 
-			ImageView mBtnPagedown = (ImageView)view.findViewById(R.id.btn_list_pagedown);
+			ImageView mBtnPagedown = (ImageView) view.findViewById(R.id.btn_list_pagedown);
 			mBtnPagedown.setVisibility(View.VISIBLE);
 			mBtnPagedown.setOnClickListener(new ImageView.OnClickListener() {
 				@Override
@@ -155,31 +155,31 @@ public class ThreadListFragment extends Fragment {
 		getActivity().getActionBar().setTitle("");
 		getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
 		getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
-		getActivity().getActionBar().setSelectedNavigationItem(mForumSelect==-1?0:mForumSelect);
+		getActivity().getActionBar().setSelectedNavigationItem(mForumSelect == -1 ? 0 : mForumSelect);
 
 		//refresh unkown avatars
-        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-            mThreadListAdapter.refreshAvatars();
-        }
+		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+			mThreadListAdapter.refreshAvatars();
+		}
 
-		super.onCreateOptionsMenu(menu,inflater);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected (MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.v(LOG_TAG, "onOptionsItemSelected");
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			// Implemented in activity
-			return false;
-		case R.id.action_refresh_list:
-			refresh();
-			return true;
-		case R.id.action_thread_list_settings:
-			showThreadListSettingsDialog();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case android.R.id.home:
+				// Implemented in activity
+				return false;
+			case R.id.action_refresh_list:
+				refresh();
+				return true;
+			case R.id.action_thread_list_settings:
+				showThreadListSettingsDialog();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 
 	}
@@ -213,15 +213,15 @@ public class ThreadListFragment extends Fragment {
 
 	public class OnScrollCallback implements AbsListView.OnScrollListener {
 
-        int mLastVisibleItem = 0;
-        int mVisibleItemCount = 0;
+		int mLastVisibleItem = 0;
+		int mVisibleItemCount = 0;
 
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
-				int visibleItemCount, int totalItemCount) {
+							 int visibleItemCount, int totalItemCount) {
 
-            mLastVisibleItem = firstVisibleItem;
-            mVisibleItemCount = visibleItemCount;
+			mLastVisibleItem = firstVisibleItem;
+			mVisibleItemCount = visibleItemCount;
 
 			if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
 
@@ -236,25 +236,28 @@ public class ThreadListFragment extends Fragment {
 			}
 		}
 
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            if (scrollState == SCROLL_STATE_IDLE) {
-                //Log.v(LOG_TAG, "scrollState = " + scrollState + ", VisibleItem=" + mLastVisibleItem + ", mVisibleItemCount=" + mVisibleItemCount);
-                if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-                    mThreadListAdapter.markAvatars(mLastVisibleItem, mVisibleItemCount);
-                    mThreadListAdapter.refreshAvatars();
-                }
-            }
-        }
-
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+				if (scrollState == SCROLL_STATE_FLING) {
+					//Glide.with(mCtx).pauseRequests();
+				} else if (scrollState == SCROLL_STATE_IDLE) {
+					//Log.v(LOG_TAG, "scrollState = " + scrollState + ", VisibleItem=" + mLastVisibleItem + ", mVisibleItemCount=" + mVisibleItemCount);
+					mThreadListAdapter.markAvatars(mLastVisibleItem, mVisibleItemCount);
+					mThreadListAdapter.refreshAvatars();
+					//Glide.with(mCtx).resumeRequests();
+				}
+			}
+		}
 
 
 	}
+
 	private class OnItemClickCallback implements AdapterView.OnItemClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> listView, View itemView, int position,
-				long row) {
+								long row) {
 			// TODO Auto-generated method stub
 
 			//Log.v(LOG_TAG, "onItemClick");
@@ -269,9 +272,9 @@ public class ThreadListFragment extends Fragment {
 				ThreadDetailFragment fragment = new ThreadDetailFragment();
 				fragment.setArguments(arguments);
 				getFragmentManager().beginTransaction()
-				.replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-				.addToBackStack(ThreadDetailFragment.class.getName())
-				.commit();
+						.replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
+						.addToBackStack(ThreadDetailFragment.class.getName())
+						.commit();
 			} else {
 
 				Bundle arguments = new Bundle();
@@ -281,15 +284,15 @@ public class ThreadListFragment extends Fragment {
 				fragment.setArguments(arguments);
 				if (HiSettingsHelper.getInstance().isEinkOptimization()) {
 					getFragmentManager().beginTransaction()
-					.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-					.addToBackStack(ThreadDetailFragment.class.getName())
-					.commit();
+							.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+							.addToBackStack(ThreadDetailFragment.class.getName())
+							.commit();
 				} else {
 					getFragmentManager().beginTransaction()
-					.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-					.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-					.addToBackStack(ThreadDetailFragment.class.getName())
-					.commit();
+							.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+							.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+							.addToBackStack(ThreadDetailFragment.class.getName())
+							.commit();
 				}
 
 			}
@@ -308,18 +311,22 @@ public class ThreadListFragment extends Fragment {
 
 		@Override
 		public void onLoadFinished(Loader<ThreadListBean> arg0,
-				ThreadListBean arg1) {
+								   ThreadListBean arg1) {
 			Log.v(LOG_TAG, "onLoadFinished enter");
 
 			mInloading = false;
 
-			if(arg1 == null) {
+			if (arg1 == null) {
 				// May be login error, error message should be populated in login async task
-				if (mPage > 1) {mPage--;}
+				if (mPage > 1) {
+					mPage--;
+				}
 				return;
 			} else if (arg1.count == 0) {
 				// Page load fail.
-				if (mPage > 1) {mPage--;}
+				if (mPage > 1) {
+					mPage--;
+				}
 
 				Message msgError = Message.obtain();
 				msgError.what = STAGE_ERROR;
@@ -354,7 +361,7 @@ public class ThreadListFragment extends Fragment {
 			mMsgHandler.sendMessage(msgDone);
 			Message msgClean = Message.obtain();
 			msgClean.what = STAGE_CLEAN;
-			mMsgHandler.sendMessageDelayed(msgClean, 1000*1);
+			mMsgHandler.sendMessageDelayed(msgClean, 1000 * 1);
 		}
 
 		@Override
@@ -369,46 +376,50 @@ public class ThreadListFragment extends Fragment {
 	}
 
 	private void showThreadListSettingsDialog() {
-		final LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View viewlayout = inflater.inflate(R.layout.dialog_thread_list_settings, null);
 
-		final Switch sShowPicOnMobileNetwork = (Switch)viewlayout.findViewById(R.id.sw_load_pic_on_mobile_network);
-		final Switch sPrefetch = (Switch)viewlayout.findViewById(R.id.sw_prefetch);
-		final Switch sShowStickThreads = (Switch)viewlayout.findViewById(R.id.sw_show_stick_threads);
-		final Switch sSortByPostTime = (Switch)viewlayout.findViewById(R.id.sw_sort_by_post_time);
-        final Switch sShowThreadListAvatar = (Switch) viewlayout.findViewById(R.id.sw_threadlist_avatar);
+		final Switch sShowPicOnMobileNetwork = (Switch) viewlayout.findViewById(R.id.sw_load_pic_on_mobile_network);
+		final Switch sPrefetch = (Switch) viewlayout.findViewById(R.id.sw_prefetch);
+		final Switch sShowStickThreads = (Switch) viewlayout.findViewById(R.id.sw_show_stick_threads);
+		final Switch sSortByPostTime = (Switch) viewlayout.findViewById(R.id.sw_sort_by_post_time);
+		final Switch sShowThreadListAvatar = (Switch) viewlayout.findViewById(R.id.sw_threadlist_avatar);
 
 		sShowPicOnMobileNetwork.setChecked(HiSettingsHelper.getInstance().isLoadImgOnMobileNwk());
-		sShowPicOnMobileNetwork.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
+		sShowPicOnMobileNetwork.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				HiSettingsHelper.getInstance().setLoadImgOnMobileNwk(arg1);
-			}});
-        sShowThreadListAvatar.setChecked(HiSettingsHelper.getInstance().isShowThreadListAvatar());
-        sShowThreadListAvatar.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                HiSettingsHelper.getInstance().setShowThreadListAvatar(arg1);
-            }
-        });
-        sPrefetch.setChecked(HiSettingsHelper.getInstance().isPreFetch());
-		sPrefetch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
+			}
+		});
+		sShowThreadListAvatar.setChecked(HiSettingsHelper.getInstance().isShowThreadListAvatar());
+		sShowThreadListAvatar.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+				HiSettingsHelper.getInstance().setShowThreadListAvatar(arg1);
+			}
+		});
+		sPrefetch.setChecked(HiSettingsHelper.getInstance().isPreFetch());
+		sPrefetch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				HiSettingsHelper.getInstance().setPreFetch(arg1);
-			}});
+			}
+		});
 		sShowStickThreads.setChecked(HiSettingsHelper.getInstance().isShowStickThreads());
-		sShowStickThreads.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
+		sShowStickThreads.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				HiSettingsHelper.getInstance().setShowStickThreads(arg1);
-			}});
+			}
+		});
 		sSortByPostTime.setChecked(HiSettingsHelper.getInstance().isSortByPostTime());
-		sSortByPostTime.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
+		sSortByPostTime.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				HiSettingsHelper.getInstance().setSortByPostTime(arg1);
-			}});
+			}
+		});
 
 		final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
 		popDialog.setTitle("帖子设置");
@@ -424,36 +435,36 @@ public class ThreadListFragment extends Fragment {
 			String page = "(第" + mPage + "页)";
 
 			switch (msg.what) {
-			case STAGE_ERROR:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.red));
-				Bundle b = msg.getData();
-				mTipBar.setText(b.getString(STAGE_ERROR_KEY));
-				Log.e(LOG_TAG, b.getString(STAGE_ERROR_KEY));
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
-			case STAGE_CLEAN:
-				mTipBar.setVisibility(View.INVISIBLE);
-				break;
-			case STAGE_DONE:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
-				mTipBar.setText(page+"加载完成");
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
-			case STAGE_RELOGIN:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
-				mTipBar.setText("正在登录");
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
-			case STAGE_GET_WEBPAGE:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
-				mTipBar.setText(page+"正在获取页面");
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
-			case STAGE_PARSE:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
-				mTipBar.setText(page+"正在解析页面");
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
+				case STAGE_ERROR:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.red));
+					Bundle b = msg.getData();
+					mTipBar.setText(b.getString(STAGE_ERROR_KEY));
+					Log.e(LOG_TAG, b.getString(STAGE_ERROR_KEY));
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
+				case STAGE_CLEAN:
+					mTipBar.setVisibility(View.INVISIBLE);
+					break;
+				case STAGE_DONE:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
+					mTipBar.setText(page + "加载完成");
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
+				case STAGE_RELOGIN:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
+					mTipBar.setText("正在登录");
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
+				case STAGE_GET_WEBPAGE:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
+					mTipBar.setText(page + "正在获取页面");
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
+				case STAGE_PARSE:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
+					mTipBar.setText(page + "正在解析页面");
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
 			}
 			return false;
 		}

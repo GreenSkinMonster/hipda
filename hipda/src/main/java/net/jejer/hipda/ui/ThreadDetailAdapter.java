@@ -10,13 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.ContentAbs;
 import net.jejer.hipda.bean.ContentAttach;
 import net.jejer.hipda.bean.ContentGoToFloor;
@@ -40,7 +40,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 	private FragmentManager mFragmentManager;
 
 	public ThreadDetailAdapter(Context context, FragmentManager fm, int resource,
-			List<DetailBean> objects, Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
+							   List<DetailBean> objects, Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
 		super(context, resource, objects);
 		// TODO Auto-generated constructor stub
 		mCtx = context;
@@ -57,48 +57,55 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 		ViewHolder holder;
 
 		if (convertView == null || convertView.getTag() == null) {
-			convertView = mInflater.inflate(R.layout.item_thread_detail, null); 
+			convertView = mInflater.inflate(R.layout.item_thread_detail, null);
 
-			holder = new ViewHolder(); 
-			holder.avatar = (NetworkImageView) convertView.findViewById(R.id.iv_avatar);  
-			holder.author = (TextView) convertView.findViewById(R.id.author);  
-			holder.time = (TextView) convertView.findViewById(R.id.time); 
-			holder.floor = (TextView) convertView.findViewById(R.id.floor); 
-			holder.postStatus = (TextView) convertView.findViewById(R.id.post_status); 
+			holder = new ViewHolder();
+			holder.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
+			holder.author = (TextView) convertView.findViewById(R.id.author);
+			holder.time = (TextView) convertView.findViewById(R.id.time);
+			holder.floor = (TextView) convertView.findViewById(R.id.floor);
+			holder.postStatus = (TextView) convertView.findViewById(R.id.post_status);
 			convertView.setTag(holder);
 		} else {
-			holder = (ViewHolder)convertView.getTag();
+			holder = (ViewHolder) convertView.getTag();
 		}
 
-		holder.author.setText(detail.getAuthor());  
+		holder.author.setText(detail.getAuthor());
 		holder.time.setText(detail.getTimePost());
-		holder.floor.setText(detail.getFloor()+"#");
+		holder.floor.setText(detail.getFloor() + "#");
 		String postStaus = detail.getPostStatus();
 		if (postStaus != null && postStaus.length() > 0)
 			holder.postStatus.setText(postStaus);
 		else
 			holder.postStatus.setVisibility(View.GONE);
 
-        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-            holder.avatar.setImageUrl(detail.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
-        } else {
-            holder.avatar.setImageUrl("", VolleyHelper.getInstance().getAvatarLoader());
-            holder.avatar.setVisibility(View.GONE);
-        }
-        holder.avatar.setDefaultImageResId(R.drawable.google_user);
-		holder.avatar.setErrorImageResId(R.drawable.google_user);
+		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+			//holder.avatar.setImageUrl(detail.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
+			holder.avatar.setVisibility(View.VISIBLE);
+			Glide.with(getContext())
+					.load(detail.getAvatarUrl())
+					.centerCrop()
+							//.placeholder(R.drawable.google_user)
+					.crossFade()
+					.into(holder.avatar);
+		} else {
+			//holder.avatar.setImageUrl("", VolleyHelper.getInstance().getAvatarLoader());
+			holder.avatar.setVisibility(View.GONE);
+		}
+		//holder.avatar.setDefaultImageResId(R.drawable.google_user);
+		//holder.avatar.setErrorImageResId(R.drawable.google_user);
 		holder.avatar.setTag(R.id.avatar_tag_uid, detail.getUid());
 		holder.avatar.setTag(R.id.avatar_tag_username, detail.getAuthor());
 		holder.avatar.setOnClickListener(mAvatarListener);
 
-		LinearLayout contentView = (LinearLayout)convertView.findViewById(R.id.content_layout);
+		LinearLayout contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
 		contentView.removeAllViews();
 		for (int i = 0; i < detail.getContents().getSize(); i++) {
 			ContentAbs content = detail.getContents().get(i);
 			if (content instanceof ContentText) {
 				TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
 				tv.setFragmentManager(mFragmentManager);
-				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17+HiSettingsHelper.getInstance().getPostTextsizeAdj());
+				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17 + HiSettingsHelper.getInstance().getPostTextsizeAdj());
 				tv.setMovementMethod(LinkMovementMethod.getInstance());
 				//dirty hack, remove two <br> after poststatus
 				String cnt = content.getContent();
@@ -119,25 +126,25 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 			} else if (content instanceof ContentAttach) {
 				TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
 				tv.setFragmentManager(mFragmentManager);
-				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17+HiSettingsHelper.getInstance().getPostTextsizeAdj());
+				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17 + HiSettingsHelper.getInstance().getPostTextsizeAdj());
 				tv.setMovementMethod(LinkMovementMethod.getInstance());
 				tv.setText(content.getContent());
 				tv.setFocusable(false);
 				contentView.addView(tv);
 			} else if (content instanceof ContentQuote) {
 				TextView tv = new TextView(mCtx);
-				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17+HiSettingsHelper.getInstance().getPostTextsizeAdj());
+				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17 + HiSettingsHelper.getInstance().getPostTextsizeAdj());
 				tv.setAutoLinkMask(Linkify.WEB_URLS);
 				tv.setText(content.getContent());
-				tv.setFocusable(false);	// make convertView long clickable.
+				tv.setFocusable(false);    // make convertView long clickable.
 				contentView.addView(tv);
 			} else if (content instanceof ContentGoToFloor) {
 				Button btnGotoFloor = new Button(mCtx);
 				btnGotoFloor.setBackgroundColor(mCtx.getResources().getColor(R.color.hipda));
 				btnGotoFloor.setText(content.getContent());
-				btnGotoFloor.setTag(((ContentGoToFloor)content).getFloor());
+				btnGotoFloor.setTag(((ContentGoToFloor) content).getFloor());
 				btnGotoFloor.setOnClickListener(mGoToFloorListener);
-				btnGotoFloor.setFocusable(false);	// make convertView long clickable.
+				btnGotoFloor.setFocusable(false);    // make convertView long clickable.
 				contentView.addView(btnGotoFloor);
 			}
 		}
@@ -146,7 +153,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 	}
 
 	private static class ViewHolder {
-		NetworkImageView avatar;
+		ImageView avatar;
 		TextView author;
 		TextView floor;
 		TextView postStatus;

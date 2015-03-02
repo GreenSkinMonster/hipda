@@ -9,10 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.cache.AvatarUrlCache;
@@ -50,7 +49,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
 		holders.put(position, holder);
 
-		holder.avatar = (NetworkImageView) convertView.findViewById(R.id.iv_avatar);
+		holder.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
 		holder.tv_author = (TextView) convertView.findViewById(R.id.tv_author);
 		holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
 		holder.tv_viewcounter = (TextView) convertView.findViewById(R.id.tv_viewcounter);
@@ -76,13 +75,20 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 		}
 
         if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-            holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
-        } else {
-            holder.avatar.setImageUrl("", VolleyHelper.getInstance().getAvatarLoader());
-            holder.avatar.setVisibility(View.GONE);
+			//holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
+			holder.avatar.setVisibility(View.VISIBLE);
+			Glide.with(getContext())
+					.load(thread.getAvatarUrl())
+					.centerCrop()
+							//.placeholder(R.drawable.google_user)
+					.crossFade()
+					.into(holder.avatar);
+		} else {
+			//holder.avatar.setImageUrl("", VolleyHelper.getInstance().getAvatarLoader());
+			holder.avatar.setVisibility(View.GONE);
         }
-        holder.avatar.setDefaultImageResId(R.drawable.google_user);
-		holder.avatar.setErrorImageResId(R.drawable.google_user);
+		//holder.avatar.setDefaultImageResId(R.drawable.google_user);
+		//holder.avatar.setErrorImageResId(R.drawable.google_user);
 		holder.avatar.setTag(R.id.avatar_tag_uid, thread.getAuthorId());
 		holder.avatar.setTag(R.id.avatar_tag_username, thread.getAuthor());
 		//holder.avatar.setOnClickListener(mAvatarListener);
@@ -103,32 +109,30 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
     }
 
     public void refreshAvatars() {
-        if (AvatarUrlCache.getInstance().isUpdated()) {
-            AvatarUrlCache.getInstance().setUpdated(false);
-            boolean uiNeedNotify = false;
-            long start = System.currentTimeMillis();
-            for (int i = 0; i < getCount(); i++) {
-                ThreadBean thread = getItem(i);
-                if (thread.getAvatarUrl().length() == 0
-                        && AvatarUrlCache.getInstance().get(thread.getAuthorId()).length() > 0) {
-                    thread.setAvatarUrl(AvatarUrlCache.getInstance().get(thread.getAuthorId()));
-                    ViewHolder holder = holders.get(i);
-                    if (holder != null
-                            && !thread.getAvatarUrl().equals(holder.avatar.getImageURL())) {
-                        holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
-                        uiNeedNotify = true;
-                    }
-                }
-            }
-            if (uiNeedNotify) {
-                notifyDataSetChanged();
-            }
-            Log.v("ThreadListAdapter", "refreshAvatars size=" + getCount() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
-        }
-    }
+		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()
+				&& AvatarUrlCache.getInstance().isUpdated()) {
+			AvatarUrlCache.getInstance().setUpdated(false);
+			long start = System.currentTimeMillis();
+			for (int i = 0; i < getCount(); i++) {
+				ThreadBean thread = getItem(i);
+				if (!AvatarUrlCache.getInstance().get(thread.getAuthorId()).equals((thread.getAvatarUrl()))) {
+					thread.setAvatarUrl(AvatarUrlCache.getInstance().get(thread.getAuthorId()));
+					ViewHolder holder = holders.get(i);
+					if (holder != null) {
+						Glide.with(getContext())
+								.load(thread.getAvatarUrl())
+								.centerCrop()
+								.crossFade()
+								.into(holder.avatar);
+					}
+				}
+			}
+			Log.v("ThreadListAdapter", "refreshAvatars size=" + getCount() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
+		}
+	}
 
 	private static class ViewHolder {
-		NetworkImageView avatar;
+		ImageView avatar;
 		TextView tv_title;
 		TextView tv_author;
 		TextView tv_viewcounter;

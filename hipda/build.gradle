@@ -12,7 +12,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -21,5 +22,6 @@ android {
 dependencies {
     compile 'org.jsoup:jsoup:1.8.1'
     compile 'com.mcxiaoke.volley:library:1.0.10'
+    compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'com.android.support:support-v4:19.1.0'
 }
