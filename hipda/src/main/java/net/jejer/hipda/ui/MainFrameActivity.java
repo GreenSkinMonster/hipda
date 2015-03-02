@@ -1,17 +1,10 @@
 package net.jejer.hipda.ui;
 
-import net.jejer.hipda.R;
-import net.jejer.hipda.async.PostAsyncTask;
-import net.jejer.hipda.async.SimpleListLoader;
-import net.jejer.hipda.async.VolleyHelper;
-import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.cache.AvatarUrlCache;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
@@ -21,9 +14,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
-public class MainFrameActivity extends Activity {
+import net.jejer.hipda.R;
+import net.jejer.hipda.async.PostAsyncTask;
+import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.async.VolleyHelper;
+import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.cache.AvatarUrlCache;
+
+public class MainFrameActivity extends Activity
+        implements ThreadDetailFragment.AvatarUrlUpdated {
     private final String LOG_TAG = getClass().getSimpleName();
 
     private DrawerLayout mDrawerLayout;
@@ -142,11 +142,11 @@ public class MainFrameActivity extends Activity {
 
         if (popFragment(true) == false) {
             mQuit++;
-            if (mQuit == 1) {
-                Toast.makeText(this, "再按一次退出HiPDA", Toast.LENGTH_LONG).show();
-            } else {
+//            if (mQuit == 1) {
+//                Toast.makeText(this, "再按一次退出HiPDA", Toast.LENGTH_LONG).show();
+//            } else {
                 finish();
-            }
+//            }
         }
 
     }
@@ -188,6 +188,15 @@ public class MainFrameActivity extends Activity {
             return false;
         }
 
+    }
+
+    @Override
+    public void onAvatarUrlUpdated() {
+        Fragment fragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+        if (fragment instanceof ThreadListFragment) {
+            Log.e(LOG_TAG, "refresh avatars " + fragment.getClass().getName());
+            ((ThreadListFragment) fragment).refreshAvatars();
+        }
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {

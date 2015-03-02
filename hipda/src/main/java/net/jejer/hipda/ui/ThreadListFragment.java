@@ -211,6 +211,10 @@ public class ThreadListFragment extends Fragment {
 		Log.v(LOG_TAG, "restartLoader() called");
 	}
 
+    public void refreshAvatars() {
+        mThreadListAdapter.refreshAvatars();
+    }
+
 	public class OnScrollCallback implements AbsListView.OnScrollListener {
 
 		int mLastVisibleItem = 0;

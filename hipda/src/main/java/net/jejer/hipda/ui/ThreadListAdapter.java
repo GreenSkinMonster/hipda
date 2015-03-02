@@ -118,8 +118,9 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 				if (!AvatarUrlCache.getInstance().get(thread.getAuthorId()).equals((thread.getAvatarUrl()))) {
 					thread.setAvatarUrl(AvatarUrlCache.getInstance().get(thread.getAuthorId()));
 					ViewHolder holder = holders.get(i);
-					if (holder != null) {
-						Glide.with(getContext())
+                    if (holder != null
+                            && thread.getAuthorId().equals(holder.avatar.getTag(R.id.avatar_tag_uid))) {
+                        Glide.with(getContext())
 								.load(thread.getAvatarUrl())
 								.centerCrop()
 								.crossFade()

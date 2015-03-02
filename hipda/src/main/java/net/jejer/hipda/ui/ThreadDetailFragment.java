@@ -1,22 +1,10 @@
 package net.jejer.hipda.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.jejer.hipda.R;
-import net.jejer.hipda.async.DetailListLoader;
-import net.jejer.hipda.async.FavoriteHelper;
-import net.jejer.hipda.async.PostAsyncTask;
-import net.jejer.hipda.bean.DetailBean;
-import net.jejer.hipda.bean.DetailListBean;
-import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.utils.HiUtils;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -42,6 +30,18 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import net.jejer.hipda.R;
+import net.jejer.hipda.async.DetailListLoader;
+import net.jejer.hipda.async.FavoriteHelper;
+import net.jejer.hipda.async.PostAsyncTask;
+import net.jejer.hipda.bean.DetailBean;
+import net.jejer.hipda.bean.DetailListBean;
+import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.HiUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ThreadDetailFragment extends Fragment {
@@ -409,7 +409,9 @@ public class ThreadDetailFragment extends Fragment {
 			//			b.putInt(ThreadDetailFragment.LOADER_PAGE_KEY, details.getPage());
 			//			msgDone.setData(b);
 			//			mMsgHandler.sendMessage(msgDone);
-		}
+
+            mCallback.onAvatarUrlUpdated();
+        }
 
 
 
@@ -673,4 +675,26 @@ public class ThreadDetailFragment extends Fragment {
 			}
 		}
 	}
+
+
+    AvatarUrlUpdated mCallback;
+
+    public interface AvatarUrlUpdated {
+        public void onAvatarUrlUpdated();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (AvatarUrlUpdated) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement TextClicked");
+        }
+    }
+
 }
