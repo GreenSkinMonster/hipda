@@ -2,8 +2,10 @@ package net.jejer.hipda.ui;
 
 import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ import net.jejer.hipda.bean.ContentQuote;
 import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.glide.GlideScaleViewTarget;
 
 import java.util.List;
 
@@ -107,10 +110,10 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setFragmentManager(mFragmentManager);
 				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17 + HiSettingsHelper.getInstance().getPostTextsizeAdj());
 				tv.setMovementMethod(LinkMovementMethod.getInstance());
-				//dirty hack, remove two <br> after poststatus
+				//dirty hack, remove one <br> after poststatus
 				String cnt = content.getContent();
 				if (postStaus != null && postStaus.length() > 0 && cnt.startsWith("<br><br>")) {
-					cnt = cnt.substring("<br><br>".length());
+					cnt = cnt.substring("<br>".length());
 				}
 				tv.setText(cnt);
 				//setAutoLinkMask have conflict with setMovementMethod
@@ -118,10 +121,32 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setFocusable(false);
 				contentView.addView(tv);
 			} else if (content instanceof ContentImg) {
-				HiNwkImgView niv = new HiNwkImgView(mCtx);
-				niv.setUrl(content.getContent());
+                //HiNwkImgView niv = new HiNwkImgView(mCtx);
+                //niv.setUrl(content.getContent());
+                ImageView niv = new ImageView(mCtx);
+				//niv.setScaleX(2.0f);
+				//niv.setScaleY(2.0f);
 				niv.setFocusable(false);
 				contentView.addView(niv);
+
+				final String imageUrl = content.getContent();
+
+				Glide.with(getContext())
+						.load(imageUrl)
+						.override(500, 500)
+						.placeholder(R.drawable.ic_action_picture)
+						.error(R.drawable.tapatalk_image_broken)
+						.into(new GlideScaleViewTarget(niv));
+
+
+//                Glide.with(getContext())
+//                        .load(imageUrl)
+//								.override(500,500)
+//						//.placeholder(R.drawable.ic_action_picture)
+//						//.error(R.drawable.tapatalk_image_broken)
+//						//.override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+//                        .into(niv);
+
 				//Log.v(LOG_TAG, "NetworkImageView Added");
 			} else if (content instanceof ContentAttach) {
 				TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);

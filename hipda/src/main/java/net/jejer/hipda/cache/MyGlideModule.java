@@ -12,8 +12,8 @@ public class MyGlideModule implements GlideModule {
 
 	@Override
 	public void applyOptions(Context context, GlideBuilder builder) {
-		builder.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 50 * 1024 * 1024));
-		builder.setMemoryCache(new LruResourceCache(10 * 1024 * 1024));
+        builder.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 100 * 1024 * 1024));
+        builder.setMemoryCache(new LruResourceCache(10 * 1024 * 1024));
 	}
 
 	@Override
