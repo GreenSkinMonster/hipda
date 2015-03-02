@@ -118,10 +118,17 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setFocusable(false);
 				contentView.addView(tv);
 			} else if (content instanceof ContentImg) {
-				HiNwkImgView niv = new HiNwkImgView(mCtx);
-				niv.setUrl(content.getContent());
-				niv.setFocusable(false);
+                //HiNwkImgView niv = new HiNwkImgView(mCtx);
+                //niv.setUrl(content.getContent());
+                ImageView niv = new ImageView(mCtx);
+                niv.setFocusable(false);
 				contentView.addView(niv);
+
+                Glide.with(getContext())
+                        .load(content.getContent())
+                        .fitCenter()
+                        .into(niv);
+
 				//Log.v(LOG_TAG, "NetworkImageView Added");
 			} else if (content instanceof ContentAttach) {
 				TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
