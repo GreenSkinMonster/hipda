@@ -28,9 +28,15 @@ public class GlideScaleViewTarget extends GlideDrawableImageViewTarget {
 		if (resource.getIntrinsicWidth() < 200) {
 			getView().getLayoutParams().width = resource.getIntrinsicWidth() * 4;
 			getView().getLayoutParams().height = resource.getIntrinsicHeight() * 4;
+		} else if (resource.getIntrinsicWidth() < 300) {
+			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 2.8f);
+			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 2.8f);
 		} else if (resource.getIntrinsicWidth() < 400) {
 			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 2.4f);
 			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 2.4f);
+		} else if (resource.getIntrinsicWidth() < 500) {
+			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 1.9f);
+			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 1.9f);
 		} else if (resource.getIntrinsicWidth() < 600) {
 			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 1.5f);
 			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 1.5f);
