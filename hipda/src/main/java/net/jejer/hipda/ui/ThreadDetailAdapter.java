@@ -2,10 +2,8 @@ package net.jejer.hipda.ui;
 
 import android.app.FragmentManager;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,19 +122,24 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 //HiNwkImgView niv = new HiNwkImgView(mCtx);
                 //niv.setUrl(content.getContent());
                 ImageView niv = new ImageView(mCtx);
-				//niv.setScaleX(2.0f);
-				//niv.setScaleY(2.0f);
 				niv.setFocusable(false);
 				contentView.addView(niv);
 
 				final String imageUrl = content.getContent();
 
+				int maxWidth = 1080;
+				ThreadDetailFragment fragment = (ThreadDetailFragment) mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
+				if (fragment != null && fragment.getView() != null) {
+					maxWidth = fragment.getView().getWidth();
+				}
+				maxWidth = Math.round(maxWidth * 0.95f);
+
 				Glide.with(getContext())
 						.load(imageUrl)
-						.override(500, 500)
+						.override(Math.round(maxWidth * 0.5f), Math.round(maxWidth * 0.5f))
 						.placeholder(R.drawable.ic_action_picture)
 						.error(R.drawable.tapatalk_image_broken)
-						.into(new GlideScaleViewTarget(niv));
+						.into(new GlideScaleViewTarget(niv, maxWidth));
 
 
 //                Glide.with(getContext())

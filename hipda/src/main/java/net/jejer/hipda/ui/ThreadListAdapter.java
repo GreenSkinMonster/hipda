@@ -24,7 +24,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 	private LayoutInflater mInflater;
 	//private Context mCtx;
 	//private List<ThreadBean> threads;
-	private HashMap<Integer, ViewHolder> holders = new HashMap<Integer, ViewHolder>();
+	private HashMap<String, ViewHolder> holders = new HashMap<String, ViewHolder>();
 
 	public ThreadListAdapter(Context context, int resource,
 							 List<ThreadBean> objects) {
@@ -47,8 +47,6 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		holders.put(position, holder);
-
 		holder.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
 		holder.tv_author = (TextView) convertView.findViewById(R.id.tv_author);
 		holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
@@ -56,6 +54,8 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 		holder.tv_replycounter = (TextView) convertView.findViewById(R.id.tv_replycounter);
 		holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
 		holder.iv_image_indicator = (ImageView) convertView.findViewById(R.id.iv_image_indicator);
+
+		holders.put(thread.getTid(), holder);
 
 
 		holder.tv_author.setText(thread.getAuthor());
@@ -112,22 +112,25 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()
 				&& AvatarUrlCache.getInstance().isUpdated()) {
 			AvatarUrlCache.getInstance().setUpdated(false);
+			boolean changed = true;
 			long start = System.currentTimeMillis();
 			for (int i = 0; i < getCount(); i++) {
 				ThreadBean thread = getItem(i);
 				if (!AvatarUrlCache.getInstance().get(thread.getAuthorId()).equals((thread.getAvatarUrl()))) {
-					thread.setAvatarUrl(AvatarUrlCache.getInstance().get(thread.getAuthorId()));
-					ViewHolder holder = holders.get(i);
-                    if (holder != null
+					ViewHolder holder = holders.get(thread.getTid());
+					if (holder != null
                             && thread.getAuthorId().equals(holder.avatar.getTag(R.id.avatar_tag_uid))) {
                         Glide.with(getContext())
 								.load(thread.getAvatarUrl())
 								.centerCrop()
 								.crossFade()
 								.into(holder.avatar);
+						thread.setAvatarUrl(AvatarUrlCache.getInstance().get(thread.getAuthorId()));
 					}
 				}
 			}
+			if (changed)
+				notifyDataSetChanged();
 			Log.v("ThreadListAdapter", "refreshAvatars size=" + getCount() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
 		}
 	}
