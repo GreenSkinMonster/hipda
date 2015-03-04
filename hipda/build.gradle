@@ -12,8 +12,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -24,5 +24,6 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.10'
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'com.github.bumptech.glide:volley-integration:1.2.2'
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:2.4.0'
     compile 'com.android.support:support-v4:19.1.0'
 }

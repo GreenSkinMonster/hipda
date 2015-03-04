@@ -26,9 +26,9 @@ public class GlideScaleViewTarget extends GlideDrawableImageViewTarget {
 	public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
 		super.onResourceReady(resource, animation);
 		if (resource.getIntrinsicWidth() < maxWidth * 0.2f) {
-			getView().getLayoutParams().width = resource.getIntrinsicWidth() * 4;
-			getView().getLayoutParams().height = resource.getIntrinsicHeight() * 4;
-		} else if (resource.getIntrinsicWidth() < maxWidth * 0.3) {
+			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 3.4f);
+			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 3.4f);
+		} else if (resource.getIntrinsicWidth() < maxWidth * 0.3f) {
 			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 2.8f);
 			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 2.8f);
 		} else if (resource.getIntrinsicWidth() < maxWidth * 0.4f) {
@@ -44,5 +44,12 @@ public class GlideScaleViewTarget extends GlideDrawableImageViewTarget {
 			getView().getLayoutParams().width = maxWidth;
 			getView().getLayoutParams().height = Math.round(maxWidth * 1.0f * resource.getIntrinsicHeight() / resource.getIntrinsicWidth());
 		}
+		Log.v("GlideScaleViewTarget", resource.getIntrinsicWidth() + "x" + resource.getIntrinsicHeight());
 	}
+
+	private int dpToPx(int dp) {
+		float density = getView().getContext().getResources().getDisplayMetrics().density;
+		return Math.round((float) dp * density);
+	}
+
 }
