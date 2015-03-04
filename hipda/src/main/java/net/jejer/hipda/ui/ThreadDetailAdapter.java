@@ -10,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentAbs;
@@ -26,6 +28,7 @@ import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideScaleViewTarget;
+import net.jejer.hipda.utils.HiUtils;
 
 import java.util.List;
 
@@ -122,11 +125,12 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 			} else if (content instanceof ContentImg) {
 				//HiNwkImgView niv = new HiNwkImgView(mCtx);
 				//niv.setUrl(content.getContent());
-				ImageView niv = new ImageView(mCtx);
+				final String imageUrl = content.getContent();
+
+				GlideImageView niv = new GlideImageView(mCtx);
 				niv.setFocusable(false);
 				contentView.addView(niv);
-
-				final String imageUrl = content.getContent();
+				niv.setUrl(imageUrl);
 
 				int maxWidth = 1080;
 				ThreadDetailFragment fragment = (ThreadDetailFragment) mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
@@ -135,21 +139,17 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				}
 				maxWidth = Math.round(maxWidth * 0.95f);
 
-				Glide.with(getContext())
-						.load(imageUrl)
-						.override(Math.round(maxWidth * 0.5f), Math.round(maxWidth * 0.5f))
-						.placeholder(R.drawable.ic_action_picture)
-						.error(R.drawable.tapatalk_image_broken)
-						.into(new GlideScaleViewTarget(niv, maxWidth));
-
-
-//                Glide.with(getContext())
-//                        .load(imageUrl)
-//								.override(500,500)
-//						//.placeholder(R.drawable.ic_action_picture)
-//						//.error(R.drawable.tapatalk_image_broken)
-//						//.override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-//                        .into(niv);
+				if (HiUtils.isAutoLoadImg(mCtx)) {
+					Glide.with(getContext())
+							.load(imageUrl)
+							.diskCacheStrategy(DiskCacheStrategy.ALL)
+							.override(Math.round(maxWidth * 0.5f), Math.round(maxWidth * 0.5f))
+									//.placeholder(R.drawable.ic_action_picture)
+							.error(R.drawable.tapatalk_image_broken)
+							.into(new GlideScaleViewTarget(niv, maxWidth));
+				} else {
+					niv.setImageResource(R.drawable.ic_action_picture);
+				}
 
 				//Log.v(LOG_TAG, "NetworkImageView Added");
 			} else if (content instanceof ContentAttach) {

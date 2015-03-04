@@ -74,20 +74,20 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 			holder.iv_image_indicator.setVisibility(View.GONE);
 		}
 
-        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
 			//holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
 			holder.avatar.setVisibility(View.VISIBLE);
 			Glide.with(getContext())
 					.load(thread.getAvatarUrl())
 					.centerCrop()
-							//.placeholder(R.drawable.google_user)
+					.placeholder(R.drawable.google_user)
 					.error(R.drawable.google_user)
 					.crossFade()
 					.into(holder.avatar);
 		} else {
 			//holder.avatar.setImageUrl("", VolleyHelper.getInstance().getAvatarLoader());
 			holder.avatar.setVisibility(View.GONE);
-        }
+		}
 		//holder.avatar.setDefaultImageResId(R.drawable.google_user);
 		//holder.avatar.setErrorImageResId(R.drawable.google_user);
 		holder.avatar.setTag(R.id.avatar_tag_uid, thread.getAuthorId());
@@ -97,19 +97,19 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 		return convertView;
 	}
 
-    public void markAvatars(int startPostion, int count) {
-        if (count > 0 && startPostion >= 0) {
-            for (int i = startPostion; i < startPostion + count; i++) {
-                if (i < getCount()) {
-                    ThreadBean thread = getItem(i);
-                    AvatarUrlCache.getInstance().markDirty(thread.getAuthorId());
-                }
-            }
-        }
-        AvatarUrlCache.getInstance().fetchAvatarUrls(this);
-    }
+	public void markAvatars(int startPostion, int count) {
+		if (count > 0 && startPostion >= 0) {
+			for (int i = startPostion; i < startPostion + count; i++) {
+				if (i < getCount()) {
+					ThreadBean thread = getItem(i);
+					AvatarUrlCache.getInstance().markDirty(thread.getAuthorId());
+				}
+			}
+		}
+		AvatarUrlCache.getInstance().fetchAvatarUrls(this);
+	}
 
-    public void refreshAvatars() {
+	public void refreshAvatars() {
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()
 				&& AvatarUrlCache.getInstance().isUpdated()) {
 			AvatarUrlCache.getInstance().setUpdated(false);
@@ -120,11 +120,11 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 				if (!AvatarUrlCache.getInstance().get(thread.getAuthorId()).equals((thread.getAvatarUrl()))) {
 					ViewHolder holder = holders.get(thread.getTid());
 					if (holder != null
-                            && thread.getAuthorId().equals(holder.avatar.getTag(R.id.avatar_tag_uid))) {
-                        Glide.with(getContext())
+							&& thread.getAuthorId().equals(holder.avatar.getTag(R.id.avatar_tag_uid))) {
+						Glide.with(getContext())
 								.load(thread.getAvatarUrl())
 								.centerCrop()
-										//.placeholder(R.drawable.google_user)
+								.placeholder(R.drawable.google_user)
 								.error(R.drawable.google_user)
 								.crossFade()
 								.into(holder.avatar);

@@ -12,7 +12,7 @@
 
         <!-- http://stackoverflow.com/questions/13026717/unable-to-give-margin-or-padding-for-webview-in-frame-layout -->
 
-        <WebView
+        <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
             android:id="@+id/wv_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
