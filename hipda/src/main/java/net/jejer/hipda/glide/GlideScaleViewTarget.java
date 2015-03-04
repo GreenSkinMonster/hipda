@@ -44,6 +44,5 @@ public class GlideScaleViewTarget extends GlideDrawableImageViewTarget {
 			getView().getLayoutParams().width = maxWidth;
 			getView().getLayoutParams().height = Math.round(maxWidth * 1.0f * resource.getIntrinsicHeight() / resource.getIntrinsicWidth());
 		}
-		Log.e("GlideScaleViewTarget", resource.getIntrinsicWidth() + "x" + resource.getIntrinsicHeight());
 	}
 }

@@ -112,7 +112,7 @@ public class AvatarUrlCache {
 
 	private void save() {
 		long start = System.currentTimeMillis();
-		if (start - lastSaveTime > 30 * 1000) {
+		if (start - lastSaveTime > 10 * 1000) {
 			Set<String> keys = avatarMap.keySet();
 			SharedPreferences.Editor prefsWriter = avatarPrefs.edit();
 			for (String key : keys) {
