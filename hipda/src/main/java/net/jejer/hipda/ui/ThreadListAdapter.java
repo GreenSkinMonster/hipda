@@ -81,6 +81,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 					.load(thread.getAvatarUrl())
 					.centerCrop()
 							//.placeholder(R.drawable.google_user)
+					.error(R.drawable.google_user)
 					.crossFade()
 					.into(holder.avatar);
 		} else {
@@ -123,6 +124,8 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
                         Glide.with(getContext())
 								.load(thread.getAvatarUrl())
 								.centerCrop()
+										//.placeholder(R.drawable.google_user)
+								.error(R.drawable.google_user)
 								.crossFade()
 								.into(holder.avatar);
 						thread.setAvatarUrl(AvatarUrlCache.getInstance().get(thread.getAuthorId()));

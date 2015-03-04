@@ -86,7 +86,8 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 			Glide.with(getContext())
 					.load(detail.getAvatarUrl())
 					.centerCrop()
-							//.placeholder(R.drawable.google_user)
+//					.placeholder(R.drawable.google_user)
+					.error(R.drawable.google_user)
 					.crossFade()
 					.into(holder.avatar);
 		} else {
@@ -119,9 +120,9 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setFocusable(false);
 				contentView.addView(tv);
 			} else if (content instanceof ContentImg) {
-                //HiNwkImgView niv = new HiNwkImgView(mCtx);
-                //niv.setUrl(content.getContent());
-                ImageView niv = new ImageView(mCtx);
+				//HiNwkImgView niv = new HiNwkImgView(mCtx);
+				//niv.setUrl(content.getContent());
+				ImageView niv = new ImageView(mCtx);
 				niv.setFocusable(false);
 				contentView.addView(niv);
 

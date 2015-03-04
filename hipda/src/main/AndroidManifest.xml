@@ -28,8 +28,4 @@
         </activity>
     </application>
 
-    <meta-data
-        android:name="net.jejer.hipda.cache.MyGlideModule"
-        android:value="GlideModule"/>
-
 </manifest>

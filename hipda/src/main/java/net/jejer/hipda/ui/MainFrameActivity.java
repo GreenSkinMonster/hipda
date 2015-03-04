@@ -21,6 +21,7 @@ import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.AvatarUrlCache;
+import net.jejer.hipda.glide.GlideHelper;
 
 public class MainFrameActivity extends Activity
 		implements ThreadDetailFragment.AvatarUrlUpdated {
@@ -43,6 +44,7 @@ public class MainFrameActivity extends Activity
 		}
 
 		AvatarUrlCache.getInstance().init(this);
+		GlideHelper.init(this);
 
 		// Init Volley
 		VolleyHelper.getInstance().init(this);
