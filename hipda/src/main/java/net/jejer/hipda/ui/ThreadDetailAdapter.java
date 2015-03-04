@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -146,7 +145,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 							.override(Math.round(maxWidth * 0.5f), Math.round(maxWidth * 0.5f))
 									//.placeholder(R.drawable.ic_action_picture)
 							.error(R.drawable.tapatalk_image_broken)
-							.into(new GlideScaleViewTarget(niv, maxWidth));
+							.into(new GlideScaleViewTarget(niv, maxWidth, imageUrl));
 				} else {
 					niv.setImageResource(R.drawable.ic_action_picture);
 				}

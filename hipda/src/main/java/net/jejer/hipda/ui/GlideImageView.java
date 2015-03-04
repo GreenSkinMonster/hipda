@@ -1,20 +1,15 @@
 package net.jejer.hipda.ui;
 
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.Context;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
@@ -51,6 +46,11 @@ public class GlideImageView extends ImageView {
 
 			LayoutInflater inflater = (LayoutInflater) mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View layout = inflater.inflate(R.layout.popup_image, null);
+
+			final Dialog dialog = new Dialog(mCtx, android.R.style.Theme_Black_NoTitleBar);
+			dialog.setContentView(layout);
+			dialog.getWindow().setWindowAnimations(android.R.anim.slide_in_left);
+			dialog.show();
 
 			final SubsamplingScaleImageView wvImage = (SubsamplingScaleImageView) layout.findViewById(R.id.wv_image);
 			wvImage.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
@@ -91,18 +91,6 @@ public class GlideImageView extends ImageView {
 				}
 			});
 
-			PopupWindow popup = new PopupWindow(layout);
-			popup.setFocusable(true);
-			popup.setBackgroundDrawable(mCtx.getResources().getDrawable(R.drawable.ic_action_picture));
-			popup.setOutsideTouchable(true);
-
-			WindowManager wm = (WindowManager) mCtx.getSystemService(Context.WINDOW_SERVICE);
-			Display display = wm.getDefaultDisplay();
-			Point size = new Point();
-			display.getSize(size);
-			popup.setWidth(size.x - 50);
-			popup.setHeight(size.y - 100);
-			popup.showAtLocation(layout, Gravity.CENTER, 0, 25);
 		}
 	}
 }
