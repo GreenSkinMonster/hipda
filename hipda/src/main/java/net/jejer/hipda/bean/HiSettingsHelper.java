@@ -2,6 +2,7 @@ package net.jejer.hipda.bean;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 
 public class HiSettingsHelper {
@@ -28,6 +29,7 @@ public class HiSettingsHelper {
     public static final String PERF_EINK_OPTIMIZATION = "PERF_EINK_OPTIMIZATION";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
+	public static final String PERF_SCREEN_ORIENTATION = "PERF_SCREEN_ORIENTATION";
 
 
     private Context mCtx;
@@ -58,6 +60,7 @@ public class HiSettingsHelper {
     private String[] mBlanklistUsernames = null;
 
     private String mPostTextSizeAdj = "";
+	private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -108,7 +111,8 @@ public class HiSettingsHelper {
         isEinkOptimizationFromPref();
         getBlanklistUsernamesFromPref();
         getPostTextsizeAdjFromPref();
-    }
+		getScreenOrietationFromPref();
+	}
 
     public boolean isLoginInfoValid() {
         return (!mUsername.isEmpty() && !mPassword.isEmpty());
@@ -400,4 +404,24 @@ public class HiSettingsHelper {
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_TEXTSIZE_POST_ADJ, adj).commit();
     }
+
+	public int getScreenOrietation() {
+		return mScreenOrientation;
+	}
+
+	public int getScreenOrietationFromPref() {
+		try {
+			mScreenOrientation = Integer.parseInt(mSharedPref.getString(PERF_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_USER + ""));
+		} catch (Exception e) {
+			mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
+		}
+		return mScreenOrientation;
+	}
+
+	public void setScreenOrietation(int screenOrientation) {
+		mScreenOrientation = screenOrientation;
+		SharedPreferences.Editor editor = mSharedPref.edit();
+		editor.putString(PERF_SCREEN_ORIENTATION, mScreenOrientation + "").commit();
+	}
+
 }

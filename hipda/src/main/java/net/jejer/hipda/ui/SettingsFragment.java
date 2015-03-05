@@ -1,7 +1,5 @@
 package net.jejer.hipda.ui;
 
-import net.jejer.hipda.R;
-import net.jejer.hipda.bean.HiSettingsHelper;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -11,6 +9,9 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.util.Log;
+
+import net.jejer.hipda.R;
+import net.jejer.hipda.bean.HiSettingsHelper;
 
 public class SettingsFragment extends PreferenceFragment {
 	private final String LOG_TAG = getClass().getSimpleName();
@@ -30,6 +31,7 @@ public class SettingsFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TAILURL));
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_BLANKLIST_USERNAMES));
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_POST_ADJ));
+		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
 	}
 
 	@Override
@@ -52,6 +54,7 @@ public class SettingsFragment extends PreferenceFragment {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object value) {
 
+			Log.v("onPreferenceChange", "onPreferenceChange");
 			String stringValue = value.toString();
 			if (preference instanceof ListPreference) {
 				// For list preferences, look up the correct display value in
@@ -61,8 +64,8 @@ public class SettingsFragment extends PreferenceFragment {
 
 				// Set the summary to reflect the new value.
 				preference
-				.setSummary(index >= 0 ? listPreference.getEntries()[index]
-						: null);
+						.setSummary(index >= 0 ? listPreference.getEntries()[index]
+								: null);
 
 				//			} else if (preference.getKey().equals("load_img_without_wifi")) {
 				//				if (value.equals(false)) {

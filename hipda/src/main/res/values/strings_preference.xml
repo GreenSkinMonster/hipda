@@ -50,6 +50,18 @@
         <item>4</item>
     </string-array>
 
+    <!--  value should match ActivityInfo.SCREEN_ORIENTATION_*-->
+    <string-array name="pref_screen_orientation">
+        <item>@string/screen_auto</item>
+        <item>@string/screen_portrait</item>
+        <item>@string/screen_landscape</item>
+    </string-array>
+    <string-array name="pref_screen_orientation_values">
+        <item>2</item>
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+
     <string name="pref_category_tail">小尾巴</string>
     <string name="pref_category_ui">UI</string>
 
@@ -67,6 +79,7 @@
     <string name="pref_title_eink_optimization">EINK优化</string>
     <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
+    <string name="pref_screen_orientation">屏幕方向</string>
     <string name="pref_title_about">关于HiPDA</string>
 
 </resources>
