@@ -77,7 +77,7 @@ public class MainFrameActivity extends Activity
 		mSwipeListener = new OnSwipeTouchListener(this) {
 			public void onSwipeRight() {
 				//Log.v(LOG_TAG, "onSwipeRight");
-				if (!HiSettingsHelper.getInstance().getIsLandscape()) {
+				if (HiSettingsHelper.getInstance().isGestureBack() && !HiSettingsHelper.getInstance().getIsLandscape()) {
 					popFragment(false);
 				}
 			}

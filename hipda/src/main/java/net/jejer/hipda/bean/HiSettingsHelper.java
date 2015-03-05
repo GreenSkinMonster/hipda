@@ -30,6 +30,7 @@ public class HiSettingsHelper {
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
 	public static final String PERF_SCREEN_ORIENTATION = "PERF_SCREEN_ORIENTATION";
+	public static final String PERF_GESTURE_BACK = "PERF_GESTURE_BACK";
 
 
     private Context mCtx;
@@ -61,6 +62,7 @@ public class HiSettingsHelper {
 
     private String mPostTextSizeAdj = "";
 	private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
+	private boolean mGestureBack = true;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -112,6 +114,7 @@ public class HiSettingsHelper {
         getBlanklistUsernamesFromPref();
         getPostTextsizeAdjFromPref();
 		getScreenOrietationFromPref();
+		isGestureBackFromPref();
 	}
 
     public boolean isLoginInfoValid() {
@@ -423,5 +426,21 @@ public class HiSettingsHelper {
 		SharedPreferences.Editor editor = mSharedPref.edit();
 		editor.putString(PERF_SCREEN_ORIENTATION, mScreenOrientation + "").commit();
 	}
+
+	public boolean isGestureBack() {
+		return mGestureBack;
+	}
+
+	public boolean isGestureBackFromPref() {
+		mGestureBack = mSharedPref.getBoolean(PERF_GESTURE_BACK, false);
+		return mGestureBack;
+	}
+
+	public void setGestureBack(boolean gestureBack) {
+		mGestureBack = gestureBack;
+		SharedPreferences.Editor editor = mSharedPref.edit();
+		editor.putBoolean(PERF_GESTURE_BACK, gestureBack).commit();
+	}
+
 
 }

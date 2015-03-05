@@ -77,6 +77,7 @@
     <string name="pref_title_tail_url">尾巴链接</string>
     <string name="pref_title_encode_utf8">使用UTF8编码</string>
     <string name="pref_title_eink_optimization">EINK优化</string>
+    <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
     <string name="pref_screen_orientation">屏幕方向</string>

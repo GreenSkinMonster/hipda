@@ -80,6 +80,12 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_screen_orientation"/>
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="PERF_GESTURE_BACK"
+            android:title="@string/pref_title_gesture_back"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_general">

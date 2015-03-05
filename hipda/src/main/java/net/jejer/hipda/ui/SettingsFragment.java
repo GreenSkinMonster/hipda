@@ -66,20 +66,6 @@ public class SettingsFragment extends PreferenceFragment {
 				preference
 						.setSummary(index >= 0 ? listPreference.getEntries()[index]
 								: null);
-
-				//			} else if (preference.getKey().equals("load_img_without_wifi")) {
-				//				if (value.equals(false)) {
-				//					preference.setSummary(R.string.pref_summary_load_img_without_wifi_off);
-				//				} else {
-				//					preference.setSummary(R.string.pref_summary_load_img_without_wifi_on);
-				//				}
-				//
-				//			} else if (preference.getKey().equals("show_stick_threads")) {
-				//				if (value.equals(false)) {
-				//					preference.setSummary(R.string.pref_summary_show_stick_threads_off);
-				//				} else {
-				//					preference.setSummary(R.string.pref_summary_show_stick_threads_on);
-				//				}
 			} else {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
@@ -93,7 +79,7 @@ public class SettingsFragment extends PreferenceFragment {
 	private static void bindPreferenceSummaryToValue(Preference preference) {
 		// Set the listener to watch for value changes.
 		preference
-		.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+				.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
 		// Trigger the listener immediately with the preference's
 		// current value.
@@ -103,19 +89,19 @@ public class SettingsFragment extends PreferenceFragment {
 					preference,
 					PreferenceManager.getDefaultSharedPreferences(
 							preference.getContext()).getBoolean(preference.getKey(),
-									false));
+							false));
 		} else if (preference instanceof SwitchPreference) {
 			sBindPreferenceSummaryToValueListener.onPreferenceChange(
 					preference,
 					PreferenceManager.getDefaultSharedPreferences(
 							preference.getContext()).getBoolean(preference.getKey(),
-									false));
+							false));
 		} else {
 			sBindPreferenceSummaryToValueListener.onPreferenceChange(
 					preference,
 					PreferenceManager.getDefaultSharedPreferences(
 							preference.getContext()).getString(preference.getKey(),
-									""));
+							""));
 		}
 	}
 
