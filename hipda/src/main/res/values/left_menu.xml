@@ -2,16 +2,16 @@
 <resources>
 
     <string-array name="left_menu">
-        <item>论坛</item>
-        <item>搜索</item>
-        <item>我的帖子</item>
-        <item>我的回复</item>
-        <item>我的收藏</item>
-        <item>短消息</item>
-        <item>帖子消息</item>
-        <item>发表新帖</item>
-        <item>设置</item>
-        <item>切换主题</item>
+        <item>@string/title_drawer_forum</item>
+        <item>@string/title_drawer_search</item>
+        <item>@string/title_drawer_mypost</item>
+        <item>@string/title_drawer_myreply</item>
+        <item>@string/title_drawer_favorites</item>
+        <item>@string/title_drawer_sms</item>
+        <item>@string/title_drawer_notify</item>
+        <item>@string/title_drawer_newpost</item>
+        <item>@string/title_drawer_setting</item>
+        <item>@string/title_drawer_theme</item>
     </string-array>
 
 </resources>
