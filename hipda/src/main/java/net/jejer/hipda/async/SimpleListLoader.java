@@ -1,10 +1,8 @@
 package net.jejer.hipda.async;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import android.content.AsyncTaskLoader;
+import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -13,9 +11,12 @@ import com.android.volley.toolbox.StringRequest;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
-import android.content.AsyncTaskLoader;
-import android.content.Context;
-import android.util.Log;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 	public static final int TYPE_MYREPLY = 0;
@@ -36,7 +37,6 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 
 	public SimpleListLoader(Context context, int type, int page, String extra) {
 		super(context);
-		// TODO Auto-generated constructor stub
 		mCtx = context;
 		mType = type;
 		mPage = page;
@@ -46,8 +46,6 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 
 	@Override
 	public SimpleListBean loadInBackground() {
-		// TODO Auto-generated method stub
-		// TODO Auto-generated method stub
 		//Log.v(LOG_TAG, "loadInBackground Enter");
 
 		Document doc = null;
@@ -56,12 +54,10 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 		do {
 			fetchSimpleList(mType);
 
-			synchronized(mLocker){
+			synchronized (mLocker) {
 				try {
 					mLocker.wait();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 			//Log.v(LOG_TAG, "loadInBackground got notified");
@@ -87,33 +83,36 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 	private void fetchSimpleList(int type) {
 		String url = null;
 		switch (type) {
-		case TYPE_MYREPLY:
-			url = HiUtils.MyReplyUrl + "&page=" + mPage;
-			break;
-		case TYPE_SMS:
-			url = HiUtils.SMSUrl;
-			break;
-		case TYPE_THREADNOTIFY:
-			url = HiUtils.ThreadNotifyUrl;
-			break;
-		case TYPE_SMSDETAIL:
-			url = HiUtils.SMSDetailUrl + mExtra;
-			break;
-		case TYPE_SEARCH:
-			try {
-				url = HiUtils.SearchTitle + URLEncoder.encode(mExtra, "GBK");
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-			break;
-		case TYPE_FAVORITES:
-			url = HiUtils.FavoritesUrl;
-			break;
-		default:
-			break;
+			case TYPE_MYREPLY:
+				url = HiUtils.MyReplyUrl + "&page=" + mPage;
+				break;
+			case TYPE_MYPOST:
+				url = HiUtils.MyPostUrl + "&page=" + mPage;
+				break;
+			case TYPE_SMS:
+				url = HiUtils.SMSUrl;
+				break;
+			case TYPE_THREADNOTIFY:
+				url = HiUtils.ThreadNotifyUrl;
+				break;
+			case TYPE_SMSDETAIL:
+				url = HiUtils.SMSDetailUrl + mExtra;
+				break;
+			case TYPE_SEARCH:
+				try {
+					url = HiUtils.SearchTitle + URLEncoder.encode(mExtra, "GBK");
+				} catch (UnsupportedEncodingException e) {
+					Log.e(LOG_TAG, "Encoding error", e);
+				}
+				break;
+			case TYPE_FAVORITES:
+				url = HiUtils.FavoritesUrl;
+				break;
+			default:
+				break;
 		}
 
-		StringRequest sReq = new HiStringRequest(mCtx, url, 
+		StringRequest sReq = new HiStringRequest(mCtx, url,
 				new ThreadListListener(), new ThreadListErrorListener());
 		VolleyHelper.getInstance().add(sReq);
 	}
@@ -121,20 +120,19 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 	private class ThreadListListener implements Response.Listener<String> {
 		@Override
 		public void onResponse(String response) {
-			// TODO Auto-generated method stub
 			//Log.v(LOG_TAG, "onResponse");
 			mRsp = response;
-			synchronized(mLocker){
+			synchronized (mLocker) {
 				mLocker.notify();
 			}
 		}
 	}
+
 	private class ThreadListErrorListener implements Response.ErrorListener {
 		@Override
 		public void onErrorResponse(VolleyError error) {
-			// TODO Auto-generated method stub
 			Log.e(LOG_TAG, error.toString());
-			synchronized(mLocker){
+			synchronized (mLocker) {
 				mRsp = null;
 				mLocker.notify();
 			}

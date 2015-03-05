@@ -1,13 +1,5 @@
 package net.jejer.hipda.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.jejer.hipda.R;
-import net.jejer.hipda.async.SimpleListLoader;
-import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.bean.SimpleListBean;
-import net.jejer.hipda.bean.SimpleListItemBean;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -28,6 +20,15 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import net.jejer.hipda.R;
+import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.SimpleListBean;
+import net.jejer.hipda.bean.SimpleListItemBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SimpleListFragment extends Fragment {
 	private final String LOG_TAG = getClass().getSimpleName();
@@ -82,6 +83,7 @@ public class SimpleListFragment extends Fragment {
 
 		switch (mType) {
 		case SimpleListLoader.TYPE_MYREPLY:
+		case SimpleListLoader.TYPE_MYPOST:
 		case SimpleListLoader.TYPE_SMS:
 		case SimpleListLoader.TYPE_THREADNOTIFY:
 		case SimpleListLoader.TYPE_FAVORITES:
@@ -101,47 +103,52 @@ public class SimpleListFragment extends Fragment {
 		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
 		switch (mType) {
-		case SimpleListLoader.TYPE_MYREPLY:
-			getActivity().getActionBar().setTitle(R.string.title_fragment_simple_myreply);
-			inflater.inflate(R.menu.menu_simple_thread_list, menu);
-			break;
-		case SimpleListLoader.TYPE_SMS:
-			getActivity().getActionBar().setTitle(R.string.title_fragment_simple_sms);
-			inflater.inflate(R.menu.menu_simple_thread_list, menu);
-			break;
-		case SimpleListLoader.TYPE_THREADNOTIFY:
-			getActivity().getActionBar().setTitle(R.string.title_fragment_simple_notify);
-			inflater.inflate(R.menu.menu_simple_thread_list, menu);
-			break;
-		case SimpleListLoader.TYPE_FAVORITES:
-			getActivity().getActionBar().setTitle(R.string.title_fragment_simple_favorites);
-			inflater.inflate(R.menu.menu_simple_thread_list, menu);
-			break;
-		case SimpleListLoader.TYPE_SEARCH:
-			getActivity().getActionBar().setTitle(R.string.title_fragment_simple_search);
-			inflater.inflate(R.menu.menu_search, menu);
-			searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-			searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-				@Override
-				public boolean onQueryTextSubmit(String query) {
-					mQuery = query;
-					mSimpleListAdapter.clear();
-					// Close SoftKeyboard
-					InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
-							Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
-					getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-					return false;
-				}
-				@Override
-				public boolean onQueryTextChange(String newText) {
-					return false;
-				}
-			});
-			break;
+			case SimpleListLoader.TYPE_MYREPLY:
+				getActivity().getActionBar().setTitle(R.string.title_drawer_myreply);
+				inflater.inflate(R.menu.menu_simple_thread_list, menu);
+				break;
+			case SimpleListLoader.TYPE_MYPOST:
+				getActivity().getActionBar().setTitle(R.string.title_drawer_mypost);
+				inflater.inflate(R.menu.menu_simple_thread_list, menu);
+				break;
+			case SimpleListLoader.TYPE_SMS:
+				getActivity().getActionBar().setTitle(R.string.title_drawer_sms);
+				inflater.inflate(R.menu.menu_simple_thread_list, menu);
+				break;
+			case SimpleListLoader.TYPE_THREADNOTIFY:
+				getActivity().getActionBar().setTitle(R.string.title_drawer_notify);
+				inflater.inflate(R.menu.menu_simple_thread_list, menu);
+				break;
+			case SimpleListLoader.TYPE_FAVORITES:
+				getActivity().getActionBar().setTitle(R.string.title_drawer_favorites);
+				inflater.inflate(R.menu.menu_simple_thread_list, menu);
+				break;
+			case SimpleListLoader.TYPE_SEARCH:
+				getActivity().getActionBar().setTitle(R.string.title_drawer_search);
+				inflater.inflate(R.menu.menu_search, menu);
+				searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+				searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+					@Override
+					public boolean onQueryTextSubmit(String query) {
+						mQuery = query;
+						mSimpleListAdapter.clear();
+						// Close SoftKeyboard
+						InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+								Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+						getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+						return false;
+					}
 
-		default:
-			break;
+					@Override
+					public boolean onQueryTextChange(String newText) {
+						return false;
+					}
+				});
+				break;
+
+			default:
+				break;
 		}
 
 		super.onCreateOptionsMenu(menu, inflater);
