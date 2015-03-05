@@ -75,7 +75,6 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 		}
 
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-			//holder.avatar.setImageUrl(thread.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
 			holder.avatar.setVisibility(View.VISIBLE);
 			Glide.with(getContext())
 					.load(thread.getAvatarUrl())
@@ -85,11 +84,8 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 					.crossFade()
 					.into(holder.avatar);
 		} else {
-			//holder.avatar.setImageUrl("", VolleyHelper.getInstance().getAvatarLoader());
 			holder.avatar.setVisibility(View.GONE);
 		}
-		//holder.avatar.setDefaultImageResId(R.drawable.google_user);
-		//holder.avatar.setErrorImageResId(R.drawable.google_user);
 		holder.avatar.setTag(R.id.avatar_tag_uid, thread.getAuthorId());
 		holder.avatar.setTag(R.id.avatar_tag_username, thread.getAuthor());
 		//holder.avatar.setOnClickListener(mAvatarListener);
@@ -134,7 +130,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 			}
 			if (changed)
 				notifyDataSetChanged();
-			Log.v("ThreadListAdapter", "refreshAvatars size=" + getCount() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
+			//Log.v("ThreadListAdapter", "refreshAvatars size=" + getCount() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
 		}
 	}
 
