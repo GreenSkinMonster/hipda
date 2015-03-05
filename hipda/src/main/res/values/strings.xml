@@ -43,4 +43,9 @@
     <string name="footer_hint_load_ready">松手加载下一页</string>
     <string name="hint_subject">主题</string>
 
+    <string name="screen_portrait">竖向</string>
+    <string name="screen_landscape">横向</string>
+    <string name="screen_system">系统</string>
+    <string name="screen_auto">自动</string>
+
 </resources>

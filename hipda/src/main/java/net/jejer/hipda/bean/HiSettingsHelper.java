@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import net.jejer.hipda.R;
+
 public class HiSettingsHelper {
     /*
      *
@@ -28,6 +30,7 @@ public class HiSettingsHelper {
     public static final String PERF_EINK_OPTIMIZATION = "PERF_EINK_OPTIMIZATION";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
+	public static final String PERF_SCREEN_ORIENTATION = "PERF_SCREEN_ORIENTATION";
 
 
     private Context mCtx;
@@ -58,6 +61,7 @@ public class HiSettingsHelper {
     private String[] mBlanklistUsernames = null;
 
     private String mPostTextSizeAdj = "";
+	private String mScreenOrientation = "";
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -108,7 +112,8 @@ public class HiSettingsHelper {
         isEinkOptimizationFromPref();
         getBlanklistUsernamesFromPref();
         getPostTextsizeAdjFromPref();
-    }
+		getScreenOrietationFromPref();
+	}
 
     public boolean isLoginInfoValid() {
         return (!mUsername.isEmpty() && !mPassword.isEmpty());
@@ -400,4 +405,20 @@ public class HiSettingsHelper {
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_TEXTSIZE_POST_ADJ, adj).commit();
     }
+
+	public String getScreenOrietation() {
+		return mScreenOrientation;
+	}
+
+	public String getScreenOrietationFromPref() {
+		mScreenOrientation = mSharedPref.getString(PERF_SCREEN_ORIENTATION, mCtx.getResources().getString(R.string.screen_portrait));
+		return mScreenOrientation;
+	}
+
+	public void setScreenOrietation(String screenOrientation) {
+		mScreenOrientation = screenOrientation;
+		SharedPreferences.Editor editor = mSharedPref.edit();
+		editor.putString(PERF_SCREEN_ORIENTATION, mScreenOrientation + "").commit();
+	}
+
 }
