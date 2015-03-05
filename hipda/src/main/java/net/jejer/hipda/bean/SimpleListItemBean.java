@@ -59,7 +59,7 @@ public class SimpleListItemBean {
 		if (mAvatarUrl.contains("noavatar")) {
 			this.mAvatarUrl = "";
 		} else {
-			this.mAvatarUrl = mAvatarUrl.replaceAll("middle", "small");
+			this.mAvatarUrl = mAvatarUrl;
 		}
 	}
 	

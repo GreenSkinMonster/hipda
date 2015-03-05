@@ -231,7 +231,7 @@ public class MainFrameActivity extends Activity
 							.replace(R.id.main_frame_container, searchFragment, SimpleListFragment.class.getName())
 							.commit();
 					break;
-				case 2:    // my reply
+				case 2:    // my posts
 					Bundle replyBundle = new Bundle();
 					replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYREPLY);
 					SimpleListFragment replyFragment = new SimpleListFragment();
@@ -240,7 +240,16 @@ public class MainFrameActivity extends Activity
 							.replace(R.id.main_frame_container, replyFragment, SimpleListFragment.class.getName())
 							.commit();
 					break;
-				case 3:    // my favorites
+				case 3:    // my reply
+					Bundle postsBundle = new Bundle();
+					postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYREPLY);
+					SimpleListFragment postsFragment = new SimpleListFragment();
+					postsFragment.setArguments(postsBundle);
+					getFragmentManager().beginTransaction()
+							.replace(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
+							.commit();
+					break;
+				case 4:    // my favorites
 					Bundle favBundle = new Bundle();
 					favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_FAVORITES);
 					SimpleListFragment favFragment = new SimpleListFragment();
@@ -249,7 +258,7 @@ public class MainFrameActivity extends Activity
 							.replace(R.id.main_frame_container, favFragment, SimpleListFragment.class.getName())
 							.commit();
 					break;
-				case 4:    // sms
+				case 5:    // sms
 					Bundle smsBundle = new Bundle();
 					smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
 					SimpleListFragment smsFragment = new SimpleListFragment();
@@ -258,7 +267,7 @@ public class MainFrameActivity extends Activity
 							.replace(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
 							.commit();
 					break;
-				case 5:    // thread notify
+				case 6:    // thread notify
 					Bundle notifyBundle = new Bundle();
 					notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREADNOTIFY);
 					SimpleListFragment notifyFragment = new SimpleListFragment();
@@ -267,7 +276,7 @@ public class MainFrameActivity extends Activity
 							.replace(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
 							.commit();
 					break;
-				case 6:    // new thread
+				case 7:    // new thread
 					Bundle arguments = new Bundle();
 					arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_NEW_THREAD);
 					PostFragment fragment = new PostFragment();
@@ -284,13 +293,13 @@ public class MainFrameActivity extends Activity
 								.commit();
 					}
 					break;
-				case 7:    // settings
+				case 8:    // settings
 					getFragmentManager().beginTransaction()
 							.replace(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
 							.addToBackStack(SettingsFragment.class.getName())
 							.commit();
 					break;
-				case 8:    // switch day/night theme
+				case 9:    // switch day/night theme
 					HiSettingsHelper.getInstance().setNightTheme(!HiSettingsHelper.getInstance().isNightTheme());
 					Intent intent = getIntent();
 					intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

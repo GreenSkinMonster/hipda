@@ -7,14 +7,14 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical" >
 
-        <com.android.volley.toolbox.NetworkImageView
+         <ImageView
             android:id="@+id/iv_item_indicator"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentLeft="true"
             android:layout_margin="4dp"
             android:contentDescription="@string/iv_item_indicator"
-            android:src="@drawable/google_speaker" />
+            android:src="@drawable/google_user" />
     </RelativeLayout>
 
     <RelativeLayout

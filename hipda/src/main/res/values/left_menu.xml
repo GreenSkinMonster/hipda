@@ -4,6 +4,7 @@
     <string-array name="left_menu">
         <item>论坛</item>
         <item>搜索</item>
+        <item>我的帖子</item>
         <item>我的回复</item>
         <item>我的收藏</item>
         <item>短消息</item>

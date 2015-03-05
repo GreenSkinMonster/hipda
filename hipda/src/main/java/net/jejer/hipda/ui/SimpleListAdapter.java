@@ -3,16 +3,22 @@ package net.jejer.hipda.ui;
 import java.util.List;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.VolleyHelper;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.cache.AvatarUrlCache;
+
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
@@ -23,7 +29,6 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 	public SimpleListAdapter(Context context, int resource,
 			List<SimpleListItemBean> objects, int type) {
 		super(context, resource, objects);
-		// TODO Auto-generated constructor stub
 		mInflater = LayoutInflater.from(context);
 		mCtx = context;
 		mType = type;
@@ -45,7 +50,7 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 		holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);  
 		holder.tv_info = (TextView) convertView.findViewById(R.id.tv_info);  
 		holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time); 
-		holder.iv_item_indicator = (NetworkImageView) convertView.findViewById(R.id.iv_item_indicator); 
+		holder.iv_item_indicator = (ImageView) convertView.findViewById(R.id.iv_item_indicator);
 
 		String str;
 		holder.tv_title.setText(item.getTitle());  
@@ -68,10 +73,23 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 			holder.tv_time.setText(str);
 		}
 
-		holder.iv_item_indicator.setDefaultImageResId(R.drawable.google_speaker);
-		if (mType == SimpleListLoader.TYPE_SMS) {
-			holder.iv_item_indicator.setImageUrl(item.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
-
+		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+			String avatarUrl = item.getAvatarUrl();
+			if(TextUtils.isEmpty(avatarUrl)){
+				avatarUrl = AvatarUrlCache.getInstance().get(item.getId());
+			}else{
+				avatarUrl = avatarUrl.replaceAll("small","middle");
+			}
+			holder.iv_item_indicator.setVisibility(View.VISIBLE);
+			Glide.with(getContext())
+					.load(avatarUrl)
+					.centerCrop()
+					.placeholder(R.drawable.google_user)
+					.error(R.drawable.google_user)
+					.crossFade()
+					.into(holder.iv_item_indicator);
+		} else {
+			holder.iv_item_indicator.setVisibility(View.GONE);
 		}
 
 		return convertView;
@@ -81,6 +99,6 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 		TextView tv_title;
 		TextView tv_info;
 		TextView tv_time;
-		NetworkImageView iv_item_indicator;
+		ImageView iv_item_indicator;
 	}
 }

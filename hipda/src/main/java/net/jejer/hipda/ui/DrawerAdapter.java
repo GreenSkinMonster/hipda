@@ -17,8 +17,6 @@ public class DrawerAdapter extends ArrayAdapter<String> {
 
 	public DrawerAdapter(Context context, int resource, String[] o) {
 		super(context, resource, o);
-		// TODO Auto-generated constructor stub
-
 		mCtx = context;
 		mItemRsc = resource;
 		mInflater = LayoutInflater.from(context);
@@ -72,6 +70,9 @@ public class DrawerAdapter extends ArrayAdapter<String> {
 		} else if (title.contains("我的收藏")) {
 			color = mCtx.getResources().getColor(R.color.darkorange);
 			icon = mCtx.getResources().getDrawable(R.drawable.google_heart);
+		}else if (title.equals("我的帖子")) {
+			color = mCtx.getResources().getColor(R.color.darkorange);
+			icon = mCtx.getResources().getDrawable(R.drawable.google_user);
 		}
 
 		holder.tv_title.setText(title);  
