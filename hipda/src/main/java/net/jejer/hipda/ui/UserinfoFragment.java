@@ -1,17 +1,5 @@
 package net.jejer.hipda.ui;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.StringRequest;
-
-import net.jejer.hipda.R;
-import net.jejer.hipda.async.HiStringRequest;
-import net.jejer.hipda.async.PostSmsAsyncTask;
-import net.jejer.hipda.async.VolleyHelper;
-import net.jejer.hipda.bean.UserInfoBean;
-import net.jejer.hipda.utils.HiParser;
-import net.jejer.hipda.utils.HiUtils;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -26,7 +14,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
+
+import net.jejer.hipda.R;
+import net.jejer.hipda.async.HiStringRequest;
+import net.jejer.hipda.async.PostSmsAsyncTask;
+import net.jejer.hipda.async.VolleyHelper;
+import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.UserInfoBean;
+import net.jejer.hipda.utils.HiParser;
+import net.jejer.hipda.utils.HiUtils;
 
 public class UserinfoFragment extends Fragment {
 	private final String LOG_TAG = getClass().getSimpleName();
@@ -37,7 +40,7 @@ public class UserinfoFragment extends Fragment {
 	private String mUid;
 	private String mUsername;
 
-	private NetworkImageView mAvatarView;
+	private ImageView mAvatarView;
 	private TextView mDetailView;
 
 	@Override
@@ -61,9 +64,7 @@ public class UserinfoFragment extends Fragment {
 		Log.v(LOG_TAG, "onCreateView");
 		View view = inflater.inflate(R.layout.fragment_userinfo, container, false);
 
-		mAvatarView = (NetworkImageView)view.findViewById(R.id.userinfo_avatar);
-		mAvatarView.setDefaultImageResId(R.drawable.google_user);
-		mAvatarView.setErrorImageResId(R.drawable.google_user);
+		mAvatarView = (ImageView)view.findViewById(R.id.userinfo_avatar);
 
 		TextView usernameTv = (TextView)view.findViewById(R.id.userinfo_username);
 		usernameTv.setText(mUsername);
@@ -125,7 +126,17 @@ public class UserinfoFragment extends Fragment {
 		public void onResponse(String response) {
 			UserInfoBean info = HiParser.parseUserInfo(response);
 			if (info != null) {
-				mAvatarView.setImageUrl(info.getmAvatarUrl(), VolleyHelper.getInstance().getImgLoader());
+				if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+					mAvatarView.setVisibility(View.VISIBLE);
+					Glide.with(getActivity())
+							.load(info.getmAvatarUrl())
+							.centerCrop()
+							.error(R.drawable.google_user)
+							.crossFade()
+							.into(mAvatarView);
+				} else {
+					mAvatarView.setVisibility(View.GONE);
+				}
 				mDetailView.setText(info.getmDetail());
 			} else {
 				mDetailView.setText("解析信息失败, 请重试.");
