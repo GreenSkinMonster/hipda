@@ -77,7 +77,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_centerHorizontal="true"
                 android:text=""
-                android:textColor="@color/background_silver"/>
+                android:textColor="@color/background_grey"/>
         </RelativeLayout>
 
         <LinearLayout
