@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="net.jejer.hipda"
           android:versionCode="16"
-          android:versionName="1.3.90">
+          android:versionName="1.3.91">
 
 <uses-sdk
         android:minSdkVersion="16"

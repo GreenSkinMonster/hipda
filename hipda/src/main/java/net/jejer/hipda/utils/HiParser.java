@@ -1,15 +1,21 @@
 package net.jejer.hipda.utils;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+
 import net.jejer.hipda.async.HiStringRequest;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.DetailBean;
+import net.jejer.hipda.bean.DetailBean.Contents;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
-import net.jejer.hipda.bean.DetailBean.Contents;
 import net.jejer.hipda.bean.UserInfoBean;
 import net.jejer.hipda.ui.NotifyHelper;
 
@@ -18,12 +24,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
-
-import android.content.Context;
-import android.util.Log;
 
 public class HiParser {
 	public static final String LOG_TAG = "HiParser";
@@ -418,18 +418,20 @@ public class HiParser {
 
 	public static SimpleListBean parseSimpleList(Context ctx, int type, Document doc) {
 		switch (type) {
-		case SimpleListLoader.TYPE_MYREPLY:
-			return parseReplyList(ctx, doc);
-		case SimpleListLoader.TYPE_SMS:
-			return parseSMS(doc);
-		case SimpleListLoader.TYPE_THREADNOTIFY:
-			return parseNotify(doc);
-		case SimpleListLoader.TYPE_SMSDETAIL:
-			return parseSmsDetail(doc);
-		case SimpleListLoader.TYPE_SEARCH:
-			return parseSearch(doc);
-		case SimpleListLoader.TYPE_FAVORITES:
-			return parseFavorites(doc);
+			case SimpleListLoader.TYPE_MYREPLY:
+				return parseReplyList(ctx, doc);
+			case SimpleListLoader.TYPE_MYPOST:
+				return parseMyPost(ctx, doc);
+			case SimpleListLoader.TYPE_SMS:
+				return parseSMS(doc);
+			case SimpleListLoader.TYPE_THREADNOTIFY:
+				return parseNotify(doc);
+			case SimpleListLoader.TYPE_SMSDETAIL:
+				return parseSmsDetail(doc);
+			case SimpleListLoader.TYPE_SEARCH:
+				return parseSearch(doc);
+			case SimpleListLoader.TYPE_FAVORITES:
+				return parseFavorites(doc);
 		}
 
 		return null;
@@ -479,6 +481,60 @@ public class HiParser {
 				if (thES.size() == 0) { continue; }
 				item.setInfo(thES.first().text());
 			}
+		}
+		return list;
+	}
+
+	private static SimpleListBean parseMyPost(Context ctx, Document doc) {
+		if (doc == null) {
+			return null;
+		}
+
+		Elements tableES = doc.select("table.datatable");
+		if (tableES.size() == 0) {
+			return null;
+		}
+
+		SimpleListBean list = new SimpleListBean();
+		Elements trES = tableES.first().select("tr");
+
+		SimpleListItemBean item = null;
+		//first tr is title, skip
+		Log.e(LOG_TAG, "tr.size=" + trES.size());
+		for (int i = 1; i < trES.size(); ++i) {
+			Element trE = trES.get(i);
+
+			// odd have title, even have reply text;
+			item = new SimpleListItemBean();
+
+			// thread
+			Elements thES = trE.select("th");
+			if (thES.size() == 0) {
+				continue;
+			}
+			Elements linkES = thES.first().select("a");
+			if (linkES.size() != 1) {
+				continue;
+			}
+			String tid = linkES.first().attr("href");
+			if (!tid.startsWith("viewthread.php?tid=")) {
+				continue;
+			}
+			tid = HttpUtils.getMiddleString(tid, "viewthread.php?tid=", "&");
+			String title = linkES.first().text();
+
+			// time
+			Elements lastpostES = trE.select("td.lastpost");
+			if (lastpostES.size() == 0) {
+				continue;
+			}
+			String time = lastpostES.first().text();
+
+			item.setId(tid);
+			item.setTitle(title);
+			item.setTime(time);
+
+			list.add(item);
 		}
 		return list;
 	}

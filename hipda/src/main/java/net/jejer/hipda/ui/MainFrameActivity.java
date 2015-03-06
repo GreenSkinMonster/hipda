@@ -152,7 +152,7 @@ public class MainFrameActivity extends Activity
 	public void onBackPressed() {
 		Log.v(LOG_TAG, "onBackPressed");
 
-		if (popFragment(true) == false) {
+		if (!popFragment(true)) {
 			mQuit++;
 //            if (mQuit == 1) {
 //                Toast.makeText(this, "再按一次退出HiPDA", Toast.LENGTH_LONG).show();
@@ -214,7 +214,6 @@ public class MainFrameActivity extends Activity
 
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			// TODO Auto-generated method stub
 
 			switch (position) {
 				case 0:    // forum
@@ -232,21 +231,21 @@ public class MainFrameActivity extends Activity
 							.commit();
 					break;
 				case 2:    // my posts
+					Bundle postsBundle = new Bundle();
+					postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYPOST);
+					SimpleListFragment postsFragment = new SimpleListFragment();
+					postsFragment.setArguments(postsBundle);
+					getFragmentManager().beginTransaction()
+							.replace(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
+							.commit();
+					break;
+				case 3:    // my reply
 					Bundle replyBundle = new Bundle();
 					replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYREPLY);
 					SimpleListFragment replyFragment = new SimpleListFragment();
 					replyFragment.setArguments(replyBundle);
 					getFragmentManager().beginTransaction()
 							.replace(R.id.main_frame_container, replyFragment, SimpleListFragment.class.getName())
-							.commit();
-					break;
-				case 3:    // my reply
-					Bundle postsBundle = new Bundle();
-					postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYREPLY);
-					SimpleListFragment postsFragment = new SimpleListFragment();
-					postsFragment.setArguments(postsBundle);
-					getFragmentManager().beginTransaction()
-							.replace(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
 							.commit();
 					break;
 				case 4:    // my favorites
@@ -318,7 +317,6 @@ public class MainFrameActivity extends Activity
 
 		@Override
 		public void onBackStackChanged() {
-			// TODO Auto-generated method stub
 			//Log.v(LOG_TAG, "onBackStackChanged");
 
 			// reset back key press counter

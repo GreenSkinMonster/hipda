@@ -18,11 +18,7 @@
     <string name="iv_avatar">头像</string>
     <string name="iv_thread_indicator">帖子在此</string>
     <string name="action_send">发送</string>
-    <string name="title_fragment_simple_myreply">我的回复</string>
-    <string name="title_fragment_simple_sms">短消息</string>
-    <string name="title_fragment_simple_notify">帖子消息</string>
-    <string name="title_fragment_simple_search">搜索</string>
-    <string name="title_fragment_simple_favorites">收藏</string>
+
     <string name="iv_drawer_color_block"></string>
     <string name="iv_drawer_icon"></string>
     <string name="txt_quick_mark"></string>
@@ -47,5 +43,16 @@
     <string name="screen_landscape">横向</string>
     <string name="screen_system">系统</string>
     <string name="screen_auto">自动</string>
+
+    <string name="title_drawer_forum">论坛</string>
+    <string name="title_drawer_search">搜索</string>
+    <string name="title_drawer_mypost">我的帖子</string>
+    <string name="title_drawer_myreply">我的回复</string>
+    <string name="title_drawer_favorites">我的收藏</string>
+    <string name="title_drawer_sms">短消息</string>
+    <string name="title_drawer_notify">帖子消息</string>
+    <string name="title_drawer_newpost">发表新帖</string>
+    <string name="title_drawer_setting">设置</string>
+    <string name="title_drawer_theme">切换主题</string>
 
 </resources>
