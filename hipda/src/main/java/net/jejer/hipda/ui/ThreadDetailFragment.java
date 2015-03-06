@@ -48,7 +48,7 @@ public class ThreadDetailFragment extends Fragment {
 	public static final String ARG_TID_KEY = "tid";
 	public static final String ARG_TITLE_KEY = "title";
 
-	private final String LOG_TAG = getClass().getSimpleName();;
+	private final String LOG_TAG = getClass().getSimpleName();
 
 	private Context mCtx;
 	private String mTid;
@@ -63,7 +63,7 @@ public class ThreadDetailFragment extends Fragment {
 	private int mGoToPage = 1;
 	private int mMaxPostInPage = 1;	// for goto floor, user can configure max post per page
 	private int mOffsetInPage = -1;	// for goto floor
-	private boolean mInloading = false;	
+	private boolean mInloading = false;
 	private TextView mReplyTextTv;
 	private ImageButton mPostReplyIb;
 	private View quickReply;
@@ -92,7 +92,7 @@ public class ThreadDetailFragment extends Fragment {
 
 		mLoaderCallbacks = new ThreadListLoaderCallbacks();
 		List<DetailBean> a = new ArrayList<DetailBean>();
-		mAdapter = new ThreadDetailAdapter(mCtx, getFragmentManager(), R.layout.item_thread_detail, a, 
+		mAdapter = new ThreadDetailAdapter(mCtx, getFragmentManager(), R.layout.item_thread_detail, a,
 				new GoToFloorOnClickListener(), new AvatarOnClickListener());
 
 		mMsgHandler = new Handler(new ThreadDetailMsgHandler());
@@ -146,7 +146,6 @@ public class ThreadDetailFragment extends Fragment {
 		mPostReplyIb.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				String replyText = mReplyTextTv.getText().toString();
 				if (replyText.length() < 5) {
 					Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
@@ -215,7 +214,7 @@ public class ThreadDetailFragment extends Fragment {
 		getLoaderManager().initLoader(0, new Bundle(), mLoaderCallbacks);
 		//getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
 		showOrLoadPage();
-	};
+	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -358,7 +357,7 @@ public class ThreadDetailFragment extends Fragment {
 				DetailListBean details) {
 			Log.v(LOG_TAG, "onLoadFinished");
 
-			mInloading = false;		
+			mInloading = false;
 
 			if(details == null) {
 				// May be login error, error message should be populated in login async task
@@ -410,6 +409,27 @@ public class ThreadDetailFragment extends Fragment {
 			//			msgDone.setData(b);
 			//			mMsgHandler.sendMessage(msgDone);
 
+			//when press back, hide quickreply first
+//			if (getView() != null) {
+//				getView().setFocusableInTouchMode(true);
+//				getView().requestFocus();
+//				getView().setOnKeyListener(new View.OnKeyListener() {
+//					@Override
+//					public boolean onKey(View v, int keyCode, KeyEvent event) {
+//						if (event.getAction() == KeyEvent.ACTION_DOWN) {
+//							if (keyCode == KeyEvent.KEYCODE_BACK) {
+//								if (quickReply.getVisibility() == View.VISIBLE) {
+//									quickReply.setVisibility(View.INVISIBLE);
+//									return true;
+//								}
+//								return false;
+//							}
+//						}
+//						return false;
+//					}
+//				});
+//			}
+
             mCallback.onAvatarUrlUpdated();
         }
 
@@ -439,8 +459,6 @@ public class ThreadDetailFragment extends Fragment {
 
 		@Override
 		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-			// TODO Auto-generated method stub
-
 			mDetailListView.setItemChecked(position, true);
 
 			position = position - mDetailListView.getHeaderViewsCount();
@@ -448,7 +466,7 @@ public class ThreadDetailFragment extends Fragment {
 				return false;
 			}
 
-			ThreadDetailActionModeCallback cb = new ThreadDetailActionModeCallback(ThreadDetailFragment.this, mTid, 
+			ThreadDetailActionModeCallback cb = new ThreadDetailActionModeCallback(ThreadDetailFragment.this, mTid,
 					mAdapter.getItem(position));
 			getActivity().startActionMode(cb);
 
@@ -466,7 +484,6 @@ public class ThreadDetailFragment extends Fragment {
 		btnLastPage.setOnClickListener(new Button.OnClickListener(){
 			@Override
 			public void onClick(View view) {
-				// TODO Auto-generated method stub
 				sbGotoPage.setProgress(mMaxPage - 1);
 			}});
 
@@ -509,7 +526,7 @@ public class ThreadDetailFragment extends Fragment {
 		@Override
 		public void onClick(View view) {
 			mAuthorOnly = false;
-			
+
 			int floor = (Integer)view.getTag();
 			mGoToPage = floor/mMaxPostInPage + 1; // page start from 1
 			mOffsetInPage = floor%mMaxPostInPage - 1; // offset start from 0
@@ -619,7 +636,6 @@ public class ThreadDetailFragment extends Fragment {
 	}
 
 	private void addAuthorPosts(DetailListBean details) {
-		// TODO Auto-generated method stub
 		for (DetailBean detail : details.getAll()) {
 			if (detail.getAuthor().equals(mCache.get(1).getAll().get(0).getAuthor())) {
 				mAdapter.add(detail);
@@ -646,13 +662,13 @@ public class ThreadDetailFragment extends Fragment {
 			String uid = (String) arg0.getTag(R.id.avatar_tag_uid);
 			String username = (String) arg0.getTag(R.id.avatar_tag_username);
 			Log.v(LOG_TAG, "AvatarOnClickListener.onClick, username="+username+" uid="+uid);
-			
+
 			Bundle arguments = new Bundle();
 			arguments.putString(UserinfoFragment.ARG_UID, uid);
 			arguments.putString(UserinfoFragment.ARG_USERNAME, username);
 			UserinfoFragment fragment = new UserinfoFragment();
 			fragment.setArguments(arguments);
-			
+
 			setHasOptionsMenu(false);
 			if (HiSettingsHelper.getInstance().getIsLandscape()) {
 				getFragmentManager().beginTransaction()

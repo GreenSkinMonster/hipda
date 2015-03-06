@@ -1,9 +1,5 @@
 package net.jejer.hipda.ui;
 
-import net.jejer.hipda.R;
-import net.jejer.hipda.async.PostSmsAsyncTask;
-import net.jejer.hipda.async.SimpleListLoader;
-import net.jejer.hipda.bean.SimpleListBean;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -21,6 +17,11 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import net.jejer.hipda.R;
+import net.jejer.hipda.async.PostSmsAsyncTask;
+import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.bean.SimpleListBean;
 
 public class SmsFragment extends Fragment {
 	private final String LOG_TAG = getClass().getSimpleName();
@@ -70,7 +71,6 @@ public class SmsFragment extends Fragment {
 		postIb.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				String replyText = mQuickReplyTv.getText().toString();
 				if (replyText.length() > 0) {
 					new PostSmsAsyncTask(getActivity(), mUid).execute(replyText);
@@ -114,14 +114,12 @@ public class SmsFragment extends Fragment {
 
 		@Override
 		public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-			// TODO Auto-generated method stub
 			return new SimpleListLoader(SmsFragment.this.getActivity(), SimpleListLoader.TYPE_SMSDETAIL, 1, mUid);
 		}
 
 		@Override
 		public void onLoadFinished(Loader<SimpleListBean> loader,
 				SimpleListBean list) {
-			// TODO Auto-generated method stub
 
 			Log.v(LOG_TAG, "onLoadFinished enter");
 
@@ -130,6 +128,8 @@ public class SmsFragment extends Fragment {
 				Toast.makeText(SmsFragment.this.getActivity(), 
 						"自动加载失败", Toast.LENGTH_LONG).show();
 				return;
+			}else{
+				mQuickReplyView.setVisibility(View.VISIBLE);
 			}
 
 			Log.v(LOG_TAG, "mThreadListAdapter.addAll(arg1.threads) called, added "+list.getCount());
@@ -138,7 +138,6 @@ public class SmsFragment extends Fragment {
 
 		@Override
 		public void onLoaderReset(Loader<SimpleListBean> arg0) {
-			// TODO Auto-generated method stub
 			Log.v(LOG_TAG, "onLoaderReset");
 		}
 	}
