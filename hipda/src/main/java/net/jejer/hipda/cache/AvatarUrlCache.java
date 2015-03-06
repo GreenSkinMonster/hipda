@@ -10,9 +10,7 @@ import net.jejer.hipda.utils.HiUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class AvatarUrlCache {
 
@@ -22,7 +20,8 @@ public class AvatarUrlCache {
 	private final static String AVATAR_URL_PREFIX = HiUtils.BaseUrl + "uc_server/data/avatar";
 
 	private SharedPreferences avatarPrefs;
-	private LinkedHashMap<String, String> avatarMap;
+	private final int MAX_ENTRIES = 4096;
+	private LRUCache<String, String> avatarMap;
 	private Context mCtx;
 
 	private Collection<String> mDirtyUids = new ArrayList<String>();
@@ -42,34 +41,30 @@ public class AvatarUrlCache {
 
 	public void init(Context ctx) {
 		mCtx = ctx;
+
+		avatarMap = new LRUCache<String, String>(MAX_ENTRIES);
+		avatarPrefs = mCtx.getSharedPreferences(PREFS_NAME, 0);
+
 		load();
 	}
 
 	private void load() {
-		if (avatarPrefs == null) {
-			long start = System.currentTimeMillis();
-			avatarPrefs = mCtx.getSharedPreferences(PREFS_NAME, 0);
-			Map<String, ?> keys = avatarPrefs.getAll();
-			avatarMap = new LinkedHashMap<String, String>();
-			for (Map.Entry<String, ?> entry : keys.entrySet()) {
-				avatarMap.put(entry.getKey(), entry.getValue().toString());
-			}
-			Log.v(LOG_TAG, "load avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
+		Map<String, ?> keys = avatarPrefs.getAll();
+		for (Map.Entry<String, ?> entry : keys.entrySet()) {
+			avatarMap.put(entry.getKey(), entry.getValue().toString());
 		}
 	}
 
 	public void put(String uid, String url) {
-		if (!avatarMap.containsKey(uid) || !avatarMap.get(uid).equals(url)) {
-			if (url == null)
-				url = "";
-			if (url.startsWith(AVATAR_URL_PREFIX)) {
-				url = url.substring(AVATAR_URL_PREFIX.length());
-			}
-			avatarMap.put(uid, url);
-			mDirtyUids.remove(uid);
-			mUpdated = true;
-			save();
+		if (url == null)
+			url = "";
+		if (url.startsWith(AVATAR_URL_PREFIX)) {
+			url = url.substring(AVATAR_URL_PREFIX.length());
 		}
+		avatarMap.put(uid, url);
+		mDirtyUids.remove(uid);
+		mUpdated = true;
+		save();
 	}
 
 	public String get(String uid) {
@@ -94,7 +89,7 @@ public class AvatarUrlCache {
 			Collection<String> temp = new ArrayList<String>();
 			temp.addAll(mDirtyUids);
 			mDirtyUids.clear();
-			//new AvatarUrlTask(mCtx, threadListAdapter, temp).execute();
+			new AvatarUrlTask(mCtx, threadListAdapter, temp).execute();
 		}
 	}
 
@@ -112,15 +107,16 @@ public class AvatarUrlCache {
 
 	private void save() {
 		long start = System.currentTimeMillis();
-		if (start - lastSaveTime > 10 * 1000) {
-			Set<String> keys = avatarMap.keySet();
+		if (start - lastSaveTime > 30 * 1000) {
+			Collection<Map.Entry<String, String>> entries = avatarMap.getAll();
 			SharedPreferences.Editor prefsWriter = avatarPrefs.edit();
-			for (String key : keys) {
-				prefsWriter.putString(key, avatarMap.get(key));
+			prefsWriter.clear();
+			for (Map.Entry<String, String> entry : entries) {
+				prefsWriter.putString(entry.getKey(), entry.getValue());
 			}
 			prefsWriter.apply();
 			lastSaveTime = System.currentTimeMillis();
-			Log.v(LOG_TAG, "save avatarPrefs, size=" + avatarMap.size() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
+			Log.v(LOG_TAG, "save avatarPrefs, size=" + avatarMap.usedEntries() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
 		}
 	}
 
