@@ -476,37 +476,36 @@ public class ThreadDetailFragment extends Fragment {
 
 	private void showGotoPageDialog() {
 		mGoToPage = mCurrentPage;
-		final LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View viewlayout = inflater.inflate(R.layout.dialog_goto_page, null);
-		final Button btnLastPage = (Button)viewlayout.findViewById(R.id.btn_last_page);
-		final SeekBar sbGotoPage = (SeekBar)viewlayout.findViewById(R.id.sb_page);
-		btnLastPage.setText(String.valueOf(mGoToPage)+"/"+String.valueOf(mMaxPage));
-		btnLastPage.setOnClickListener(new Button.OnClickListener(){
-			@Override
-			public void onClick(View view) {
-				sbGotoPage.setProgress(mMaxPage - 1);
-			}});
+		final Button btnLastPage = (Button) viewlayout.findViewById(R.id.btn_last_page);
+		final SeekBar sbGotoPage = (SeekBar) viewlayout.findViewById(R.id.sb_page);
+		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final AlertDialog dialog;
 
 		// Fuck Android SeekBar, always start from 0
-		sbGotoPage.setMax(mMaxPage-1);
-		sbGotoPage.setProgress(mCurrentPage-1);
+		sbGotoPage.setMax(mMaxPage - 1);
+		sbGotoPage.setProgress(mCurrentPage - 1);
 		sbGotoPage.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				mGoToPage = progress + 1; //start from 0
-				btnLastPage.setText(String.valueOf(mGoToPage)+"/"+String.valueOf(mMaxPage));
+				btnLastPage.setText(String.valueOf(mGoToPage) + "/" + String.valueOf(mMaxPage));
 			}
+
 			@Override
-			public void onStartTrackingTouch(SeekBar arg0) {}
+			public void onStartTrackingTouch(SeekBar arg0) {
+			}
+
 			@Override
-			public void onStopTrackingTouch(SeekBar arg0) {}
+			public void onStopTrackingTouch(SeekBar arg0) {
+			}
 		});
 
-		final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
-		popDialog.setTitle("转到第N页");
-		popDialog.setView(viewlayout);
+		builder.setTitle("转到第N页");
+		builder.setView(viewlayout);
 		// Add the buttons
-		popDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// User clicked OK button
 				mCurrentPage = mGoToPage;
@@ -514,12 +513,25 @@ public class ThreadDetailFragment extends Fragment {
 				showOrLoadPage();
 			}
 		});
-		popDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// User cancelled the dialog
 			}
 		});
-		popDialog.create().show();
+		dialog = builder.create();
+		dialog.show();
+
+		btnLastPage.setText(String.valueOf(mGoToPage) + "/" + String.valueOf(mMaxPage));
+		btnLastPage.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				sbGotoPage.setProgress(mMaxPage - 1);
+				//direct go to last page
+				mCurrentPage = mGoToPage;
+				showOrLoadPage();
+				dialog.dismiss();
+			}
+		});
 	}
 
 	public class GoToFloorOnClickListener implements Button.OnClickListener {
