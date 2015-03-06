@@ -126,31 +126,30 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				//niv.setUrl(content.getContent());
 				final String imageUrl = content.getContent();
 
-				GlideImageView niv = new GlideImageView(mCtx);
-				niv.setFocusable(false);
-				contentView.addView(niv);
-				niv.setUrl(imageUrl);
+				GlideImageView giv = new GlideImageView(mCtx);
+				giv.setFocusable(false);
+				contentView.addView(giv);
+				giv.setUrl(imageUrl);
 
-				int maxWidth = 1080;
+				int maxViewWidth = 1080;
+				int lowerImageWidth = 320;
+
 				ThreadDetailFragment fragment = (ThreadDetailFragment) mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
 				if (fragment != null && fragment.getView() != null) {
-					maxWidth = fragment.getView().getWidth();
+					maxViewWidth = fragment.getView().getWidth();
 				}
-				maxWidth = Math.round(maxWidth * 0.95f);
 
 				if (HiUtils.isAutoLoadImg(mCtx)) {
 					Glide.with(getContext())
 							.load(imageUrl)
 							.diskCacheStrategy(DiskCacheStrategy.ALL)
-							.override(Math.round(maxWidth * 0.5f), Math.round(maxWidth * 0.5f))
-									//.placeholder(R.drawable.ic_action_picture)
+							.placeholder(R.drawable.ic_action_picture)
 							.error(R.drawable.tapatalk_image_broken)
-							.into(new GlideScaleViewTarget(niv, maxWidth, imageUrl));
+							.into(new GlideScaleViewTarget(giv, lowerImageWidth, maxViewWidth, imageUrl));
 				} else {
-					niv.setImageResource(R.drawable.ic_action_picture);
+					giv.setImageResource(R.drawable.ic_action_picture);
 				}
 
-				//Log.v(LOG_TAG, "NetworkImageView Added");
 			} else if (content instanceof ContentAttach) {
 				TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
 				tv.setFragmentManager(mFragmentManager);

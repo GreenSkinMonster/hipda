@@ -6,55 +6,62 @@ import android.widget.ImageView;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
 
 public class GlideScaleViewTarget extends GlideDrawableImageViewTarget {
 
 	private final String LOG_TAG = getClass().getSimpleName();
 
-	private int mMaxWidth;
+	private int mMaxViewWidth;
 	private String mUrl;
 
-	public GlideScaleViewTarget(ImageView view, int maxWidth, String url) {
+	public GlideScaleViewTarget(ImageView view, int lowerImageWidth, int maxViewWidth, String url) {
 		super(view);
-		mMaxWidth = maxWidth;
-		mUrl = url;
-	}
 
-	@Override
-	public void getSize(SizeReadyCallback cb) {
-		super.getSize(cb);
+		//set a lower width to make Gllide load low resolution image to ram
+		//we will change view's size later in onResourceReady according to image's size
+		view.getLayoutParams().width = lowerImageWidth;
+		view.getLayoutParams().height = lowerImageWidth;
+
+		mMaxViewWidth = maxViewWidth;
+		mUrl = url;
 	}
 
 	@Override
 	public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
 		super.onResourceReady(resource, animation);
-		if (resource.getIntrinsicWidth() < mMaxWidth * 0.2f) {
-			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 3.4f);
-			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 3.4f);
-		} else if (resource.getIntrinsicWidth() < mMaxWidth * 0.3f) {
-			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 2.8f);
-			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 2.8f);
-		} else if (resource.getIntrinsicWidth() < mMaxWidth * 0.4f) {
-			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 2.4f);
-			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 2.4f);
-		} else if (resource.getIntrinsicWidth() < mMaxWidth * 0.5f) {
-			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 1.9f);
-			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 1.9f);
-		} else if (resource.getIntrinsicWidth() < mMaxWidth * 0.6f) {
-			getView().getLayoutParams().width = Math.round(resource.getIntrinsicWidth() * 1.5f);
-			getView().getLayoutParams().height = Math.round(resource.getIntrinsicHeight() * 1.5f);
+
+		if (resource.getIntrinsicWidth() <= 0)
+			return;
+
+		//leave 12dp on both left and right side, this should match layout setup
+		int maxViewWidth = mMaxViewWidth - dpToPx(12 * 2);
+
+		//if image width < half maxViewWidth, scale it up for better view
+		int maxScaleWidth = Math.round(maxViewWidth * 0.5f);
+
+		double scaleRate = getScaleRate(resource.getIntrinsicWidth());
+		int scaledWidth = Math.round((int) (resource.getIntrinsicWidth() * scaleRate));
+		int scaledHeight = Math.round((int) (resource.getIntrinsicHeight() * scaleRate));
+
+		if (scaledWidth < maxScaleWidth) {
+			getView().getLayoutParams().width = scaledWidth;
+			getView().getLayoutParams().height = scaledHeight;
 		} else {
-			getView().getLayoutParams().width = mMaxWidth;
-			getView().getLayoutParams().height = Math.round(mMaxWidth * 1.0f * resource.getIntrinsicHeight() / resource.getIntrinsicWidth());
+			getView().getLayoutParams().width = maxViewWidth;
+			getView().getLayoutParams().height = Math.round(maxViewWidth * 1.0f * resource.getIntrinsicHeight() / resource.getIntrinsicWidth());
 		}
 		if (Log.isLoggable(LOG_TAG, Log.VERBOSE))
-			Log.v(LOG_TAG, mUrl + ", size=" + resource.getIntrinsicWidth() + "x" + resource.getIntrinsicHeight());
+			Log.v(LOG_TAG, "mVW=" + maxViewWidth + " mSW=" + maxScaleWidth + ", size=" + resource.getIntrinsicWidth() + "x" + resource.getIntrinsicHeight() + "," + mUrl.substring(mUrl.lastIndexOf("/") + 1));
 	}
 
 	private int dpToPx(int dp) {
 		float density = getView().getContext().getResources().getDisplayMetrics().density;
 		return Math.round((float) dp * density);
+	}
+
+	//Math! http://www.mathsisfun.com/data/function-grapher.php
+	private double getScaleRate(int x) {
+		return Math.pow(x, 1.2) / x;
 	}
 
 }
