@@ -31,10 +31,7 @@ import net.jejer.hipda.utils.HiUtils;
 
 import java.util.List;
 
-//import android.util.Log;
-
 public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
-	//private final String LOG_TAG = getClass().getSimpleName();
 
 	private Context mCtx;
 	private LayoutInflater mInflater;
@@ -45,7 +42,6 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 	public ThreadDetailAdapter(Context context, FragmentManager fm, int resource,
 							   List<DetailBean> objects, Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
 		super(context, resource, objects);
-		// TODO Auto-generated constructor stub
 		mCtx = context;
 		mFragmentManager = fm;
 		mInflater = LayoutInflater.from(context);
@@ -83,7 +79,6 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 			holder.postStatus.setVisibility(View.GONE);
 
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-			//holder.avatar.setImageUrl(detail.getAvatarUrl(), VolleyHelper.getInstance().getAvatarLoader());
 			holder.avatar.setVisibility(View.VISIBLE);
 			Glide.with(getContext())
 					.load(detail.getAvatarUrl())
@@ -93,11 +88,8 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 					.crossFade()
 					.into(holder.avatar);
 		} else {
-			//holder.avatar.setImageUrl("", VolleyHelper.getInstance().getAvatarLoader());
 			holder.avatar.setVisibility(View.GONE);
 		}
-		//holder.avatar.setDefaultImageResId(R.drawable.google_user);
-		//holder.avatar.setErrorImageResId(R.drawable.google_user);
 		holder.avatar.setTag(R.id.avatar_tag_uid, detail.getUid());
 		holder.avatar.setTag(R.id.avatar_tag_username, detail.getAuthor());
 		holder.avatar.setOnClickListener(mAvatarListener);
@@ -122,8 +114,6 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setFocusable(false);
 				contentView.addView(tv);
 			} else if (content instanceof ContentImg) {
-				//HiNwkImgView niv = new HiNwkImgView(mCtx);
-				//niv.setUrl(content.getContent());
 				final String imageUrl = content.getContent();
 
 				GlideImageView giv = new GlideImageView(mCtx);
@@ -167,7 +157,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				contentView.addView(tv);
 			} else if (content instanceof ContentGoToFloor) {
 				Button btnGotoFloor = new Button(mCtx);
-				btnGotoFloor.setBackgroundColor(mCtx.getResources().getColor(R.color.hipda));
+				btnGotoFloor.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
 				btnGotoFloor.setText(content.getContent());
 				btnGotoFloor.setTag(((ContentGoToFloor) content).getFloor());
 				btnGotoFloor.setOnClickListener(mGoToFloorListener);
