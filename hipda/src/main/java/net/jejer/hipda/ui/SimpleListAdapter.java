@@ -1,17 +1,5 @@
 package net.jejer.hipda.ui;
 
-import java.util.List;
-
-import com.android.volley.toolbox.NetworkImageView;
-import com.bumptech.glide.Glide;
-
-import net.jejer.hipda.R;
-import net.jejer.hipda.async.SimpleListLoader;
-import net.jejer.hipda.async.VolleyHelper;
-import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.bean.SimpleListItemBean;
-import net.jejer.hipda.cache.AvatarUrlCache;
-
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -20,6 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+
+import net.jejer.hipda.R;
+import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.cache.AvatarUrlCache;
+
+import java.util.List;
 
 public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 	private LayoutInflater mInflater;
@@ -57,7 +54,6 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 		if (item.isNew()) {
 			holder.tv_title.setTextColor(mCtx.getResources().getColor(R.color.red));
 		}
-		// TODO set to default color if item is not new!
 
 		str = item.getInfo();
 		if (str == null || str.isEmpty()) {
