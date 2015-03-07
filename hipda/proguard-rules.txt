@@ -14,3 +14,5 @@
     **[] $VALUES;
     public *;
 }
+
+-keeppackagenames net.jejer.hipda
