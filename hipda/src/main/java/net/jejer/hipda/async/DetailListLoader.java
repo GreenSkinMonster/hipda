@@ -1,23 +1,24 @@
 package net.jejer.hipda.async;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.HiParserThreadDetail;
 import net.jejer.hipda.utils.HiUtils;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 	private final String LOG_TAG = getClass().getSimpleName();
@@ -32,7 +33,6 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 
 	public DetailListLoader(Context context, Handler handler, String tid, int page) {
 		super(context);
-		// TODO Auto-generated constructor stub
 		mCtx = context;
 		mHandler = handler;
 		mLocker = this;
@@ -42,7 +42,6 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 
 	@Override
 	public DetailListBean loadInBackground() {
-		// TODO Auto-generated method stub
 		//Log.v(LOG_TAG, "loadInBackground");
 
 		if (mTid.equals("")) {
@@ -54,12 +53,10 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 		boolean fetch_done = false;
 		do {
 			fetchDetail();
-			synchronized(mLocker){
+			synchronized (mLocker) {
 				try {
 					mLocker.wait();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 			//Log.v(LOG_TAG, "loadInBackground got notified");
@@ -93,7 +90,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 		mHandler.sendMessage(msg);
 
 		String url = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
-		StringRequest sReq = new HiStringRequest(mCtx, url, 
+		StringRequest sReq = new HiStringRequest(mCtx, url,
 				new DetailListListener(), new ThreadDetailErrorListener());
 		VolleyHelper.getInstance().add(sReq);
 	}
@@ -101,15 +98,15 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 	private class DetailListListener implements Response.Listener<String> {
 		@Override
 		public void onResponse(String response) {
-			// TODO Auto-generated method stub
 			//Log.v(LOG_TAG, "onResponse");
 
 			mRsp = response;
-			synchronized(mLocker){
+			synchronized (mLocker) {
 				mLocker.notify();
 			}
 		}
 	}
+
 	private class ThreadDetailErrorListener implements Response.ErrorListener {
 		@Override
 		public void onErrorResponse(VolleyError error) {
@@ -122,7 +119,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 			msg.setData(b);
 			mHandler.sendMessage(msg);
 
-			synchronized(mLocker){
+			synchronized (mLocker) {
 				mRsp = null;
 				mLocker.notify();
 			}

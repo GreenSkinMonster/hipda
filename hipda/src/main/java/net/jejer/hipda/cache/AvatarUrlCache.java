@@ -5,12 +5,13 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import net.jejer.hipda.async.AvatarUrlTask;
-import net.jejer.hipda.ui.ThreadListAdapter;
 import net.jejer.hipda.utils.HiUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AvatarUrlCache {
 
@@ -24,9 +25,12 @@ public class AvatarUrlCache {
 	private LRUCache<String, String> avatarMap;
 	private Context mCtx;
 
-	private Collection<String> mDirtyUids = new ArrayList<String>();
+	private Map<String, String> mDirtyUids = new ConcurrentHashMap<String, String>();
+
 	private boolean mUpdated = false;
 	private long lastSaveTime = 0;
+
+	private static boolean FETCH_AVATAR_URL_BY_UID = false;
 
 
 	private static AvatarUrlCache ourInstance = new AvatarUrlCache();
@@ -79,17 +83,21 @@ public class AvatarUrlCache {
 	}
 
 	public void markDirty(String uid) {
-		if (!avatarMap.containsKey(uid) && !mDirtyUids.contains(uid)) {
-			mDirtyUids.add(uid);
+		if (!avatarMap.containsKey(uid) && !mDirtyUids.containsKey(uid)) {
+			mDirtyUids.put(uid, uid);
 		}
 	}
 
-	public void fetchAvatarUrls(ThreadListAdapter threadListAdapter) {
+	public void fetchAvatarUrls() {
 		if (mDirtyUids.size() > 0) {
-			Collection<String> temp = new ArrayList<String>();
-			temp.addAll(mDirtyUids);
-			mDirtyUids.clear();
-			new AvatarUrlTask(mCtx, threadListAdapter, temp).execute();
+			Set<String> uids = mDirtyUids.keySet();
+			Collection<String> fetchlist = new ArrayList<String>();
+			for (String uid : uids) {
+				fetchlist.add(uid);
+				mDirtyUids.remove(uid);
+			}
+			if (FETCH_AVATAR_URL_BY_UID)
+				new AvatarUrlTask(mCtx).fetch(fetchlist);
 		}
 	}
 
@@ -119,5 +127,6 @@ public class AvatarUrlCache {
 			Log.v(LOG_TAG, "save avatarPrefs, size=" + avatarMap.usedEntries() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
 		}
 	}
+
 
 }
