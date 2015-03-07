@@ -1,20 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:gravity="center_vertical">
 
-    <SeekBar
-        android:id="@+id/sb_page"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/btn_last_page"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <SeekBar
+            android:id="@+id/sb_page"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="0"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="" />
+        android:padding="4dp">
+
+        <Button
+            android:id="@+id/btn_fisrt_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="@string/action_first"/>
+
+        <Button
+            android:id="@+id/btn_previous_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/btn_fisrt_page"
+            android:text="@string/action_previous"/>
+
+        <Button
+            android:id="@+id/btn_next_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/btn_last_page"
+            android:text="@string/action_next"/>
+
+        <Button
+            android:id="@+id/btn_last_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@string/action_last"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

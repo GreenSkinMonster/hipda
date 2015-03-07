@@ -55,4 +55,9 @@
     <string name="title_drawer_setting">设置</string>
     <string name="title_drawer_theme">切换主题</string>
 
+    <string name="action_first">|&lt;</string>
+    <string name="action_previous">&lt;</string>
+    <string name="action_next">&gt;</string>
+    <string name="action_last">&gt;|</string>
+
 </resources>

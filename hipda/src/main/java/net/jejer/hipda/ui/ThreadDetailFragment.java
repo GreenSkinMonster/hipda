@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -61,8 +63,8 @@ public class ThreadDetailFragment extends Fragment {
 	private int mCurrentPage = 1;
 	private int mMaxPage = 1;
 	private int mGoToPage = 1;
-	private int mMaxPostInPage = 1;	// for goto floor, user can configure max post per page
-	private int mOffsetInPage = -1;	// for goto floor
+	private int mMaxPostInPage = 1;    // for goto floor, user can configure max post per page
+	private int mOffsetInPage = -1;    // for goto floor
 	private boolean mInloading = false;
 	private TextView mReplyTextTv;
 	private ImageButton mPostReplyIb;
@@ -70,7 +72,7 @@ public class ThreadDetailFragment extends Fragment {
 	private Handler mMsgHandler;
 	private boolean mAuthorOnly = false;
 
-	private SparseArray<DetailListBean> mCache = new  SparseArray<DetailListBean>();
+	private SparseArray<DetailListBean> mCache = new SparseArray<DetailListBean>();
 	public static final String LOADER_PAGE_KEY = "LOADER_PAGE_KEY";
 
 	@Override
@@ -78,7 +80,7 @@ public class ThreadDetailFragment extends Fragment {
 		Log.v(LOG_TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 
-		((MainFrameActivity)getActivity()).registOnSwipeCallback(this);
+		((MainFrameActivity) getActivity()).registOnSwipeCallback(this);
 		mCtx = getActivity();
 
 		setHasOptionsMenu(true);
@@ -99,18 +101,18 @@ public class ThreadDetailFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "onCreateView");
 		View view = inflater.inflate(R.layout.fragment_thread_detail, container, false);
 
-		mDetailListView = (XListView)view.findViewById(R.id.lv_thread_details);
+		mDetailListView = (XListView) view.findViewById(R.id.lv_thread_details);
 		mDetailListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		mTipBar = (TextView)view.findViewById(R.id.thread_detail_tipbar);
+		mTipBar = (TextView) view.findViewById(R.id.thread_detail_tipbar);
 		mTipBar.bringToFront();
 
 		if (!HiSettingsHelper.getInstance().getIsLandscape()) {
 			mDetailListView.addHeaderView(inflater.inflate(R.layout.head_thread_detail, null));
-			mTitleView = (TextView)view.findViewById(R.id.thread_detail_title);
+			mTitleView = (TextView) view.findViewById(R.id.thread_detail_title);
 			mTitleView.setText(mTitle);
 		}
 		mDetailListView.setPullLoadEnable(false);
@@ -127,6 +129,7 @@ public class ThreadDetailFragment extends Fragment {
 				mDetailListView.stopRefresh();
 				showOrLoadPage();
 			}
+
 			@Override
 			public void onLoadMore() {
 				//Next Page
@@ -157,7 +160,7 @@ public class ThreadDetailFragment extends Fragment {
 					quickReply.setVisibility(View.INVISIBLE);
 					new PostAsyncTask(getActivity(), PostAsyncTask.MODE_REPLY_THREAD, null).execute(replyText, mTid, "", "", "");
 					// Close SoftKeyboard
-					InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
 							Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(mReplyTextTv.getWindowToken(), 0);
 				}
@@ -167,17 +170,17 @@ public class ThreadDetailFragment extends Fragment {
 		quickReply.bringToFront();
 
 		if (HiSettingsHelper.getInstance().isEinkOptimization()) {
-			ImageView mBtnPageup = (ImageView)view.findViewById(R.id.btn_detail_pageup);
+			ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_detail_pageup);
 			mBtnPageup.setVisibility(View.VISIBLE);
 			mBtnPageup.setOnClickListener(new ImageView.OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					int index = mDetailListView.getFirstVisiblePosition()-mDetailListView.getChildCount()+1;
-					mDetailListView.setSelection(index<0?0:index);
+					int index = mDetailListView.getFirstVisiblePosition() - mDetailListView.getChildCount() + 1;
+					mDetailListView.setSelection(index < 0 ? 0 : index);
 				}
 			});
 
-			ImageView mBtnPagedown = (ImageView)view.findViewById(R.id.btn_detail_pagedown);
+			ImageView mBtnPagedown = (ImageView) view.findViewById(R.id.btn_detail_pagedown);
 			mBtnPagedown.setVisibility(View.VISIBLE);
 			mBtnPagedown.setOnClickListener(new ImageView.OnClickListener() {
 				@Override
@@ -187,8 +190,8 @@ public class ThreadDetailFragment extends Fragment {
 						int height = mDetailListView.getHeight();
 						int item_height = mDetailListView.getChildAt(0).getHeight();
 						if (item_height < Math.abs(offset)) {
-							if (mDetailListView.getFirstVisiblePosition()+1 < mDetailListView.getCount()) {
-								mDetailListView.setSelection(mDetailListView.getFirstVisiblePosition()+1);
+							if (mDetailListView.getFirstVisiblePosition() + 1 < mDetailListView.getCount()) {
+								mDetailListView.setSelection(mDetailListView.getFirstVisiblePosition() + 1);
 							}
 						} else {
 							mDetailListView.setSelectionFromTop(mDetailListView.getFirstVisiblePosition(), offset - height);
@@ -210,6 +213,7 @@ public class ThreadDetailFragment extends Fragment {
 		mDetailListView.setAdapter(mAdapter);
 		mDetailListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		mDetailListView.setOnItemLongClickListener(new OnItemLongClickCallback());
+		mDetailListView.setOnScrollListener(new OnScrollCallback());
 
 		getLoaderManager().initLoader(0, new Bundle(), mLoaderCallbacks);
 		//getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
@@ -227,73 +231,73 @@ public class ThreadDetailFragment extends Fragment {
 		getActivity().getActionBar().setTitle(mTitle);
 		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 
-		super.onCreateOptionsMenu(menu,inflater);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected (MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.v(LOG_TAG, "onOptionsItemSelected");
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			// Implemented in activity
-			return false;
-		case R.id.action_open_url:
-			String url = HiUtils.DetailListUrl+mTid;
-			Intent i = new Intent(Intent.ACTION_VIEW);
-			i.setData(Uri.parse(url));
-			startActivity(i);
-			return true;
-		case R.id.action_reply:
-			setHasOptionsMenu(false);
-			Bundle arguments = new Bundle();
-			arguments.putString(PostFragment.ARG_TID_KEY, mTid);
-			arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_REPLY_THREAD);
-			PostFragment fragment = new PostFragment();
-			fragment.setArguments(arguments);
-			if (HiSettingsHelper.getInstance().getIsLandscape()) {
-				getFragmentManager().beginTransaction()
-				.add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-				.addToBackStack(PostFragment.class.getName())
-				.commit();
-			} else {
-				getFragmentManager().beginTransaction()
-				.add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-				.addToBackStack(PostFragment.class.getName())
-				.commit();
-			}
-
-			return true;
-		case R.id.action_refresh_detail:
-			refresh();
-			return true;
-		case R.id.action_goto:
-			if (mAuthorOnly) {
-				Toast.makeText(getActivity(), "请先退出只看楼主模式", Toast.LENGTH_LONG).show();
+			case android.R.id.home:
+				// Implemented in activity
+				return false;
+			case R.id.action_open_url:
+				String url = HiUtils.DetailListUrl + mTid;
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(url));
+				startActivity(i);
 				return true;
-			}
-			showGotoPageDialog();
-			return true;
-		case R.id.action_only_author:
-			mAuthorOnly = !mAuthorOnly;
-			mAdapter.clear();
-			mCurrentPage = 1;
-			if (mAuthorOnly) {
-				mDetailListView.setPullLoadEnable(false);
-				mDetailListView.setPullRefreshEnable(false);
-				getActivity().getActionBar().setTitle("(只看楼主)"+mTitle);
-				showAndLoadAuthorOnly();
-			} else {
-				showOrLoadPage();
-			}
-			return true;
-		case R.id.action_add_favorite:
-			FavoriteHelper.getInstance().addFavorite(mCtx, mTid, mTitle);
-			return true;
-		case R.id.action_remove_favorite:
-			FavoriteHelper.getInstance().removeFavorite(mCtx, mTid, mTitle);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.action_reply:
+				setHasOptionsMenu(false);
+				Bundle arguments = new Bundle();
+				arguments.putString(PostFragment.ARG_TID_KEY, mTid);
+				arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_REPLY_THREAD);
+				PostFragment fragment = new PostFragment();
+				fragment.setArguments(arguments);
+				if (HiSettingsHelper.getInstance().getIsLandscape()) {
+					getFragmentManager().beginTransaction()
+							.add(R.id.main_frame_container, fragment, PostFragment.class.getName())
+							.addToBackStack(PostFragment.class.getName())
+							.commit();
+				} else {
+					getFragmentManager().beginTransaction()
+							.add(R.id.main_frame_container, fragment, PostFragment.class.getName())
+							.addToBackStack(PostFragment.class.getName())
+							.commit();
+				}
+
+				return true;
+			case R.id.action_refresh_detail:
+				refresh();
+				return true;
+			case R.id.action_goto:
+				if (mAuthorOnly) {
+					Toast.makeText(getActivity(), "请先退出只看楼主模式", Toast.LENGTH_LONG).show();
+					return true;
+				}
+				showGotoPageDialog();
+				return true;
+			case R.id.action_only_author:
+				mAuthorOnly = !mAuthorOnly;
+				mAdapter.clear();
+				mCurrentPage = 1;
+				if (mAuthorOnly) {
+					mDetailListView.setPullLoadEnable(false);
+					mDetailListView.setPullRefreshEnable(false);
+					getActivity().getActionBar().setTitle("(只看楼主)" + mTitle);
+					showAndLoadAuthorOnly();
+				} else {
+					showOrLoadPage();
+				}
+				return true;
+			case R.id.action_add_favorite:
+				FavoriteHelper.getInstance().addFavorite(mCtx, mTid, mTitle);
+				return true;
+			case R.id.action_remove_favorite:
+				FavoriteHelper.getInstance().removeFavorite(mCtx, mTid, mTitle);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -302,6 +306,23 @@ public class ThreadDetailFragment extends Fragment {
 		Bundle b = new Bundle();
 		b.putInt(LOADER_PAGE_KEY, mCurrentPage);
 		getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
+	}
+
+	private class OnScrollCallback implements AbsListView.OnScrollListener {
+
+		@Override
+		public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+		}
+
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			if (scrollState == SCROLL_STATE_FLING) {
+				//Glide.with(mCtx).pauseRequests();
+			} else if (scrollState == SCROLL_STATE_IDLE) {
+				//Glide.with(mCtx).resumeRequests();
+			}
+		}
+
 	}
 
 	@Override
@@ -326,7 +347,7 @@ public class ThreadDetailFragment extends Fragment {
 	public void onDestroy() {
 		//Log.v(LOG_TAG, "onDestory");
 		getLoaderManager().destroyLoader(0);
-		((MainFrameActivity)getActivity()).registOnSwipeCallback(null);
+		((MainFrameActivity) getActivity()).registOnSwipeCallback(null);
 		super.onDestroy();
 	}
 
@@ -354,12 +375,12 @@ public class ThreadDetailFragment extends Fragment {
 
 		@Override
 		public void onLoadFinished(Loader<DetailListBean> loader,
-				DetailListBean details) {
+								   DetailListBean details) {
 			Log.v(LOG_TAG, "onLoadFinished");
 
 			mInloading = false;
 
-			if(details == null) {
+			if (details == null) {
 				// May be login error, error message should be populated in login async task
 				return;
 			} else if (details.getCount() == 0) {
@@ -430,9 +451,25 @@ public class ThreadDetailFragment extends Fragment {
 //				});
 //			}
 
-            mCallback.onAvatarUrlUpdated();
-        }
 
+			//prefetch next page when current page is done
+			prefetchNextPage();
+
+			if (mCurrentPage == 1) {
+				mDetailListView.setPullRefreshEnable(false);
+			} else {
+				mDetailListView.setPullRefreshEnable(true);
+			}
+			if (mCurrentPage == mMaxPage) {
+				mDetailListView.setPullLoadEnable(false);
+			} else {
+				mDetailListView.setPullLoadEnable(true);
+			}
+
+			//try to refresh avatar views on thread list
+			//but not always work, need a better way
+			mCallback.onAvatarUrlUpdated();
+		}
 
 
 		@Override
@@ -445,10 +482,23 @@ public class ThreadDetailFragment extends Fragment {
 
 	}
 
+	private void prefetchNextPage() {
+		if (!mAuthorOnly
+				&& HiSettingsHelper.getInstance().isPreFetch()
+				&& mCache.get(mCurrentPage + 1) == null
+				&& mCurrentPage < mMaxPage) {
+			Log.v(LOG_TAG, "prefetch page " + (mCurrentPage + 1));
+			Bundle b = new Bundle();
+			b.putInt(LOADER_PAGE_KEY, mCurrentPage + 1);
+			getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
+		}
+	}
+
 	public void onSwipeTop() {
 		//Log.v(LOG_TAG, "onSwipeTop");
 		quickReply.setVisibility(View.INVISIBLE);
 	}
+
 	public void onSwipeBottom() {
 		//Log.v(LOG_TAG, "onSwipeBottom");
 		quickReply.bringToFront();
@@ -478,10 +528,29 @@ public class ThreadDetailFragment extends Fragment {
 		mGoToPage = mCurrentPage;
 		final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View viewlayout = inflater.inflate(R.layout.dialog_goto_page, null);
+		final Button btnFirstPage = (Button) viewlayout.findViewById(R.id.btn_fisrt_page);
 		final Button btnLastPage = (Button) viewlayout.findViewById(R.id.btn_last_page);
+		final Button btnNextPage = (Button) viewlayout.findViewById(R.id.btn_next_page);
+		final Button btnPreviousPage = (Button) viewlayout.findViewById(R.id.btn_previous_page);
 		final SeekBar sbGotoPage = (SeekBar) viewlayout.findViewById(R.id.sb_page);
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		final AlertDialog dialog;
+
+		builder.setTitle("转到第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
+		builder.setView(viewlayout);
+
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				mCurrentPage = mGoToPage;
+				showOrLoadPage();
+			}
+		});
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// User cancelled the dialog
+			}
+		});
+		dialog = builder.create();
 
 		// Fuck Android SeekBar, always start from 0
 		sbGotoPage.setMax(mMaxPage - 1);
@@ -490,7 +559,7 @@ public class ThreadDetailFragment extends Fragment {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				mGoToPage = progress + 1; //start from 0
-				btnLastPage.setText(String.valueOf(mGoToPage) + "/" + String.valueOf(mMaxPage));
+				dialog.setTitle("转到第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
 			}
 
 			@Override
@@ -502,36 +571,58 @@ public class ThreadDetailFragment extends Fragment {
 			}
 		});
 
-		builder.setTitle("转到第N页");
-		builder.setView(viewlayout);
-		// Add the buttons
-		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				// User clicked OK button
-				mCurrentPage = mGoToPage;
-				//getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
-				showOrLoadPage();
-			}
-		});
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				// User cancelled the dialog
-			}
-		});
-		dialog = builder.create();
-		dialog.show();
-
-		btnLastPage.setText(String.valueOf(mGoToPage) + "/" + String.valueOf(mMaxPage));
-		btnLastPage.setOnClickListener(new Button.OnClickListener() {
+		btnFirstPage.setOnClickListener(new Button.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				sbGotoPage.setProgress(mMaxPage - 1);
-				//direct go to last page
+				mGoToPage = 0;
+				sbGotoPage.setProgress(mGoToPage);
 				mCurrentPage = mGoToPage;
 				showOrLoadPage();
 				dialog.dismiss();
 			}
 		});
+
+		btnLastPage.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				sbGotoPage.setProgress(mMaxPage - 1);
+				mCurrentPage = mGoToPage;
+				showOrLoadPage();
+				dialog.dismiss();
+			}
+		});
+
+		btnNextPage.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (mCurrentPage < mMaxPage) {
+					sbGotoPage.setProgress(mCurrentPage);
+				}
+				mCurrentPage = mGoToPage;
+				showOrLoadPage();
+				dialog.dismiss();
+			}
+		});
+
+		btnPreviousPage.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (mCurrentPage > 1) {
+					sbGotoPage.setProgress(mCurrentPage - 2);
+				}
+				mCurrentPage = mGoToPage;
+				showOrLoadPage();
+				dialog.dismiss();
+			}
+		});
+
+		dialog.show();
+
+		//set dialog title to center
+		TextView titleView = (TextView) dialog.findViewById(mCtx.getResources().getIdentifier("alertTitle", "id", "android"));
+		if (titleView != null) {
+			titleView.setGravity(Gravity.CENTER);
+		}
 	}
 
 	public class GoToFloorOnClickListener implements Button.OnClickListener {
@@ -539,9 +630,9 @@ public class ThreadDetailFragment extends Fragment {
 		public void onClick(View view) {
 			mAuthorOnly = false;
 
-			int floor = (Integer)view.getTag();
-			mGoToPage = floor/mMaxPostInPage + 1; // page start from 1
-			mOffsetInPage = floor%mMaxPostInPage - 1; // offset start from 0
+			int floor = (Integer) view.getTag();
+			mGoToPage = floor / mMaxPostInPage + 1; // page start from 1
+			mOffsetInPage = floor % mMaxPostInPage - 1; // offset start from 0
 
 			if (mGoToPage != mCurrentPage) {
 				mCurrentPage = mGoToPage;
@@ -565,80 +656,64 @@ public class ThreadDetailFragment extends Fragment {
 			String pageStr = "(第" + page + "页)";
 
 			switch (msg.what) {
-			case ThreadListFragment.STAGE_ERROR:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.red));
-				Bundle b = msg.getData();
-				mTipBar.setText(b.getString(ThreadListFragment.STAGE_ERROR_KEY));
-				Log.e(LOG_TAG, b.getString(ThreadListFragment.STAGE_ERROR_KEY));
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
-			case ThreadListFragment.STAGE_CLEAN:
-				mTipBar.setVisibility(View.INVISIBLE);
-				break;
-			case ThreadListFragment.STAGE_DONE:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
-				mTipBar.setText(pageStr+"加载完成");
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
-			case ThreadListFragment.STAGE_RELOGIN:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
-				mTipBar.setText("正在登录");
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
-			case ThreadListFragment.STAGE_GET_WEBPAGE:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
-				mTipBar.setText(pageStr+"正在获取页面");
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
-			case ThreadListFragment.STAGE_PARSE:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
-				mTipBar.setText(pageStr+"正在解析页面");
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
-			case ThreadListFragment.STAGE_PREFETCH:
-				mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
-				mTipBar.setText("正在预读下一页");
-				mTipBar.setVisibility(View.VISIBLE);
-				break;
+				case ThreadListFragment.STAGE_ERROR:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.red));
+					Bundle b = msg.getData();
+					mTipBar.setText(b.getString(ThreadListFragment.STAGE_ERROR_KEY));
+					Log.e(LOG_TAG, b.getString(ThreadListFragment.STAGE_ERROR_KEY));
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
+				case ThreadListFragment.STAGE_CLEAN:
+					mTipBar.setVisibility(View.INVISIBLE);
+					break;
+				case ThreadListFragment.STAGE_DONE:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
+					mTipBar.setText(pageStr + "加载完成");
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
+				case ThreadListFragment.STAGE_RELOGIN:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
+					mTipBar.setText("正在登录");
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
+				case ThreadListFragment.STAGE_GET_WEBPAGE:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
+					mTipBar.setText(pageStr + "正在获取页面");
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
+				case ThreadListFragment.STAGE_PARSE:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
+					mTipBar.setText(pageStr + "正在解析页面");
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
+				case ThreadListFragment.STAGE_PREFETCH:
+					mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
+					mTipBar.setText("正在预读下一页");
+					mTipBar.setVisibility(View.VISIBLE);
+					break;
 			}
 			return false;
 		}
 	}
 
 	private void showOrLoadPage() {
-		getActivity().getActionBar().setTitle("("+
-				String.valueOf(mCurrentPage)+"/"+String.valueOf(mMaxPage)
-				+")"+mTitle);
+		getActivity().getActionBar().setTitle("(" +
+				String.valueOf(mCurrentPage) + "/" + String.valueOf(mMaxPage)
+				+ ")" + mTitle);
 
 		if (mCache.get(mCurrentPage) != null) {
 			mAdapter.clear();
 			mAdapter.addAll(mCache.get(mCurrentPage).getAll());
 			mAdapter.notifyDataSetChanged();
 			mDetailListView.setSelection(0);
+
+			//if current page loaded from cache then onLoadFinished will not be called
+			prefetchNextPage();
+
 		} else {
 			Bundle b = new Bundle();
 			b.putInt(LOADER_PAGE_KEY, mCurrentPage);
 			getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
-		}
-
-		// Prefetch
-		if (HiSettingsHelper.getInstance().isPreFetch()
-				&& mCache.get(mCurrentPage+1) == null
-				&& mCurrentPage < mMaxPage) {
-			Bundle b = new Bundle();
-			b.putInt(LOADER_PAGE_KEY, mCurrentPage+1);
-			getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
-		}
-
-		if (mCurrentPage == 1) {
-			mDetailListView.setPullRefreshEnable(false);
-		} else {
-			mDetailListView.setPullRefreshEnable(true);
-		}
-		if (mCurrentPage == mMaxPage) {
-			mDetailListView.setPullLoadEnable(false);
-		} else {
-			mDetailListView.setPullLoadEnable(true);
 		}
 
 		if (mOffsetInPage != -1) {
@@ -673,7 +748,7 @@ public class ThreadDetailFragment extends Fragment {
 		public void onClick(View arg0) {
 			String uid = (String) arg0.getTag(R.id.avatar_tag_uid);
 			String username = (String) arg0.getTag(R.id.avatar_tag_username);
-			Log.v(LOG_TAG, "AvatarOnClickListener.onClick, username="+username+" uid="+uid);
+			Log.v(LOG_TAG, "AvatarOnClickListener.onClick, username=" + username + " uid=" + uid);
 
 			Bundle arguments = new Bundle();
 			arguments.putString(UserinfoFragment.ARG_UID, uid);
@@ -684,45 +759,45 @@ public class ThreadDetailFragment extends Fragment {
 			setHasOptionsMenu(false);
 			if (HiSettingsHelper.getInstance().getIsLandscape()) {
 				getFragmentManager().beginTransaction()
-				.replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-				.addToBackStack(ThreadDetailFragment.class.getName())
-				.commit();
+						.replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
+						.addToBackStack(ThreadDetailFragment.class.getName())
+						.commit();
 			} else {
 				if (HiSettingsHelper.getInstance().isEinkOptimization()) {
 					getFragmentManager().beginTransaction()
-					.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-					.addToBackStack(ThreadDetailFragment.class.getName())
-					.commit();
+							.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+							.addToBackStack(ThreadDetailFragment.class.getName())
+							.commit();
 				} else {
 					getFragmentManager().beginTransaction()
-					.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-					.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-					.addToBackStack(ThreadDetailFragment.class.getName())
-					.commit();
+							.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+							.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+							.addToBackStack(ThreadDetailFragment.class.getName())
+							.commit();
 				}
 			}
 		}
 	}
 
 
-    AvatarUrlUpdated mCallback;
+	AvatarUrlUpdated mCallback;
 
-    public interface AvatarUrlUpdated {
-        public void onAvatarUrlUpdated();
-    }
+	public interface AvatarUrlUpdated {
+		public void onAvatarUrlUpdated();
+	}
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
 
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (AvatarUrlUpdated) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement TextClicked");
-        }
-    }
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try {
+			mCallback = (AvatarUrlUpdated) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement TextClicked");
+		}
+	}
 
 }
