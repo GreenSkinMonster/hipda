@@ -4,9 +4,13 @@ import android.content.Context;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.integration.volley.VolleyUrlLoader;
 import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
+import com.bumptech.glide.load.model.GlideUrl;
+
+import java.io.InputStream;
 
 public class GlideHelper {
 
@@ -21,6 +25,8 @@ public class GlideHelper {
 			gb.setDiskCache(dlw);
 
 			Glide.setup(gb);
+
+			Glide.get(context).register(GlideUrl.class, InputStream.class, new VolleyUrlLoader.Factory(context));
 		}
 	}
 
