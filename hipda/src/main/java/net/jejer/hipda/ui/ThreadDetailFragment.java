@@ -455,16 +455,7 @@ public class ThreadDetailFragment extends Fragment {
 			//prefetch next page when current page is done
 			prefetchNextPage();
 
-			if (mCurrentPage == 1) {
-				mDetailListView.setPullRefreshEnable(false);
-			} else {
-				mDetailListView.setPullRefreshEnable(true);
-			}
-			if (mCurrentPage == mMaxPage) {
-				mDetailListView.setPullLoadEnable(false);
-			} else {
-				mDetailListView.setPullLoadEnable(true);
-			}
+			setPullLoadStatus();
 
 			//try to refresh avatar views on thread list
 			//but not always work, need a better way
@@ -491,6 +482,19 @@ public class ThreadDetailFragment extends Fragment {
 			Bundle b = new Bundle();
 			b.putInt(LOADER_PAGE_KEY, mCurrentPage + 1);
 			getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
+		}
+	}
+
+	private void setPullLoadStatus() {
+		if (mCurrentPage == 1) {
+			mDetailListView.setPullRefreshEnable(false);
+		} else {
+			mDetailListView.setPullRefreshEnable(true);
+		}
+		if (mCurrentPage == mMaxPage) {
+			mDetailListView.setPullLoadEnable(false);
+		} else {
+			mDetailListView.setPullLoadEnable(true);
 		}
 	}
 
@@ -715,6 +719,8 @@ public class ThreadDetailFragment extends Fragment {
 			b.putInt(LOADER_PAGE_KEY, mCurrentPage);
 			getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
 		}
+
+		setPullLoadStatus();
 
 		if (mOffsetInPage != -1) {
 			mDetailListView.setSelection(mOffsetInPage + mDetailListView.getHeaderViewsCount());
