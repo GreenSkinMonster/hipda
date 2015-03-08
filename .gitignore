@@ -2,7 +2,9 @@
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
-/.idea/dictionaries 
+/.idea/dictionaries
+/.idea/codeStyleSettings.xml 
+/.navigation
 .DS_Store
 /build
 
