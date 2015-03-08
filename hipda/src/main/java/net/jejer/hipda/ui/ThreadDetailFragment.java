@@ -128,6 +128,7 @@ public class ThreadDetailFragment extends Fragment {
 
 				}
 				mDetailListView.stopRefresh();
+				mOffsetInPage = mCurrentPage * mMaxPostInPage - 1;
 				showOrLoadPage();
 			}
 
