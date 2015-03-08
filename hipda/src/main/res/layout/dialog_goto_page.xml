@@ -8,13 +8,15 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:layout_margin="4dp">
 
         <SeekBar
             android:id="@+id/sb_page"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginTop="8dp"
             android:layout_weight="0"/>
 
     </LinearLayout>
@@ -22,35 +24,40 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp">
+        android:padding="4dp"
+        android:layout_margin="4dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_fisrt_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="@string/action_first"/>
+            android:src="@drawable/ic_action_first"
+            android:layout_margin="4dp"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_previous_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/btn_fisrt_page"
-            android:text="@string/action_previous"/>
+            android:src="@drawable/ic_action_previous"
+            android:layout_margin="4dp"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_next_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/btn_last_page"
-            android:text="@string/action_next"/>
+            android:src="@drawable/ic_action_next"
+            android:layout_margin="4dp"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_last_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="@string/action_last"/>
+            android:src="@drawable/ic_action_last"
+            android:layout_margin="4dp"/>
 
     </RelativeLayout>
 

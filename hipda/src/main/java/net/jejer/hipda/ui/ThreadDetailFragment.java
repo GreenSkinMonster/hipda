@@ -510,10 +510,10 @@ public class ThreadDetailFragment extends Fragment {
 		mGoToPage = mCurrentPage;
 		final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View viewlayout = inflater.inflate(R.layout.dialog_goto_page, null);
-		final Button btnFirstPage = (Button) viewlayout.findViewById(R.id.btn_fisrt_page);
-		final Button btnLastPage = (Button) viewlayout.findViewById(R.id.btn_last_page);
-		final Button btnNextPage = (Button) viewlayout.findViewById(R.id.btn_next_page);
-		final Button btnPreviousPage = (Button) viewlayout.findViewById(R.id.btn_previous_page);
+		final ImageButton btnFirstPage = (ImageButton) viewlayout.findViewById(R.id.btn_fisrt_page);
+		final ImageButton btnLastPage = (ImageButton) viewlayout.findViewById(R.id.btn_last_page);
+		final ImageButton btnNextPage = (ImageButton) viewlayout.findViewById(R.id.btn_next_page);
+		final ImageButton btnPreviousPage = (ImageButton) viewlayout.findViewById(R.id.btn_previous_page);
 		final SeekBar sbGotoPage = (SeekBar) viewlayout.findViewById(R.id.sb_page);
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		final AlertDialog dialog;
@@ -556,7 +556,7 @@ public class ThreadDetailFragment extends Fragment {
 		btnFirstPage.setOnClickListener(new Button.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				mGoToPage = 0;
+				mGoToPage = 1;
 				sbGotoPage.setProgress(mGoToPage);
 				mCurrentPage = mGoToPage;
 				showOrLoadPage();
