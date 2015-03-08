@@ -66,6 +66,7 @@ public class ThreadDetailFragment extends Fragment {
 	private int mMaxPostInPage = 1;    // for goto floor, user can configure max post per page
 	private int mOffsetInPage = -1;    // for goto floor
 	private boolean mInloading = false;
+	private boolean mPrefetching = false;
 	private TextView mReplyTextTv;
 	private ImageButton mPostReplyIb;
 	private View quickReply;
@@ -311,7 +312,13 @@ public class ThreadDetailFragment extends Fragment {
 	private class OnScrollCallback implements AbsListView.OnScrollListener {
 
 		@Override
-		public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+		public void onScroll(AbsListView view, int firstVisibleItem,
+							 int visibleItemCount, int totalItemCount) {
+			//only after user scroll part of page, load next page
+			if(!mInloading && !mPrefetching && firstVisibleItem > Math.round(0.4f * mMaxPostInPage)){
+				mPrefetching = true;
+				prefetchNextPage();
+			}
 		}
 
 		@Override
@@ -379,6 +386,7 @@ public class ThreadDetailFragment extends Fragment {
 			Log.v(LOG_TAG, "onLoadFinished");
 
 			mInloading = false;
+			mPrefetching = false;
 
 			if (details == null) {
 				// May be login error, error message should be populated in login async task
@@ -423,38 +431,6 @@ public class ThreadDetailFragment extends Fragment {
 				mMaxPostInPage = details.getCount();
 			}
 
-			//			Message msgDone = Message.obtain();
-			//			msgDone.what = ThreadListFragment.STAGE_DONE;
-			//			Bundle b = new Bundle();
-			//			b.putInt(ThreadDetailFragment.LOADER_PAGE_KEY, details.getPage());
-			//			msgDone.setData(b);
-			//			mMsgHandler.sendMessage(msgDone);
-
-			//when press back, hide quickreply first
-//			if (getView() != null) {
-//				getView().setFocusableInTouchMode(true);
-//				getView().requestFocus();
-//				getView().setOnKeyListener(new View.OnKeyListener() {
-//					@Override
-//					public boolean onKey(View v, int keyCode, KeyEvent event) {
-//						if (event.getAction() == KeyEvent.ACTION_DOWN) {
-//							if (keyCode == KeyEvent.KEYCODE_BACK) {
-//								if (quickReply.getVisibility() == View.VISIBLE) {
-//									quickReply.setVisibility(View.INVISIBLE);
-//									return true;
-//								}
-//								return false;
-//							}
-//						}
-//						return false;
-//					}
-//				});
-//			}
-
-
-			//prefetch next page when current page is done
-			prefetchNextPage();
-
 			setPullLoadStatus();
 
 			//try to refresh avatar views on thread list
@@ -468,6 +444,7 @@ public class ThreadDetailFragment extends Fragment {
 			//Log.v(LOG_TAG, "onLoaderReset");
 
 			mInloading = false;
+			mPrefetching = false;
 			mTipBar.setVisibility(View.INVISIBLE);
 		}
 
@@ -711,8 +688,8 @@ public class ThreadDetailFragment extends Fragment {
 			mAdapter.notifyDataSetChanged();
 			mDetailListView.setSelection(0);
 
-			//if current page loaded from cache then onLoadFinished will not be called
-			prefetchNextPage();
+			//if current page loaded from cache, set prefetch flag for next page
+			mPrefetching = false;
 
 		} else {
 			Bundle b = new Bundle();
