@@ -51,6 +51,7 @@ import java.util.List;
 public class ThreadDetailFragment extends Fragment {
 	public static final String ARG_TID_KEY = "tid";
 	public static final String ARG_TITLE_KEY = "title";
+	private final int LAST_FLOOR_OFFSET =Integer.MIN_VALUE;
 
 	private final String LOG_TAG = getClass().getSimpleName();
 
@@ -599,6 +600,7 @@ public class ThreadDetailFragment extends Fragment {
 			public void onClick(View view) {
 				sbGotoPage.setProgress(mMaxPage - 1);
 				mCurrentPage = mGoToPage;
+				mOffsetInPage = LAST_FLOOR_OFFSET;
 				showOrLoadPage();
 				dialog.dismiss();
 			}
@@ -717,7 +719,13 @@ public class ThreadDetailFragment extends Fragment {
 			mAdapter.clear();
 			mAdapter.addAll(mCache.get(mCurrentPage).getAll());
 			mAdapter.notifyDataSetChanged();
-			mDetailListView.setSelection(0);
+
+			if (mOffsetInPage == LAST_FLOOR_OFFSET) {
+				mOffsetInPage = -1;
+				mDetailListView.setSelection(mAdapter.getCount() - 1);
+			} else {
+				mDetailListView.setSelection(0);
+			}
 
 			//if current page loaded from cache, set prefetch flag for next page
 			mPrefetching = false;
@@ -730,7 +738,7 @@ public class ThreadDetailFragment extends Fragment {
 
 		setPullLoadStatus();
 
-		if (mOffsetInPage != -1) {
+		if (mOffsetInPage != -1 && mOffsetInPage != LAST_FLOOR_OFFSET) {
 			mDetailListView.setSelection(mOffsetInPage + mDetailListView.getHeaderViewsCount());
 			mOffsetInPage = -1;
 		}
