@@ -15,11 +15,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -144,6 +146,32 @@ public class ThreadDetailFragment extends Fragment {
 				showOrLoadPage();
 			}
 		});
+
+
+		final GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
+			@Override
+			public boolean onDoubleTap(MotionEvent e) {
+				if(mDetailListView.isFastScrollEnabled()) {
+					mDetailListView.setFastScrollEnabled(false);
+					mDetailListView.setFastScrollAlwaysVisible(false);
+				}else{
+					mDetailListView.setFastScrollEnabled(true);
+					mDetailListView.setFastScrollAlwaysVisible(true);
+				}
+				return true;
+			}
+		};
+
+		final GestureDetector detector = new GestureDetector(mCtx,listener);
+		detector.setOnDoubleTapListener(listener);
+
+		mDetailListView.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				return detector.onTouchEvent(event);
+			}
+		});
+
 
 		quickReply = view.findViewById(R.id.inc_quick_reply);
 		mReplyTextTv = (TextView) quickReply.findViewById(R.id.tv_reply_text);
@@ -310,13 +338,15 @@ public class ThreadDetailFragment extends Fragment {
 		getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
 	}
 
+
+
 	private class OnScrollCallback implements AbsListView.OnScrollListener {
 
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 							 int visibleItemCount, int totalItemCount) {
 			//only after user scroll part of page, load next page
-			if(!mInloading && !mPrefetching && firstVisibleItem > Math.round(0.4f * mMaxPostInPage)){
+			if(!mInloading && !mPrefetching && firstVisibleItem > Math.round(0.2f * mMaxPostInPage)){
 				mPrefetching = true;
 				prefetchNextPage();
 			}
