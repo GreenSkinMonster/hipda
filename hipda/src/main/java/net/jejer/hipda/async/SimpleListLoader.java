@@ -48,7 +48,6 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 	public SimpleListBean loadInBackground() {
 		//Log.v(LOG_TAG, "loadInBackground Enter");
 
-		Document doc = null;
 		int count = 0;
 		boolean getOk = false;
 		do {
@@ -60,23 +59,25 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 				} catch (InterruptedException e) {
 				}
 			}
-			//Log.v(LOG_TAG, "loadInBackground got notified");
+
 			if (mRsp != null) {
-				doc = Jsoup.parse(mRsp);
-				if (!LoginAsyncTask.checkLoggedin(null, doc)) {
-					new LoginAsyncTask(mCtx, null).doInBackground();
+				if (!LoginHelper.checkLoggedin(mCtx, mRsp)) {
+					int status = new LoginHelper(mCtx, null).login();
+					if (status > LoginHelper.FAIL_RETRY) {
+						break;
+					}
 				} else {
 					getOk = true;
 				}
 			}
 			count++;
-			//Log.v(LOG_TAG, "try count = " + String.valueOf(count));
 		} while (!getOk && count < 3);
 
 		if (!getOk) {
 			return null;
 		}
 
+		Document doc = Jsoup.parse(mRsp);
 		return HiParser.parseSimpleList(mCtx, mType, doc);
 	}
 

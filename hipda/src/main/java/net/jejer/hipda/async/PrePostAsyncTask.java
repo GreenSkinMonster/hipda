@@ -1,10 +1,12 @@
 package net.jejer.hipda.async;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.net.http.AndroidHttpClient;
+import android.os.AsyncTask;
+
+import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.HttpUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -18,12 +20,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.HttpUtils;
-import android.content.Context;
-import android.net.http.AndroidHttpClient;
-import android.os.AsyncTask;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PrePostAsyncTask extends AsyncTask< String, Void, Map<String, List<String>> > {
 
@@ -67,13 +68,14 @@ public class PrePostAsyncTask extends AsyncTask< String, Void, Map<String, List<
 		String rsp_str;
 		Boolean rspOk = false;
 		int retry = 0;
-		Document doc = null;
 		do {
 			rsp_str = getReplyPage(client, localContext, url);
 			if (rsp_str != null) {
-				doc = Jsoup.parse(rsp_str);
-				if (!LoginAsyncTask.checkLoggedin(null, doc)) {
-					new LoginAsyncTask(mCtx, null).doInBackground();
+				if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
+					int status = new LoginHelper(mCtx, null).login();
+					if (status > LoginHelper.FAIL_RETRY) {
+						break;
+					}
 				} else {
 					rspOk = true;
 				}
@@ -87,6 +89,7 @@ public class PrePostAsyncTask extends AsyncTask< String, Void, Map<String, List<
 			return null;
 		}
 
+		Document doc = Jsoup.parse(rsp_str);
 		return parseRsp(doc);
 	}
 

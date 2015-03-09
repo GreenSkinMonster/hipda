@@ -48,7 +48,6 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 			return null;
 		}
 
-		Document doc = null;
 		int try_count = 0;
 		boolean fetch_done = false;
 		do {
@@ -56,15 +55,16 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 			synchronized (mLocker) {
 				try {
 					mLocker.wait();
-				} catch (InterruptedException e) {
+				} catch (InterruptedException ignored) {
 				}
 			}
-			//Log.v(LOG_TAG, "loadInBackground got notified");
 
 			if (mRsp != null) {
-				doc = Jsoup.parse(mRsp);
-				if (!LoginAsyncTask.checkLoggedin(mHandler, doc)) {
-					new LoginAsyncTask(mCtx, mHandler).doInBackground();
+				if (!LoginHelper.checkLoggedin(mCtx, mRsp)) {
+					int status = new LoginHelper(mCtx, mHandler).login();
+					if (status > LoginHelper.FAIL_RETRY) {
+						break;
+					}
 				} else {
 					fetch_done = true;
 				}
@@ -77,6 +77,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 			return null;
 		}
 
+		Document doc = Jsoup.parse(mRsp);
 		return HiParserThreadDetail.parse(mCtx, mHandler, mPage, doc);
 	}
 

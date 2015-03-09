@@ -1,9 +1,9 @@
 package net.jejer.hipda.async;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
+import android.content.Context;
+import android.net.http.AndroidHttpClient;
+import android.os.AsyncTask;
+import android.widget.Toast;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.HiUtils;
@@ -23,10 +23,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import android.content.Context;
-import android.net.http.AndroidHttpClient;
-import android.os.AsyncTask;
-import android.widget.Toast;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 	private Context mCtx;
@@ -55,17 +55,20 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 		String rsp_str;
 		Boolean done = false;
 		int retry = 0;
-		Document doc = null;
 		do {
-			rsp_str = getPostPage(client, localContext, HiUtils.SMSPreparePostUrl+mUid);
-			doc = Jsoup.parse(rsp_str);
-			if (!LoginAsyncTask.checkLoggedin(null, doc)) {
-				new LoginAsyncTask(mCtx, null).doInBackground();
+			rsp_str = getPostPage(client, localContext, HiUtils.SMSPreparePostUrl + mUid);
+			if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
+				int status = new LoginHelper(mCtx, null).login();
+				if (status > LoginHelper.FAIL_RETRY) {
+					break;
+				}
 			} else {
 				done = true;
 			}
 			retry++;
 		} while (!done && retry < 3);
+
+		Document doc =  Jsoup.parse(rsp_str);
 		Elements formhashES = doc.select("input#formhash");
 		if (formhashES.size() == 0) {
 			mResult = "SMS send fail, can not get formhash.";
