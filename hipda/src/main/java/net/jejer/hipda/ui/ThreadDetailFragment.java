@@ -51,7 +51,7 @@ import java.util.List;
 public class ThreadDetailFragment extends Fragment {
 	public static final String ARG_TID_KEY = "tid";
 	public static final String ARG_TITLE_KEY = "title";
-	private final int LAST_FLOOR_OFFSET =Integer.MIN_VALUE;
+	private final int LAST_FLOOR_OFFSET = Integer.MIN_VALUE;
 
 	private final String LOG_TAG = getClass().getSimpleName();
 
@@ -127,12 +127,11 @@ public class ThreadDetailFragment extends Fragment {
 				//Previous Page
 				if (mCurrentPage > 1) {
 					mCurrentPage--;
-					//getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
-
 				}
 				mDetailListView.stopRefresh();
-				mOffsetInPage = mCurrentPage * mMaxPostInPage - 1;
+				mOffsetInPage = LAST_FLOOR_OFFSET;
 				showOrLoadPage();
+				quickReply.setVisibility(View.INVISIBLE);
 			}
 
 			@Override
@@ -140,8 +139,6 @@ public class ThreadDetailFragment extends Fragment {
 				//Next Page
 				if (mCurrentPage < mMaxPage) {
 					mCurrentPage++;
-					//getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
-
 				}
 				mDetailListView.stopLoadMore();
 				showOrLoadPage();
@@ -152,10 +149,10 @@ public class ThreadDetailFragment extends Fragment {
 		final GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
 			@Override
 			public boolean onDoubleTap(MotionEvent e) {
-				if(mDetailListView.isFastScrollEnabled()) {
+				if (mDetailListView.isFastScrollEnabled()) {
 					mDetailListView.setFastScrollEnabled(false);
 					mDetailListView.setFastScrollAlwaysVisible(false);
-				}else{
+				} else {
 					mDetailListView.setFastScrollEnabled(true);
 					mDetailListView.setFastScrollAlwaysVisible(true);
 				}
@@ -163,7 +160,7 @@ public class ThreadDetailFragment extends Fragment {
 			}
 		};
 
-		final GestureDetector detector = new GestureDetector(mCtx,listener);
+		final GestureDetector detector = new GestureDetector(mCtx, listener);
 		detector.setOnDoubleTapListener(listener);
 
 		mDetailListView.setOnTouchListener(new View.OnTouchListener() {
@@ -340,14 +337,13 @@ public class ThreadDetailFragment extends Fragment {
 	}
 
 
-
 	private class OnScrollCallback implements AbsListView.OnScrollListener {
 
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 							 int visibleItemCount, int totalItemCount) {
 			//only after user scroll part of page, load next page
-			if(!mInloading && !mPrefetching && firstVisibleItem > Math.round(0.2f * mMaxPostInPage)){
+			if (!mInloading && !mPrefetching && firstVisibleItem > Math.round(0.2f * mMaxPostInPage)) {
 				mPrefetching = true;
 				prefetchNextPage();
 			}
@@ -549,7 +545,7 @@ public class ThreadDetailFragment extends Fragment {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		final AlertDialog dialog;
 
-		builder.setTitle("转到第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
+		builder.setTitle("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
 		builder.setView(viewlayout);
 
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -572,7 +568,7 @@ public class ThreadDetailFragment extends Fragment {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				mGoToPage = progress + 1; //start from 0
-				dialog.setTitle("转到第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
+				dialog.setTitle("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
 			}
 
 			@Override
@@ -587,9 +583,7 @@ public class ThreadDetailFragment extends Fragment {
 		btnFirstPage.setOnClickListener(new Button.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				mGoToPage = 1;
-				sbGotoPage.setProgress(mGoToPage);
-				mCurrentPage = mGoToPage;
+				mCurrentPage = 1;
 				showOrLoadPage();
 				dialog.dismiss();
 			}
@@ -598,8 +592,7 @@ public class ThreadDetailFragment extends Fragment {
 		btnLastPage.setOnClickListener(new Button.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				sbGotoPage.setProgress(mMaxPage - 1);
-				mCurrentPage = mGoToPage;
+				mCurrentPage = mMaxPage;
 				mOffsetInPage = LAST_FLOOR_OFFSET;
 				showOrLoadPage();
 				dialog.dismiss();
@@ -610,10 +603,9 @@ public class ThreadDetailFragment extends Fragment {
 			@Override
 			public void onClick(View view) {
 				if (mCurrentPage < mMaxPage) {
-					sbGotoPage.setProgress(mCurrentPage);
+					mCurrentPage++;
+					showOrLoadPage();
 				}
-				mCurrentPage = mGoToPage;
-				showOrLoadPage();
 				dialog.dismiss();
 			}
 		});
@@ -622,10 +614,9 @@ public class ThreadDetailFragment extends Fragment {
 			@Override
 			public void onClick(View view) {
 				if (mCurrentPage > 1) {
-					sbGotoPage.setProgress(mCurrentPage - 2);
+					mCurrentPage--;
+					showOrLoadPage();
 				}
-				mCurrentPage = mGoToPage;
-				showOrLoadPage();
 				dialog.dismiss();
 			}
 		});
@@ -721,8 +712,11 @@ public class ThreadDetailFragment extends Fragment {
 			mAdapter.notifyDataSetChanged();
 
 			if (mOffsetInPage == LAST_FLOOR_OFFSET) {
+				mDetailListView.setSelection(mAdapter.getCount() - 1 + mDetailListView.getHeaderViewsCount());
 				mOffsetInPage = -1;
-				mDetailListView.setSelection(mAdapter.getCount() - 1);
+			} else if (mOffsetInPage != -1) {
+				mDetailListView.setSelection(mOffsetInPage + mDetailListView.getHeaderViewsCount());
+				mOffsetInPage = -1;
 			} else {
 				mDetailListView.setSelection(0);
 			}
@@ -730,18 +724,14 @@ public class ThreadDetailFragment extends Fragment {
 			//if current page loaded from cache, set prefetch flag for next page
 			mPrefetching = false;
 
+			setPullLoadStatus();
+
 		} else {
 			Bundle b = new Bundle();
 			b.putInt(LOADER_PAGE_KEY, mCurrentPage);
 			getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
 		}
 
-		setPullLoadStatus();
-
-		if (mOffsetInPage != -1 && mOffsetInPage != LAST_FLOOR_OFFSET) {
-			mDetailListView.setSelection(mOffsetInPage + mDetailListView.getHeaderViewsCount());
-			mOffsetInPage = -1;
-		}
 	}
 
 	private void addAuthorPosts(DetailListBean details) {
