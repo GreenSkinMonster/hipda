@@ -106,6 +106,7 @@ public class UpdateHelper {
 		public void onErrorResponse(VolleyError error) {
 			Log.e(LOG_TAG, error.toString());
 			if (!mSilent) {
+				pd.setIndeterminateDrawable(null);
 				pd.setMessage("检查新版本时发生错误");
 				dismiss();
 			}
