@@ -760,12 +760,11 @@ public class ThreadDetailFragment extends Fragment {
 		}
 	}
 
-	class AvatarOnClickListener implements View.OnClickListener {
+	class AvatarOnClickListener extends OnSingleClickListener {
 		@Override
-		public void onClick(View arg0) {
+		public void onSingleClick(View arg0) {
 			String uid = (String) arg0.getTag(R.id.avatar_tag_uid);
 			String username = (String) arg0.getTag(R.id.avatar_tag_username);
-			Log.v(LOG_TAG, "AvatarOnClickListener.onClick, username=" + username + " uid=" + uid);
 
 			Bundle arguments = new Bundle();
 			arguments.putString(UserinfoFragment.ARG_UID, uid);

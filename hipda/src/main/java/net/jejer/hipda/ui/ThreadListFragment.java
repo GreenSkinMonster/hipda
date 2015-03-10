@@ -258,15 +258,11 @@ public class ThreadListFragment extends Fragment {
 
 	}
 
-	private class OnItemClickCallback implements AdapterView.OnItemClickListener {
+	private class OnItemClickCallback extends OnViewItemSingleClickListener {
 
 		@Override
-		public void onItemClick(AdapterView<?> listView, View itemView, int position,
+		public void onItemSingleClick(AdapterView<?> listView, View itemView, int position,
 								long row) {
-			// TODO Auto-generated method stub
-
-			//Log.v(LOG_TAG, "onItemClick");
-
 			ThreadBean thread = mThreadListAdapter.getItem(position);
 
 			setHasOptionsMenu(false);
