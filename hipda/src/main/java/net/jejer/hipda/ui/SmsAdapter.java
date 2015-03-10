@@ -8,11 +8,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.glide.GlideHelper;
 
 import java.util.ArrayList;
 
@@ -48,13 +47,7 @@ public class SmsAdapter extends ArrayAdapter<SimpleListItemBean> {
 
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
 			holder.iv_avatar.setVisibility(View.VISIBLE);
-			Glide.with(getContext())
-					.load(item.getAvatarUrl())
-					.centerCrop()
-//					.placeholder(R.drawable.google_user)
-					.error(R.drawable.google_user)
-					.crossFade()
-					.into(holder.iv_avatar);
+			GlideHelper.loadAvatar(getContext(), holder.iv_avatar, item.getAvatarUrl());
 		} else {
 			holder.iv_avatar.setVisibility(View.GONE);
 		}

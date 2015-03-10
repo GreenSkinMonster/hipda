@@ -9,12 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.cache.AvatarUrlCache;
+import net.jejer.hipda.glide.GlideHelper;
 
 import java.util.List;
 
@@ -71,19 +70,13 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
 			String avatarUrl = item.getAvatarUrl();
-			if(TextUtils.isEmpty(avatarUrl)){
+			if (TextUtils.isEmpty(avatarUrl)) {
 				avatarUrl = AvatarUrlCache.getInstance().get(item.getId());
-			}else{
-				avatarUrl = avatarUrl.replaceAll("small","middle");
+			} else {
+				avatarUrl = avatarUrl.replaceAll("small", "middle");
 			}
 			holder.iv_item_indicator.setVisibility(View.VISIBLE);
-			Glide.with(getContext())
-					.load(avatarUrl)
-					.centerCrop()
-					.placeholder(R.drawable.google_user)
-					.error(R.drawable.google_user)
-					.crossFade()
-					.into(holder.iv_item_indicator);
+			GlideHelper.loadAvatar(getContext(), holder.iv_item_indicator, avatarUrl);
 		} else {
 			holder.iv_item_indicator.setVisibility(View.GONE);
 		}

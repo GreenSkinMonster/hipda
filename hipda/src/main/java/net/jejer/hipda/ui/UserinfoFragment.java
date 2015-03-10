@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.bumptech.glide.Glide;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.HiStringRequest;
@@ -28,6 +27,7 @@ import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.UserInfoBean;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
 
@@ -128,12 +128,7 @@ public class UserinfoFragment extends Fragment {
 			if (info != null) {
 				if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
 					mAvatarView.setVisibility(View.VISIBLE);
-					Glide.with(getActivity())
-							.load(info.getmAvatarUrl())
-							.centerCrop()
-							.error(R.drawable.google_user)
-							.crossFade()
-							.into(mAvatarView);
+					GlideHelper.loadAvatar(getActivity(), mAvatarView, info.getmAvatarUrl());
 				} else {
 					mAvatarView.setVisibility(View.GONE);
 				}

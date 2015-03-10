@@ -26,6 +26,7 @@ import net.jejer.hipda.bean.ContentQuote;
 import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideScaleViewTarget;
 import net.jejer.hipda.utils.HiUtils;
 
@@ -80,19 +81,17 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
 			holder.avatar.setVisibility(View.VISIBLE);
-			Glide.with(getContext())
-					.load(detail.getAvatarUrl())
-					.centerCrop()
-//					.placeholder(R.drawable.google_user)
-					.error(R.drawable.google_user)
-					.crossFade()
-					.into(holder.avatar);
+			GlideHelper.loadAvatar(getContext(), holder.avatar, detail.getAvatarUrl());
 		} else {
 			holder.avatar.setVisibility(View.GONE);
 		}
 		holder.avatar.setTag(R.id.avatar_tag_uid, detail.getUid());
 		holder.avatar.setTag(R.id.avatar_tag_username, detail.getAuthor());
 		holder.avatar.setOnClickListener(mAvatarListener);
+
+		holder.author.setTag(R.id.avatar_tag_uid, detail.getUid());
+		holder.author.setTag(R.id.avatar_tag_username, detail.getAuthor());
+		holder.author.setOnClickListener(mAvatarListener);
 
 		LinearLayout contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
 		contentView.removeAllViews();
@@ -121,15 +120,15 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				contentView.addView(giv);
 				giv.setUrl(imageUrl);
 
-				int maxViewWidth = 1080;
-				int lowerImageWidth = 320;
-
-				ThreadDetailFragment fragment = (ThreadDetailFragment) mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
-				if (fragment != null && fragment.getView() != null) {
-					maxViewWidth = fragment.getView().getWidth();
-				}
 
 				if (HiUtils.isAutoLoadImg(mCtx)) {
+					int maxViewWidth = 1080;
+					int lowerImageWidth = 320;
+
+					ThreadDetailFragment fragment = (ThreadDetailFragment) mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
+					if (fragment != null && fragment.getView() != null) {
+						maxViewWidth = fragment.getView().getWidth();
+					}
 					Glide.with(getContext())
 							.load(imageUrl)
 							.diskCacheStrategy(DiskCacheStrategy.ALL)

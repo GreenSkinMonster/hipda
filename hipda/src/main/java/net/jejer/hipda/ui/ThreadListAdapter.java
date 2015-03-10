@@ -8,12 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.cache.AvatarUrlCache;
+import net.jejer.hipda.glide.GlideHelper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -75,13 +74,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
 			holder.avatar.setVisibility(View.VISIBLE);
-			Glide.with(getContext())
-					.load(thread.getAvatarUrl())
-					.centerCrop()
-					.placeholder(R.drawable.google_user)
-					.error(R.drawable.google_user)
-					.crossFade()
-					.into(holder.avatar);
+			GlideHelper.loadAvatar(getContext(), holder.avatar, thread.getAvatarUrl());
 		} else {
 			holder.avatar.setVisibility(View.GONE);
 		}
@@ -116,13 +109,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 					ViewHolder holder = holders.get(thread.getTid());
 					if (holder != null
 							&& thread.getAuthorId().equals(holder.avatar.getTag(R.id.avatar_tag_uid))) {
-						Glide.with(getContext())
-								.load(thread.getAvatarUrl())
-								.centerCrop()
-								.placeholder(R.drawable.google_user)
-								.error(R.drawable.google_user)
-								.crossFade()
-								.into(holder.avatar);
+						GlideHelper.loadAvatar(getContext(), holder.avatar, thread.getAvatarUrl());
 						thread.setAvatarUrl(AvatarUrlCache.getInstance().get(thread.getAuthorId()));
 					}
 				}
