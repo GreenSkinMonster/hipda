@@ -9,6 +9,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.bean.HiSettingsHelper;
 
 public class AboutDialogPreference extends DialogPreference {
 
@@ -25,13 +26,10 @@ public class AboutDialogPreference extends DialogPreference {
 
 	@Override
 	protected void onBindDialogView(View view) {
-		String versionName = "----";
-		try {
-			versionName = view.getContext().getPackageManager().getPackageInfo(view.getContext().getPackageName(), 0).versionName;
-		} catch (Exception e) {
-		}
+		String version = HiSettingsHelper.getInstance().getAppVersion();
+
 		TextView versionView = (TextView) view.findViewById(R.id.version);
-		versionView.setText(versionName);
+		versionView.setText(version);
 
 		WebView wv = (WebView) view.findViewById(R.id.credits);
 		wv.loadUrl("file:///android_asset/html/about.html");

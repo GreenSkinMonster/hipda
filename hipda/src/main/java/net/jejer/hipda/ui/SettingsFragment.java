@@ -11,7 +11,12 @@ import android.preference.SwitchPreference;
 import android.util.Log;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class SettingsFragment extends PreferenceFragment {
 	private final String LOG_TAG = getClass().getSimpleName();
@@ -32,6 +37,20 @@ public class SettingsFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_BLANKLIST_USERNAMES));
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_POST_ADJ));
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
+
+		//bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_LAST_UPDATE_CHECK));
+
+		Preference dialogPref = findPreference(HiSettingsHelper.PERF_ABOUT);
+		dialogPref.setSummary(HiSettingsHelper.getInstance().getAppVersion());
+
+		Preference checkPreference = findPreference(HiSettingsHelper.PERF_LAST_UPDATE_CHECK);
+		checkPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			public boolean onPreferenceClick(Preference preference) {
+				new UpdateHelper(getView().getContext(), false).check();
+				return true;
+			}
+		});
+
 	}
 
 	@Override
@@ -56,7 +75,13 @@ public class SettingsFragment extends PreferenceFragment {
 
 			Log.v("onPreferenceChange", "onPreferenceChange");
 			String stringValue = value.toString();
-			if (preference instanceof ListPreference) {
+			if (HiSettingsHelper.PERF_LAST_UPDATE_CHECK.equals(preference.getKey())) {
+				try {
+					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+					preference.setSummary(formatter.format(new Date(Long.parseLong(stringValue))));
+				} catch (Exception ignored) {
+				}
+			} else if (preference instanceof ListPreference) {
 				// For list preferences, look up the correct display value in
 				// the preference's 'entries' list.
 				ListPreference listPreference = (ListPreference) preference;
@@ -83,7 +108,6 @@ public class SettingsFragment extends PreferenceFragment {
 
 		// Trigger the listener immediately with the preference's
 		// current value.
-
 		if (preference instanceof CheckBoxPreference) {
 			sBindPreferenceSummaryToValueListener.onPreferenceChange(
 					preference,

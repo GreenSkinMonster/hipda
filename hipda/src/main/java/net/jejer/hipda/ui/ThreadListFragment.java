@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.ThreadListLoader;
+import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
@@ -308,8 +309,6 @@ public class ThreadListFragment extends Fragment {
 
 		@Override
 		public Loader<ThreadListBean> onCreateLoader(int arg0, Bundle arg1) {
-			// TODO Auto-generated method stub
-
 			return new ThreadListLoader(mCtx, mMsgHandler, mForumId, mPage);
 		}
 
@@ -365,12 +364,16 @@ public class ThreadListFragment extends Fragment {
 			mMsgHandler.sendMessage(msgDone);
 			Message msgClean = Message.obtain();
 			msgClean.what = STAGE_CLEAN;
-			mMsgHandler.sendMessageDelayed(msgClean, 1000 * 1);
+			mMsgHandler.sendMessageDelayed(msgClean, 1000);
+
+			if (HiSettingsHelper.getInstance().isUpdateCheckable()) {
+				new UpdateHelper(mCtx, true).check();
+			}
+
 		}
 
 		@Override
 		public void onLoaderReset(Loader<ThreadListBean> arg0) {
-			// TODO Auto-generated method stub
 			Log.v(LOG_TAG, "onLoaderReset enter");
 
 			mInloading = false;

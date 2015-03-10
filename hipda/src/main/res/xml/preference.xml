@@ -103,7 +103,16 @@
             android:title="@string/pref_title_blanklist"/>
 
         <net.jejer.hipda.ui.AboutDialogPreference
+            android:key="PERF_ABOUT"
             android:title="@string/pref_title_about"/>
+
+        <Preference
+            android:key="PERF_LAST_UPDATE_CHECK"
+            android:selectable="true"
+            android:enabled="true"
+            android:title="@string/pref_title_check_update"
+            android:summary=""/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>

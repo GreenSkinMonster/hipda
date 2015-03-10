@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class HiSettingsHelper {
     /*
      *
@@ -31,6 +35,8 @@ public class HiSettingsHelper {
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
 	public static final String PERF_SCREEN_ORIENTATION = "PERF_SCREEN_ORIENTATION";
 	public static final String PERF_GESTURE_BACK = "PERF_GESTURE_BACK";
+	public static final String PERF_LAST_UPDATE_CHECK = "PERF_LAST_UPDATE_CHECK";
+	public static final String PERF_ABOUT = "PERF_ABOUT";
 
 
     private Context mCtx;
@@ -74,7 +80,18 @@ public class HiSettingsHelper {
     public boolean getIsLandscape() {
         return mIsLandscape;
     }
-    // --------------- THIS IS NOT IN PERF -----------
+
+	private boolean mIsUpdateChecked;
+
+	public boolean isUpdateChecked() {
+		return mIsUpdateChecked;
+	}
+
+	public void setUpdateChecked(boolean updateChecked) {
+		mIsUpdateChecked = updateChecked;
+	}
+
+	// --------------- THIS IS NOT IN PERF -----------
 
 
     private HiSettingsHelper() {
@@ -442,5 +459,39 @@ public class HiSettingsHelper {
 		editor.putBoolean(PERF_GESTURE_BACK, gestureBack).commit();
 	}
 
+	public Date getLastUpdateCheckTime() {
+		String millis = mSharedPref.getString(PERF_LAST_UPDATE_CHECK, "");
+		if (millis.length() > 0) {
+			try {
+				return new Date(Long.parseLong(millis));
+			} catch (Exception ignored) {
+			}
+		}
+		return null;
+	}
+
+	public void setLastUpdateCheckTime(Date d){
+		SharedPreferences.Editor editor = mSharedPref.edit();
+		editor.putString(HiSettingsHelper.PERF_LAST_UPDATE_CHECK, d.getTime()+"").apply();
+	}
+
+	public boolean isUpdateCheckable() {
+		if (!isUpdateChecked()) {
+			Date now = new Date();
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+			Date lastCheck = HiSettingsHelper.getInstance().getLastUpdateCheckTime();
+			return lastCheck == null || !formatter.format(now).equals(formatter.format(lastCheck));
+		}
+		return false;
+	}
+
+	public String getAppVersion() {
+		String version = "0.0.00";
+		try {
+			version = mCtx.getPackageManager().getPackageInfo(mCtx.getPackageName(), 0).versionName;
+		} catch (Exception ignored) {
+		}
+		return version;
+	}
 
 }
