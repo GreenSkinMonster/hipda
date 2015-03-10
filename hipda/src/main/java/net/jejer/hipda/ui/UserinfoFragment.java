@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -60,34 +61,42 @@ public class UserinfoFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		Log.v(LOG_TAG, "onCreateView");
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_userinfo, container, false);
+		view.setClickable(false);
 
-		mAvatarView = (ImageView)view.findViewById(R.id.userinfo_avatar);
+		mAvatarView = (ImageView) view.findViewById(R.id.userinfo_avatar);
 
-		TextView usernameTv = (TextView)view.findViewById(R.id.userinfo_username);
+		TextView usernameTv = (TextView) view.findViewById(R.id.userinfo_username);
 		usernameTv.setText(mUsername);
 
-		mDetailView = (TextView)view.findViewById(R.id.userinfo_detail);
+		mDetailView = (TextView) view.findViewById(R.id.userinfo_detail);
 		mDetailView.setText("正在获取信息...");
+
+		//to avoid click through this view
+		view.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return true;
+			}
+		});
 
 		return view;
 	}
 
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		Log.v(LOG_TAG, "onActivityCreated");
 
-		StringRequest sReq = new HiStringRequest(getActivity(), HiUtils.UserInfoUrl+mUid, 
-				new OnDetailLoadComplete(), 
+		StringRequest sReq = new HiStringRequest(getActivity(), HiUtils.UserInfoUrl + mUid,
+				new OnDetailLoadComplete(),
 				new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				mDetailView.setText("获取信息失败, 请重试.");
-			}
-		});
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						mDetailView.setText("获取信息失败, 请重试.");
+					}
+				});
 		VolleyHelper.getInstance().add(sReq);
 	}
 
@@ -102,21 +111,20 @@ public class UserinfoFragment extends Fragment {
 		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActivity().getActionBar().setTitle(mUsername);
 
-		super.onCreateOptionsMenu(menu,inflater);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected (MenuItem item) {
-		Log.v(LOG_TAG, "onOptionsItemSelected");
+	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			// Implemented in activity
-			return false;
-		case R.id.action_send_sms:
-			showSendSmsDialog();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case android.R.id.home:
+				// Implemented in activity
+				return false;
+			case R.id.action_send_sms:
+				showSendSmsDialog();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 
 	}
@@ -140,21 +148,22 @@ public class UserinfoFragment extends Fragment {
 	}
 
 	private void showSendSmsDialog() {
-		final LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View viewlayout = inflater.inflate(R.layout.dialog_userinfo_sms, null);
 
-		final EditText smsTextView = (EditText)viewlayout.findViewById(R.id.et_userinfo_sms);
+		final EditText smsTextView = (EditText) viewlayout.findViewById(R.id.et_userinfo_sms);
 
 		final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
-		popDialog.setTitle("发送短消息给 "+mUsername);
+		popDialog.setTitle("发送短消息给 " + mUsername);
 		popDialog.setView(viewlayout);
 		// Add the buttons
-		popDialog.setPositiveButton("发送", 
-				new DialogInterface.OnClickListener(){
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				new PostSmsAsyncTask(getActivity(), mUid).execute(smsTextView.getText().toString());
-			}});
+		popDialog.setPositiveButton("发送",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						new PostSmsAsyncTask(getActivity(), mUid).execute(smsTextView.getText().toString());
+					}
+				});
 		popDialog.setNegativeButton("取消", null);
 		popDialog.create().show();
 	}
