@@ -491,15 +491,20 @@ public class ThreadDetailFragment extends Fragment {
 	}
 
 	private void setPullLoadStatus() {
-		if (mCurrentPage == 1) {
+		if (mAuthorOnly) {
+			mDetailListView.setPullLoadEnable(false);
 			mDetailListView.setPullRefreshEnable(false);
 		} else {
-			mDetailListView.setPullRefreshEnable(true);
-		}
-		if (mCurrentPage == mMaxPage) {
-			mDetailListView.setPullLoadEnable(false);
-		} else {
-			mDetailListView.setPullLoadEnable(true);
+			if (mCurrentPage == 1) {
+				mDetailListView.setPullRefreshEnable(false);
+			} else {
+				mDetailListView.setPullRefreshEnable(true);
+			}
+			if (mCurrentPage == mMaxPage) {
+				mDetailListView.setPullLoadEnable(false);
+			} else {
+				mDetailListView.setPullLoadEnable(true);
+			}
 		}
 	}
 
