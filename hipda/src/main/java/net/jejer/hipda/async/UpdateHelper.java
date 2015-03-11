@@ -1,10 +1,8 @@
 package net.jejer.hipda.async;
 
 import android.app.DownloadManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
-import android.os.CountDownTimer;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,6 +12,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
@@ -29,7 +28,7 @@ public class UpdateHelper {
 	private Context mCtx;
 	private boolean mSilent;
 
-	private ProgressDialog pd;
+	private HiProgressDialog pd;
 
 	public UpdateHelper(Context ctx, boolean isSilent) {
 		mCtx = ctx;
@@ -40,7 +39,7 @@ public class UpdateHelper {
 		if (mSilent) {
 			doCheck();
 		} else {
-			pd = ProgressDialog.show(mCtx, "检查更新", "正在检查新版本，请稍候……");
+			pd = HiProgressDialog.show(mCtx, "正在检查新版本，请稍候...");
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -78,10 +77,9 @@ public class UpdateHelper {
 
 				if (found) {
 					if (mSilent) {
-						Toast.makeText(mCtx, "发现新版本 " + newVersion +"，请在设置中检查更新", Toast.LENGTH_LONG).show();
+						Toast.makeText(mCtx, "发现新版本 " + newVersion + "，请在设置中检查更新", Toast.LENGTH_LONG).show();
 					} else {
-						pd.setMessage("发现新版本 " + newVersion+"，正在下载...");
-						pd.setIndeterminateDrawable(null);
+						pd.setMessage("发现新版本 " + newVersion + "，正在下载...");
 						DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
 						DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
 						req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
@@ -89,15 +87,13 @@ public class UpdateHelper {
 						dm.enqueue(req);
 					}
 				}
-
 			}
 
 			if (!found && !mSilent) {
 				pd.setMessage("没有发现新版本");
-				pd.setIndeterminateDrawable(null);
 			}
 
-			dismiss();
+			pd.dismiss(null, 3000);
 		}
 	}
 
@@ -106,24 +102,8 @@ public class UpdateHelper {
 		public void onErrorResponse(VolleyError error) {
 			Log.e(LOG_TAG, error.toString());
 			if (!mSilent) {
-				pd.setIndeterminateDrawable(null);
-				pd.setMessage("检查新版本时发生错误");
-				dismiss();
+				pd.dismiss("检查新版本时发生错误", 3000);
 			}
-		}
-	}
-
-	private void dismiss() {
-		if (pd != null) {
-			pd.setCancelable(true);
-			new CountDownTimer(3000, 1000) {
-				public void onTick(long millisUntilFinished) {
-				}
-
-				public void onFinish() {
-					pd.dismiss();
-				}
-			}.start();
 		}
 	}
 
