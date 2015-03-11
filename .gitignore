@@ -1,9 +1,16 @@
 .gradle
 /local.properties
+
 /.idea/workspace.xml
 /.idea/libraries
 /.idea/dictionaries
 /.idea/codeStyleSettings.xml 
+/.idea/gradle.xml
+/.idea/misc.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/inspectionProfiles/Serializable.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+
 /.navigation
 .DS_Store
 /build
