@@ -28,7 +28,8 @@ public class HiProgressDialog extends ProgressDialog {
 		if (message != null)
 			setMessage(message);
 		setCancelable(true);
-		setIndeterminateDrawable(null);
+		setIndeterminateDrawable(getContext().getResources().getDrawable(android.R.drawable.ic_dialog_info));
+		setIndeterminate(true);
 		new CountDownTimer(millisToWait, 1000) {
 			public void onTick(long millisUntilFinished) {
 			}

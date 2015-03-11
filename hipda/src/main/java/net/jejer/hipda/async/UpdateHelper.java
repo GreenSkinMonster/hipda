@@ -4,6 +4,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -64,36 +65,36 @@ public class UpdateHelper {
 		public void onResponse(String response) {
 
 			String version = HiSettingsHelper.getInstance().getAppVersion();
+			String newVersion = "", url = "", filename = "";
 			String firstAttachment = HttpUtils.getMiddleString(response, "<a href=\"attachment.php?", "</a>");
 			boolean found = false;
 
 			if (firstAttachment != null && firstAttachment.contains("sid=") && firstAttachment.contains("hipda-release-")) {
+				String args = firstAttachment.substring(0, firstAttachment.indexOf("\""));
+				url = HiUtils.BaseUrl + "attachment.php?" + args;
+				filename = HttpUtils.getMiddleString(firstAttachment, "<strong>", "</strong>");
+				newVersion = HttpUtils.getMiddleString(filename, "hipda-release-", ".apk");
 
-				final String url = HiUtils.BaseUrl + "attachment.php?" + firstAttachment.substring(0, firstAttachment.indexOf("\""));
-				final String filename = HttpUtils.getMiddleString(firstAttachment, "<strong>", "</strong>");
-				String newVersion = HttpUtils.getMiddleString(filename, "hipda-release-", ".apk");
+				found = !TextUtils.isEmpty(args) && !TextUtils.isEmpty(filename) && newer(version, newVersion);
+			}
 
-				found = newer(version, newVersion);
-
-				if (found) {
-					if (mSilent) {
-						Toast.makeText(mCtx, "发现新版本 " + newVersion + "，请在设置中检查更新", Toast.LENGTH_LONG).show();
-					} else {
-						pd.setMessage("发现新版本 " + newVersion + "，正在下载...");
-						DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
-						DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
-						req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-						req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-						dm.enqueue(req);
-					}
+			if (found) {
+				if (mSilent) {
+					Toast.makeText(mCtx, "发现新版本 " + newVersion + "，请在设置中检查更新", Toast.LENGTH_LONG).show();
+				} else {
+					pd.setMessage("发现新版本 " + newVersion + "，正在下载...");
+					DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
+					DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+					req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+					req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+					dm.enqueue(req);
+				}
+			} else {
+				if (!mSilent) {
+					pd.dismiss("没有发现新版本", 3000);
 				}
 			}
 
-			if (!found && !mSilent) {
-				pd.setMessage("没有发现新版本");
-			}
-
-			pd.dismiss(null, 3000);
 		}
 	}
 
