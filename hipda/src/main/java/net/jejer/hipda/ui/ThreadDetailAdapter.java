@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.text.method.LinkMovementMethod;
@@ -125,7 +126,8 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 					int maxViewWidth = 1080;
 					int lowerImageWidth = 320;
 
-					ThreadDetailFragment fragment = (ThreadDetailFragment) mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
+					//this fragment could be replaced by UserinfoFragment, so DO NOT cast it
+					Fragment fragment = mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
 					if (fragment != null && fragment.getView() != null) {
 						maxViewWidth = fragment.getView().getWidth();
 					}
