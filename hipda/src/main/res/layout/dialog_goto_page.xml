@@ -34,6 +34,8 @@
             android:layout_alignParentLeft="true"
             android:src="@drawable/ic_action_first"
             android:layout_margin="4dp"
+            android:padding="10dp"
+            android:background="?android:selectableItemBackground"
             android:tint="@color/hipda"/>
 
         <ImageButton
@@ -43,6 +45,8 @@
             android:layout_toRightOf="@+id/btn_fisrt_page"
             android:src="@drawable/ic_action_previous"
             android:layout_margin="4dp"
+            android:padding="10dp"
+            android:background="?android:selectableItemBackground"
             android:tint="@color/hipda"/>
 
         <ImageButton
@@ -52,6 +56,8 @@
             android:layout_toLeftOf="@+id/btn_last_page"
             android:src="@drawable/ic_action_next"
             android:layout_margin="4dp"
+            android:padding="10dp"
+            android:background="?android:selectableItemBackground"
             android:tint="@color/hipda"/>
 
         <ImageButton
@@ -61,6 +67,8 @@
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_action_last"
             android:layout_margin="4dp"
+            android:padding="10dp"
+            android:background="?android:selectableItemBackground"
             android:tint="@color/hipda"/>
 
     </RelativeLayout>
