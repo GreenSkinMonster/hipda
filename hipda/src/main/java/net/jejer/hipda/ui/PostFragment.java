@@ -1,21 +1,8 @@
 package net.jejer.hipda.ui;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import net.jejer.hipda.R;
-import net.jejer.hipda.async.PostAsyncTask;
-import net.jejer.hipda.async.PrePostAsyncTask;
-import net.jejer.hipda.async.UploadImgAsyncTask;
-import net.jejer.hipda.utils.HiUtils;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -44,10 +31,21 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.jejer.hipda.R;
+import net.jejer.hipda.async.PostAsyncTask;
+import net.jejer.hipda.async.PrePostAsyncTask;
+import net.jejer.hipda.async.UploadImgAsyncTask;
+import net.jejer.hipda.utils.HiUtils;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 public class PostFragment extends Fragment {
 	private static final int SELECT_PICTURE = 1;
 
 	private final String LOG_TAG = getClass().getSimpleName();
+	public static final String ARG_FID_KEY = "fid";
 	public static final String ARG_TID_KEY = "tid";
 	public static final String ARG_PID_KEY = "pid";
 	public static final String ARG_FLOOR_KEY = "floor";
@@ -67,6 +65,12 @@ public class PostFragment extends Fragment {
 
 	private Spinner mSpForum;
 
+	private PostAsyncTask.PostListener postListener;
+
+	public void setPostListener(PostAsyncTask.PostListener postListener) {
+		this.postListener = postListener;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "onCreate");
@@ -74,6 +78,9 @@ public class PostFragment extends Fragment {
 
 		setHasOptionsMenu(true);
 
+		if (getArguments().containsKey(ARG_FID_KEY)) {
+			mFid = getArguments().getString(ARG_FID_KEY);
+		}
 		if (getArguments().containsKey(ARG_TID_KEY)) {
 			mTid = getArguments().getString(ARG_TID_KEY);
 		}
@@ -93,78 +100,81 @@ public class PostFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "onCreateView");
 		View view = inflater.inflate(R.layout.fragment_post, container, false);
 
-		mTvReplyMsg = (TextView)view.findViewById(R.id.et_reply);
-		mTvAdditional = (TextView)view.findViewById(R.id.et_additional);
+		mTvReplyMsg = (TextView) view.findViewById(R.id.et_reply);
+		mTvAdditional = (TextView) view.findViewById(R.id.et_additional);
 		mTvAdditional.setText("正在收集信息");
 
-		mSpForum = (Spinner)view.findViewById(R.id.sp_fid);
+		mSpForum = (Spinner) view.findViewById(R.id.sp_fid);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
 				R.array.forums, android.R.layout.simple_list_item_1);
 		mSpForum.setAdapter(adapter);
+		if (mFid != null) {
+			mSpForum.setSelection(HiUtils.getForumIndexByFid(getActivity(), mFid));
+		}
 		mSpForum.setOnItemSelectedListener(new FidSelectListener());
 
-		mTvSubjectMsg = (TextView)view.findViewById(R.id.et_subject);
-		
-		
+		mTvSubjectMsg = (TextView) view.findViewById(R.id.et_subject);
+
+
 		// Prepare emoji tabs
-		TabHost th = (TabHost)view.findViewById(R.id.th_emoji);
+		TabHost th = (TabHost) view.findViewById(R.id.th_emoji);
 		th.setup();
-		
+
 		TabSpec tabSpec1 = th.newTabSpec("tab1");
 		tabSpec1.setIndicator("默认表情");
 		tabSpec1.setContent(R.id.tab1_emoji);
 		th.addTab(tabSpec1);
-		
+
 		TabSpec tabSpec2 = th.newTabSpec("tab2");
 		tabSpec2.setIndicator("酷酷猴");
 		tabSpec2.setContent(R.id.tab2_emoji);
 		th.addTab(tabSpec2);
-		
+
 		TabSpec tabSpec3 = th.newTabSpec("tab3");
 		tabSpec3.setIndicator("呆呆男");
 		tabSpec3.setContent(R.id.tab3_emoji);
 		th.addTab(tabSpec3);
-		
+
 		// Prepare emoji icons
-		final ExpandableHeightGridView gvTab1 = (ExpandableHeightGridView)th.findViewById(R.id.tab1_emoji);
+		final ExpandableHeightGridView gvTab1 = (ExpandableHeightGridView) th.findViewById(R.id.tab1_emoji);
 		gvTab1.setExpanded(true);
 		gvTab1.setAdapter(new EmojiAdapter(getActivity(), 1));
 		gvTab1.setOnItemClickListener(new GridView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
+									int position, long id) {
 				String reply = "" + mTvReplyMsg.getText();
-				reply += ((String)gvTab1.getAdapter().getItem(position));
+				reply += ((String) gvTab1.getAdapter().getItem(position));
 				mTvReplyMsg.setText(reply);
 			}
 		});
-		final ExpandableHeightGridView gvTab2 = (ExpandableHeightGridView)th.findViewById(R.id.tab2_emoji);
+		final ExpandableHeightGridView gvTab2 = (ExpandableHeightGridView) th.findViewById(R.id.tab2_emoji);
 		gvTab2.setExpanded(true);
 		gvTab2.setAdapter(new EmojiAdapter(getActivity(), 2));
 		gvTab2.setOnItemClickListener(new GridView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
+									int position, long id) {
 				String reply = "" + mTvReplyMsg.getText();
-				reply += ((String)gvTab2.getAdapter().getItem(position));
+				reply += ((String) gvTab2.getAdapter().getItem(position));
 				mTvReplyMsg.setText(reply);
 			}
 		});
-		final ExpandableHeightGridView gvTab3 = (ExpandableHeightGridView)th.findViewById(R.id.tab3_emoji);
+		final ExpandableHeightGridView gvTab3 = (ExpandableHeightGridView) th.findViewById(R.id.tab3_emoji);
 		gvTab3.setExpanded(true);
 		gvTab3.setAdapter(new EmojiAdapter(getActivity(), 3));
 		gvTab3.setOnItemClickListener(new GridView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
+									int position, long id) {
 				String reply = "" + mTvReplyMsg.getText();
-				reply += ((String)gvTab3.getAdapter().getItem(position));
+				reply += ((String) gvTab3.getAdapter().getItem(position));
 				mTvReplyMsg.setText(reply);
 			}
 		});
-		
-				
+
+
 		return view;
 	}
 
@@ -172,8 +182,8 @@ public class PostFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "onActivityCreated");
 		super.onActivityCreated(savedInstanceState);
-	};
-	
+	}
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -202,68 +212,65 @@ public class PostFragment extends Fragment {
 		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		switch (mMode) {
-		case PostAsyncTask.MODE_REPLY_THREAD:
-			getActivity().getActionBar().setTitle("回复帖子");
-			break;
-		case PostAsyncTask.MODE_REPLY_POST:
-			getActivity().getActionBar().setTitle("回复 "+mFloor+"#");
-			break;
-		case PostAsyncTask.MODE_QUOTE_POST:
-			getActivity().getActionBar().setTitle("引用 "+mFloor+"#");
-			break;
-		case PostAsyncTask.MODE_NEW_THREAD:
-			getActivity().getActionBar().setTitle("发表新帖");
-			mSpForum.setVisibility(View.VISIBLE);
-			mTvSubjectMsg.setVisibility(View.VISIBLE);
-			break;
+			case PostAsyncTask.MODE_REPLY_THREAD:
+				getActivity().getActionBar().setTitle("回复帖子");
+				break;
+			case PostAsyncTask.MODE_REPLY_POST:
+				getActivity().getActionBar().setTitle("回复 " + mFloor + "#");
+				break;
+			case PostAsyncTask.MODE_QUOTE_POST:
+				getActivity().getActionBar().setTitle("引用 " + mFloor + "#");
+				break;
+			case PostAsyncTask.MODE_NEW_THREAD:
+				getActivity().getActionBar().setTitle(getActivity().getResources().getString(R.string.action_new_thread));
+				mSpForum.setVisibility(View.VISIBLE);
+				mTvSubjectMsg.setVisibility(View.VISIBLE);
+				break;
 		}
-		super.onCreateOptionsMenu(menu,inflater);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected (MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.v(LOG_TAG, "onOptionsItemSelected");
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			// Implemented in activity
-			return false;
-		case R.id.action_upload_img:
-			if (mPrePostInfo == null) {
-				Toast.makeText(getActivity(), "请等待信息收集结束再选择图片", Toast.LENGTH_LONG).show();
-			} else {
-				Intent intent = new Intent();
-				intent.setType("image/*");
-				intent.setAction(Intent.ACTION_GET_CONTENT);
-				startActivityForResult(Intent.createChooser(intent,
-						"Select Picture"), SELECT_PICTURE);
-			}
-			return true;
-		case R.id.action_post:
-			String replyText = mTvReplyMsg.getText().toString();
-			if (replyText.length() < 5) {
-				Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
+			case android.R.id.home:
+				// Implemented in activity
+				return false;
+			case R.id.action_upload_img:
+				if (mPrePostInfo == null) {
+					Toast.makeText(getActivity(), "请等待信息收集结束再选择图片", Toast.LENGTH_LONG).show();
+				} else {
+					Intent intent = new Intent();
+					intent.setType("image/*");
+					intent.setAction(Intent.ACTION_GET_CONTENT);
+					startActivityForResult(Intent.createChooser(intent,
+							"Select Picture"), SELECT_PICTURE);
+				}
 				return true;
-			}
-			String subjectText = mTvSubjectMsg.getText().toString();
-			if (mMode == PostAsyncTask.MODE_NEW_THREAD && subjectText.length() < 5) {
-				Toast.makeText(getActivity(), "主题字数必须大于5", Toast.LENGTH_LONG).show();
+			case R.id.action_post:
+				String replyText = mTvReplyMsg.getText().toString();
+				if (replyText.length() < 5) {
+					Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
+					return true;
+				}
+				String subjectText = mTvSubjectMsg.getText().toString();
+				if (mMode == PostAsyncTask.MODE_NEW_THREAD && subjectText.length() < 5) {
+					Toast.makeText(getActivity(), "主题字数必须大于5", Toast.LENGTH_LONG).show();
+					return true;
+				}
+				new PostAsyncTask(getActivity(), mMode, mPrePostInfo, postListener).execute(replyText, mTid, mPid, mFid, subjectText);
+
+				// Close SoftKeyboard
+				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+						Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(mTvReplyMsg.getWindowToken(), 0);
+
+				// Close reply fragment
+				((MainFrameActivity) getActivity()).popFragment(false);
 				return true;
-			}
-			//ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-			//ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", replyText);
-			//clipboard.setPrimaryClip(clip);
-			new PostAsyncTask(getActivity(), mMode, mPrePostInfo).execute(replyText, mTid, mPid, mFid, subjectText);
-
-			// Close SoftKeyboard
-			InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
-					Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(mTvReplyMsg.getWindowToken(), 0);
-
-			// Close reply fragment
-			((MainFrameActivity)getActivity()).popFragment(false);
-			return true;
-		default:
-			return false;
+			default:
+				return false;
 		}
 	}
 
@@ -280,17 +287,9 @@ public class PostFragment extends Fragment {
 				try {
 					bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
 					Log.v(LOG_TAG, String.valueOf(bitmap.getByteCount()));
-				} catch (FileNotFoundException e) {
-					Log.v(LOG_TAG, "FileNotFoundException");
-					e.printStackTrace();
-				} catch (IOException e) {
-					Log.v(LOG_TAG, "IOException");
-					e.printStackTrace();
-				} catch (OutOfMemoryError e) {
-					Log.v(LOG_TAG, "OutOfMemoryError");
-					e.printStackTrace();
+				} catch (Exception e) {
+					Log.v(LOG_TAG, "Exception", e);
 				}
-
 
 				final UploadImgButton b = new UploadImgButton(getActivity());
 				b.setImgName(getImgName(selectedImageUri));
@@ -298,12 +297,13 @@ public class PostFragment extends Fragment {
 					@Override
 					public void onClick(View arg0) {
 						String reply = "" + mTvReplyMsg.getText();
-						reply += ("[attachimg]"+b.getImgId()+"[/attachimg]");
+						reply += ("[attachimg]" + b.getImgId() + "[/attachimg]");
 						mTvReplyMsg.setText(reply);
 
 						// Add attach id for post
 						mPrePostInfo.get("attaches").add(b.getImgId());
-					}});
+					}
+				});
 
 				LinearLayout postLayout = (LinearLayout) getActivity().findViewById(R.id.layout_post);
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -320,16 +320,16 @@ public class PostFragment extends Fragment {
 			// Split at colon, use second item in the array
 			String id = uri.getPath().split(":")[1];
 
-			String[] column = { MediaStore.Images.Media.DATA };
+			String[] column = {MediaStore.Images.Media.DATA};
 
 			// where id is equal to
 			String sel = MediaStore.Images.Media._ID + "=?";
 
-			CursorLoader cursorloader = new CursorLoader(getActivity(), 
-					MediaStore.Images.Media.EXTERNAL_CONTENT_URI, 
-					column, 
+			CursorLoader cursorloader = new CursorLoader(getActivity(),
+					MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+					column,
 					sel,
-					new String[] { id },
+					new String[]{id},
 					null);
 			Cursor cursor = cursorloader.loadInBackground();
 
@@ -343,7 +343,7 @@ public class PostFragment extends Fragment {
 							|| name.endsWith("bmp")
 							|| name.endsWith("gif")) {
 						if (name.contains("/")) {
-							return name.substring(name.lastIndexOf("/")+1, name.length());
+							return name.substring(name.lastIndexOf("/") + 1, name.length());
 						}
 					}
 				}
@@ -351,9 +351,9 @@ public class PostFragment extends Fragment {
 
 			cursor.close();
 		} else {
-			CursorLoader cursorloader = new CursorLoader(getActivity(), 
-					uri, 
-					null, 
+			CursorLoader cursorloader = new CursorLoader(getActivity(),
+					uri,
+					null,
 					null,
 					null,
 					null);
@@ -369,7 +369,7 @@ public class PostFragment extends Fragment {
 							|| name.endsWith("bmp")
 							|| name.endsWith("gif")) {
 						if (name.contains("/")) {
-							return name.substring(name.lastIndexOf("/")+1, name.length());
+							return name.substring(name.lastIndexOf("/") + 1, name.length());
 						}
 					}
 				}
@@ -382,7 +382,7 @@ public class PostFragment extends Fragment {
 	private class PrePostListener implements PrePostAsyncTask.PrePostListener {
 		@Override
 		public void PrePostComplete(boolean result,
-				Map<String, List<String>> info) {
+									Map<String, List<String>> info) {
 			if (result) {
 				mPrePostInfo = info;
 				mTvAdditional.setVisibility(View.GONE);
@@ -405,6 +405,7 @@ public class PostFragment extends Fragment {
 			mFid = String.valueOf(HiUtils.getForumID(getActivity(), pos));
 			Log.v("FID", mFid);
 		}
+
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {
 		}

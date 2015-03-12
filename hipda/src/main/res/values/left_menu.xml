@@ -9,7 +9,6 @@
         <item>@string/title_drawer_favorites</item>
         <item>@string/title_drawer_sms</item>
         <item>@string/title_drawer_notify</item>
-        <item>@string/title_drawer_newpost</item>
         <item>@string/title_drawer_setting</item>
         <item>@string/title_drawer_theme</item>
     </string-array>

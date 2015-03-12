@@ -12,15 +12,15 @@ public class HiUtils {
 	public static final String ThreadListUrl = "http://www.hi-pda.com/forum/forumdisplay.php?fid=";
 	public static final String DetailListUrl = "http://www.hi-pda.com/forum/viewthread.php?tid=";
 	public static final String BaseUrl = "http://www.hi-pda.com/forum/";
-	public static final String ReplyUrl = BaseUrl+"post.php?action=reply&tid=";
-	public static final String NewThreadUrl = BaseUrl+"post.php?action=newthread&fid=";
-	public static final String MyReplyUrl = BaseUrl+"my.php?item=posts";
-	public static final String MyPostUrl = BaseUrl+"my.php?item=threads";
-	public static final String SMSUrl = BaseUrl+"pm.php?filter=privatepm";
-	public static final String SMSDetailUrl = BaseUrl+"pm.php?daterange=5&uid=";
-	public static final String SMSPreparePostUrl = BaseUrl+"pm.php?daterange=1&uid=";
-	public static final String SMSPostUrl = BaseUrl+"pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1&uid=";
-	public static final String ThreadNotifyUrl = BaseUrl+"notice.php?filter=threads";
+	public static final String ReplyUrl = BaseUrl + "post.php?action=reply&tid=";
+	public static final String NewThreadUrl = BaseUrl + "post.php?action=newthread&fid=";
+	public static final String MyReplyUrl = BaseUrl + "my.php?item=posts";
+	public static final String MyPostUrl = BaseUrl + "my.php?item=threads";
+	public static final String SMSUrl = BaseUrl + "pm.php?filter=privatepm";
+	public static final String SMSDetailUrl = BaseUrl + "pm.php?daterange=5&uid=";
+	public static final String SMSPreparePostUrl = BaseUrl + "pm.php?daterange=1&uid=";
+	public static final String SMSPostUrl = BaseUrl + "pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1&uid=";
+	public static final String ThreadNotifyUrl = BaseUrl + "notice.php?filter=threads";
 	public static final String CheckSMS = BaseUrl + "pm.php?checknewpm";
 	public static final String UploadImgUrl = BaseUrl + "misc.php?action=swfupload&operation=upload&simple=1&type=image";
 	public static final String SearchTitle = BaseUrl + "search.php?srchtype=title&searchsubmit=true&st=on&srchuname=&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D=all&srchtxt=";
@@ -38,6 +38,16 @@ public class HiUtils {
 		return forumsID[(int) idx];
 	}
 
+	public static int getForumIndexByFid(Context ctx, String fid) {
+		final int[] forumsID = ctx.getResources().getIntArray(R.array.forums_id);
+		for (int i = 0; i < forumsID.length; i++) {
+			if (fid.equals(forumsID[i] + "")) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	public static String getFullUrl(String particalUrl) {
 		return BaseUrl + particalUrl;
 	}
@@ -46,7 +56,7 @@ public class HiUtils {
 		if (HiSettingsHelper.getInstance().isLoadImgOnMobileNwk()) {
 			return true;
 		} else {
-			ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+			ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo info = cm.getActiveNetworkInfo();
 			if (info == null || !info.isConnected() || info.getType() != ConnectivityManager.TYPE_WIFI) {
 				//Mobile Network

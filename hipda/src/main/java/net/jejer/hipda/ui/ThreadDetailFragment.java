@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ThreadDetailFragment extends Fragment {
+public class ThreadDetailFragment extends Fragment implements PostAsyncTask.PostListener {
 	public static final String ARG_TID_KEY = "tid";
 	public static final String ARG_TITLE_KEY = "title";
 	private final int LAST_FLOOR_OFFSET = Integer.MIN_VALUE;
@@ -75,9 +75,10 @@ public class ThreadDetailFragment extends Fragment {
 	private View quickReply;
 	private Handler mMsgHandler;
 	private boolean mAuthorOnly = false;
-
 	private SparseArray<DetailListBean> mCache = new SparseArray<DetailListBean>();
 	public static final String LOADER_PAGE_KEY = "LOADER_PAGE_KEY";
+
+	private HiProgressDialog postProgressDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -181,12 +182,9 @@ public class ThreadDetailFragment extends Fragment {
 				if (replyText.length() < 5) {
 					Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
 				} else {
-					//ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
-					//ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", replyText);
-					//clipboard.setPrimaryClip(clip);
 					mReplyTextTv.setText("");
 					quickReply.setVisibility(View.INVISIBLE);
-					new PostAsyncTask(getActivity(), PostAsyncTask.MODE_REPLY_THREAD, null).execute(replyText, mTid, "", "", "");
+					new PostAsyncTask(getActivity(), PostAsyncTask.MODE_QUICK_REPLY, null, ThreadDetailFragment.this).execute(replyText, mTid, "", "", "");
 					// Close SoftKeyboard
 					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
 							Context.INPUT_METHOD_SERVICE);
@@ -282,6 +280,7 @@ public class ThreadDetailFragment extends Fragment {
 				arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_REPLY_THREAD);
 				PostFragment fragment = new PostFragment();
 				fragment.setArguments(arguments);
+				fragment.setPostListener(this);
 				if (HiSettingsHelper.getInstance().getIsLandscape()) {
 					getFragmentManager().beginTransaction()
 							.add(R.id.main_frame_container, fragment, PostFragment.class.getName())
@@ -336,26 +335,76 @@ public class ThreadDetailFragment extends Fragment {
 		getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
 	}
 
+	@Override
+	public void onPrePost() {
+		if (HiSettingsHelper.getInstance().isPostReirect()) {
+			postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
+		} else {
+			Toast.makeText(mCtx, "正在发表...", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	@Override
+	public void onPostDone(int mode, int status, String message, String tid, String title) {
+		if (status == PostAsyncTask.STATUS_SUCCESS) {
+			if (postProgressDialog != null) {
+				postProgressDialog.dismiss(message);
+			} else {
+				Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
+			}
+
+			if (!mAuthorOnly && HiSettingsHelper.getInstance().isPostReirect()) {
+				mCurrentPage = mMaxPage;
+				mOffsetInPage = LAST_FLOOR_OFFSET;
+				mCache.remove(mCurrentPage);
+				showOrLoadPage();
+			}
+
+		} else {
+			if (postProgressDialog != null) {
+				postProgressDialog.dismiss(message, 3000);
+			} else {
+				Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
+			}
+		}
+	}
 
 	private class OnScrollCallback implements AbsListView.OnScrollListener {
+
+		private int mLastFirstVisibleItem;
+		private long lastUpdate = System.currentTimeMillis();
 
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 							 int visibleItemCount, int totalItemCount) {
-			//only after user scroll part of page, load next page
-			if (!mInloading && !mPrefetching && firstVisibleItem > Math.round(0.2f * mMaxPostInPage)) {
-				mPrefetching = true;
-				prefetchNextPage();
+			if (!mInloading && !mPrefetching) {
+				if (mLastFirstVisibleItem < firstVisibleItem) {
+					//scroll down, prefetch next page
+					if (firstVisibleItem > Math.round(0.2f * totalItemCount)) {
+						prefetchNextPage(1);
+					}
+				}
+				if (mLastFirstVisibleItem > firstVisibleItem) {
+					//scroll up, prefetch previous page
+					if (firstVisibleItem < Math.round(0.5f * totalItemCount)) {
+						prefetchNextPage(-1);
+					}
+				}
+			}
+			long now = System.currentTimeMillis();
+			if (now - 200 > lastUpdate) {
+				mLastFirstVisibleItem = firstVisibleItem;
+				lastUpdate = now;
 			}
 		}
 
 		@Override
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
-			if (scrollState == SCROLL_STATE_FLING) {
-				//Glide.with(mCtx).pauseRequests();
-			} else if (scrollState == SCROLL_STATE_IDLE) {
-				//Glide.with(mCtx).resumeRequests();
-			}
+//			if (scrollState == SCROLL_STATE_FLING) {
+//				Glide.with(mCtx).pauseRequests();
+//			} else if (scrollState == SCROLL_STATE_IDLE) {
+//				Glide.with(mCtx).resumeRequests();
+//			}
 		}
 
 	}
@@ -478,14 +527,17 @@ public class ThreadDetailFragment extends Fragment {
 
 	}
 
-	private void prefetchNextPage() {
-		if (!mAuthorOnly
+	private void prefetchNextPage(int pageOffset) {
+		if (!mPrefetching && !mAuthorOnly
 				&& HiSettingsHelper.getInstance().isPreFetch()
-				&& mCache.get(mCurrentPage + 1) == null
-				&& mCurrentPage < mMaxPage) {
-			Log.v(LOG_TAG, "prefetch page " + (mCurrentPage + 1));
+				&& mCache.get(mCurrentPage + pageOffset) == null) {
+			int page = mCurrentPage + pageOffset;
+			if (page < 1 || page > mMaxPage)
+				return;
+			mPrefetching = true;
+			Log.v(LOG_TAG, "prefetch page " + page);
 			Bundle b = new Bundle();
-			b.putInt(LOADER_PAGE_KEY, mCurrentPage + 1);
+			b.putInt(LOADER_PAGE_KEY, page);
 			getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
 		}
 	}

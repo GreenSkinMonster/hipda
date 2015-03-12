@@ -27,8 +27,10 @@ import android.widget.ListView;
 import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.async.ThreadListLoader;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -40,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ThreadListFragment extends Fragment {
+public class ThreadListFragment extends Fragment implements PostAsyncTask.PostListener {
 	public final static int STAGE_ERROR = -1;
 	public final static int STAGE_CLEAN = 0;
 	public final static int STAGE_RELOGIN = 1;
@@ -63,6 +65,7 @@ public class ThreadListFragment extends Fragment {
 	private TextView mTipBar;
 	private boolean mInloading = false;
 	private Handler mMsgHandler;
+	private HiProgressDialog postProgressDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -179,6 +182,27 @@ public class ThreadListFragment extends Fragment {
 			case R.id.action_thread_list_settings:
 				showThreadListSettingsDialog();
 				return true;
+			case R.id.action_new_thread:
+				Bundle arguments = new Bundle();
+				arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_NEW_THREAD);
+				arguments.putString(PostFragment.ARG_FID_KEY, mForumId + "");
+
+				PostFragment fragment = new PostFragment();
+				fragment.setArguments(arguments);
+				fragment.setPostListener(this);
+
+				if (HiSettingsHelper.getInstance().getIsLandscape()) {
+					getFragmentManager().beginTransaction()
+							.add(R.id.main_frame_container, fragment, PostFragment.class.getName())
+							.addToBackStack(PostFragment.class.getName())
+							.commit();
+				} else {
+					getFragmentManager().beginTransaction()
+							.add(R.id.main_frame_container, fragment, PostFragment.class.getName())
+							.addToBackStack(PostFragment.class.getName())
+							.commit();
+				}
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -212,9 +236,42 @@ public class ThreadListFragment extends Fragment {
 		Log.v(LOG_TAG, "restartLoader() called");
 	}
 
-    public void refreshAvatars() {
-        mThreadListAdapter.refreshAvatars();
-    }
+	public void refreshAvatars() {
+		mThreadListAdapter.refreshAvatars();
+	}
+
+	@Override
+	public void onPrePost() {
+		if (HiSettingsHelper.getInstance().isPostReirect()) {
+			postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
+		} else {
+			Toast.makeText(mCtx, "正在发表...", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	@Override
+	public void onPostDone(int mode, int status, String message, String tid, String title) {
+		if (status == PostAsyncTask.STATUS_SUCCESS) {
+			if (postProgressDialog != null) {
+				postProgressDialog.dismiss(message);
+			} else {
+				Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
+			}
+
+			if (HiSettingsHelper.getInstance().isPostReirect()) {
+				showThreadDetailFragment(tid, title);
+			}
+			//refresh thread list
+			refresh();
+
+		} else {
+			if (postProgressDialog != null) {
+				postProgressDialog.dismiss(message, 3000);
+			} else {
+				Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
+			}
+		}
+	}
 
 	public class OnScrollCallback implements AbsListView.OnScrollListener {
 
@@ -262,43 +319,46 @@ public class ThreadListFragment extends Fragment {
 
 		@Override
 		public void onItemSingleClick(AdapterView<?> listView, View itemView, int position,
-								long row) {
+									  long row) {
 			ThreadBean thread = mThreadListAdapter.getItem(position);
+			String tid = thread.getTid();
+			String title = thread.getTitle();
+			showThreadDetailFragment(tid, title);
+		}
 
-			setHasOptionsMenu(false);
-			if (HiSettingsHelper.getInstance().getIsLandscape()) {
-				Bundle arguments = new Bundle();
-				arguments.putString(ThreadDetailFragment.ARG_TID_KEY, thread.getTid());
-				arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, thread.getTitle());
-				ThreadDetailFragment fragment = new ThreadDetailFragment();
-				fragment.setArguments(arguments);
+	}
+
+	private void showThreadDetailFragment(String tid, String title) {
+		setHasOptionsMenu(false);
+		if (HiSettingsHelper.getInstance().getIsLandscape()) {
+			Bundle arguments = new Bundle();
+			arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
+			arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
+			ThreadDetailFragment fragment = new ThreadDetailFragment();
+			fragment.setArguments(arguments);
+			getFragmentManager().beginTransaction()
+					.replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
+					.addToBackStack(ThreadDetailFragment.class.getName())
+					.commit();
+		} else {
+			Bundle arguments = new Bundle();
+			arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
+			arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
+			ThreadDetailFragment fragment = new ThreadDetailFragment();
+			fragment.setArguments(arguments);
+			if (HiSettingsHelper.getInstance().isEinkOptimization()) {
 				getFragmentManager().beginTransaction()
-						.replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
+						.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
 						.addToBackStack(ThreadDetailFragment.class.getName())
 						.commit();
 			} else {
-
-				Bundle arguments = new Bundle();
-				arguments.putString(ThreadDetailFragment.ARG_TID_KEY, thread.getTid());
-				arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, thread.getTitle());
-				ThreadDetailFragment fragment = new ThreadDetailFragment();
-				fragment.setArguments(arguments);
-				if (HiSettingsHelper.getInstance().isEinkOptimization()) {
-					getFragmentManager().beginTransaction()
-							.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-							.addToBackStack(ThreadDetailFragment.class.getName())
-							.commit();
-				} else {
-					getFragmentManager().beginTransaction()
-							.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-							.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-							.addToBackStack(ThreadDetailFragment.class.getName())
-							.commit();
-				}
-
+				getFragmentManager().beginTransaction()
+						.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+						.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+						.addToBackStack(ThreadDetailFragment.class.getName())
+						.commit();
 			}
 		}
-
 	}
 
 	private class ThreadListLoaderCallbacks implements LoaderManager.LoaderCallbacks<ThreadListBean> {
@@ -387,6 +447,7 @@ public class ThreadListFragment extends Fragment {
 		final Switch sShowStickThreads = (Switch) viewlayout.findViewById(R.id.sw_show_stick_threads);
 		final Switch sSortByPostTime = (Switch) viewlayout.findViewById(R.id.sw_sort_by_post_time);
 		final Switch sShowThreadListAvatar = (Switch) viewlayout.findViewById(R.id.sw_threadlist_avatar);
+		final Switch sPostRedirect = (Switch) viewlayout.findViewById(R.id.sw_post_redirect);
 
 		sShowPicOnMobileNetwork.setChecked(HiSettingsHelper.getInstance().isLoadImgOnMobileNwk());
 		sShowPicOnMobileNetwork.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
@@ -423,9 +484,16 @@ public class ThreadListFragment extends Fragment {
 				HiSettingsHelper.getInstance().setSortByPostTime(arg1);
 			}
 		});
+		sPostRedirect.setChecked(HiSettingsHelper.getInstance().isPostReirect());
+		sPostRedirect.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+				HiSettingsHelper.getInstance().setPostRedirect(arg1);
+			}
+		});
 
 		final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
-		popDialog.setTitle("帖子设置");
+		popDialog.setTitle(mCtx.getResources().getString(R.string.action_thread_list_settings));
 		popDialog.setView(viewlayout);
 		// Add the buttons
 		popDialog.setPositiveButton("OK", null);

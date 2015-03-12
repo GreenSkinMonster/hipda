@@ -17,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -96,7 +95,6 @@ public class MainFrameActivity extends Activity
 				if (mOnSwipeCallback != null) {
 					if (mOnSwipeCallback instanceof ThreadDetailFragment) {
 						((ThreadDetailFragment) mOnSwipeCallback).onSwipeBottom();
-						;
 					} else if (mOnSwipeCallback instanceof SmsFragment) {
 						((SmsFragment) mOnSwipeCallback).onSwipeBottom();
 					}
@@ -281,30 +279,13 @@ public class MainFrameActivity extends Activity
 							.replace(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
 							.commit();
 					break;
-				case 7:    // new thread
-					Bundle arguments = new Bundle();
-					arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_NEW_THREAD);
-					PostFragment fragment = new PostFragment();
-					fragment.setArguments(arguments);
-					if (HiSettingsHelper.getInstance().getIsLandscape()) {
-						getFragmentManager().beginTransaction()
-								.add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-								.addToBackStack(PostFragment.class.getName())
-								.commit();
-					} else {
-						getFragmentManager().beginTransaction()
-								.add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-								.addToBackStack(PostFragment.class.getName())
-								.commit();
-					}
-					break;
-				case 8:    // settings
+				case 7:    // settings
 					getFragmentManager().beginTransaction()
 							.replace(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
 							.addToBackStack(SettingsFragment.class.getName())
 							.commit();
 					break;
-				case 9:    // switch day/night theme
+				case 8:    // switch day/night theme
 					HiSettingsHelper.getInstance().setNightTheme(!HiSettingsHelper.getInstance().isNightTheme());
 					Intent intent = getIntent();
 					intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

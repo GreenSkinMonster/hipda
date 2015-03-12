@@ -3,6 +3,7 @@ package net.jejer.hipda.async;
 import android.content.Context;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.HiUtils;
@@ -20,13 +21,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PrePostAsyncTask extends AsyncTask< String, Void, Map<String, List<String>> > {
+public class PrePostAsyncTask extends AsyncTask<String, Void, Map<String, List<String>>> {
+	private final String LOG_TAG = getClass().getSimpleName();
 
 	private PrePostListener mListener;
 	private Context mCtx;
@@ -46,17 +47,18 @@ public class PrePostAsyncTask extends AsyncTask< String, Void, Map<String, List<
 
 		String url = HiUtils.ReplyUrl + tid;
 		switch (mMode) {
-		case PostAsyncTask.MODE_REPLY_THREAD:
-			break;
-		case PostAsyncTask.MODE_REPLY_POST:
-			url += "&reppost="+pid;
-			break;
-		case PostAsyncTask.MODE_QUOTE_POST:
-			url += "&repquote="+pid;
-			break;
-		case PostAsyncTask.MODE_NEW_THREAD:
-			url = HiUtils.NewThreadUrl+fid;
-			break;
+			case PostAsyncTask.MODE_REPLY_THREAD:
+			case PostAsyncTask.MODE_QUICK_REPLY:
+				break;
+			case PostAsyncTask.MODE_REPLY_POST:
+				url += "&reppost=" + pid;
+				break;
+			case PostAsyncTask.MODE_QUOTE_POST:
+				url += "&repquote=" + pid;
+				break;
+			case PostAsyncTask.MODE_NEW_THREAD:
+				url = HiUtils.NewThreadUrl + fid;
+				break;
 		}
 
 		// get infos
@@ -84,7 +86,7 @@ public class PrePostAsyncTask extends AsyncTask< String, Void, Map<String, List<
 		} while (!rspOk && retry < 3);
 
 		client.close();
-		
+
 		if (!rspOk) {
 			return null;
 		}
@@ -99,11 +101,10 @@ public class PrePostAsyncTask extends AsyncTask< String, Void, Map<String, List<
 		String rsp_str;
 		try {
 			HttpResponse rsp = client.execute(req, ctx);
-			HttpEntity rsp_ent = (HttpEntity)rsp.getEntity();
+			HttpEntity rsp_ent = rsp.getEntity();
 			rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			Log.e(LOG_TAG, "Network related error", e);
 			return null;
 		}
 

@@ -41,4 +41,11 @@
         android:layout_margin="8dp"
         android:text="@string/pref_title_prefetch"/>
 
+    <Switch
+        android:id="@+id/sw_post_redirect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/pref_title_post_redirect"/>
+
 </LinearLayout>
