@@ -38,6 +38,7 @@ public class HiSettingsHelper {
 	public static final String PERF_GESTURE_BACK = "PERF_GESTURE_BACK";
 	public static final String PERF_LAST_UPDATE_CHECK = "PERF_LAST_UPDATE_CHECK";
 	public static final String PERF_ABOUT = "PERF_ABOUT";
+	public static final String PERF_MAX_POSTS_IN_PAGE = "PERF_MAX_POSTS_IN_PAGE";
 
 
 	private Context mCtx;
@@ -71,6 +72,7 @@ public class HiSettingsHelper {
 	private String mPostTextSizeAdj = "";
 	private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
 	private boolean mGestureBack = true;
+	private int mMaxPostsInPage;
 
 	// --------------- THIS IS NOT IN PERF -----------
 	private boolean mIsLandscape = false;
@@ -491,6 +493,22 @@ public class HiSettingsHelper {
 	public void setLastUpdateCheckTime(Date d) {
 		SharedPreferences.Editor editor = mSharedPref.edit();
 		editor.putString(HiSettingsHelper.PERF_LAST_UPDATE_CHECK, d.getTime() + "").apply();
+	}
+
+	public int getMaxPostsInPage() {
+		if (mMaxPostsInPage <= 0) {
+			mMaxPostsInPage = mSharedPref.getInt(PERF_MAX_POSTS_IN_PAGE, 0);
+		}
+		return mMaxPostsInPage;
+	}
+
+	public void setMaxPostsInPage(int maxPostsInPage) {
+		//could be 5,10,15 default is 50
+		if (maxPostsInPage > 0 && maxPostsInPage % 5 == 0 && maxPostsInPage != mMaxPostsInPage) {
+			mMaxPostsInPage = maxPostsInPage;
+			SharedPreferences.Editor editor = mSharedPref.edit();
+			editor.putInt(HiSettingsHelper.PERF_MAX_POSTS_IN_PAGE, mMaxPostsInPage).apply();
+		}
 	}
 
 	public boolean isUpdateCheckable() {

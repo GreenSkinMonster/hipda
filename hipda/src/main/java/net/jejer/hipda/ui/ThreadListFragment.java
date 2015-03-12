@@ -11,6 +11,7 @@ import android.content.Loader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -145,6 +146,7 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 		getLoaderManager().initLoader(0, null, mCallbacks);
 		mThreadListView.setAdapter(mThreadListAdapter);
 		mThreadListView.setOnItemClickListener(new OnItemClickCallback());
+		mThreadListView.setOnItemLongClickListener(new OnItemLongClickCallback());
 		mThreadListView.setOnScrollListener(new OnScrollCallback());
 	}
 
@@ -259,7 +261,7 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 			}
 
 			if (HiSettingsHelper.getInstance().isPostReirect()) {
-				showThreadDetailFragment(tid, title);
+				showThreadDetailFragment(tid, title, -1, -1);
 			}
 			//refresh thread list
 			refresh();
@@ -323,17 +325,37 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 			ThreadBean thread = mThreadListAdapter.getItem(position);
 			String tid = thread.getTid();
 			String title = thread.getTitle();
-			showThreadDetailFragment(tid, title);
+			showThreadDetailFragment(tid, title, -1, -1);
 		}
 
 	}
 
-	private void showThreadDetailFragment(String tid, String title) {
+	private class OnItemLongClickCallback implements AdapterView.OnItemLongClickListener {
+		@Override
+		public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long row) {
+			ThreadBean thread = mThreadListAdapter.getItem(position);
+			String tid = thread.getTid();
+			String title = thread.getTitle();
+			int page = 1;
+			int maxPostsInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
+			if (maxPostsInPage > 0 && TextUtils.isDigitsOnly(thread.getCountCmts())) {
+				page = (int) Math.ceil((Integer.parseInt(thread.getCountCmts()) + 1) * 1.0f / maxPostsInPage);
+			}
+			showThreadDetailFragment(tid, title, page, ThreadDetailFragment.LAST_FLOOR_OFFSET);
+			return true;
+		}
+	}
+
+	private void showThreadDetailFragment(String tid, String title, int page, int floor) {
 		setHasOptionsMenu(false);
 		if (HiSettingsHelper.getInstance().getIsLandscape()) {
 			Bundle arguments = new Bundle();
 			arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
 			arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
+			if (page > 0)
+				arguments.putInt(ThreadDetailFragment.ARG_PAGE_KEY, page);
+			if (floor != -1)
+				arguments.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, floor);
 			ThreadDetailFragment fragment = new ThreadDetailFragment();
 			fragment.setArguments(arguments);
 			getFragmentManager().beginTransaction()
@@ -344,6 +366,10 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 			Bundle arguments = new Bundle();
 			arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
 			arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
+			if (page != -1)
+				arguments.putInt(ThreadDetailFragment.ARG_PAGE_KEY, page);
+			if (floor != -1)
+				arguments.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, floor);
 			ThreadDetailFragment fragment = new ThreadDetailFragment();
 			fragment.setArguments(arguments);
 			if (HiSettingsHelper.getInstance().isEinkOptimization()) {

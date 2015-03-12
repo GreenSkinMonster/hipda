@@ -51,7 +51,10 @@ import java.util.List;
 public class ThreadDetailFragment extends Fragment implements PostAsyncTask.PostListener {
 	public static final String ARG_TID_KEY = "tid";
 	public static final String ARG_TITLE_KEY = "title";
-	private final int LAST_FLOOR_OFFSET = Integer.MIN_VALUE;
+	public static final String ARG_FLOOR_KEY = "floor";
+	public static final String ARG_PAGE_KEY = "page";
+
+	public static final int LAST_FLOOR_OFFSET = Integer.MIN_VALUE;
 
 	private final String LOG_TAG = getClass().getSimpleName();
 
@@ -96,7 +99,12 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 		if (getArguments().containsKey(ARG_TITLE_KEY)) {
 			mTitle = getArguments().getString(ARG_TITLE_KEY);
 		}
-
+		if (getArguments().containsKey(ARG_PAGE_KEY)) {
+			mCurrentPage = getArguments().getInt(ARG_PAGE_KEY);
+		}
+		if (getArguments().containsKey(ARG_FLOOR_KEY)) {
+			mOffsetInPage = getArguments().getInt(ARG_FLOOR_KEY);
+		}
 		mLoaderCallbacks = new ThreadListLoaderCallbacks();
 		List<DetailBean> a = new ArrayList<DetailBean>();
 		mAdapter = new ThreadDetailAdapter(mCtx, getFragmentManager(), R.layout.item_thread_detail, a,
@@ -506,6 +514,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
 			if (details.getCount() > mMaxPostInPage) {
 				mMaxPostInPage = details.getCount();
+				if (mMaxPage > 1 && mCurrentPage < mMaxPage) {
+					HiSettingsHelper.getInstance().setMaxPostsInPage(mMaxPostInPage);
+				}
 			}
 
 			setPullLoadStatus();
