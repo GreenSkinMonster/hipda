@@ -6,4 +6,5 @@ package net.jejer.hipda.utils;
 public class Constants {
 	public static final int STATUS_SUCCESS = 0;
 	public static final int STATUS_FAIL = 1;
+	public static final int STATUS_FAIL_ABORT = 9;
 }

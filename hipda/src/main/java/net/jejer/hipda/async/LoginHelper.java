@@ -10,6 +10,7 @@ import android.util.Log;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.ThreadListFragment;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
@@ -41,14 +42,9 @@ public class LoginHelper {
 	private Handler mHandler;
 
 	private AndroidHttpClient client = AndroidHttpClient.newInstance(HiUtils.UserAgent);
-	private CookieStore cookieStore = new BasicCookieStore();
 	private HttpContext localContext = new BasicHttpContext();
 
 	private String mErrorMsg = "";
-
-	public final static int SUCCESS = 0;
-	public final static int FAIL_RETRY = 1;
-	public final static int FAIL_ABORT = 9;
 
 	public LoginHelper(Context ctx, Handler handler) {
 		mCtx = ctx;
@@ -64,10 +60,10 @@ public class LoginHelper {
 			mHandler.sendMessage(msg);
 		}
 
-		cookieStore = new BasicCookieStore();
+		CookieStore cookieStore = new BasicCookieStore();
 		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
-		int status = FAIL_ABORT;
+		int status = Constants.STATUS_FAIL_ABORT;
 
 		// Step2 get formhash
 		String formhash = loginStep2();
@@ -82,7 +78,7 @@ public class LoginHelper {
 		client.close();
 
 		// Update UI
-		if (status != SUCCESS && mHandler != null) {
+		if (status != Constants.STATUS_SUCCESS && mHandler != null) {
 			Message msg = Message.obtain();
 			msg.what = ThreadListFragment.STAGE_ERROR;
 			Bundle b = new Bundle();
@@ -148,7 +144,7 @@ public class LoginHelper {
 			req.setEntity(entity);
 		} catch (UnsupportedEncodingException e1) {
 			Log.e(LOG_TAG, "encoding error", e1);
-			return FAIL_RETRY;
+			return Constants.STATUS_FAIL;
 		}
 
 		String rspStr;
@@ -160,13 +156,13 @@ public class LoginHelper {
 			Log.v(LOG_TAG, rspStr);
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "network error", e);
-			return FAIL_RETRY;
+			return Constants.STATUS_FAIL;
 		}
 
 		// response is in XML format
 		if (rspStr.contains(mCtx.getString(R.string.login_success))) {
 			Log.v(LOG_TAG, "Login success!");
-			return SUCCESS;
+			return Constants.STATUS_SUCCESS;
 		} else if (rspStr.contains(mCtx.getString(R.string.login_fail))) {
 			Log.e(LOG_TAG, "Login FAIL");
 			int msgIndex = rspStr.indexOf(mCtx.getString(R.string.login_fail));
@@ -176,10 +172,10 @@ public class LoginHelper {
 			} else {
 				mErrorMsg = "登录失败,请检查账户信息";
 			}
-			return FAIL_ABORT;
+			return Constants.STATUS_FAIL_ABORT;
 		} else {
 			mErrorMsg = "登录失败,未知错误";
-			return FAIL_RETRY;
+			return Constants.STATUS_FAIL;
 		}
 	}
 

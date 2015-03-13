@@ -68,7 +68,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 			rsp_str = getPostPage(client, localContext, HiUtils.SMSPreparePostUrl + mUid);
 			if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
 				int status = new LoginHelper(mCtx, null).login();
-				if (status > LoginHelper.FAIL_RETRY) {
+				if (status > Constants.STATUS_FAIL) {
 					break;
 				}
 			} else {

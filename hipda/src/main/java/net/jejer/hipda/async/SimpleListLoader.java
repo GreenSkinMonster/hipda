@@ -9,6 +9,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.bean.SimpleListBean;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
 
@@ -63,7 +64,7 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 			if (mRsp != null) {
 				if (!LoginHelper.checkLoggedin(mCtx, mRsp)) {
 					int status = new LoginHelper(mCtx, null).login();
-					if (status > LoginHelper.FAIL_RETRY) {
+					if (status > Constants.STATUS_FAIL) {
 						break;
 					}
 				} else {

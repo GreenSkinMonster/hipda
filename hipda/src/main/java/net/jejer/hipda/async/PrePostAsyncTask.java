@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
@@ -75,7 +76,7 @@ public class PrePostAsyncTask extends AsyncTask<String, Void, Map<String, List<S
 			if (rsp_str != null) {
 				if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
 					int status = new LoginHelper(mCtx, null).login();
-					if (status > LoginHelper.FAIL_RETRY) {
+					if (status > Constants.STATUS_FAIL) {
 						break;
 					}
 				} else {
