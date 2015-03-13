@@ -12,8 +12,8 @@ import android.widget.TextView;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
-import net.jejer.hipda.cache.AvatarUrlCache;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.utils.HiUtils;
 
 import java.util.List;
 
@@ -71,7 +71,7 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
 			String avatarUrl = item.getAvatarUrl();
 			if (TextUtils.isEmpty(avatarUrl)) {
-				avatarUrl = AvatarUrlCache.getInstance().get(item.getId());
+				avatarUrl = HiUtils.getAvatarUrlByUid(item.getId());
 			} else {
 				avatarUrl = avatarUrl.replaceAll("small", "middle");
 			}

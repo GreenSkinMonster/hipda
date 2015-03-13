@@ -29,9 +29,12 @@ public class HiUtils {
 	public static final String FavoriteRemoveUrl = BaseUrl + "my.php?item=favorites&action=remove&inajax=1&ajaxtarget=favorite_msg&tid=";
 	public static final String UserInfoUrl = BaseUrl + "space.php?uid=";
 	public static final String UpdateUrl = BaseUrl + "viewthread.php?tid=1579403";
+	public static final String AvatarBaseUrl = BaseUrl + "uc_server/data/avatar/";
 
 	public static final String LoginStep3 = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
 	public static final String LoginStep2 = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
+
+	private static String AVATAR_BASE = "000000000";
 
 	public static int getForumID(Context ctx, long idx) {
 		final int[] forumsID = ctx.getResources().getIntArray(R.array.forums_id);
@@ -65,5 +68,15 @@ public class HiUtils {
 				return true;
 			}
 		}
+	}
+
+	public static String getAvatarUrlByUid(String uid) {
+		String fullUid = AVATAR_BASE.substring(0, AVATAR_BASE.length() - uid.length()) + uid;
+		String url = AvatarBaseUrl
+				+ fullUid.substring(0, 3) + "/"
+				+ fullUid.substring(3, 5) + "/"
+				+ fullUid.substring(5, 7) + "/"
+				+ fullUid.substring(7, 9) + "_avatar_middle.jpg";
+		return url;
 	}
 }

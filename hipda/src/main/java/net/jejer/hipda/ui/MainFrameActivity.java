@@ -20,11 +20,9 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.cache.AvatarUrlCache;
 import net.jejer.hipda.glide.GlideHelper;
 
-public class MainFrameActivity extends Activity
-		implements ThreadDetailFragment.AvatarUrlUpdated {
+public class MainFrameActivity extends Activity {
 	private final String LOG_TAG = getClass().getSimpleName();
 
 	private DrawerLayout mDrawerLayout;
@@ -43,7 +41,6 @@ public class MainFrameActivity extends Activity
 			setTheme(R.style.ThemeNight);
 		}
 
-		AvatarUrlCache.getInstance().init(this);
 		GlideHelper.init(this);
 
 		// Init Volley
@@ -128,7 +125,6 @@ public class MainFrameActivity extends Activity
 	@Override
 	protected void onStop() {
 		super.onStop();
-		AvatarUrlCache.getInstance().save();
 	}
 
 	@Override
@@ -204,14 +200,6 @@ public class MainFrameActivity extends Activity
 			return false;
 		}
 
-	}
-
-	@Override
-	public void onAvatarUrlUpdated() {
-		Fragment fragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
-		if (fragment instanceof ThreadListFragment) {
-			((ThreadListFragment) fragment).refreshAvatars();
-		}
 	}
 
 	private class DrawerItemClickListener implements ListView.OnItemClickListener {

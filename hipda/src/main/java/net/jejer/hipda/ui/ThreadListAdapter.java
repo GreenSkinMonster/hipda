@@ -11,7 +11,6 @@ import android.widget.TextView;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
-import net.jejer.hipda.cache.AvatarUrlCache;
 import net.jejer.hipda.glide.GlideHelper;
 
 import java.util.HashMap;
@@ -83,41 +82,6 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 		//holder.avatar.setOnClickListener(mAvatarListener);
 
 		return convertView;
-	}
-
-	public void markAvatars(int startPostion, int count) {
-		if (count > 0 && startPostion >= 0) {
-			for (int i = startPostion; i < startPostion + count; i++) {
-				if (i < getCount()) {
-					ThreadBean thread = getItem(i);
-					AvatarUrlCache.getInstance().markDirty(thread.getAuthorId());
-				}
-			}
-		}
-		AvatarUrlCache.getInstance().fetchAvatarUrls();
-	}
-
-	public void refreshAvatars() {
-		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()
-				&& AvatarUrlCache.getInstance().isUpdated()) {
-			AvatarUrlCache.getInstance().setUpdated(false);
-			boolean changed = true;
-			long start = System.currentTimeMillis();
-			for (int i = 0; i < getCount(); i++) {
-				ThreadBean thread = getItem(i);
-				if (!AvatarUrlCache.getInstance().get(thread.getAuthorId()).equals((thread.getAvatarUrl()))) {
-					ViewHolder holder = holders.get(thread.getTid());
-					if (holder != null
-							&& thread.getAuthorId().equals(holder.avatar.getTag(R.id.avatar_tag_uid))) {
-						GlideHelper.loadAvatar(getContext(), holder.avatar, thread.getAvatarUrl());
-						thread.setAvatarUrl(AvatarUrlCache.getInstance().get(thread.getAuthorId()));
-					}
-				}
-			}
-			if (changed)
-				notifyDataSetChanged();
-			//Log.v("ThreadListAdapter", "refreshAvatars size=" + getCount() + ", time used : " + (System.currentTimeMillis() - start) + " ms");
-		}
 	}
 
 	private static class ViewHolder {

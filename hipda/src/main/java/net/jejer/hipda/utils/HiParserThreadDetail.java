@@ -1,10 +1,5 @@
 package net.jejer.hipda.utils;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.select.Elements;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,11 +7,15 @@ import android.os.Message;
 import android.util.Log;
 
 import net.jejer.hipda.bean.DetailBean;
-import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.DetailBean.Contents;
-import net.jejer.hipda.cache.AvatarUrlCache;
+import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadListFragment;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
 
 public class HiParserThreadDetail {
     public static final String LOG_TAG = "HiParserThreadDetail";
@@ -118,7 +117,6 @@ public class HiParserThreadDetail {
             } else {
                 detail.setAvatarUrl(avatarES.first().attr("src"));
             }
-            AvatarUrlCache.getInstance().put(uid, detail.getAvatarUrl());
 
             //content
             Contents content = detail.getContents();

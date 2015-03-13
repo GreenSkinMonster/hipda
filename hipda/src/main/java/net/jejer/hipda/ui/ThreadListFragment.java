@@ -164,11 +164,6 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 		getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
 		getActivity().getActionBar().setSelectedNavigationItem(mForumSelect == -1 ? 0 : mForumSelect);
 
-		//refresh unkown avatars
-		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-			mThreadListAdapter.refreshAvatars();
-		}
-
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
@@ -239,10 +234,6 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 		Log.v(LOG_TAG, "restartLoader() called");
 	}
 
-	public void refreshAvatars() {
-		mThreadListAdapter.refreshAvatars();
-	}
-
 	@Override
 	public void onPrePost() {
 		if (HiSettingsHelper.getInstance().isPostReirect()) {
@@ -308,8 +299,6 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 					//Glide.with(mCtx).pauseRequests();
 				} else if (scrollState == SCROLL_STATE_IDLE) {
 					//Log.v(LOG_TAG, "scrollState = " + scrollState + ", VisibleItem=" + mLastVisibleItem + ", mVisibleItemCount=" + mVisibleItemCount);
-					mThreadListAdapter.markAvatars(mLastVisibleItem, mVisibleItemCount);
-					mThreadListAdapter.refreshAvatars();
 					//Glide.with(mCtx).resumeRequests();
 				}
 			}

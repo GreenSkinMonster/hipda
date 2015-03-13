@@ -1,7 +1,6 @@
 package net.jejer.hipda.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -521,10 +520,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 			}
 
 			setPullLoadStatus();
-
-			//try to refresh avatar views on thread list
-			//but not always work, need a better way
-			mCallback.onAvatarUrlUpdated();
 		}
 
 
@@ -856,27 +851,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 							.commit();
 				}
 			}
-		}
-	}
-
-
-	AvatarUrlUpdated mCallback;
-
-	public interface AvatarUrlUpdated {
-		public void onAvatarUrlUpdated();
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-
-		// This makes sure that the container activity has implemented
-		// the callback interface. If not, it throws an exception
-		try {
-			mCallback = (AvatarUrlUpdated) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()
-					+ " must implement TextClicked");
 		}
 	}
 

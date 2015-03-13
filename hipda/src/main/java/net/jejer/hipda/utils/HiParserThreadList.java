@@ -1,24 +1,23 @@
 package net.jejer.hipda.utils;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+
 import net.jejer.hipda.async.HiStringRequest;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
-import net.jejer.hipda.cache.AvatarUrlCache;
 import net.jejer.hipda.ui.NotifyHelper;
 import net.jejer.hipda.ui.ThreadListFragment;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
-
-import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 
 public class HiParserThreadList {
     public static final String LOG_TAG = "HiParserThreadList";
@@ -80,7 +79,7 @@ public class HiParserThreadList {
             String authorId = HttpUtils.getMiddleString(userLink, "uid=", "&");
             thread.setAuthorId(authorId);
 
-            thread.setAvatarUrl(AvatarUrlCache.getInstance().get(authorId));
+            thread.setAvatarUrl(HiUtils.getAvatarUrlByUid(authorId));
 
             Elements threadCreateTimeES = authorES.first().select("em");
             if (threadCreateTimeES.size() == 0) {
