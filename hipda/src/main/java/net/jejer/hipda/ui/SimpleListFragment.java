@@ -60,11 +60,11 @@ public class SimpleListFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "onCreateView");
 		View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
-		mThreadListView = (ListView)view.findViewById(R.id.lv_threads);
-		mTipBar = (TextView)view.findViewById(R.id.thread_list_tipbar);
+		mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
+		mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
 		mTipBar.setVisibility(View.GONE);
 
 		return view;
@@ -82,15 +82,15 @@ public class SimpleListFragment extends Fragment {
 		mThreadListView.setOnScrollListener(new OnScrollCallback());
 
 		switch (mType) {
-		case SimpleListLoader.TYPE_MYREPLY:
-		case SimpleListLoader.TYPE_MYPOST:
-		case SimpleListLoader.TYPE_SMS:
-		case SimpleListLoader.TYPE_THREADNOTIFY:
-		case SimpleListLoader.TYPE_FAVORITES:
-			getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-			break;
-		case SimpleListLoader.TYPE_SEARCH:
-			break;
+			case SimpleListLoader.TYPE_MYREPLY:
+			case SimpleListLoader.TYPE_MYPOST:
+			case SimpleListLoader.TYPE_SMS:
+			case SimpleListLoader.TYPE_THREADNOTIFY:
+			case SimpleListLoader.TYPE_FAVORITES:
+				getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+				break;
+			case SimpleListLoader.TYPE_SEARCH:
+				break;
 		}
 	}
 
@@ -155,17 +155,17 @@ public class SimpleListFragment extends Fragment {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected (MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.v(LOG_TAG, "onOptionsItemSelected");
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			// Implemented in activity
-			return false;
-		case R.id.action_refresh:
-			refresh();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case android.R.id.home:
+				// Implemented in activity
+				return false;
+			case R.id.action_refresh:
+				refresh();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 
 	}
@@ -181,37 +181,21 @@ public class SimpleListFragment extends Fragment {
 
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
-				int visibleItemCount, int totalItemCount) {
-			// TODO Auto-generated method stub
-			//			if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
-			//
-			//				if (!mInloading) {
-			//					mInloading = true;
-			//					mPage++;
-			//
-			//					Log.v(LOG_TAG, "overScroll autoload triggerd, load page " + String.valueOf(mPage));
-			//
-			//					getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-			//					Log.v(LOG_TAG, "restartLoader() called");
-			//				}
-			//			}
+							 int visibleItemCount, int totalItemCount) {
 		}
 
 		@Override
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
-			// TODO Auto-generated method stub
-
 		}
 
 	}
+
 	public class OnItemClickCallback implements AdapterView.OnItemClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> listView, View itemView, int position,
-				long row) {
-			// TODO Auto-generated method stub
+								long row) {
 
-			Log.v(LOG_TAG, "onItemClick");
 			setHasOptionsMenu(false);
 			SimpleListItemBean item = mSimpleListAdapter.getItem(position);
 
@@ -229,14 +213,14 @@ public class SimpleListFragment extends Fragment {
 			fragment.setArguments(bun);
 			if (HiSettingsHelper.getInstance().getIsLandscape()) {
 				getFragmentManager().beginTransaction()
-				.replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-				.addToBackStack(ThreadDetailFragment.class.getName())
-				.commit();
+						.replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
+						.addToBackStack(ThreadDetailFragment.class.getName())
+						.commit();
 			} else {
 				getFragmentManager().beginTransaction()
-				.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-				.addToBackStack(ThreadDetailFragment.class.getName())
-				.commit();
+						.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+						.addToBackStack(ThreadDetailFragment.class.getName())
+						.commit();
 			}
 		}
 	}
@@ -245,8 +229,6 @@ public class SimpleListFragment extends Fragment {
 
 		@Override
 		public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-			// TODO Auto-generated method stub
-
 			mTipBar.setText("加载中...");
 			mTipBar.setVisibility(View.VISIBLE);
 			mTipBar.bringToFront();
@@ -255,22 +237,20 @@ public class SimpleListFragment extends Fragment {
 
 		@Override
 		public void onLoadFinished(Loader<SimpleListBean> loader,
-				SimpleListBean list) {
-			// TODO Auto-generated method stub
-
+								   SimpleListBean list) {
 			Log.v(LOG_TAG, "onLoadFinished enter");
 
 			mTipBar.setVisibility(View.INVISIBLE);
 
-			if(list == null || list.getCount() == 0) {
+			if (list == null || list.getCount() == 0) {
 				Log.v(LOG_TAG, "onLoadFinished list == null || list.getCount == 0");
-				Toast.makeText(SimpleListFragment.this.getActivity(), 
+				Toast.makeText(SimpleListFragment.this.getActivity(),
 						"自动加载失败", Toast.LENGTH_LONG).show();
 				return;
 			}
 
 
-			Log.v(LOG_TAG, "mThreadListAdapter.addAll(arg1.threads) called, added "+list.getCount());
+			Log.v(LOG_TAG, "mThreadListAdapter.addAll(arg1.threads) called, added " + list.getCount());
 			mSimpleListAdapter.addAll(list.getAll());
 
 			//			if (mResume) {
@@ -283,7 +263,6 @@ public class SimpleListFragment extends Fragment {
 
 		@Override
 		public void onLoaderReset(Loader<SimpleListBean> arg0) {
-			// TODO Auto-generated method stub
 			Log.v(LOG_TAG, "onLoaderReset");
 
 			mTipBar.setVisibility(View.INVISIBLE);

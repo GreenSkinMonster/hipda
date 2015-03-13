@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
@@ -38,12 +39,9 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 	public static final int MODE_NEW_THREAD = 3;
 	public static final int MODE_QUICK_REPLY = 4;
 
-	public static final int STATUS_SUCCESS = 0;
-	public static final int STATUS_FAIL = 1;
-
 	private int mMode;
 	private String mResult;
-	private int mStatus = STATUS_FAIL;
+	private int mStatus = Constants.STATUS_FAIL;
 	private Context mCtx;
 	private Map<String, List<String>> mInfo;
 
@@ -121,7 +119,7 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 
 	@Override
 	protected void onPostExecute(Void avoid) {
-		if (mStatus != STATUS_SUCCESS && !TextUtils.isEmpty(mContent)) {
+		if (mStatus != Constants.STATUS_SUCCESS && !TextUtils.isEmpty(mContent)) {
 			ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
 			ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", mContent);
 			clipboard.setPrimaryClip(clip);
@@ -176,7 +174,7 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 
 		if (rsp_code == 302) {
 			mResult = "发表成功!";
-			mStatus = STATUS_SUCCESS;
+			mStatus = Constants.STATUS_SUCCESS;
 
 			//viewthread.php?tid=123456&extra=
 			String location = rsp.getFirstHeader("Location") != null ? rsp.getFirstHeader("Location").toString() : "";

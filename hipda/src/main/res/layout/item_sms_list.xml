@@ -1,13 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    android:orientation="vertical" >
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_margin="4dp"
+              android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/iv_avatar"
@@ -17,12 +17,12 @@
             android:layout_alignParentTop="true"
             android:layout_margin="4dp"
             android:contentDescription="@string/iv_avatar"
-            android:src="@drawable/google_user" />
+            android:src="@drawable/google_user"/>
 
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/iv_avatar" >
+            android:layout_toRightOf="@+id/iv_avatar">
 
             <TextView
                 android:id="@+id/tv_author"
@@ -33,7 +33,7 @@
                 android:layout_margin="4dp"
                 android:text=""
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/hipda"/>
 
             <TextView
                 android:id="@+id/tv_time"
@@ -42,15 +42,20 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_margin="4dp"
-                android:text="" />
-        </RelativeLayout>
-    </RelativeLayout>
+                android:text=""/>
 
-    <TextView
-        android:id="@+id/tv_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:text="" />
+            <TextView
+                android:id="@+id/tv_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/tv_author"
+                android:textSize="16sp"
+                android:text=""
+                android:clickable="true"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

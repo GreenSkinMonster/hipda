@@ -37,6 +37,7 @@ import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 
 import java.util.ArrayList;
@@ -253,7 +254,7 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 
 	@Override
 	public void onPostDone(int mode, int status, String message, String tid, String title) {
-		if (status == PostAsyncTask.STATUS_SUCCESS) {
+		if (status == Constants.STATUS_SUCCESS) {
 			if (postProgressDialog != null) {
 				postProgressDialog.dismiss(message);
 			} else {

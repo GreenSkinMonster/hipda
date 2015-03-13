@@ -6,24 +6,27 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.SimpleListBean;
+import net.jejer.hipda.utils.Constants;
 
-public class SmsFragment extends Fragment {
+public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListener {
 	private final String LOG_TAG = getClass().getSimpleName();
 
 	public static final String ARG_ID = "ID";
@@ -35,9 +38,7 @@ public class SmsFragment extends Fragment {
 	private SmsListLoaderCallbacks mLoaderCallbacks;
 	private ListView mListView;
 
-	private View mQuickReplyView;
-	private TextView mQuickReplyTv;
-
+	private HiProgressDialog postProgressDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -56,32 +57,40 @@ public class SmsFragment extends Fragment {
 		mAdapter = new SmsAdapter(getActivity(), R.layout.item_sms_list);
 		mLoaderCallbacks = new SmsListLoaderCallbacks();
 
-		((MainFrameActivity)getActivity()).registOnSwipeCallback(this);
+		((MainFrameActivity) getActivity()).registOnSwipeCallback(this);
+
 	}
 
 	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "onCreateView");
 		View view = inflater.inflate(R.layout.fragment_sms, container, false);
-		mListView = (ListView)view.findViewById(R.id.lv_sms);
+		mListView = (ListView) view.findViewById(R.id.lv_sms);
 
-		mQuickReplyView = view.findViewById(R.id.inc_quick_reply);
-		mQuickReplyTv = (TextView)mQuickReplyView.findViewById(R.id.tv_reply_text);
-		ImageButton postIb = (ImageButton)mQuickReplyView.findViewById(R.id.ib_reply_post);
+		//to avoid click through this view
+		view.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return true;
+			}
+		});
+
+		ImageButton postIb = (ImageButton) view.findViewById(R.id.ib_send_sms);
+		final EditText etSms = (EditText) view.findViewById(R.id.et_sms);
 		postIb.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String replyText = mQuickReplyTv.getText().toString();
+				String replyText = etSms.getText().toString();
 				if (replyText.length() > 0) {
-					new PostSmsAsyncTask(getActivity(), mUid).execute(replyText);
+					new PostSmsAsyncTask(getActivity(), mUid, SmsFragment.this).execute(replyText);
 					// Close SoftKeyboard
-					InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
-							Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(mQuickReplyTv.getWindowToken(), 0);
+					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(etSms.getWindowToken(), 0);
+					etSms.setText("");
 				}
 			}
 		});
-		mQuickReplyView.bringToFront();
+
 		return view;
 	}
 
@@ -105,9 +114,37 @@ public class SmsFragment extends Fragment {
 
 		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActivity().getActionBar().setTitle("与"+mId+"的短消息");
+		getActivity().getActionBar().setTitle("与" + mId + "的短消息");
 
-		super.onCreateOptionsMenu(menu,inflater);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public void onPrePost() {
+		postProgressDialog = HiProgressDialog.show(getActivity(), "正在发送...");
+	}
+
+	@Override
+	public void onPostDone(int status, String message) {
+		if (status == Constants.STATUS_SUCCESS) {
+			//new sms has some delay, so this is a dirty hack
+			new CountDownTimer(1000, 1000) {
+				public void onTick(long millisUntilFinished) {
+				}
+
+				public void onFinish() {
+					try {
+						getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
+					} catch (Exception ignored) {
+
+					}
+				}
+			}.start();
+			postProgressDialog.dismiss(message);
+		} else {
+			postProgressDialog.dismiss(message, 3000);
+		}
+
 	}
 
 	public class SmsListLoaderCallbacks implements LoaderManager.LoaderCallbacks<SimpleListBean> {
@@ -119,21 +156,20 @@ public class SmsFragment extends Fragment {
 
 		@Override
 		public void onLoadFinished(Loader<SimpleListBean> loader,
-				SimpleListBean list) {
+								   SimpleListBean list) {
 
 			Log.v(LOG_TAG, "onLoadFinished enter");
 
-			if(list == null || list.getCount() == 0) {
-				Log.v(LOG_TAG, "onLoadFinished list == null || list.getCount == 0");
-				Toast.makeText(SmsFragment.this.getActivity(), 
-						"自动加载失败", Toast.LENGTH_LONG).show();
+			if (list == null || list.getCount() == 0) {
+				Toast.makeText(SmsFragment.this.getActivity(),
+						"没有短消息", Toast.LENGTH_LONG).show();
 				return;
-			}else{
-				mQuickReplyView.setVisibility(View.VISIBLE);
 			}
 
-			Log.v(LOG_TAG, "mThreadListAdapter.addAll(arg1.threads) called, added "+list.getCount());
+			mAdapter.clear();
 			mAdapter.addAll(list.getAll());
+			mAdapter.notifyDataSetChanged();
+			mListView.setSelection(mAdapter.getCount());
 		}
 
 		@Override
@@ -143,9 +179,8 @@ public class SmsFragment extends Fragment {
 	}
 
 	public void onSwipeTop() {
-		mQuickReplyView.setVisibility(View.INVISIBLE);
 	}
+
 	public void onSwipeBottom() {
-		mQuickReplyView.setVisibility(View.VISIBLE);
 	}
 }

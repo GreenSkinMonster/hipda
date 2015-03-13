@@ -42,6 +42,7 @@ import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 
 import java.util.ArrayList;
@@ -354,7 +355,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
 	@Override
 	public void onPostDone(int mode, int status, String message, String tid, String title) {
-		if (status == PostAsyncTask.STATUS_SUCCESS) {
+		if (status == Constants.STATUS_SUCCESS) {
 			if (postProgressDialog != null) {
 				postProgressDialog.dismiss(message);
 			} else {

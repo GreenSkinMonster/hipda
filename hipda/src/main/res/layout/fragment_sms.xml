@@ -1,21 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?background" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?background"
+                android:orientation="vertical">
 
-    <include
-        android:id="@+id/inc_quick_reply"
-        android:layout_alignParentBottom="true"
-        layout="@layout/view_quick_reply"
-        android:visibility="invisible" />
 
     <ListView
         android:id="@+id/lv_sms"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:clickable="true" >
+        android:layout_height="wrap_content"
+        android:stackFromBottom="true"
+        android:transcriptMode="normal"
+        android:layout_above="@+id/border_line">
     </ListView>
+
+    <View
+        android:id="@+id/border_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/rl_input"
+        android:background="@color/silver"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_input"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/et_sms"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:layout_margin="4dp"
+            android:hint="@string/txt_quick_hint"
+            android:inputType="textMultiLine"
+            android:singleLine="false"
+            android:minLines="3"
+            android:maxLines="6"
+            android:scrollHorizontally="false"
+            android:scrollbars="vertical"
+            android:gravity="bottom"
+            android:text="@string/txt_quick_mark"
+            android:layout_toLeftOf="@+id/ib_send_sms">
+        </EditText>
+
+        <ImageButton
+            android:id="@+id/ib_send_sms"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/ib_quick_send"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@+id/et_sms"
+            android:src="?icon_send"/>
+    </RelativeLayout>
 
 </RelativeLayout>

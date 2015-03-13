@@ -1,11 +1,16 @@
 package net.jejer.hipda.async;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
@@ -23,26 +28,30 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
+
+	private String LOG_TAG = getClass().getSimpleName();
+
 	private Context mCtx;
 	private String mUid;
 
 	private String mFormhash;
-	private String mResult = "SMS send success";
+	private int mStatus = Constants.STATUS_FAIL;
+	private String mResult = "";
+	private String mText = "";
+	private PostListener mPostListenerCallback;
 
-	public PostSmsAsyncTask(Context ctx, String uid) {
+	public PostSmsAsyncTask(Context ctx, String uid, PostListener postListener) {
 		mCtx = ctx;
 		mUid = uid;
+		mPostListenerCallback = postListener;
 	}
 
 	@Override
 	protected Void doInBackground(String... arg0) {
-		// TODO Auto-generated method stub
 		String content = arg0[0];
 
 		// prepare http client
@@ -68,7 +77,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 			retry++;
 		} while (!done && retry < 3);
 
-		Document doc =  Jsoup.parse(rsp_str);
+		Document doc = Jsoup.parse(rsp_str);
 		Elements formhashES = doc.select("input#formhash");
 		if (formhashES.size() == 0) {
 			mResult = "SMS send fail, can not get formhash.";
@@ -85,16 +94,16 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 		return null;
 	}
 
-	private String getPostPage(AndroidHttpClient client, HttpContext ctx, String url){
+	private String getPostPage(AndroidHttpClient client, HttpContext ctx, String url) {
 		HttpGet req = new HttpGet(url);
 		String rsp_str;
 		try {
 			HttpResponse rsp = client.execute(req, ctx);
-			HttpEntity rsp_ent = (HttpEntity)rsp.getEntity();
+			HttpEntity rsp_ent = rsp.getEntity();
 			rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			Log.e(LOG_TAG, "Network error", e);
+			mResult = "发生网络错误";
 			return null;
 		}
 		return rsp_str;
@@ -110,39 +119,68 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 		post_param.put("handlekey", "pmreply");
 		post_param.put("message", content);
 
+		mText = content;
 
 		try {
 			String encoded = HttpUtils.buildHttpString(post_param);
 			StringEntity entity = new StringEntity(encoded, HiSettingsHelper.getInstance().getEncode());
 			entity.setContentType("application/x-www-form-urlencoded");
 			req.setEntity(entity);
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (Exception e) {
+			Log.e(LOG_TAG, "Network error", e);
+			mResult = "编码错误";
 			return null;
 		}
 
 		String rsp_str;
 		try {
 			HttpResponse rsp = client.execute(req, ctx);
-			HttpEntity rsp_ent = (HttpEntity)rsp.getEntity();
+			HttpEntity rsp_ent = rsp.getEntity();
 			rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
-			//Log.i("weather_info_response", rsp_str);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			Log.e(LOG_TAG, "Network error", e);
+			mResult = "发生网络错误";
 			return null;
 		}
 
 		if (!rsp_str.contains("class=\"summary\"")) {
-			mResult = "SMS post failed.";
+			mResult = "短消息发送失败.";
+		} else {
+			mResult = "短消息发送成功.";
+			mStatus = Constants.STATUS_SUCCESS;
 		}
-
 		return rsp_str;
 	}
 
 	@Override
-	protected void onPostExecute(Void avoid) {
-		Toast.makeText(mCtx, mResult, Toast.LENGTH_LONG).show();
+	protected void onPreExecute() {
+		super.onPreExecute();
+		if (mPostListenerCallback != null)
+			mPostListenerCallback.onPrePost();
+		else
+			Toast.makeText(mCtx, "正在发送...", Toast.LENGTH_LONG).show();
 	}
+
+	@Override
+	protected void onPostExecute(Void avoid) {
+		super.onPostExecute(avoid);
+		if (mStatus != Constants.STATUS_SUCCESS && !TextUtils.isEmpty(mText)) {
+			ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
+			ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", mText);
+			clipboard.setPrimaryClip(clip);
+			mResult += "\n请注意：发表失败的短消息已经复制到粘贴板";
+		}
+		if (mPostListenerCallback != null) {
+			mPostListenerCallback.onPostDone(mStatus, mResult);
+		} else {
+			Toast.makeText(mCtx, mResult, Toast.LENGTH_LONG).show();
+		}
+	}
+
+	public interface PostListener {
+		public void onPrePost();
+
+		public void onPostDone(int status, String message);
+	}
+
 }

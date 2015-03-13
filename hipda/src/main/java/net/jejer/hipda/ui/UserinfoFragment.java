@@ -161,7 +161,7 @@ public class UserinfoFragment extends Fragment {
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						new PostSmsAsyncTask(getActivity(), mUid).execute(smsTextView.getText().toString());
+						new PostSmsAsyncTask(getActivity(), mUid, null).execute(smsTextView.getText().toString());
 					}
 				});
 		popDialog.setNegativeButton("取消", null);
