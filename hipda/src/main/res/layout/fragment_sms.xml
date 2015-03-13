@@ -26,18 +26,18 @@
         android:id="@+id/rl_input"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
         <EditText
             android:id="@+id/et_sms"
             android:layout_width="fill_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:hint="@string/txt_quick_hint"
             android:inputType="textMultiLine"
             android:singleLine="false"
-            android:minLines="3"
+            android:minLines="1"
             android:maxLines="6"
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
