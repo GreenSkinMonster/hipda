@@ -298,7 +298,7 @@ public class HiSettingsHelper {
 	}
 
 	public boolean isPostRedirectFromPref() {
-		mPostRedirect = mSharedPref.getBoolean(PERF_POST_REDIRECT, false);
+		mPostRedirect = mSharedPref.getBoolean(PERF_POST_REDIRECT, true);
 		return mPostRedirect;
 	}
 

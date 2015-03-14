@@ -82,7 +82,7 @@ public class UpdateHelper {
 				if (mSilent) {
 					Toast.makeText(mCtx, "发现新版本 " + newVersion + "，请在设置中检查更新", Toast.LENGTH_LONG).show();
 				} else {
-					pd.setMessage("发现新版本 " + newVersion + "，正在下载...");
+					pd.dismiss("发现新版本 " + newVersion + "，开始下载", 3000);
 					DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
 					DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
 					req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
