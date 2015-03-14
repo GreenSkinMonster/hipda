@@ -72,11 +72,9 @@ public class HiUtils {
 	}
 
 	public static String getAvatarUrlByUid(String uid) {
-		if (uid == null)
-			return "";
-		if (uid.indexOf("&") > 0)
-			uid = uid.substring(0, uid.indexOf("&"));
-		if (!TextUtils.isDigitsOnly(uid))
+		if (TextUtils.isEmpty(uid)
+				|| uid.length() > AVATAR_BASE.length()
+				|| !TextUtils.isDigitsOnly(uid))
 			return "";
 
 		String fullUid = AVATAR_BASE.substring(0, AVATAR_BASE.length() - uid.length()) + uid;

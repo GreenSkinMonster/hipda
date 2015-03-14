@@ -1,7 +1,6 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.utils.HiUtils;
 
 import java.util.List;
 
@@ -23,7 +21,7 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 	private int mType;
 
 	public SimpleListAdapter(Context context, int resource,
-			List<SimpleListItemBean> objects, int type) {
+							 List<SimpleListItemBean> objects, int type) {
 		super(context, resource, objects);
 		mInflater = LayoutInflater.from(context);
 		mCtx = context;
@@ -36,20 +34,20 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 
 		ViewHolder holder;
 		if (convertView == null || convertView.getTag() == null) {
-			convertView = mInflater.inflate(R.layout.item_simple_list, null); 
-			holder = new ViewHolder();  
+			convertView = mInflater.inflate(R.layout.item_simple_list, null);
+			holder = new ViewHolder();
 			convertView.setTag(holder);
 		} else {
-			holder = (ViewHolder)convertView.getTag();
+			holder = (ViewHolder) convertView.getTag();
 		}
 
-		holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);  
-		holder.tv_info = (TextView) convertView.findViewById(R.id.tv_info);  
-		holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time); 
+		holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
+		holder.tv_info = (TextView) convertView.findViewById(R.id.tv_info);
+		holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
 		holder.iv_item_indicator = (ImageView) convertView.findViewById(R.id.iv_item_indicator);
 
 		String str;
-		holder.tv_title.setText(item.getTitle());  
+		holder.tv_title.setText(item.getTitle());
 		if (item.isNew()) {
 			holder.tv_title.setTextColor(mCtx.getResources().getColor(R.color.red));
 		}
@@ -69,14 +67,8 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 		}
 
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-			String avatarUrl = item.getAvatarUrl();
-			if (TextUtils.isEmpty(avatarUrl)) {
-				avatarUrl = HiUtils.getAvatarUrlByUid(item.getId());
-			} else {
-				avatarUrl = avatarUrl.replaceAll("small", "middle");
-			}
 			holder.iv_item_indicator.setVisibility(View.VISIBLE);
-			GlideHelper.loadAvatar(getContext(), holder.iv_item_indicator, avatarUrl);
+			GlideHelper.loadAvatar(getContext(), holder.iv_item_indicator, item.getAvatarUrl());
 		} else {
 			holder.iv_item_indicator.setVisibility(View.GONE);
 		}
