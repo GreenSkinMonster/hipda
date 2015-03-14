@@ -3,6 +3,7 @@ package net.jejer.hipda.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -71,6 +72,13 @@ public class HiUtils {
 	}
 
 	public static String getAvatarUrlByUid(String uid) {
+		if (uid == null)
+			return "";
+		if (uid.indexOf("&") > 0)
+			uid = uid.substring(0, uid.indexOf("&"));
+		if (!TextUtils.isDigitsOnly(uid))
+			return "";
+
 		String fullUid = AVATAR_BASE.substring(0, AVATAR_BASE.length() - uid.length()) + uid;
 		String url = AvatarBaseUrl
 				+ fullUid.substring(0, 3) + "/"
