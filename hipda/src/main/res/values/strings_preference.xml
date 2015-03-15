@@ -38,6 +38,8 @@
         <item>+2</item>
         <item>+3</item>
         <item>+4</item>
+        <item>+6</item>
+        <item>+8</item>
     </string-array>
     <string-array name="pref_post_textsize_adjust_values">
         <item>-3</item>
@@ -48,6 +50,33 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
+        <item>6</item>
+        <item>8</item>
+    </string-array>
+
+    <string-array name="pref_title_textsize_adjust_titles">
+        <item>-3</item>
+        <item>-2</item>
+        <item>-1</item>
+        <item>0</item>
+        <item>+1</item>
+        <item>+2</item>
+        <item>+3</item>
+        <item>+4</item>
+        <item>+6</item>
+        <item>+8</item>
+    </string-array>
+    <string-array name="pref_title_textsize_adjust_values">
+        <item>-3</item>
+        <item>-2</item>
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>6</item>
+        <item>8</item>
     </string-array>
 
     <!--  value should match ActivityInfo.SCREEN_ORIENTATION_*-->
@@ -80,6 +109,7 @@
     <string name="pref_title_eink_optimization">EINK优化</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
+    <string name="pref_title_textsize_adjust_title">标题字号调整</string>
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
     <string name="pref_screen_orientation">屏幕方向</string>
     <string name="pref_title_about">关于HiPDA</string>

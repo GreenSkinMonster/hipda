@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,7 +105,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 			if (content instanceof ContentText) {
 				TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
 				tv.setFragmentManager(mFragmentManager);
-				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17 + HiSettingsHelper.getInstance().getPostTextsizeAdj());
+				tv.setTextSize(HiSettingsHelper.getPostTextSize());
 				tv.setMovementMethod(LinkMovementMethod.getInstance());
 				//dirty hack, remove extra <br>
 				String cnt = content.getContent();
@@ -155,14 +154,14 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 			} else if (content instanceof ContentAttach) {
 				TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
 				tv.setFragmentManager(mFragmentManager);
-				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17 + HiSettingsHelper.getInstance().getPostTextsizeAdj());
+				tv.setTextSize(HiSettingsHelper.getPostTextSize());
 				tv.setMovementMethod(LinkMovementMethod.getInstance());
 				tv.setText(content.getContent());
 				tv.setFocusable(false);
 				contentView.addView(tv);
 			} else if (content instanceof ContentQuote) {
 				TextView tv = new TextView(mCtx);
-				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17 + HiSettingsHelper.getInstance().getPostTextsizeAdj());
+				tv.setTextSize(HiSettingsHelper.getPostTextSize());
 				tv.setAutoLinkMask(Linkify.WEB_URLS);
 				tv.setText(content.getContent());
 				tv.setFocusable(false);    // make convertView long clickable.

@@ -128,6 +128,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 		if (!HiSettingsHelper.getInstance().getIsLandscape()) {
 			mDetailListView.addHeaderView(inflater.inflate(R.layout.head_thread_detail, null));
 			mTitleView = (TextView) view.findViewById(R.id.thread_detail_title);
+			mTitleView.setTextSize(HiSettingsHelper.getTitleTextSize());
 			mTitleView.setText(mTitle);
 		}
 		mDetailListView.setPullLoadEnable(false);
@@ -184,6 +185,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
 		quickReply = view.findViewById(R.id.inc_quick_reply);
 		mReplyTextTv = (TextView) quickReply.findViewById(R.id.tv_reply_text);
+		mReplyTextTv.setTextSize(HiSettingsHelper.getPostTextSize());
 		mPostReplyIb = (ImageButton) quickReply.findViewById(R.id.ib_reply_post);
 		mPostReplyIb.setOnClickListener(new View.OnClickListener() {
 			@Override

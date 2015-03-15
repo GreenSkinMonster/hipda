@@ -45,6 +45,9 @@ public class SmsAdapter extends ArrayAdapter<SimpleListItemBean> {
 		holder.tv_time.setText(item.getTime());
 		holder.tv_content.setText(item.getInfo());
 
+		holder.tv_author.setTextSize(HiSettingsHelper.getPostTextSize());
+		holder.tv_content.setTextSize(HiSettingsHelper.getPostTextSize());
+
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
 			holder.iv_avatar.setVisibility(View.VISIBLE);
 			GlideHelper.loadAvatar(getContext(), holder.iv_avatar, item.getAvatarUrl());

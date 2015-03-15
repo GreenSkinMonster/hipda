@@ -36,6 +36,7 @@ public class SettingsFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TAILURL));
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_BLANKLIST_USERNAMES));
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_POST_ADJ));
+		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_TITLE_ADJ));
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
 
 		//bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_LAST_UPDATE_CHECK));

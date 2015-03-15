@@ -36,6 +36,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.async.PrePostAsyncTask;
 import net.jejer.hipda.async.UploadImgAsyncTask;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.utils.HiUtils;
 
@@ -125,6 +126,8 @@ public class PostFragment extends Fragment {
 
 		mTvSubjectMsg = (TextView) view.findViewById(R.id.et_subject);
 
+		mTvReplyMsg.setTextSize(HiSettingsHelper.getPostTextSize());
+		mTvAdditional.setTextSize(HiSettingsHelper.getPostTextSize());
 
 		// Prepare emoji tabs
 		TabHost th = (TabHost) view.findViewById(R.id.th_emoji);

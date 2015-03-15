@@ -23,6 +23,7 @@ import android.widget.Toast;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.utils.Constants;
 
@@ -77,6 +78,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
 
 		ImageButton postIb = (ImageButton) view.findViewById(R.id.ib_send_sms);
 		final EditText etSms = (EditText) view.findViewById(R.id.et_sms);
+		etSms.setTextSize(HiSettingsHelper.getPostTextSize());
 		postIb.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

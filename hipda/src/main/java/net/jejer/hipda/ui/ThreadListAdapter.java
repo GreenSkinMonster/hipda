@@ -57,6 +57,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
 		holder.tv_author.setText(thread.getAuthor());
 		holder.tv_title.setText(thread.getTitle());
+		holder.tv_title.setTextSize(HiSettingsHelper.getTitleTextSize());
 		if (thread.getCountCmts() != null) {
 			holder.tv_replycounter.setText(thread.getCountCmts());
 		}

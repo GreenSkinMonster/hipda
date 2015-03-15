@@ -34,6 +34,7 @@ public class HiSettingsHelper {
 	public static final String PERF_EINK_OPTIMIZATION = "PERF_EINK_OPTIMIZATION";
 	public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
 	public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
+	public static final String PERF_TEXTSIZE_TITLE_ADJ = "PERF_TEXTSIZE_TITLE_ADJ";
 	public static final String PERF_SCREEN_ORIENTATION = "PERF_SCREEN_ORIENTATION";
 	public static final String PERF_GESTURE_BACK = "PERF_GESTURE_BACK";
 	public static final String PERF_LAST_UPDATE_CHECK = "PERF_LAST_UPDATE_CHECK";
@@ -70,6 +71,7 @@ public class HiSettingsHelper {
 	private String[] mBlanklistUsernames = null;
 
 	private String mPostTextSizeAdj = "";
+	private String mTitleTextSizeAdj = "";
 	private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
 	private boolean mGestureBack = true;
 	private int mMaxPostsInPage;
@@ -134,6 +136,7 @@ public class HiSettingsHelper {
 		isEinkOptimizationFromPref();
 		getBlanklistUsernamesFromPref();
 		getPostTextsizeAdjFromPref();
+		getTitleTextsizeAdjFromPref();
 		getScreenOrietationFromPref();
 		isGestureBackFromPref();
 		isPostRedirectFromPref();
@@ -445,6 +448,21 @@ public class HiSettingsHelper {
 		editor.putString(PERF_TEXTSIZE_POST_ADJ, adj).commit();
 	}
 
+	public int getTitleTextsizeAdj() {
+		return Integer.parseInt(mTitleTextSizeAdj);
+	}
+
+	public String getTitleTextsizeAdjFromPref() {
+		mTitleTextSizeAdj = mSharedPref.getString(PERF_TEXTSIZE_TITLE_ADJ, "0");
+		return mTitleTextSizeAdj;
+	}
+
+	public void setTitleTextsizeAdj(String adj) {
+		mPostTextSizeAdj = adj;
+		SharedPreferences.Editor editor = mSharedPref.edit();
+		editor.putString(PERF_TEXTSIZE_TITLE_ADJ, adj).commit();
+	}
+
 	public int getScreenOrietation() {
 		return mScreenOrientation;
 	}
@@ -528,6 +546,14 @@ public class HiSettingsHelper {
 		} catch (Exception ignored) {
 		}
 		return version;
+	}
+
+	public static int getPostTextSize() {
+		return 17 + getInstance().getPostTextsizeAdj();
+	}
+
+	public static int getTitleTextSize() {
+		return 18 + getInstance().getTitleTextsizeAdj();
 	}
 
 }

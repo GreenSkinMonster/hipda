@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,20 +48,22 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 		holder.iv_item_indicator = (ImageView) convertView.findViewById(R.id.iv_item_indicator);
 
 		String str;
+		holder.tv_title.setTextSize(HiSettingsHelper.getPostTextSize());
 		holder.tv_title.setText(item.getTitle());
 		if (item.isNew()) {
 			holder.tv_title.setTextColor(mCtx.getResources().getColor(R.color.red));
 		}
 
+		holder.tv_info.setTextSize(HiSettingsHelper.getPostTextSize());
 		str = item.getInfo();
-		if (str == null || str.isEmpty()) {
+		if (TextUtils.isEmpty(str)) {
 			holder.tv_info.setHeight(0);
 		} else {
 			holder.tv_info.setText(str);
 		}
 
 		str = item.getTime();
-		if (str == null || str.isEmpty()) {
+		if (TextUtils.isEmpty(str)) {
 			holder.tv_info.setHeight(0);
 		} else {
 			holder.tv_time.setText(str);
