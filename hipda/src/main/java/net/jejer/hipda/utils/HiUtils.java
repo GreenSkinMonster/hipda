@@ -14,6 +14,7 @@ public class HiUtils {
 	public static final String DetailListUrl = "http://www.hi-pda.com/forum/viewthread.php?tid=";
 	public static final String BaseUrl = "http://www.hi-pda.com/forum/";
 	public static final String ReplyUrl = BaseUrl + "post.php?action=reply&tid=";
+	public static final String EditUrl = BaseUrl + "post.php?action=edit";
 	public static final String NewThreadUrl = BaseUrl + "post.php?action=newthread&fid=";
 	public static final String MyReplyUrl = BaseUrl + "my.php?item=posts";
 	public static final String MyPostUrl = BaseUrl + "my.php?item=threads";

@@ -35,6 +35,7 @@ import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.async.ThreadListLoader;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.utils.Constants;
@@ -244,7 +245,7 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 	}
 
 	@Override
-	public void onPostDone(int mode, int status, String message, String tid, String title) {
+	public void onPostDone(int mode, int status, String message, PostBean postBean) {
 		if (status == Constants.STATUS_SUCCESS) {
 			if (postProgressDialog != null) {
 				postProgressDialog.dismiss(message);
@@ -253,7 +254,7 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 			}
 
 			if (HiSettingsHelper.getInstance().isPostReirect()) {
-				showThreadDetailFragment(tid, title, -1, -1);
+				showThreadDetailFragment(postBean.getTid(), postBean.getSubject(), -1, -1);
 			}
 			//refresh thread list
 			refresh();
@@ -294,14 +295,14 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 
 		@Override
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
-			if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-				if (scrollState == SCROLL_STATE_FLING) {
-					//Glide.with(mCtx).pauseRequests();
-				} else if (scrollState == SCROLL_STATE_IDLE) {
-					//Log.v(LOG_TAG, "scrollState = " + scrollState + ", VisibleItem=" + mLastVisibleItem + ", mVisibleItemCount=" + mVisibleItemCount);
-					//Glide.with(mCtx).resumeRequests();
-				}
-			}
+//			if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+//				if (scrollState == SCROLL_STATE_FLING) {
+//					Glide.with(mCtx).pauseRequests();
+//				} else if (scrollState == SCROLL_STATE_IDLE) {
+//					Log.v(LOG_TAG, "scrollState = " + scrollState + ", VisibleItem=" + mLastVisibleItem + ", mVisibleItemCount=" + mVisibleItemCount);
+//					Glide.with(mCtx).resumeRequests();
+//				}
+//			}
 		}
 
 

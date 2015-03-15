@@ -22,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -35,6 +36,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.async.PrePostAsyncTask;
 import net.jejer.hipda.async.UploadImgAsyncTask;
+import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.utils.HiUtils;
 
 import java.util.List;
@@ -58,7 +60,7 @@ public class PostFragment extends Fragment {
 	private int mMode;
 	private TextView mTvAdditional;
 	private TextView mTvSubjectMsg;
-	private TextView mTvReplyMsg;
+	private EditText mTvReplyMsg;
 	private PrePostAsyncTask.PrePostListener mPrePostListener = new PrePostListener();
 	private Map<String, List<String>> mPrePostInfo;
 	private PrePostAsyncTask mPrePostAsyncTask;
@@ -96,7 +98,11 @@ public class PostFragment extends Fragment {
 
 		// Start fetch info
 		mPrePostAsyncTask = new PrePostAsyncTask(getActivity(), mPrePostListener, mMode);
-		mPrePostAsyncTask.execute(mTid, mPid);
+		PostBean postBean = new PostBean();
+		postBean.setTid(mTid);
+		postBean.setPid(mPid);
+		postBean.setFid(mFid);
+		mPrePostAsyncTask.execute(postBean);
 	}
 
 	@Override
@@ -104,7 +110,7 @@ public class PostFragment extends Fragment {
 		Log.v(LOG_TAG, "onCreateView");
 		View view = inflater.inflate(R.layout.fragment_post, container, false);
 
-		mTvReplyMsg = (TextView) view.findViewById(R.id.et_reply);
+		mTvReplyMsg = (EditText) view.findViewById(R.id.et_reply);
 		mTvAdditional = (TextView) view.findViewById(R.id.et_additional);
 		mTvAdditional.setText("正在收集信息");
 
@@ -146,9 +152,7 @@ public class PostFragment extends Fragment {
 		gvTab1.setOnItemClickListener(new GridView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
 									int position, long id) {
-				String reply = "" + mTvReplyMsg.getText();
-				reply += ((String) gvTab1.getAdapter().getItem(position));
-				mTvReplyMsg.setText(reply);
+				mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), (String) gvTab1.getAdapter().getItem(position));
 			}
 		});
 		final ExpandableHeightGridView gvTab2 = (ExpandableHeightGridView) th.findViewById(R.id.tab2_emoji);
@@ -157,9 +161,7 @@ public class PostFragment extends Fragment {
 		gvTab2.setOnItemClickListener(new GridView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
 									int position, long id) {
-				String reply = "" + mTvReplyMsg.getText();
-				reply += ((String) gvTab2.getAdapter().getItem(position));
-				mTvReplyMsg.setText(reply);
+				mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), (String) gvTab2.getAdapter().getItem(position));
 			}
 		});
 		final ExpandableHeightGridView gvTab3 = (ExpandableHeightGridView) th.findViewById(R.id.tab3_emoji);
@@ -168,9 +170,7 @@ public class PostFragment extends Fragment {
 		gvTab3.setOnItemClickListener(new GridView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
 									int position, long id) {
-				String reply = "" + mTvReplyMsg.getText();
-				reply += ((String) gvTab3.getAdapter().getItem(position));
-				mTvReplyMsg.setText(reply);
+				mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), (String) gvTab3.getAdapter().getItem(position));
 			}
 		});
 
@@ -226,6 +226,9 @@ public class PostFragment extends Fragment {
 				mSpForum.setVisibility(View.VISIBLE);
 				mTvSubjectMsg.setVisibility(View.VISIBLE);
 				break;
+			case PostAsyncTask.MODE_EDIT_POST:
+				getActivity().getActionBar().setTitle(getActivity().getResources().getString(R.string.action_edit));
+				break;
 		}
 		super.onCreateOptionsMenu(menu, inflater);
 	}
@@ -259,7 +262,15 @@ public class PostFragment extends Fragment {
 					Toast.makeText(getActivity(), "主题字数必须大于5", Toast.LENGTH_LONG).show();
 					return true;
 				}
-				new PostAsyncTask(getActivity(), mMode, mPrePostInfo, postListener).execute(replyText, mTid, mPid, mFid, subjectText);
+				//when edit post, pass floor number
+				PostBean postBean = new PostBean();
+				postBean.setContent(replyText);
+				postBean.setTid(mTid);
+				postBean.setPid(mPid);
+				postBean.setFid(mFid);
+				postBean.setSubject(subjectText);
+				postBean.setFloor(mMode == PostAsyncTask.MODE_EDIT_POST ? mFloor : "");
+				new PostAsyncTask(getActivity(), mMode, mPrePostInfo, postListener).execute(postBean);
 
 				// Close SoftKeyboard
 				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
@@ -296,10 +307,7 @@ public class PostFragment extends Fragment {
 				b.setOnClickListener(new Button.OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						String reply = "" + mTvReplyMsg.getText();
-						reply += ("[attachimg]" + b.getImgId() + "[/attachimg]");
-						mTvReplyMsg.setText(reply);
-
+						mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), "[attachimg]" + b.getImgId() + "[/attachimg]");
 						// Add attach id for post
 						mPrePostInfo.get("attaches").add(b.getImgId());
 					}
@@ -381,15 +389,23 @@ public class PostFragment extends Fragment {
 
 	private class PrePostListener implements PrePostAsyncTask.PrePostListener {
 		@Override
-		public void PrePostComplete(boolean result,
+		public void PrePostComplete(int mode, boolean result,
 									Map<String, List<String>> info) {
 			if (result) {
 				mPrePostInfo = info;
 				mTvAdditional.setVisibility(View.GONE);
 				getActivity().invalidateOptionsMenu();
 				if (!info.get("text").isEmpty() && !info.get("text").get(0).isEmpty()) {
-					mTvAdditional.setText(info.get("text").get(0));
-					mTvAdditional.setVisibility(View.VISIBLE);
+					if (mode == PostAsyncTask.MODE_EDIT_POST) {
+						mTvReplyMsg.setText(info.get("text").get(0));
+						if (!info.get("subject").isEmpty() && !info.get("subject").get(0).isEmpty()) {
+							mTvSubjectMsg.setText(info.get("subject").get(0));
+							mTvSubjectMsg.setVisibility(View.VISIBLE);
+						}
+					} else {
+						mTvAdditional.setText(info.get("text").get(0));
+						mTvAdditional.setVisibility(View.VISIBLE);
+					}
 				}
 			} else {
 				mTvAdditional.setText("收集信息失败，请返回重试");

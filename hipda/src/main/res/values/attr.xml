@@ -10,6 +10,7 @@
     <attr name="icon_refresh" format="reference" />
     <attr name="icon_send" format="reference" />
     <attr name="icon_reply" format="reference" />
+    <attr name="icon_edit" format="reference"/>
     <attr name="icon_quote" format="reference" />
     <attr name="icon_website" format="reference" />
     <attr name="icon_goto_page" format="reference" />

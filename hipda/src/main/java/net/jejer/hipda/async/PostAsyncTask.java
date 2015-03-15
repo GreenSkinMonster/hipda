@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
@@ -30,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PostAsyncTask extends AsyncTask<String, Void, Void> {
+public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 	private final String LOG_TAG = getClass().getSimpleName();
 
 	public static final int MODE_REPLY_THREAD = 0;
@@ -38,6 +39,7 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 	public static final int MODE_QUOTE_POST = 2;
 	public static final int MODE_NEW_THREAD = 3;
 	public static final int MODE_QUICK_REPLY = 4;
+	public static final int MODE_EDIT_POST = 5;
 
 	private int mMode;
 	private String mResult;
@@ -49,6 +51,7 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 	private String mContent;
 	private String mTid;
 	private String mTitle;
+	private String mFloor;
 
 	public PostAsyncTask(Context ctx, int mode, Map<String, List<String>> info, PostListener postListenerCallback) {
 		mCtx = ctx;
@@ -65,30 +68,36 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 	}
 
 	@Override
-	protected Void doInBackground(String... params) {
+	protected Void doInBackground(PostBean... postBeans) {
 
-		String reply_text = params[0];
-		String tid = params[1];
-		String pid = params[2];
-		String fid = params[3];
-		String subject = params[4];
+		PostBean postBean = postBeans[0];
+		String reply_text = postBean.getContent();
+		String tid = postBean.getTid();
+		String pid = postBean.getPid();
+		String fid = postBean.getFid();
+		String floor = postBean.getFloor();
+		String subject = postBean.getSubject();
 
 		if (mInfo == null) {
-			mInfo = new PrePostAsyncTask(mCtx, null, mMode).doInBackground(tid, pid);
+			mInfo = new PrePostAsyncTask(mCtx, null, mMode).doInBackground(postBean);
 		}
+		if (!TextUtils.isEmpty(floor) && TextUtils.isDigitsOnly(floor))
+			mFloor = floor;
 
 		mContent = reply_text;
 
-		String tail_text = HiSettingsHelper.getInstance().getTailText();
-		if (!tail_text.isEmpty() && HiSettingsHelper.getInstance().isAddTail()) {
-			String tail_url = HiSettingsHelper.getInstance().getTailUrl();
-			if (!tail_url.isEmpty()) {
-				if ((!tail_url.startsWith("http")) && (!tail_url.startsWith("https"))) {
-					tail_url = "http://" + tail_url;
+		if (mMode != MODE_EDIT_POST) {
+			String tail_text = HiSettingsHelper.getInstance().getTailText();
+			if (!tail_text.isEmpty() && HiSettingsHelper.getInstance().isAddTail()) {
+				String tail_url = HiSettingsHelper.getInstance().getTailUrl();
+				if (!tail_url.isEmpty()) {
+					if ((!tail_url.startsWith("http")) && (!tail_url.startsWith("https"))) {
+						tail_url = "http://" + tail_url;
+					}
+					reply_text = reply_text + "  [url=" + tail_url + "][size=1]" + tail_text + "[/size][/url]";
+				} else {
+					reply_text = reply_text + "  [size=1]" + tail_text + "[/size]";
 				}
-				reply_text = reply_text + "  [url=" + tail_url + "][size=1]" + tail_text + "[/size][/url]";
-			} else {
-				reply_text = reply_text + "  [size=1]" + tail_text + "[/size]";
 			}
 		}
 
@@ -106,10 +115,14 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 				break;
 			case MODE_REPLY_POST:
 			case MODE_QUOTE_POST:
-				doPost(client, localContext, url, mInfo.get("text").get(0) + "\n\n\n    " + reply_text);
+				doPost(client, localContext, url, mInfo.get("text").get(0) + "\n\n    " + reply_text);
 				break;
 			case MODE_NEW_THREAD:
 				url = HiUtils.NewThreadUrl + fid + "&topicsubmit=yes";
+				doPost(client, localContext, url, reply_text, subject);
+			case MODE_EDIT_POST:
+				if (TextUtils.isEmpty(fid)) fid = "2";
+				url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
 				doPost(client, localContext, url, reply_text, subject);
 		}
 
@@ -125,9 +138,12 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 			clipboard.setPrimaryClip(clip);
 			mResult += "\n请注意：发表失败的内容已经复制到粘贴板";
 		}
-//		Toast.makeText(mCtx, mResult, Toast.LENGTH_LONG).show();
+		PostBean postBean = new PostBean();
+		postBean.setSubject(mTitle);
+		postBean.setFloor(mFloor);
+		postBean.setTid(mTid);
 		if (mPostListenerCallback != null)
-			mPostListenerCallback.onPostDone(mMode, mStatus, mResult, mTid, mTitle);
+			mPostListenerCallback.onPostDone(mMode, mStatus, mResult, postBean);
 	}
 
 	private void doPost(AndroidHttpClient client, HttpContext ctx, String url, String... text) {
@@ -145,6 +161,11 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 		if (mMode == MODE_NEW_THREAD) {
 			post_param.put("subject", text[1]);
 			mTitle = text[1];
+		} else if (mMode == MODE_EDIT_POST) {
+			if (!TextUtils.isEmpty(text[1])) {
+				post_param.put("subject", text[1]);
+				mTitle = text[1];
+			}
 		}
 
 		try {
@@ -153,14 +174,14 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 			entity.setContentType("application/x-www-form-urlencoded");
 			req.setEntity(entity);
 		} catch (Exception e) {
-			Log.e(LOG_TAG, " Encoding error", e);
+			Log.e(LOG_TAG, "Encoding error", e);
 			mResult = "编码错误!";
 			return;
 		}
 
 		String rsp_str;
 		int rsp_code;
-		HttpResponse rsp = null;
+		HttpResponse rsp;
 		try {
 			rsp = client.execute(req, ctx);
 			HttpEntity rsp_ent = rsp.getEntity();
@@ -171,6 +192,7 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 			mResult = "发生网络错误!";
 			return;
 		}
+		Log.e(LOG_TAG, rsp_str);
 
 		if (rsp_code == 302) {
 			mResult = "发表成功!";
@@ -196,8 +218,8 @@ public class PostAsyncTask extends AsyncTask<String, Void, Void> {
 	}
 
 	public interface PostListener {
-		public void onPrePost();
+		void onPrePost();
 
-		public void onPostDone(int mode, int status, String message, String tid, String title);
+		void onPostDone(int mode, int status, String message, PostBean postBean);
 	}
 }

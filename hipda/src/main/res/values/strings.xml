@@ -4,6 +4,7 @@
     <string name="app_name">HiPDA</string>
     <string name="action_refresh">刷新</string>
     <string name="action_reply">回复</string>
+    <string name="action_edit">编辑</string>
     <string name="action_search">搜索帖子</string>
     <string name="action_goto_page">跳到指定页</string>
     <string name="action_quote">引用</string>

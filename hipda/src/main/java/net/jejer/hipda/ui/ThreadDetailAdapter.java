@@ -74,11 +74,16 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 		holder.author.setText(detail.getAuthor());
 		holder.time.setText(detail.getTimePost());
 		holder.floor.setText(detail.getFloor() + "#");
+
+		boolean trimBr = false;
 		String postStaus = detail.getPostStatus();
-		if (postStaus != null && postStaus.length() > 0)
+		if (postStaus != null && postStaus.length() > 0) {
 			holder.postStatus.setText(postStaus);
-		else
+			holder.postStatus.setVisibility(View.VISIBLE);
+			trimBr = true;
+		} else {
 			holder.postStatus.setVisibility(View.GONE);
+		}
 
 		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
 			holder.avatar.setVisibility(View.VISIBLE);
@@ -103,24 +108,30 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setFragmentManager(mFragmentManager);
 				tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17 + HiSettingsHelper.getInstance().getPostTextsizeAdj());
 				tv.setMovementMethod(LinkMovementMethod.getInstance());
-				//dirty hack, remove one <br> after poststatus
+				//dirty hack, remove extra <br>
 				String cnt = content.getContent();
-				if (postStaus != null && postStaus.length() > 0 && cnt.startsWith("<br><br>")) {
-					cnt = cnt.substring("<br>".length());
+				if (trimBr) {
+					if (cnt.startsWith("<br><br><br>")) {
+						cnt = cnt.substring("<br><br>".length());
+					} else if (cnt.startsWith("<br><br>")) {
+						cnt = cnt.substring("<br>".length());
+					}
 				}
-				tv.setText(cnt);
-				//setAutoLinkMask have conflict with setMovementMethod
-				//tv.setAutoLinkMask(Linkify.WEB_URLS);
-				tv.setFocusable(false);
-				contentView.addView(tv);
+				if (!"<br>".equals(cnt)) {
+					tv.setText(cnt);
+					//setAutoLinkMask have conflict with setMovementMethod
+					//tv.setAutoLinkMask(Linkify.WEB_URLS);
+					tv.setFocusable(false);
+					contentView.addView(tv);
+				}
 			} else if (content instanceof ContentImg) {
 				final String imageUrl = content.getContent();
 
 				GlideImageView giv = new GlideImageView(mCtx);
 				giv.setFocusable(false);
+				giv.setClickable(true);
 				contentView.addView(giv);
 				giv.setUrl(imageUrl);
-
 
 				if (HiUtils.isAutoLoadImg(mCtx)) {
 					int maxViewWidth = 1080;
@@ -156,14 +167,17 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setText(content.getContent());
 				tv.setFocusable(false);    // make convertView long clickable.
 				contentView.addView(tv);
+				trimBr = true;
 			} else if (content instanceof ContentGoToFloor) {
-				Button btnGotoFloor = new Button(mCtx);
+				TextView btnGotoFloor = new TextView(mCtx);
 				btnGotoFloor.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
 				btnGotoFloor.setText(content.getContent());
 				btnGotoFloor.setTag(((ContentGoToFloor) content).getFloor());
 				btnGotoFloor.setOnClickListener(mGoToFloorListener);
 				btnGotoFloor.setFocusable(false);    // make convertView long clickable.
+				btnGotoFloor.setClickable(true);
 				contentView.addView(btnGotoFloor);
+				trimBr = true;
 			}
 		}
 

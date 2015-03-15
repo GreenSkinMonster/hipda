@@ -3,9 +3,11 @@ package net.jejer.hipda.async;
 import android.content.Context;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
@@ -27,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PrePostAsyncTask extends AsyncTask<String, Void, Map<String, List<String>>> {
+public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List<String>>> {
 	private final String LOG_TAG = getClass().getSimpleName();
 
 	private PrePostListener mListener;
@@ -41,10 +43,12 @@ public class PrePostAsyncTask extends AsyncTask<String, Void, Map<String, List<S
 	}
 
 	@Override
-	protected Map<String, List<String>> doInBackground(String... arg0) {
-		String tid = arg0[0];
-		String pid = arg0[1];
-		String fid = "2";
+	protected Map<String, List<String>> doInBackground(PostBean... postBeans) {
+
+		PostBean postBean = postBeans[0];
+		String tid = postBean.getTid();
+		String pid = postBean.getPid();
+		String fid = postBean.getFid();
 
 		String url = HiUtils.ReplyUrl + tid;
 		switch (mMode) {
@@ -59,6 +63,11 @@ public class PrePostAsyncTask extends AsyncTask<String, Void, Map<String, List<S
 				break;
 			case PostAsyncTask.MODE_NEW_THREAD:
 				url = HiUtils.NewThreadUrl + fid;
+				break;
+			case PostAsyncTask.MODE_EDIT_POST:
+				//fid is not really needed, just put a value here
+				if (TextUtils.isEmpty(fid)) fid = "2";
+				url = HiUtils.EditUrl + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
 				break;
 		}
 
@@ -119,6 +128,7 @@ public class PrePostAsyncTask extends AsyncTask<String, Void, Map<String, List<S
 		result.put("uid", new ArrayList<String>());
 		result.put("hash", new ArrayList<String>());
 		result.put("attaches", new ArrayList<String>());
+		result.put("subject", new ArrayList<String>());
 
 		Elements formhashES = doc.select("input[name=formhash]");
 		if (formhashES.size() < 1) {
@@ -148,20 +158,26 @@ public class PrePostAsyncTask extends AsyncTask<String, Void, Map<String, List<S
 			result.get("hash").add(hashES.first().attr("value"));
 		}
 
+		//for edit post
+		Elements subjectES = doc.select("input[name=subject]");
+		if (subjectES.size() > 0) {
+			result.get("subject").add(subjectES.first().attr("value"));
+		}
+
 		return result;
 	}
 
 	@Override
 	protected void onPostExecute(Map<String, List<String>> result) {
 		if (result == null) {
-			mListener.PrePostComplete(false, null);
+			mListener.PrePostComplete(mMode, false, null);
 			return;
 		}
-		mListener.PrePostComplete(!result.get("formhash").isEmpty(), result);
+		mListener.PrePostComplete(mMode, !result.get("formhash").isEmpty(), result);
 	}
 
 	public interface PrePostListener {
-		public void PrePostComplete(boolean result, Map<String, List<String>> info);
+		void PrePostComplete(int mode, boolean result, Map<String, List<String>> info);
 	}
 
 }

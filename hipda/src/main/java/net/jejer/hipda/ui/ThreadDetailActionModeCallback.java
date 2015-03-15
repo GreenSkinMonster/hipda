@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.bean.DetailBean;
+import net.jejer.hipda.bean.HiSettingsHelper;
 
 public class ThreadDetailActionModeCallback implements ActionMode.Callback {
 	private ThreadDetailFragment mFragment;
@@ -31,6 +32,27 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
 		PostFragment fragment = new PostFragment();
 
 		switch (item.getItemId()) {
+			case R.id.action_edit:
+				if (mDetailBean.getAuthor().equals(HiSettingsHelper.getInstance().getUsername())) {
+					mFragment.setHasOptionsMenu(false);
+
+					//arguments.putString(PostFragment.ARG_FID_KEY, "2");
+					arguments.putString(PostFragment.ARG_TID_KEY, mTid);
+					arguments.putString(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
+					arguments.putString(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
+					arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_EDIT_POST);
+
+					fragment.setArguments(arguments);
+					fragment.setPostListener(mFragment);
+
+					mFragment.getFragmentManager().beginTransaction()
+							.add(R.id.main_frame_container, fragment, PostFragment.class.getName())
+							.addToBackStack(PostFragment.class.getName())
+							.commit();
+					mode.finish();
+					return true;
+				}
+				break;
 			case R.id.action_reply:
 				mFragment.setHasOptionsMenu(false);
 
@@ -84,8 +106,12 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
 		MenuInflater inflater = mode.getMenuInflater();
 		inflater.inflate(R.menu.contextual_menu_thread_detail, menu);
 
-		mode.setTitle(mDetailBean.getFloor() + "#");
+		if (!mDetailBean.getAuthor().equals(HiSettingsHelper.getInstance().getUsername())) {
+			MenuItem item = menu.findItem(R.id.action_edit);
+			item.setVisible(false);
+		}
 
+		mode.setTitle(mDetailBean.getFloor() + "#");
 		return true;
 	}
 

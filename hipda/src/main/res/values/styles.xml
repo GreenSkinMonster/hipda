@@ -2,13 +2,19 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+
+
+
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
+
+
+
         -->
     </style>
 
@@ -39,6 +45,7 @@
         <item name="icon_upload_img">@drawable/ic_action_new_picture_day</item>
         <item name="icon_search">@drawable/ic_action_search_day</item>
         <item name="icon_send_sms">@drawable/tapatalk_bubble_reply_day</item>
+        <item name="icon_edit">@android:drawable/ic_menu_edit</item>
     </style>
 
     <!-- Theme Night. -->
@@ -63,6 +70,7 @@
         <item name="icon_upload_img">@drawable/ic_action_new_picture_night</item>
         <item name="icon_search">@drawable/ic_action_search_night</item>
         <item name="icon_send_sms">@drawable/tapatalk_bubble_reply_night</item>
+        <item name="icon_edit">@android:drawable/ic_menu_edit</item>
     </style>
 
 </resources>

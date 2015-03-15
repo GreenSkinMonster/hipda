@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.GestureDetector;
@@ -41,6 +42,7 @@ import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 
@@ -192,7 +194,10 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 				} else {
 					mReplyTextTv.setText("");
 					quickReply.setVisibility(View.INVISIBLE);
-					new PostAsyncTask(getActivity(), PostAsyncTask.MODE_QUICK_REPLY, null, ThreadDetailFragment.this).execute(replyText, mTid, "", "", "");
+					PostBean postBean = new PostBean();
+					postBean.setContent(replyText);
+					postBean.setTid(mTid);
+					new PostAsyncTask(getActivity(), PostAsyncTask.MODE_QUICK_REPLY, null, ThreadDetailFragment.this).execute(postBean);
 					// Close SoftKeyboard
 					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
 							Context.INPUT_METHOD_SERVICE);
@@ -353,7 +358,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 	}
 
 	@Override
-	public void onPostDone(int mode, int status, String message, String tid, String title) {
+	public void onPostDone(int mode, int status, String message, PostBean postBean) {
 		if (status == Constants.STATUS_SUCCESS) {
 			if (postProgressDialog != null) {
 				postProgressDialog.dismiss(message);
@@ -362,8 +367,14 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 			}
 
 			if (!mAuthorOnly && HiSettingsHelper.getInstance().isPostReirect()) {
+				int floor = -1;
+				if (!TextUtils.isEmpty(postBean.getFloor()) && TextUtils.isDigitsOnly(postBean.getFloor()))
+					floor = Integer.parseInt(postBean.getFloor());
 				mCurrentPage = mMaxPage;
-				mOffsetInPage = LAST_FLOOR_OFFSET;
+				if (floor != -1 && floor > 0)
+					mOffsetInPage = floor;
+				else
+					mOffsetInPage = LAST_FLOOR_OFFSET;
 				mCache.remove(mCurrentPage);
 				showOrLoadPage();
 			}
@@ -778,8 +789,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 			if (mOffsetInPage == LAST_FLOOR_OFFSET) {
 				mDetailListView.setSelection(mAdapter.getCount() - 1 + mDetailListView.getHeaderViewsCount());
 				mOffsetInPage = -1;
-			} else if (mOffsetInPage != -1) {
-				mDetailListView.setSelection(mOffsetInPage + mDetailListView.getHeaderViewsCount());
+			} else if (mOffsetInPage != -1 && mOffsetInPage > 0) {
+				Log.e("XX", mOffsetInPage + " - " + mDetailListView.getHeaderViewsCount());
+				mDetailListView.setSelection(mOffsetInPage - 1 + mDetailListView.getHeaderViewsCount());
 				mOffsetInPage = -1;
 			} else {
 				mDetailListView.setSelection(0);

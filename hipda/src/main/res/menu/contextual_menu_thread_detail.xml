@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/action_edit"
+        android:icon="?icon_edit"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_edit"/>
+    <item
         android:id="@+id/action_reply"
         android:icon="?icon_reply"
         android:showAsAction="ifRoom"

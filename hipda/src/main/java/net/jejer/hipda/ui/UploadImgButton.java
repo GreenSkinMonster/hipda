@@ -1,9 +1,10 @@
 package net.jejer.hipda.ui;
 
-import net.jejer.hipda.R;
-import net.jejer.hipda.async.UploadImgAsyncTask;
 import android.content.Context;
 import android.widget.Button;
+
+import net.jejer.hipda.R;
+import net.jejer.hipda.async.UploadImgAsyncTask;
 
 public class UploadImgButton extends Button implements UploadImgAsyncTask.UploadImgListener {
 	public final static int STAGE_UPLOADING = -1;
@@ -47,7 +48,7 @@ public class UploadImgButton extends Button implements UploadImgAsyncTask.Upload
 			this.setEnabled(true);
 			mId = id;
 			this.setText("点击添加"+mName);
-			this.setTextColor(mCtx.getResources().getColor(R.color.red));
+			this.setTextColor(mCtx.getResources().getColor(R.color.hipda));
 		} else {
 			this.setText("上传失败或图片太大");
 			this.setTextColor(mCtx.getResources().getColor(R.color.red));
