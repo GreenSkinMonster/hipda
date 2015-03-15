@@ -33,7 +33,7 @@
                 android:layout_margin="4dp"
                 android:text=""
                 android:textSize="16sp"
-                android:textColor="@color/hipda"/>
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/tv_time"

@@ -19,7 +19,7 @@ import java.util.List;
 public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
 	private LayoutInflater mInflater;
-	//private Context mCtx;
+	private Context mCtx;
 	//private List<ThreadBean> threads;
 	private HashMap<String, ViewHolder> holders = new HashMap<String, ViewHolder>();
 
@@ -27,7 +27,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 							 List<ThreadBean> objects) {
 		super(context, resource, objects);
 		mInflater = LayoutInflater.from(context);
-		//mCtx = context;
+		mCtx = context;
 		//threads = objects;
 	}
 
@@ -56,6 +56,10 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
 
 		holder.tv_author.setText(thread.getAuthor());
+		if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+			holder.tv_author.setTextColor(mCtx.getResources().getColor(R.color.grey));
+		}
+
 		holder.tv_title.setText(thread.getTitle());
 		holder.tv_title.setTextSize(HiSettingsHelper.getTitleTextSize());
 		if (thread.getCountCmts() != null) {
@@ -80,7 +84,6 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 		}
 		holder.avatar.setTag(R.id.avatar_tag_uid, thread.getAuthorId());
 		holder.avatar.setTag(R.id.avatar_tag_username, thread.getAuthor());
-		//holder.avatar.setOnClickListener(mAvatarListener);
 
 		return convertView;
 	}
