@@ -127,6 +127,7 @@ public class SimpleListFragment extends Fragment {
 				getActivity().getActionBar().setTitle(R.string.title_drawer_search);
 				inflater.inflate(R.menu.menu_search, menu);
 				searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+				searchView.setIconified(false);
 				searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 					@Override
 					public boolean onQueryTextSubmit(String query) {
