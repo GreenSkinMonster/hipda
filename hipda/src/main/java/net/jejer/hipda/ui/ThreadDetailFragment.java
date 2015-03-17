@@ -713,6 +713,12 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 			mAuthorOnly = false;
 
 			int floor = (Integer) view.getTag();
+
+			//if user direct jump to last page, he may not get correct mMaxPostInPage
+			if (mMaxPostInPage < HiSettingsHelper.getInstance().getMaxPostsInPage()) {
+				mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
+			}
+
 			mGoToPage = floor / mMaxPostInPage + 1; // page start from 1
 			mOffsetInPage = floor % mMaxPostInPage - 1; // offset start from 0
 
