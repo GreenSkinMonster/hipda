@@ -121,6 +121,32 @@ public class HiParserThreadDetail {
 			//content
 			Contents content = detail.getContents();
 			Elements postmessageES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.t_msgfontfix table tbody tr td.t_msgfont");
+
+			//locked user content
+			if (postmessageES.size() == 0) {
+				postmessageES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.locked");
+			}
+
+			//poll content
+			boolean isPollFirstPost = false;
+			if (postmessageES.size() == 0) {
+				postmessageES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.specialmsg table tbody tr td.t_msgfont");
+				isPollFirstPost = "1".equals(floor);
+			}
+			if (isPollFirstPost) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.pollinfo").text()).append("<br>");
+				Elements pollOptions = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.pollchart table  tbody tr");
+				for (int j = 0; j < pollOptions.size(); j++) {
+					if (j % 2 == 0 && j < pollOptions.size() - 1)
+						sb.append(pollOptions.get(j).text());
+					if (j % 2 == 1)
+						sb.append(pollOptions.get(j).text()).append("<br>");
+				}
+				sb.append("<br>");
+				content.addText(sb.toString());
+			}
+
 			if (postmessageES.size() == 0) {
 				content.addText("[!!找不到帖子内容，可能是该帖被管理员或版主屏蔽!!]");
 				details.add(detail);
