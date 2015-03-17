@@ -3,8 +3,10 @@ package net.jejer.hipda.ui;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Loader;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +16,13 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -25,12 +31,18 @@ import com.android.volley.toolbox.StringRequest;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.HiStringRequest;
 import net.jejer.hipda.async.PostSmsAsyncTask;
+import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.SimpleListBean;
+import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.bean.UserInfoBean;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserinfoFragment extends Fragment {
 	private final String LOG_TAG = getClass().getSimpleName();
@@ -43,6 +55,14 @@ public class UserinfoFragment extends Fragment {
 
 	private ImageView mAvatarView;
 	private TextView mDetailView;
+
+	private ListView mThreadListView;
+	private SimpleListAdapter mSimpleListAdapter;
+	private Button mButton;
+	private LoaderManager.LoaderCallbacks<SimpleListBean> mCallbacks;
+
+	private boolean isShowThreads;
+	private boolean isThreadsLoaded;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +78,11 @@ public class UserinfoFragment extends Fragment {
 		if (getArguments().containsKey(ARG_UID)) {
 			mUid = getArguments().getString(ARG_UID);
 		}
+
+		List<SimpleListItemBean> a = new ArrayList<SimpleListItemBean>();
+		mSimpleListAdapter = new SimpleListAdapter(getActivity(), R.layout.item_simple_list, a, SimpleListLoader.TYPE_SEARCH_USER_THREADS);
+		mCallbacks = new SearchThreadByUidLoaderCallbacks();
+
 	}
 
 	@Override
@@ -81,6 +106,28 @@ public class UserinfoFragment extends Fragment {
 			}
 		});
 
+		mThreadListView = (ListView) view.findViewById(R.id.lv_search_threads);
+		mButton = (Button) view.findViewById(R.id.btn_search_threads);
+		mButton.setOnClickListener(new OnSingleClickListener() {
+			@Override
+			public void onSingleClick(View view) {
+				isShowThreads = !isShowThreads;
+				if (isShowThreads) {
+					mButton.setText("显示信息");
+					mDetailView.setVisibility(View.GONE);
+					mThreadListView.setVisibility(View.VISIBLE);
+					if (!isThreadsLoaded) {
+						mButton.setEnabled(false);
+						getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+					}
+				} else {
+					mButton.setText("搜索帖子");
+					mThreadListView.setVisibility(View.GONE);
+					mDetailView.setVisibility(View.VISIBLE);
+				}
+			}
+		});
+
 		return view;
 	}
 
@@ -98,6 +145,10 @@ public class UserinfoFragment extends Fragment {
 					}
 				});
 		VolleyHelper.getInstance().add(sReq);
+
+		mThreadListView.setAdapter(mSimpleListAdapter);
+		mThreadListView.setOnItemClickListener(new OnItemClickCallback());
+
 	}
 
 	@Override
@@ -167,4 +218,68 @@ public class UserinfoFragment extends Fragment {
 		popDialog.setNegativeButton("取消", null);
 		popDialog.create().show();
 	}
+
+	public class SearchThreadByUidLoaderCallbacks implements LoaderManager.LoaderCallbacks<SimpleListBean> {
+
+		@Override
+		public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
+			Toast.makeText(getActivity(), "加载中...", Toast.LENGTH_SHORT).show();
+			return new SimpleListLoader(UserinfoFragment.this.getActivity(), SimpleListLoader.TYPE_SEARCH_USER_THREADS, 1, mUid);
+		}
+
+		@Override
+		public void onLoadFinished(Loader<SimpleListBean> loader,
+								   SimpleListBean list) {
+			Log.v(LOG_TAG, "onLoadFinished enter");
+
+			if (mButton != null)
+				mButton.setEnabled(true);
+
+			if (list == null || list.getCount() == 0) {
+				Log.v(LOG_TAG, "onLoadFinished list == null || list.getCount == 0");
+				Toast.makeText(getActivity(), "帖子加载失败", Toast.LENGTH_LONG).show();
+				return;
+			}
+
+			Log.v(LOG_TAG, "mThreadListAdapter.addAll(arg1.threads) called, added " + list.getCount());
+			mSimpleListAdapter.addAll(list.getAll());
+			isThreadsLoaded = true;
+		}
+
+		@Override
+		public void onLoaderReset(Loader<SimpleListBean> arg0) {
+			Log.v(LOG_TAG, "onLoaderReset");
+		}
+
+	}
+
+	public class OnItemClickCallback implements AdapterView.OnItemClickListener {
+
+		@Override
+		public void onItemClick(AdapterView<?> listView, View itemView, int position,
+								long row) {
+
+			setHasOptionsMenu(false);
+			SimpleListItemBean item = mSimpleListAdapter.getItem(position);
+
+			Bundle bun = new Bundle();
+			Fragment fragment = null;
+			bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getId());
+			bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
+			fragment = new ThreadDetailFragment();
+			fragment.setArguments(bun);
+			if (HiSettingsHelper.getInstance().getIsLandscape()) {
+				getFragmentManager().beginTransaction()
+						.replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
+						.addToBackStack(ThreadDetailFragment.class.getName())
+						.commit();
+			} else {
+				getFragmentManager().beginTransaction()
+						.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+						.addToBackStack(ThreadDetailFragment.class.getName())
+						.commit();
+			}
+		}
+	}
+
 }

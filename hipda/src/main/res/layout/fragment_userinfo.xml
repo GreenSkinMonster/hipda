@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?background"
-    android:orientation="vertical"
-    android:padding="8dp" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="?background"
+              android:orientation="vertical"
+              android:padding="8dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp" >
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/userinfo_avatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/google_user" />
+            android:src="@drawable/google_user"/>
 
         <TextView
             android:id="@+id/userinfo_username"
@@ -23,17 +23,28 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:text=""
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-    </LinearLayout>
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_toRightOf="@+id/userinfo_avatar"/>
+
+        <Button
+            android:id="@+id/btn_search_threads"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="搜索帖子"
+            android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
 
     <ScrollView
+        android:id="@+id/sv_userinfo_detail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/userinfo_detail"
@@ -41,8 +52,16 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:text=""
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
         </LinearLayout>
     </ScrollView>
+
+    <ListView
+        android:id="@+id/lv_search_threads"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
+    </ListView>
+
 
 </LinearLayout>

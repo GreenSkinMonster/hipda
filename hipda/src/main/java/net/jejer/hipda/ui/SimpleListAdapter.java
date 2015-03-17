@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
@@ -69,7 +70,8 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 			holder.tv_time.setText(str);
 		}
 
-		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()
+				&& mType != SimpleListLoader.TYPE_SEARCH_USER_THREADS) {
 			holder.iv_item_indicator.setVisibility(View.VISIBLE);
 			GlideHelper.loadAvatar(getContext(), holder.iv_item_indicator, item.getAvatarUrl());
 		} else {

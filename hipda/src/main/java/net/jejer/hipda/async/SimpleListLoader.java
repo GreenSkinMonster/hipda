@@ -27,6 +27,7 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 	public static final int TYPE_THREADNOTIFY = 4;
 	public static final int TYPE_SMSDETAIL = 5;
 	public static final int TYPE_FAVORITES = 6;
+	public static final int TYPE_SEARCH_USER_THREADS = 7;
 
 	private final String LOG_TAG = getClass().getSimpleName();
 	private Context mCtx;
@@ -106,6 +107,9 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 				} catch (UnsupportedEncodingException e) {
 					Log.e(LOG_TAG, "Encoding error", e);
 				}
+				break;
+			case TYPE_SEARCH_USER_THREADS:
+				url = HiUtils.SearchUserThreads + mExtra + "&page=" + mPage;
 				break;
 			case TYPE_FAVORITES:
 				url = HiUtils.FavoritesUrl;

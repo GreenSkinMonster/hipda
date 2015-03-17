@@ -31,6 +31,8 @@ public class HiParser {
 				return parseSmsDetail(doc);
 			case SimpleListLoader.TYPE_SEARCH:
 				return parseSearch(doc);
+			case SimpleListLoader.TYPE_SEARCH_USER_THREADS:
+				return parseSearch(doc);
 			case SimpleListLoader.TYPE_FAVORITES:
 				return parseFavorites(doc);
 		}
@@ -429,6 +431,11 @@ public class HiParser {
 				continue;
 			}
 			item.setAuthor(authorAES.first().text());
+
+			Elements timeES = tbodyE.select("tr td.author em");
+			if (timeES.size() > 0) {
+				item.setTime(timeES.first().text());
+			}
 
 			list.add(item);
 		}
