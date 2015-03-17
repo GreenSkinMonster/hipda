@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,11 +135,30 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 			} else if (content instanceof ContentImg) {
 				final String imageUrl = content.getContent();
 
-				GlideImageView giv = new GlideImageView(mCtx);
+				TextView textView = new TextView(mCtx);
+				textView.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
+				textView.setGravity(Gravity.CENTER_HORIZONTAL);
+				textView.setVisibility(View.INVISIBLE);
+
+				final GlideImageView giv = new GlideImageView(mCtx);
 				giv.setFocusable(false);
 				giv.setClickable(true);
+
+				textView.setClickable(true);
+				textView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						giv.performClick();
+					}
+				});
+
 				contentView.addView(giv);
+				contentView.addView(textView);
+
 				giv.setUrl(imageUrl);
+
+				giv.getLayoutParams().width = 400;
+				giv.getLayoutParams().height = 400;
 
 				if (HiUtils.isAutoLoadImg(mCtx)) {
 					int maxViewWidth = 1080;
@@ -151,10 +171,11 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 					}
 					Glide.with(getContext())
 							.load(imageUrl)
+							.asBitmap()
 							.diskCacheStrategy(DiskCacheStrategy.ALL)
 							.placeholder(R.drawable.ic_action_picture)
 							.error(R.drawable.tapatalk_image_broken)
-							.into(new GlideScaleViewTarget(giv, lowerImageWidth, maxViewWidth, imageUrl));
+							.into(new GlideScaleViewTarget(mCtx, giv, textView, lowerImageWidth, maxViewWidth, imageUrl));
 				} else {
 					giv.setImageResource(R.drawable.ic_action_picture);
 				}

@@ -57,9 +57,9 @@
     <string name="title_drawer_setting">设置</string>
     <string name="title_drawer_theme">切换主题</string>
 
-    <string name="action_first">|&lt;</string>
-    <string name="action_previous">&lt;</string>
-    <string name="action_next">&gt;</string>
-    <string name="action_last">&gt;|</string>
+    <string name="image_loading">正在加载&#8230;</string>
+    <string name="image_click_to_view_long">超长图 点击查看</string>
+    <string name="image_click_to_view">点击查看大图</string>
+    <string name="image_click_to_play">点击播放</string>
 
 </resources>

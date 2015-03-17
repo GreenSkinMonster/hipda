@@ -1,36 +1,46 @@
 package net.jejer.hipda.glide;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
-public class GlideScaleViewTarget extends GlideDrawableImageViewTarget {
+import net.jejer.hipda.R;
+import net.jejer.hipda.ui.GlideImageView;
+
+public class GlideScaleViewTarget extends BitmapImageViewTarget {
 
 	private final String LOG_TAG = getClass().getSimpleName();
 
 	private int mMaxViewWidth;
 	private String mUrl;
+	private TextView mTextView;
+	private Context mCtx;
 
-	public GlideScaleViewTarget(ImageView view, int lowerImageWidth, int maxViewWidth, String url) {
+	public GlideScaleViewTarget(Context ctx, ImageView view, TextView textView, int lowerImageWidth, int maxViewWidth, String url) {
 		super(view);
+		mCtx = ctx;
 
-		//set a lower width to make Gllide load low resolution image to ram
+		//set a lower width to make Glide load low resolution image to ram
 		//we will change view's size later in onResourceReady according to image's size
 		view.getLayoutParams().width = lowerImageWidth;
 		view.getLayoutParams().height = lowerImageWidth;
 
 		mMaxViewWidth = maxViewWidth;
 		mUrl = url;
+		mTextView = textView;
 	}
 
 	@Override
-	public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
-		super.onResourceReady(resource, animation);
+	public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+		super.onResourceReady(resource, glideAnimation);
 
-		if (resource.getIntrinsicWidth() <= 0)
+		if (resource.getWidth() <= 0)
 			return;
 
 		//leave 12dp on both left and right side, this should match layout setup
@@ -39,19 +49,28 @@ public class GlideScaleViewTarget extends GlideDrawableImageViewTarget {
 		//if image width < half maxViewWidth, scale it up for better view
 		int maxScaleWidth = Math.round(maxViewWidth * 0.5f);
 
-		double scaleRate = getScaleRate(resource.getIntrinsicWidth());
-		int scaledWidth = Math.round((int) (resource.getIntrinsicWidth() * scaleRate));
-		int scaledHeight = Math.round((int) (resource.getIntrinsicHeight() * scaleRate));
+		double scaleRate = getScaleRate(resource.getWidth());
+		int scaledWidth = Math.round((int) (resource.getWidth() * scaleRate));
+		int scaledHeight = Math.round((int) (resource.getHeight() * scaleRate));
 
 		if (scaledWidth < maxScaleWidth) {
 			getView().getLayoutParams().width = scaledWidth;
 			getView().getLayoutParams().height = scaledHeight;
 		} else {
 			getView().getLayoutParams().width = maxViewWidth;
-			getView().getLayoutParams().height = Math.round(maxViewWidth * 1.0f * resource.getIntrinsicHeight() / resource.getIntrinsicWidth());
+			getView().getLayoutParams().height = Math.round(maxViewWidth * 1.0f * resource.getHeight() / resource.getWidth());
+		}
+		if (mUrl.toLowerCase().endsWith(".gif")) {
+			mTextView.setVisibility(View.VISIBLE);
+			mTextView.setText(mCtx.getResources().getString(R.string.image_click_to_play));
+		} else if (scaledWidth >= GlideImageView.MIN_SCALE_WIDTH) {
+			mTextView.setVisibility(View.VISIBLE);
+			mTextView.setText(mCtx.getResources().getString(R.string.image_click_to_view));
+		} else {
+			mTextView.setVisibility(View.INVISIBLE);
 		}
 		if (Log.isLoggable(LOG_TAG, Log.VERBOSE))
-			Log.v(LOG_TAG, "mVW=" + maxViewWidth + " mSW=" + maxScaleWidth + ", size=" + resource.getIntrinsicWidth() + "x" + resource.getIntrinsicHeight() + "," + mUrl.substring(mUrl.lastIndexOf("/") + 1));
+			Log.v(LOG_TAG, "mVW=" + maxViewWidth + " mSW=" + maxScaleWidth + ", size=" + resource.getWidth() + "x" + resource.getHeight() + "," + mUrl.substring(mUrl.lastIndexOf("/") + 1));
 	}
 
 	private int dpToPx(int dp) {

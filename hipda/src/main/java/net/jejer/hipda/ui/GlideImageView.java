@@ -12,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
@@ -22,8 +24,13 @@ import java.io.File;
 
 public class GlideImageView extends ImageView {
 
+	public static int MIN_SCALE_WIDTH = 600;
+
 	private Context mCtx;
 	private String mUrl;
+
+	private static ImageView currentImageView;
+	private static String currentUrl;
 
 	public GlideImageView(Context context) {
 		super(context);
@@ -39,10 +46,20 @@ public class GlideImageView extends ImageView {
 	private class GlideImageViewClickHandler implements OnClickListener {
 		@Override
 		public void onClick(View view) {
-
-			if (mUrl.toLowerCase().endsWith(".gif") || view.getLayoutParams().width < 600) {
-				return;
+			if (mUrl.equals(currentUrl)) {
+				stopCurrentGif();
+			} else if (mUrl.toLowerCase().endsWith(".gif")) {
+				stopCurrentGif();
+				loadGif();
+			} else if (view.getLayoutParams().width < MIN_SCALE_WIDTH) {
+				//do nothing
+			} else {
+				stopCurrentGif();
+				loadBitmap();
 			}
+		}
+
+		private void loadBitmap() {
 
 			LayoutInflater inflater = (LayoutInflater) mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View layout = inflater.inflate(R.layout.popup_image, null);
@@ -57,6 +74,11 @@ public class GlideImageView extends ImageView {
 
 			new AsyncTask<Void, Void, File>() {
 				@Override
+				protected void onPreExecute() {
+					super.onPreExecute();
+				}
+
+				@Override
 				protected File doInBackground(Void... voids) {
 					try {
 						FutureTarget<File> future =
@@ -66,7 +88,7 @@ public class GlideImageView extends ImageView {
 						File cacheFile = future.get();
 						Glide.clear(future);
 						return cacheFile;
-					} catch (Exception e) {
+					} catch (Exception ignored) {
 					}
 					return null;
 				}
@@ -80,7 +102,7 @@ public class GlideImageView extends ImageView {
 			}.execute();
 
 			ImageButton btnDownload = (ImageButton) layout.findViewById(R.id.btn_download_image);
-			btnDownload.setOnClickListener(new ImageButton.OnClickListener() {
+			btnDownload.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
 					DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -90,7 +112,38 @@ public class GlideImageView extends ImageView {
 					dm.enqueue(req);
 				}
 			});
-
 		}
 	}
+
+	private void loadGif() {
+
+		currentUrl = mUrl;
+		currentImageView = this;
+		Glide.with(mCtx).pauseRequests();
+		Glide.with(mCtx)
+				.load(mUrl)
+				.priority(Priority.IMMEDIATE)
+				.diskCacheStrategy(DiskCacheStrategy.SOURCE)
+				.skipMemoryCache(true)
+				.error(R.drawable.tapatalk_image_broken)
+				.into(this);
+		Glide.with(mCtx).resumeRequests();
+	}
+
+	private void stopCurrentGif() {
+		try {
+			if (currentImageView != null) {
+				Glide.with(mCtx)
+						.load(currentUrl)
+						.asBitmap()
+						.diskCacheStrategy(DiskCacheStrategy.SOURCE)
+						.error(R.drawable.tapatalk_image_broken)
+						.into(currentImageView);
+			}
+		} catch (Exception ignored) {
+		}
+		currentUrl = null;
+		currentImageView = null;
+	}
+
 }
