@@ -1,6 +1,7 @@
 package net.jejer.hipda.utils;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.jejer.hipda.async.SimpleListLoader;
@@ -431,6 +432,12 @@ public class HiParser {
 				continue;
 			}
 			item.setAuthor(authorAES.first().text());
+
+			String spaceUrl = authorAES.first().attr("href");
+			if (!TextUtils.isEmpty(spaceUrl)) {
+				String uid = HttpUtils.getMiddleString(spaceUrl, "uid=", "&");
+				item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
+			}
 
 			Elements timeES = tbodyE.select("tr td.author em");
 			if (timeES.size() > 0) {
