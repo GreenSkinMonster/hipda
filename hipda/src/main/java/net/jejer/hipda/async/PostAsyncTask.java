@@ -77,6 +77,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 		String fid = postBean.getFid();
 		String floor = postBean.getFloor();
 		String subject = postBean.getSubject();
+		String typeid = postBean.getTypeid();
 
 		if (mInfo == null) {
 			mInfo = new PrePostAsyncTask(mCtx, null, mMode).doInBackground(postBean);
@@ -118,12 +119,14 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 				doPost(client, localContext, url, mInfo.get("text").get(0) + "\n\n    " + reply_text);
 				break;
 			case MODE_NEW_THREAD:
-				url = HiUtils.NewThreadUrl + fid + "&topicsubmit=yes";
+				url = HiUtils.NewThreadUrl + fid + "&typeid=" + typeid + "&topicsubmit=yes";
 				doPost(client, localContext, url, reply_text, subject);
+				break;
 			case MODE_EDIT_POST:
 				if (TextUtils.isEmpty(fid)) fid = "2";
 				url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
 				doPost(client, localContext, url, reply_text, subject);
+				break;
 		}
 
 		client.close();
@@ -192,7 +195,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 			mResult = "发生网络错误!";
 			return;
 		}
-		Log.e(LOG_TAG, rsp_str);
+		//Log.e(LOG_TAG, rsp_str);
 
 		if (rsp_code == 302) {
 			mResult = "发表成功!";

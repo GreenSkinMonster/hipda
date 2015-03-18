@@ -12,6 +12,7 @@ public class PostBean {
 	private String floor;
 	private String subject;
 	private String content;
+	private String typeid;
 
 	public String getTid() {
 		return tid;
@@ -60,4 +61,13 @@ public class PostBean {
 	public void setContent(String content) {
 		this.content = content;
 	}
+
+	public String getTypeid() {
+		return typeid;
+	}
+
+	public void setTypeid(String typeid) {
+		this.typeid = typeid;
+	}
+
 }

@@ -22,6 +22,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
@@ -129,6 +130,8 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List
 		result.put("hash", new ArrayList<String>());
 		result.put("attaches", new ArrayList<String>());
 		result.put("subject", new ArrayList<String>());
+		result.put("typeid_values", new ArrayList<String>());
+		result.put("typeid_names", new ArrayList<String>());
 
 		Elements formhashES = doc.select("input[name=formhash]");
 		if (formhashES.size() < 1) {
@@ -164,6 +167,12 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List
 			result.get("subject").add(subjectES.first().attr("value"));
 		}
 
+		Elements typeidES = doc.select("#typeid > option");
+		for (int i = 0; i < typeidES.size(); i++) {
+			Element typeidEl = typeidES.get(i);
+			result.get("typeid_values").add(typeidEl.val());
+			result.get("typeid_names").add( typeidEl.text());
+		}
 		return result;
 	}
 

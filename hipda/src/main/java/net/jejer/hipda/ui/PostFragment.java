@@ -58,6 +58,7 @@ public class PostFragment extends Fragment {
 	private String mTid;
 	private String mPid;
 	private String mFloor;
+	private String mTypeid = "0";
 	private int mMode;
 	private TextView mTvAdditional;
 	private TextView mTvSubjectMsg;
@@ -67,6 +68,7 @@ public class PostFragment extends Fragment {
 	private PrePostAsyncTask mPrePostAsyncTask;
 
 	private Spinner mSpForum;
+	private Spinner mSpTypeIds;
 
 	private PostAsyncTask.PostListener postListener;
 
@@ -119,10 +121,14 @@ public class PostFragment extends Fragment {
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
 				R.array.forums, android.R.layout.simple_list_item_1);
 		mSpForum.setAdapter(adapter);
+		mSpForum.setOnItemSelectedListener(new FidSelectListener());
+		mSpForum.setEnabled(false);
 		if (mFid != null) {
 			mSpForum.setSelection(HiUtils.getForumIndexByFid(getActivity(), mFid));
 		}
-		mSpForum.setOnItemSelectedListener(new FidSelectListener());
+
+		mSpTypeIds = (Spinner) view.findViewById(R.id.sp_typeid);
+		mSpTypeIds.setOnItemSelectedListener(new TypeidSelectListener());
 
 		mTvSubjectMsg = (TextView) view.findViewById(R.id.et_subject);
 
@@ -227,6 +233,7 @@ public class PostFragment extends Fragment {
 			case PostAsyncTask.MODE_NEW_THREAD:
 				getActivity().getActionBar().setTitle(getActivity().getResources().getString(R.string.action_new_thread));
 				mSpForum.setVisibility(View.VISIBLE);
+				mSpTypeIds.setVisibility(View.VISIBLE);
 				mTvSubjectMsg.setVisibility(View.VISIBLE);
 				break;
 			case PostAsyncTask.MODE_EDIT_POST:
@@ -255,22 +262,30 @@ public class PostFragment extends Fragment {
 				}
 				return true;
 			case R.id.action_post:
-				String replyText = mTvReplyMsg.getText().toString();
-				if (replyText.length() < 5) {
-					Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
+				if ("6".equals(mFid) && "0".equals(mTypeid)) {
+					Toast.makeText(getActivity(), "B&S版发帖必须指定分类", Toast.LENGTH_LONG).show();
 					return true;
 				}
+
 				String subjectText = mTvSubjectMsg.getText().toString();
 				if (mMode == PostAsyncTask.MODE_NEW_THREAD && subjectText.length() < 5) {
 					Toast.makeText(getActivity(), "主题字数必须大于5", Toast.LENGTH_LONG).show();
 					return true;
 				}
+
+				String replyText = mTvReplyMsg.getText().toString();
+				if (replyText.length() < 5) {
+					Toast.makeText(getActivity(), "帖子内容字数必须大于5", Toast.LENGTH_LONG).show();
+					return true;
+				}
+
 				//when edit post, pass floor number
 				PostBean postBean = new PostBean();
 				postBean.setContent(replyText);
 				postBean.setTid(mTid);
 				postBean.setPid(mPid);
 				postBean.setFid(mFid);
+				postBean.setTypeid(mTypeid);
 				postBean.setSubject(subjectText);
 				postBean.setFloor(mMode == PostAsyncTask.MODE_EDIT_POST ? mFloor : "");
 				new PostAsyncTask(getActivity(), mMode, mPrePostInfo, postListener).execute(postBean);
@@ -398,6 +413,26 @@ public class PostFragment extends Fragment {
 				mPrePostInfo = info;
 				mTvAdditional.setVisibility(View.GONE);
 				getActivity().invalidateOptionsMenu();
+
+				if (mode == PostAsyncTask.MODE_NEW_THREAD) {
+					KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), android.R.layout.simple_list_item_1);
+					List<String> typeids = info.get("typeid_values");
+					if (typeids != null && typeids.size() > 0) {
+						adapter.setEntryValues(info.get("typeid_values").toArray(new String[typeids.size()]));
+						adapter.setEntries(info.get("typeid_names").toArray(new String[typeids.size()]));
+						mSpTypeIds.setAdapter(adapter);
+						mSpTypeIds.setVisibility(View.VISIBLE);
+					} else {
+						String[] noNames = {"无分类"};
+						String[] noValues = {"0"};
+						adapter.setEntries(noNames);
+						adapter.setEntryValues(noValues);
+						mSpTypeIds.setAdapter(adapter);
+						mSpTypeIds.setVisibility(View.VISIBLE);
+						mSpTypeIds.setEnabled(false);
+					}
+				}
+
 				if (!info.get("text").isEmpty() && !info.get("text").get(0).isEmpty()) {
 					if (mode == PostAsyncTask.MODE_EDIT_POST) {
 						mTvReplyMsg.setText(info.get("text").get(0));
@@ -420,13 +455,24 @@ public class PostFragment extends Fragment {
 	private class FidSelectListener implements Spinner.OnItemSelectedListener {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-			//parent.getItemAtPosition(pos);
 			mFid = String.valueOf(HiUtils.getForumID(getActivity(), pos));
-			Log.v("FID", mFid);
 		}
 
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {
 		}
 	}
+
+	private class TypeidSelectListener implements Spinner.OnItemSelectedListener {
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+			KeyValueArrayAdapter adapter = (KeyValueArrayAdapter) parent.getAdapter();
+			mTypeid = adapter.getEntryValue(pos);
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+		}
+	}
+
 }
