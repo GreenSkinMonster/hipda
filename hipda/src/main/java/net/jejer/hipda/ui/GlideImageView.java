@@ -116,7 +116,6 @@ public class GlideImageView extends ImageView {
 	}
 
 	private void loadGif() {
-
 		currentUrl = mUrl;
 		currentImageView = this;
 		Glide.with(mCtx).pauseRequests();

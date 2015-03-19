@@ -22,14 +22,9 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
 	private TextView mTextView;
 	private Context mCtx;
 
-	public GlideScaleViewTarget(Context ctx, ImageView view, TextView textView, int lowerImageWidth, int maxViewWidth, String url) {
+	public GlideScaleViewTarget(Context ctx, ImageView view, TextView textView, int maxViewWidth, String url) {
 		super(view);
 		mCtx = ctx;
-
-		//set a lower width to make Glide load low resolution image to ram
-		//we will change view's size later in onResourceReady according to image's size
-		view.getLayoutParams().width = lowerImageWidth;
-		view.getLayoutParams().height = lowerImageWidth;
 
 		mMaxViewWidth = maxViewWidth;
 		mUrl = url;
@@ -63,6 +58,9 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
 		if (mUrl.toLowerCase().endsWith(".gif")) {
 			mTextView.setVisibility(View.VISIBLE);
 			mTextView.setText(mCtx.getResources().getString(R.string.image_click_to_play));
+		} else if (scaledWidth >= GlideImageView.MIN_SCALE_WIDTH && scaledHeight >= 3 * scaledWidth) {
+			mTextView.setVisibility(View.VISIBLE);
+			mTextView.setText(mCtx.getResources().getString(R.string.image_click_to_view_long));
 		} else if (scaledWidth >= GlideImageView.MIN_SCALE_WIDTH) {
 			mTextView.setVisibility(View.VISIBLE);
 			mTextView.setText(mCtx.getResources().getString(R.string.image_click_to_view));

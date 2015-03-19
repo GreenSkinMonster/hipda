@@ -3,6 +3,7 @@ package net.jejer.hipda.ui;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.Gravity;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentAbs;
@@ -29,6 +31,7 @@ import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideScaleViewTarget;
+import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.utils.HiUtils;
 
 import java.util.List;
@@ -162,20 +165,31 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 
 				if (HiUtils.isAutoLoadImg(mCtx)) {
 					int maxViewWidth = 1080;
-					int lowerImageWidth = 320;
 
 					//this fragment could be replaced by UserinfoFragment, so DO NOT cast it
 					Fragment fragment = mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
 					if (fragment != null && fragment.getView() != null) {
 						maxViewWidth = fragment.getView().getWidth();
 					}
-					Glide.with(getContext())
-							.load(imageUrl)
-							.asBitmap()
-							.diskCacheStrategy(DiskCacheStrategy.ALL)
-							.placeholder(R.drawable.ic_action_picture)
-							.error(R.drawable.tapatalk_image_broken)
-							.into(new GlideScaleViewTarget(mCtx, giv, textView, lowerImageWidth, maxViewWidth, imageUrl));
+					if (imageUrl.toLowerCase().endsWith(".gif")) {
+						Glide.with(getContext())
+								.load(imageUrl)
+								.asBitmap()
+								.diskCacheStrategy(DiskCacheStrategy.ALL)
+								.placeholder(R.drawable.ic_action_picture)
+								.error(R.drawable.tapatalk_image_broken)
+								.into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
+					} else {
+						Glide.with(getContext())
+								.load(imageUrl)
+								.asBitmap()
+								.cacheDecoder(new FileToStreamDecoder<Bitmap>(new ThreadImageDecoder()))
+								.imageDecoder(new ThreadImageDecoder())
+								.diskCacheStrategy(DiskCacheStrategy.ALL)
+								.placeholder(R.drawable.ic_action_picture)
+								.error(R.drawable.tapatalk_image_broken)
+								.into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
+					}
 				} else {
 					giv.setImageResource(R.drawable.ic_action_picture);
 				}
