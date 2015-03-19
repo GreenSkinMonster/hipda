@@ -11,6 +11,7 @@ import android.content.Loader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ThreadListFragment extends Fragment implements PostAsyncTask.PostListener {
+public class ThreadListFragment extends Fragment
+		implements PostAsyncTask.PostListener, SwipeRefreshLayout.OnRefreshListener {
 	public final static int STAGE_ERROR = -1;
 	public final static int STAGE_CLEAN = 0;
 	public final static int STAGE_RELOGIN = 1;
@@ -69,6 +71,7 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 	private boolean mInloading = false;
 	private Handler mMsgHandler;
 	private HiProgressDialog postProgressDialog;
+	private SwipeRefreshLayout swipeLayout;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -112,6 +115,10 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 		mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
 		mTipBar.setVisibility(View.INVISIBLE);
 		mTipBar.bringToFront();
+
+		swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+		swipeLayout.setOnRefreshListener(this);
+		swipeLayout.setColorSchemeResources(R.color.hipda);
 
 		if (HiSettingsHelper.getInstance().isEinkOptimization()) {
 			ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_list_pageup);
@@ -228,9 +235,8 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 	}
 
 	private void refresh() {
-		//Log.v(LOG_TAG, "refresh() called");
 		mPage = 1;
-		mThreadListAdapter.clear();
+		mThreadListView.setSelection(0);
 		getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
 		Log.v(LOG_TAG, "restartLoader() called");
 	}
@@ -266,6 +272,11 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 				Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
 			}
 		}
+	}
+
+	@Override
+	public void onRefresh() {
+		refresh();
 	}
 
 	public class OnScrollCallback implements AbsListView.OnScrollListener {
@@ -386,19 +397,19 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 		}
 
 		@Override
-		public void onLoadFinished(Loader<ThreadListBean> arg0,
-								   ThreadListBean arg1) {
+		public void onLoadFinished(Loader<ThreadListBean> loader,
+								   ThreadListBean threads) {
 			Log.v(LOG_TAG, "onLoadFinished enter");
 
 			mInloading = false;
+			swipeLayout.setRefreshing(false);
 
-			if (arg1 == null) {
-				// May be login error, error message should be populated in login async task
+			if (threads == null) {
 				if (mPage > 1) {
 					mPage--;
 				}
 				return;
-			} else if (arg1.count == 0) {
+			} else if (threads.count == 0) {
 				// Page load fail.
 				if (mPage > 1) {
 					mPage--;
@@ -414,23 +425,35 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 				return;
 			}
 
-			// Remove duplicate
 			int count = 0;
-			for (ThreadBean newthread : arg1.threads) {
-				boolean duplicate = false;
-				for (int i = 0; i < mThreadListAdapter.getCount(); i++) {
-					ThreadBean oldthread = mThreadListAdapter.getItem(i);
-					if (newthread.getTid().equals(oldthread.getTid())) {
-						duplicate = true;
-						break;
-					}
+			if (mPage == 1) {
+				//avoid clear and refresh
+				for (ThreadBean newthread : threads.threads) {
+					mThreadListAdapter.insert(newthread, count++);
 				}
-				if (!duplicate) {
-					mThreadListAdapter.add(newthread);
-					count++;
+				for (int i = mThreadListAdapter.getCount() - 1; i >= count; i--) {
+					mThreadListAdapter.remove(mThreadListAdapter.getItem(i));
+				}
+				mThreadListAdapter.notifyDataSetChanged();
+				mThreadListView.setSelection(0);
+			} else {
+				for (ThreadBean newthread : threads.threads) {
+					boolean duplicate = false;
+					for (int i = 0; i < mThreadListAdapter.getCount(); i++) {
+						ThreadBean oldthread = mThreadListAdapter.getItem(i);
+						if (newthread.getTid().equals(oldthread.getTid())) {
+							duplicate = true;
+							break;
+						}
+					}
+					if (!duplicate) {
+						mThreadListAdapter.add(newthread);
+						count++;
+					}
 				}
 			}
 			Log.v(LOG_TAG, "New Threads Added: " + count);
+			Log.v(LOG_TAG, "Total Threads : " + mThreadListAdapter.getCount());
 
 			Message msgDone = Message.obtain();
 			msgDone.what = STAGE_DONE;
@@ -451,6 +474,7 @@ public class ThreadListFragment extends Fragment implements PostAsyncTask.PostLi
 
 			mInloading = false;
 			mTipBar.setVisibility(View.INVISIBLE);
+			swipeLayout.setRefreshing(false);
 		}
 
 	}

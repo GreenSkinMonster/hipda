@@ -7,14 +7,21 @@
 
     <!-- <include layout="@layout/progress_bar"/> -->
 
-    <ListView
-        android:id="@+id/lv_threads"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:divider="?background"
-        android:dividerHeight="8dp">
-    </ListView>
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/lv_threads"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:divider="?background"
+            android:dividerHeight="8dp">
+        </ListView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView
         android:id="@+id/thread_list_tipbar"
