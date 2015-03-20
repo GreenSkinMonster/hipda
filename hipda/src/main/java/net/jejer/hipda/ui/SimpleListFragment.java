@@ -6,6 +6,7 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,7 +31,7 @@ import net.jejer.hipda.bean.SimpleListItemBean;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleListFragment extends Fragment {
+public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 	private final String LOG_TAG = getClass().getSimpleName();
 	public static final String ARG_TYPE = "type";
 
@@ -42,6 +43,7 @@ public class SimpleListFragment extends Fragment {
 	private LoaderManager.LoaderCallbacks<SimpleListBean> mCallbacks;
 	private String mQuery = "";
 	private SearchView searchView = null;
+	private SwipeRefreshLayout swipeLayout;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,10 @@ public class SimpleListFragment extends Fragment {
 		mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
 		mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
 		mTipBar.setVisibility(View.GONE);
+
+		swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+		swipeLayout.setOnRefreshListener(this);
+		swipeLayout.setColorSchemeResources(R.color.hipda);
 
 		return view;
 	}
@@ -175,7 +181,11 @@ public class SimpleListFragment extends Fragment {
 		Log.v(LOG_TAG, "refresh() called");
 		mSimpleListAdapter.clear();
 		getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-		Log.v(LOG_TAG, "restartLoader() called");
+	}
+
+	@Override
+	public void onRefresh() {
+		refresh();
 	}
 
 	public class OnScrollCallback implements AbsListView.OnScrollListener {
@@ -242,24 +252,16 @@ public class SimpleListFragment extends Fragment {
 			Log.v(LOG_TAG, "onLoadFinished enter");
 
 			mTipBar.setVisibility(View.INVISIBLE);
+			swipeLayout.setRefreshing(false);
 
 			if (list == null || list.getCount() == 0) {
-				Log.v(LOG_TAG, "onLoadFinished list == null || list.getCount == 0");
 				Toast.makeText(SimpleListFragment.this.getActivity(),
-						"自动加载失败", Toast.LENGTH_LONG).show();
+						"没有数据", Toast.LENGTH_LONG).show();
 				return;
 			}
 
-
-			Log.v(LOG_TAG, "mThreadListAdapter.addAll(arg1.threads) called, added " + list.getCount());
 			mSimpleListAdapter.addAll(list.getAll());
 
-			//			if (mResume) {
-			//				Log.v(LOG_TAG, "Resume, skip add");
-			//				mResume = false;
-			//			} else {
-			//				mThreadListAdapter.addAll(arg1.threads);
-			//			}
 		}
 
 		@Override
@@ -267,6 +269,7 @@ public class SimpleListFragment extends Fragment {
 			Log.v(LOG_TAG, "onLoaderReset");
 
 			mTipBar.setVisibility(View.INVISIBLE);
+			swipeLayout.setRefreshing(false);
 		}
 
 	}
