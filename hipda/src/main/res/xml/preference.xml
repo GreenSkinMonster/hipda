@@ -35,7 +35,7 @@
             android:title="@string/pref_title_login_answer"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_tail">
-        <SwitchPreference
+        <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="true"
             android:key="PERF_ADDTAIL"
             android:title="@string/pref_title_add_tail"/>
@@ -92,7 +92,7 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_screen_orientation"/>
 
-        <SwitchPreference
+        <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="true"
             android:key="PERF_GESTURE_BACK"
             android:title="@string/pref_title_gesture_back"/>
@@ -100,7 +100,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_general">
-        <SwitchPreference
+        <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="false"
             android:key="PERF_ENCODEUTF8"
             android:title="@string/pref_title_encode_utf8"/>
