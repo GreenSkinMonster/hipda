@@ -91,12 +91,11 @@ public class ThreadListFragment extends Fragment
 			@Override
 			public boolean onNavigationItemSelected(int position, long itemId) {
 				Log.v(LOG_TAG, "onNavigationItemSelected = " + String.valueOf(position));
-				//Toast.makeText(mCtx, String.valueOf(position), Toast.LENGTH_LONG).show();
-
 				int forumId = HiUtils.getForumID(mCtx, itemId);
 				if (mForumId != forumId) {
 					mForumId = forumId;
 					mForumSelect = getActivity().getActionBar().getSelectedNavigationIndex();
+					mThreadListAdapter.clear();
 					refresh();
 				}
 
