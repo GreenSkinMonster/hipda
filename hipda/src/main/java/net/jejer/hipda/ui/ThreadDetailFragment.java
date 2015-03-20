@@ -210,14 +210,13 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
 		quickReply.bringToFront();
 
-		if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+		if (HiSettingsHelper.getInstance().isEinkModeFloatButtonEnabled()) {
 			ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_detail_pageup);
 			mBtnPageup.setVisibility(View.VISIBLE);
 			mBtnPageup.setOnClickListener(new ImageView.OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					int index = mDetailListView.getFirstVisiblePosition() - mDetailListView.getChildCount() + 1;
-					mDetailListView.setSelection(index < 0 ? 0 : index);
+					listViewPageUp();
 				}
 			});
 
@@ -226,20 +225,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 			mBtnPagedown.setOnClickListener(new ImageView.OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					if (mDetailListView.getLastVisiblePosition() == mDetailListView.getFirstVisiblePosition()) {
-						int offset = mDetailListView.getChildAt(0).getTop();
-						int height = mDetailListView.getHeight();
-						int item_height = mDetailListView.getChildAt(0).getHeight();
-						if (item_height < Math.abs(offset)) {
-							if (mDetailListView.getFirstVisiblePosition() + 1 < mDetailListView.getCount()) {
-								mDetailListView.setSelection(mDetailListView.getFirstVisiblePosition() + 1);
-							}
-						} else {
-							mDetailListView.setSelectionFromTop(mDetailListView.getFirstVisiblePosition(), offset - height);
-						}
-					} else {
-						mDetailListView.setSelection(mDetailListView.getLastVisiblePosition());
-					}
+					listViewPageDown();
 				}
 			});
 		}
@@ -591,6 +577,36 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 		quickReply.setVisibility(View.VISIBLE);
 	}
 
+	public void onVolumeUp() {
+		listViewPageUp();
+	}
+
+	public void onVolumeDown() {
+		listViewPageDown();
+	}
+
+	private void listViewPageUp() {
+		int index = mDetailListView.getFirstVisiblePosition() - mDetailListView.getChildCount() + 1;
+		mDetailListView.setSelection(index < 0 ? 0 : index);
+	}
+
+	private void listViewPageDown() {
+		if (mDetailListView.getLastVisiblePosition() == mDetailListView.getFirstVisiblePosition()) {
+			int offset = mDetailListView.getChildAt(0).getTop();
+			int height = mDetailListView.getHeight();
+			int item_height = mDetailListView.getChildAt(0).getHeight();
+			if (item_height < Math.abs(offset)) {
+				if (mDetailListView.getFirstVisiblePosition() + 1 < mDetailListView.getCount()) {
+					mDetailListView.setSelection(mDetailListView.getFirstVisiblePosition() + 1);
+				}
+			} else {
+				mDetailListView.setSelectionFromTop(mDetailListView.getFirstVisiblePosition(), offset - height);
+			}
+		} else {
+			mDetailListView.setSelection(mDetailListView.getLastVisiblePosition());
+		}
+	}
+
 	private class OnItemLongClickCallback implements AdapterView.OnItemLongClickListener {
 
 		@Override
@@ -796,14 +812,12 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
 			if (mOffsetInPage == LAST_FLOOR_OFFSET) {
 				mDetailListView.setSelection(mAdapter.getCount() - 1 + mDetailListView.getHeaderViewsCount());
-				mOffsetInPage = -1;
-			} else if (mOffsetInPage != -1 && mOffsetInPage > 0) {
-				Log.e("XX", mOffsetInPage + " - " + mDetailListView.getHeaderViewsCount());
-				mDetailListView.setSelection(mOffsetInPage - 1 + mDetailListView.getHeaderViewsCount());
-				mOffsetInPage = -1;
+			} else if (mOffsetInPage >= 0) {
+				mDetailListView.setSelection(mOffsetInPage + mDetailListView.getHeaderViewsCount());
 			} else {
 				mDetailListView.setSelection(0);
 			}
+			mOffsetInPage = -1;
 
 			//if current page loaded from cache, set prefetch flag for next page
 			mPrefetching = false;
@@ -858,7 +872,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 						.addToBackStack(ThreadDetailFragment.class.getName())
 						.commit();
 			} else {
-				if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+				if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
 					getFragmentManager().beginTransaction()
 							.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
 							.addToBackStack(ThreadDetailFragment.class.getName())

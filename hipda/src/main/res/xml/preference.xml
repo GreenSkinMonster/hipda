@@ -58,10 +58,12 @@
             android:title="@string/pref_title_tail_url"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_ui">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="PERF_EINK_OPTIMIZATION"
-            android:title="@string/pref_title_eink_optimization"/>
+        <MultiSelectListPreference
+            android:defaultValue="@array/empty_array"
+            android:entries="@array/pref_title_eink_mode"
+            android:entryValues="@array/pref_title_eink_mode_values"
+            android:key="PERF_EINK_MODE"
+            android:title="@string/pref_title_eink_mode"/>
 
         <ListPreference
             android:defaultValue="0"

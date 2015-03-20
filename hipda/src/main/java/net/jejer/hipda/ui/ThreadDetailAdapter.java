@@ -102,7 +102,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 		holder.author.setTag(R.id.avatar_tag_username, detail.getAuthor());
 		holder.author.setOnClickListener(mAvatarListener);
 
-		if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+		if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
 			holder.author.setTextColor(mCtx.getResources().getColor(R.color.grey));
 			holder.floor.setTextColor(mCtx.getResources().getColor(R.color.grey));
 		}
@@ -116,7 +116,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setFragmentManager(mFragmentManager);
 				tv.setTextSize(HiSettingsHelper.getPostTextSize());
 				tv.setMovementMethod(LinkMovementMethod.getInstance());
-				if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+				if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
 					tv.setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
 				}
 				//dirty hack, remove extra <br>
@@ -200,7 +200,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setTextSize(HiSettingsHelper.getPostTextSize());
 				tv.setMovementMethod(LinkMovementMethod.getInstance());
 				tv.setText(content.getContent());
-				if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+				if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
 					tv.setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
 				}
 				tv.setFocusable(false);
@@ -210,7 +210,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 				tv.setTextSize(HiSettingsHelper.getPostTextSize());
 				tv.setAutoLinkMask(Linkify.WEB_URLS);
 				tv.setText(content.getContent());
-				if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+				if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
 					tv.setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
 				}
 				tv.setFocusable(false);    // make convertView long clickable.

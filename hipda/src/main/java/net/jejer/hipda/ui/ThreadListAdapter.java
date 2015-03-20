@@ -56,7 +56,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
 
 		holder.tv_author.setText(thread.getAuthor());
-		if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+		if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
 			holder.tv_author.setTextColor(mCtx.getResources().getColor(R.color.grey));
 		}
 

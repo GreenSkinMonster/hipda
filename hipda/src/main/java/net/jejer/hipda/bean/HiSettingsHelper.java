@@ -7,7 +7,9 @@ import android.preference.PreferenceManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 public class HiSettingsHelper {
 	/*
@@ -32,6 +34,7 @@ public class HiSettingsHelper {
 	public static final String PERF_NIGHTTHEME = "PERF_NIGHTTHEME";
 	public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
 	public static final String PERF_EINK_OPTIMIZATION = "PERF_EINK_OPTIMIZATION";
+	public static final String PERF_EINK_MODE = "PERF_EINK_MODE";
 	public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
 	public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
 	public static final String PERF_TEXTSIZE_TITLE_ADJ = "PERF_TEXTSIZE_TITLE_ADJ";
@@ -67,6 +70,7 @@ public class HiSettingsHelper {
 
 	private boolean mEncodeUtf8 = false;
 	private boolean mEinkOptimization = false;
+	private Set<String> mEinkMode = new HashSet<String>();
 
 	private String[] mBlanklistUsernames = null;
 
@@ -134,6 +138,7 @@ public class HiSettingsHelper {
 		isNightThemeFromPref();
 		isEncodeUtf8FromPref();
 		isEinkOptimizationFromPref();
+		getEinkModeFromPref();
 		getBlanklistUsernamesFromPref();
 		getPostTextsizeAdjFromPref();
 		getTitleTextsizeAdjFromPref();
@@ -409,6 +414,21 @@ public class HiSettingsHelper {
 		editor.putBoolean(PERF_EINK_OPTIMIZATION, einkOptimization).commit();
 	}
 
+	public Set<String> getEinkMode() {
+		return mEinkMode;
+	}
+
+	public Set<String> getEinkModeFromPref() {
+		mEinkMode = mSharedPref.getStringSet(PERF_EINK_MODE, new HashSet<String>());
+		return mEinkMode;
+	}
+
+	public void setEinkOptimization(Set<String> einkMode) {
+		mEinkMode = einkMode;
+		SharedPreferences.Editor editor = mSharedPref.edit();
+		editor.putStringSet(PERF_EINK_MODE, einkMode).commit();
+	}
+
 	public String[] getBlanklistUsernames() {
 		return mBlanklistUsernames;
 	}
@@ -554,6 +574,19 @@ public class HiSettingsHelper {
 
 	public static int getTitleTextSize() {
 		return 18 + getInstance().getTitleTextsizeAdj();
+	}
+
+	public boolean isEinkModeUIEnabled() {
+		return getEinkMode().contains("1");
+	}
+
+
+	public boolean isEinkModeFloatButtonEnabled() {
+		return getEinkMode().contains("2");
+	}
+
+	public boolean isEinkModeVolumeKeyEnabled() {
+		return getEinkMode().contains("3");
 	}
 
 }

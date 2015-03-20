@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -14,9 +15,8 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SettingsFragment extends PreferenceFragment {
 	private final String LOG_TAG = getClass().getSimpleName();
@@ -24,7 +24,6 @@ public class SettingsFragment extends PreferenceFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 
 
 		// Load the preferences from an XML resource
@@ -38,8 +37,7 @@ public class SettingsFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_POST_ADJ));
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_TITLE_ADJ));
 		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
-
-		//bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_LAST_UPDATE_CHECK));
+		bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_EINK_MODE));
 
 		Preference dialogPref = findPreference(HiSettingsHelper.PERF_ABOUT);
 		dialogPref.setSummary(HiSettingsHelper.getInstance().getAppVersion());
@@ -76,12 +74,22 @@ public class SettingsFragment extends PreferenceFragment {
 
 			Log.v("onPreferenceChange", "onPreferenceChange");
 			String stringValue = value.toString();
-			if (HiSettingsHelper.PERF_LAST_UPDATE_CHECK.equals(preference.getKey())) {
-				try {
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
-					preference.setSummary(formatter.format(new Date(Long.parseLong(stringValue))));
-				} catch (Exception ignored) {
+			if (preference instanceof MultiSelectListPreference) {
+				MultiSelectListPreference listPreference = (MultiSelectListPreference) preference;
+				Set<String> selectedValues = (Set<String>) value;
+				CharSequence[] entries = listPreference.getEntries();
+				CharSequence[] entryValues = listPreference.getEntryValues();
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < entryValues.length; i++) {
+					String v = entryValues[i].toString();
+					if (selectedValues.contains(v)) {
+						if (sb.length() > 0)
+							sb.append(", ");
+						int index = listPreference.findIndexOfValue(v);
+						sb.append(entries[index]);
+					}
 				}
+				preference.setSummary(sb.toString());
 			} else if (preference instanceof ListPreference) {
 				// For list preferences, look up the correct display value in
 				// the preference's 'entries' list.
@@ -121,6 +129,12 @@ public class SettingsFragment extends PreferenceFragment {
 					PreferenceManager.getDefaultSharedPreferences(
 							preference.getContext()).getBoolean(preference.getKey(),
 							false));
+		} else if (preference instanceof MultiSelectListPreference) {
+			sBindPreferenceSummaryToValueListener.onPreferenceChange(
+					preference,
+					PreferenceManager.getDefaultSharedPreferences(
+							preference.getContext()).getStringSet(preference.getKey(),
+							new HashSet<String>()));
 		} else {
 			sBindPreferenceSummaryToValueListener.onPreferenceChange(
 					preference,

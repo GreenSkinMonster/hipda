@@ -120,7 +120,7 @@ public class ThreadListFragment extends Fragment
 		swipeLayout.setOnRefreshListener(this);
 		swipeLayout.setColorSchemeResources(R.color.hipda);
 
-		if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+		if (HiSettingsHelper.getInstance().isEinkModeFloatButtonEnabled()) {
 			ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_list_pageup);
 			mBtnPageup.setVisibility(View.VISIBLE);
 			mBtnPageup.setOnClickListener(new ImageView.OnClickListener() {
@@ -212,7 +212,6 @@ public class ThreadListFragment extends Fragment
 			default:
 				return super.onOptionsItemSelected(item);
 		}
-
 	}
 
 	@Override
@@ -277,6 +276,15 @@ public class ThreadListFragment extends Fragment
 	@Override
 	public void onRefresh() {
 		refresh();
+	}
+
+	public void onVolumeUp() {
+		int index = mThreadListView.getFirstVisiblePosition() - mThreadListView.getChildCount() + 1;
+		mThreadListView.setSelection(index < 0 ? 0 : index);
+	}
+
+	public void onVolumeDown() {
+		mThreadListView.setSelection(mThreadListView.getLastVisiblePosition());
 	}
 
 	public class OnScrollCallback implements AbsListView.OnScrollListener {
@@ -374,7 +382,7 @@ public class ThreadListFragment extends Fragment
 				arguments.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, floor);
 			ThreadDetailFragment fragment = new ThreadDetailFragment();
 			fragment.setArguments(arguments);
-			if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+			if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
 				getFragmentManager().beginTransaction()
 						.add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
 						.addToBackStack(ThreadDetailFragment.class.getName())
@@ -452,8 +460,7 @@ public class ThreadListFragment extends Fragment
 					}
 				}
 			}
-			Log.v(LOG_TAG, "New Threads Added: " + count);
-			Log.v(LOG_TAG, "Total Threads : " + mThreadListAdapter.getCount());
+			Log.v(LOG_TAG, "New Threads Added: " + count + ", Total = " + mThreadListAdapter.getCount());
 
 			Message msgDone = Message.obtain();
 			msgDone.what = STAGE_DONE;

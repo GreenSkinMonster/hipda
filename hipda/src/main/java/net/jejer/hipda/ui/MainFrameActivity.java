@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -82,8 +83,6 @@ public class MainFrameActivity extends Activity {
 				if (mOnSwipeCallback != null) {
 					if (mOnSwipeCallback instanceof ThreadDetailFragment) {
 						((ThreadDetailFragment) mOnSwipeCallback).onSwipeTop();
-					} else if (mOnSwipeCallback instanceof SmsFragment) {
-						((SmsFragment) mOnSwipeCallback).onSwipeTop();
 					}
 				}
 			}
@@ -92,8 +91,6 @@ public class MainFrameActivity extends Activity {
 				if (mOnSwipeCallback != null) {
 					if (mOnSwipeCallback instanceof ThreadDetailFragment) {
 						((ThreadDetailFragment) mOnSwipeCallback).onSwipeBottom();
-					} else if (mOnSwipeCallback instanceof SmsFragment) {
-						((SmsFragment) mOnSwipeCallback).onSwipeBottom();
 					}
 				}
 			}
@@ -161,6 +158,32 @@ public class MainFrameActivity extends Activity {
 //            }
 		}
 
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (HiSettingsHelper.getInstance().isEinkModeVolumeKeyEnabled()) {
+			Fragment fragment = getFragmentManager().findFragmentByTag(ThreadDetailFragment.class.getName());
+			if (fragment == null) {
+				fragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+			}
+			if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+				if (fragment instanceof ThreadDetailFragment) {
+					((ThreadDetailFragment) fragment).onVolumeDown();
+				} else if (fragment instanceof ThreadListFragment) {
+					((ThreadListFragment) fragment).onVolumeDown();
+				}
+				return true;
+			} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+				if (fragment instanceof ThreadDetailFragment) {
+					((ThreadDetailFragment) fragment).onVolumeUp();
+				} else if (fragment instanceof ThreadListFragment) {
+					((ThreadListFragment) fragment).onVolumeUp();
+				}
+				return true;
+			}
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 	public boolean popFragment(boolean backPressed) {

@@ -58,8 +58,6 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
 		mAdapter = new SmsAdapter(getActivity(), R.layout.item_sms_list);
 		mLoaderCallbacks = new SmsListLoaderCallbacks();
 
-		((MainFrameActivity) getActivity()).registOnSwipeCallback(this);
-
 	}
 
 	@Override
@@ -180,9 +178,4 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
 		}
 	}
 
-	public void onSwipeTop() {
-	}
-
-	public void onSwipeBottom() {
-	}
 }
