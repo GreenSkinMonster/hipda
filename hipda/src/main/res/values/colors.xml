@@ -33,6 +33,7 @@
     </integer-array>
 
     <item name="hipda" type="color">#33B6EA</item>
+    <item name="icon_blue" type="color">#2196F3</item>
     <item name="day_background" type="color">#E8E8E8</item>
     <item name="day_list_item_background" type="color">#FFFFFF</item>
     <item name="day_detail_background" type="color">#FFFFFF</item>
