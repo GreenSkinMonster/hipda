@@ -72,6 +72,8 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
 		swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
 		swipeLayout.setOnRefreshListener(this);
 		swipeLayout.setColorSchemeResources(R.color.hipda);
+		if (mType == SimpleListLoader.TYPE_SEARCH)
+			swipeLayout.setEnabled(false);
 
 		return view;
 	}
