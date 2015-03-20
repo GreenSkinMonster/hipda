@@ -117,7 +117,7 @@ public class ThreadListFragment extends Fragment
 
 		swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
 		swipeLayout.setOnRefreshListener(this);
-		swipeLayout.setColorSchemeResources(R.color.hipda);
+		swipeLayout.setColorSchemeResources(R.color.icon_blue);
 
 		if (HiSettingsHelper.getInstance().isEinkModeFloatButtonEnabled()) {
 			ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_list_pageup);
@@ -434,14 +434,11 @@ public class ThreadListFragment extends Fragment
 
 			int count = 0;
 			if (mPage == 1) {
-				//avoid clear and refresh
+				mThreadListAdapter.clear();
 				for (ThreadBean newthread : threads.threads) {
-					mThreadListAdapter.insert(newthread, count++);
+					mThreadListAdapter.add(newthread);
+					count++;
 				}
-				for (int i = mThreadListAdapter.getCount() - 1; i >= count; i--) {
-					mThreadListAdapter.remove(mThreadListAdapter.getItem(i));
-				}
-				mThreadListAdapter.notifyDataSetChanged();
 				mThreadListView.setSelection(0);
 			} else {
 				for (ThreadBean newthread : threads.threads) {
