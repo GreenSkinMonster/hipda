@@ -10,13 +10,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical">
-
-        <FrameLayout
-            android:layout_width="3dp"
-            android:layout_height="12dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginRight="0dp"></FrameLayout>
+        android:gravity="bottom">
 
         <ImageView
             android:id="@+id/iv_avatar"
@@ -40,65 +34,42 @@
             android:padding="4dp"
             android:text=""
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:gravity="top" />
 
-        <TextView
-            android:id="@+id/tv_author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/tv_title"
-            android:padding="4dp"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="@color/hipda" />
-
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/tv_title"
-            android:padding="4dp"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="?android:textColorSecondary" />
-
-        <TextView
-            android:id="@+id/tv_viewcounter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_title"
-            android:layout_toLeftOf="@+id/tv_time"
-            android:drawableLeft="@drawable/tapatalk_view_icon"
-            android:paddingBottom="4dp"
-            android:paddingRight="4dp"
-            android:paddingTop="4dp"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="?android:textColorSecondary" />
-
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/ll_replycounter"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_title"
-            android:layout_toLeftOf="@+id/tv_viewcounter"
-            android:gravity="center_vertical">
+            android:gravity="right">
+
+            <TextView
+                android:id="@+id/tv_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:padding="4dp"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="@color/hipda" />
+
 
             <ImageView
                 android:id="@+id/iv_image_indicator"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_margin="4dp"
+                android:layout_toLeftOf="@+id/tv_replycounter"
                 android:contentDescription="@string/iv_thread_indicator"
-                android:src="@drawable/twitter_ic_bottom_bar_gallery_active"
+                android:src="@drawable/ic_action_image"
                 android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_replycounter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/tv_viewcounter"
                 android:drawableLeft="@drawable/tapatalk_topic_icon"
                 android:paddingBottom="4dp"
                 android:paddingRight="4dp"
@@ -106,7 +77,32 @@
                 android:singleLine="true"
                 android:text=""
                 android:textColor="?android:textColorSecondary" />
-        </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_viewcounter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/tv_time"
+                android:drawableLeft="@drawable/tapatalk_view_icon"
+                android:paddingBottom="4dp"
+                android:paddingRight="4dp"
+                android:paddingTop="4dp"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_alignParentRight="true"
+                android:padding="4dp"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="?android:textColorSecondary" />
+
+        </RelativeLayout>
     </RelativeLayout>
 
 </LinearLayout>
