@@ -38,6 +38,21 @@ public class DetailBean {
             }
         }
 
+        public void addAppMark(String text, String url) {
+            String mark = "[appmark " + text + " ]";
+            if (url != null && url.length() > 0) {
+                mark = "[appmark <a href=\"" + url + "\">" + text + "</a>]";
+            }
+            if (newString) {
+                list.add(new ContentText(mark));
+                lastTextIdx = list.size() - 1;
+                newString = false;
+            } else {
+                ContentText ct = (ContentText) list.get(lastTextIdx);
+                ct.append(mark);
+            }
+        }
+
         public void addLink(String text, String url) {
             String link = "[<a href=\"" + url + "\">" + text + "</a>]";
             if (newString) {

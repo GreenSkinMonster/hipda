@@ -1,13 +1,5 @@
 package net.jejer.hipda.ui;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import net.jejer.hipda.R;
-import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.HttpUtils;
-
 import android.app.DownloadManager;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -17,11 +9,21 @@ import android.os.Environment;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.style.ImageSpan;
+import android.text.style.RelativeSizeSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import net.jejer.hipda.R;
+import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.HttpUtils;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TextViewWithEmoticon extends TextView {
 	private final static String LOG_TAG = "TextViewWithEmoticon";
@@ -30,7 +32,6 @@ public class TextViewWithEmoticon extends TextView {
 
 	public TextViewWithEmoticon(Context context) {
 		super(context);
-		// TODO Auto-generated constructor stub
 		mCtx = context;
 	}
 
@@ -78,6 +79,20 @@ public class TextViewWithEmoticon extends TextView {
 
 		return hasChanges;
 	}
+
+	private static SpannableStringBuilder addAppMark(Context context, SpannableStringBuilder spannable) {
+		String text = spannable.toString();
+		int idxStart = text.indexOf("[appmark ");
+		if (idxStart >= 0) {
+			int idxEnd = text.indexOf("]", idxStart);
+			if (idxEnd > 0) {
+				spannable.setSpan(new RelativeSizeSpan(0.75f), idxStart, idxEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				spannable = spannable.delete(idxEnd, idxEnd + 1).delete(idxStart, idxStart + 9);
+			}
+		}
+		return spannable;
+	}
+
 	private static Spannable getTextWithImages(final Context context, CharSequence text) {
 		SpannableStringBuilder b = (SpannableStringBuilder)Html.fromHtml(text.toString());
 		for(URLSpan s : b.getSpans(0, b.length(), URLSpan.class)){
@@ -89,7 +104,7 @@ public class TextViewWithEmoticon extends TextView {
 						DownloadManager.Request downloadReq = new DownloadManager.Request(Uri.parse(getURL()));
 						downloadReq.addRequestHeader("Cookie", "cdb_auth="+HiSettingsHelper.getInstance().getCookieAuth());
 						downloadReq.addRequestHeader("User-agent", HiUtils.UserAgent);
-						
+
 						// FUCK Android, we cannot use pub_download directory and keep original filename!
 						downloadReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, ((TextView)view).getText().toString());
 						downloadReq.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
@@ -143,6 +158,8 @@ public class TextViewWithEmoticon extends TextView {
 				continue;
 			}
 		}
+
+		b = addAppMark(context, b);
 
 		Spannable spannable = spannableFactory.newSpannable(b);
 		addImages(context, spannable);

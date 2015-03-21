@@ -214,8 +214,19 @@ public class HiParserThreadDetail {
 	private static boolean parseNode(Node contentN, DetailBean.Contents content) {
 		//Log.v(LOG_TAG, contentN.nodeName());
 
-		if (contentN.nodeName().equals("font")    // textfont
-				|| contentN.nodeName().equals("i")    //text in an alternate voice or mood
+		if (contentN.nodeName().equals("font")) {
+			Element elemFont = (Element) contentN;
+			Element elemParent = elemFont.parent();
+			if (elemFont.attr("size").equals("1") || (elemParent != null &&
+					elemParent.nodeName().equals("font") && elemParent.attr("size").equals("1"))) {
+				content.addAppMark(elemFont.text(), null);
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		if (contentN.nodeName().equals("i")    //text in an alternate voice or mood
 				|| contentN.nodeName().equals("u")    //text that should be stylistically different from normal text
 				|| contentN.nodeName().equals("em")    //text emphasized
 				|| contentN.nodeName().equals("strike")    //text strikethrough
@@ -305,6 +316,12 @@ public class HiParserThreadDetail {
 			if (aE.childNodeSize() > 0 && aE.childNode(0).nodeName().equals("img")) {
 				content.addLink(url, url);
 				return true;
+			}
+
+			if (aE.childNodeSize() > 0 && aE.childNode(0).nodeName().equals("font") &&
+					aE.childNode(0).attr("size").equals("1")) {
+				content.addAppMark(text, url);
+				return false;
 			}
 
 			if (url.startsWith("attachment.php?")) {
