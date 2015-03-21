@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -135,9 +136,12 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 textView.setGravity(Gravity.CENTER_HORIZONTAL);
                 textView.setVisibility(View.INVISIBLE);
 
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 400);
+                params.addRule(RelativeLayout.CENTER_IN_PARENT);
                 final GlideImageView giv = new GlideImageView(mCtx);
                 giv.setFocusable(false);
                 giv.setClickable(true);
+                giv.setLayoutParams(params);
 
                 textView.setClickable(true);
                 textView.setOnClickListener(new View.OnClickListener() {
@@ -151,9 +155,6 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 contentView.addView(textView);
 
                 giv.setUrl(imageUrl);
-
-                giv.getLayoutParams().width = 400;
-                giv.getLayoutParams().height = 400;
 
                 if (HiUtils.isAutoLoadImg(mCtx)) {
                     int maxViewWidth = 1080;
