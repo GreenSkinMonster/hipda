@@ -1,6 +1,7 @@
 package net.jejer.hipda.async;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -54,8 +55,17 @@ public class HiStringRequest extends StringRequest {
 	@Override
 	protected Response<String> parseNetworkResponse(NetworkResponse response) {
 		String parsed;
+		String encoding = HiSettingsHelper.getInstance().getEncode();
+		String contextType = response.headers.get("Content-Type");
+		if (!TextUtils.isEmpty(contextType)) {
+			if (contextType.toUpperCase().contains("UTF")) {
+				encoding = "UTF-8";
+			} else if (contextType.toUpperCase().contains("GBK")) {
+				encoding = "GBK";
+			}
+		}
 		try {
-			parsed = new String(response.data, HiSettingsHelper.getInstance().getEncode());
+			parsed = new String(response.data, encoding);
 		} catch (UnsupportedEncodingException e) {
 			Log.e("HiStringRequest", "encoding error", e);
 			parsed = "";
