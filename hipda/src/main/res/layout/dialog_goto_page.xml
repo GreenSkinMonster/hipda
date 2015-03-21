@@ -36,7 +36,7 @@
             android:layout_margin="4dp"
             android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="@color/hipda" />
+            android:tint="?attr/color_hipda" />
 
         <ImageButton
             android:id="@+id/btn_previous_page"
@@ -47,7 +47,7 @@
             android:layout_margin="4dp"
             android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="@color/hipda" />
+            android:tint="?attr/color_hipda" />
 
         <ImageButton
             android:id="@+id/btn_next_page"
@@ -58,7 +58,7 @@
             android:layout_margin="4dp"
             android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="@color/hipda" />
+            android:tint="?attr/color_hipda" />
 
         <ImageButton
             android:id="@+id/btn_last_page"
@@ -69,7 +69,7 @@
             android:layout_margin="4dp"
             android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="@color/hipda" />
+            android:tint="?attr/color_hipda" />
 
     </RelativeLayout>
 

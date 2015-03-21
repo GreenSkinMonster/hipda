@@ -69,7 +69,6 @@ public class HiSettingsHelper {
     private boolean mNightTheme = false;
 
     private boolean mEncodeUtf8 = false;
-    private boolean mEinkOptimization = false;
     private Set<String> mEinkMode = new HashSet<String>();
 
     private String[] mBlanklistUsernames = null;
@@ -137,7 +136,6 @@ public class HiSettingsHelper {
         getTailUrlFromPref();
         isNightThemeFromPref();
         isEncodeUtf8FromPref();
-        isEinkOptimizationFromPref();
         getEinkModeFromPref();
         getBlanklistUsernamesFromPref();
         getPostTextsizeAdjFromPref();
@@ -393,25 +391,10 @@ public class HiSettingsHelper {
 
     public String getEncode() {
         if (mEncodeUtf8) {
-            return "UTF8";
+            return "UTF-8";
         } else {
             return "GBK";
         }
-    }
-
-    public boolean isEinkOptimization() {
-        return mEinkOptimization;
-    }
-
-    public boolean isEinkOptimizationFromPref() {
-        mEinkOptimization = mSharedPref.getBoolean(PERF_EINK_OPTIMIZATION, false);
-        return mEinkOptimization;
-    }
-
-    public void setEinkOptimization(boolean einkOptimization) {
-        mEinkOptimization = einkOptimization;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_EINK_OPTIMIZATION, einkOptimization).commit();
     }
 
     public Set<String> getEinkMode() {

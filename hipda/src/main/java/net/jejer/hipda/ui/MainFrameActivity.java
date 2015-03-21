@@ -38,7 +38,9 @@ public class MainFrameActivity extends Activity {
         Log.v(LOG_TAG, "onCreate");
         // Init Settings
         HiSettingsHelper.getInstance().init(this);
-        if (HiSettingsHelper.getInstance().isNightTheme()) {
+        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
+            setTheme(R.style.ThemeEink);
+        } else if (HiSettingsHelper.getInstance().isNightTheme()) {
             setTheme(R.style.ThemeNight);
         }
 

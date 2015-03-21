@@ -5,16 +5,9 @@
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
     android:layout_alignParentTop="true"
-    android:background="@drawable/border"
+    android:background="?attr/color_hipda"
     android:clickable="true"
-    android:padding="2dp">
-
-    <!--     <ImageView -->
-    <!--         android:id="@+id/iv_thread_detail_title" -->
-    <!--         android:layout_width="32dp" -->
-    <!--         android:layout_height="32dp" -->
-    <!--         android:contentDescription="@string/iv_thread_indicator" -->
-    <!--         android:src="@drawable/google_speaker" /> -->
+    android:paddingBottom="1dp">
 
     <TextView
         android:id="@+id/thread_detail_title"
@@ -26,6 +19,6 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:background="?detail_background"
-        android:visibility="visible"></TextView>
+        android:visibility="visible" />
 
 </LinearLayout>

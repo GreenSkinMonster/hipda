@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -20,6 +21,9 @@ import java.util.Set;
 
 public class SettingsFragment extends PreferenceFragment {
     private final String LOG_TAG = getClass().getSimpleName();
+
+    private boolean mEinkUi;
+    private int mScreenOrietation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,8 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+        mEinkUi = HiSettingsHelper.getInstance().isEinkModeUIEnabled();
+        mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
     }
 
     @Override
@@ -66,6 +72,15 @@ public class SettingsFragment extends PreferenceFragment {
         Log.v(LOG_TAG, "onStop, reload settings");
         super.onStop();
         HiSettingsHelper.getInstance().reload();
+
+        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled() != mEinkUi
+                || HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation) {
+            Intent intent = getActivity().getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            getActivity().finish();
+            startActivity(intent);
+        }
+
     }
 
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {

@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:background="@color/hipda"
+            android:background="?attr/color_hipda"
             android:clickable="false"
             android:cursorVisible="false"
             android:focusable="false"
@@ -81,7 +81,7 @@
                 <TabWidget
                     android:id="@android:id/tabs"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></TabWidget>
+                    android:layout_height="wrap_content"/>
 
                 <FrameLayout
                     android:id="@android:id/tabcontent"
@@ -99,7 +99,7 @@
                         android:isScrollContainer="false"
                         android:numColumns="auto_fit"
                         android:stretchMode="columnWidth"
-                        android:verticalSpacing="2dp"></net.jejer.hipda.ui.ExpandableHeightGridView>
+                        android:verticalSpacing="2dp"/>
 
                     <net.jejer.hipda.ui.ExpandableHeightGridView
                         android:id="@+id/tab2_emoji"
@@ -111,7 +111,7 @@
                         android:isScrollContainer="false"
                         android:numColumns="auto_fit"
                         android:stretchMode="columnWidth"
-                        android:verticalSpacing="2dp"></net.jejer.hipda.ui.ExpandableHeightGridView>
+                        android:verticalSpacing="2dp"/>
 
                     <net.jejer.hipda.ui.ExpandableHeightGridView
                         android:id="@+id/tab3_emoji"
@@ -123,7 +123,7 @@
                         android:isScrollContainer="false"
                         android:numColumns="auto_fit"
                         android:stretchMode="columnWidth"
-                        android:verticalSpacing="2dp"></net.jejer.hipda.ui.ExpandableHeightGridView>
+                        android:verticalSpacing="2dp"/>
                 </FrameLayout>
             </LinearLayout>
         </TabHost>

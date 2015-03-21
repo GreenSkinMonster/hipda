@@ -33,6 +33,8 @@ public class TextViewWithEmoticon extends TextView {
     public TextViewWithEmoticon(Context context) {
         super(context);
         mCtx = context;
+        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled())
+            setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
     }
 
     public void setFragmentManager(FragmentManager fm) {
@@ -137,7 +139,7 @@ public class TextViewWithEmoticon extends TextView {
                                         .commit();
                             } else {
                                 mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
-                                if (HiSettingsHelper.getInstance().isEinkOptimization()) {
+                                if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
                                     mFragmentManager.beginTransaction()
                                             .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
                                             .addToBackStack(ThreadDetailFragment.class.getName())

@@ -20,5 +20,6 @@
     <attr name="icon_upload_img" format="reference" />
     <attr name="icon_search" format="reference" />
     <attr name="icon_send_sms" format="reference" />
+    <attr name="color_hipda" format="color" />
 
 </resources>
