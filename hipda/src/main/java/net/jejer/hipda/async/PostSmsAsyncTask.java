@@ -33,154 +33,154 @@ import java.util.Map;
 
 public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 
-	private String LOG_TAG = getClass().getSimpleName();
+    private String LOG_TAG = getClass().getSimpleName();
 
-	private Context mCtx;
-	private String mUid;
+    private Context mCtx;
+    private String mUid;
 
-	private String mFormhash;
-	private int mStatus = Constants.STATUS_FAIL;
-	private String mResult = "";
-	private String mText = "";
-	private PostListener mPostListenerCallback;
+    private String mFormhash;
+    private int mStatus = Constants.STATUS_FAIL;
+    private String mResult = "";
+    private String mText = "";
+    private PostListener mPostListenerCallback;
 
-	public PostSmsAsyncTask(Context ctx, String uid, PostListener postListener) {
-		mCtx = ctx;
-		mUid = uid;
-		mPostListenerCallback = postListener;
-	}
+    public PostSmsAsyncTask(Context ctx, String uid, PostListener postListener) {
+        mCtx = ctx;
+        mUid = uid;
+        mPostListenerCallback = postListener;
+    }
 
-	@Override
-	protected Void doInBackground(String... arg0) {
-		String content = arg0[0];
+    @Override
+    protected Void doInBackground(String... arg0) {
+        String content = arg0[0];
 
-		// prepare http client
-		CookieStore cookieStore = HttpUtils.restoreCookie(mCtx);
-		HttpContext localContext = new BasicHttpContext();
-		AndroidHttpClient client = AndroidHttpClient.newInstance(HiUtils.UserAgent);
-		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+        // prepare http client
+        CookieStore cookieStore = HttpUtils.restoreCookie(mCtx);
+        HttpContext localContext = new BasicHttpContext();
+        AndroidHttpClient client = AndroidHttpClient.newInstance(HiUtils.UserAgent);
+        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
-		// fetch a new page and parse formhash
-		String rsp_str;
-		Boolean done = false;
-		int retry = 0;
-		do {
-			rsp_str = getPostPage(client, localContext, HiUtils.SMSPreparePostUrl + mUid);
-			if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
-				int status = new LoginHelper(mCtx, null).login();
-				if (status > Constants.STATUS_FAIL) {
-					break;
-				}
-			} else {
-				done = true;
-			}
-			retry++;
-		} while (!done && retry < 3);
+        // fetch a new page and parse formhash
+        String rsp_str;
+        Boolean done = false;
+        int retry = 0;
+        do {
+            rsp_str = getPostPage(client, localContext, HiUtils.SMSPreparePostUrl + mUid);
+            if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
+                int status = new LoginHelper(mCtx, null).login();
+                if (status > Constants.STATUS_FAIL) {
+                    break;
+                }
+            } else {
+                done = true;
+            }
+            retry++;
+        } while (!done && retry < 3);
 
-		Document doc = Jsoup.parse(rsp_str);
-		Elements formhashES = doc.select("input#formhash");
-		if (formhashES.size() == 0) {
-			mResult = "SMS send fail, can not get formhash.";
-			client.close();
-			return null;
-		} else {
-			mFormhash = formhashES.first().attr("value");
-		}
+        Document doc = Jsoup.parse(rsp_str);
+        Elements formhashES = doc.select("input#formhash");
+        if (formhashES.size() == 0) {
+            mResult = "SMS send fail, can not get formhash.";
+            client.close();
+            return null;
+        } else {
+            mFormhash = formhashES.first().attr("value");
+        }
 
-		// do post
-		doPost(client, localContext, content);
+        // do post
+        doPost(client, localContext, content);
 
-		client.close();
-		return null;
-	}
+        client.close();
+        return null;
+    }
 
-	private String getPostPage(AndroidHttpClient client, HttpContext ctx, String url) {
-		HttpGet req = new HttpGet(url);
-		String rsp_str;
-		try {
-			HttpResponse rsp = client.execute(req, ctx);
-			HttpEntity rsp_ent = rsp.getEntity();
-			rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
-		} catch (Exception e) {
-			Log.e(LOG_TAG, "Network error", e);
-			mResult = "发生网络错误";
-			return null;
-		}
-		return rsp_str;
-	}
+    private String getPostPage(AndroidHttpClient client, HttpContext ctx, String url) {
+        HttpGet req = new HttpGet(url);
+        String rsp_str;
+        try {
+            HttpResponse rsp = client.execute(req, ctx);
+            HttpEntity rsp_ent = rsp.getEntity();
+            rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Network error", e);
+            mResult = "发生网络错误";
+            return null;
+        }
+        return rsp_str;
+    }
 
-	private String doPost(AndroidHttpClient client, HttpContext ctx, String content) {
-		String url = HiUtils.SMSPostUrl + mUid;
-		HttpPost req = new HttpPost(url);
+    private String doPost(AndroidHttpClient client, HttpContext ctx, String content) {
+        String url = HiUtils.SMSPostUrl + mUid;
+        HttpPost req = new HttpPost(url);
 
-		Map<String, String> post_param = new HashMap<String, String>();
-		post_param.put("formhash", mFormhash);
-		post_param.put("lastdaterange", String.valueOf(System.currentTimeMillis()));
-		post_param.put("handlekey", "pmreply");
-		post_param.put("message", content);
+        Map<String, String> post_param = new HashMap<String, String>();
+        post_param.put("formhash", mFormhash);
+        post_param.put("lastdaterange", String.valueOf(System.currentTimeMillis()));
+        post_param.put("handlekey", "pmreply");
+        post_param.put("message", content);
 
-		mText = content;
+        mText = content;
 
-		try {
-			String encoded = HttpUtils.buildHttpString(post_param);
-			StringEntity entity = new StringEntity(encoded, HiSettingsHelper.getInstance().getEncode());
-			entity.setContentType("application/x-www-form-urlencoded");
-			req.setEntity(entity);
-		} catch (Exception e) {
-			Log.e(LOG_TAG, "Network error", e);
-			mResult = "编码错误";
-			return null;
-		}
+        try {
+            String encoded = HttpUtils.buildHttpString(post_param);
+            StringEntity entity = new StringEntity(encoded, HiSettingsHelper.getInstance().getEncode());
+            entity.setContentType("application/x-www-form-urlencoded");
+            req.setEntity(entity);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Network error", e);
+            mResult = "编码错误";
+            return null;
+        }
 
-		String rsp_str;
-		try {
-			HttpResponse rsp = client.execute(req, ctx);
-			HttpEntity rsp_ent = rsp.getEntity();
-			rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
-		} catch (Exception e) {
-			Log.e(LOG_TAG, "Network error", e);
-			mResult = "发生网络错误";
-			return null;
-		}
+        String rsp_str;
+        try {
+            HttpResponse rsp = client.execute(req, ctx);
+            HttpEntity rsp_ent = rsp.getEntity();
+            rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Network error", e);
+            mResult = "发生网络错误";
+            return null;
+        }
 
-		if (!rsp_str.contains("class=\"summary\"")) {
-			mResult = "短消息发送失败.";
-		} else {
-			mResult = "短消息发送成功.";
-			mStatus = Constants.STATUS_SUCCESS;
-		}
-		return rsp_str;
-	}
+        if (!rsp_str.contains("class=\"summary\"")) {
+            mResult = "短消息发送失败.";
+        } else {
+            mResult = "短消息发送成功.";
+            mStatus = Constants.STATUS_SUCCESS;
+        }
+        return rsp_str;
+    }
 
-	@Override
-	protected void onPreExecute() {
-		super.onPreExecute();
-		if (mPostListenerCallback != null)
-			mPostListenerCallback.onPrePost();
-		else
-			Toast.makeText(mCtx, "正在发送...", Toast.LENGTH_LONG).show();
-	}
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if (mPostListenerCallback != null)
+            mPostListenerCallback.onPrePost();
+        else
+            Toast.makeText(mCtx, "正在发送...", Toast.LENGTH_LONG).show();
+    }
 
-	@Override
-	protected void onPostExecute(Void avoid) {
-		super.onPostExecute(avoid);
-		if (mStatus != Constants.STATUS_SUCCESS && !TextUtils.isEmpty(mText)) {
-			ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
-			ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", mText);
-			clipboard.setPrimaryClip(clip);
-			mResult += "\n请注意：发表失败的短消息已经复制到粘贴板";
-		}
-		if (mPostListenerCallback != null) {
-			mPostListenerCallback.onPostDone(mStatus, mResult);
-		} else {
-			Toast.makeText(mCtx, mResult, Toast.LENGTH_LONG).show();
-		}
-	}
+    @Override
+    protected void onPostExecute(Void avoid) {
+        super.onPostExecute(avoid);
+        if (mStatus != Constants.STATUS_SUCCESS && !TextUtils.isEmpty(mText)) {
+            ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", mText);
+            clipboard.setPrimaryClip(clip);
+            mResult += "\n请注意：发表失败的短消息已经复制到粘贴板";
+        }
+        if (mPostListenerCallback != null) {
+            mPostListenerCallback.onPostDone(mStatus, mResult);
+        } else {
+            Toast.makeText(mCtx, mResult, Toast.LENGTH_LONG).show();
+        }
+    }
 
-	public interface PostListener {
-		public void onPrePost();
+    public interface PostListener {
+        public void onPrePost();
 
-		public void onPostDone(int status, String message);
-	}
+        public void onPostDone(int status, String message);
+    }
 
 }

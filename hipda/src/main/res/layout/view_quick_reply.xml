@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="?replyBarBackground">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="?replyBarBackground">
 
     <View
         android:id="@+id/border_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentTop="true"
-        android:background="@color/silver"/>
+        android:background="@color/silver" />
 
     <EditText
         android:id="@+id/tv_reply_text"
@@ -25,8 +25,7 @@
         android:scrollHorizontally="false"
         android:scrollbars="vertical"
         android:text="@string/txt_quick_mark"
-        android:layout_toLeftOf="@+id/ib_reply_post">
-    </EditText>
+        android:layout_toLeftOf="@+id/ib_reply_post"></EditText>
 
     <ImageButton
         android:id="@+id/ib_reply_post"
@@ -35,6 +34,6 @@
         android:contentDescription="@string/ib_quick_send"
         android:layout_alignParentRight="true"
         android:layout_alignBottom="@+id/tv_reply_text"
-        android:src="?icon_send"/>
+        android:src="?icon_send" />
 
 </RelativeLayout>

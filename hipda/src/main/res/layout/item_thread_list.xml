@@ -1,11 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:background="?list_item_background"
-              android:paddingBottom="4dp"
-              android:paddingLeft="0dp"
-              android:paddingRight="8dp"
-              android:paddingTop="4dp">
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="?list_item_background"
+    android:paddingBottom="4dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -16,8 +16,7 @@
             android:layout_width="3dp"
             android:layout_height="12dp"
             android:layout_alignParentLeft="true"
-            android:layout_marginRight="0dp">
-        </FrameLayout>
+            android:layout_marginRight="0dp"></FrameLayout>
 
         <ImageView
             android:id="@+id/iv_avatar"
@@ -26,7 +25,7 @@
             android:layout_alignParentBottom="true"
             android:contentDescription="@string/iv_avatar"
             android:padding="4dp"
-            android:src="@drawable/google_user"/>
+            android:src="@drawable/google_user" />
 
     </RelativeLayout>
 
@@ -41,7 +40,7 @@
             android:padding="4dp"
             android:text=""
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_author"
@@ -52,7 +51,7 @@
             android:padding="4dp"
             android:singleLine="true"
             android:text=""
-            android:textColor="@color/hipda"/>
+            android:textColor="@color/hipda" />
 
         <TextView
             android:id="@+id/tv_time"
@@ -63,7 +62,7 @@
             android:padding="4dp"
             android:singleLine="true"
             android:text=""
-            android:textColor="?android:textColorSecondary"/>
+            android:textColor="?android:textColorSecondary" />
 
         <TextView
             android:id="@+id/tv_viewcounter"
@@ -77,7 +76,7 @@
             android:paddingTop="4dp"
             android:singleLine="true"
             android:text=""
-            android:textColor="?android:textColorSecondary"/>
+            android:textColor="?android:textColorSecondary" />
 
         <LinearLayout
             android:id="@+id/ll_replycounter"
@@ -94,7 +93,7 @@
                 android:layout_margin="4dp"
                 android:contentDescription="@string/iv_thread_indicator"
                 android:src="@drawable/twitter_ic_bottom_bar_gallery_active"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_replycounter"
@@ -106,7 +105,7 @@
                 android:paddingTop="4dp"
                 android:singleLine="true"
                 android:text=""
-                android:textColor="?android:textColorSecondary"/>
+                android:textColor="?android:textColorSecondary" />
         </LinearLayout>
     </RelativeLayout>
 

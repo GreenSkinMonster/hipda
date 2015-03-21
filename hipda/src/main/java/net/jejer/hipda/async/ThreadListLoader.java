@@ -22,102 +22,102 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
-	private final String LOG_TAG = getClass().getSimpleName();
-	private Context mCtx;
-	private int mForumId = 0;
-	private int mPage = 1;
-	private Object mLocker;
-	private String mRsp;
-	private Handler mHandler;
+    private final String LOG_TAG = getClass().getSimpleName();
+    private Context mCtx;
+    private int mForumId = 0;
+    private int mPage = 1;
+    private Object mLocker;
+    private String mRsp;
+    private Handler mHandler;
 
-	public ThreadListLoader(Context context, Handler handler, int forumId, int page) {
-		super(context);
-		mCtx = context;
-		mHandler = handler;
-		mForumId = forumId;
-		mPage = page;
-		mLocker = this;
-	}
+    public ThreadListLoader(Context context, Handler handler, int forumId, int page) {
+        super(context);
+        mCtx = context;
+        mHandler = handler;
+        mForumId = forumId;
+        mPage = page;
+        mLocker = this;
+    }
 
-	@Override
-	public ThreadListBean loadInBackground() {
-		//Log.v(LOG_TAG, "loadInBackground Enter");
-		if (mForumId == 0) {
-			return null;
-		}
+    @Override
+    public ThreadListBean loadInBackground() {
+        //Log.v(LOG_TAG, "loadInBackground Enter");
+        if (mForumId == 0) {
+            return null;
+        }
 
-		int count = 0;
-		boolean getOk = false;
-		do {
-			fetchForumList();
+        int count = 0;
+        boolean getOk = false;
+        do {
+            fetchForumList();
 
-			synchronized (mLocker) {
-				try {
-					mLocker.wait();
-				} catch (InterruptedException ignored) {
-				}
-			}
+            synchronized (mLocker) {
+                try {
+                    mLocker.wait();
+                } catch (InterruptedException ignored) {
+                }
+            }
 
-			if (mRsp != null && LoginHelper.checkLoggedin(mCtx, mRsp)) {
-				getOk = true;
-			} else {
-				int status = new LoginHelper(mCtx, mHandler).login();
-				if (status > Constants.STATUS_FAIL) {
-					break;
-				}
-			}
-			count++;
-			//Log.v(LOG_TAG, "try count = " + String.valueOf(count));
-		} while (!getOk && count < 3);
+            if (mRsp != null && LoginHelper.checkLoggedin(mCtx, mRsp)) {
+                getOk = true;
+            } else {
+                int status = new LoginHelper(mCtx, mHandler).login();
+                if (status > Constants.STATUS_FAIL) {
+                    break;
+                }
+            }
+            count++;
+            //Log.v(LOG_TAG, "try count = " + String.valueOf(count));
+        } while (!getOk && count < 3);
 
-		if (!getOk) {
-			return null;
-		}
+        if (!getOk) {
+            return null;
+        }
 
-		Document doc = Jsoup.parse(mRsp);
-		return HiParserThreadList.parse(mCtx, mHandler, doc);
-	}
+        Document doc = Jsoup.parse(mRsp);
+        return HiParserThreadList.parse(mCtx, mHandler, doc);
+    }
 
-	private void fetchForumList() {
-		Message msg = Message.obtain();
-		msg.what = ThreadListFragment.STAGE_GET_WEBPAGE;
-		mHandler.sendMessage(msg);
+    private void fetchForumList() {
+        Message msg = Message.obtain();
+        msg.what = ThreadListFragment.STAGE_GET_WEBPAGE;
+        mHandler.sendMessage(msg);
 
-		String url = HiUtils.ThreadListUrl + mForumId + "&page=" + mPage;
-		if (HiSettingsHelper.getInstance().isSortByPostTime()) {
-			url += "&orderby=dateline";
-		}
-		StringRequest sReq = new HiStringRequest(mCtx, url,
-				new ThreadListListener(), new ThreadListErrorListener());
-		VolleyHelper.getInstance().add(sReq);
-	}
+        String url = HiUtils.ThreadListUrl + mForumId + "&page=" + mPage;
+        if (HiSettingsHelper.getInstance().isSortByPostTime()) {
+            url += "&orderby=dateline";
+        }
+        StringRequest sReq = new HiStringRequest(mCtx, url,
+                new ThreadListListener(), new ThreadListErrorListener());
+        VolleyHelper.getInstance().add(sReq);
+    }
 
-	private class ThreadListListener implements Response.Listener<String> {
-		@Override
-		public void onResponse(String response) {
-			mRsp = response;
-			synchronized (mLocker) {
-				mLocker.notify();
-			}
-		}
-	}
+    private class ThreadListListener implements Response.Listener<String> {
+        @Override
+        public void onResponse(String response) {
+            mRsp = response;
+            synchronized (mLocker) {
+                mLocker.notify();
+            }
+        }
+    }
 
-	private class ThreadListErrorListener implements Response.ErrorListener {
-		@Override
-		public void onErrorResponse(VolleyError error) {
-			Log.e(LOG_TAG, error.toString());
+    private class ThreadListErrorListener implements Response.ErrorListener {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e(LOG_TAG, error.toString());
 
-			Message msg = Message.obtain();
-			msg.what = ThreadListFragment.STAGE_ERROR;
-			Bundle b = new Bundle();
-			b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA,请检查网络");
-			msg.setData(b);
-			mHandler.sendMessage(msg);
+            Message msg = Message.obtain();
+            msg.what = ThreadListFragment.STAGE_ERROR;
+            Bundle b = new Bundle();
+            b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA,请检查网络");
+            msg.setData(b);
+            mHandler.sendMessage(msg);
 
-			synchronized (mLocker) {
-				mRsp = null;
-				mLocker.notify();
-			}
-		}
-	}
+            synchronized (mLocker) {
+                mRsp = null;
+                mLocker.notify();
+            }
+        }
+    }
 }

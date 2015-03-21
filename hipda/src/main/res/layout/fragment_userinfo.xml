@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="?background"
-              android:orientation="vertical"
-              android:padding="8dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?background"
+    android:orientation="vertical"
+    android:padding="8dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
             android:id="@+id/userinfo_avatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/google_user"/>
+            android:src="@drawable/google_user" />
 
         <TextView
             android:id="@+id/userinfo_username"
@@ -24,14 +24,14 @@
             android:padding="8dp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_toRightOf="@+id/userinfo_avatar"/>
+            android:layout_toRightOf="@+id/userinfo_avatar" />
 
         <Button
             android:id="@+id/btn_search_threads"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="搜索帖子"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true" />
 
     </RelativeLayout>
 
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:text=""
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
+                android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
     </ScrollView>
 

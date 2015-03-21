@@ -8,14 +8,14 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_title_username"/>
+            android:title="@string/pref_title_username" />
         <EditTextPreference
             android:inputType="textPassword"
             android:key="PERF_PASSWORD"
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_title_password"/>
+            android:title="@string/pref_title_password" />
 
         <ListPreference
             android:defaultValue="0"
@@ -24,7 +24,7 @@
             android:key="PERF_SECQUESTION"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_title_login_question"/>
+            android:title="@string/pref_title_login_question" />
 
         <EditTextPreference
             android:inputType="text"
@@ -32,13 +32,13 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_title_login_answer"/>
+            android:title="@string/pref_title_login_answer" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_tail">
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="true"
             android:key="PERF_ADDTAIL"
-            android:title="@string/pref_title_add_tail"/>
+            android:title="@string/pref_title_add_tail" />
 
         <EditTextPreference
             android:defaultValue="@string/default_tail_text"
@@ -47,7 +47,7 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_title_tail_text"/>
+            android:title="@string/pref_title_tail_text" />
         <EditTextPreference
             android:defaultValue="@string/default_tail_url"
             android:inputType="text"
@@ -55,7 +55,7 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_title_tail_url"/>
+            android:title="@string/pref_title_tail_url" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_ui">
         <MultiSelectListPreference
@@ -63,7 +63,7 @@
             android:entries="@array/pref_title_eink_mode"
             android:entryValues="@array/pref_title_eink_mode_values"
             android:key="PERF_EINK_MODE"
-            android:title="@string/pref_title_eink_mode"/>
+            android:title="@string/pref_title_eink_mode" />
 
         <ListPreference
             android:defaultValue="0"
@@ -72,7 +72,7 @@
             android:key="PERF_TEXTSIZE_TITLE_ADJ"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_title_textsize_adjust_title"/>
+            android:title="@string/pref_title_textsize_adjust_title" />
 
         <ListPreference
             android:defaultValue="0"
@@ -81,7 +81,7 @@
             android:key="PERF_TEXTSIZE_POST_ADJ"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_post_textsize_adjust_title"/>
+            android:title="@string/pref_post_textsize_adjust_title" />
 
         <ListPreference
             android:defaultValue="2"
@@ -90,12 +90,12 @@
             android:key="PERF_SCREEN_ORIENTATION"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_screen_orientation"/>
+            android:title="@string/pref_screen_orientation" />
 
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="true"
             android:key="PERF_GESTURE_BACK"
-            android:title="@string/pref_title_gesture_back"/>
+            android:title="@string/pref_title_gesture_back" />
 
     </PreferenceCategory>
 
@@ -103,7 +103,7 @@
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="false"
             android:key="PERF_ENCODEUTF8"
-            android:title="@string/pref_title_encode_utf8"/>
+            android:title="@string/pref_title_encode_utf8" />
 
         <EditTextPreference
             android:inputType="text"
@@ -111,18 +111,18 @@
             android:maxLines="1"
             android:selectAllOnFocus="false"
             android:singleLine="true"
-            android:title="@string/pref_title_blanklist"/>
+            android:title="@string/pref_title_blanklist" />
 
         <net.jejer.hipda.ui.AboutDialogPreference
             android:key="PERF_ABOUT"
-            android:title="@string/pref_title_about"/>
+            android:title="@string/pref_title_about" />
 
         <Preference
             android:key="PERF_LAST_UPDATE_CHECK"
             android:selectable="true"
             android:enabled="true"
             android:title="@string/pref_title_check_update"
-            android:summary=""/>
+            android:summary="" />
 
     </PreferenceCategory>
 

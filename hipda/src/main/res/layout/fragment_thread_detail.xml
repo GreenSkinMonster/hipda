@@ -3,7 +3,7 @@
     android:id="@+id/fragment_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?detail_background" >
+    android:background="?detail_background">
 
     <include
         android:id="@+id/inc_quick_reply"
@@ -19,16 +19,14 @@
         android:background="@color/hipda"
         android:gravity="center"
         android:textColor="@android:color/primary_text_dark"
-        android:visibility="visible" >
-    </TextView>
+        android:visibility="visible"></TextView>
 
     <net.jejer.hipda.ui.XListView
         android:id="@+id/lv_thread_details"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:clickable="true" >
-    </net.jejer.hipda.ui.XListView>
+        android:clickable="true"></net.jejer.hipda.ui.XListView>
 
     <ImageView
         android:id="@+id/btn_detail_pageup"
@@ -40,8 +38,7 @@
         android:layout_marginTop="40dp"
         android:contentDescription="@string/btn_pageup"
         android:src="@drawable/jejer_up"
-        android:visibility="gone" >
-    </ImageView>
+        android:visibility="gone"></ImageView>
 
     <ImageView
         android:id="@+id/btn_detail_pagedown"
@@ -53,7 +50,6 @@
         android:layout_marginRight="15dp"
         android:contentDescription="@string/btn_pagedown"
         android:src="@drawable/jejer_down"
-        android:visibility="gone" >
-    </ImageView>
+        android:visibility="gone"></ImageView>
 
 </RelativeLayout>

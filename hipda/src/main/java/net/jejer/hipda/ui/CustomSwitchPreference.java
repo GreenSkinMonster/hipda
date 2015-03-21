@@ -10,15 +10,15 @@ import android.util.AttributeSet;
  * Created by GreenSkinMonster on 2015-03-21.
  */
 public class CustomSwitchPreference extends SwitchPreference {
-	public CustomSwitchPreference(Context context) {
-		this(context, null);
-	}
+    public CustomSwitchPreference(Context context) {
+        this(context, null);
+    }
 
-	public CustomSwitchPreference(Context context, AttributeSet attrs) {
-		this(context, attrs, android.R.attr.switchPreferenceStyle);
-	}
+    public CustomSwitchPreference(Context context, AttributeSet attrs) {
+        this(context, attrs, android.R.attr.switchPreferenceStyle);
+    }
 
-	public CustomSwitchPreference(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    public CustomSwitchPreference(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
 }

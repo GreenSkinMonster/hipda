@@ -38,205 +38,205 @@ import java.util.List;
 
 public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 
-	private Context mCtx;
-	private LayoutInflater mInflater;
-	private Button.OnClickListener mGoToFloorListener;
-	private View.OnClickListener mAvatarListener;
-	private FragmentManager mFragmentManager;
+    private Context mCtx;
+    private LayoutInflater mInflater;
+    private Button.OnClickListener mGoToFloorListener;
+    private View.OnClickListener mAvatarListener;
+    private FragmentManager mFragmentManager;
 
-	public ThreadDetailAdapter(Context context, FragmentManager fm, int resource,
-							   List<DetailBean> objects, Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
-		super(context, resource, objects);
-		mCtx = context;
-		mFragmentManager = fm;
-		mInflater = LayoutInflater.from(context);
-		mGoToFloorListener = gotoFloorListener;
-		mAvatarListener = avatarListener;
-	}
+    public ThreadDetailAdapter(Context context, FragmentManager fm, int resource,
+                               List<DetailBean> objects, Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
+        super(context, resource, objects);
+        mCtx = context;
+        mFragmentManager = fm;
+        mInflater = LayoutInflater.from(context);
+        mGoToFloorListener = gotoFloorListener;
+        mAvatarListener = avatarListener;
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		DetailBean detail = getItem(position);
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        DetailBean detail = getItem(position);
 
-		ViewHolder holder;
+        ViewHolder holder;
 
-		if (convertView == null || convertView.getTag() == null) {
-			convertView = mInflater.inflate(R.layout.item_thread_detail, null);
+        if (convertView == null || convertView.getTag() == null) {
+            convertView = mInflater.inflate(R.layout.item_thread_detail, null);
 
-			holder = new ViewHolder();
-			holder.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
-			holder.author = (TextView) convertView.findViewById(R.id.author);
-			holder.time = (TextView) convertView.findViewById(R.id.time);
-			holder.floor = (TextView) convertView.findViewById(R.id.floor);
-			holder.postStatus = (TextView) convertView.findViewById(R.id.post_status);
-			convertView.setTag(holder);
-		} else {
-			holder = (ViewHolder) convertView.getTag();
-		}
+            holder = new ViewHolder();
+            holder.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
+            holder.author = (TextView) convertView.findViewById(R.id.author);
+            holder.time = (TextView) convertView.findViewById(R.id.time);
+            holder.floor = (TextView) convertView.findViewById(R.id.floor);
+            holder.postStatus = (TextView) convertView.findViewById(R.id.post_status);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
 
-		holder.author.setText(detail.getAuthor());
-		holder.time.setText(detail.getTimePost());
-		holder.floor.setText(detail.getFloor() + "#");
+        holder.author.setText(detail.getAuthor());
+        holder.time.setText(detail.getTimePost());
+        holder.floor.setText(detail.getFloor() + "#");
 
-		boolean trimBr = false;
-		String postStaus = detail.getPostStatus();
-		if (postStaus != null && postStaus.length() > 0) {
-			holder.postStatus.setText(postStaus);
-			holder.postStatus.setVisibility(View.VISIBLE);
-			trimBr = true;
-		} else {
-			holder.postStatus.setVisibility(View.GONE);
-		}
+        boolean trimBr = false;
+        String postStaus = detail.getPostStatus();
+        if (postStaus != null && postStaus.length() > 0) {
+            holder.postStatus.setText(postStaus);
+            holder.postStatus.setVisibility(View.VISIBLE);
+            trimBr = true;
+        } else {
+            holder.postStatus.setVisibility(View.GONE);
+        }
 
-		if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-			holder.avatar.setVisibility(View.VISIBLE);
-			GlideHelper.loadAvatar(getContext(), holder.avatar, detail.getAvatarUrl());
-		} else {
-			holder.avatar.setVisibility(View.GONE);
-		}
-		holder.avatar.setTag(R.id.avatar_tag_uid, detail.getUid());
-		holder.avatar.setTag(R.id.avatar_tag_username, detail.getAuthor());
-		holder.avatar.setOnClickListener(mAvatarListener);
+        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+            holder.avatar.setVisibility(View.VISIBLE);
+            GlideHelper.loadAvatar(getContext(), holder.avatar, detail.getAvatarUrl());
+        } else {
+            holder.avatar.setVisibility(View.GONE);
+        }
+        holder.avatar.setTag(R.id.avatar_tag_uid, detail.getUid());
+        holder.avatar.setTag(R.id.avatar_tag_username, detail.getAuthor());
+        holder.avatar.setOnClickListener(mAvatarListener);
 
-		holder.author.setTag(R.id.avatar_tag_uid, detail.getUid());
-		holder.author.setTag(R.id.avatar_tag_username, detail.getAuthor());
-		holder.author.setOnClickListener(mAvatarListener);
+        holder.author.setTag(R.id.avatar_tag_uid, detail.getUid());
+        holder.author.setTag(R.id.avatar_tag_username, detail.getAuthor());
+        holder.author.setOnClickListener(mAvatarListener);
 
-		if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-			holder.author.setTextColor(mCtx.getResources().getColor(R.color.grey));
-			holder.floor.setTextColor(mCtx.getResources().getColor(R.color.grey));
-		}
+        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
+            holder.author.setTextColor(mCtx.getResources().getColor(R.color.grey));
+            holder.floor.setTextColor(mCtx.getResources().getColor(R.color.grey));
+        }
 
-		LinearLayout contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
-		contentView.removeAllViews();
-		for (int i = 0; i < detail.getContents().getSize(); i++) {
-			ContentAbs content = detail.getContents().get(i);
-			if (content instanceof ContentText) {
-				TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
-				tv.setFragmentManager(mFragmentManager);
-				tv.setTextSize(HiSettingsHelper.getPostTextSize());
-				tv.setMovementMethod(LinkMovementMethod.getInstance());
-				if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-					tv.setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
-				}
-				//dirty hack, remove extra <br>
-				String cnt = content.getContent();
-				if (trimBr) {
-					if (cnt.startsWith("<br><br><br>")) {
-						cnt = cnt.substring("<br><br>".length());
-					} else if (cnt.startsWith("<br><br>")) {
-						cnt = cnt.substring("<br>".length());
-					}
-				}
-				if (!"<br>".equals(cnt)) {
-					tv.setText(cnt);
-					//setAutoLinkMask have conflict with setMovementMethod
-					//tv.setAutoLinkMask(Linkify.WEB_URLS);
-					tv.setFocusable(false);
-					contentView.addView(tv);
-				}
-			} else if (content instanceof ContentImg) {
-				final String imageUrl = content.getContent();
+        LinearLayout contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
+        contentView.removeAllViews();
+        for (int i = 0; i < detail.getContents().getSize(); i++) {
+            ContentAbs content = detail.getContents().get(i);
+            if (content instanceof ContentText) {
+                TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
+                tv.setFragmentManager(mFragmentManager);
+                tv.setTextSize(HiSettingsHelper.getPostTextSize());
+                tv.setMovementMethod(LinkMovementMethod.getInstance());
+                if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
+                    tv.setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
+                }
+                //dirty hack, remove extra <br>
+                String cnt = content.getContent();
+                if (trimBr) {
+                    if (cnt.startsWith("<br><br><br>")) {
+                        cnt = cnt.substring("<br><br>".length());
+                    } else if (cnt.startsWith("<br><br>")) {
+                        cnt = cnt.substring("<br>".length());
+                    }
+                }
+                if (!"<br>".equals(cnt)) {
+                    tv.setText(cnt);
+                    //setAutoLinkMask have conflict with setMovementMethod
+                    //tv.setAutoLinkMask(Linkify.WEB_URLS);
+                    tv.setFocusable(false);
+                    contentView.addView(tv);
+                }
+            } else if (content instanceof ContentImg) {
+                final String imageUrl = content.getContent();
 
-				TextView textView = new TextView(mCtx);
-				textView.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
-				textView.setGravity(Gravity.CENTER_HORIZONTAL);
-				textView.setVisibility(View.INVISIBLE);
+                TextView textView = new TextView(mCtx);
+                textView.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
+                textView.setGravity(Gravity.CENTER_HORIZONTAL);
+                textView.setVisibility(View.INVISIBLE);
 
-				final GlideImageView giv = new GlideImageView(mCtx);
-				giv.setFocusable(false);
-				giv.setClickable(true);
+                final GlideImageView giv = new GlideImageView(mCtx);
+                giv.setFocusable(false);
+                giv.setClickable(true);
 
-				textView.setClickable(true);
-				textView.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						giv.performClick();
-					}
-				});
+                textView.setClickable(true);
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        giv.performClick();
+                    }
+                });
 
-				contentView.addView(giv);
-				contentView.addView(textView);
+                contentView.addView(giv);
+                contentView.addView(textView);
 
-				giv.setUrl(imageUrl);
+                giv.setUrl(imageUrl);
 
-				giv.getLayoutParams().width = 400;
-				giv.getLayoutParams().height = 400;
+                giv.getLayoutParams().width = 400;
+                giv.getLayoutParams().height = 400;
 
-				if (HiUtils.isAutoLoadImg(mCtx)) {
-					int maxViewWidth = 1080;
+                if (HiUtils.isAutoLoadImg(mCtx)) {
+                    int maxViewWidth = 1080;
 
-					//this fragment could be replaced by UserinfoFragment, so DO NOT cast it
-					Fragment fragment = mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
-					if (fragment != null && fragment.getView() != null) {
-						maxViewWidth = fragment.getView().getWidth();
-					}
-					if (imageUrl.toLowerCase().endsWith(".gif")) {
-						Glide.with(getContext())
-								.load(imageUrl)
-								.asBitmap()
-								.diskCacheStrategy(DiskCacheStrategy.ALL)
-								.placeholder(R.drawable.ic_action_picture)
-								.error(R.drawable.tapatalk_image_broken)
-								.into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
-					} else {
-						Glide.with(getContext())
-								.load(imageUrl)
-								.asBitmap()
-								.cacheDecoder(new FileToStreamDecoder<Bitmap>(new ThreadImageDecoder()))
-								.imageDecoder(new ThreadImageDecoder())
-								.diskCacheStrategy(DiskCacheStrategy.ALL)
-								.placeholder(R.drawable.ic_action_picture)
-								.error(R.drawable.tapatalk_image_broken)
-								.into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
-					}
-				} else {
-					giv.setImageResource(R.drawable.ic_action_picture);
-				}
+                    //this fragment could be replaced by UserinfoFragment, so DO NOT cast it
+                    Fragment fragment = mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
+                    if (fragment != null && fragment.getView() != null) {
+                        maxViewWidth = fragment.getView().getWidth();
+                    }
+                    if (imageUrl.toLowerCase().endsWith(".gif")) {
+                        Glide.with(getContext())
+                                .load(imageUrl)
+                                .asBitmap()
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .placeholder(R.drawable.ic_action_picture)
+                                .error(R.drawable.tapatalk_image_broken)
+                                .into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
+                    } else {
+                        Glide.with(getContext())
+                                .load(imageUrl)
+                                .asBitmap()
+                                .cacheDecoder(new FileToStreamDecoder<Bitmap>(new ThreadImageDecoder()))
+                                .imageDecoder(new ThreadImageDecoder())
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .placeholder(R.drawable.ic_action_picture)
+                                .error(R.drawable.tapatalk_image_broken)
+                                .into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
+                    }
+                } else {
+                    giv.setImageResource(R.drawable.ic_action_picture);
+                }
 
-			} else if (content instanceof ContentAttach) {
-				TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
-				tv.setFragmentManager(mFragmentManager);
-				tv.setTextSize(HiSettingsHelper.getPostTextSize());
-				tv.setMovementMethod(LinkMovementMethod.getInstance());
-				tv.setText(content.getContent());
-				if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-					tv.setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
-				}
-				tv.setFocusable(false);
-				contentView.addView(tv);
-			} else if (content instanceof ContentQuote) {
-				TextView tv = new TextView(mCtx);
-				tv.setTextSize(HiSettingsHelper.getPostTextSize());
-				tv.setAutoLinkMask(Linkify.WEB_URLS);
-				tv.setText(content.getContent());
-				if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-					tv.setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
-				}
-				tv.setFocusable(false);    // make convertView long clickable.
-				contentView.addView(tv);
-				trimBr = true;
-			} else if (content instanceof ContentGoToFloor) {
-				TextView btnGotoFloor = new TextView(mCtx);
-				btnGotoFloor.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
-				btnGotoFloor.setText(content.getContent());
-				btnGotoFloor.setTag(((ContentGoToFloor) content).getFloor());
-				btnGotoFloor.setOnClickListener(mGoToFloorListener);
-				btnGotoFloor.setFocusable(false);    // make convertView long clickable.
-				btnGotoFloor.setClickable(true);
-				contentView.addView(btnGotoFloor);
-				trimBr = true;
-			}
-		}
+            } else if (content instanceof ContentAttach) {
+                TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
+                tv.setFragmentManager(mFragmentManager);
+                tv.setTextSize(HiSettingsHelper.getPostTextSize());
+                tv.setMovementMethod(LinkMovementMethod.getInstance());
+                tv.setText(content.getContent());
+                if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
+                    tv.setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
+                }
+                tv.setFocusable(false);
+                contentView.addView(tv);
+            } else if (content instanceof ContentQuote) {
+                TextView tv = new TextView(mCtx);
+                tv.setTextSize(HiSettingsHelper.getPostTextSize());
+                tv.setAutoLinkMask(Linkify.WEB_URLS);
+                tv.setText(content.getContent());
+                if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
+                    tv.setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
+                }
+                tv.setFocusable(false);    // make convertView long clickable.
+                contentView.addView(tv);
+                trimBr = true;
+            } else if (content instanceof ContentGoToFloor) {
+                TextView btnGotoFloor = new TextView(mCtx);
+                btnGotoFloor.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
+                btnGotoFloor.setText(content.getContent());
+                btnGotoFloor.setTag(((ContentGoToFloor) content).getFloor());
+                btnGotoFloor.setOnClickListener(mGoToFloorListener);
+                btnGotoFloor.setFocusable(false);    // make convertView long clickable.
+                btnGotoFloor.setClickable(true);
+                contentView.addView(btnGotoFloor);
+                trimBr = true;
+            }
+        }
 
-		return convertView;
-	}
+        return convertView;
+    }
 
-	private static class ViewHolder {
-		ImageView avatar;
-		TextView author;
-		TextView floor;
-		TextView postStatus;
-		TextView time;
-	}
+    private static class ViewHolder {
+        ImageView avatar;
+        TextView author;
+        TextView floor;
+        TextView postStatus;
+        TextView time;
+    }
 }

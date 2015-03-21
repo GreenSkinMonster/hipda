@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:id="@+id/popup_image"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:id="@+id/popup_image"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,7 +12,7 @@
         <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
             android:id="@+id/wv_image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <ImageButton
@@ -20,6 +20,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/btn_close_image_popup"
-        android:src="?icon_download"/>
+        android:src="?icon_download" />
 
 </FrameLayout>

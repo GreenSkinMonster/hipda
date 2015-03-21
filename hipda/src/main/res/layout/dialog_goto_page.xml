@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:gravity="center_vertical">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
 
 
     <LinearLayout
@@ -17,7 +17,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="0"/>
+            android:layout_weight="0" />
 
     </LinearLayout>
 
@@ -36,7 +36,7 @@
             android:layout_margin="4dp"
             android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="@color/hipda"/>
+            android:tint="@color/hipda" />
 
         <ImageButton
             android:id="@+id/btn_previous_page"
@@ -47,7 +47,7 @@
             android:layout_margin="4dp"
             android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="@color/hipda"/>
+            android:tint="@color/hipda" />
 
         <ImageButton
             android:id="@+id/btn_next_page"
@@ -58,7 +58,7 @@
             android:layout_margin="4dp"
             android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="@color/hipda"/>
+            android:tint="@color/hipda" />
 
         <ImageButton
             android:id="@+id/btn_last_page"
@@ -69,7 +69,7 @@
             android:layout_margin="4dp"
             android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="@color/hipda"/>
+            android:tint="@color/hipda" />
 
     </RelativeLayout>
 

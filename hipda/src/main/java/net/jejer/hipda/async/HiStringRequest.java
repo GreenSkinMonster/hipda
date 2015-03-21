@@ -22,55 +22,55 @@ import java.util.Map;
 
 public class HiStringRequest extends StringRequest {
 
-	public HiStringRequest(Context ctx, int method, String url,
-						   Listener<String> listener, ErrorListener errorListener) {
-		super(method, url, listener, errorListener);
-	}
+    public HiStringRequest(Context ctx, int method, String url,
+                           Listener<String> listener, ErrorListener errorListener) {
+        super(method, url, listener, errorListener);
+    }
 
-	public HiStringRequest(Context ctx, String url, Listener<String> listener,
-						   ErrorListener errorListener) {
-		super(url, listener, errorListener);
-	}
+    public HiStringRequest(Context ctx, String url, Listener<String> listener,
+                           ErrorListener errorListener) {
+        super(url, listener, errorListener);
+    }
 
-	@Override
-	public Map<String, String> getHeaders() throws AuthFailureError {
-		Map<String, String> headers = super.getHeaders();
+    @Override
+    public Map<String, String> getHeaders() throws AuthFailureError {
+        Map<String, String> headers = super.getHeaders();
 
-		if (headers == null
-				|| headers.equals(Collections.emptyMap())) {
-			headers = new HashMap<String, String>();
-		}
+        if (headers == null
+                || headers.equals(Collections.emptyMap())) {
+            headers = new HashMap<String, String>();
+        }
 
-		//only send auth cookie to HiPDA
-		if (getUrl().startsWith(HiUtils.BaseUrl)) {
-			headers.put("Cookie", "cdb_auth=" + HiSettingsHelper.getInstance().getCookieAuth());
-		} else {
-			headers.remove("Cookie");
-		}
-		headers.put("User-agent", HiUtils.UserAgent);
+        //only send auth cookie to HiPDA
+        if (getUrl().startsWith(HiUtils.BaseUrl)) {
+            headers.put("Cookie", "cdb_auth=" + HiSettingsHelper.getInstance().getCookieAuth());
+        } else {
+            headers.remove("Cookie");
+        }
+        headers.put("User-agent", HiUtils.UserAgent);
 
-		return headers;
-	}
+        return headers;
+    }
 
-	@Override
-	protected Response<String> parseNetworkResponse(NetworkResponse response) {
-		String parsed;
-		String encoding = HiSettingsHelper.getInstance().getEncode();
-		String contextType = response.headers.get("Content-Type");
-		if (!TextUtils.isEmpty(contextType)) {
-			if (contextType.toUpperCase().contains("UTF")) {
-				encoding = "UTF-8";
-			} else if (contextType.toUpperCase().contains("GBK")) {
-				encoding = "GBK";
-			}
-		}
-		try {
-			parsed = new String(response.data, encoding);
-		} catch (UnsupportedEncodingException e) {
-			Log.e("HiStringRequest", "encoding error", e);
-			parsed = "";
-		}
-		return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
-	}
+    @Override
+    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+        String parsed;
+        String encoding = HiSettingsHelper.getInstance().getEncode();
+        String contextType = response.headers.get("Content-Type");
+        if (!TextUtils.isEmpty(contextType)) {
+            if (contextType.toUpperCase().contains("UTF")) {
+                encoding = "UTF-8";
+            } else if (contextType.toUpperCase().contains("GBK")) {
+                encoding = "GBK";
+            }
+        }
+        try {
+            parsed = new String(response.data, encoding);
+        } catch (UnsupportedEncodingException e) {
+            Log.e("HiStringRequest", "encoding error", e);
+            parsed = "";
+        }
+        return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
+    }
 
 }

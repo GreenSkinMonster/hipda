@@ -5,16 +5,16 @@
         android:id="@+id/action_refresh_list"
         android:icon="?icon_refresh"
         android:showAsAction="ifRoom"
-        android:title="@string/action_refresh"/>
+        android:title="@string/action_refresh" />
 
     <item
         android:id="@+id/action_new_thread"
         android:icon="@android:drawable/ic_menu_add"
-        android:title="@string/action_new_thread"/>
+        android:title="@string/action_new_thread" />
 
     <item
         android:id="@+id/action_thread_list_settings"
         android:icon="?icon_settings"
-        android:title="@string/action_thread_list_settings"/>
+        android:title="@string/action_thread_list_settings" />
 
 </menu>

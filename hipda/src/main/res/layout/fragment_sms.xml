@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?background"
-                android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?background"
+    android:orientation="vertical">
 
 
     <ListView
@@ -12,15 +12,14 @@
         android:layout_height="wrap_content"
         android:stackFromBottom="true"
         android:transcriptMode="normal"
-        android:layout_above="@+id/border_line">
-    </ListView>
+        android:layout_above="@+id/border_line"></ListView>
 
     <View
         android:id="@+id/border_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@+id/rl_input"
-        android:background="@color/silver"/>
+        android:background="@color/silver" />
 
     <RelativeLayout
         android:id="@+id/rl_input"
@@ -43,8 +42,7 @@
             android:scrollbars="vertical"
             android:gravity="bottom"
             android:text="@string/txt_quick_mark"
-            android:layout_toLeftOf="@+id/ib_send_sms">
-        </EditText>
+            android:layout_toLeftOf="@+id/ib_send_sms"></EditText>
 
         <ImageButton
             android:id="@+id/ib_send_sms"
@@ -53,7 +51,7 @@
             android:contentDescription="@string/ib_quick_send"
             android:layout_alignParentRight="true"
             android:layout_alignBottom="@+id/et_sms"
-            android:src="?icon_send"/>
+            android:src="?icon_send" />
     </RelativeLayout>
 
 </RelativeLayout>

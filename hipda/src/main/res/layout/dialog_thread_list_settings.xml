@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:gravity="center_horizontal"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <Switch
         android:id="@+id/sw_show_stick_threads"
@@ -32,20 +32,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="@string/pref_threadlist_avatar"/>
+        android:text="@string/pref_threadlist_avatar" />
 
     <Switch
         android:id="@+id/sw_prefetch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="@string/pref_title_prefetch"/>
+        android:text="@string/pref_title_prefetch" />
 
     <Switch
         android:id="@+id/sw_post_redirect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="@string/pref_title_post_redirect"/>
+        android:text="@string/pref_title_post_redirect" />
 
 </LinearLayout>

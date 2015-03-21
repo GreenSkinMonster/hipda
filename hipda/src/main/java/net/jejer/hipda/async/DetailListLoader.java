@@ -22,109 +22,109 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
-	private final String LOG_TAG = getClass().getSimpleName();
+    private final String LOG_TAG = getClass().getSimpleName();
 
-	private Context mCtx;
-	private Handler mHandler;
+    private Context mCtx;
+    private Handler mHandler;
 
-	private Object mLocker;
-	private String mTid;
-	private int mPage;
-	private String mRsp;
+    private Object mLocker;
+    private String mTid;
+    private int mPage;
+    private String mRsp;
 
-	public DetailListLoader(Context context, Handler handler, String tid, int page) {
-		super(context);
-		mCtx = context;
-		mHandler = handler;
-		mLocker = this;
-		mTid = tid;
-		mPage = page;
-	}
+    public DetailListLoader(Context context, Handler handler, String tid, int page) {
+        super(context);
+        mCtx = context;
+        mHandler = handler;
+        mLocker = this;
+        mTid = tid;
+        mPage = page;
+    }
 
-	@Override
-	public DetailListBean loadInBackground() {
-		//Log.v(LOG_TAG, "loadInBackground");
+    @Override
+    public DetailListBean loadInBackground() {
+        //Log.v(LOG_TAG, "loadInBackground");
 
-		if (mTid.equals("")) {
-			return null;
-		}
+        if (mTid.equals("")) {
+            return null;
+        }
 
-		int try_count = 0;
-		boolean fetch_done = false;
-		do {
-			fetchDetail();
-			synchronized (mLocker) {
-				try {
-					mLocker.wait();
-				} catch (InterruptedException ignored) {
-				}
-			}
+        int try_count = 0;
+        boolean fetch_done = false;
+        do {
+            fetchDetail();
+            synchronized (mLocker) {
+                try {
+                    mLocker.wait();
+                } catch (InterruptedException ignored) {
+                }
+            }
 
-			if (mRsp != null) {
-				if (!LoginHelper.checkLoggedin(mCtx, mRsp)) {
-					int status = new LoginHelper(mCtx, mHandler).login();
-					if (status > Constants.STATUS_FAIL) {
-						break;
-					}
-				} else {
-					fetch_done = true;
-				}
-			}
-			try_count++;
-		} while (!fetch_done && try_count < 3);
-		//Log.v(LOG_TAG, "try_count = " + String.valueOf(try_count));
-		if (!fetch_done) {
-			Log.e(LOG_TAG, "Load Detail Fail");
-			return null;
-		}
+            if (mRsp != null) {
+                if (!LoginHelper.checkLoggedin(mCtx, mRsp)) {
+                    int status = new LoginHelper(mCtx, mHandler).login();
+                    if (status > Constants.STATUS_FAIL) {
+                        break;
+                    }
+                } else {
+                    fetch_done = true;
+                }
+            }
+            try_count++;
+        } while (!fetch_done && try_count < 3);
+        //Log.v(LOG_TAG, "try_count = " + String.valueOf(try_count));
+        if (!fetch_done) {
+            Log.e(LOG_TAG, "Load Detail Fail");
+            return null;
+        }
 
-		Document doc = Jsoup.parse(mRsp);
-		return HiParserThreadDetail.parse(mCtx, mHandler, mPage, doc);
-	}
+        Document doc = Jsoup.parse(mRsp);
+        return HiParserThreadDetail.parse(mCtx, mHandler, mPage, doc);
+    }
 
 
-	private void fetchDetail() {
-		Message msg = Message.obtain();
-		msg.what = ThreadListFragment.STAGE_GET_WEBPAGE;
-		Bundle b = new Bundle();
-		b.putInt(ThreadDetailFragment.LOADER_PAGE_KEY, mPage);
-		msg.setData(b);
-		mHandler.sendMessage(msg);
+    private void fetchDetail() {
+        Message msg = Message.obtain();
+        msg.what = ThreadListFragment.STAGE_GET_WEBPAGE;
+        Bundle b = new Bundle();
+        b.putInt(ThreadDetailFragment.LOADER_PAGE_KEY, mPage);
+        msg.setData(b);
+        mHandler.sendMessage(msg);
 
-		String url = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
-		StringRequest sReq = new HiStringRequest(mCtx, url,
-				new DetailListListener(), new ThreadDetailErrorListener());
-		VolleyHelper.getInstance().add(sReq);
-	}
+        String url = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
+        StringRequest sReq = new HiStringRequest(mCtx, url,
+                new DetailListListener(), new ThreadDetailErrorListener());
+        VolleyHelper.getInstance().add(sReq);
+    }
 
-	private class DetailListListener implements Response.Listener<String> {
-		@Override
-		public void onResponse(String response) {
-			//Log.v(LOG_TAG, "onResponse");
+    private class DetailListListener implements Response.Listener<String> {
+        @Override
+        public void onResponse(String response) {
+            //Log.v(LOG_TAG, "onResponse");
 
-			mRsp = response;
-			synchronized (mLocker) {
-				mLocker.notify();
-			}
-		}
-	}
+            mRsp = response;
+            synchronized (mLocker) {
+                mLocker.notify();
+            }
+        }
+    }
 
-	private class ThreadDetailErrorListener implements Response.ErrorListener {
-		@Override
-		public void onErrorResponse(VolleyError error) {
-			Log.e(LOG_TAG, error.toString());
+    private class ThreadDetailErrorListener implements Response.ErrorListener {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e(LOG_TAG, error.toString());
 
-			Message msg = Message.obtain();
-			msg.what = ThreadListFragment.STAGE_ERROR;
-			Bundle b = new Bundle();
-			b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA,请检查网络");
-			msg.setData(b);
-			mHandler.sendMessage(msg);
+            Message msg = Message.obtain();
+            msg.what = ThreadListFragment.STAGE_ERROR;
+            Bundle b = new Bundle();
+            b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA,请检查网络");
+            msg.setData(b);
+            mHandler.sendMessage(msg);
 
-			synchronized (mLocker) {
-				mRsp = null;
-				mLocker.notify();
-			}
-		}
-	}
+            synchronized (mLocker) {
+                mRsp = null;
+                mLocker.notify();
+            }
+        }
+    }
 }

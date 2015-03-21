@@ -102,8 +102,7 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="empty_array">
-    </string-array>
+    <string-array name="empty_array"></string-array>
 
     <string name="pref_category_tail">小尾巴</string>
     <string name="pref_category_ui">UI</string>

@@ -1,29 +1,29 @@
 package net.jejer.hipda.bean;
 
 public class UserInfoBean {
-	
-	private String mAvatarUrl;
-	private String mDetail;
 
-	public UserInfoBean() {
-		// TODO Auto-generated constructor stub
-	}
+    private String mAvatarUrl;
+    private String mDetail;
 
-	public String getmAvatarUrl() {
-		return mAvatarUrl;
-	}
+    public UserInfoBean() {
+        // TODO Auto-generated constructor stub
+    }
 
-	public void setmAvatarUrl(String mAvatarUrl) {
-		this.mAvatarUrl = mAvatarUrl;
-	}
+    public String getmAvatarUrl() {
+        return mAvatarUrl;
+    }
 
-	public String getmDetail() {
-		return mDetail;
-	}
+    public void setmAvatarUrl(String mAvatarUrl) {
+        this.mAvatarUrl = mAvatarUrl;
+    }
 
-	public void setmDetail(String mDetail) {
-		this.mDetail = mDetail;
-	}
+    public String getmDetail() {
+        return mDetail;
+    }
 
-	
+    public void setmDetail(String mDetail) {
+        this.mDetail = mDetail;
+    }
+
+
 }

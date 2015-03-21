@@ -31,162 +31,162 @@ import java.util.List;
 import java.util.Map;
 
 public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List<String>>> {
-	private final String LOG_TAG = getClass().getSimpleName();
+    private final String LOG_TAG = getClass().getSimpleName();
 
-	private PrePostListener mListener;
-	private Context mCtx;
-	private int mMode;
+    private PrePostListener mListener;
+    private Context mCtx;
+    private int mMode;
 
-	public PrePostAsyncTask(Context ctx, PrePostListener listener, int mode) {
-		mCtx = ctx;
-		mListener = listener;
-		mMode = mode;
-	}
+    public PrePostAsyncTask(Context ctx, PrePostListener listener, int mode) {
+        mCtx = ctx;
+        mListener = listener;
+        mMode = mode;
+    }
 
-	@Override
-	protected Map<String, List<String>> doInBackground(PostBean... postBeans) {
+    @Override
+    protected Map<String, List<String>> doInBackground(PostBean... postBeans) {
 
-		PostBean postBean = postBeans[0];
-		String tid = postBean.getTid();
-		String pid = postBean.getPid();
-		String fid = postBean.getFid();
+        PostBean postBean = postBeans[0];
+        String tid = postBean.getTid();
+        String pid = postBean.getPid();
+        String fid = postBean.getFid();
 
-		String url = HiUtils.ReplyUrl + tid;
-		switch (mMode) {
-			case PostAsyncTask.MODE_REPLY_THREAD:
-			case PostAsyncTask.MODE_QUICK_REPLY:
-				break;
-			case PostAsyncTask.MODE_REPLY_POST:
-				url += "&reppost=" + pid;
-				break;
-			case PostAsyncTask.MODE_QUOTE_POST:
-				url += "&repquote=" + pid;
-				break;
-			case PostAsyncTask.MODE_NEW_THREAD:
-				url = HiUtils.NewThreadUrl + fid;
-				break;
-			case PostAsyncTask.MODE_EDIT_POST:
-				//fid is not really needed, just put a value here
-				if (TextUtils.isEmpty(fid)) fid = "2";
-				url = HiUtils.EditUrl + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
-				break;
-		}
+        String url = HiUtils.ReplyUrl + tid;
+        switch (mMode) {
+            case PostAsyncTask.MODE_REPLY_THREAD:
+            case PostAsyncTask.MODE_QUICK_REPLY:
+                break;
+            case PostAsyncTask.MODE_REPLY_POST:
+                url += "&reppost=" + pid;
+                break;
+            case PostAsyncTask.MODE_QUOTE_POST:
+                url += "&repquote=" + pid;
+                break;
+            case PostAsyncTask.MODE_NEW_THREAD:
+                url = HiUtils.NewThreadUrl + fid;
+                break;
+            case PostAsyncTask.MODE_EDIT_POST:
+                //fid is not really needed, just put a value here
+                if (TextUtils.isEmpty(fid)) fid = "2";
+                url = HiUtils.EditUrl + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
+                break;
+        }
 
-		// get infos
-		CookieStore cookieStore = HttpUtils.restoreCookie(mCtx);
-		HttpContext localContext = new BasicHttpContext();
-		AndroidHttpClient client = AndroidHttpClient.newInstance(HiUtils.UserAgent);
-		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+        // get infos
+        CookieStore cookieStore = HttpUtils.restoreCookie(mCtx);
+        HttpContext localContext = new BasicHttpContext();
+        AndroidHttpClient client = AndroidHttpClient.newInstance(HiUtils.UserAgent);
+        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
-		String rsp_str;
-		Boolean rspOk = false;
-		int retry = 0;
-		do {
-			rsp_str = getReplyPage(client, localContext, url);
-			if (rsp_str != null) {
-				if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
-					int status = new LoginHelper(mCtx, null).login();
-					if (status > Constants.STATUS_FAIL) {
-						break;
-					}
-				} else {
-					rspOk = true;
-				}
-			}
-			retry++;
-		} while (!rspOk && retry < 3);
+        String rsp_str;
+        Boolean rspOk = false;
+        int retry = 0;
+        do {
+            rsp_str = getReplyPage(client, localContext, url);
+            if (rsp_str != null) {
+                if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
+                    int status = new LoginHelper(mCtx, null).login();
+                    if (status > Constants.STATUS_FAIL) {
+                        break;
+                    }
+                } else {
+                    rspOk = true;
+                }
+            }
+            retry++;
+        } while (!rspOk && retry < 3);
 
-		client.close();
+        client.close();
 
-		if (!rspOk) {
-			return null;
-		}
+        if (!rspOk) {
+            return null;
+        }
 
-		Document doc = Jsoup.parse(rsp_str);
-		return parseRsp(doc);
-	}
+        Document doc = Jsoup.parse(rsp_str);
+        return parseRsp(doc);
+    }
 
-	private String getReplyPage(AndroidHttpClient client, HttpContext ctx, String url) {
-		HttpGet req = new HttpGet(url);
+    private String getReplyPage(AndroidHttpClient client, HttpContext ctx, String url) {
+        HttpGet req = new HttpGet(url);
 
-		String rsp_str;
-		try {
-			HttpResponse rsp = client.execute(req, ctx);
-			HttpEntity rsp_ent = rsp.getEntity();
-			rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
-		} catch (Exception e) {
-			Log.e(LOG_TAG, "Network related error", e);
-			return null;
-		}
+        String rsp_str;
+        try {
+            HttpResponse rsp = client.execute(req, ctx);
+            HttpEntity rsp_ent = rsp.getEntity();
+            rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Network related error", e);
+            return null;
+        }
 
-		return rsp_str;
-	}
+        return rsp_str;
+    }
 
-	private Map<String, List<String>> parseRsp(Document doc) {
-		Map<String, List<String>> result = new HashMap<String, List<String>>();
-		result.put("formhash", new ArrayList<String>());
-		result.put("text", new ArrayList<String>());
-		result.put("uid", new ArrayList<String>());
-		result.put("hash", new ArrayList<String>());
-		result.put("attaches", new ArrayList<String>());
-		result.put("subject", new ArrayList<String>());
-		result.put("typeid_values", new ArrayList<String>());
-		result.put("typeid_names", new ArrayList<String>());
+    private Map<String, List<String>> parseRsp(Document doc) {
+        Map<String, List<String>> result = new HashMap<String, List<String>>();
+        result.put("formhash", new ArrayList<String>());
+        result.put("text", new ArrayList<String>());
+        result.put("uid", new ArrayList<String>());
+        result.put("hash", new ArrayList<String>());
+        result.put("attaches", new ArrayList<String>());
+        result.put("subject", new ArrayList<String>());
+        result.put("typeid_values", new ArrayList<String>());
+        result.put("typeid_names", new ArrayList<String>());
 
-		Elements formhashES = doc.select("input[name=formhash]");
-		if (formhashES.size() < 1) {
-			return result;
-		} else {
-			result.get("formhash").add(formhashES.first().attr("value"));
-		}
+        Elements formhashES = doc.select("input[name=formhash]");
+        if (formhashES.size() < 1) {
+            return result;
+        } else {
+            result.get("formhash").add(formhashES.first().attr("value"));
+        }
 
-		Elements addtextES = doc.select("textarea");
-		if (addtextES.size() < 1) {
-			return result;
-		} else {
-			result.get("text").add(addtextES.first().text());
-		}
+        Elements addtextES = doc.select("textarea");
+        if (addtextES.size() < 1) {
+            return result;
+        } else {
+            result.get("text").add(addtextES.first().text());
+        }
 
-		Elements scriptES = doc.select("script");
-		if (scriptES.size() < 1) {
-			return result;
-		} else {
-			result.get("uid").add(HttpUtils.getMiddleString(scriptES.first().data(), "discuz_uid = ", ","));
-		}
+        Elements scriptES = doc.select("script");
+        if (scriptES.size() < 1) {
+            return result;
+        } else {
+            result.get("uid").add(HttpUtils.getMiddleString(scriptES.first().data(), "discuz_uid = ", ","));
+        }
 
-		Elements hashES = doc.select("input[name=hash]");
-		if (hashES.size() < 1) {
-			return result;
-		} else {
-			result.get("hash").add(hashES.first().attr("value"));
-		}
+        Elements hashES = doc.select("input[name=hash]");
+        if (hashES.size() < 1) {
+            return result;
+        } else {
+            result.get("hash").add(hashES.first().attr("value"));
+        }
 
-		//for edit post
-		Elements subjectES = doc.select("input[name=subject]");
-		if (subjectES.size() > 0) {
-			result.get("subject").add(subjectES.first().attr("value"));
-		}
+        //for edit post
+        Elements subjectES = doc.select("input[name=subject]");
+        if (subjectES.size() > 0) {
+            result.get("subject").add(subjectES.first().attr("value"));
+        }
 
-		Elements typeidES = doc.select("#typeid > option");
-		for (int i = 0; i < typeidES.size(); i++) {
-			Element typeidEl = typeidES.get(i);
-			result.get("typeid_values").add(typeidEl.val());
-			result.get("typeid_names").add( typeidEl.text());
-		}
-		return result;
-	}
+        Elements typeidES = doc.select("#typeid > option");
+        for (int i = 0; i < typeidES.size(); i++) {
+            Element typeidEl = typeidES.get(i);
+            result.get("typeid_values").add(typeidEl.val());
+            result.get("typeid_names").add(typeidEl.text());
+        }
+        return result;
+    }
 
-	@Override
-	protected void onPostExecute(Map<String, List<String>> result) {
-		if (result == null) {
-			mListener.PrePostComplete(mMode, false, null);
-			return;
-		}
-		mListener.PrePostComplete(mMode, !result.get("formhash").isEmpty(), result);
-	}
+    @Override
+    protected void onPostExecute(Map<String, List<String>> result) {
+        if (result == null) {
+            mListener.PrePostComplete(mMode, false, null);
+            return;
+        }
+        mListener.PrePostComplete(mMode, !result.get("formhash").isEmpty(), result);
+    }
 
-	public interface PrePostListener {
-		void PrePostComplete(int mode, boolean result, Map<String, List<String>> info);
-	}
+    public interface PrePostListener {
+        void PrePostComplete(int mode, boolean result, Map<String, List<String>> info);
+    }
 
 }

@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content">
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
             android:layout_alignParentLeft="true"
             android:layout_margin="4dp"
             android:contentDescription="@string/iv_item_indicator"
-            android:src="@drawable/google_user"/>
+            android:src="@drawable/google_user" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -30,7 +30,7 @@
                 android:layout_margin="4dp"
                 android:text=""
                 android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_info"
@@ -41,7 +41,7 @@
                 android:padding="4dp"
                 android:text=""
                 android:textSize="16sp"
-                android:color="@android:color/secondary_text_light"/>
+                android:color="@android:color/secondary_text_light" />
 
             <TextView
                 android:id="@+id/tv_time"
@@ -52,7 +52,7 @@
                 android:padding="4dp"
                 android:singleLine="true"
                 android:text=""
-                android:color="@android:color/secondary_text_light"/>
+                android:color="@android:color/secondary_text_light" />
         </RelativeLayout>
 
     </RelativeLayout>
