@@ -33,7 +33,6 @@ public class HiSettingsHelper {
     public static final String PERF_TAILURL = "PERF_TAILURL";
     public static final String PERF_NIGHTTHEME = "PERF_NIGHTTHEME";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
-    public static final String PERF_EINK_OPTIMIZATION = "PERF_EINK_OPTIMIZATION";
     public static final String PERF_EINK_MODE = "PERF_EINK_MODE";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
@@ -78,6 +77,7 @@ public class HiSettingsHelper {
     private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
     private boolean mGestureBack = true;
     private int mMaxPostsInPage;
+    private String mHiPdaColorValue;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;

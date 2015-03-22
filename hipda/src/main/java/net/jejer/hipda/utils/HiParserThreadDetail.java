@@ -252,8 +252,9 @@ public class HiParserThreadDetail {
             String tmp = ((Element) contentN).text();
             if (tmp.startsWith("回复 ") && tmp.length() < (3 + 6 + 15) && tmp.contains("#")) {
                 int floor = HttpUtils.getIntFromString(tmp.substring(0, tmp.indexOf("#")));
+                String author = tmp.substring(tmp.lastIndexOf("#") + 1).trim();
                 if (floor > 0) {
-                    content.addGoToFloor(tmp, floor);
+                    content.addGoToFloor(tmp, floor, author);
                     return false;
                 }
             }

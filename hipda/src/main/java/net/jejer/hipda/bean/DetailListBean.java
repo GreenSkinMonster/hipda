@@ -1,6 +1,7 @@
 package net.jejer.hipda.bean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class DetailListBean {
@@ -11,14 +12,17 @@ public class DetailListBean {
     private int mPage = 0;
     private String mTitle;
     private String mFid;
+    private HashMap<String, DetailBean> mFloorBeans;
 
     public DetailListBean() {
-        mDetailBeans = new ArrayList<DetailBean>();
+        mDetailBeans = new ArrayList<>();
+        mFloorBeans = new HashMap<>();
         mHaveNext = false;
     }
 
     public void add(DetailBean detailBean) {
         mDetailBeans.add(detailBean);
+        mFloorBeans.put(detailBean.getFloor(), detailBean);
         mCount++;
     }
 
@@ -35,6 +39,14 @@ public class DetailListBean {
             return "";
         }
         return mDetailBeans.get(mDetailBeans.size() - 1).getPostId();
+    }
+
+    public String getContentsByFloor(String floor) {
+        DetailBean detailBean = mFloorBeans.get(floor);
+        if (detailBean != null) {
+            return detailBean.getContents().getCopyText(true);
+        }
+        return null;
     }
 
     public Boolean getHaveNext() {
