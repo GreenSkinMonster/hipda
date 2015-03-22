@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.Html;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.Gravity;
@@ -44,8 +46,9 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
     private Button.OnClickListener mGoToFloorListener;
     private View.OnClickListener mAvatarListener;
     private FragmentManager mFragmentManager;
+    private ThreadDetailFragment mDetailFragment;
 
-    public ThreadDetailAdapter(Context context, FragmentManager fm, int resource,
+    public ThreadDetailAdapter(Context context, FragmentManager fm, ThreadDetailFragment detailFragment, int resource,
                                List<DetailBean> objects, Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
         super(context, resource, objects);
         mCtx = context;
@@ -53,6 +56,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
         mInflater = LayoutInflater.from(context);
         mGoToFloorListener = gotoFloorListener;
         mAvatarListener = avatarListener;
+        mDetailFragment = detailFragment;
     }
 
     @Override
@@ -201,17 +205,38 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 tv.setAutoLinkMask(Linkify.WEB_URLS);
                 tv.setText(content.getContent());
                 tv.setFocusable(false);    // make convertView long clickable.
+                tv.setPadding(8, 8, 8, 8);
+                tv.setBackgroundColor(mCtx.getResources().getColor(R.color.quote_text_background));
                 contentView.addView(tv);
                 trimBr = true;
             } else if (content instanceof ContentGoToFloor) {
+                ContentGoToFloor contentGoToFloor = (ContentGoToFloor) content;
                 TextView btnGotoFloor = new TextView(mCtx);
-                btnGotoFloor.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
-                btnGotoFloor.setText(content.getContent());
-                btnGotoFloor.setTag(((ContentGoToFloor) content).getFloor());
+                btnGotoFloor.setBackgroundColor(mCtx.getResources().getColor(R.color.quote_text_background));
+                btnGotoFloor.setText(Html.fromHtml(
+                        contentGoToFloor.getAuthor()
+                                + "   <font color='" + HiSettingsHelper.getInstance().getHiPdaColorValue() + "'>"
+                                + "<b>"
+                                + contentGoToFloor.getFloor() + "#</b></font>"));
+                btnGotoFloor.setTag(contentGoToFloor.getFloor());
                 btnGotoFloor.setOnClickListener(mGoToFloorListener);
                 btnGotoFloor.setFocusable(false);    // make convertView long clickable.
                 btnGotoFloor.setClickable(true);
+                btnGotoFloor.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
+                btnGotoFloor.setGravity(Gravity.RIGHT);
+                btnGotoFloor.setPadding(16, 8, 16, 8);
                 contentView.addView(btnGotoFloor);
+
+                String quoteText = mDetailFragment.getCachedFlootContent(contentGoToFloor.getFloor());
+                if (!TextUtils.isEmpty(quoteText)) {
+                    TextViewWithEmoticon quoteTextView = new TextViewWithEmoticon(mCtx);
+                    quoteTextView.setPadding(16, 16, 16, 20);
+                    quoteTextView.setText(quoteText);
+                    quoteTextView.setBackgroundColor(mCtx.getResources().getColor(R.color.quote_text_background));
+                    quoteTextView.setFocusable(false);
+                    quoteTextView.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
+                    contentView.addView(quoteTextView);
+                }
                 trimBr = true;
             }
         }

@@ -80,8 +80,8 @@ public class DetailBean {
             newString = true;
         }
 
-        public void addGoToFloor(String text, int floor) {
-            list.add(new ContentGoToFloor(text, floor));
+        public void addGoToFloor(String text, int floor, String author) {
+            list.add(new ContentGoToFloor(text, floor, author));
             newString = true;
         }
 
@@ -94,11 +94,15 @@ public class DetailBean {
         }
 
         public String getCopyText() {
-            StringBuilder sb = new StringBuilder();
+            return getCopyText(false);
+        }
 
+        public String getCopyText(boolean isJustText) {
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < list.size(); i++) {
                 ContentAbs o = list.get(i);
-                sb.append(o.getCopyText());
+                if (isJustText && o instanceof ContentText)
+                    sb.append(o.getCopyText());
             }
 
             return sb.toString();

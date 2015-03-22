@@ -111,7 +111,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         }
         mLoaderCallbacks = new ThreadListLoaderCallbacks();
         List<DetailBean> a = new ArrayList<DetailBean>();
-        mAdapter = new ThreadDetailAdapter(mCtx, getFragmentManager(), R.layout.item_thread_detail, a,
+        mAdapter = new ThreadDetailAdapter(mCtx, getFragmentManager(), this, R.layout.item_thread_detail, a,
                 new GoToFloorOnClickListener(), new AvatarOnClickListener());
 
         mMsgHandler = new Handler(new ThreadDetailMsgHandler());
@@ -377,6 +377,17 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                 Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    public String getCachedFlootContent(int floor) {
+        //if user direct jump to last page, he may not get correct mMaxPostInPage
+        if (mMaxPostInPage < HiSettingsHelper.getInstance().getMaxPostsInPage()) {
+            mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
+        }
+        int page = (floor / mMaxPostInPage) + 1;
+        if (mCache.get(page) != null)
+            return mCache.get(page).getContentsByFloor(floor + "");
+        return null;
     }
 
     private class OnScrollCallback implements AbsListView.OnScrollListener {

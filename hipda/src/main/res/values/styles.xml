@@ -49,7 +49,6 @@
         <item name="icon_edit">@android:drawable/ic_menu_edit</item>
         <item name="color_hipda">@color/hipda</item>
         <item name="android:actionBarStyle">@style/DayActionBar</item>
-        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <!-- Theme Night. -->

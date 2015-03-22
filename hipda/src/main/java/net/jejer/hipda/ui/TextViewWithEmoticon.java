@@ -3,6 +3,8 @@ package net.jejer.hipda.ui;
 import android.app.DownloadManager;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -71,7 +73,9 @@ public class TextViewWithEmoticon extends TextView {
             int id = context.getResources().getIdentifier(resname, "drawable", context.getPackageName());
             if (set && id != 0) {
                 hasChanges = true;
-                spannable.setSpan(new ImageSpan(context, id),
+                Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), id);
+                Bitmap scaledbmp = Bitmap.createScaledBitmap(bmp, 80, 80, false);
+                spannable.setSpan(new ImageSpan(context, scaledbmp),
                         matcher.start(),
                         matcher.end(),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
