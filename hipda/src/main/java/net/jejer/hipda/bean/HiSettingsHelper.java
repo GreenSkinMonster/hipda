@@ -406,7 +406,7 @@ public class HiSettingsHelper {
         return mEinkMode;
     }
 
-    public void setEinkOptimization(Set<String> einkMode) {
+    public void setEinkMode(Set<String> einkMode) {
         mEinkMode = einkMode;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putStringSet(PERF_EINK_MODE, einkMode).commit();

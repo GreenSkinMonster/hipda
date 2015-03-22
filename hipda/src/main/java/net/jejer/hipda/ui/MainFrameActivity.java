@@ -23,6 +23,8 @@ import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 
+import java.util.Set;
+
 public class MainFrameActivity extends Activity {
     private final String LOG_TAG = getClass().getSimpleName();
 
@@ -299,6 +301,11 @@ public class MainFrameActivity extends Activity {
                             .commit();
                     break;
                 case 8:    // switch day/night theme
+                    //cancel eink mode ui
+                    Set<String> einkMode = HiSettingsHelper.getInstance().getEinkMode();
+                    if (einkMode.contains("1"))
+                        einkMode.remove("1");
+                    HiSettingsHelper.getInstance().setEinkMode(einkMode);
                     HiSettingsHelper.getInstance().setNightTheme(!HiSettingsHelper.getInstance().isNightTheme());
                     Intent intent = getIntent();
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
