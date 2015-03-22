@@ -245,6 +245,8 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
             mTipBar.setText("加载中...");
             mTipBar.setVisibility(View.VISIBLE);
             mTipBar.bringToFront();
+            if (!swipeLayout.isRefreshing())
+                swipeLayout.setEnabled(false);
             return new SimpleListLoader(SimpleListFragment.this.getActivity(), mType, 1, mQuery);
         }
 
@@ -254,6 +256,8 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
             Log.v(LOG_TAG, "onLoadFinished enter");
 
             mTipBar.setVisibility(View.INVISIBLE);
+            if (mType != SimpleListLoader.TYPE_SEARCH)
+                swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
 
             if (list == null || list.getCount() == 0) {
@@ -271,6 +275,8 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
             Log.v(LOG_TAG, "onLoaderReset");
 
             mTipBar.setVisibility(View.INVISIBLE);
+            if (mType != SimpleListLoader.TYPE_SEARCH)
+                swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
         }
 

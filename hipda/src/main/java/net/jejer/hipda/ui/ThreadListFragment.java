@@ -400,6 +400,8 @@ public class ThreadListFragment extends Fragment
 
         @Override
         public Loader<ThreadListBean> onCreateLoader(int arg0, Bundle arg1) {
+            if (!swipeLayout.isRefreshing())
+                swipeLayout.setEnabled(false);
             return new ThreadListLoader(mCtx, mMsgHandler, mForumId, mPage);
         }
 
@@ -409,6 +411,7 @@ public class ThreadListFragment extends Fragment
             Log.v(LOG_TAG, "onLoadFinished enter");
 
             mInloading = false;
+            swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
 
             if (threads == null) {
@@ -477,6 +480,7 @@ public class ThreadListFragment extends Fragment
 
             mInloading = false;
             mTipBar.setVisibility(View.INVISIBLE);
+            swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
         }
 
