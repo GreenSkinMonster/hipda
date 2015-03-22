@@ -15,8 +15,8 @@ public class DetailListBean {
     private HashMap<String, DetailBean> mFloorBeans;
 
     public DetailListBean() {
-        mDetailBeans = new ArrayList<>();
-        mFloorBeans = new HashMap<>();
+        mDetailBeans = new ArrayList<DetailBean>();
+        mFloorBeans = new HashMap<String, DetailBean>();
         mHaveNext = false;
     }
 
