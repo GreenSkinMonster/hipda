@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 
+import net.jejer.hipda.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -570,6 +572,20 @@ public class HiSettingsHelper {
 
     public boolean isEinkModeVolumeKeyEnabled() {
         return getEinkMode().contains("3");
+    }
+
+    @SuppressWarnings("ResourceType")
+    public String getHiPdaColorValue() {
+        if (mHiPdaColorValue == null) {
+            if (isEinkModeUIEnabled())
+                mHiPdaColorValue = mCtx.getResources().getString(R.color.black);
+            else
+                mHiPdaColorValue = mCtx.getResources().getString(R.color.hipda);
+            if (mHiPdaColorValue.length() == 9) {
+                mHiPdaColorValue = "#" + mHiPdaColorValue.substring(3);
+            }
+        }
+        return mHiPdaColorValue;
     }
 
 }
