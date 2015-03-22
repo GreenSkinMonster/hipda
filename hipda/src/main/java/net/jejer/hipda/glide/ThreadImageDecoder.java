@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * pre scale bitmap before load to ImageView
  * Created by GreenSkinMonster on 2015-03-18.
  */
 public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> {
@@ -25,12 +26,17 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
         Resource<Bitmap> result = null;
         int maxWidth = 450;
         try {
-            Bitmap original = BitmapFactory.decodeStream(new BufferedInputStream(source));
+            BitmapFactory.Options bitmapLoadingOptions = new BitmapFactory.Options();
+            bitmapLoadingOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+            Bitmap original = BitmapFactory.decodeStream(new BufferedInputStream(source), null, bitmapLoadingOptions);
+
             int originalWidth = original.getWidth();
             int originalHeight = original.getHeight();
 
-            if (originalWidth <= maxWidth && originalHeight < 4 * originalWidth)
-                return new SimpleResource<Bitmap>(original);
+            if (originalWidth <= maxWidth && originalHeight < 4 * originalWidth) {
+//                Log.e(LOG_TAG, "original " + originalWidth + "x" + originalHeight + " return");
+                return new SimpleResource<>(original);
+            }
 
             if (originalHeight > 4 * originalWidth)
                 originalHeight = 3 * originalWidth;
@@ -42,8 +48,11 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
             matrix.postScale(scale, scale);
 
             Bitmap bitmap = Bitmap.createBitmap(original, 0, 0, originalWidth, originalHeight, matrix, true);
+            result = new SimpleResource<>(bitmap);
 
-            result = new SimpleResource<Bitmap>(bitmap);
+            original.recycle();
+//            Log.e(LOG_TAG, "original " + originalWidth + "x" + originalHeight + ", new " + bitmap.getWidth() + "x" + bitmap.getHeight()+ " "+bitmap.getConfig().toString());
+
         } catch (Exception e) {
             Log.e(LOG_TAG, "error when decoding image", e);
         }
