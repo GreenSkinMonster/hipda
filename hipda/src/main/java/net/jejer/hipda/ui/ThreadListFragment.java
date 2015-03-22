@@ -369,7 +369,6 @@ public class ThreadListFragment extends Fragment
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-                    .addToBackStack(ThreadDetailFragment.class.getName())
                     .commit();
         } else {
             Bundle arguments = new Bundle();

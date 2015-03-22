@@ -110,7 +110,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
         menu.clear();
 
         getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         switch (mType) {
             case SimpleListLoader.TYPE_MYREPLY:
                 getActivity().getActionBar().setTitle(R.string.title_drawer_myreply);

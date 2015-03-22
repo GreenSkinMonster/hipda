@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.SimpleListLoader;
@@ -151,15 +152,13 @@ public class MainFrameActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        Log.v(LOG_TAG, "onBackPressed");
-
         if (!popFragment(true)) {
             mQuit++;
-//            if (mQuit == 1) {
-//                Toast.makeText(this, "再按一次退出HiPDA", Toast.LENGTH_LONG).show();
-//            } else {
-            finish();
-//            }
+            if (mQuit == 1 && HiSettingsHelper.getInstance().getIsLandscape()) {
+                Toast.makeText(this, "再按一次退出HiPDA", Toast.LENGTH_LONG).show();
+            } else {
+                finish();
+            }
         }
 
     }
@@ -247,6 +246,7 @@ public class MainFrameActivity extends Activity {
                     searchFragment.setArguments(searchBundle);
                     getFragmentManager().beginTransaction()
                             .replace(R.id.main_frame_container, searchFragment, SimpleListFragment.class.getName())
+                            .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
                 case 2:    // my posts
@@ -256,6 +256,7 @@ public class MainFrameActivity extends Activity {
                     postsFragment.setArguments(postsBundle);
                     getFragmentManager().beginTransaction()
                             .replace(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
+                            .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
                 case 3:    // my reply
@@ -265,6 +266,7 @@ public class MainFrameActivity extends Activity {
                     replyFragment.setArguments(replyBundle);
                     getFragmentManager().beginTransaction()
                             .replace(R.id.main_frame_container, replyFragment, SimpleListFragment.class.getName())
+                            .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
                 case 4:    // my favorites
@@ -274,6 +276,7 @@ public class MainFrameActivity extends Activity {
                     favFragment.setArguments(favBundle);
                     getFragmentManager().beginTransaction()
                             .replace(R.id.main_frame_container, favFragment, SimpleListFragment.class.getName())
+                            .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
                 case 5:    // sms
@@ -283,6 +286,7 @@ public class MainFrameActivity extends Activity {
                     smsFragment.setArguments(smsBundle);
                     getFragmentManager().beginTransaction()
                             .replace(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
+                            .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
                 case 6:    // thread notify
@@ -292,6 +296,7 @@ public class MainFrameActivity extends Activity {
                     notifyFragment.setArguments(notifyBundle);
                     getFragmentManager().beginTransaction()
                             .replace(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
+                            .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
                 case 7:    // settings
