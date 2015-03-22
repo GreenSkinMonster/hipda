@@ -17,10 +17,12 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 public class ThreadDetailActionModeCallback implements ActionMode.Callback {
     private ThreadDetailFragment mFragment;
     private String mTid;
+    private String mFid;
     private DetailBean mDetailBean;
 
-    public ThreadDetailActionModeCallback(ThreadDetailFragment fragment, String tid, DetailBean detailBean) {
+    public ThreadDetailActionModeCallback(ThreadDetailFragment fragment, String fid, String tid, DetailBean detailBean) {
         mFragment = fragment;
+        mFid = fid;
         mTid = tid;
         mDetailBean = detailBean;
     }
@@ -36,7 +38,7 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 if (mDetailBean.getAuthor().equals(HiSettingsHelper.getInstance().getUsername())) {
                     mFragment.setHasOptionsMenu(false);
 
-                    //arguments.putString(PostFragment.ARG_FID_KEY, "2");
+                    arguments.putString(PostFragment.ARG_FID_KEY, mFid);
                     arguments.putString(PostFragment.ARG_TID_KEY, mTid);
                     arguments.putString(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
                     arguments.putString(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());

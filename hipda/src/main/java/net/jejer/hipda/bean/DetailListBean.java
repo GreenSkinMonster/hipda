@@ -10,6 +10,7 @@ public class DetailListBean {
     private int mCount = 0;
     private int mPage = 0;
     private String mTitle;
+    private String mFid;
 
     public DetailListBean() {
         mDetailBeans = new ArrayList<DetailBean>();
@@ -66,5 +67,13 @@ public class DetailListBean {
 
     public void setTitle(String mTitle) {
         this.mTitle = mTitle;
+    }
+
+    public String getFid() {
+        return mFid;
+    }
+
+    public void setFid(String fid) {
+        mFid = fid;
     }
 }

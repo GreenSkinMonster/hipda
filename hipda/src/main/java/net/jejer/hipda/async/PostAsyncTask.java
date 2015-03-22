@@ -123,7 +123,6 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
                 doPost(client, localContext, url, reply_text, subject);
                 break;
             case MODE_EDIT_POST:
-                if (TextUtils.isEmpty(fid)) fid = "2";
                 url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
                 doPost(client, localContext, url, reply_text, subject);
                 break;

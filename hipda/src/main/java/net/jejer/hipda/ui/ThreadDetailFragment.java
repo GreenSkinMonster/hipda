@@ -56,13 +56,15 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     public static final String ARG_FLOOR_KEY = "floor";
     public static final String ARG_PAGE_KEY = "page";
 
-    public static final int LAST_FLOOR_OFFSET = Integer.MIN_VALUE;
+    public static final int LAST_FLOOR = Integer.MIN_VALUE;
+    public static final int LAST_PAGE = Integer.MIN_VALUE;
 
     private final String LOG_TAG = getClass().getSimpleName();
 
     private Context mCtx;
     private String mTid;
     private String mTitle;
+    private String mFid;
     private XListView mDetailListView;
     private TextView mTipBar;
     private TextView mTitleView;
@@ -72,7 +74,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     private int mMaxPage = 1;
     private int mGoToPage = 1;
     private int mMaxPostInPage = 1;    // for goto floor, user can configure max post per page
-    private int mOffsetInPage = -1;    // for goto floor
+    private int mFloorOfPage = -1;    // for every page start form 1
     private boolean mInloading = false;
     private boolean mPrefetching = false;
     private TextView mReplyTextTv;
@@ -105,7 +107,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             mCurrentPage = getArguments().getInt(ARG_PAGE_KEY);
         }
         if (getArguments().containsKey(ARG_FLOOR_KEY)) {
-            mOffsetInPage = getArguments().getInt(ARG_FLOOR_KEY);
+            mFloorOfPage = getArguments().getInt(ARG_FLOOR_KEY);
         }
         mLoaderCallbacks = new ThreadListLoaderCallbacks();
         List<DetailBean> a = new ArrayList<DetailBean>();
@@ -141,7 +143,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                     mCurrentPage--;
                 }
                 mDetailListView.stopRefresh();
-                mOffsetInPage = LAST_FLOOR_OFFSET;
+                mFloorOfPage = LAST_FLOOR;
                 showOrLoadPage();
                 quickReply.setVisibility(View.INVISIBLE);
             }
@@ -355,14 +357,15 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             }
 
             if (!mAuthorOnly && HiSettingsHelper.getInstance().isPostReirect()) {
-                int floor = -1;
+                if (mode != PostAsyncTask.MODE_EDIT_POST)
+                    mCurrentPage = mMaxPage;
+
+                int floor = LAST_FLOOR;
                 if (!TextUtils.isEmpty(postBean.getFloor()) && TextUtils.isDigitsOnly(postBean.getFloor()))
                     floor = Integer.parseInt(postBean.getFloor());
-                mCurrentPage = mMaxPage;
-                if (floor != -1 && floor > 0)
-                    mOffsetInPage = floor;
-                else
-                    mOffsetInPage = LAST_FLOOR_OFFSET;
+                if (floor == LAST_FLOOR || floor > 0)
+                    mFloorOfPage = floor;
+
                 mCache.remove(mCurrentPage);
                 showOrLoadPage();
             }
@@ -500,8 +503,12 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                 }
             }
 
+            mFid = details.getFid();
+
             // Set MaxPage earlier than showOrLoadPage()
             mMaxPage = details.getLastPage();
+            if (mCurrentPage == LAST_PAGE)
+                mCurrentPage = mMaxPage;
 
             //mAdapter.addAll(details.getAll());
             mCache.put(details.getPage(), details);
@@ -618,8 +625,8 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                 return false;
             }
 
-            ThreadDetailActionModeCallback cb = new ThreadDetailActionModeCallback(ThreadDetailFragment.this, mTid,
-                    mAdapter.getItem(position));
+            ThreadDetailActionModeCallback cb = new ThreadDetailActionModeCallback(ThreadDetailFragment.this,
+                    mFid, mTid, mAdapter.getItem(position));
             getActivity().startActionMode(cb);
 
             return true;
@@ -686,7 +693,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             @Override
             public void onClick(View view) {
                 mCurrentPage = mMaxPage;
-                mOffsetInPage = LAST_FLOOR_OFFSET;
+                mFloorOfPage = LAST_FLOOR;
                 showOrLoadPage();
                 dialog.dismiss();
             }
@@ -736,15 +743,15 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             }
 
             mGoToPage = floor / mMaxPostInPage + 1; // page start from 1
-            mOffsetInPage = floor % mMaxPostInPage - 1; // offset start from 0
+            mFloorOfPage = floor % mMaxPostInPage; // floor start from 1
 
             if (mGoToPage != mCurrentPage) {
                 mCurrentPage = mGoToPage;
                 //getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
                 showOrLoadPage();
             } else {
-                mDetailListView.setSelection(mOffsetInPage + mDetailListView.getHeaderViewsCount());
-                mOffsetInPage = -1;
+                mDetailListView.setSelection(mFloorOfPage + mDetailListView.getHeaderViewsCount() - 1);
+                mFloorOfPage = -1;
             }
         }
     }
@@ -810,14 +817,14 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             mAdapter.addAll(mCache.get(mCurrentPage).getAll());
             mAdapter.notifyDataSetChanged();
 
-            if (mOffsetInPage == LAST_FLOOR_OFFSET) {
+            if (mFloorOfPage == LAST_FLOOR) {
                 mDetailListView.setSelection(mAdapter.getCount() - 1 + mDetailListView.getHeaderViewsCount());
-            } else if (mOffsetInPage >= 0) {
-                mDetailListView.setSelection(mOffsetInPage + mDetailListView.getHeaderViewsCount());
+            } else if (mFloorOfPage >= 0) {
+                mDetailListView.setSelection(mFloorOfPage + mDetailListView.getHeaderViewsCount() - 1);
             } else {
                 mDetailListView.setSelection(0);
             }
-            mOffsetInPage = -1;
+            mFloorOfPage = -1;
 
             //if current page loaded from cache, set prefetch flag for next page
             mPrefetching = false;

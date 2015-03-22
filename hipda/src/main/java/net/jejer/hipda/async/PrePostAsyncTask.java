@@ -3,7 +3,6 @@ package net.jejer.hipda.async;
 import android.content.Context;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -67,7 +66,6 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List
                 break;
             case PostAsyncTask.MODE_EDIT_POST:
                 //fid is not really needed, just put a value here
-                if (TextUtils.isEmpty(fid)) fid = "2";
                 url = HiUtils.EditUrl + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
                 break;
         }

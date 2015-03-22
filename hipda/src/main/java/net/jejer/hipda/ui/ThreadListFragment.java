@@ -350,7 +350,7 @@ public class ThreadListFragment extends Fragment
             if (maxPostsInPage > 0 && TextUtils.isDigitsOnly(thread.getCountCmts())) {
                 page = (int) Math.ceil((Integer.parseInt(thread.getCountCmts()) + 1) * 1.0f / maxPostsInPage);
             }
-            showThreadDetailFragment(tid, title, page, ThreadDetailFragment.LAST_FLOOR_OFFSET);
+            showThreadDetailFragment(tid, title, page, ThreadDetailFragment.LAST_FLOOR);
             return true;
         }
     }

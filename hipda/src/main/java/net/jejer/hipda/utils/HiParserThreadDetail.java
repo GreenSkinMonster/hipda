@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.jejer.hipda.bean.DetailBean;
@@ -21,6 +22,23 @@ public class HiParserThreadDetail {
     public static final String LOG_TAG = "HiParserThreadDetail";
 
     public static DetailListBean parse(Context ctx, Handler handler, int page, Document doc) {
+
+        // get last page
+        Elements pagesES = doc.select("div#wrap div.forumcontrol div.pages");
+        // thread have only 1 page don't have "div.pages"
+        int last_page = 1;
+        if (pagesES.size() != 0) {
+            for (Node n : pagesES.first().childNodes()) {
+                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                if (tmp > last_page) {
+                    last_page = tmp;
+                }
+            }
+        }
+        if (page == ThreadDetailFragment.LAST_PAGE) {
+            page = last_page;
+        }
+
         // Update UI
         Message msgStartParse = Message.obtain();
         msgStartParse.what = ThreadListFragment.STAGE_PARSE;
@@ -35,20 +53,15 @@ public class HiParserThreadDetail {
         DetailListBean details = new DetailListBean();
         details.setPage(page);
 
-        // get last page
-        Elements pagesES = doc.select("div#wrap div.forumcontrol div.pages");
-        // thread have only 1 page don't have "div.pages"
-        int last_page = 1;
-        if (pagesES.size() != 0) {
-            for (Node n : pagesES.first().childNodes()) {
-                int tmp = HttpUtils.getIntFromString(((Element) n).text());
-                if (tmp > last_page) {
-                    last_page = tmp;
-                }
-            }
-        }
         details.setLastPage(last_page);
-        //Log.v("TEST_LAST_PAGE", String.valueOf(last_page));
+
+        //get forum id
+        Elements threadTitleES = doc.select("#threadtitle a");
+        if (threadTitleES.size() > 0) {
+            String forumUrl = threadTitleES.first().attr("href");
+            if (!TextUtils.isEmpty(forumUrl))
+                details.setFid(HttpUtils.getMiddleString(forumUrl, "fid=", "&"));
+        }
 
         //Title
         Elements threadtitleES = doc.select("div#threadtitle");

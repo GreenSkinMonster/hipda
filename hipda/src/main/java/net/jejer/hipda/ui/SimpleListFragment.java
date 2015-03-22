@@ -87,6 +87,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
         getLoaderManager().destroyLoader(0);
         mThreadListView.setAdapter(mSimpleListAdapter);
         mThreadListView.setOnItemClickListener(new OnItemClickCallback());
+        mThreadListView.setOnItemLongClickListener(new OnItemLongClickCallback());
         mThreadListView.setOnScrollListener(new OnScrollCallback());
 
         switch (mType) {
@@ -235,6 +236,41 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
                         .addToBackStack(ThreadDetailFragment.class.getName())
                         .commit();
             }
+        }
+    }
+
+    public class OnItemLongClickCallback implements AdapterView.OnItemLongClickListener {
+
+        @Override
+        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long row) {
+            setHasOptionsMenu(false);
+            SimpleListItemBean item = mSimpleListAdapter.getItem(position);
+
+            Bundle bun = new Bundle();
+            Fragment fragment;
+            if (mType == SimpleListLoader.TYPE_SMS) {
+                return true;
+            } else {
+                bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getId());
+                bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
+                bun.putInt(ThreadDetailFragment.ARG_PAGE_KEY, ThreadDetailFragment.LAST_PAGE);
+                bun.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, ThreadDetailFragment.LAST_FLOOR);
+                fragment = new ThreadDetailFragment();
+            }
+            fragment.setArguments(bun);
+            if (HiSettingsHelper.getInstance().getIsLandscape()) {
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
+                        .addToBackStack(ThreadDetailFragment.class.getName())
+                        .commit();
+            } else {
+                getFragmentManager().beginTransaction()
+                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                        .addToBackStack(ThreadDetailFragment.class.getName())
+                        .commit();
+            }
+
+            return true;
         }
     }
 

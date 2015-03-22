@@ -265,7 +265,7 @@ public class PostFragment extends Fragment {
                 }
                 return true;
             case R.id.action_post:
-                if ("6".equals(mFid) && "0".equals(mTypeid)) {
+                if (mMode == PostAsyncTask.MODE_NEW_THREAD && "6".equals(mFid) && "0".equals(mTypeid)) {
                     Toast.makeText(getActivity(), "B&S版发帖必须指定分类", Toast.LENGTH_LONG).show();
                     return true;
                 }

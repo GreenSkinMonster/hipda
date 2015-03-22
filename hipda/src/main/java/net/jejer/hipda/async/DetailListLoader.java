@@ -91,7 +91,12 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         msg.setData(b);
         mHandler.sendMessage(msg);
 
-        String url = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
+        String url;
+        if (mPage == ThreadDetailFragment.LAST_PAGE) {
+            url = HiUtils.LastPageUrl + mTid;
+        } else {
+            url = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
+        }
         StringRequest sReq = new HiStringRequest(mCtx, url,
                 new DetailListListener(), new ThreadDetailErrorListener());
         VolleyHelper.getInstance().add(sReq);
