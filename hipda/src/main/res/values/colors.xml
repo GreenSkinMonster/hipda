@@ -39,10 +39,14 @@
     <item name="day_detail_background" type="color">#FFFFFF</item>
     <item name="day_img_background" type="color">#F0F0F0</item>
     <item name="day_replybarbackground" type="color">#E8E8E8</item>
+    <item name="day_list_item_divider" type="color">@color/background_silver</item>
     <item name="night_background" type="color">#1C1D1E</item>
-    <item name="night_list_item_background" type="color">#2C2E30</item>
+    <item name="night_list_item_background" type="color">#1C1D1E</item>
     <item name="night_detail_background" type="color">#1C1D1E</item>
     <item name="night_img_background" type="color">#2B2C2D</item>
     <item name="night_replybarbackground" type="color">#000000</item>
+    <item name="night_list_item_divider" type="color">@color/background_grey</item>
+    <item name="eink_background" type="color">#FFFFFF</item>
+    <item name="eink_list_item_divider" type="color">@color/background_silver</item>
 
 </resources>

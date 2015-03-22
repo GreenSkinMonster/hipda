@@ -25,7 +25,7 @@
         android:scrollHorizontally="false"
         android:scrollbars="vertical"
         android:text="@string/txt_quick_mark"
-        android:layout_toLeftOf="@+id/ib_reply_post"></EditText>
+        android:layout_toLeftOf="@+id/ib_reply_post" />
 
     <ImageButton
         android:id="@+id/ib_reply_post"

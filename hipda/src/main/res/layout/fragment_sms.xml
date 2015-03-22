@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?background"
+    android:background="?list_item_background"
     android:orientation="vertical">
 
 
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:stackFromBottom="true"
         android:transcriptMode="normal"
-        android:layout_above="@+id/border_line"></ListView>
+        android:layout_above="@+id/border_line"/>
 
     <View
         android:id="@+id/border_line"
@@ -42,7 +42,7 @@
             android:scrollbars="vertical"
             android:gravity="bottom"
             android:text="@string/txt_quick_mark"
-            android:layout_toLeftOf="@+id/ib_send_sms"></EditText>
+            android:layout_toLeftOf="@+id/ib_send_sms"/>
 
         <ImageButton
             android:id="@+id/ib_send_sms"

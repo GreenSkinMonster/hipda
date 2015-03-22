@@ -3,7 +3,7 @@
     android:id="@+id/fragment_threadlist"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?background">
+    android:background="?list_item_background">
 
     <!-- <include layout="@layout/progress_bar"/> -->
 
@@ -17,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:divider="?background"
-            android:dividerHeight="8dp"/>
+            android:divider="?list_item_divider"
+            android:dividerHeight="1dp"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

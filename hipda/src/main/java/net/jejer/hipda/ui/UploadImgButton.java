@@ -44,11 +44,11 @@ public class UploadImgButton extends Button implements UploadImgAsyncTask.Upload
     @Override
     public void complete(boolean result, String id) {
         this.setEnabled(result);
-        if (result == true) {
+        if (result) {
             this.setEnabled(true);
             mId = id;
             this.setText("点击添加" + mName);
-            this.setTextColor(mCtx.getResources().getColor(R.color.hipda));
+            this.setTextColor(mCtx.getResources().getColor(R.color.icon_blue));
         } else {
             this.setText("上传失败或图片太大");
             this.setTextColor(mCtx.getResources().getColor(R.color.red));
