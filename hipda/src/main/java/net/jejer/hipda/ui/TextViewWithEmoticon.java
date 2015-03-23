@@ -9,14 +9,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Html;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -32,6 +35,8 @@ public class TextViewWithEmoticon extends TextView {
     private final static String LOG_TAG = "TextViewWithEmoticon";
     private static Context mCtx;
     private static FragmentManager mFragmentManager;
+
+    private static final Spannable.Factory spannableFactory = Spannable.Factory.getInstance();
 
     public TextViewWithEmoticon(Context context) {
         super(context);
@@ -57,7 +62,6 @@ public class TextViewWithEmoticon extends TextView {
         super.setText(s, BufferType.SPANNABLE);
     }
 
-    private static final Spannable.Factory spannableFactory = Spannable.Factory.getInstance();
 
     private static boolean addImages(Context context, Spannable spannable) {
         Pattern refImg = Pattern.compile("\\Q[emoticon images/smilies/\\E([a-zA-Z0-9_\\/]+)\\Q.gif]\\E");
@@ -178,6 +182,43 @@ public class TextViewWithEmoticon extends TextView {
         Spannable spannable = spannableFactory.newSpannable(b);
         addImages(context, spannable);
         return spannable;
+    }
+
+    /**
+     * http://stackoverflow.com/a/17246463/2299887
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean ret = false;
+        CharSequence text = getText();
+        Spannable stext = Spannable.Factory.getInstance().newSpannable(text);
+        int action = event.getAction();
+
+        if (action == MotionEvent.ACTION_UP ||
+                action == MotionEvent.ACTION_DOWN) {
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+
+            x -= getTotalPaddingLeft();
+            y -= getTotalPaddingTop();
+
+            x += getScrollX();
+            y += getScrollY();
+
+            Layout layout = getLayout();
+            int line = layout.getLineForVertical(y);
+            int off = layout.getOffsetForHorizontal(line, x);
+
+            ClickableSpan[] link = stext.getSpans(off, off, ClickableSpan.class);
+
+            if (link.length != 0) {
+                if (action == MotionEvent.ACTION_UP) {
+                    link[0].onClick(this);
+                }
+                ret = true;
+            }
+        }
+        return ret;
     }
 
 }

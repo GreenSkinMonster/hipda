@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -116,7 +115,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
                 tv.setFragmentManager(mFragmentManager);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize());
-                tv.setMovementMethod(LinkMovementMethod.getInstance());
+
                 //dirty hack, remove extra <br>
                 String cnt = content.getContent();
                 if (trimBr) {
@@ -196,7 +195,6 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
                 tv.setFragmentManager(mFragmentManager);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize());
-                tv.setMovementMethod(LinkMovementMethod.getInstance());
                 tv.setText(content.getContent());
                 tv.setFocusable(false);
                 contentView.addView(tv);
