@@ -33,6 +33,7 @@
         <item name="detail_background">@color/day_detail_background</item>
         <item name="img_background">@color/day_img_background</item>
         <item name="replyBarBackground">@color/day_replybarbackground</item>
+        <item name="quote_text_background">@color/day_quote_text_background</item>
         <item name="list_item_divider">@color/day_list_item_divider</item>
         <item name="icon_refresh">@drawable/ic_action_refresh_day</item>
         <item name="icon_send">@drawable/ic_action_send_now_day</item>
@@ -61,6 +62,7 @@
         <item name="detail_background">@color/night_detail_background</item>
         <item name="img_background">@color/night_img_background</item>
         <item name="replyBarBackground">@color/night_replybarbackground</item>
+        <item name="quote_text_background">@color/night_quote_text_background</item>
         <item name="list_item_divider">@color/night_list_item_divider</item>
         <item name="icon_refresh">@drawable/ic_action_refresh_night</item>
         <item name="icon_send">@drawable/ic_action_send_now_night</item>
@@ -90,6 +92,7 @@
         <item name="detail_background">@color/day_detail_background</item>
         <item name="img_background">@color/day_img_background</item>
         <item name="replyBarBackground">@color/day_replybarbackground</item>
+        <item name="quote_text_background">@color/eink_quote_text_background</item>
         <item name="list_item_divider">@color/eink_list_item_divider</item>
         <item name="icon_refresh">@drawable/ic_action_refresh_eink</item>
         <item name="icon_send">@drawable/ic_action_send_now_eink</item>

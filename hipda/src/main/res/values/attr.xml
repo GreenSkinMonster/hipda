@@ -8,6 +8,7 @@
     <attr name="img_background" format="color" />
     <attr name="replyBarBackground" format="color" />
     <attr name="list_item_divider" format="color" />
+    <attr name="quote_text_background" format="color" />
     <attr name="icon_refresh" format="reference" />
     <attr name="icon_send" format="reference" />
     <attr name="icon_reply" format="reference" />

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -200,13 +201,18 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 tv.setFocusable(false);
                 contentView.addView(tv);
             } else if (content instanceof ContentQuote && !((ContentQuote) content).isReplyQuote()) {
+
+                TypedValue typedValue = new TypedValue();
+                mCtx.getTheme().resolveAttribute(R.attr.quote_text_background, typedValue, true);
+                int color = typedValue.data;
+
                 TextView tv = new TextView(mCtx);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
                 tv.setAutoLinkMask(Linkify.WEB_URLS);
                 tv.setText(content.getContent());
                 tv.setFocusable(false);    // make convertView long clickable.
                 tv.setPadding(16, 16, 16, 16);
-                tv.setBackgroundColor(mCtx.getResources().getColor(R.color.quote_text_background));
+                tv.setBackgroundColor(mCtx.getResources().getColor(color));
                 contentView.addView(tv);
                 trimBr = true;
             } else if (content instanceof ContentGoToFloor || content instanceof ContentQuote) {

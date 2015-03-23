@@ -18,7 +18,6 @@
 
     <item name="background_grey" type="color">#4E808080</item>
     <item name="background_silver" type="color">#4EC0C0C0</item>
-    <item name="quote_text_background" type="color">#33C0C0C0</item>
 
     <integer-array name="androidcolors">
         <item>@color/blue</item>
@@ -49,5 +48,9 @@
     <item name="night_list_item_divider" type="color">@color/background_grey</item>
     <item name="eink_background" type="color">#FFFFFF</item>
     <item name="eink_list_item_divider" type="color">@color/background_silver</item>
+    <item name="day_quote_text_background" type="color">#33C0C0C0</item>
+    <item name="night_quote_text_background" type="color">#11C0C0C0</item>
+    <item name="eink_quote_text_background" type="color">#33C0C0C0</item>
+
 
 </resources>
