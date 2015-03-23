@@ -28,7 +28,8 @@
         android:layout_alignParentTop="true"
         android:divider="?list_item_divider"
         android:dividerHeight="1dp"
-        android:clickable="true" />
+        android:clickable="true"
+        android:paddingBottom="8dp" />
 
     <ImageView
         android:id="@+id/btn_detail_pageup"

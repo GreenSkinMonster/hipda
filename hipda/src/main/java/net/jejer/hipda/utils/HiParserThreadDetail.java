@@ -250,11 +250,16 @@ public class HiParserThreadDetail {
             return true;
         } else if (contentN.nodeName().equals("strong")) {
             String tmp = ((Element) contentN).text();
+            String postId = "";
+            Elements floorLink = ((Element) contentN).select("a[href]");
+            if (floorLink.size() > 0) {
+                postId = HttpUtils.getMiddleString(floorLink.first().attr("href"), "pid=", "&");
+            }
             if (tmp.startsWith("回复 ") && tmp.length() < (3 + 6 + 15) && tmp.contains("#")) {
                 int floor = HttpUtils.getIntFromString(tmp.substring(0, tmp.indexOf("#")));
                 String author = tmp.substring(tmp.lastIndexOf("#") + 1).trim();
-                if (floor > 0) {
-                    content.addGoToFloor(tmp, floor, author);
+                if (!TextUtils.isEmpty(postId) && floor > 0) {
+                    content.addGoToFloor(tmp, postId, floor, author);
                     return false;
                 }
             }
@@ -352,7 +357,13 @@ public class HiParserThreadDetail {
                 // remove div.t_attach
                 return false;
             } else if (divE.hasClass("quote")) {
-                content.addQuote(divE.text());
+                Elements postEls = divE.select("font[size=2]");
+                String authorAndTime = "";
+                if (postEls.size() > 0) {
+                    authorAndTime = postEls.first().text();
+                    postEls.first().remove();
+                }
+                content.addQuote(divE.text(), authorAndTime);
                 return false;
             } else if (divE.hasClass("attach_popup")) {
                 // remove div.attach_popup

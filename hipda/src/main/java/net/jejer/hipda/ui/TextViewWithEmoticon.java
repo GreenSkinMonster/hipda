@@ -15,6 +15,7 @@ import android.text.Spanned;
 import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.URLSpan;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -34,6 +35,13 @@ public class TextViewWithEmoticon extends TextView {
 
     public TextViewWithEmoticon(Context context) {
         super(context);
+        mCtx = context;
+        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled())
+            setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
+    }
+
+    public TextViewWithEmoticon(Context context, AttributeSet attrs) {
+        super(context, attrs);
         mCtx = context;
         if (HiSettingsHelper.getInstance().isEinkModeUIEnabled())
             setLinkTextColor(mCtx.getResources().getColor(R.color.grey));

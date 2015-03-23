@@ -35,6 +35,7 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideScaleViewTarget;
 import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
         ViewHolder holder;
 
         if (convertView == null || convertView.getTag() == null) {
-            convertView = mInflater.inflate(R.layout.item_thread_detail, null);
+            convertView = mInflater.inflate(R.layout.item_thread_detail, parent, false);
 
             holder = new ViewHolder();
             holder.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
@@ -198,41 +199,70 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 tv.setText(content.getContent());
                 tv.setFocusable(false);
                 contentView.addView(tv);
-            } else if (content instanceof ContentQuote) {
+            } else if (content instanceof ContentQuote && !((ContentQuote) content).isReplyQuote()) {
                 TextView tv = new TextView(mCtx);
-                tv.setTextSize(HiSettingsHelper.getPostTextSize());
+                tv.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
                 tv.setAutoLinkMask(Linkify.WEB_URLS);
                 tv.setText(content.getContent());
                 tv.setFocusable(false);    // make convertView long clickable.
-                tv.setPadding(8, 8, 8, 8);
+                tv.setPadding(16, 16, 16, 16);
                 tv.setBackgroundColor(mCtx.getResources().getColor(R.color.quote_text_background));
                 contentView.addView(tv);
                 trimBr = true;
-            } else if (content instanceof ContentGoToFloor) {
-                ContentGoToFloor contentGoToFloor = (ContentGoToFloor) content;
-                TextView btnGotoFloor = new TextView(mCtx);
-                btnGotoFloor.setBackgroundColor(mCtx.getResources().getColor(R.color.quote_text_background));
-                btnGotoFloor.setText(contentGoToFloor.getAuthor()
-                        + "    " + contentGoToFloor.getFloor() + "#");
-                btnGotoFloor.setTag(contentGoToFloor.getFloor());
-                btnGotoFloor.setOnClickListener(mGoToFloorListener);
-                btnGotoFloor.setFocusable(false);    // make convertView long clickable.
-                btnGotoFloor.setClickable(true);
-                btnGotoFloor.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
-                btnGotoFloor.setGravity(Gravity.RIGHT);
-                btnGotoFloor.setPadding(16, 8, 16, 8);
-                contentView.addView(btnGotoFloor);
+            } else if (content instanceof ContentGoToFloor || content instanceof ContentQuote) {
 
-                String quoteText = mDetailFragment.getCachedFlootContent(contentGoToFloor.getFloor());
-                if (!TextUtils.isEmpty(quoteText)) {
-                    TextViewWithEmoticon quoteTextView = new TextViewWithEmoticon(mCtx);
-                    quoteTextView.setPadding(16, 16, 16, 20);
-                    quoteTextView.setText(quoteText);
-                    quoteTextView.setBackgroundColor(mCtx.getResources().getColor(R.color.quote_text_background));
-                    quoteTextView.setFocusable(false);
-                    quoteTextView.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
-                    contentView.addView(quoteTextView);
+                String author = "";
+                String time = "";
+                String note = "";
+                String text = "";
+
+                int floor = -1;
+                if (content instanceof ContentGoToFloor) {
+                    //floor is not accurate if some user deleted post
+                    //use floor to get page, then get cache by postid
+                    ContentGoToFloor goToFloor = (ContentGoToFloor) content;
+                    author = goToFloor.getAuthor();
+                    floor = goToFloor.getFloor();
+                    DetailBean detailBean = mDetailFragment.getCachedPost(goToFloor.getFloor(), goToFloor.getPostId());
+                    if (detailBean != null) {
+                        text = detailBean.getContents().getCopyText(true);
+                        floor = Integer.parseInt(detailBean.getFloor());
+                    }
+                    note = floor + "#";
+                } else {
+                    author = ((ContentQuote) content).getAuthor();
+                    if (!TextUtils.isEmpty(((ContentQuote) content).getTo()))
+                        note = "to: " + ((ContentQuote) content).getTo();
+                    time = ((ContentQuote) content).getTime();
+                    text = ((ContentQuote) content).getText();
                 }
+
+                LinearLayout quoteLayout = (LinearLayout) LayoutInflater.from(mCtx)
+                        .inflate(R.layout.item_quote_text, parent, false);
+
+                TextView tvAuthor = (TextView) quoteLayout.findViewById(R.id.quote_author);
+                TextView tvNote = (TextView) quoteLayout.findViewById(R.id.quote_note);
+                TextView tvContent = (TextView) quoteLayout.findViewById(R.id.quote_content);
+                TextView tvTime = (TextView) quoteLayout.findViewById(R.id.quote_post_time);
+
+                tvAuthor.setText(Utils.nullToText(author));
+                tvNote.setText(Utils.nullToText(note));
+                tvContent.setText(Utils.nullToText(text));
+                tvTime.setText(Utils.nullToText(time));
+
+                tvAuthor.setTextSize(HiSettingsHelper.getPostTextSize() - 2);
+                tvNote.setTextSize(HiSettingsHelper.getPostTextSize() - 2);
+                tvContent.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
+                tvTime.setTextSize(HiSettingsHelper.getPostTextSize() - 4);
+
+                if (floor > 0) {
+                    tvNote.setTag(floor);
+                    tvNote.setOnClickListener(mGoToFloorListener);
+                    tvNote.setFocusable(false);
+                    tvNote.setClickable(true);
+                }
+
+                contentView.addView(quoteLayout);
                 trimBr = true;
             }
         }

@@ -379,14 +379,14 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         }
     }
 
-    public String getCachedFlootContent(int floor) {
+    public DetailBean getCachedPost(int floor, String postId) {
         //if user direct jump to last page, he may not get correct mMaxPostInPage
         if (mMaxPostInPage < HiSettingsHelper.getInstance().getMaxPostsInPage()) {
             mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
         }
         int page = (floor / mMaxPostInPage) + 1;
         if (mCache.get(page) != null)
-            return mCache.get(page).getContentsByFloor(floor + "");
+            return mCache.get(page).getPostByPostId(postId);
         return null;
     }
 

@@ -12,17 +12,17 @@ public class DetailListBean {
     private int mPage = 0;
     private String mTitle;
     private String mFid;
-    private HashMap<String, DetailBean> mFloorBeans;
+    private HashMap<String, DetailBean> mPostIdBeans;
 
     public DetailListBean() {
         mDetailBeans = new ArrayList<DetailBean>();
-        mFloorBeans = new HashMap<String, DetailBean>();
+        mPostIdBeans = new HashMap<String, DetailBean>();
         mHaveNext = false;
     }
 
     public void add(DetailBean detailBean) {
         mDetailBeans.add(detailBean);
-        mFloorBeans.put(detailBean.getFloor(), detailBean);
+        mPostIdBeans.put(detailBean.getPostId(), detailBean);
         mCount++;
     }
 
@@ -41,12 +41,8 @@ public class DetailListBean {
         return mDetailBeans.get(mDetailBeans.size() - 1).getPostId();
     }
 
-    public String getContentsByFloor(String floor) {
-        DetailBean detailBean = mFloorBeans.get(floor);
-        if (detailBean != null) {
-            return detailBean.getContents().getCopyText(true);
-        }
-        return null;
+    public DetailBean getPostByPostId(String postId) {
+        return mPostIdBeans.get(postId);
     }
 
     public Boolean getHaveNext() {

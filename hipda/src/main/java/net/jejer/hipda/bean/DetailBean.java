@@ -75,13 +75,13 @@ public class DetailBean {
             newString = true;
         }
 
-        public void addQuote(String text) {
-            list.add(new ContentQuote(unEscapeHtml(text)));
+        public void addQuote(String text, String authorAndTime) {
+            list.add(new ContentQuote(unEscapeHtml(text), authorAndTime));
             newString = true;
         }
 
-        public void addGoToFloor(String text, int floor, String author) {
-            list.add(new ContentGoToFloor(text, floor, author));
+        public void addGoToFloor(String text, String postId, int floor, String author) {
+            list.add(new ContentGoToFloor(text, postId, floor, author));
             newString = true;
         }
 
