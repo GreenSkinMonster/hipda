@@ -101,10 +101,9 @@ public class DetailBean {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < list.size(); i++) {
                 ContentAbs o = list.get(i);
-                if (isJustText && o instanceof ContentText)
+                if (!isJustText || o instanceof ContentText)
                     sb.append(o.getCopyText());
             }
-
             return sb.toString();
         }
     }
