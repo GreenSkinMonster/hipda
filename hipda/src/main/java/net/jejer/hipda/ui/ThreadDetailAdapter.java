@@ -202,7 +202,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 
                 TypedValue typedValue = new TypedValue();
                 mCtx.getTheme().resolveAttribute(R.attr.quote_text_background, typedValue, true);
-                int color = typedValue.data;
+                int colorRscId = typedValue.resourceId;
 
                 TextView tv = new TextView(mCtx);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
@@ -210,7 +210,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 tv.setText(content.getContent());
                 tv.setFocusable(false);    // make convertView long clickable.
                 tv.setPadding(16, 16, 16, 16);
-                tv.setBackgroundColor(mCtx.getResources().getColor(color));
+                tv.setBackgroundColor(mCtx.getResources().getColor(colorRscId));
                 contentView.addView(tv);
                 trimBr = true;
             } else if (content instanceof ContentGoToFloor || content instanceof ContentQuote) {
