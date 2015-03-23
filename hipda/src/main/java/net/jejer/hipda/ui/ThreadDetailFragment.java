@@ -775,7 +775,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             if (bundle != null) {
                 page = bundle.getInt(LOADER_PAGE_KEY, 0);
             }
-            String pageStr = "(第" + page + "页)";
+            String pageStr = page > 0 ? "(第" + page + "页)" : "";
 
             switch (msg.what) {
                 case ThreadListFragment.STAGE_ERROR:
