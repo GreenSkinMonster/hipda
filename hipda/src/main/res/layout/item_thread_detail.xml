@@ -12,8 +12,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:paddingBottom="16dp">
+            android:paddingBottom="12dp">
 
             <TextView
                 android:id="@+id/floor"
@@ -22,6 +21,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:padding="2dp"
+                android:layout_marginRight="2dp"
                 android:text=""
                 android:textColor="?attr/color_hipda"
                 android:textSize="20sp"
@@ -49,7 +49,7 @@
                     android:layout_alignParentBottom="true"
                     android:padding="4dp"
                     android:text=""
-                    android:textSize="17sp"
+                    android:textSize="18sp"
                     android:textColor="?attr/color_hipda" />
 
                 <TextView

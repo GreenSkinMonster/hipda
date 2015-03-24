@@ -88,6 +88,12 @@ public class HiParserThreadList {
             String threadCreateTime = threadCreateTimeES.first().text();
             thread.setTimeCreate(threadCreateTime);
 
+            Elements threadUpdateTimeES = tbodyE.select("td.lastpost em a");
+            if (threadUpdateTimeES.size() > 0) {
+                String threadUpdateTime = threadUpdateTimeES.first().text();
+                thread.setTimeUpdate(threadUpdateTime);
+            }
+
 			/*  comments and views  */
             Elements nums = tbodyE.select("td.nums");
             if (nums.size() == 0) {

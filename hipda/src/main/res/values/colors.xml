@@ -49,7 +49,7 @@
     <item name="eink_background" type="color">#FFFFFF</item>
     <item name="eink_list_item_divider" type="color">@color/background_silver</item>
     <item name="day_quote_text_background" type="color">#33C0C0C0</item>
-    <item name="night_quote_text_background" type="color">#11C0C0C0</item>
+    <item name="night_quote_text_background" type="color">#22C0C0C0</item>
     <item name="eink_quote_text_background" type="color">#33C0C0C0</item>
 
 

@@ -16,6 +16,7 @@ public class ThreadBean {
     private String mCountViews;
 
     private String mTimeCreate;
+    private String mTimeUpdate;
     private Boolean mHaveAttach;
     private Boolean mHavePic;
 
@@ -105,15 +106,23 @@ public class ThreadBean {
     }
 
 
+    public String getTimeUpdate() {
+        return mTimeUpdate;
+    }
+
+
+    public void setTimeUpdate(String timeUpdate) {
+        mTimeUpdate = timeUpdate;
+    }
+
     public String getTimeCreate() {
-        return mTimeCreate.replaceAll("-", "/");
+        return mTimeCreate;
     }
 
 
     public void setTimeCreate(String mTimeCreate) {
         this.mTimeCreate = mTimeCreate;
     }
-
 
     public Boolean getHaveAttach() {
         return mHaveAttach;
