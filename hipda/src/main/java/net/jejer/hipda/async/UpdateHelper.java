@@ -142,7 +142,7 @@ public class UpdateHelper {
         public void onErrorResponse(VolleyError error) {
             Log.e(LOG_TAG, error.toString());
             if (!mSilent) {
-                pd.dismiss("检查新版本时发生错误", 3000);
+                pd.dismiss("检查新版本时发生错误 : " + VolleyHelper.getErrorReason(error), 3000);
             }
         }
     }

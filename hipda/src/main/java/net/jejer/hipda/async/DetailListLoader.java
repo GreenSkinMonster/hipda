@@ -122,7 +122,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
             Message msg = Message.obtain();
             msg.what = ThreadListFragment.STAGE_ERROR;
             Bundle b = new Bundle();
-            b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA,请检查网络");
+            b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA," + VolleyHelper.getErrorReason(error));
             msg.setData(b);
             mHandler.sendMessage(msg);
 

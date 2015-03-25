@@ -141,7 +141,8 @@ public class UserinfoFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        mDetailView.setText("获取信息失败, 请重试.");
+                        Log.e(LOG_TAG, error.toString());
+                        mDetailView.setText("获取信息失败, 请重试." + VolleyHelper.getErrorReason(error));
                     }
                 });
         VolleyHelper.getInstance().add(sReq);

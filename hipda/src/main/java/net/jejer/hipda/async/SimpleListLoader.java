@@ -3,6 +3,7 @@ package net.jejer.hipda.async;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -138,6 +139,9 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
         @Override
         public void onErrorResponse(VolleyError error) {
             Log.e(LOG_TAG, error.toString());
+            Toast.makeText(mCtx,
+                    VolleyHelper.getErrorReason(error),
+                    Toast.LENGTH_LONG).show();
             synchronized (mLocker) {
                 mRsp = null;
                 mLocker.notify();
