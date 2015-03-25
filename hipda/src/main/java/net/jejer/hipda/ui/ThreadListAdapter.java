@@ -51,7 +51,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
         holder.tv_viewcounter = (TextView) convertView.findViewById(R.id.tv_viewcounter);
         holder.tv_replycounter = (TextView) convertView.findViewById(R.id.tv_replycounter);
         holder.tv_create_time = (TextView) convertView.findViewById(R.id.tv_create_time);
-        holder.tv_update_time = (TextView) convertView.findViewById(R.id.tv_update_time);
+        //holder.tv_update_time = (TextView) convertView.findViewById(R.id.tv_update_time);
         holder.iv_image_indicator = (ImageView) convertView.findViewById(R.id.iv_image_indicator);
 
         holders.put(thread.getTid(), holder);
@@ -67,7 +67,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
             holder.tv_viewcounter.setText(thread.getCountViews());
         }
         holder.tv_create_time.setText(Utils.shortyTime(thread.getTimeCreate()));
-        holder.tv_update_time.setText(Utils.shortyTime(thread.getTimeUpdate()));
+        //holder.tv_update_time.setText(Utils.shortyTime(thread.getTimeUpdate()));
 
         if (thread.getHavePic()) {
             holder.iv_image_indicator.setVisibility(View.VISIBLE);
@@ -94,7 +94,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
         TextView tv_viewcounter;
         TextView tv_replycounter;
         TextView tv_create_time;
-        TextView tv_update_time;
+        //TextView tv_update_time;
         ImageView iv_image_indicator;
     }
 }

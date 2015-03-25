@@ -12,7 +12,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp">
+            android:paddingBottom="8dp">
 
             <TextView
                 android:id="@+id/floor"
@@ -87,7 +87,7 @@
             android:orientation="vertical"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:paddingBottom="12dp" />
+            android:paddingBottom="8dp" />
     </LinearLayout>
 
 </LinearLayout>

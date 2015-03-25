@@ -115,6 +115,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
                 tv.setFragmentManager(mFragmentManager);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize());
+                tv.setPadding(8, 8, 8, 8);
 
                 //dirty hack, remove extra <br>
                 String cnt = content.getContent();
