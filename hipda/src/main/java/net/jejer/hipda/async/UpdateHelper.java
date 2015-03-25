@@ -1,12 +1,16 @@
 package net.jejer.hipda.async;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.Gravity;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -51,7 +55,7 @@ public class UpdateHelper {
     }
 
     private void doCheck() {
-        HiSettingsHelper.getInstance().setUpdateChecked(true);
+        HiSettingsHelper.getInstance().setAutoUpdateCheck(true);
         HiSettingsHelper.getInstance().setLastUpdateCheckTime(new Date());
 
         String url = HiUtils.UpdateUrl;
@@ -65,30 +69,65 @@ public class UpdateHelper {
         public void onResponse(String response) {
 
             String version = HiSettingsHelper.getInstance().getAppVersion();
-            String newVersion = "", url = "", filename = "";
-            String firstAttachment = HttpUtils.getMiddleString(response, "<a href=\"attachment.php?", "</a>");
+            String newVersion = "";
+            final String url;
+            final String filename;
+            String updateNotes = "";
+            if (response.contains("postnum29887924"))
+                response = response.substring(response.indexOf("postnum29887924"));
+            else
+                return;
+
             boolean found = false;
 
+            String firstAttachment = HttpUtils.getMiddleString(response, "<a href=\"attachment.php?", "</a>");
             if (firstAttachment != null && firstAttachment.contains("sid=") && firstAttachment.contains("hipda-release-")) {
                 String args = firstAttachment.substring(0, firstAttachment.indexOf("\""));
                 url = HiUtils.BaseUrl + "attachment.php?" + args;
                 filename = HttpUtils.getMiddleString(firstAttachment, "<strong>", "</strong>");
                 newVersion = HttpUtils.getMiddleString(filename, "hipda-release-", ".apk");
-
+                updateNotes = HttpUtils.getMiddleString(response.substring(response.indexOf("更新记录")), "<ul>", "</ul>");
                 found = !TextUtils.isEmpty(args) && !TextUtils.isEmpty(filename) && newer(version, newVersion);
+            } else {
+                url = "";
+                filename = "";
             }
 
             if (found) {
-                if (mSilent) {
-                    Toast.makeText(mCtx, "发现新版本 " + newVersion + "，请在设置中检查更新", Toast.LENGTH_LONG).show();
-                } else {
-                    pd.dismiss("发现新版本 " + newVersion + "，开始下载", 3000);
-                    DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
-                    DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
-                    req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                    req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-                    dm.enqueue(req);
+                if (!mSilent) {
+                    pd.dismiss();
                 }
+
+                Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion).setMessage(
+                        updateNotes.replace("<ul>", "").replace("<li>", "").replace("<br />", "")).
+                        setPositiveButton("下载",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
+                                        DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+                                        req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                        req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                                        dm.enqueue(req);
+                                    }
+                                }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).setNeutralButton("不再提醒", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        HiSettingsHelper.getInstance().setAutoUpdateCheck(false);
+                    }
+                }).create();
+
+                dialog.show();
+
+                TextView titleView = (TextView) dialog.findViewById(mCtx.getResources().getIdentifier("alertTitle", "id", "android"));
+                if (titleView != null) {
+                    titleView.setGravity(Gravity.CENTER);
+                }
+
             } else {
                 if (!mSilent) {
                     pd.dismiss("没有发现新版本", 3000);
@@ -110,6 +149,8 @@ public class UpdateHelper {
 
     private boolean newer(String version, String newVersion) {
         //version format #.#.##
+        if (TextUtils.isEmpty(newVersion))
+            return false;
         try {
             return Integer.parseInt(newVersion.replace(".", "")) > Integer.parseInt(version.replace(".", ""));
         } catch (Exception ignored) {

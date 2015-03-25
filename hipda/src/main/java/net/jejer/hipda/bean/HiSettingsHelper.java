@@ -42,6 +42,7 @@ public class HiSettingsHelper {
     public static final String PERF_SCREEN_ORIENTATION = "PERF_SCREEN_ORIENTATION";
     public static final String PERF_GESTURE_BACK = "PERF_GESTURE_BACK";
     public static final String PERF_LAST_UPDATE_CHECK = "PERF_LAST_UPDATE_CHECK";
+    public static final String PERF_AUTO_UPDATE_CHECK = "PERF_AUTO_UPDATE_CHECK";
     public static final String PERF_ABOUT = "PERF_ABOUT";
     public static final String PERF_MAX_POSTS_IN_PAGE = "PERF_MAX_POSTS_IN_PAGE";
 
@@ -90,16 +91,6 @@ public class HiSettingsHelper {
 
     public boolean getIsLandscape() {
         return mIsLandscape;
-    }
-
-    private boolean mIsUpdateChecked;
-
-    public boolean isUpdateChecked() {
-        return mIsUpdateChecked;
-    }
-
-    public void setUpdateChecked(boolean updateChecked) {
-        mIsUpdateChecked = updateChecked;
     }
 
     // --------------- THIS IS NOT IN PERF -----------
@@ -518,6 +509,15 @@ public class HiSettingsHelper {
         editor.putString(HiSettingsHelper.PERF_LAST_UPDATE_CHECK, d.getTime() + "").apply();
     }
 
+    public void setAutoUpdateCheck(boolean b) {
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(HiSettingsHelper.PERF_AUTO_UPDATE_CHECK, b).apply();
+    }
+
+    public boolean isAutoUpdateCheck() {
+        return mSharedPref.getBoolean(PERF_AUTO_UPDATE_CHECK, true);
+    }
+
     public int getMaxPostsInPage() {
         if (mMaxPostsInPage <= 0) {
             mMaxPostsInPage = mSharedPref.getInt(PERF_MAX_POSTS_IN_PAGE, 0);
@@ -535,13 +535,12 @@ public class HiSettingsHelper {
     }
 
     public boolean isUpdateCheckable() {
-        if (!isUpdateChecked()) {
-            Date now = new Date();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            Date lastCheck = HiSettingsHelper.getInstance().getLastUpdateCheckTime();
-            return lastCheck == null || !formatter.format(now).equals(formatter.format(lastCheck));
-        }
-        return false;
+        if (!isAutoUpdateCheck())
+            return false;
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        Date lastCheck = HiSettingsHelper.getInstance().getLastUpdateCheckTime();
+        return lastCheck == null || !formatter.format(now).equals(formatter.format(lastCheck));
     }
 
     public String getAppVersion() {

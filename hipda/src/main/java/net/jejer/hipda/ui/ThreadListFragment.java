@@ -34,7 +34,6 @@ import android.widget.Toast;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.async.ThreadListLoader;
-import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.ThreadBean;
@@ -466,10 +465,6 @@ public class ThreadListFragment extends Fragment
             Message msgClean = Message.obtain();
             msgClean.what = STAGE_CLEAN;
             mMsgHandler.sendMessageDelayed(msgClean, 1000);
-
-            if (HiSettingsHelper.getInstance().isUpdateCheckable()) {
-                new UpdateHelper(mCtx, true).check();
-            }
 
         }
 

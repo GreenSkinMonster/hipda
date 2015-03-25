@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
@@ -121,7 +122,12 @@ public class MainFrameActivity extends Activity {
                     .replace(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
                     .addToBackStack(SettingsFragment.class.getName())
                     .commit();
+        } else {
+            if (HiSettingsHelper.getInstance().isUpdateCheckable()) {
+                new UpdateHelper(this, true).check();
+            }
         }
+
     }
 
     @Override
