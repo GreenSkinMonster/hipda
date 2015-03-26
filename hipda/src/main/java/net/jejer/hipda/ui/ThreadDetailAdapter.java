@@ -120,10 +120,10 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
         holder.avatar.setOnClickListener(mAvatarListener);
 
 
-//should be useless!
-//        holder.author.setTag(R.id.avatar_tag_uid, detail.getUid());
-//        holder.author.setTag(R.id.avatar_tag_username, detail.getAuthor());
-//        holder.author.setOnClickListener(mAvatarListener);
+
+        holder.author.setTag(R.id.avatar_tag_uid, detail.getUid());
+        holder.author.setTag(R.id.avatar_tag_username, detail.getAuthor());
+        holder.author.setOnClickListener(mAvatarListener);
 
         LinearLayout contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
         contentView.removeAllViews();
