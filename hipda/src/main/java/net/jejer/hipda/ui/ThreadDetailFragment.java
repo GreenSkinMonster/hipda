@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -132,6 +133,11 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             mTitleView = (TextView) view.findViewById(R.id.thread_detail_title);
             mTitleView.setTextSize(HiSettingsHelper.getTitleTextSize());
             mTitleView.setText(mTitle);
+            if (ThreadListFragment.TITLE_BOLD_ON == HiSettingsHelper.getInstance().getTitleBold()) {
+                mTitleView.setTypeface(null, Typeface.BOLD);
+            } else {
+                mTitleView.setTypeface(null, Typeface.NORMAL);
+            }
         }
         mDetailListView.setPullLoadEnable(false);
         mDetailListView.setPullRefreshEnable(false);

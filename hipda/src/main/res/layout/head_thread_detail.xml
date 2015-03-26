@@ -17,7 +17,6 @@
         android:gravity="center"
         android:text=""
         android:textSize="18sp"
-        android:textStyle="bold"
         android:background="?detail_background"
         android:visibility="visible" />
 
