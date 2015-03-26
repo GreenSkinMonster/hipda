@@ -21,7 +21,9 @@ public class ContentQuote extends ContentAbs {
         }
         if (text.startsWith("回复")) {
             text = text.substring("回复".length()).trim();
-            if (text.indexOf(" ") > 0)
+            if (text.indexOf("    ") > 0)
+                to = text.substring(0, text.indexOf("    ")).trim();
+            else if (text.indexOf(" ") > 0)
                 to = text.substring(0, text.indexOf(" ")).trim();
             if (!TextUtils.isEmpty(to))
                 text = text.substring(to.length() + 1).trim();
