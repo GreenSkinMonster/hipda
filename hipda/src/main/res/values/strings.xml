@@ -11,6 +11,7 @@
     <string name="action_copy">复制</string>
     <string name="action_only_author">只看楼主</string>
     <string name="action_open_url">浏览器打开</string>
+    <string name="action_post_font">行距设置</string>
     <string name="action_thread_list_settings">帖子设置</string>
     <string name="action_upload_img">上传图片</string>
     <string name="action_add_favorite">添加收藏</string>

@@ -507,6 +507,7 @@ public class ThreadListFragment extends Fragment
             @Override
             public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
                 HiSettingsHelper.getInstance().setShowThreadListAvatar(arg1);
+                mThreadListAdapter.notifyDataSetChanged();
             }
         });
         sPrefetch.setChecked(HiSettingsHelper.getInstance().isPreFetch());

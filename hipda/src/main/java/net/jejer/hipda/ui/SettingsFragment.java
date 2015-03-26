@@ -43,6 +43,7 @@ public class SettingsFragment extends PreferenceFragment {
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_EINK_MODE));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TITLE_BOLD));
+        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_POST_LINE_SPACING));
 
         Preference dialogPref = findPreference(HiSettingsHelper.PERF_ABOUT);
         dialogPref.setSummary(HiSettingsHelper.getInstance().getAppVersion());

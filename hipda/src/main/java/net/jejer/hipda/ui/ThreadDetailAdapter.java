@@ -68,6 +68,19 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 
         ViewHolder holder;
 
+        float lineSpacingExtra = 1f;
+        float lineSpacingMultiplier = 1.0f;
+        if (HiSettingsHelper.getInstance().getPostLineSpacing() == 1) {
+            lineSpacingExtra = 2;
+            lineSpacingMultiplier = 1.1f;
+        } else if (HiSettingsHelper.getInstance().getPostLineSpacing() == 2) {
+            lineSpacingExtra = 4;
+            lineSpacingMultiplier = 1.2f;
+        } else if (HiSettingsHelper.getInstance().getPostLineSpacing() == 3) {
+            lineSpacingExtra = 6;
+            lineSpacingMultiplier = 1.3f;
+        }
+
         if (convertView == null || convertView.getTag() == null) {
             convertView = mInflater.inflate(R.layout.item_thread_detail, parent, false);
 
@@ -119,6 +132,9 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 tv.setFragmentManager(mFragmentManager);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize());
                 tv.setPadding(8, 8, 8, 8);
+                if (HiSettingsHelper.getInstance().getPostLineSpacing() > 0) {
+                    tv.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
+                }
 
                 //dirty hack, remove extra <br>
                 String cnt = content.getContent();
@@ -198,6 +214,9 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 tv.setFocusable(false);    // make convertView long clickable.
                 tv.setPadding(16, 16, 16, 16);
                 tv.setBackgroundColor(mCtx.getResources().getColor(colorRscId));
+                if (HiSettingsHelper.getInstance().getPostLineSpacing() > 0) {
+                    tv.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
+                }
                 contentView.addView(tv);
                 trimBr = true;
             } else if (content instanceof ContentGoToFloor || content instanceof ContentQuote) {
@@ -245,6 +264,10 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 tvNote.setTextSize(HiSettingsHelper.getPostTextSize() - 2);
                 tvContent.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
                 tvTime.setTextSize(HiSettingsHelper.getPostTextSize() - 4);
+
+                if (HiSettingsHelper.getInstance().getPostLineSpacing() > 0) {
+                    tvContent.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
+                }
 
                 if (floor > 0) {
                     tvNote.setTag(floor);
