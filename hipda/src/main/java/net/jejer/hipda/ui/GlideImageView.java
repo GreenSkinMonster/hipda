@@ -39,8 +39,11 @@ public class GlideImageView extends ImageView {
 
     public void setUrl(String url) {
         mUrl = url;
-        setOnClickListener(new GlideImageViewClickHandler());
+    }
+
+    public void setClickToViewBigImage() {
         setClickable(true);
+        setOnClickListener(new GlideImageViewClickHandler());
     }
 
     private class GlideImageViewClickHandler implements OnClickListener {

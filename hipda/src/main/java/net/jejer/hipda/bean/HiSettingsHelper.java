@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import net.jejer.hipda.R;
 
@@ -36,6 +37,7 @@ public class HiSettingsHelper {
     public static final String PERF_NIGHTTHEME = "PERF_NIGHTTHEME";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
     public static final String PERF_EINK_MODE = "PERF_EINK_MODE";
+    public static final String PERF_TITLE_BOLD = "PERF_TITLE_BOLD";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
     public static final String PERF_TEXTSIZE_TITLE_ADJ = "PERF_TEXTSIZE_TITLE_ADJ";
@@ -45,6 +47,7 @@ public class HiSettingsHelper {
     public static final String PERF_AUTO_UPDATE_CHECK = "PERF_AUTO_UPDATE_CHECK";
     public static final String PERF_ABOUT = "PERF_ABOUT";
     public static final String PERF_MAX_POSTS_IN_PAGE = "PERF_MAX_POSTS_IN_PAGE";
+    public static final String PERF_POST_LINE_SPACING = "PERF_POST_LINE_SPACING";
 
 
     private Context mCtx;
@@ -72,10 +75,12 @@ public class HiSettingsHelper {
 
     private boolean mEncodeUtf8 = false;
     private Set<String> mEinkMode = new HashSet<String>();
+    private int mTitleBold;
 
     private String[] mBlanklistUsernames = null;
 
     private String mPostTextSizeAdj = "";
+    private int mPostLineSpacing = 0;
     private String mTitleTextSizeAdj = "";
     private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
     private boolean mGestureBack = true;
@@ -136,6 +141,8 @@ public class HiSettingsHelper {
         getScreenOrietationFromPref();
         isGestureBackFromPref();
         isPostRedirectFromPref();
+        getTitleBoldFromPref();
+        getPostLineSpacingFromPref();
     }
 
     public boolean isLoginInfoValid() {
@@ -405,6 +412,26 @@ public class HiSettingsHelper {
         editor.putStringSet(PERF_EINK_MODE, einkMode).commit();
     }
 
+    public int getTitleBold() {
+        return mTitleBold;
+    }
+
+    public void setTitleBold(int titleBold) {
+        mTitleBold = titleBold;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_TITLE_BOLD, titleBold + "").commit();
+    }
+
+    public int getTitleBoldFromPref() {
+        String strTitleBold = mSharedPref.getString(PERF_TITLE_BOLD, "0");
+        if (TextUtils.isDigitsOnly(strTitleBold)) {
+            mTitleBold = Integer.parseInt(strTitleBold);
+        } else {
+            mTitleBold = 0;
+        }
+        return mTitleBold;
+    }
+
     public String[] getBlanklistUsernames() {
         return mBlanklistUsernames;
     }
@@ -442,6 +469,25 @@ public class HiSettingsHelper {
         mPostTextSizeAdj = adj;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_TEXTSIZE_POST_ADJ, adj).commit();
+    }
+
+
+    public void setPostLineSpacing(int lineSpacing) {
+        mPostLineSpacing = lineSpacing;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_POST_LINE_SPACING, lineSpacing + "").commit();
+    }
+
+    public int getPostLineSpacing() {
+        return mPostLineSpacing;
+    }
+
+    public int getPostLineSpacingFromPref() {
+        String value = mSharedPref.getString(PERF_POST_LINE_SPACING, "0");
+        if (TextUtils.isDigitsOnly(value)) {
+            mPostLineSpacing = Integer.parseInt(value);
+        }
+        return mPostLineSpacing;
     }
 
     public int getTitleTextsizeAdj() {

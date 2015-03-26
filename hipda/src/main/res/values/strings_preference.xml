@@ -54,6 +54,19 @@
         <item>8</item>
     </string-array>
 
+    <string-array name="pref_post_line_spacing_titles">
+        <item>默认</item>
+        <item>稍大</item>
+        <item>再大点</item>
+        <item>很大了</item>
+    </string-array>
+    <string-array name="pref_post_line_spacing_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
     <string-array name="pref_title_textsize_adjust_titles">
         <item>-3</item>
         <item>-2</item>
@@ -102,6 +115,15 @@
         <item>3</item>
     </string-array>
 
+    <string-array name="pref_title_bold">
+        <item>启用</item>
+        <item>关闭</item>
+    </string-array>
+    <string-array name="pref_title_bold_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
     <string-array name="empty_array"></string-array>
 
     <string name="pref_category_tail">小尾巴</string>
@@ -125,6 +147,8 @@
     <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
     <string name="pref_title_textsize_adjust_title">标题字号调整</string>
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
+    <string name="pref_post_line_spacing_title">帖子行距调整</string>
+    <string name="pref_title_bold_title">标题使用粗体</string>
     <string name="pref_screen_orientation">屏幕方向</string>
     <string name="pref_title_about">关于HiPDA</string>
     <string name="pref_title_check_update">检查更新</string>
