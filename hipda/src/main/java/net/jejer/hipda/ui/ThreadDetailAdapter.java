@@ -37,6 +37,7 @@ import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
@@ -47,6 +48,8 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
     private View.OnClickListener mAvatarListener;
     private FragmentManager mFragmentManager;
     private ThreadDetailFragment mDetailFragment;
+
+    private List<String> loadedImages = new ArrayList<String>();
 
     public ThreadDetailAdapter(Context context, FragmentManager fm, ThreadDetailFragment detailFragment, int resource,
                                List<DetailBean> objects, Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
@@ -136,7 +139,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
             } else if (content instanceof ContentImg) {
                 final String imageUrl = content.getContent();
 
-                TextView textView = new TextView(mCtx);
+                final TextView textView = new TextView(mCtx);
                 textView.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
                 textView.setGravity(Gravity.CENTER_HORIZONTAL);
                 textView.setVisibility(View.INVISIBLE);
@@ -161,35 +164,18 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 
                 giv.setUrl(imageUrl);
 
-                if (HiUtils.isAutoLoadImg(mCtx)) {
-                    int maxViewWidth = 1080;
-
-                    //this fragment could be replaced by UserinfoFragment, so DO NOT cast it
-                    Fragment fragment = mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
-                    if (fragment != null && fragment.getView() != null) {
-                        maxViewWidth = fragment.getView().getWidth();
-                    }
-                    if (imageUrl.toLowerCase().endsWith(".gif")) {
-                        Glide.with(getContext())
-                                .load(imageUrl)
-                                .asBitmap()
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .placeholder(R.drawable.ic_action_picture)
-                                .error(R.drawable.tapatalk_image_broken)
-                                .into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
-                    } else {
-                        Glide.with(getContext())
-                                .load(imageUrl)
-                                .asBitmap()
-                                .cacheDecoder(new FileToStreamDecoder<Bitmap>(new ThreadImageDecoder()))
-                                .imageDecoder(new ThreadImageDecoder())
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .placeholder(R.drawable.ic_action_picture)
-                                .error(R.drawable.tapatalk_image_broken)
-                                .into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
-                    }
+                if (HiUtils.isAutoLoadImg(mCtx) || loadedImages.contains(imageUrl)) {
+                    loadImage(imageUrl, textView, giv);
                 } else {
                     giv.setImageResource(R.drawable.ic_action_picture);
+                    giv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            loadedImages.add(imageUrl);
+                            giv.setImageResource(R.drawable.loading);
+                            loadImage(imageUrl, textView, giv);
+                        }
+                    });
                 }
 
             } else if (content instanceof ContentAttach) {
@@ -273,6 +259,34 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
         }
 
         return convertView;
+    }
+
+    private void loadImage(String imageUrl, TextView textView, GlideImageView giv) {
+        int maxViewWidth = 1080;
+        //this fragment could be replaced by UserinfoFragment, so DO NOT cast it
+        Fragment fragment = mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
+        if (fragment != null && fragment.getView() != null) {
+            maxViewWidth = fragment.getView().getWidth();
+        }
+        if (imageUrl.toLowerCase().endsWith(".gif")) {
+            Glide.with(getContext())
+                    .load(imageUrl)
+                    .asBitmap()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_action_picture)
+                    .error(R.drawable.tapatalk_image_broken)
+                    .into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
+        } else {
+            Glide.with(getContext())
+                    .load(imageUrl)
+                    .asBitmap()
+                    .cacheDecoder(new FileToStreamDecoder<Bitmap>(new ThreadImageDecoder()))
+                    .imageDecoder(new ThreadImageDecoder())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_action_picture)
+                    .error(R.drawable.tapatalk_image_broken)
+                    .into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
+        }
     }
 
     private static class ViewHolder {

@@ -67,6 +67,10 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
         } else {
             mTextView.setVisibility(View.INVISIBLE);
         }
+
+        if (getView() instanceof GlideImageView)
+            ((GlideImageView) getView()).setClickToViewBigImage();
+
         if (Log.isLoggable(LOG_TAG, Log.VERBOSE))
             Log.v(LOG_TAG, "mVW=" + maxViewWidth + " mSW=" + maxScaleWidth + ", size=" + resource.getWidth() + "x" + resource.getHeight() + "," + mUrl.substring(mUrl.lastIndexOf("/") + 1));
     }
