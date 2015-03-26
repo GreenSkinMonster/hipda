@@ -30,8 +30,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_margin="4dp"
                 android:text=""
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_info"

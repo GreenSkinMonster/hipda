@@ -55,6 +55,15 @@
                 android:textColor="?attr/color_hipda" />
 
 
+            <TextView
+                android:id="@+id/tv_update_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:text=""
+                android:textSize="14sp"
+                android:visibility="gone" />
+
             <ImageView
                 android:id="@+id/iv_image_indicator"
                 android:layout_width="20dp"

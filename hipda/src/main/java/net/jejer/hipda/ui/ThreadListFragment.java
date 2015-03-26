@@ -56,6 +56,10 @@ public class ThreadListFragment extends Fragment
     public final static int STAGE_PREFETCH = 5;
     public final static String STAGE_ERROR_KEY = "ERROR_MSG";
 
+    public final static int TITLE_BOLD_ON = 0;
+    public final static int TITLE_BOLD_OFF = 1;
+    public final static int TITLE_BOLD_ONLY_NEW = 2;
+
     private final String LOG_TAG = getClass().getSimpleName();
     private Context mCtx;
     private int mForumId = 0;

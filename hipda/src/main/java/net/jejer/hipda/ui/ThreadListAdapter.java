@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
         holder.tv_viewcounter = (TextView) convertView.findViewById(R.id.tv_viewcounter);
         holder.tv_replycounter = (TextView) convertView.findViewById(R.id.tv_replycounter);
         holder.tv_create_time = (TextView) convertView.findViewById(R.id.tv_create_time);
-        //holder.tv_update_time = (TextView) convertView.findViewById(R.id.tv_update_time);
+        holder.tv_update_time = (TextView) convertView.findViewById(R.id.tv_update_time);
         holder.iv_image_indicator = (ImageView) convertView.findViewById(R.id.iv_image_indicator);
 
         holders.put(thread.getTid(), holder);
@@ -60,6 +61,14 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
         holder.tv_title.setText(thread.getTitle());
         holder.tv_title.setTextSize(HiSettingsHelper.getTitleTextSize());
+        if (ThreadListFragment.TITLE_BOLD_ON == HiSettingsHelper.getInstance().getTitleBold()
+                || (ThreadListFragment.TITLE_BOLD_ONLY_NEW == HiSettingsHelper.getInstance().getTitleBold()
+                && thread.isNew())) {
+            holder.tv_title.setTypeface(null, Typeface.BOLD);
+        } else {
+            holder.tv_title.setTypeface(null, Typeface.NORMAL);
+        }
+
         if (thread.getCountCmts() != null) {
             holder.tv_replycounter.setText(thread.getCountCmts());
         }
@@ -67,7 +76,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
             holder.tv_viewcounter.setText(thread.getCountViews());
         }
         holder.tv_create_time.setText(Utils.shortyTime(thread.getTimeCreate()));
-        //holder.tv_update_time.setText(Utils.shortyTime(thread.getTimeUpdate()));
+        holder.tv_update_time.setText(Utils.shortyTime(thread.getTimeUpdate()));
 
         if (thread.getHavePic()) {
             holder.iv_image_indicator.setVisibility(View.VISIBLE);
@@ -94,7 +103,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
         TextView tv_viewcounter;
         TextView tv_replycounter;
         TextView tv_create_time;
-        //TextView tv_update_time;
+        TextView tv_update_time;
         ImageView iv_image_indicator;
     }
 }

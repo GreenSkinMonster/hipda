@@ -57,6 +57,12 @@ public class HiParserThreadList {
             String title = titleES.first().text();
             thread.setTitle(title);
 
+            Elements threadIsNewES = tbodyE.select("td.folder img");
+            if (threadIsNewES.size() > 0) {
+                String imgSrc = Utils.nullToText(threadIsNewES.first().attr("src"));
+                thread.setNew(imgSrc.contains("new"));
+            }
+
 			/*  author, authorId and create_time  */
             Elements authorES = tbodyE.select("td.author");
             if (authorES.size() == 0) {

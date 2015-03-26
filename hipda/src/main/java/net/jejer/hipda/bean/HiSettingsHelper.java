@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import net.jejer.hipda.R;
 
@@ -36,6 +37,7 @@ public class HiSettingsHelper {
     public static final String PERF_NIGHTTHEME = "PERF_NIGHTTHEME";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
     public static final String PERF_EINK_MODE = "PERF_EINK_MODE";
+    public static final String PERF_TITLE_BOLD = "PERF_TITLE_BOLD";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
     public static final String PERF_TEXTSIZE_TITLE_ADJ = "PERF_TEXTSIZE_TITLE_ADJ";
@@ -72,6 +74,7 @@ public class HiSettingsHelper {
 
     private boolean mEncodeUtf8 = false;
     private Set<String> mEinkMode = new HashSet<String>();
+    private int mTitleBold;
 
     private String[] mBlanklistUsernames = null;
 
@@ -136,6 +139,7 @@ public class HiSettingsHelper {
         getScreenOrietationFromPref();
         isGestureBackFromPref();
         isPostRedirectFromPref();
+        getTitleBoldFromPref();
     }
 
     public boolean isLoginInfoValid() {
@@ -403,6 +407,26 @@ public class HiSettingsHelper {
         mEinkMode = einkMode;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putStringSet(PERF_EINK_MODE, einkMode).commit();
+    }
+
+    public int getTitleBold() {
+        return mTitleBold;
+    }
+
+    public void setTitleBold(int titleBold) {
+        mTitleBold = titleBold;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_TITLE_BOLD, titleBold + "").commit();
+    }
+
+    public int getTitleBoldFromPref() {
+        String strTitleBold = mSharedPref.getString(PERF_TITLE_BOLD, "0");
+        if (TextUtils.isDigitsOnly(strTitleBold)) {
+            mTitleBold = Integer.parseInt(strTitleBold);
+        } else {
+            mTitleBold = 0;
+        }
+        return mTitleBold;
     }
 
     public String[] getBlanklistUsernames() {

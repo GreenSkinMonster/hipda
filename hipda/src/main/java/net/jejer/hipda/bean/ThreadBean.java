@@ -19,6 +19,7 @@ public class ThreadBean {
     private String mTimeUpdate;
     private Boolean mHaveAttach;
     private Boolean mHavePic;
+    private boolean mNew;
 
     public ThreadBean() {
         mIsStick = false;
@@ -128,7 +129,6 @@ public class ThreadBean {
         return mHaveAttach;
     }
 
-
     public void setHaveAttach(Boolean mHaveAttach) {
         this.mHaveAttach = mHaveAttach;
     }
@@ -138,9 +138,16 @@ public class ThreadBean {
         return mHavePic;
     }
 
-
     public void setHavePic(Boolean mHavePic) {
         this.mHavePic = mHavePic;
+    }
+
+    public boolean isNew() {
+        return mNew;
+    }
+
+    public void setNew(boolean isNew) {
+        this.mNew = isNew;
     }
 
     public String getAvatarUrl() {
