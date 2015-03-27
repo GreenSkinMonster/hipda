@@ -26,6 +26,7 @@ import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.utils.Constants;
+//import net.jejer.hipda.ui.ThreadDetailFragment.AvatarOnClickListener;
 
 public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListener {
     private final String LOG_TAG = getClass().getSimpleName();
@@ -55,7 +56,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
             mUid = getArguments().getString(ARG_UID);
         }
 
-        mAdapter = new SmsAdapter(getActivity(), R.layout.item_sms_list);
+        mAdapter = new SmsAdapter(getActivity(), mId, mUid, R.layout.item_sms_list, new AvatarOnClickListener());
         mLoaderCallbacks = new SmsListLoaderCallbacks();
 
     }
@@ -175,6 +176,40 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
         @Override
         public void onLoaderReset(Loader<SimpleListBean> arg0) {
             Log.v(LOG_TAG, "onLoaderReset");
+        }
+    }
+    class AvatarOnClickListener extends OnSingleClickListener {
+        @Override
+        public void onSingleClick(View arg0) {
+            String uid = (String) arg0.getTag(R.id.avatar_tag_uid);
+            String username = (String) arg0.getTag(R.id.avatar_tag_username);
+
+            Bundle arguments = new Bundle();
+            arguments.putString(UserinfoFragment.ARG_UID, uid);
+            arguments.putString(UserinfoFragment.ARG_USERNAME, username);
+            UserinfoFragment fragment = new UserinfoFragment();
+            fragment.setArguments(arguments);
+
+            setHasOptionsMenu(false);
+            if (HiSettingsHelper.getInstance().getIsLandscape()) {
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
+                        .addToBackStack(ThreadDetailFragment.class.getName())
+                        .commit();
+            } else {
+                if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
+                    getFragmentManager().beginTransaction()
+                            .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                            .addToBackStack(ThreadDetailFragment.class.getName())
+                            .commit();
+                } else {
+                    getFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                            .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                            .addToBackStack(ThreadDetailFragment.class.getName())
+                            .commit();
+                }
+            }
         }
     }
 
