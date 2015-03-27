@@ -56,7 +56,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
             mUid = getArguments().getString(ARG_UID);
         }
 
-        mAdapter = new SmsAdapter(getActivity(), mId, mUid, R.layout.item_sms_list, new AvatarOnClickListener());
+        mAdapter = new SmsAdapter(getActivity(), R.layout.item_sms_list, new AvatarOnClickListener());
         mLoaderCallbacks = new SmsListLoaderCallbacks();
 
     }
@@ -178,6 +178,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
             Log.v(LOG_TAG, "onLoaderReset");
         }
     }
+
     class AvatarOnClickListener extends OnSingleClickListener {
         @Override
         public void onSingleClick(View arg0) {

@@ -10,7 +10,6 @@ public class SimpleListItemBean {
     private String mTime;
     private String mAuthor;
     private String mAvatarUrl = "";
-    ;
     private boolean mNew = false;
 
     public String getId() {
@@ -79,6 +78,5 @@ public class SimpleListItemBean {
         }
         mAvatarUrl = avatarUrl.replace("small", "middle");
     }
-
 
 }

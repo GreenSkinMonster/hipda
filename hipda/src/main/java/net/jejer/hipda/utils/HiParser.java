@@ -357,6 +357,15 @@ public class HiParser {
             return null;
         }
 
+        //get my uid and username
+        Elements uidMenuES = doc.select("#umenu cite a.noborder");
+        if (uidMenuES.size() < 1) {
+            return null;
+        }
+        String mySpaceUrl = Utils.nullToText(uidMenuES.first().attr("href"));
+        String myUid = HttpUtils.getMiddleString(mySpaceUrl, "uid=", "&");
+        String myUsername = uidMenuES.first().text();
+
         Elements smslistES = doc.select("li.s_clear");
         if (smslistES.size() < 1) {
             return null;
@@ -366,15 +375,6 @@ public class HiParser {
         for (int i = 0; i < smslistES.size(); ++i) {
             Element smsE = smslistES.get(i);
             SimpleListItemBean item = new SimpleListItemBean();
-
-            // avatar
-            Elements avatarES = smsE.select("a.avatar");
-            if (avatarES.size() > 0) {
-                Elements avatarImgES = avatarES.first().select("img");
-                if (avatarImgES.size() > 0) {
-                    item.setAvatarUrl(avatarImgES.first().attr("src"));
-                }
-            }
 
             // author
             Elements pciteES = smsE.select("p.cite");
@@ -386,6 +386,23 @@ public class HiParser {
                 continue;
             }
             item.setAuthor(citeES.first().text());
+
+            // avatar
+            Elements avatarES = smsE.select("a.avatar");
+            if (avatarES.size() > 0) {
+                Elements avatarImgES = avatarES.first().select("img");
+                if (avatarImgES.size() > 0) {
+                    item.setAvatarUrl(avatarImgES.first().attr("src"));
+                }
+                if (item.getAuthor().equals(myUsername)) {
+                    item.setId(myUid);
+                } else {
+                    String spaceUrl = Utils.nullToText(avatarES.first().attr("href"));
+                    item.setId(HttpUtils.getMiddleString(spaceUrl, "uid=", "&"));
+                }
+            }
+
+            Log.e("XXX", item.getId() + " -- " + item.getAuthor());
 
             // time
             item.setTime(pciteES.first().ownText());
