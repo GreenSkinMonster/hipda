@@ -49,7 +49,7 @@
                     android:layout_alignParentBottom="true"
                     android:padding="4dp"
                     android:text=""
-                    android:textSize="18sp"
+                    android:textSize="17sp"
                     android:textColor="?attr/color_hipda" />
 
                 <TextView

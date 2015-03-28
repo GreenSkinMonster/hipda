@@ -402,8 +402,6 @@ public class HiParser {
                 }
             }
 
-            Log.e("XXX", item.getId() + " -- " + item.getAuthor());
-
             // time
             item.setTime(pciteES.first().ownText());
 

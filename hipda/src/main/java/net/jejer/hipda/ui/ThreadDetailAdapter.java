@@ -177,15 +177,16 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                 giv.setUrl(imageUrl);
 
                 if (HiUtils.isAutoLoadImg(mCtx) || loadedImages.contains(imageUrl)) {
-                    loadImage(imageUrl, textView, giv);
+                    giv.setImageResource(R.drawable.ic_action_picture);
+                    loadImage(imageUrl, textView, giv, false);
                 } else {
                     giv.setImageResource(R.drawable.ic_action_picture);
                     giv.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             loadedImages.add(imageUrl);
-                            giv.setImageResource(R.drawable.loading);
-                            loadImage(imageUrl, textView, giv);
+                            loadImage(imageUrl, textView, giv, true);
+                            giv.setOnClickListener(null);
                         }
                     });
                 }
@@ -280,7 +281,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
         return convertView;
     }
 
-    private void loadImage(String imageUrl, TextView textView, GlideImageView giv) {
+    private void loadImage(String imageUrl, TextView textView, GlideImageView giv, boolean delayedLoading) {
         int maxViewWidth = 1080;
         //this fragment could be replaced by UserinfoFragment, so DO NOT cast it
         Fragment fragment = mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
@@ -292,7 +293,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     .load(imageUrl)
                     .asBitmap()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.ic_action_picture)
+                    .placeholder(delayedLoading ? R.drawable.loading : R.drawable.ic_action_picture)
                     .error(R.drawable.tapatalk_image_broken)
                     .into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
         } else {
@@ -302,7 +303,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     .cacheDecoder(new FileToStreamDecoder<Bitmap>(new ThreadImageDecoder()))
                     .imageDecoder(new ThreadImageDecoder())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.ic_action_picture)
+                    .placeholder(delayedLoading ? R.drawable.loading : R.drawable.ic_action_picture)
                     .error(R.drawable.tapatalk_image_broken)
                     .into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
         }
