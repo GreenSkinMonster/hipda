@@ -15,4 +15,9 @@
     public *;
 }
 
--keeppackagenames net.jejer.hipda.**
+-keep class net.jejer.hipda.** { *; }
+
+#ACRA
+-keepattributes SourceFile,LineNumberTable
+-keepattributes *Annotation*
+-keep class org.acra.** { *; }

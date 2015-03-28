@@ -63,4 +63,6 @@
     <string name="image_click_to_view">点击查看大图</string>
     <string name="image_click_to_play">点击播放</string>
 
+    <string name="crash_toast_text">HiPDA怪兽版发生了意外，请协助通过邮件反馈错误信息</string>
+
 </resources>
