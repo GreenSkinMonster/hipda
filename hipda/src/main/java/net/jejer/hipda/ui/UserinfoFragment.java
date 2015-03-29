@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,6 +65,11 @@ public class UserinfoFragment extends Fragment {
 
     private boolean isShowThreads;
     private boolean isThreadsLoaded;
+
+    private int mPage = 1;
+    private boolean mInloading = false;
+    private String mSearchIdUrl;
+    private int mMaxPage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -149,7 +156,7 @@ public class UserinfoFragment extends Fragment {
 
         mThreadListView.setAdapter(mSimpleListAdapter);
         mThreadListView.setOnItemClickListener(new OnItemClickCallback());
-
+        mThreadListView.setOnScrollListener(new OnScrollCallback());
     }
 
     @Override
@@ -220,12 +227,50 @@ public class UserinfoFragment extends Fragment {
         popDialog.create().show();
     }
 
+    public class OnScrollCallback implements AbsListView.OnScrollListener {
+
+        int mLastVisibleItem = 0;
+        int mVisibleItemCount = 0;
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem,
+                             int visibleItemCount, int totalItemCount) {
+
+            mLastVisibleItem = firstVisibleItem;
+            mVisibleItemCount = visibleItemCount;
+
+            if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
+                if (!mInloading) {
+                    mInloading = true;
+                    if (mPage < mMaxPage) {
+                        mPage++;
+                        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                    } else {
+                        Toast.makeText(getActivity(), "已经是最后一页，共 " + mMaxPage + " 页", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+        }
+
+
+    }
+
     public class SearchThreadByUidLoaderCallbacks implements LoaderManager.LoaderCallbacks<SimpleListBean> {
 
         @Override
         public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-            Toast.makeText(getActivity(), "加载中...", Toast.LENGTH_SHORT).show();
-            return new SimpleListLoader(UserinfoFragment.this.getActivity(), SimpleListLoader.TYPE_SEARCH_USER_THREADS, 1, mUid);
+            Toast.makeText(getActivity(),
+                    "正在加载第 " + mPage + " 页"
+                            + (!TextUtils.isEmpty(mSearchIdUrl) ? "，共 " + mMaxPage + " 页" : ""),
+                    Toast.LENGTH_SHORT).show();
+            return new SimpleListLoader(UserinfoFragment.this.getActivity(),
+                    SimpleListLoader.TYPE_SEARCH_USER_THREADS,
+                    mPage,
+                    TextUtils.isEmpty(mSearchIdUrl) ? mUid : mSearchIdUrl);
         }
 
         @Override
@@ -233,22 +278,27 @@ public class UserinfoFragment extends Fragment {
                                    SimpleListBean list) {
             Log.v(LOG_TAG, "onLoadFinished enter");
 
+            mInloading = false;
+
             if (mButton != null)
                 mButton.setEnabled(true);
 
             if (list == null || list.getCount() == 0) {
                 Log.v(LOG_TAG, "onLoadFinished list == null || list.getCount == 0");
-                Toast.makeText(getActivity(), "帖子加载失败", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "帖子加载失败", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             Log.v(LOG_TAG, "mThreadListAdapter.addAll(arg1.threads) called, added " + list.getCount());
+            mSearchIdUrl = list.getSearchIdUrl();
+            mMaxPage = list.getMaxPage();
             mSimpleListAdapter.addAll(list.getAll());
             isThreadsLoaded = true;
         }
 
         @Override
         public void onLoaderReset(Loader<SimpleListBean> arg0) {
+            mInloading = false;
             Log.v(LOG_TAG, "onLoaderReset");
         }
 
@@ -264,10 +314,9 @@ public class UserinfoFragment extends Fragment {
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
 
             Bundle bun = new Bundle();
-            Fragment fragment = null;
             bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getId());
             bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
-            fragment = new ThreadDetailFragment();
+            Fragment fragment = new ThreadDetailFragment();
             fragment.setArguments(bun);
             if (HiSettingsHelper.getInstance().getIsLandscape()) {
                 getFragmentManager().beginTransaction()

@@ -2,7 +2,6 @@ package net.jejer.hipda.utils;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.SimpleListBean;
@@ -52,6 +51,21 @@ public class HiParser {
         }
 
         SimpleListBean list = new SimpleListBean();
+
+        int last_page = 1;
+        //if this is the last page, page number is in <strong>
+        Elements pagesES = doc.select("div.pages_btns div.pages a");
+        pagesES.addAll(doc.select("div.pages_btns div.pages strong"));
+        if (pagesES.size() > 0) {
+            for (Node n : pagesES) {
+                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                if (tmp > last_page) {
+                    last_page = tmp;
+                }
+            }
+        }
+        list.setMaxPage(last_page);
+
         Elements trES = tableES.first().select("tr");
 
         SimpleListItemBean item = null;
@@ -113,11 +127,25 @@ public class HiParser {
         }
 
         SimpleListBean list = new SimpleListBean();
+
+        int last_page = 1;
+        //if this is the last page, page number is in <strong>
+        Elements pagesES = doc.select("div.pages_btns div.pages a");
+        pagesES.addAll(doc.select("div.pages_btns div.pages strong"));
+        if (pagesES.size() > 0) {
+            for (Node n : pagesES) {
+                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                if (tmp > last_page) {
+                    last_page = tmp;
+                }
+            }
+        }
+        list.setMaxPage(last_page);
+
         Elements trES = tableES.first().select("tr");
 
         SimpleListItemBean item = null;
         //first tr is title, skip
-        Log.e(LOG_TAG, "tr.size=" + trES.size());
         for (int i = 1; i < trES.size(); ++i) {
             Element trE = trES.get(i);
 
@@ -424,6 +452,24 @@ public class HiParser {
         }
 
         SimpleListBean list = new SimpleListBean();
+        int last_page = 1;
+
+        //if this is the last page, page number is in <strong>
+        Elements pagesES = doc.select("div.pages_btns div.pages a");
+        pagesES.addAll(doc.select("div.pages_btns div.pages strong"));
+        String searchIdUrl;
+        if (pagesES.size() > 0) {
+            searchIdUrl = pagesES.first().attr("href");
+            list.setSearchIdUrl(searchIdUrl);
+            for (Node n : pagesES) {
+                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                if (tmp > last_page) {
+                    last_page = tmp;
+                }
+            }
+        }
+        list.setMaxPage(last_page);
+
         Elements tbodyES = doc.select("tbody");
         for (int i = 0; i < tbodyES.size(); ++i) {
             Element tbodyE = tbodyES.get(i);
@@ -471,6 +517,21 @@ public class HiParser {
         }
 
         SimpleListBean list = new SimpleListBean();
+
+        int last_page = 1;
+        //if this is the last page, page number is in <strong>
+        Elements pagesES = doc.select("div.pages a");
+        pagesES.addAll(doc.select("div.pages strong"));
+        if (pagesES.size() > 0) {
+            for (Node n : pagesES) {
+                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                if (tmp > last_page) {
+                    last_page = tmp;
+                }
+            }
+        }
+        list.setMaxPage(last_page);
+
         Elements trES = doc.select("table.datatable tbody tr");
         for (int i = 0; i < trES.size(); ++i) {
             Element trE = trES.get(i);

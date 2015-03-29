@@ -7,6 +7,8 @@ public class SimpleListBean {
     private List<SimpleListItemBean> mSimpleListItemBeans
             = new ArrayList<SimpleListItemBean>();
     private int mCount = 0;
+    private String mSearchIdUrl;
+    private int mMaxPage;
 
     public void add(SimpleListItemBean item) {
         mSimpleListItemBeans.add(item);
@@ -19,5 +21,21 @@ public class SimpleListBean {
 
     public List<SimpleListItemBean> getAll() {
         return mSimpleListItemBeans;
+    }
+
+    public String getSearchIdUrl() {
+        return mSearchIdUrl;
+    }
+
+    public void setSearchIdUrl(String searchIdUrl) {
+        mSearchIdUrl = searchIdUrl;
+    }
+
+    public int getMaxPage() {
+        return mMaxPage;
+    }
+
+    public void setMaxPage(int maxPage) {
+        mMaxPage = maxPage;
     }
 }

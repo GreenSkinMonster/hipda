@@ -2,6 +2,7 @@ package net.jejer.hipda.async;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -105,12 +106,28 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
             case TYPE_SEARCH:
                 try {
                     url = HiUtils.SearchTitle + URLEncoder.encode(mExtra, "GBK");
+                    if (mPage > 1)
+                        url += "&page=" + mPage;
                 } catch (UnsupportedEncodingException e) {
                     Log.e(LOG_TAG, "Encoding error", e);
                 }
                 break;
             case TYPE_SEARCH_USER_THREADS:
-                url = HiUtils.SearchUserThreads + mExtra + "&page=" + mPage;
+                if (TextUtils.isDigitsOnly(mExtra)) {
+                    //first search, use uid
+                    url = HiUtils.SearchUserThreads + mExtra + "&page=" + mPage;
+                } else {
+                    //after first seach, searchId is generated
+                    url = HiUtils.BaseUrl + mExtra;
+                    //replace page number in url
+                    int pageIndex = url.indexOf("page=");
+                    int pageEndIndex = url.indexOf("&", pageIndex + "page=".length());
+                    if (pageIndex > 0 && pageEndIndex > pageIndex) {
+                        url = url.substring(0, pageIndex) + "page=" + mPage + url.substring(pageEndIndex);
+                    } else if (pageEndIndex == -1) {
+                        url = url.substring(0, pageIndex) + "page=" + mPage;
+                    }
+                }
                 break;
             case TYPE_FAVORITES:
                 url = HiUtils.FavoritesUrl;

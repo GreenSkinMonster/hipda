@@ -45,6 +45,10 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
     private SearchView searchView = null;
     private SwipeRefreshLayout swipeLayout;
 
+    private int mPage = 1;
+    private boolean mInloading = false;
+    private int mMaxPage;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +76,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeResources(R.color.icon_blue);
-        if (mType == SimpleListLoader.TYPE_SEARCH)
-            swipeLayout.setEnabled(false);
+        swipeLayout.setEnabled(false);
 
         return view;
     }
@@ -146,7 +149,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
                                 Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
-                        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                        refresh();
                         return false;
                     }
 
@@ -181,7 +184,8 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
     }
 
     private void refresh() {
-        Log.v(LOG_TAG, "refresh() called");
+        mMaxPage = 0;
+        mPage = 1;
         mSimpleListAdapter.clear();
         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
     }
@@ -193,14 +197,34 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
 
     public class OnScrollCallback implements AbsListView.OnScrollListener {
 
+        int mLastVisibleItem = 0;
+        int mVisibleItemCount = 0;
+
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem,
                              int visibleItemCount, int totalItemCount) {
+
+            mLastVisibleItem = firstVisibleItem;
+            mVisibleItemCount = visibleItemCount;
+
+            if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
+                if (!mInloading) {
+                    mInloading = true;
+                    if (mPage < mMaxPage) {
+                        mPage++;
+                        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                    } else {
+                        if (mMaxPage > 0)
+                            Toast.makeText(getActivity(), "已经是最后一页，共 " + mMaxPage + " 页", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
         }
 
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
         }
+
 
     }
 
@@ -278,23 +302,30 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
 
         @Override
         public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-            mTipBar.setText("加载中...");
+            if (mMaxPage > 1)
+                mTipBar.setText("正在加载" +
+                        (mMaxPage > 1 ? ("第 " + mPage + " 页，共 " + mMaxPage + " 页") : ""));
+            else
+                mTipBar.setText("加载中...");
+
             mTipBar.setVisibility(View.VISIBLE);
             mTipBar.bringToFront();
             if (!swipeLayout.isRefreshing())
                 swipeLayout.setEnabled(false);
-            return new SimpleListLoader(SimpleListFragment.this.getActivity(), mType, 1, mQuery);
+
+            return new SimpleListLoader(getActivity(),
+                    mType,
+                    mPage,
+                    mQuery);
         }
 
         @Override
         public void onLoadFinished(Loader<SimpleListBean> loader,
                                    SimpleListBean list) {
-            Log.v(LOG_TAG, "onLoadFinished enter");
-
             mTipBar.setVisibility(View.INVISIBLE);
-            if (mType != SimpleListLoader.TYPE_SEARCH)
-                swipeLayout.setEnabled(true);
+            swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
+            mInloading = false;
 
             if (list == null || list.getCount() == 0) {
                 Toast.makeText(SimpleListFragment.this.getActivity(),
@@ -302,8 +333,8 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
                 return;
             }
 
+            mMaxPage = list.getMaxPage();
             mSimpleListAdapter.addAll(list.getAll());
-
         }
 
         @Override
@@ -311,9 +342,9 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
             Log.v(LOG_TAG, "onLoaderReset");
 
             mTipBar.setVisibility(View.INVISIBLE);
-            if (mType != SimpleListLoader.TYPE_SEARCH)
-                swipeLayout.setEnabled(true);
+            swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
+            mInloading = false;
         }
 
     }
