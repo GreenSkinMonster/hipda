@@ -131,7 +131,7 @@
             android:singleLine="true"
             android:title="@string/pref_title_blanklist" />
 
-        <net.jejer.hipda.ui.AboutDialogPreference
+        <Preference
             android:key="PERF_ABOUT"
             android:title="@string/pref_title_about" />
 

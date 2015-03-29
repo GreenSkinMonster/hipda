@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.app.ActionBar;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -47,6 +48,14 @@ public class SettingsFragment extends PreferenceFragment {
 
         Preference dialogPref = findPreference(HiSettingsHelper.PERF_ABOUT);
         dialogPref.setSummary(HiSettingsHelper.getInstance().getAppVersion());
+        dialogPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                final Dialog dialog = new AboutDialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
+                dialog.getWindow().setWindowAnimations(android.R.anim.fade_in);
+                dialog.show();
+                return true;
+            }
+        });
 
         Preference checkPreference = findPreference(HiSettingsHelper.PERF_LAST_UPDATE_CHECK);
         checkPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

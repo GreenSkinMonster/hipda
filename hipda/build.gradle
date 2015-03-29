@@ -26,5 +26,6 @@ dependencies {
     compile 'com.github.bumptech.glide:volley-integration:1.2.2'
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:2.4.0'
     compile 'ch.acra:acra:4.5.0'
+    compile 'net.frakbot.creditsroll:creditsroll:1.0@aar'
     compile 'com.android.support:support-v4:21.0.3'
 }
