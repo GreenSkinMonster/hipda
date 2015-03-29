@@ -44,7 +44,7 @@
                 android:layout_margin="4dp"
                 android:text="" />
 
-            <TextView
+            <net.jejer.hipda.ui.TextViewWithEmoticon
                 android:id="@+id/tv_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

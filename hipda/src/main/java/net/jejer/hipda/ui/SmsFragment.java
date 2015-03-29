@@ -3,6 +3,8 @@ package net.jejer.hipda.ui;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
@@ -11,10 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -25,6 +27,7 @@ import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
+import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.utils.Constants;
 //import net.jejer.hipda.ui.ThreadDetailFragment.AvatarOnClickListener;
 
@@ -66,11 +69,23 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
         Log.v(LOG_TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_sms, container, false);
         mListView = (ListView) view.findViewById(R.id.lv_sms);
+        mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         //to avoid click through this view
-        view.setOnTouchListener(new View.OnTouchListener() {
+//        view.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                return true;
+//            }
+//        });
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", ((SimpleListItemBean) adapterView.getItemAtPosition(i)).getInfo());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getActivity(), "短信息内容已经复制至粘贴板", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });

@@ -2,6 +2,7 @@ package net.jejer.hipda.ui;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,8 @@ public class SmsAdapter extends ArrayAdapter<SimpleListItemBean> {
         holder.tv_author.setText(item.getAuthor());
         holder.tv_time.setText(item.getTime());
         holder.tv_content.setText(item.getInfo());
+        holder.tv_content.setFocusable(false);
+        holder.tv_content.setAutoLinkMask(Linkify.WEB_URLS);
 
         holder.tv_author.setTextSize(HiSettingsHelper.getPostTextSize());
         holder.tv_content.setTextSize(HiSettingsHelper.getPostTextSize());
