@@ -135,7 +135,7 @@
     <string name="pref_threadlist_avatar">显示帖子头像</string>
     <string name="pref_title_prefetch">预加载</string>
     <string name="pref_title_show_stick_threads">显示置顶帖</string>
-    <string name="pref_title_sort_by_post_time">发帖时间排序</string>
+    <string name="pref_title_sort_by_post_time">发帖时间排序(按板块)</string>
     <string name="pref_title_post_redirect">发表后跳转</string>
     <string name="pref_title_add_tail">添加小尾巴</string>
     <string name="pref_title_tail_text">尾巴文字</string>

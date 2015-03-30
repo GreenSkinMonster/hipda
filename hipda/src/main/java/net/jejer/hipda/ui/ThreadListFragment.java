@@ -422,6 +422,16 @@ public class ThreadListFragment extends Fragment
                 }
                 return;
             } else if (threads.count == 0) {
+
+                if (threads.parsed && mPage <= 5 && !HiSettingsHelper.getInstance().isShowStickThreads()) {
+                    mPage++;
+                    mInloading = true;
+                    getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                    if (HiSettingsHelper.getInstance().getMaxPostsInPage() < HiUtils.MAX_THREADS_IN_PAGE)
+                        Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 // Page load fail.
                 if (mPage > 1) {
                     mPage--;
@@ -524,11 +534,11 @@ public class ThreadListFragment extends Fragment
                 HiSettingsHelper.getInstance().setShowStickThreads(arg1);
             }
         });
-        sSortByPostTime.setChecked(HiSettingsHelper.getInstance().isSortByPostTime());
+        sSortByPostTime.setChecked(HiSettingsHelper.getInstance().isSortByPostTime(mForumId));
         sSortByPostTime.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                HiSettingsHelper.getInstance().setSortByPostTime(arg1);
+                HiSettingsHelper.getInstance().setSortByPostTime(mForumId, arg0.isChecked());
             }
         });
         sPostRedirect.setChecked(HiSettingsHelper.getInstance().isPostReirect());
@@ -543,7 +553,7 @@ public class ThreadListFragment extends Fragment
         popDialog.setTitle(mCtx.getResources().getString(R.string.action_thread_list_settings));
         popDialog.setView(viewlayout);
         // Add the buttons
-        popDialog.setPositiveButton("OK", null);
+        popDialog.setPositiveButton(getResources().getString(android.R.string.ok), null);
         popDialog.create().show();
     }
 
