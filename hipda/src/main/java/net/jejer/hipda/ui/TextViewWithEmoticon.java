@@ -3,8 +3,7 @@ package net.jejer.hipda.ui;
 import android.app.DownloadManager;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -63,7 +62,7 @@ public class TextViewWithEmoticon extends TextView {
     }
 
 
-    private static boolean addImages(Context context, Spannable spannable) {
+    private boolean addImages(Context context, Spannable spannable) {
         Pattern refImg = Pattern.compile("\\Q[emoticon images/smilies/\\E([a-zA-Z0-9_\\/]+)\\Q.gif]\\E");
         boolean hasChanges = false;
 
@@ -85,20 +84,23 @@ public class TextViewWithEmoticon extends TextView {
             int id = context.getResources().getIdentifier(resname, "drawable", context.getPackageName());
             if (set && id != 0) {
                 hasChanges = true;
-                Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), id);
-                Bitmap scaledbmp = Bitmap.createScaledBitmap(bmp, 80, 80, false);
-                spannable.setSpan(new ImageSpan(context, scaledbmp),
-                        matcher.start(),
-                        matcher.end(),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
+                Drawable icon = context.getResources().getDrawable(id);
+                if (icon != null) {
+                    int height = Math.round(getLineHeight() * 1.2f);
+                    icon.setBounds(0, 0, height, height);
+                    spannable.setSpan(new ImageSpan(icon, ImageSpan.ALIGN_BOTTOM),
+                            matcher.start(),
+                            matcher.end(),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    );
+                }
             }
         }
 
         return hasChanges;
     }
 
-    private static SpannableStringBuilder addAppMark(Context context, SpannableStringBuilder spannable) {
+    private SpannableStringBuilder addAppMark(Context context, SpannableStringBuilder spannable) {
         String text = spannable.toString();
         int idxStart = text.indexOf("[appmark ");
         if (idxStart >= 0) {
@@ -111,7 +113,7 @@ public class TextViewWithEmoticon extends TextView {
         return spannable;
     }
 
-    private static Spannable getTextWithImages(final Context context, CharSequence text) {
+    private Spannable getTextWithImages(final Context context, CharSequence text) {
         SpannableStringBuilder b = (SpannableStringBuilder) Html.fromHtml(text.toString());
         for (URLSpan s : b.getSpans(0, b.length(), URLSpan.class)) {
             String s_url = s.getURL();
