@@ -39,6 +39,7 @@ public class HiUtils {
     public static final String LoginStep2 = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
 
     private static String AVATAR_BASE = "000000000";
+    public static int MAX_THREADS_IN_PAGE = 50;
 
     public static int getForumID(Context ctx, long idx) {
         final int[] forumsID = ctx.getResources().getIntArray(R.array.forums_id);

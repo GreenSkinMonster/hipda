@@ -29,7 +29,7 @@ public class HiSettingsHelper {
     public static final String PERF_LOADIMGONMOBILENWK = "PERF_LOADIMGONMOBILENWK";
     public static final String PERF_THREADLISTAVATAR = "PERF_THREADLISTAVATAR";
     public static final String PERF_PREFETCH = "PERF_PREFETCH";
-    public static final String PERF_SORTBYPOSTTIME = "PERF_SORTBYPOSTTIME";
+    public static final String PERF_SORTBYPOSTTIME_BY_FORUM = "PERF_SORTBYPOSTTIME_BY_FORUM";
     public static final String PERF_POST_REDIRECT = "PERF_POST_REDIRECT";
     public static final String PERF_ADDTAIL = "PERF_ADDTAIL";
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
@@ -63,9 +63,9 @@ public class HiSettingsHelper {
     private boolean mShowStickThreads = false;
     private boolean mLoadImgOnMobileNwk = true;
     private boolean mPreFetch = true;
-    private boolean mSortByPostTime = false;
     private boolean mShowThreadListAvatar = true;
     private boolean mPostRedirect = true;
+    private Set<String> mSortByPostTimeByForum;
 
     private boolean mAddTail = true;
     private String mTailText = "";
@@ -128,7 +128,7 @@ public class HiSettingsHelper {
         isLoadImgOnMobileNwkFromPref();
         isShowThreadListAvatarFromPref();
         isPreFetchFromPref();
-        isSortByPostTimeFromPref();
+        isSortByPostTimeByForumFromPref();
         isAddTailFromPref();
         getTailTextFromPref();
         getTailUrlFromPref();
@@ -284,19 +284,24 @@ public class HiSettingsHelper {
         editor.putBoolean(PERF_PREFETCH, preFetch).commit();
     }
 
-    public boolean isSortByPostTime() {
-        return mSortByPostTime;
+    public boolean isSortByPostTime(int fid) {
+        return mSortByPostTimeByForum.contains(fid + "");
     }
 
-    public boolean isSortByPostTimeFromPref() {
-        mSortByPostTime = mSharedPref.getBoolean(PERF_SORTBYPOSTTIME, false);
-        return mSortByPostTime;
-    }
-
-    public void setSortByPostTime(boolean sortByPostTime) {
-        mSortByPostTime = sortByPostTime;
+    public void setSortByPostTime(int fid, boolean sortByPostTime) {
+        if (sortByPostTime) {
+            if (!mSortByPostTimeByForum.contains(fid + ""))
+                mSortByPostTimeByForum.add(fid + "");
+        } else {
+            mSortByPostTimeByForum.remove(fid + "");
+        }
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_SORTBYPOSTTIME, sortByPostTime).commit();
+        editor.putStringSet(PERF_SORTBYPOSTTIME_BY_FORUM, mSortByPostTimeByForum).commit();
+    }
+
+    public Set<String> isSortByPostTimeByForumFromPref() {
+        mSortByPostTimeByForum = mSharedPref.getStringSet(PERF_SORTBYPOSTTIME_BY_FORUM, new HashSet<String>());
+        return mSortByPostTimeByForum;
     }
 
     public boolean isPostReirect() {

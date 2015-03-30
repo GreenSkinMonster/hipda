@@ -10,6 +10,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.async.HiStringRequest;
 import net.jejer.hipda.async.VolleyHelper;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.ui.NotifyHelper;
@@ -31,9 +32,12 @@ public class HiParserThreadList {
         // Async check notify
         new parseNotifyRunnable(ctx, doc).run();
 
-        ThreadListBean threads = new ThreadListBean(ctx);
+        ThreadListBean threads = new ThreadListBean();
         Elements tbodyES = doc.select("tbody[id]");
         for (int i = 0; i < tbodyES.size(); ++i) {
+
+            threads.parsed = true;
+
             Element tbodyE = tbodyES.get(i);
             ThreadBean thread = new ThreadBean();
 
@@ -49,6 +53,10 @@ public class HiParserThreadList {
             // is stick thread or normal thread
             Boolean isStick = idType.startsWith("stickthread");
             thread.setIsStick(isStick);
+
+            if (isStick && !HiSettingsHelper.getInstance().isShowStickThreads()) {
+                continue;
+            }
 
             Elements titleES = tbodyE.select("span#" + idThread);
             if (titleES.size() == 0) {

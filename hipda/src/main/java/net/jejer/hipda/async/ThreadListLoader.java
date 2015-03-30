@@ -84,7 +84,7 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
         mHandler.sendMessage(msg);
 
         String url = HiUtils.ThreadListUrl + mForumId + "&page=" + mPage;
-        if (HiSettingsHelper.getInstance().isSortByPostTime()) {
+        if (HiSettingsHelper.getInstance().isSortByPostTime(mForumId)) {
             url += "&orderby=dateline";
         }
         StringRequest sReq = new HiStringRequest(mCtx, url,
