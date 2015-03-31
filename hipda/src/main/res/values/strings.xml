@@ -17,6 +17,7 @@
     <string name="action_add_favorite">添加收藏</string>
     <string name="action_remove_favorite">删除收藏</string>
     <string name="action_send_sms">发短消息</string>
+    <string name="action_blacklist">加入黑名单</string>
     <string name="iv_avatar">头像</string>
     <string name="iv_thread_indicator">帖子在此</string>
     <string name="action_send">发送</string>

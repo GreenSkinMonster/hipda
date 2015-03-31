@@ -9,8 +9,11 @@ import android.text.TextUtils;
 import net.jejer.hipda.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -77,7 +80,7 @@ public class HiSettingsHelper {
     private Set<String> mEinkMode = new HashSet<String>();
     private int mTitleBold;
 
-    private String[] mBlanklistUsernames = null;
+    private List<String> mBlanklistUsernames = new ArrayList<String>();
 
     private String mPostTextSizeAdj = "";
     private int mPostLineSpacing = 0;
@@ -437,19 +440,27 @@ public class HiSettingsHelper {
         return mTitleBold;
     }
 
-    public String[] getBlanklistUsernames() {
+    public List<String> getBlanklistUsernames() {
         return mBlanklistUsernames;
     }
 
-    public String[] getBlanklistUsernamesFromPref() {
-        mBlanklistUsernames = mSharedPref.getString(PERF_BLANKLIST_USERNAMES, "").split(" ");
+    public List<String> getBlanklistUsernamesFromPref() {
+        String[] usernames = mSharedPref.getString(PERF_BLANKLIST_USERNAMES, "").split(" ");
+        mBlanklistUsernames.clear();
+        mBlanklistUsernames.addAll(Arrays.asList(usernames));
         return mBlanklistUsernames;
     }
 
-    public void setBlanklistUsernames(String blanklistUsernames) {
-        mBlanklistUsernames = blanklistUsernames.split(" ");
+    public void setBlanklistUsernames(List<String> blanklistUsernames) {
+        mBlanklistUsernames = blanklistUsernames;
+        StringBuilder sb = new StringBuilder();
+        for (String username : blanklistUsernames) {
+            if (sb.length() > 0)
+                sb.append(" ");
+            sb.append(username);
+        }
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_BLANKLIST_USERNAMES, blanklistUsernames).commit();
+        editor.putString(PERF_BLANKLIST_USERNAMES, sb.toString()).apply();
     }
 
     public boolean isUserBlack(String username) {

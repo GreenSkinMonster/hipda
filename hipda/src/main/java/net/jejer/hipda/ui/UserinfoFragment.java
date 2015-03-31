@@ -182,10 +182,24 @@ public class UserinfoFragment extends Fragment {
             case R.id.action_send_sms:
                 showSendSmsDialog();
                 return true;
+            case R.id.action_blacklist:
+                blacklistUser();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    private void blacklistUser() {
+        List<String> blackList = HiSettingsHelper.getInstance().getBlanklistUsernames();
+        if (!blackList.contains(mUsername)) {
+            blackList.add(mUsername);
+            HiSettingsHelper.getInstance().setBlanklistUsernames(blackList);
+            Toast.makeText(getActivity(), "已经将用户 " + mUsername + " 添加到黑名单", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "用户 " + mUsername + " 已经在黑名单中", Toast.LENGTH_SHORT).show();
+        }
     }
 
     class OnDetailLoadComplete implements Response.Listener<String> {
