@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -44,6 +43,7 @@ import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
+import net.jejer.hipda.cache.ThreadDetailCache;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 
@@ -83,7 +83,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     private View quickReply;
     private Handler mMsgHandler;
     private boolean mAuthorOnly = false;
-    private SparseArray<DetailListBean> mCache = new SparseArray<DetailListBean>();
+    private ThreadDetailCache mCache = new ThreadDetailCache();
     public static final String LOADER_PAGE_KEY = "LOADER_PAGE_KEY";
 
     private HiProgressDialog postProgressDialog;
@@ -390,10 +390,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         if (mMaxPostInPage < HiSettingsHelper.getInstance().getMaxPostsInPage()) {
             mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
         }
-        int page = (floor / mMaxPostInPage) + 1;
-        if (mCache.get(page) != null)
-            return mCache.get(page).getPostByPostId(postId);
-        return null;
+        return mCache.getPostByPostId(postId);
     }
 
     private class OnScrollCallback implements AbsListView.OnScrollListener {
@@ -759,8 +756,11 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                 mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
             }
 
-            mGoToPage = floor / mMaxPostInPage + 1; // page start from 1
+            mGoToPage = (floor - 1) / mMaxPostInPage + 1; // page start from 1
             mFloorOfPage = floor % mMaxPostInPage; // floor start from 1
+            if (mFloorOfPage == 0) {
+                mFloorOfPage = mMaxPostInPage;
+            }
 
             if (mGoToPage != mCurrentPage) {
                 mCurrentPage = mGoToPage;

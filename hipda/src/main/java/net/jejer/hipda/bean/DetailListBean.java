@@ -6,9 +6,7 @@ import java.util.List;
 
 public class DetailListBean {
     private List<DetailBean> mDetailBeans;
-    private Boolean mHaveNext;
     private int mLastPage = 1;
-    private int mCount = 0;
     private int mPage = 0;
     private String mTitle;
     private String mFid;
@@ -17,40 +15,23 @@ public class DetailListBean {
     public DetailListBean() {
         mDetailBeans = new ArrayList<DetailBean>();
         mPostIdBeans = new HashMap<String, DetailBean>();
-        mHaveNext = false;
     }
 
     public void add(DetailBean detailBean) {
         mDetailBeans.add(detailBean);
         mPostIdBeans.put(detailBean.getPostId(), detailBean);
-        mCount++;
     }
 
     public int getCount() {
-        return mCount;
+        return mDetailBeans.size();
     }
 
     public List<DetailBean> getAll() {
         return mDetailBeans;
     }
 
-    public String getLastId() {
-        if (mDetailBeans.size() == 0) {
-            return "";
-        }
-        return mDetailBeans.get(mDetailBeans.size() - 1).getPostId();
-    }
-
-    public DetailBean getPostByPostId(String postId) {
+    public DetailBean getPostInPage(String postId) {
         return mPostIdBeans.get(postId);
-    }
-
-    public Boolean getHaveNext() {
-        return mHaveNext;
-    }
-
-    public void setHaveNext(Boolean mHaveNext) {
-        this.mHaveNext = mHaveNext;
     }
 
     public int getLastPage() {
