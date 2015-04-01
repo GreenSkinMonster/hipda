@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -29,23 +30,24 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 
     private Object mLocker;
     private String mTid;
+    private String mGotoPostId;
     private int mPage;
     private String mRsp;
 
-    public DetailListLoader(Context context, Handler handler, String tid, int page) {
+    public DetailListLoader(Context context, Handler handler, String tid, String gotoPostId, int page) {
         super(context);
         mCtx = context;
         mHandler = handler;
         mLocker = this;
         mTid = tid;
+        mGotoPostId = gotoPostId;
         mPage = page;
     }
 
     @Override
     public DetailListBean loadInBackground() {
-        //Log.v(LOG_TAG, "loadInBackground");
 
-        if (mTid.equals("")) {
+        if (TextUtils.isEmpty(mTid)) {
             return null;
         }
 
@@ -79,9 +81,8 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         }
 
         Document doc = Jsoup.parse(mRsp);
-        return HiParserThreadDetail.parse(mCtx, mHandler, mPage, doc);
+        return HiParserThreadDetail.parse(mCtx, mHandler, doc);
     }
-
 
     private void fetchDetail() {
         Message msg = Message.obtain();
@@ -92,7 +93,10 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         mHandler.sendMessage(msg);
 
         String url;
-        if (mPage == ThreadDetailFragment.LAST_PAGE) {
+        if (!TextUtils.isEmpty(mGotoPostId)) {
+            //volley will fetch content automaticly if response is a 302 redirect
+            url = HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", mGotoPostId);
+        } else if (mPage == ThreadDetailFragment.LAST_PAGE) {
             url = HiUtils.LastPageUrl + mTid;
         } else {
             url = HiUtils.DetailListUrl + mTid + "&page=" + mPage;

@@ -53,6 +53,7 @@ import java.util.List;
 
 public class ThreadDetailFragment extends Fragment implements PostAsyncTask.PostListener {
     public static final String ARG_TID_KEY = "tid";
+    public static final String ARG_PID_KEY = "pid";
     public static final String ARG_TITLE_KEY = "title";
     public static final String ARG_FLOOR_KEY = "floor";
     public static final String ARG_PAGE_KEY = "page";
@@ -64,6 +65,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
     private Context mCtx;
     private String mTid;
+    private String mGotoPostId;
     private String mTitle;
     private String mFid;
     private XListView mDetailListView;
@@ -74,7 +76,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     private int mCurrentPage = 1;
     private int mMaxPage = 1;
     private int mGoToPage = 1;
-    private int mMaxPostInPage = 1;    // for goto floor, user can configure max post per page
+    private int mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();    // user can configure max posts per page in forum setting
     private int mFloorOfPage = -1;    // for every page start form 1
     private boolean mInloading = false;
     private boolean mPrefetching = false;
@@ -100,6 +102,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
         if (getArguments().containsKey(ARG_TID_KEY)) {
             mTid = getArguments().getString(ARG_TID_KEY);
+        }
+        if (getArguments().containsKey(ARG_PID_KEY)) {
+            mGotoPostId = getArguments().getString(ARG_PID_KEY);
         }
         if (getArguments().containsKey(ARG_TITLE_KEY)) {
             mTitle = getArguments().getString(ARG_TITLE_KEY);
@@ -251,7 +256,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         mDetailListView.setOnScrollListener(new OnScrollCallback());
 
         getLoaderManager().initLoader(0, new Bundle(), mLoaderCallbacks);
-        //getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
         showOrLoadPage();
     }
 
@@ -385,11 +389,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         }
     }
 
-    public DetailBean getCachedPost(int floor, String postId) {
-        //if user direct jump to last page, he may not get correct mMaxPostInPage
-        if (mMaxPostInPage < HiSettingsHelper.getInstance().getMaxPostsInPage()) {
-            mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
-        }
+    public DetailBean getCachedPost(String postId) {
         return mCache.getPostByPostId(postId);
     }
 
@@ -478,7 +478,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             mDetailListView.setPullRefreshEnable(false);
 
             //VolleyHelper.getInstance().cancelAll();
-            return new DetailListLoader(mCtx, mMsgHandler, mTid, args.getInt(LOADER_PAGE_KEY, 1));
+            return new DetailListLoader(mCtx, mMsgHandler, mTid, mGotoPostId, args.getInt(LOADER_PAGE_KEY, 1));
         }
 
         @Override
@@ -488,6 +488,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
             mInloading = false;
             mPrefetching = false;
+            mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
 
             if (details == null) {
                 // May be login error, error message should be populated in login async task
@@ -521,22 +522,29 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
             // Set MaxPage earlier than showOrLoadPage()
             mMaxPage = details.getLastPage();
-            if (mCurrentPage == LAST_PAGE)
-                mCurrentPage = mMaxPage;
 
-            //mAdapter.addAll(details.getAll());
+            //go to specific post id
+            if (!TextUtils.isEmpty(mGotoPostId)) {
+                mCurrentPage = details.getPage();
+                DetailBean detailBean = details.getPostInPage(mGotoPostId);
+
+                int floor = Integer.parseInt(detailBean.getFloor());
+
+                mFloorOfPage = floor % mMaxPostInPage; // floor start from 1
+                if (mFloorOfPage == 0) {
+                    mFloorOfPage = mMaxPostInPage;
+                }
+                mGotoPostId = null;
+            } else if (mCurrentPage == LAST_PAGE) {
+                mCurrentPage = mMaxPage;
+            }
+
             mCache.put(details.getPage(), details);
+
             if (!mAuthorOnly && mCurrentPage == details.getPage()) {
                 showOrLoadPage();
             } else if (mAuthorOnly) {
                 showAndLoadAuthorOnly();
-            }
-
-            if (details.getCount() > mMaxPostInPage) {
-                mMaxPostInPage = details.getCount();
-                if (mMaxPage > 1 && mCurrentPage < mMaxPage) {
-                    HiSettingsHelper.getInstance().setMaxPostsInPage(mMaxPostInPage);
-                }
             }
 
             setPullLoadStatus();
@@ -662,17 +670,19 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         builder.setTitle("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
         builder.setView(viewlayout);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                mCurrentPage = mGoToPage;
-                showOrLoadPage();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-            }
-        });
+        builder.setPositiveButton(getResources().getString(android.R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mCurrentPage = mGoToPage;
+                        showOrLoadPage();
+                    }
+                });
+        builder.setNegativeButton(getResources().getString(android.R.string.cancel),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
         dialog = builder.create();
 
         // Fuck Android SeekBar, always start from 0
@@ -751,12 +761,8 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
             int floor = (Integer) view.getTag();
 
-            //if user direct jump to last page, he may not get correct mMaxPostInPage
-            if (mMaxPostInPage < HiSettingsHelper.getInstance().getMaxPostsInPage()) {
-                mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
-            }
-
             mGoToPage = (floor - 1) / mMaxPostInPage + 1; // page start from 1
+
             mFloorOfPage = floor % mMaxPostInPage; // floor start from 1
             if (mFloorOfPage == 0) {
                 mFloorOfPage = mMaxPostInPage;
@@ -841,7 +847,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             } else {
                 mDetailListView.setSelection(0);
             }
+
             mFloorOfPage = -1;
+            mGotoPostId = null;
 
             //if current page loaded from cache, set prefetch flag for next page
             mPrefetching = false;

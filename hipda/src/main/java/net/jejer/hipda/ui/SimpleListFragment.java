@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -241,11 +242,14 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
             Fragment fragment = null;
             if (mType == SimpleListLoader.TYPE_SMS) {
                 bun.putString(SmsFragment.ARG_ID, item.getAuthor());
-                bun.putString(SmsFragment.ARG_UID, item.getId());
+                bun.putString(SmsFragment.ARG_UID, item.getUid());
                 fragment = new SmsFragment();
             } else {
-                bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getId());
+                bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getTid());
                 bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
+                if (!TextUtils.isEmpty(item.getPid())) {
+                    bun.putString(ThreadDetailFragment.ARG_PID_KEY, item.getPid());
+                }
                 fragment = new ThreadDetailFragment();
             }
             fragment.setArguments(bun);
@@ -275,7 +279,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
             if (mType == SimpleListLoader.TYPE_SMS) {
                 return true;
             } else {
-                bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getId());
+                bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getTid());
                 bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
                 bun.putInt(ThreadDetailFragment.ARG_PAGE_KEY, ThreadDetailFragment.LAST_PAGE);
                 bun.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, ThreadDetailFragment.LAST_FLOOR);

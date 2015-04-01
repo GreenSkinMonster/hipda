@@ -90,7 +90,8 @@ public class HiParser {
                 if (!tid.startsWith("redirect.php?goto=")) {
                     continue;
                 }
-                tid = HttpUtils.getMiddleString(tid, "ptid=", "&");
+                item.setTid(HttpUtils.getMiddleString(tid, "ptid=", "&"));
+                item.setPid(HttpUtils.getMiddleString(tid, "pid=", "&"));
                 String title = linkES.first().text();
 
                 // time
@@ -100,7 +101,6 @@ public class HiParser {
                 }
                 String time = lastpostES.first().text();
 
-                item.setId(tid);
                 item.setTitle(title);
                 item.setTime(time);
             } else {
@@ -175,7 +175,7 @@ public class HiParser {
             }
             String time = lastpostES.first().text();
 
-            item.setId(tid);
+            item.setTid(tid);
             item.setTitle(title);
             item.setTime(time);
 
@@ -225,7 +225,7 @@ public class HiParser {
                 continue;
             }
             String uid = uidAES.first().attr("href");
-            item.setId(HttpUtils.getMiddleString(uid, "uid=", "&"));
+            item.setUid(HttpUtils.getMiddleString(uid, "uid=", "&"));
 
             // time
             item.setTime(pciteES.first().ownText());
@@ -309,7 +309,7 @@ public class HiParser {
             if (a.attr("href").startsWith("http://www.hi-pda.com/forum/redirect.php?from=notice&goto=findpost")) {
                 // Thread Name and TID and PID
                 item.setTitle(a.text());
-                item.setId(HttpUtils.getMiddleString(a.attr("href"), "ptid=", ""));
+                item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", ""));
                 item.setPid(HttpUtils.getMiddleString(a.attr("href"), "pid=", "&"));
                 break;
             }
@@ -349,7 +349,7 @@ public class HiParser {
             }
             if (a.attr("href").startsWith("http://www.hi-pda.com/forum/redirect.php?from=notice&goto=findpost")) {
                 // Thread Name and TID and PID
-                item.setId(HttpUtils.getMiddleString(a.attr("href"), "ptid=", ""));
+                item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", ""));
                 item.setPid(HttpUtils.getMiddleString(a.attr("href"), "pid=", "&"));
                 break;
             }
@@ -423,10 +423,10 @@ public class HiParser {
                     item.setAvatarUrl(avatarImgES.first().attr("src"));
                 }
                 if (item.getAuthor().equals(myUsername)) {
-                    item.setId(myUid);
+                    item.setUid(myUid);
                 } else {
                     String spaceUrl = Utils.nullToText(avatarES.first().attr("href"));
-                    item.setId(HttpUtils.getMiddleString(spaceUrl, "uid=", "&"));
+                    item.setUid(HttpUtils.getMiddleString(spaceUrl, "uid=", "&"));
                 }
             }
 
@@ -486,7 +486,7 @@ public class HiParser {
                 continue;
             }
             String href = subjectAES.first().attr("href");
-            item.setId(HttpUtils.getMiddleString(href, "tid=", "&"));
+            item.setTid(HttpUtils.getMiddleString(href, "tid=", "&"));
 
             Elements authorAES = tbodyE.select("tr td.author cite a");
             if (authorAES.size() == 0) {
@@ -548,7 +548,7 @@ public class HiParser {
                 continue;
             }
             String href = subjectAES.first().attr("href");
-            item.setId(HttpUtils.getMiddleString(href, "tid=", "&"));
+            item.setTid(HttpUtils.getMiddleString(href, "tid=", "&"));
 
             list.add(item);
         }

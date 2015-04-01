@@ -328,7 +328,7 @@ public class UserinfoFragment extends Fragment {
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
 
             Bundle bun = new Bundle();
-            bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getId());
+            bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getTid());
             bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
             Fragment fragment = new ThreadDetailFragment();
             fragment.setArguments(bun);

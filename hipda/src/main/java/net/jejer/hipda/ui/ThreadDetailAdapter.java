@@ -234,7 +234,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     ContentGoToFloor goToFloor = (ContentGoToFloor) content;
                     author = goToFloor.getAuthor();
                     floor = goToFloor.getFloor();
-                    DetailBean detailBean = mDetailFragment.getCachedPost(goToFloor.getFloor(), goToFloor.getPostId());
+                    DetailBean detailBean = mDetailFragment.getCachedPost(goToFloor.getPostId());
                     if (detailBean != null) {
                         text = detailBean.getContents().getCopyText(true);
                         floor = Integer.parseInt(detailBean.getFloor());

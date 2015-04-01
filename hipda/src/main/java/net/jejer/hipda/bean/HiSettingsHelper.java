@@ -582,7 +582,7 @@ public class HiSettingsHelper {
 
     public int getMaxPostsInPage() {
         if (mMaxPostsInPage <= 0) {
-            mMaxPostsInPage = mSharedPref.getInt(PERF_MAX_POSTS_IN_PAGE, 0);
+            mMaxPostsInPage = mSharedPref.getInt(PERF_MAX_POSTS_IN_PAGE, 50);
         }
         return mMaxPostsInPage;
     }

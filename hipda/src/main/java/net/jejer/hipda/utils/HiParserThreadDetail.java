@@ -10,6 +10,7 @@ import android.util.Log;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailBean.Contents;
 import net.jejer.hipda.bean.DetailListBean;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadListFragment;
 
@@ -21,22 +22,23 @@ import org.jsoup.select.Elements;
 public class HiParserThreadDetail {
     public static final String LOG_TAG = "HiParserThreadDetail";
 
-    public static DetailListBean parse(Context ctx, Handler handler, int page, Document doc) {
+    public static DetailListBean parse(Context ctx, Handler handler, Document doc) {
 
         // get last page
         Elements pagesES = doc.select("div#wrap div.forumcontrol div.pages");
         // thread have only 1 page don't have "div.pages"
         int last_page = 1;
+        int page = 1;
         if (pagesES.size() != 0) {
             for (Node n : pagesES.first().childNodes()) {
                 int tmp = HttpUtils.getIntFromString(((Element) n).text());
                 if (tmp > last_page) {
                     last_page = tmp;
                 }
+                if ("strong".equals(n.nodeName())) {
+                    page = tmp;
+                }
             }
-        }
-        if (page == ThreadDetailFragment.LAST_PAGE) {
-            page = last_page;
         }
 
         // Update UI
@@ -52,7 +54,6 @@ public class HiParserThreadDetail {
 
         DetailListBean details = new DetailListBean();
         details.setPage(page);
-
         details.setLastPage(last_page);
 
         //get forum id
@@ -73,8 +74,9 @@ public class HiParserThreadDetail {
         if (rootES.size() != 1) {
             return null;
         }
-        for (int i = 0; i < rootES.first().childNodeSize(); i++) {
-            Element postE = rootES.first().child(i);
+        Element postsEL = rootES.first();
+        for (int i = 0; i < postsEL.childNodeSize(); i++) {
+            Element postE = postsEL.child(i);
 
             DetailBean detail = new DetailBean();
 
@@ -101,6 +103,16 @@ public class HiParserThreadDetail {
             }
             String floor = postinfoAES.first().text();
             detail.setFloor(floor);
+
+            //update max posts in page, this is controlled by user setting
+            if (i == 0) {
+                if (page == 1 && last_page > 1) {
+                    HiSettingsHelper.getInstance().setMaxPostsInPage(postsEL.childNodeSize());
+                } else if (page > 1) {
+                    int maxPostsInPage = (Integer.parseInt(floor) - 1) / (page - 1);
+                    HiSettingsHelper.getInstance().setMaxPostsInPage(maxPostsInPage);
+                }
+            }
 
             //author
             Elements postauthorAES = postE.select("table tbody tr td.postauthor div.postinfo a");

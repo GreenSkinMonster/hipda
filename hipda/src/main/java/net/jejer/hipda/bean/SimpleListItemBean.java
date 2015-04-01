@@ -3,21 +3,30 @@ package net.jejer.hipda.bean;
 import android.text.TextUtils;
 
 public class SimpleListItemBean {
-    private String mId;
+    private String mTid;
     private String mPid;
     private String mTitle;
     private String mInfo;
     private String mTime;
+    private String mUid;
     private String mAuthor;
     private String mAvatarUrl = "";
     private boolean mNew = false;
 
-    public String getId() {
-        return mId;
+    public String getUid() {
+        return mUid;
     }
 
-    public void setId(String mId) {
-        this.mId = mId;
+    public void setUid(String uid) {
+        mUid = uid;
+    }
+
+    public String getTid() {
+        return mTid;
+    }
+
+    public void setTid(String tid) {
+        this.mTid = tid;
     }
 
     public String getPid() {

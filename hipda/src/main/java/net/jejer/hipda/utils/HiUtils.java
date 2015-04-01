@@ -19,6 +19,7 @@ public class HiUtils {
     public static final String MyReplyUrl = BaseUrl + "my.php?item=posts";
     public static final String MyPostUrl = BaseUrl + "my.php?item=threads";
     public static final String LastPageUrl = BaseUrl + "/redirect.php?goto=lastpost&from=fastpost&tid=";
+    public static final String RedirectToPostUrl = BaseUrl + "/redirect.php?goto=findpost&pid={pid}&ptid={tid}";
     public static final String SMSUrl = BaseUrl + "pm.php?filter=privatepm";
     public static final String SMSDetailUrl = BaseUrl + "pm.php?daterange=5&uid=";
     public static final String SMSPreparePostUrl = BaseUrl + "pm.php?daterange=1&uid=";

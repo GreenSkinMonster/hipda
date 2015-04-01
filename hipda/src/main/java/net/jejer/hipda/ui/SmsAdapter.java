@@ -45,9 +45,9 @@ public class SmsAdapter extends ArrayAdapter<SimpleListItemBean> {
         holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
         holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
 
-        holder.iv_avatar.setTag(R.id.avatar_tag_uid, item.getId());
+        holder.iv_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
         holder.iv_avatar.setTag(R.id.avatar_tag_username, item.getAuthor());
-        if (!TextUtils.isEmpty(item.getId())) {
+        if (!TextUtils.isEmpty(item.getUid())) {
             holder.iv_avatar.setOnClickListener(mAvatarListener);
         }
 
