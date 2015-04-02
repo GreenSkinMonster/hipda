@@ -141,6 +141,11 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
                 inflater.inflate(R.menu.menu_search, menu);
                 searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
                 searchView.setIconified(false);
+                searchView.setQueryHint("按帖子标题搜索");
+                if (!TextUtils.isEmpty(mQuery)) {
+                    searchView.setQuery(mQuery, false);
+                    searchView.clearFocus();
+                }
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
