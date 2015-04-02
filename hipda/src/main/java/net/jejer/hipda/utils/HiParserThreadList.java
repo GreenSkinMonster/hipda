@@ -65,6 +65,11 @@ public class HiParserThreadList {
             String title = titleES.first().text();
             thread.setTitle(title);
 
+            Elements typeES = tbodyE.select("th.subject em a");
+            if (typeES.size() > 0) {
+                thread.setType(typeES.text());
+            }
+
             Elements threadIsNewES = tbodyE.select("td.folder img");
             if (threadIsNewES.size() > 0) {
                 String imgSrc = Utils.nullToText(threadIsNewES.first().attr("src"));

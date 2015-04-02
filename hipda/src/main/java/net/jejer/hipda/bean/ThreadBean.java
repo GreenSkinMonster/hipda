@@ -20,6 +20,7 @@ public class ThreadBean {
     private Boolean mHaveAttach;
     private Boolean mHavePic;
     private boolean mNew;
+    private String mType;
 
     public ThreadBean() {
         mIsStick = false;
@@ -162,4 +163,11 @@ public class ThreadBean {
         }
     }
 
+    public String getType() {
+        return mType;
+    }
+
+    public void setType(String type) {
+        mType = type;
+    }
 }

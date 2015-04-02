@@ -2,6 +2,8 @@ package net.jejer.hipda.ui;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +61,12 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
         holder.tv_author.setText(thread.getAuthor());
 
-        holder.tv_title.setText(thread.getTitle());
+        if (!TextUtils.isEmpty(thread.getType())) {
+            holder.tv_title.setText(Html.fromHtml("<font color=grey>[" + thread.getType() + "]</font>" + thread.getTitle()));
+        } else {
+            holder.tv_title.setText(thread.getTitle());
+        }
+
         holder.tv_title.setTextSize(HiSettingsHelper.getTitleTextSize());
         if (ThreadListFragment.TITLE_BOLD_ON == HiSettingsHelper.getInstance().getTitleBold()
                 || (ThreadListFragment.TITLE_BOLD_ONLY_NEW == HiSettingsHelper.getInstance().getTitleBold()
