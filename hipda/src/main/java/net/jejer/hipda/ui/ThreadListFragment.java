@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -30,6 +31,9 @@ import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostAsyncTask;
@@ -75,6 +79,7 @@ public class ThreadListFragment extends Fragment
     private Handler mMsgHandler;
     private HiProgressDialog postProgressDialog;
     private SwipeRefreshLayout swipeLayout;
+    private FloatingActionsMenu mFam;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,6 +127,27 @@ public class ThreadListFragment extends Fragment
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeResources(R.color.icon_blue);
 
+        mFam = (FloatingActionsMenu) view.findViewById(R.id.fam_actions);
+        mFam.setVisibility(View.INVISIBLE);
+
+        FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
+        fabRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mFam.collapse();
+                refresh();
+            }
+        });
+
+        FloatingActionButton fabNewThread = (FloatingActionButton) view.findViewById(R.id.action_fab_new_thread);
+        fabNewThread.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mFam.collapse();
+                newThread();
+            }
+        });
+
         if (HiSettingsHelper.getInstance().isEinkModeFloatButtonEnabled()) {
             ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_list_pageup);
             mBtnPageup.setVisibility(View.VISIBLE);
@@ -159,6 +185,15 @@ public class ThreadListFragment extends Fragment
         mThreadListView.setOnItemClickListener(new OnItemClickCallback());
         mThreadListView.setOnItemLongClickListener(new OnItemLongClickCallback());
         mThreadListView.setOnScrollListener(new OnScrollCallback());
+        mThreadListView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (mFam.isExpanded()) {
+                    mFam.collapse();
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -191,28 +226,32 @@ public class ThreadListFragment extends Fragment
                 showThreadListSettingsDialog();
                 return true;
             case R.id.action_new_thread:
-                Bundle arguments = new Bundle();
-                arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_NEW_THREAD);
-                arguments.putString(PostFragment.ARG_FID_KEY, mForumId + "");
-
-                PostFragment fragment = new PostFragment();
-                fragment.setArguments(arguments);
-                fragment.setPostListener(this);
-
-                if (HiSettingsHelper.getInstance().getIsLandscape()) {
-                    getFragmentManager().beginTransaction()
-                            .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-                            .addToBackStack(PostFragment.class.getName())
-                            .commit();
-                } else {
-                    getFragmentManager().beginTransaction()
-                            .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-                            .addToBackStack(PostFragment.class.getName())
-                            .commit();
-                }
+                newThread();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void newThread() {
+        Bundle arguments = new Bundle();
+        arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_NEW_THREAD);
+        arguments.putString(PostFragment.ARG_FID_KEY, mForumId + "");
+
+        PostFragment fragment = new PostFragment();
+        fragment.setArguments(arguments);
+        fragment.setPostListener(this);
+
+        if (HiSettingsHelper.getInstance().getIsLandscape()) {
+            getFragmentManager().beginTransaction()
+                    .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
+                    .addToBackStack(PostFragment.class.getName())
+                    .commit();
+        } else {
+            getFragmentManager().beginTransaction()
+                    .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
+                    .addToBackStack(PostFragment.class.getName())
+                    .commit();
         }
     }
 
@@ -302,30 +341,17 @@ public class ThreadListFragment extends Fragment
             mVisibleItemCount = visibleItemCount;
 
             if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
-
                 if (!mInloading) {
                     mInloading = true;
                     mPage++;
-                    //Log.v(LOG_TAG, "overScroll autoload triggerd, load page " + String.valueOf(mPage));
-
                     getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-                    //Log.v(LOG_TAG, "restartLoader() called");
                 }
             }
         }
 
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
-//			if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-//				if (scrollState == SCROLL_STATE_FLING) {
-//					Glide.with(mCtx).pauseRequests();
-//				} else if (scrollState == SCROLL_STATE_IDLE) {
-//					Log.v(LOG_TAG, "scrollState = " + scrollState + ", VisibleItem=" + mLastVisibleItem + ", mVisibleItemCount=" + mVisibleItemCount);
-//					Glide.with(mCtx).resumeRequests();
-//				}
-//			}
         }
-
 
     }
 
@@ -415,6 +441,7 @@ public class ThreadListFragment extends Fragment
             mInloading = false;
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
+            mFam.setVisibility(View.VISIBLE);
 
             if (threads == null) {
                 if (mPage > 1) {

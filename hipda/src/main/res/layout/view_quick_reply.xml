@@ -17,7 +17,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:hint="@string/txt_quick_hint"
+        android:hint="@string/action_quick_reply"
         android:inputType="textMultiLine"
         android:singleLine="false"
         android:minLines="1"

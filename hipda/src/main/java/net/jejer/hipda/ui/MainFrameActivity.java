@@ -158,6 +158,12 @@ public class MainFrameActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+
+        if (mOnSwipeCallback instanceof ThreadDetailFragment) {
+            if (((ThreadDetailFragment) mOnSwipeCallback).hideQuickReply())
+                return;
+        }
+
         if (!popFragment(true)) {
             mQuit++;
             if (mQuit == 1 && HiSettingsHelper.getInstance().getIsLandscape()) {

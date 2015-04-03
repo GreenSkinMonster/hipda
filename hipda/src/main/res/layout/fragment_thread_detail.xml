@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragment_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -38,7 +39,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="60dp"
         android:contentDescription="@string/btn_pageup"
         android:src="@drawable/jejer_up"
         android:visibility="gone" />
@@ -49,10 +50,58 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="75dp"
         android:layout_marginRight="15dp"
         android:contentDescription="@string/btn_pagedown"
         android:src="@drawable/jejer_down"
         android:visibility="gone" />
+
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/multiple_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        fab:fab_addButtonColorNormal="@color/background_silver"
+        fab:fab_addButtonColorPressed="@color/background_grey"
+        fab:fab_addButtonPlusIconColor="@color/icon_blue"
+        fab:fab_labelStyle="@style/menu_labels_style"
+        fab:fab_addButtonSize="mini"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/action_fab_goto_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_title="@string/action_goto_page"
+            fab:fab_colorNormal="@color/blue_normal"
+            fab:fab_colorPressed="@color/blue_pressed"
+            fab:fab_icon="@drawable/tapatalk_bubble_move_night"
+            fab:fab_size="mini" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/action_fab_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_title="@string/action_refresh"
+            fab:fab_colorNormal="@color/blue_normal"
+            fab:fab_colorPressed="@color/blue_pressed"
+            fab:fab_icon="@drawable/ic_action_refresh_night"
+            fab:fab_size="mini" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/action_fab_quick_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/blue_normal"
+            fab:fab_colorPressed="@color/blue_pressed"
+            fab:fab_icon="@drawable/ic_action_write"
+            fab:fab_title="@string/action_quick_reply"
+            fab:fab_size="mini" />
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </RelativeLayout>

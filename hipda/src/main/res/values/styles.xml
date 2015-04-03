@@ -125,4 +125,9 @@
         <item name="android:src">@drawable/ic_action_menu_eink</item>
     </style>
 
+    <style name="menu_labels_style">
+        <item name="android:background">@drawable/fab_label_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>

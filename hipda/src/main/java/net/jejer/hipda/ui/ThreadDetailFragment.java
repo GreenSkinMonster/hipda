@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -34,6 +35,9 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.DetailListLoader;
@@ -89,6 +93,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     public static final String LOADER_PAGE_KEY = "LOADER_PAGE_KEY";
 
     private HiProgressDialog postProgressDialog;
+    private FloatingActionsMenu mFam;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,6 +137,46 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         mDetailListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         mTipBar = (TextView) view.findViewById(R.id.thread_detail_tipbar);
         mTipBar.bringToFront();
+
+        mFam = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
+        mFam.setVisibility(View.INVISIBLE);
+
+        FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
+        fabRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mFam.collapse();
+                mFloorOfPage = LAST_FLOOR;
+                refresh();
+            }
+        });
+
+        FloatingActionButton fabQuickReply = (FloatingActionButton) view.findViewById(R.id.action_fab_quick_reply);
+        fabQuickReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mFam.collapse();
+                mFam.setVisibility(View.INVISIBLE);
+                quickReply.setVisibility(View.VISIBLE);
+                quickReply.bringToFront();
+                (new Handler()).postDelayed(new Runnable() {
+                    public void run() {
+                        mReplyTextTv.requestFocus();
+                        mReplyTextTv.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                        mReplyTextTv.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+                    }
+                }, 200);
+            }
+        });
+
+        FloatingActionButton fabGotoPage = (FloatingActionButton) view.findViewById(R.id.action_fab_goto_page);
+        fabGotoPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mFam.collapse();
+                showGotoPageDialog();
+            }
+        });
 
         if (!HiSettingsHelper.getInstance().getIsLandscape()) {
             mDetailListView.addHeaderView(inflater.inflate(R.layout.head_thread_detail, null));
@@ -191,6 +236,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         mDetailListView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
+                if (mFam.isExpanded()) {
+                    mFam.collapse();
+                }
                 return detector.onTouchEvent(event);
             }
         });
@@ -217,11 +265,10 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
                             Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mReplyTextTv.getWindowToken(), 0);
+                    mFam.setVisibility(View.VISIBLE);
                 }
             }
         });
-
-        quickReply.bringToFront();
 
         if (HiSettingsHelper.getInstance().isEinkModeFloatButtonEnabled()) {
             ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_detail_pageup);
@@ -471,7 +518,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
             //mAdapter.clear();
 
-            quickReply.setVisibility(View.INVISIBLE);
+//            quickReply.setVisibility(View.INVISIBLE);
 
             // Re-enable after load complete if needed.
             mDetailListView.setPullLoadEnable(false);
@@ -489,6 +536,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             mInloading = false;
             mPrefetching = false;
             mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
+            mFam.setVisibility(View.VISIBLE);
 
             if (details == null) {
                 // May be login error, error message should be populated in login async task
@@ -557,7 +605,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
             mInloading = false;
             mPrefetching = false;
-            mTipBar.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -597,13 +644,13 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
     public void onSwipeTop() {
         //Log.v(LOG_TAG, "onSwipeTop");
-        quickReply.setVisibility(View.INVISIBLE);
+//        quickReply.setVisibility(View.INVISIBLE);
     }
 
     public void onSwipeBottom() {
         //Log.v(LOG_TAG, "onSwipeBottom");
-        quickReply.bringToFront();
-        quickReply.setVisibility(View.VISIBLE);
+//        quickReply.bringToFront();
+//        quickReply.setVisibility(View.VISIBLE);
     }
 
     public void onVolumeUp() {
@@ -752,6 +799,16 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         if (titleView != null) {
             titleView.setGravity(Gravity.CENTER);
         }
+    }
+
+    public boolean hideQuickReply() {
+        if (quickReply.getVisibility() == View.VISIBLE) {
+            mReplyTextTv.setText("");
+            quickReply.setVisibility(View.INVISIBLE);
+            mFam.setVisibility(View.VISIBLE);
+            return true;
+        }
+        return false;
     }
 
     public class GoToFloorOnClickListener implements Button.OnClickListener {
