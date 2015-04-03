@@ -176,14 +176,16 @@ public class MainFrameActivity extends Activity {
             if (fragment == null) {
                 fragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
             }
-            if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+            if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
+                    || keyCode == KeyEvent.KEYCODE_PAGE_DOWN)) {
                 if (fragment instanceof ThreadDetailFragment) {
                     ((ThreadDetailFragment) fragment).onVolumeDown();
                 } else if (fragment instanceof ThreadListFragment) {
                     ((ThreadListFragment) fragment).onVolumeDown();
                 }
                 return true;
-            } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP
+                    || keyCode == KeyEvent.KEYCODE_PAGE_UP) {
                 if (fragment instanceof ThreadDetailFragment) {
                     ((ThreadDetailFragment) fragment).onVolumeUp();
                 } else if (fragment instanceof ThreadListFragment) {
