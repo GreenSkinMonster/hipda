@@ -1,12 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.widget.TextView;
-
-import net.jejer.hipda.R;
 
 
 public class NotifyHelper {
@@ -62,6 +57,9 @@ public class NotifyHelper {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                ((MainFrameActivity) mActivity).onNotification();
+
                 if (mCntSMS > 0) {
                     mViewSmsItemTextView.setText("短消息 (" + mCntSMS + ")");
                 } else {
@@ -77,26 +75,25 @@ public class NotifyHelper {
         });
 
 
-        if (mCntSMS + mCntThread > 0) {
-
-            Notification.Builder mBuilder =
-                    new Notification.Builder(mActivity)
-                            .setSmallIcon(R.drawable.ic_stat_hi)
-                            .setContentTitle("您有新短消息或帖子通知")
-                            .setContentText("短消息(" + String.valueOf(mCntSMS) + "), 帖子通知(" + String.valueOf(mCntThread) + ") 请打开侧栏查阅")
-                            .setAutoCancel(true);
-
-            NotificationManager mNotifyMgr =
-                    (NotificationManager) mActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-            // Builds the notification and issues it.
-            //Call requires API level 16 (current min is 14): android.app.Notification.Builder#build
-            mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
-        } else {
-            NotificationManager mNotifyMgr =
-                    (NotificationManager) mActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-            // Builds the notification and issues it.
-            //Call requires API level 16 (current min is 14): android.app.Notification.Builder#build
-            mNotifyMgr.cancel(NOTIFICATION_ID);
-        }
+//        if (mCntSMS + mCntThread > 0) {
+//            Notification.Builder mBuilder =
+//                    new Notification.Builder(mActivity)
+//                            .setSmallIcon(R.drawable.ic_stat_hi)
+//                            .setContentTitle("您有新短消息或帖子通知")
+//                            .setContentText("短消息(" + String.valueOf(mCntSMS) + "), 帖子通知(" + String.valueOf(mCntThread) + ") 请打开侧栏查阅")
+//                            .setAutoCancel(true);
+//
+//            NotificationManager mNotifyMgr =
+//                    (NotificationManager) mActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+//            if (Build.VERSION.SDK_INT < 16) {
+//                mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.getNotification());
+//            } else {
+//                mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
+//            }
+//        } else {
+//            NotificationManager mNotifyMgr =
+//                    (NotificationManager) mActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+//            mNotifyMgr.cancel(NOTIFICATION_ID);
+//        }
     }
 }

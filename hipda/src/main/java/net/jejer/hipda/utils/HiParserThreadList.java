@@ -30,7 +30,7 @@ public class HiParserThreadList {
         handler.sendMessage(msgStartParse);
 
         // Async check notify
-        new parseNotifyRunnable(ctx, doc).run();
+        new parseNotifyRunnable(ctx, doc, true).run();
 
         ThreadListBean threads = new ThreadListBean();
         Elements tbodyES = doc.select("tbody[id]");
@@ -165,10 +165,12 @@ public class HiParserThreadList {
     public static class parseNotifyRunnable implements Runnable {
         private Context mCtx;
         private Document mDoc;
+        private boolean mCheckSMS;
 
-        public parseNotifyRunnable(Context ctx, Document doc) {
+        public parseNotifyRunnable(Context ctx, Document doc, boolean checkSMS) {
             mCtx = ctx;
             mDoc = doc;
+            mCheckSMS = checkSMS;
         }
 
         @Override
@@ -182,28 +184,27 @@ public class HiParserThreadList {
             //私人消息 (1) 公共消息 (0) 系统消息 (0) 好友消息 (0) 帖子消息 (0)
             int cnt = 0;
             for (String s : notifyStr.split("\\) ")) {
-                cnt = 0;
                 if (s.contains("私人消息")) {
                     cnt = HttpUtils.getIntFromString(s);
                     NotifyHelper.getInstance().setCntSMS(cnt);
                     Log.v("NEW SMS:", String.valueOf(cnt));
-                    continue;
                 } else if (s.contains("帖子消息")) {
                     cnt = HttpUtils.getIntFromString(s);
                     NotifyHelper.getInstance().setCntThread(cnt);
                     Log.v("THREAD NOTIFY:", String.valueOf(cnt));
-                    continue;
                 }
             }
 
-            // Trigger Refresh SMS, result will show in next load.
-            StringRequest sReq = new HiStringRequest(mCtx, HiUtils.CheckSMS,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                        }
-                    }, null);
-            VolleyHelper.getInstance().add(sReq);
+            if (mCheckSMS) {
+                // Trigger Refresh SMS, result will show in next load.
+                StringRequest sReq = new HiStringRequest(mCtx, HiUtils.CheckSMS,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                            }
+                        }, null);
+                VolleyHelper.getInstance().add(sReq);
+            }
 
             // Update UI
             NotifyHelper.getInstance().updateDrawer();

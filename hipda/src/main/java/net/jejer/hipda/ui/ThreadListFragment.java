@@ -37,6 +37,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostAsyncTask;
+import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.ThreadListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
@@ -80,6 +81,8 @@ public class ThreadListFragment extends Fragment
     private HiProgressDialog postProgressDialog;
     private SwipeRefreshLayout swipeLayout;
     private FloatingActionsMenu mFam;
+    private FloatingActionButton mFabNotify;
+    private boolean mShowNotifyToast = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -148,6 +151,35 @@ public class ThreadListFragment extends Fragment
             }
         });
 
+        mFabNotify = (FloatingActionButton) view.findViewById(R.id.action_fab_notify);
+        mFabNotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (NotifyHelper.getInstance().getCntSMS() > 0) {
+                    Bundle smsBundle = new Bundle();
+                    smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
+                    SimpleListFragment smsFragment = new SimpleListFragment();
+                    smsFragment.setArguments(smsBundle);
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
+                            .addToBackStack(SimpleListFragment.class.getName())
+                            .commit();
+                } else if (NotifyHelper.getInstance().getCntThread() > 0) {
+                    Bundle notifyBundle = new Bundle();
+                    notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREADNOTIFY);
+                    SimpleListFragment notifyFragment = new SimpleListFragment();
+                    notifyFragment.setArguments(notifyBundle);
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
+                            .addToBackStack(SimpleListFragment.class.getName())
+                            .commit();
+                } else {
+                    Toast.makeText(mCtx, "没有未处理的通知", Toast.LENGTH_SHORT).show();
+                    mFabNotify.setVisibility(View.GONE);
+                }
+            }
+        });
+
         if (HiSettingsHelper.getInstance().isEinkModeFloatButtonEnabled()) {
             ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_list_pageup);
             mBtnPageup.setVisibility(View.VISIBLE);
@@ -208,6 +240,8 @@ public class ThreadListFragment extends Fragment
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
         getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
         getActivity().getActionBar().setSelectedNavigationItem(mForumSelect == -1 ? 0 : mForumSelect);
+
+        showNotification();
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -500,6 +534,8 @@ public class ThreadListFragment extends Fragment
             }
             Log.v(LOG_TAG, "New Threads Added: " + count + ", Total = " + mThreadListAdapter.getCount());
 
+            showNotification();
+
             Message msgDone = Message.obtain();
             msgDone.what = STAGE_DONE;
             mMsgHandler.sendMessage(msgDone);
@@ -582,6 +618,32 @@ public class ThreadListFragment extends Fragment
         // Add the buttons
         popDialog.setPositiveButton(getResources().getString(android.R.string.ok), null);
         popDialog.create().show();
+    }
+
+    public void showNotification() {
+        int smsCount = NotifyHelper.getInstance().getCntSMS();
+        int threadCount = NotifyHelper.getInstance().getCntThread();
+        if (smsCount + threadCount > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("您有 ");
+            if (smsCount > 0) {
+                sb.append(smsCount + " 条新的短消息");
+            }
+            if (threadCount > 0) {
+                if (sb.length() > 3)
+                    sb.append(", ");
+                sb.append(threadCount + " 条新的帖子通知");
+            }
+            if (mShowNotifyToast) {
+                Toast.makeText(mCtx, sb.toString(), Toast.LENGTH_SHORT).show();
+                mShowNotifyToast = false;
+            }
+            mFabNotify.setVisibility(View.VISIBLE);
+        } else {
+            mShowNotifyToast = true;
+            if (mFabNotify.getVisibility() == View.VISIBLE)
+                mFabNotify.setVisibility(View.GONE);
+        }
     }
 
     private class ThreadListMsgHandler implements Handler.Callback {

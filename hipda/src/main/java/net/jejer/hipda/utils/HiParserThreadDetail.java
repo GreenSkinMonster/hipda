@@ -50,7 +50,7 @@ public class HiParserThreadDetail {
         handler.sendMessage(msgStartParse);
 
         // Async check notify
-        new HiParserThreadList.parseNotifyRunnable(ctx, doc).run();
+        new HiParserThreadList.parseNotifyRunnable(ctx, doc, true).run();
 
         DetailListBean details = new DetailListBean();
         details.setPage(page);

@@ -18,6 +18,10 @@ public class HiParser {
     public static final String LOG_TAG = "HiParser";
 
     public static SimpleListBean parseSimpleList(Context ctx, int type, Document doc) {
+
+        // Async check notify
+        new HiParserThreadList.parseNotifyRunnable(ctx, doc, false).run();
+
         switch (type) {
             case SimpleListLoader.TYPE_MYREPLY:
                 return parseReplyList(ctx, doc);

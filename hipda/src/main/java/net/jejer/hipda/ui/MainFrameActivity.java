@@ -242,6 +242,12 @@ public class MainFrameActivity extends Activity {
 
     }
 
+    public void onNotification() {
+        if (mOnSwipeCallback instanceof ThreadListFragment) {
+            ((ThreadListFragment) mOnSwipeCallback).showNotification();
+        }
+    }
+
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
 
         @Override
