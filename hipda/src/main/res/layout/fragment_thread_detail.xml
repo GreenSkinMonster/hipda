@@ -76,7 +76,6 @@
             android:id="@+id/action_fab_goto_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_title="@string/action_goto_page"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
             fab:fab_icon="@drawable/tapatalk_bubble_move_night"
@@ -86,7 +85,6 @@
             android:id="@+id/action_fab_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_title="@string/action_refresh"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
             fab:fab_icon="@drawable/ic_action_refresh_night"
@@ -98,8 +96,7 @@
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
-            fab:fab_icon="@drawable/ic_action_write"
-            fab:fab_title="@string/action_quick_reply"
+            fab:fab_icon="@drawable/ic_action_quick_reply"
             fab:fab_size="mini" />
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
