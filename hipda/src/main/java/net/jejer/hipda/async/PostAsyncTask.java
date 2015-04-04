@@ -3,10 +3,8 @@ package net.jejer.hipda.async;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
@@ -14,15 +12,6 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -102,33 +91,27 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             }
         }
 
-        CookieStore cookieStore = HttpUtils.restoreCookie(mCtx);
-        HttpContext localContext = new BasicHttpContext();
-        AndroidHttpClient client = AndroidHttpClient.newInstance(HiUtils.UserAgent);
-        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-
         String url = HiUtils.ReplyUrl + tid + "&replysubmit=yes";
         // do send
         switch (mMode) {
             case MODE_REPLY_THREAD:
             case MODE_QUICK_REPLY:
-                doPost(client, localContext, url, reply_text);
+                doPost(url, reply_text);
                 break;
             case MODE_REPLY_POST:
             case MODE_QUOTE_POST:
-                doPost(client, localContext, url, mInfo.get("text").get(0) + "\n\n    " + reply_text);
+                doPost(url, mInfo.get("text").get(0) + "\n\n    " + reply_text);
                 break;
             case MODE_NEW_THREAD:
                 url = HiUtils.NewThreadUrl + fid + "&typeid=" + typeid + "&topicsubmit=yes";
-                doPost(client, localContext, url, reply_text, subject);
+                doPost(url, reply_text, subject);
                 break;
             case MODE_EDIT_POST:
                 url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
-                doPost(client, localContext, url, reply_text, subject);
+                doPost(url, reply_text, subject);
                 break;
         }
 
-        client.close();
         return null;
     }
 
@@ -148,11 +131,19 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             mPostListenerCallback.onPostDone(mMode, mStatus, mResult, postBean);
     }
 
-    private void doPost(AndroidHttpClient client, HttpContext ctx, String url, String... text) {
-        HttpPost req = new HttpPost(url);
+    private void doPost(String url, String... text) {
+
+        String formhash = mInfo.get("formhash").size() > 0
+                ? mInfo.get("formhash").get(0) : null;
+
+        if (TextUtils.isEmpty(formhash)) {
+            mResult = "发表失败!";
+            mStatus = Constants.STATUS_FAIL;
+            return;
+        }
 
         Map<String, String> post_param = new HashMap<String, String>();
-        post_param.put("formhash", mInfo.get("formhash").get(0));
+        post_param.put("formhash", formhash);
         post_param.put("posttime", String.valueOf(System.currentTimeMillis()));
         post_param.put("wysiwyg", "0");
         post_param.put("checkbox", "0");
@@ -170,44 +161,15 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             }
         }
 
-        try {
-            String encoded = HttpUtils.buildHttpString(post_param);
-            StringEntity entity = new StringEntity(encoded, HiSettingsHelper.getInstance().getEncode());
-            entity.setContentType("application/x-www-form-urlencoded");
-            req.setEntity(entity);
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Encoding error", e);
-            mResult = "编码错误!";
-            return;
-        }
+        String rsp_str = VolleyHelper.getInstance().synchronousPost(url, post_param,
+                VolleyHelper.getInstance().getSimpleErrorListener());
 
-        String rsp_str;
-        int rsp_code;
-        HttpResponse rsp;
-        try {
-            rsp = client.execute(req, ctx);
-            HttpEntity rsp_ent = rsp.getEntity();
-            rsp_code = rsp.getStatusLine().getStatusCode();
-            rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
-        } catch (Exception e) {
-            Log.e(LOG_TAG, " Network related error", e);
-            mResult = "发生网络错误!";
-            return;
-        }
-        //Log.e(LOG_TAG, rsp_str);
-
-        if (rsp_code == 302) {
-            mResult = "发表成功!";
-            mStatus = Constants.STATUS_SUCCESS;
-
-            //viewthread.php?tid=123456&extra=
-            String location = rsp.getFirstHeader("Location") != null ? rsp.getFirstHeader("Location").toString() : "";
-            if (!TextUtils.isEmpty(location))
-                mTid = HttpUtils.getMiddleString(location, "viewthread.php?tid=", "&");
-
-        } else {
-            if (rsp_code >= 400) {
-                mResult = "服务器错误代码 " + rsp_code + "!";
+        //when success, volley will follow 302 redirect get the page content
+        if (!TextUtils.isEmpty(rsp_str)) {
+            if (rsp_str.contains("tid = parseInt('")) {
+                mTid = HttpUtils.getMiddleString(rsp_str, "tid = parseInt('", "'");
+                mResult = "发表成功!";
+                mStatus = Constants.STATUS_SUCCESS;
             } else {
                 mResult = "发表失败!";
                 Document doc = Jsoup.parse(rsp_str);
@@ -215,8 +177,13 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
                 if (!error.isEmpty()) {
                     mResult += error.text();
                 }
+                mStatus = Constants.STATUS_FAIL;
             }
+        } else {
+            mResult = "发表失败!";
+            mStatus = Constants.STATUS_FAIL;
         }
+
     }
 
     public interface PostListener {

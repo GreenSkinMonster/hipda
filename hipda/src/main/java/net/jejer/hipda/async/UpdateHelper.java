@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -20,6 +21,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
 
@@ -81,12 +83,12 @@ public class UpdateHelper {
             boolean found = false;
 
             String firstAttachment = HttpUtils.getMiddleString(response, "<a href=\"attachment.php?", "</a>");
-            if (firstAttachment != null && firstAttachment.contains("sid=") && firstAttachment.contains("hipda-release-")) {
+            if (firstAttachment != null && firstAttachment.contains("hipda-release-")) {
                 String args = firstAttachment.substring(0, firstAttachment.indexOf("\""));
                 url = HiUtils.BaseUrl + "attachment.php?" + args;
                 filename = HttpUtils.getMiddleString(firstAttachment, "<strong>", "</strong>");
                 newVersion = HttpUtils.getMiddleString(filename, "hipda-release-", ".apk");
-                updateNotes = HttpUtils.getMiddleString(response.substring(response.indexOf("更新记录")), "<ul>", "</ul>");
+                updateNotes = Utils.nullToText(HttpUtils.getMiddleString(response.substring(response.indexOf("更新记录")), "<ul>", "</ul>"));
                 found = !TextUtils.isEmpty(args) && !TextUtils.isEmpty(filename) && newer(version, newVersion);
             } else {
                 url = "";
@@ -104,11 +106,16 @@ public class UpdateHelper {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
-                                        DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
-                                        req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                                        req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-                                        dm.enqueue(req);
+                                        try {
+                                            DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
+                                            DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+                                            req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                            req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                                            dm.enqueue(req);
+                                        } catch (Exception e) {
+                                            Log.e(LOG_TAG, e.getMessage());
+                                            Toast.makeText(mCtx, "下载出现错误，请手动下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
                     @Override

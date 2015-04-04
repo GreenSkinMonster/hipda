@@ -1,24 +1,13 @@
 package net.jejer.hipda.async;
 
 import android.content.Context;
-import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -70,17 +59,11 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List
                 break;
         }
 
-        // get infos
-        CookieStore cookieStore = HttpUtils.restoreCookie(mCtx);
-        HttpContext localContext = new BasicHttpContext();
-        AndroidHttpClient client = AndroidHttpClient.newInstance(HiUtils.UserAgent);
-        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-
         String rsp_str;
         Boolean rspOk = false;
         int retry = 0;
         do {
-            rsp_str = getReplyPage(client, localContext, url);
+            rsp_str = VolleyHelper.getInstance().synchronousGet(url, VolleyHelper.getInstance().getSimpleErrorListener());
             if (rsp_str != null) {
                 if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
                     int status = new LoginHelper(mCtx, null).login();
@@ -94,30 +77,12 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List
             retry++;
         } while (!rspOk && retry < 3);
 
-        client.close();
-
         if (!rspOk) {
             return null;
         }
 
         Document doc = Jsoup.parse(rsp_str);
         return parseRsp(doc);
-    }
-
-    private String getReplyPage(AndroidHttpClient client, HttpContext ctx, String url) {
-        HttpGet req = new HttpGet(url);
-
-        String rsp_str;
-        try {
-            HttpResponse rsp = client.execute(req, ctx);
-            HttpEntity rsp_ent = rsp.getEntity();
-            rsp_str = EntityUtils.toString(rsp_ent, HiSettingsHelper.getInstance().getEncode());
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Network related error", e);
-            return null;
-        }
-
-        return rsp_str;
     }
 
     private Map<String, List<String>> parseRsp(Document doc) {
