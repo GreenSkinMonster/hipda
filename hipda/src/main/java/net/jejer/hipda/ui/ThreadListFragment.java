@@ -109,7 +109,6 @@ public class ThreadListFragment extends Fragment
                     mThreadListAdapter.clear();
                     refresh();
                 }
-
                 return true;
             }
         };
@@ -475,7 +474,6 @@ public class ThreadListFragment extends Fragment
             mInloading = false;
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
-            mFam.setVisibility(View.VISIBLE);
 
             if (threads == null) {
                 if (mPage > 1) {
@@ -542,6 +540,8 @@ public class ThreadListFragment extends Fragment
             Message msgClean = Message.obtain();
             msgClean.what = STAGE_CLEAN;
             mMsgHandler.sendMessageDelayed(msgClean, 1000);
+
+            mFam.setVisibility(View.VISIBLE);
 
         }
 

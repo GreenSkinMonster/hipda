@@ -358,10 +358,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                 refresh();
                 return true;
             case R.id.action_goto:
-                if (mAuthorOnly) {
-                    Toast.makeText(getActivity(), "请先退出只看楼主模式", Toast.LENGTH_LONG).show();
-                    return true;
-                }
                 showGotoPageDialog();
                 return true;
             case R.id.action_only_author:
@@ -703,6 +699,10 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     }
 
     private void showGotoPageDialog() {
+        if (mAuthorOnly) {
+            Toast.makeText(getActivity(), "请先退出只看楼主模式", Toast.LENGTH_LONG).show();
+            return;
+        }
         mGoToPage = mCurrentPage;
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View viewlayout = inflater.inflate(R.layout.dialog_goto_page, null);
@@ -888,9 +888,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     }
 
     private void showOrLoadPage() {
-        getActivity().getActionBar().setTitle("(" +
-                String.valueOf(mCurrentPage) + "/" + String.valueOf(mMaxPage)
-                + ")" + mTitle);
+        getActivity().getActionBar().setTitle("(" + (mCurrentPage > 0 ?
+                String.valueOf(mCurrentPage) + "/" + String.valueOf(mMaxPage) + ")" : "")
+                + mTitle);
 
         if (mCache.get(mCurrentPage) != null) {
             mAdapter.clear();
