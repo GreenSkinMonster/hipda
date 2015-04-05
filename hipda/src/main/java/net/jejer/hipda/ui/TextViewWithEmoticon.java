@@ -87,7 +87,7 @@ public class TextViewWithEmoticon extends TextView {
                 Drawable icon = context.getResources().getDrawable(id);
                 if (icon != null) {
                     icon.setBounds(0, 0, getLineHeight(), getLineHeight());
-                    spannable.setSpan(new ImageSpan(icon, ImageSpan.ALIGN_BOTTOM),
+                    spannable.setSpan(new ImageSpan(icon, ImageSpan.ALIGN_BASELINE),
                             matcher.start(),
                             matcher.end(),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

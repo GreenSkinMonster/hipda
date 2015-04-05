@@ -112,8 +112,15 @@ public class MainFrameActivity extends Activity {
 
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
+        int lastForumId = HiSettingsHelper.getInstance().getLastForumId();
+        ThreadListFragment threadListFragment = new ThreadListFragment();
+        Bundle argments = new Bundle();
+        if (lastForumId > 0) {
+            argments.putInt(ThreadListFragment.ARG_FID_KEY, lastForumId);
+            threadListFragment.setArguments(argments);
+        }
         getFragmentManager().beginTransaction()
-                .replace(R.id.main_frame_container, new ThreadListFragment(), ThreadListFragment.class.getName())
+                .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
                 .commit();
 
         // Check if Account info exist
@@ -182,8 +189,8 @@ public class MainFrameActivity extends Activity {
             if (fragment == null) {
                 fragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
             }
-            if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
-                    || keyCode == KeyEvent.KEYCODE_PAGE_DOWN)) {
+            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
+                    || keyCode == KeyEvent.KEYCODE_PAGE_DOWN) {
                 if (fragment instanceof ThreadDetailFragment) {
                     ((ThreadDetailFragment) fragment).onVolumeDown();
                 } else if (fragment instanceof ThreadListFragment) {

@@ -51,7 +51,7 @@ public class HiSettingsHelper {
     public static final String PERF_ABOUT = "PERF_ABOUT";
     public static final String PERF_MAX_POSTS_IN_PAGE = "PERF_MAX_POSTS_IN_PAGE";
     public static final String PERF_POST_LINE_SPACING = "PERF_POST_LINE_SPACING";
-
+    public static final String PERF_LAST_FORUM_ID = "PERF_LAST_FORUM_ID";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -89,6 +89,7 @@ public class HiSettingsHelper {
     private boolean mGestureBack = true;
     private int mMaxPostsInPage;
     private String mHiPdaColorValue;
+    private int mLastForumId = 0;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -146,6 +147,7 @@ public class HiSettingsHelper {
         isPostRedirectFromPref();
         getTitleBoldFromPref();
         getPostLineSpacingFromPref();
+        getLastForumIdFromPerf();
     }
 
     public boolean isLoginInfoValid() {
@@ -594,6 +596,21 @@ public class HiSettingsHelper {
             SharedPreferences.Editor editor = mSharedPref.edit();
             editor.putInt(HiSettingsHelper.PERF_MAX_POSTS_IN_PAGE, mMaxPostsInPage).apply();
         }
+    }
+
+    public void setLastForumId(int fid) {
+        mLastForumId = fid;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putInt(PERF_LAST_FORUM_ID, fid).apply();
+    }
+
+    public int getLastForumId() {
+        return mLastForumId;
+    }
+
+    public int getLastForumIdFromPerf() {
+        mLastForumId = mSharedPref.getInt(PERF_LAST_FORUM_ID, 0);
+        return mLastForumId;
     }
 
     public boolean isUpdateCheckable() {

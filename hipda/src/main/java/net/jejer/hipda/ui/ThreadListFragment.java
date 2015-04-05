@@ -52,6 +52,9 @@ import java.util.List;
 
 public class ThreadListFragment extends Fragment
         implements PostAsyncTask.PostListener, SwipeRefreshLayout.OnRefreshListener {
+
+    public static final String ARG_FID_KEY = "fid";
+
     public final static int STAGE_ERROR = -1;
     public final static int STAGE_CLEAN = 0;
     public final static int STAGE_RELOGIN = 1;
@@ -91,6 +94,10 @@ public class ThreadListFragment extends Fragment
 
         mCtx = getActivity();
 
+        if (getArguments() != null && getArguments().containsKey(ARG_FID_KEY)) {
+            mForumSelect = HiUtils.getForumIndexByFid(mCtx, getArguments().getInt(ARG_FID_KEY) + "");
+        }
+
         setHasOptionsMenu(true);
         mCallbacks = new ThreadListLoaderCallbacks();
         List<ThreadBean> a = new ArrayList<ThreadBean>();
@@ -107,6 +114,7 @@ public class ThreadListFragment extends Fragment
                     mForumId = forumId;
                     mForumSelect = getActivity().getActionBar().getSelectedNavigationIndex();
                     mThreadListAdapter.clear();
+                    HiSettingsHelper.getInstance().setLastForumId(forumId);
                     refresh();
                 }
                 return true;
@@ -238,7 +246,7 @@ public class ThreadListFragment extends Fragment
         getActivity().getActionBar().setTitle("");
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
         getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
-        getActivity().getActionBar().setSelectedNavigationItem(mForumSelect == -1 ? 0 : mForumSelect);
+        getActivity().getActionBar().setSelectedNavigationItem((mForumSelect < 0 || mForumSelect >= mSpinnerAdapter.getCount()) ? 0 : mForumSelect);
 
         showNotification();
 
