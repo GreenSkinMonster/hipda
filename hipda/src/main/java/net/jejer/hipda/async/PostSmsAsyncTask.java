@@ -45,8 +45,9 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
         Boolean done = false;
         int retry = 0;
         do {
+            VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
             rsp_str = VolleyHelper.getInstance().synchronousGet(HiUtils.SMSPreparePostUrl + mUid,
-                    VolleyHelper.getInstance().getSimpleErrorListener());
+                    errorListener);
             if (!TextUtils.isEmpty(rsp_str)) {
                 if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
                     int status = new LoginHelper(mCtx, null).login();
@@ -56,21 +57,24 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
                 } else {
                     done = true;
                 }
+            } else {
+                mResult = errorListener.getErrorText();
             }
             retry++;
         } while (!done && retry < 3);
 
-        Document doc = Jsoup.parse(rsp_str);
-        Elements formhashES = doc.select("input#formhash");
-        if (formhashES.size() == 0) {
-            mResult = "SMS send fail, can not get formhash.";
-            return null;
-        } else {
-            mFormhash = formhashES.first().attr("value");
+        if (done) {
+            Document doc = Jsoup.parse(rsp_str);
+            Elements formhashES = doc.select("input#formhash");
+            if (formhashES.size() == 0) {
+                mResult = "SMS send fail, can not get formhash.";
+                return null;
+            } else {
+                mFormhash = formhashES.first().attr("value");
+            }
+            // do post
+            doPost(content);
         }
-
-        // do post
-        doPost(content);
 
         return null;
     }
@@ -86,10 +90,13 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 
         mText = content;
 
+        VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
         String rsp_str = VolleyHelper.getInstance().synchronousPost(url, post_param,
-                VolleyHelper.getInstance().getSimpleErrorListener());
+                errorListener);
 
-        if (TextUtils.isEmpty(rsp_str) || !rsp_str.contains("class=\"summary\"")) {
+        if (TextUtils.isEmpty(rsp_str)) {
+            mResult = "短消息发送失败! " + errorListener.getErrorText();
+        } else if (!rsp_str.contains("class=\"summary\"")) {
             mResult = "短消息发送失败.";
         } else {
             mResult = "短消息发送成功.";

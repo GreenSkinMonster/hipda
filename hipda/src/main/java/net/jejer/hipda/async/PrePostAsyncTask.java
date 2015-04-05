@@ -63,7 +63,8 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List
         Boolean rspOk = false;
         int retry = 0;
         do {
-            rsp_str = VolleyHelper.getInstance().synchronousGet(url, VolleyHelper.getInstance().getSimpleErrorListener());
+            VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
+            rsp_str = VolleyHelper.getInstance().synchronousGet(url, errorListener);
             if (rsp_str != null) {
                 if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
                     int status = new LoginHelper(mCtx, null).login();

@@ -161,8 +161,9 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             }
         }
 
+        VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
         String rsp_str = VolleyHelper.getInstance().synchronousPost(url, post_param,
-                VolleyHelper.getInstance().getSimpleErrorListener());
+                errorListener);
 
         //when success, volley will follow 302 redirect get the page content
         if (!TextUtils.isEmpty(rsp_str)) {
@@ -180,7 +181,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
                 mStatus = Constants.STATUS_FAIL;
             }
         } else {
-            mResult = "发表失败!";
+            mResult = "发表失败! " + errorListener.getErrorText();
             mStatus = Constants.STATUS_FAIL;
         }
 

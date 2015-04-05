@@ -2,7 +2,6 @@ package net.jejer.hipda.async;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -27,7 +26,7 @@ import java.util.concurrent.TimeoutException;
 
 public class VolleyHelper {
 
-    public final static int REQUEST_TIMEOUT = 30;
+    public final static int REQUEST_TIMEOUT = 15;
     private static String LOG_TAG = VolleyHelper.class.getSimpleName();
 
     private Context mCtx;
@@ -70,14 +69,13 @@ public class VolleyHelper {
 
     public static String getErrorReason(VolleyError error) {
         String reason = "未知错误";
+        if (error == null) {
+            return reason;
+        }
         if (error instanceof TimeoutError) {
             reason = "连接超时";
         } else if (error instanceof NoConnectionError) {
-            if (error.toString().contains("UnknownHostException")) {
-                reason = "域名解析失败";
-            } else {
-                reason = "无法连接";
-            }
+            reason = "请检查网络连接";
         } else if (error instanceof AuthFailureError) {
             reason = "认证失败";
         } else if (error instanceof ServerError) {
@@ -86,13 +84,15 @@ public class VolleyHelper {
             reason = "网络错误";
         } else if (error instanceof ParseError) {
             reason = "解析失败";
+        } else {
+            reason = error.getMessage();
         }
         return reason;
     }
 
     public String synchronousGet(String url, Response.ErrorListener errorListener) {
         RequestFuture<String> future = RequestFuture.newFuture();
-        HiStringRequest request = new HiStringRequest(Request.Method.GET, url, future, null);
+        HiStringRequest request = new HiStringRequest(Request.Method.GET, url, future, future);
         mRequestQueue.add(request);
         try {
             return future.get(REQUEST_TIMEOUT, TimeUnit.SECONDS);
@@ -110,7 +110,7 @@ public class VolleyHelper {
 
     public String synchronousPost(String url, Map<String, String> params, Response.ErrorListener errorListener) {
         RequestFuture<String> future = RequestFuture.newFuture();
-        HiStringRequest request = new HiStringRequest(Request.Method.POST, url, params, future, null);
+        HiStringRequest request = new HiStringRequest(Request.Method.POST, url, params, future, future);
         mRequestQueue.add(request);
         try {
             return future.get(REQUEST_TIMEOUT, TimeUnit.SECONDS);
@@ -126,13 +126,25 @@ public class VolleyHelper {
         return null;
     }
 
-    public Response.ErrorListener getSimpleErrorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(mCtx, error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        };
+    class MyErrorListener implements Response.ErrorListener {
+        private VolleyError mError;
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            mError = error;
+        }
+
+        public VolleyError getError() {
+            return mError;
+        }
+
+        public String getErrorText() {
+            return getErrorReason(mError);
+        }
+    }
+
+    public MyErrorListener getErrorListener() {
+        return new MyErrorListener();
     }
 
 

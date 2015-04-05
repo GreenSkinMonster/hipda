@@ -58,16 +58,17 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
                 }
             }
 
-            if (mRsp != null && LoginHelper.checkLoggedin(mCtx, mRsp)) {
-                getOk = true;
-            } else {
-                int status = new LoginHelper(mCtx, mHandler).login();
-                if (status > Constants.STATUS_FAIL) {
-                    break;
+            if (mRsp != null) {
+                if (!LoginHelper.checkLoggedin(mCtx, mRsp)) {
+                    int status = new LoginHelper(mCtx, mHandler).login();
+                    if (status > Constants.STATUS_FAIL) {
+                        break;
+                    }
+                } else {
+                    getOk = true;
                 }
             }
             count++;
-            //Log.v(LOG_TAG, "try count = " + String.valueOf(count));
         } while (!getOk && count < 3);
 
         if (!getOk) {

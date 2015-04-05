@@ -45,12 +45,10 @@ public class LoginHelper {
 
         int status = Constants.STATUS_FAIL_ABORT;
 
-        // Step2 get formhash
-        String formhash = loginStep2();
+        String formhash = getFormhash();
 
-        // Step3 do login and get auth
         if (!TextUtils.isEmpty(formhash)) {
-            status = loginStep3(formhash);
+            status = doLogin(formhash);
         }
 
         // Update UI
@@ -66,10 +64,11 @@ public class LoginHelper {
         return status;
     }
 
-    private String loginStep2() {
+    private String getFormhash() {
 
+        VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
         String rstStr = VolleyHelper.getInstance().synchronousGet(HiUtils.LoginStep2,
-                VolleyHelper.getInstance().getSimpleErrorListener());
+                errorListener);
 
         if (!TextUtils.isEmpty(rstStr)) {
             Document doc = Jsoup.parse(rstStr);
@@ -88,10 +87,10 @@ public class LoginHelper {
             }
             return element.attr("value");
         }
-        return "";
+        return errorListener.getErrorText();
     }
 
-    private int loginStep3(String formhash) {
+    private int doLogin(String formhash) {
         Map<String, String> post_param = new HashMap<String, String>();
         post_param.put("m_formhash", formhash);
         post_param.put("referer", "http://www.hi-pda.com/forum/index.php");
@@ -104,26 +103,32 @@ public class LoginHelper {
 
         String rspStr;
 
+        VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
         rspStr = VolleyHelper.getInstance().synchronousPost(HiUtils.LoginStep3, post_param,
-                VolleyHelper.getInstance().getSimpleErrorListener());
+                errorListener);
         Log.v(LOG_TAG, rspStr);
 
-        // response is in XML format
-        if (rspStr.contains(mCtx.getString(R.string.login_success))) {
-            Log.v(LOG_TAG, "Login success!");
-            return Constants.STATUS_SUCCESS;
-        } else if (rspStr.contains(mCtx.getString(R.string.login_fail))) {
-            Log.e(LOG_TAG, "Login FAIL");
-            int msgIndex = rspStr.indexOf(mCtx.getString(R.string.login_fail));
-            int msgIndexEnd = rspStr.indexOf("次", msgIndex) + 1;
-            if (msgIndexEnd > msgIndex) {
-                mErrorMsg = rspStr.substring(msgIndex, msgIndexEnd);
+        if (rspStr != null) {
+            // response is in XML format
+            if (rspStr.contains(mCtx.getString(R.string.login_success))) {
+                Log.v(LOG_TAG, "Login success!");
+                return Constants.STATUS_SUCCESS;
+            } else if (rspStr.contains(mCtx.getString(R.string.login_fail))) {
+                Log.e(LOG_TAG, "Login FAIL");
+                int msgIndex = rspStr.indexOf(mCtx.getString(R.string.login_fail));
+                int msgIndexEnd = rspStr.indexOf("次", msgIndex) + 1;
+                if (msgIndexEnd > msgIndex) {
+                    mErrorMsg = rspStr.substring(msgIndex, msgIndexEnd);
+                } else {
+                    mErrorMsg = "登录失败,请检查账户信息";
+                }
+                return Constants.STATUS_FAIL_ABORT;
             } else {
-                mErrorMsg = "登录失败,请检查账户信息";
+                mErrorMsg = "登录失败,未知错误";
+                return Constants.STATUS_FAIL;
             }
-            return Constants.STATUS_FAIL_ABORT;
         } else {
-            mErrorMsg = "登录失败,未知错误";
+            mErrorMsg = "登录失败," + errorListener.getErrorText();
             return Constants.STATUS_FAIL;
         }
     }
