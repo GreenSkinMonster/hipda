@@ -17,7 +17,6 @@ import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.URLSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -99,7 +98,7 @@ public class TextViewWithEmoticon extends TextView {
         return hasChanges;
     }
 
-    private SpannableStringBuilder addAppMark(Context context, SpannableStringBuilder spannable) {
+    private SpannableStringBuilder addAppMark(SpannableStringBuilder spannable) {
         String text = spannable.toString();
         int idxStart = text.indexOf("[appmark ");
         if (idxStart >= 0) {
@@ -117,72 +116,74 @@ public class TextViewWithEmoticon extends TextView {
         for (URLSpan s : b.getSpans(0, b.length(), URLSpan.class)) {
             String s_url = s.getURL();
             if (s_url.startsWith("http://www.hi-pda.com/forum/attachment.php")) {
-                URLSpan newSpan = new URLSpan(s_url) {
-                    public void onClick(View view) {
-                        DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
-                        DownloadManager.Request downloadReq = new DownloadManager.Request(Uri.parse(getURL()));
-                        downloadReq.addRequestHeader("Cookie", "cdb_auth=" + HiSettingsHelper.getInstance().getCookieAuth());
-                        downloadReq.addRequestHeader("User-agent", HiUtils.UserAgent);
-
-                        // FUCK Android, we cannot use pub_download directory and keep original filename!
-                        downloadReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, ((TextView) view).getText().toString());
-                        downloadReq.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                        dm.enqueue(downloadReq);
-                    }
-                };
+                URLSpan newSpan = getDownloadUrlSpan(s_url);
                 b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                 b.removeSpan(s);
-                continue;
-            }
-            if (s_url.startsWith("http://www.hi-pda.com/forum/viewthread.php")) {
+            } else if (s_url.startsWith("http://www.hi-pda.com/forum/viewthread.php")) {
                 String tid = HttpUtils.getMiddleString(s_url, "tid=", "&");
                 if (tid != null) {
-                    URLSpan newSpan = new URLSpan(s_url) {
-                        public void onClick(View view) {
-                            Log.v(LOG_TAG, "ID=" + view.getRootView().getId());
-                            Log.v(LOG_TAG, "URLSpan.onClick TID=" + HttpUtils.getMiddleString(getURL(), "tid=", "&"));
-
-                            Bundle arguments = new Bundle();
-                            arguments.putString(ThreadDetailFragment.ARG_TID_KEY, HttpUtils.getMiddleString(getURL(), "tid=", "&"));
-                            arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, "");
-                            ThreadDetailFragment fragment = new ThreadDetailFragment();
-                            fragment.setArguments(arguments);
-
-                            if (HiSettingsHelper.getInstance().getIsLandscape()) {
-                                mFragmentManager.findFragmentById(R.id.thread_detail_container_in_main).setHasOptionsMenu(false);
-                                mFragmentManager.beginTransaction()
-                                        .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-                                        .addToBackStack(ThreadDetailFragment.class.getName())
-                                        .commit();
-                            } else {
-                                mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
-                                if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-                                    mFragmentManager.beginTransaction()
-                                            .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                                            .addToBackStack(ThreadDetailFragment.class.getName())
-                                            .commit();
-                                } else {
-                                    mFragmentManager.beginTransaction()
-                                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                                            .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                                            .addToBackStack(ThreadDetailFragment.class.getName())
-                                            .commit();
-                                }
-                            }
-                        }
-                    };
+                    URLSpan newSpan = getThreadUrlSpan(s_url);
                     b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                     b.removeSpan(s);
                 }
-                continue;
             }
         }
 
-        b = addAppMark(context, b);
+        b = addAppMark(b);
 
         Spannable spannable = spannableFactory.newSpannable(b);
         addImages(context, spannable);
         return spannable;
+    }
+
+    private URLSpan getThreadUrlSpan(final String s_url) {
+        return new URLSpan(s_url) {
+            public void onClick(View view) {
+                Bundle arguments = new Bundle();
+                arguments.putString(ThreadDetailFragment.ARG_TID_KEY, HttpUtils.getMiddleString(getURL(), "tid=", "&"));
+                arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, "");
+                ThreadDetailFragment fragment = new ThreadDetailFragment();
+                fragment.setArguments(arguments);
+
+                if (HiSettingsHelper.getInstance().getIsLandscape()) {
+                    mFragmentManager.findFragmentById(R.id.thread_detail_container_in_main).setHasOptionsMenu(false);
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
+                            .addToBackStack(ThreadDetailFragment.class.getName())
+                            .commit();
+                } else {
+                    mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
+                    if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
+                        mFragmentManager.beginTransaction()
+                                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                                .addToBackStack(ThreadDetailFragment.class.getName())
+                                .commit();
+                    } else {
+                        mFragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                                .addToBackStack(ThreadDetailFragment.class.getName())
+                                .commit();
+                    }
+                }
+            }
+        };
+    }
+
+    private URLSpan getDownloadUrlSpan(final String s_url) {
+        return new URLSpan(s_url) {
+            public void onClick(View view) {
+                DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
+                DownloadManager.Request downloadReq = new DownloadManager.Request(Uri.parse(getURL()));
+                downloadReq.addRequestHeader("Cookie", "cdb_auth=" + HiSettingsHelper.getInstance().getCookieAuth());
+                downloadReq.addRequestHeader("User-agent", HiUtils.UserAgent);
+
+                // FUCK Android, we cannot use pub_download directory and keep original filename!
+                downloadReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, ((TextView) view).getText().toString());
+                downloadReq.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                dm.enqueue(downloadReq);
+            }
+        };
     }
 
     /**

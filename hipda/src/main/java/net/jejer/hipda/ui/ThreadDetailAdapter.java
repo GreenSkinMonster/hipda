@@ -248,6 +248,8 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     text = ((ContentQuote) content).getText();
                 }
 
+                text = Utils.trimByClause(text, 120);
+
                 LinearLayout quoteLayout = (LinearLayout) LayoutInflater.from(mCtx)
                         .inflate(R.layout.item_quote_text, parent, false);
 
