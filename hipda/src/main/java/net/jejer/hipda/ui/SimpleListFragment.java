@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
+import android.database.AbstractCursor;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -18,8 +20,10 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +53,9 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
     private int mPage = 1;
     private boolean mInloading = false;
     private int mMaxPage;
+
+    private static String mPrefixSearchFullText;
+    private static String mPrefixSearchHistory;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,14 +145,40 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
                 break;
             case SimpleListLoader.TYPE_SEARCH:
                 getActivity().getActionBar().setTitle(R.string.title_drawer_search);
+                mPrefixSearchFullText = getActivity().getResources().getString(R.string.prefix_search_fulltext);
+                mPrefixSearchHistory = getActivity().getResources().getString(R.string.prefix_search_history);
+
                 inflater.inflate(R.menu.menu_search, menu);
                 searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
                 searchView.setIconified(false);
-                searchView.setQueryHint("按帖子标题搜索");
+                searchView.setQueryHint("按标题搜索");
                 if (!TextUtils.isEmpty(mQuery)) {
                     searchView.setQuery(mQuery, false);
                     searchView.clearFocus();
                 }
+                searchView.setSuggestionsAdapter(new SearchSuggestionsAdapter(getActivity()));
+
+                AutoCompleteTextView search_text = (AutoCompleteTextView) searchView.findViewById(searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null));
+                search_text.setThreshold(1);
+
+                searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+                    @Override
+                    public boolean onSuggestionClick(int position) {
+                        String s = searchView.getSuggestionsAdapter().getCursor().getString(1);
+                        if (s.startsWith(mPrefixSearchHistory)) {
+                            s = s.substring(mPrefixSearchHistory.length()).trim();
+                        }
+                        searchView.setQuery(s, true);
+                        searchView.clearFocus();
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onSuggestionSelect(int position) {
+                        return false;
+                    }
+                });
+
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
@@ -286,8 +319,13 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
             } else {
                 bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getTid());
                 bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
-                bun.putInt(ThreadDetailFragment.ARG_PAGE_KEY, ThreadDetailFragment.LAST_PAGE);
-                bun.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, ThreadDetailFragment.LAST_FLOOR);
+                if (!TextUtils.isEmpty(item.getPid())) {
+                    //full text search
+                    bun.putString(ThreadDetailFragment.ARG_PID_KEY, item.getPid());
+                } else {
+                    bun.putInt(ThreadDetailFragment.ARG_PAGE_KEY, ThreadDetailFragment.LAST_PAGE);
+                    bun.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, ThreadDetailFragment.LAST_FLOOR);
+                }
                 fragment = new ThreadDetailFragment();
             }
             fragment.setArguments(bun);
@@ -357,4 +395,86 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
         }
 
     }
+
+    public static class SearchSuggestionsAdapter extends SimpleCursorAdapter {
+        private static final String[] mFields = {"_id", "result"};
+        private static final String[] mVisible = {"result"};
+        private static final int[] mViewIds = {android.R.id.text1};
+
+        public SearchSuggestionsAdapter(Context context) {
+            super(context, android.R.layout.simple_list_item_1, null, mVisible, mViewIds, 0);
+        }
+
+        @Override
+        public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
+            return new SuggestionsCursor(constraint);
+        }
+
+        private class SuggestionsCursor extends AbstractCursor {
+            private ArrayList<String> mResults;
+
+            public SuggestionsCursor(CharSequence constraint) {
+                mResults = new ArrayList<String>();
+                String query = (constraint != null ? constraint.toString() : "").trim();
+                query = query.startsWith(SimpleListFragment.mPrefixSearchFullText) ? query.substring(SimpleListFragment.mPrefixSearchFullText.length()).trim() : query;
+                mResults.add(SimpleListFragment.mPrefixSearchFullText + query);
+                //not finished yet, maybe don't need search history at all
+//                for (int i = 0; i < count; i++) {
+//                    mResults.add(mPrefixSearchHistory + (i + 1));
+//                }
+            }
+
+            @Override
+            public int getCount() {
+                return mResults.size();
+            }
+
+            @Override
+            public String[] getColumnNames() {
+                return mFields;
+            }
+
+            @Override
+            public long getLong(int column) {
+                if (column == 0) {
+                    return mPos;
+                }
+                throw new UnsupportedOperationException("unimplemented");
+            }
+
+            @Override
+            public String getString(int column) {
+                if (column == 1) {
+                    return mResults.get(mPos);
+                }
+                throw new UnsupportedOperationException("unimplemented");
+            }
+
+            @Override
+            public short getShort(int column) {
+                throw new UnsupportedOperationException("unimplemented");
+            }
+
+            @Override
+            public int getInt(int column) {
+                throw new UnsupportedOperationException("unimplemented");
+            }
+
+            @Override
+            public float getFloat(int column) {
+                throw new UnsupportedOperationException("unimplemented");
+            }
+
+            @Override
+            public double getDouble(int column) {
+                throw new UnsupportedOperationException("unimplemented");
+            }
+
+            @Override
+            public boolean isNull(int column) {
+                return false;
+            }
+        }
+    }
+
 }

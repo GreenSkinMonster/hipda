@@ -20,6 +20,7 @@ public class HiUtils {
     public static final String MyPostUrl = BaseUrl + "my.php?item=threads";
     public static final String LastPageUrl = BaseUrl + "/redirect.php?goto=lastpost&from=fastpost&tid=";
     public static final String RedirectToPostUrl = BaseUrl + "/redirect.php?goto=findpost&pid={pid}&ptid={tid}";
+    public static final String GotoPostUrl = BaseUrl + "/gotopost.php?pid={pid}";
     public static final String SMSUrl = BaseUrl + "pm.php?filter=privatepm";
     public static final String SMSDetailUrl = BaseUrl + "pm.php?daterange=5&uid=";
     public static final String SMSPreparePostUrl = BaseUrl + "pm.php?daterange=1&uid=";
@@ -28,6 +29,7 @@ public class HiUtils {
     public static final String CheckSMS = BaseUrl + "pm.php?checknewpm";
     public static final String UploadImgUrl = BaseUrl + "misc.php?action=swfupload&operation=upload&simple=1&type=image";
     public static final String SearchTitle = BaseUrl + "search.php?srchtype=title&searchsubmit=true&st=on&srchuname=&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D=all&srchtxt=";
+    public static final String SearchFullText = BaseUrl + "search.php?srchtype=fulltext&searchsubmit=true&st=on&srchuname=&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D=all&srchtxt=";
     public static final String SearchUserThreads = BaseUrl + "search.php?srchfid=all&srchfrom=0&searchsubmit=yes&srchuid=";
     public static final String FavoritesUrl = BaseUrl + "my.php?item=favorites&type=thread";
     public static final String FavoriteAddUrl = BaseUrl + "my.php?item=favorites&inajax=1&ajaxtarget=favorite_msg&tid=";

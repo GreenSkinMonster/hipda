@@ -22,7 +22,7 @@ import org.jsoup.select.Elements;
 public class HiParserThreadDetail {
     public static final String LOG_TAG = "HiParserThreadDetail";
 
-    public static DetailListBean parse(Context ctx, Handler handler, Document doc) {
+    public static DetailListBean parse(Context ctx, Handler handler, Document doc, boolean parseTid) {
 
         // get last page
         Elements pagesES = doc.select("div#wrap div.forumcontrol div.pages");
@@ -55,6 +55,15 @@ public class HiParserThreadDetail {
         DetailListBean details = new DetailListBean();
         details.setPage(page);
         details.setLastPage(last_page);
+
+        if (parseTid) {
+            Elements printES = doc.select("div.posterinfo div.pagecontrol a.print");
+            if (printES.size() > 0) {
+                String tid = HttpUtils.getMiddleString(printES.first().attr("href"), "tid=", "&");
+                if (!TextUtils.isEmpty(tid) && TextUtils.isDigitsOnly(tid))
+                    details.setTid(tid);
+            }
+        }
 
         //get forum id
         Elements threadTitleES = doc.select("#threadtitle a");

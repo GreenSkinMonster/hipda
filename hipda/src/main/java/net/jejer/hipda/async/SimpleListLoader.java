@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import net.jejer.hipda.R;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParser;
@@ -105,9 +106,16 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
                 break;
             case TYPE_SEARCH:
                 try {
-                    url = HiUtils.SearchTitle + URLEncoder.encode(mExtra, "GBK");
-                    if (mPage > 1)
-                        url += "&page=" + mPage;
+                    String prefixsft = mCtx.getResources().getString(R.string.prefix_search_fulltext);
+                    if (mExtra.startsWith(prefixsft)) {
+                        url = HiUtils.SearchFullText + URLEncoder.encode(mExtra.substring(prefixsft.length()), "GBK");
+                        if (mPage > 1)
+                            url += "&page=" + mPage;
+                    } else {
+                        url = HiUtils.SearchTitle + URLEncoder.encode(mExtra, "GBK");
+                        if (mPage > 1)
+                            url += "&page=" + mPage;
+                    }
                 } catch (UnsupportedEncodingException e) {
                     Log.e(LOG_TAG, "Encoding error", e);
                 }

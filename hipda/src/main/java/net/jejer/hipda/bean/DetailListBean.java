@@ -10,6 +10,7 @@ public class DetailListBean {
     private int mPage = 0;
     private String mTitle;
     private String mFid;
+    private String mTid;
     private HashMap<String, DetailBean> mPostIdBeans;
 
     public DetailListBean() {
@@ -64,5 +65,13 @@ public class DetailListBean {
 
     public void setFid(String fid) {
         mFid = fid;
+    }
+
+    public String getTid() {
+        return mTid;
+    }
+
+    public void setTid(String tid) {
+        mTid = tid;
     }
 }

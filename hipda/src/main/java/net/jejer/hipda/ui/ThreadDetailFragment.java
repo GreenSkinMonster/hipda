@@ -563,6 +563,8 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             }
 
             mFid = details.getFid();
+            if (TextUtils.isEmpty(mTid))
+                mTid = details.getTid();
 
             // Set MaxPage earlier than showOrLoadPage()
             mMaxPage = details.getLastPage();
@@ -572,7 +574,10 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                 mCurrentPage = details.getPage();
                 DetailBean detailBean = details.getPostInPage(mGotoPostId);
 
-                int floor = Integer.parseInt(detailBean.getFloor());
+                //there is bug in search full text, given post id could'n found in thread
+                int floor = 1;
+                if (detailBean != null)
+                    floor = Integer.parseInt(detailBean.getFloor());
 
                 mFloorOfPage = floor % mMaxPostInPage; // floor start from 1
                 if (mFloorOfPage == 0) {

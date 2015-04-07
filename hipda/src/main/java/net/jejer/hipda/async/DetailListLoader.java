@@ -47,7 +47,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
     @Override
     public DetailListBean loadInBackground() {
 
-        if (TextUtils.isEmpty(mTid)) {
+        if (TextUtils.isEmpty(mTid) && TextUtils.isEmpty(mGotoPostId)) {
             return null;
         }
 
@@ -81,7 +81,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         }
 
         Document doc = Jsoup.parse(mRsp);
-        return HiParserThreadDetail.parse(mCtx, mHandler, doc);
+        return HiParserThreadDetail.parse(mCtx, mHandler, doc, mTid == null);
     }
 
     private void fetchDetail() {
@@ -95,7 +95,10 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         String url;
         if (!TextUtils.isEmpty(mGotoPostId)) {
             //volley will fetch content automaticly if response is a 302 redirect
-            url = HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", mGotoPostId);
+            if (TextUtils.isEmpty(mTid))
+                url = HiUtils.GotoPostUrl.replace("{pid}", mGotoPostId);
+            else
+                url = HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", mGotoPostId);
         } else if (mPage == ThreadDetailFragment.LAST_PAGE) {
             url = HiUtils.LastPageUrl + mTid;
         } else {

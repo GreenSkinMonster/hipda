@@ -464,6 +464,9 @@ public class HiParser {
         String searchIdUrl;
         if (pagesES.size() > 0) {
             searchIdUrl = pagesES.first().attr("href");
+            if (searchIdUrl.contains("srchtype=fulltext")) {
+                return parseSearchFullText(doc);
+            }
             list.setSearchIdUrl(searchIdUrl);
             for (Node n : pagesES) {
                 int tmp = HttpUtils.getIntFromString(((Element) n).text());
@@ -506,8 +509,83 @@ public class HiParser {
 
             Elements timeES = tbodyE.select("tr td.author em");
             if (timeES.size() > 0) {
-                item.setTime(timeES.first().text());
+                item.setTime(item.getAuthor() + "  " + timeES.first().text());
             }
+
+            list.add(item);
+        }
+
+        return list;
+    }
+
+    private static SimpleListBean parseSearchFullText(Document doc) {
+        if (doc == null) {
+            return null;
+        }
+
+        SimpleListBean list = new SimpleListBean();
+        int last_page = 1;
+
+        //if this is the last page, page number is in <strong>
+        Elements pagesES = doc.select("div.pages_btns div.pages a");
+        pagesES.addAll(doc.select("div.pages_btns div.pages strong"));
+        String searchIdUrl;
+        if (pagesES.size() > 0) {
+            searchIdUrl = pagesES.first().attr("href");
+            list.setSearchIdUrl(searchIdUrl);
+            for (Node n : pagesES) {
+                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                if (tmp > last_page) {
+                    last_page = tmp;
+                }
+            }
+        }
+        list.setMaxPage(last_page);
+
+        Elements tbodyES = doc.select("table.datatable tr");
+        for (int i = 0; i < tbodyES.size(); ++i) {
+            Element trowE = tbodyES.get(i);
+            SimpleListItemBean item = new SimpleListItemBean();
+
+            Elements subjectES = trowE.select("div.sp_title a");
+            if (subjectES.size() == 0) {
+                continue;
+            }
+            item.setTitle(subjectES.first().text());
+            //gotopost.php?pid=12345
+            String postUrl = Utils.nullToText(subjectES.first().attr("href"));
+            item.setPid(HttpUtils.getMiddleString(postUrl, "pid=", "&"));
+            if (TextUtils.isEmpty(item.getPid())) {
+                continue;
+            }
+
+            Elements contentES = trowE.select("div.sp_content");
+            if (contentES.size() > 0) {
+                item.setInfo(contentES.text());
+            }
+
+//            <div class="sp_theard">
+//            <span class="sp_w200">版块: <a href="forumdisplay.php?fid=2">Discovery</a></span>
+//            <span>作者: <a href="space.php?uid=189027">tsonglin</a></span>
+//            <span>查看: 1988</span>
+//            <span>回复: 56</span>
+//            <span class="sp_w200">最后发表: 2015-4-4 21:58</span>
+//            </div>
+            Elements postInfoES = trowE.select("div.sp_theard span");
+            if (postInfoES.size() != 5) {
+                continue;
+            }
+            Elements authorES = postInfoES.get(1).select("a");
+            if (authorES.size() > 0) {
+                item.setAuthor(authorES.first().text());
+                String spaceUrl = authorES.first().attr("href");
+                if (!TextUtils.isEmpty(spaceUrl)) {
+                    String uid = HttpUtils.getMiddleString(spaceUrl, "uid=", "&");
+                    item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
+                }
+            }
+
+            item.setTime(item.getAuthor() + " " + HttpUtils.getMiddleString(postInfoES.get(4).text(), ":", "&"));
 
             list.add(item);
         }
