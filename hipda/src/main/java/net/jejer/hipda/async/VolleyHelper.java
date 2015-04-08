@@ -16,6 +16,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 
+import net.jejer.hipda.cookie.PersistentCookieStore;
+
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -36,7 +38,7 @@ public class VolleyHelper {
         mCtx = ctx;
         if (mRequestQueue == null) {
 
-            CookieManager cookieManager = new CookieManager(new HiCookieStore(), CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+            CookieManager cookieManager = new CookieManager(new PersistentCookieStore(mCtx), CookiePolicy.ACCEPT_ORIGINAL_SERVER);
             CookieHandler.setDefault(cookieManager);
 
             mRequestQueue = Volley.newRequestQueue(mCtx);
