@@ -118,10 +118,12 @@
     <string-array name="pref_title_bold">
         <item>启用</item>
         <item>关闭</item>
+        <item>仅新帖</item>
     </string-array>
     <string-array name="pref_title_bold_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
 
     <string-array name="empty_array"></string-array>
