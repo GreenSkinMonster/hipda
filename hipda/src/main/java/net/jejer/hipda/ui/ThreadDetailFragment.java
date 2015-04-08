@@ -807,7 +807,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     }
 
     public boolean hideQuickReply() {
-        if (quickReply.getVisibility() == View.VISIBLE) {
+        if (quickReply != null && quickReply.getVisibility() == View.VISIBLE) {
             mReplyTextTv.setText("");
             quickReply.setVisibility(View.INVISIBLE);
             mFam.setVisibility(View.VISIBLE);
