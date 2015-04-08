@@ -28,4 +28,8 @@
         android:icon="?icon_website"
         android:title="@string/action_open_url" />
 
+    <item
+        android:id="@+id/action_copy_url"
+        android:title="@string/action_copy_url" />
+
 </menu>
