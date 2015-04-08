@@ -405,8 +405,10 @@ public class ThreadListFragment extends Fragment
             String tid = thread.getTid();
             String title = thread.getTitle();
             showThreadDetailFragment(tid, title, -1, -1);
-            thread.setNew(false);
-            mThreadListAdapter.notifyDataSetChanged();
+            if (TITLE_BOLD_ONLY_NEW == HiSettingsHelper.getInstance().getTitleBold()) {
+                thread.setNew(false);
+                mThreadListAdapter.notifyDataSetChanged();
+            }
         }
 
     }
@@ -423,8 +425,10 @@ public class ThreadListFragment extends Fragment
                 page = (int) Math.ceil((Integer.parseInt(thread.getCountCmts()) + 1) * 1.0f / maxPostsInPage);
             }
             showThreadDetailFragment(tid, title, page, ThreadDetailFragment.LAST_FLOOR);
-            thread.setNew(false);
-            mThreadListAdapter.notifyDataSetChanged();
+            if (TITLE_BOLD_ONLY_NEW == HiSettingsHelper.getInstance().getTitleBold()) {
+                thread.setNew(false);
+                mThreadListAdapter.notifyDataSetChanged();
+            }
             return true;
         }
     }
