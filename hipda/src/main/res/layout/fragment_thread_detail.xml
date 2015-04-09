@@ -56,49 +56,52 @@
         android:src="@drawable/jejer_down"
         android:visibility="gone" />
 
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
+    <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/multiple_actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        fab:fab_addButtonColorNormal="@color/background_silver"
-        fab:fab_addButtonColorPressed="@color/background_grey"
-        fab:fab_addButtonPlusIconColor="@color/blue_normal"
-        fab:fab_labelStyle="@style/menu_labels_style"
-        fab:fab_addButtonSize="mini"
+        fab:menu_colorNormal="@color/background_silver"
+        fab:menu_colorPressed="@color/background_grey"
+        fab:menu_icon="@drawable/fab_add"
+        fab:menu_showShadow="true"
+        fab:menu_shadowColor="#00000000"
+        fab:menu_fab_size="mini"
+        fab:menu_buttonSpacing="2dp"
+        fab:menu_animationDelayPerItem="25"
         android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginRight="20dp"
         android:layout_marginEnd="16dp">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_goto_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
-            fab:fab_icon="@drawable/tapatalk_bubble_move_night"
+            android:src="@drawable/tapatalk_bubble_move_night"
             fab:fab_size="mini" />
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
-            fab:fab_icon="@drawable/ic_action_refresh_night"
+            android:src="@drawable/ic_action_refresh_night"
             fab:fab_size="mini" />
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_quick_reply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
-            fab:fab_icon="@drawable/ic_action_quick_reply"
+            android:src="@drawable/ic_action_quick_reply"
             fab:fab_size="mini" />
 
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+    </com.github.clans.fab.FloatingActionMenu>
 
 </RelativeLayout>

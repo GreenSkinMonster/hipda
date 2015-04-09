@@ -38,8 +38,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.DetailListLoader;
@@ -95,7 +95,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     public static final String LOADER_PAGE_KEY = "LOADER_PAGE_KEY";
 
     private HiProgressDialog postProgressDialog;
-    private FloatingActionsMenu mFam;
+    private FloatingActionMenu mFam;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,14 +140,14 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         mTipBar = (TextView) view.findViewById(R.id.thread_detail_tipbar);
         mTipBar.bringToFront();
 
-        mFam = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
+        mFam = (FloatingActionMenu) view.findViewById(R.id.multiple_actions);
         mFam.setVisibility(View.INVISIBLE);
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFam.collapse();
+                mFam.close(true);
                 mFloorOfPage = LAST_FLOOR;
                 refresh();
             }
@@ -157,7 +157,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         fabQuickReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFam.collapse();
+                mFam.close(false);
                 mFam.setVisibility(View.INVISIBLE);
                 quickReply.setVisibility(View.VISIBLE);
                 quickReply.bringToFront();
@@ -175,7 +175,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         fabGotoPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFam.collapse();
+                mFam.close(true);
                 showGotoPageDialog();
             }
         });
@@ -238,8 +238,8 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         mDetailListView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
-                if (mFam.isExpanded()) {
-                    mFam.collapse();
+                if (mFam.isOpened()) {
+                    mFam.close(false);
                 }
                 return detector.onTouchEvent(event);
             }
@@ -446,20 +446,27 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
     private class OnScrollCallback implements AbsListView.OnScrollListener {
 
-        private int mLastFirstVisibleItem;
+        private int mLastVisibleItem;
         private long lastUpdate = System.currentTimeMillis();
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem,
                              int visibleItemCount, int totalItemCount) {
+
+//            if (firstVisibleItem > mLastVisibleItem) {
+//                mFam.setVisibility(View.INVISIBLE);
+//            } else if (firstVisibleItem < mLastVisibleItem) {
+//                mFam.setVisibility(View.VISIBLE);
+//            }
+
             if (!mInloading && !mPrefetching) {
-                if (mLastFirstVisibleItem < firstVisibleItem) {
+                if (mLastVisibleItem < firstVisibleItem) {
                     //scroll down, prefetch next page
                     if (firstVisibleItem > Math.round(0.2f * totalItemCount)) {
                         prefetchNextPage(1);
                     }
                 }
-                if (mLastFirstVisibleItem > firstVisibleItem) {
+                if (mLastVisibleItem > firstVisibleItem) {
                     //scroll up, prefetch previous page
                     if (firstVisibleItem < Math.round(0.5f * totalItemCount)) {
                         prefetchNextPage(-1);
@@ -468,7 +475,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             }
             long now = System.currentTimeMillis();
             if (now - 200 > lastUpdate) {
-                mLastFirstVisibleItem = firstVisibleItem;
+                mLastVisibleItem = firstVisibleItem;
                 lastUpdate = now;
             }
         }

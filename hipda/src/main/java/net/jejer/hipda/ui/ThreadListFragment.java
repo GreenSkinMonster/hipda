@@ -32,8 +32,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostAsyncTask;
@@ -83,7 +83,7 @@ public class ThreadListFragment extends Fragment
     private Handler mMsgHandler;
     private HiProgressDialog postProgressDialog;
     private SwipeRefreshLayout swipeLayout;
-    private FloatingActionsMenu mFam;
+    private FloatingActionMenu mFam;
     private FloatingActionButton mFabNotify;
     private boolean mShowNotifyToast = true;
 
@@ -137,14 +137,14 @@ public class ThreadListFragment extends Fragment
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeResources(R.color.icon_blue);
 
-        mFam = (FloatingActionsMenu) view.findViewById(R.id.fam_actions);
+        mFam = (FloatingActionMenu) view.findViewById(R.id.fam_actions);
         mFam.setVisibility(View.INVISIBLE);
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFam.collapse();
+                mFam.close(true);
                 refresh();
             }
         });
@@ -153,7 +153,7 @@ public class ThreadListFragment extends Fragment
         fabNewThread.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFam.collapse();
+                mFam.close(true);
                 newThread();
             }
         });
@@ -227,8 +227,8 @@ public class ThreadListFragment extends Fragment
         mThreadListView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (mFam.isExpanded()) {
-                    mFam.collapse();
+                if (mFam.isOpened()) {
+                    mFam.close(false);
                 }
                 return false;
             }
@@ -377,6 +377,12 @@ public class ThreadListFragment extends Fragment
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem,
                              int visibleItemCount, int totalItemCount) {
+
+//            if (firstVisibleItem > mLastVisibleItem) {
+//                mFam.setVisibility(View.INVISIBLE);
+//            } else if (firstVisibleItem < mLastVisibleItem) {
+//                mFam.setVisibility(View.VISIBLE);
+//            }
 
             mLastVisibleItem = firstVisibleItem;
             mVisibleItemCount = visibleItemCount;
