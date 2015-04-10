@@ -24,11 +24,6 @@ public class HiStringRequest extends StringRequest {
 
     private Map<String, String> mParams;
 
-    public HiStringRequest(Context ctx, int method, String url,
-                           Listener<String> listener, ErrorListener errorListener) {
-        super(method, url, listener, errorListener);
-    }
-
     public HiStringRequest(Context ctx, String url, Listener<String> listener,
                            ErrorListener errorListener) {
         super(url, listener, errorListener);
@@ -52,12 +47,6 @@ public class HiStringRequest extends StringRequest {
             headers = new HashMap<String, String>();
         }
 
-        //only send auth cookie to HiPDA
-        if (getUrl().startsWith(HiUtils.BaseUrl)) {
-            headers.put("Cookie", "cdb_auth=" + HiSettingsHelper.getInstance().getCookieAuth());
-        } else {
-            headers.remove("Cookie");
-        }
         headers.put("User-agent", HiUtils.UserAgent);
         headers.put("Content-Type", "application/x-www-form-urlencoded");
 
