@@ -114,9 +114,9 @@ public class UpdateHelper {
                                             req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                                             req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
                                             dm.enqueue(req);
-                                        } catch (Exception e) {
+                                        } catch (SecurityException e) {
                                             Log.e(LOG_TAG, e.getMessage());
-                                            Toast.makeText(mCtx, "下载出现错误，请手动下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {

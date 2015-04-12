@@ -6,10 +6,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -109,11 +111,16 @@ public class GlideImageView extends ImageView {
             btnDownload.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
-                    DownloadManager.Request req = new DownloadManager.Request(Uri.parse(mUrl));
-                    req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                    req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, mUrl.substring(mUrl.lastIndexOf("/") + 1));
-                    dm.enqueue(req);
+                    try {
+                        DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
+                        DownloadManager.Request req = new DownloadManager.Request(Uri.parse(mUrl));
+                        req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, mUrl.substring(mUrl.lastIndexOf("/") + 1));
+                        dm.enqueue(req);
+                    } catch (SecurityException e) {
+                        Log.e("GlideImageView", e.getMessage());
+                        Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }

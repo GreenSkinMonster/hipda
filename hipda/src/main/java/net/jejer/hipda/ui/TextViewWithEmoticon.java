@@ -17,9 +17,11 @@ import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.URLSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -173,15 +175,20 @@ public class TextViewWithEmoticon extends TextView {
     private URLSpan getDownloadUrlSpan(final String s_url) {
         return new URLSpan(s_url) {
             public void onClick(View view) {
-                DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
-                DownloadManager.Request downloadReq = new DownloadManager.Request(Uri.parse(getURL()));
-                downloadReq.addRequestHeader("Cookie", "cdb_auth=" + HiSettingsHelper.getInstance().getCookieAuth());
-                downloadReq.addRequestHeader("User-agent", HiUtils.UserAgent);
+                try {
+                    DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
+                    DownloadManager.Request downloadReq = new DownloadManager.Request(Uri.parse(getURL()));
+                    downloadReq.addRequestHeader("Cookie", "cdb_auth=" + HiSettingsHelper.getInstance().getCookieAuth());
+                    downloadReq.addRequestHeader("User-agent", HiUtils.UserAgent);
 
-                // FUCK Android, we cannot use pub_download directory and keep original filename!
-                downloadReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, ((TextView) view).getText().toString());
-                downloadReq.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                dm.enqueue(downloadReq);
+                    // FUCK Android, we cannot use pub_download directory and keep original filename!
+                    downloadReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, ((TextView) view).getText().toString());
+                    downloadReq.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    dm.enqueue(downloadReq);
+                } catch (SecurityException e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                    Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         };
     }
