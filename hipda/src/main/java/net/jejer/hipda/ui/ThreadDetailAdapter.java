@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +30,7 @@ import net.jejer.hipda.bean.ContentQuote;
 import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.glide.GifTransformation;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideScaleViewTarget;
 import net.jejer.hipda.glide.ThreadImageDecoder;
@@ -125,6 +125,8 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 
         LinearLayout contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
         contentView.removeAllViews();
+        contentView.bringToFront();
+
         for (int i = 0; i < detail.getContents().getSize(); i++) {
             ContentAbs content = detail.getContents().get(i);
             if (content instanceof ContentText) {
@@ -155,41 +157,29 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
             } else if (content instanceof ContentImg) {
                 final String imageUrl = content.getContent();
 
-                final TextView textView = new TextView(mCtx);
-                textView.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
-                textView.setGravity(Gravity.CENTER_HORIZONTAL);
-                textView.setVisibility(View.INVISIBLE);
-
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 400);
                 params.addRule(RelativeLayout.CENTER_IN_PARENT);
                 final GlideImageView giv = new GlideImageView(mCtx);
                 giv.setFocusable(false);
                 giv.setClickable(true);
                 giv.setLayoutParams(params);
-
-                textView.setClickable(true);
-                textView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        giv.performClick();
-                    }
-                });
+                giv.setAdjustViewBounds(true);
+                giv.bringToFront();
 
                 contentView.addView(giv);
-                contentView.addView(textView);
 
                 giv.setUrl(imageUrl);
 
                 if (HiUtils.isAutoLoadImg(mCtx) || loadedImages.contains(imageUrl)) {
                     giv.setImageResource(R.drawable.ic_action_picture);
-                    loadImage(imageUrl, textView, giv, false);
+                    loadImage(imageUrl, giv, false);
                 } else {
                     giv.setImageResource(R.drawable.ic_action_picture);
                     giv.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             loadedImages.add(imageUrl);
-                            loadImage(imageUrl, textView, giv, true);
+                            loadImage(imageUrl, giv, true);
                             giv.setOnClickListener(null);
                         }
                     });
@@ -248,7 +238,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     text = ((ContentQuote) content).getText();
                 }
 
-                text = Utils.trimByClause(text, 120);
+                text = Utils.trimByClause(text, 100);
 
                 LinearLayout quoteLayout = (LinearLayout) LayoutInflater.from(mCtx)
                         .inflate(R.layout.item_quote_text, parent, false);
@@ -287,7 +277,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
         return convertView;
     }
 
-    private void loadImage(String imageUrl, TextView textView, GlideImageView giv, boolean delayedLoading) {
+    private void loadImage(String imageUrl, GlideImageView giv, boolean delayedLoading) {
         int maxViewWidth = 1080;
         //this fragment could be replaced by UserinfoFragment, so DO NOT cast it
         Fragment fragment = mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
@@ -299,9 +289,11 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     .load(imageUrl)
                     .asBitmap()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .transform(new GifTransformation(mCtx))
                     .placeholder(delayedLoading ? R.drawable.loading : R.drawable.ic_action_picture)
                     .error(R.drawable.tapatalk_image_broken)
-                    .into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
+                    .into(new GlideScaleViewTarget(mCtx, giv, maxViewWidth, imageUrl));
+
         } else {
             Glide.with(getContext())
                     .load(imageUrl)
@@ -311,7 +303,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(delayedLoading ? R.drawable.loading : R.drawable.ic_action_picture)
                     .error(R.drawable.tapatalk_image_broken)
-                    .into(new GlideScaleViewTarget(mCtx, giv, textView, maxViewWidth, imageUrl));
+                    .into(new GlideScaleViewTarget(mCtx, giv, maxViewWidth, imageUrl));
         }
     }
 

@@ -33,13 +33,12 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
             int originalWidth = original.getWidth();
             int originalHeight = original.getHeight();
 
-            if (originalWidth <= maxWidth && originalHeight < 4 * originalWidth) {
-//                Log.e(LOG_TAG, "original " + originalWidth + "x" + originalHeight + " return");
-                return new SimpleResource<Bitmap>(original);
+            if (originalWidth <= maxWidth) {
+                return new SimpleResource<>(original);
             }
 
-            if (originalHeight > 4 * originalWidth)
-                originalHeight = 3 * originalWidth;
+            if (originalHeight > 3 * originalWidth)
+                maxWidth = 400;
 
             int newWidth = originalWidth > maxWidth ? maxWidth : originalWidth;
             float scale = ((float) newWidth) / originalWidth;
@@ -48,10 +47,9 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
             matrix.postScale(scale, scale);
 
             Bitmap bitmap = Bitmap.createBitmap(original, 0, 0, originalWidth, originalHeight, matrix, true);
-            result = new SimpleResource<Bitmap>(bitmap);
+            result = new SimpleResource<>(bitmap);
 
             original.recycle();
-//            Log.e(LOG_TAG, "original " + originalWidth + "x" + originalHeight + ", new " + bitmap.getWidth() + "x" + bitmap.getHeight()+ " "+bitmap.getConfig().toString());
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "error when decoding image", e);

@@ -19,6 +19,7 @@ import com.bumptech.glide.request.target.Target;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.glide.GifTransformation;
 
 import java.io.File;
 
@@ -139,6 +140,7 @@ public class GlideImageView extends ImageView {
                         .load(currentUrl)
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .transform(new GifTransformation(mCtx))
                         .error(R.drawable.tapatalk_image_broken)
                         .into(currentImageView);
             }

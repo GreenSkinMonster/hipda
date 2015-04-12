@@ -3,14 +3,11 @@ package net.jejer.hipda.glide;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
-import net.jejer.hipda.R;
 import net.jejer.hipda.ui.GlideImageView;
 
 public class GlideScaleViewTarget extends BitmapImageViewTarget {
@@ -19,16 +16,14 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
 
     private int mMaxViewWidth;
     private String mUrl;
-    private TextView mTextView;
     private Context mCtx;
 
-    public GlideScaleViewTarget(Context ctx, ImageView view, TextView textView, int maxViewWidth, String url) {
+    public GlideScaleViewTarget(Context ctx, ImageView view, int maxViewWidth, String url) {
         super(view);
         mCtx = ctx;
 
         mMaxViewWidth = maxViewWidth;
         mUrl = url;
-        mTextView = textView;
     }
 
     @Override
@@ -54,18 +49,6 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
         } else {
             getView().getLayoutParams().width = maxViewWidth;
             getView().getLayoutParams().height = Math.round(maxViewWidth * 1.0f * resource.getHeight() / resource.getWidth());
-        }
-        if (mUrl.toLowerCase().endsWith(".gif")) {
-            mTextView.setVisibility(View.VISIBLE);
-            mTextView.setText(mCtx.getResources().getString(R.string.image_click_to_play));
-        } else if (scaledWidth >= GlideImageView.MIN_SCALE_WIDTH && scaledHeight >= 3 * scaledWidth) {
-            mTextView.setVisibility(View.VISIBLE);
-            mTextView.setText(mCtx.getResources().getString(R.string.image_click_to_view_long));
-        } else if (scaledWidth >= GlideImageView.MIN_SCALE_WIDTH) {
-            mTextView.setVisibility(View.VISIBLE);
-            mTextView.setText(mCtx.getResources().getString(R.string.image_click_to_view));
-        } else {
-            mTextView.setVisibility(View.INVISIBLE);
         }
 
         if (getView() instanceof GlideImageView)

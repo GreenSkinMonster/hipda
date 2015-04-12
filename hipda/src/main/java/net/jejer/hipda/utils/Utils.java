@@ -45,7 +45,8 @@ public class Utils {
                 sb.append(c);
             } else {
                 sb.append(c);
-                sb.append(" ....");
+                if (i < text.length() - 1)
+                    sb.append(" ....");
                 break;
             }
         }
