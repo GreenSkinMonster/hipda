@@ -87,6 +87,7 @@
 
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="themeName">eink</item>
+        <item name="android:textColor">@android:color/black</item>
         <item name="background">@color/eink_background</item>
         <item name="list_item_background">@color/day_list_item_background</item>
         <item name="detail_background">@color/day_detail_background</item>
