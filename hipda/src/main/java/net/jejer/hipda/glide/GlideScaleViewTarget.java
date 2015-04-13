@@ -1,6 +1,5 @@
 package net.jejer.hipda.glide;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.ImageView;
@@ -16,11 +15,9 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
 
     private int mMaxViewWidth;
     private String mUrl;
-    private Context mCtx;
 
-    public GlideScaleViewTarget(Context ctx, ImageView view, int maxViewWidth, String url) {
+    public GlideScaleViewTarget(ImageView view, int maxViewWidth, String url) {
         super(view);
-        mCtx = ctx;
 
         mMaxViewWidth = maxViewWidth;
         mUrl = url;
@@ -51,8 +48,10 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
             getView().getLayoutParams().height = Math.round(maxViewWidth * 1.0f * resource.getHeight() / resource.getWidth());
         }
 
-        if (getView() instanceof GlideImageView)
-            ((GlideImageView) getView()).setClickToViewBigImage();
+        if (getView() instanceof GlideImageView) {
+            if (scaledWidth > GlideImageView.MIN_SCALE_WIDTH)
+                ((GlideImageView) getView()).setClickToViewBigImage();
+        }
 
         if (Log.isLoggable(LOG_TAG, Log.VERBOSE))
             Log.v(LOG_TAG, "mVW=" + maxViewWidth + " mSW=" + maxScaleWidth + ", size=" + resource.getWidth() + "x" + resource.getHeight() + "," + mUrl.substring(mUrl.lastIndexOf("/") + 1));

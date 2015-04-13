@@ -292,7 +292,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     .transform(new GifTransformation(mCtx))
                     .placeholder(delayedLoading ? R.drawable.loading : R.drawable.ic_action_picture)
                     .error(R.drawable.tapatalk_image_broken)
-                    .into(new GlideScaleViewTarget(mCtx, giv, maxViewWidth, imageUrl));
+                    .into(new GlideScaleViewTarget(giv, maxViewWidth, imageUrl));
 
         } else {
             Glide.with(getContext())
@@ -303,7 +303,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(delayedLoading ? R.drawable.loading : R.drawable.ic_action_picture)
                     .error(R.drawable.tapatalk_image_broken)
-                    .into(new GlideScaleViewTarget(mCtx, giv, maxViewWidth, imageUrl));
+                    .into(new GlideScaleViewTarget(giv, maxViewWidth, imageUrl));
         }
     }
 

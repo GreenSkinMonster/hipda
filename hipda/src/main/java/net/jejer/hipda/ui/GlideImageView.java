@@ -57,8 +57,6 @@ public class GlideImageView extends ImageView {
             } else if (mUrl.toLowerCase().endsWith(".gif")) {
                 stopCurrentGif();
                 loadGif();
-            } else if (view.getLayoutParams().width < MIN_SCALE_WIDTH) {
-                //do nothing
             } else {
                 stopCurrentGif();
                 loadBitmap();
