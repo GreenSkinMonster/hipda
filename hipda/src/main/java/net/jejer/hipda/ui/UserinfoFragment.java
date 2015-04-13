@@ -57,6 +57,7 @@ public class UserinfoFragment extends Fragment {
 
     private ImageView mAvatarView;
     private TextView mDetailView;
+    private TextView mUsernameView;
 
     private ListView mThreadListView;
     private SimpleListAdapter mSimpleListAdapter;
@@ -99,8 +100,8 @@ public class UserinfoFragment extends Fragment {
 
         mAvatarView = (ImageView) view.findViewById(R.id.userinfo_avatar);
 
-        TextView usernameTv = (TextView) view.findViewById(R.id.userinfo_username);
-        usernameTv.setText(mUsername);
+        mUsernameView = (TextView) view.findViewById(R.id.userinfo_username);
+        mUsernameView.setText(mUsername);
 
         mDetailView = (TextView) view.findViewById(R.id.userinfo_detail);
         mDetailView.setText("正在获取信息...");
@@ -209,11 +210,15 @@ public class UserinfoFragment extends Fragment {
             if (info != null) {
                 if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
                     mAvatarView.setVisibility(View.VISIBLE);
-                    GlideHelper.loadAvatar(getActivity(), mAvatarView, info.getmAvatarUrl());
+                    GlideHelper.loadAvatar(getActivity(), mAvatarView, info.getAvatarUrl());
                 } else {
                     mAvatarView.setVisibility(View.GONE);
                 }
-                mDetailView.setText(info.getmDetail());
+                mDetailView.setText(info.getDetail());
+                if (TextUtils.isEmpty(mUsername)) {
+                    mUsername = info.getUsername();
+                    mUsernameView.setText(mUsername);
+                }
             } else {
                 mDetailView.setText("解析信息失败, 请重试.");
             }

@@ -646,18 +646,29 @@ public class HiParser {
 
         UserInfoBean info = new UserInfoBean();
 
-        Elements avatarES = doc.select("div.side div.profile_side div.avatar img");
-        if (avatarES.size() != 0) {
-            info.setmAvatarUrl(avatarES.first().attr("src"));
+        Elements usernameES = doc.select("div#profilecontent div.itemtitle h1");
+        if (usernameES.size() > 0) {
+            info.setUsername(Utils.nullToText(usernameES.first().text()).trim());
         }
 
-        Elements detailES = doc.select("div.main div.s_clear ul.commonlist li");
+        Elements uidES = doc.select("div#profilecontent div.itemtitle ul li");
+        if (uidES.size() > 0) {
+            info.setUid(Utils.nullToText(HttpUtils.getMiddleString(uidES.first().text(), "(UID:", ")")).trim());
+        }
+
+        Elements avatarES = doc.select("div.side div.profile_side div.avatar img");
+        if (avatarES.size() != 0) {
+            info.setAvatarUrl(avatarES.first().attr("src"));
+        }
+
         StringBuilder sb = new StringBuilder();
+
+        Elements detailES = doc.select("div.main div.s_clear ul.commonlist li");
         for (Element detail : detailES) {
             sb.append(detail.text()).append('\n');
         }
 
-        info.setmDetail(sb.toString());
+        info.setDetail(sb.toString());
 
         return info;
     }

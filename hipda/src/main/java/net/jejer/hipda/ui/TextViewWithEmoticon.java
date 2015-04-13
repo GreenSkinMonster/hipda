@@ -128,6 +128,13 @@ public class TextViewWithEmoticon extends TextView {
                     b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                     b.removeSpan(s);
                 }
+            } else if (s_url.startsWith("http://www.hi-pda.com/forum/space.php")) {
+                String uid = HttpUtils.getMiddleString(s_url, "uid=", "&");
+                if (uid != null) {
+                    URLSpan newSpan = getUserInfoUrlSpan(s_url);
+                    b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
+                    b.removeSpan(s);
+                }
             }
         }
 
@@ -155,6 +162,42 @@ public class TextViewWithEmoticon extends TextView {
                             .commit();
                 } else {
                     mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
+                    if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
+                        mFragmentManager.beginTransaction()
+                                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                                .addToBackStack(ThreadDetailFragment.class.getName())
+                                .commit();
+                    } else {
+                        mFragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                                .addToBackStack(ThreadDetailFragment.class.getName())
+                                .commit();
+                    }
+                }
+            }
+        };
+    }
+
+    private URLSpan getUserInfoUrlSpan(final String s_url) {
+        return new URLSpan(s_url) {
+            public void onClick(View view) {
+
+                String uid = HttpUtils.getMiddleString(s_url, "uid=", "&");
+                String username = "";
+
+                Bundle arguments = new Bundle();
+                arguments.putString(UserinfoFragment.ARG_UID, uid);
+                arguments.putString(UserinfoFragment.ARG_USERNAME, username);
+                UserinfoFragment fragment = new UserinfoFragment();
+                fragment.setArguments(arguments);
+
+                if (HiSettingsHelper.getInstance().getIsLandscape()) {
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
+                            .addToBackStack(ThreadDetailFragment.class.getName())
+                            .commit();
+                } else {
                     if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
                         mFragmentManager.beginTransaction()
                                 .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
