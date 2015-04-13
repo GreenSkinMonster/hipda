@@ -18,6 +18,7 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
+import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 import net.jejer.hipda.R;
@@ -100,7 +101,7 @@ public class GlideImageView extends ImageView {
                 @Override
                 protected void onPostExecute(File cacheFile) {
                     super.onPostExecute(cacheFile);
-                    wvImage.setImageUri(Uri.fromFile(cacheFile));
+                    wvImage.setImage(ImageSource.uri(cacheFile.getAbsolutePath()));
                     wvImage.setMinimumDpi(100);
                 }
             }.execute();
