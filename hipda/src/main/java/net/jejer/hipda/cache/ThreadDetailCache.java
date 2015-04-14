@@ -33,7 +33,7 @@ public class ThreadDetailCache {
 
     public DetailBean getPostByPostId(String postId) {
         Integer page = mPostIdToPageMap.get(postId);
-        if (page != null && page > 0) {
+        if (page != null && page > 0 && mCache.get(page) != null) {
             return mCache.get(page).getPostInPage(postId);
         }
         return null;
