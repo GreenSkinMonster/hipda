@@ -75,8 +75,8 @@ public class DetailBean {
             newString = true;
         }
 
-        public void addQuote(String text, String authorAndTime) {
-            list.add(new ContentQuote(unEscapeHtml(text), authorAndTime));
+        public void addQuote(String text, String authorAndTime, String postId) {
+            list.add(new ContentQuote(unEscapeHtml(text), authorAndTime, postId));
             newString = true;
         }
 

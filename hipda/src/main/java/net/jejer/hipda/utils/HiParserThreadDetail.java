@@ -378,13 +378,22 @@ public class HiParserThreadDetail {
                 // remove div.t_attach
                 return false;
             } else if (divE.hasClass("quote")) {
+                String postId = null;
+                Elements redirectES = divE.select("a");
+                for (Element element : redirectES) {
+                    String href = Utils.nullToText(element.attr("href"));
+                    if (href.contains("redirect.php?goto=findpost")) {
+                        postId = HttpUtils.getMiddleString(href, "pid=", "&");
+                        break;
+                    }
+                }
                 Elements postEls = divE.select("font[size=2]");
                 String authorAndTime = "";
                 if (postEls.size() > 0) {
                     authorAndTime = postEls.first().text();
                     postEls.first().remove();
                 }
-                content.addQuote(divE.text(), authorAndTime);
+                content.addQuote(divE.text(), authorAndTime, postId);
                 return false;
             } else if (divE.hasClass("attach_popup")) {
                 // remove div.attach_popup

@@ -10,8 +10,10 @@ public class ContentQuote extends ContentAbs {
     private String to;
     private String time;
     private String text;
+    private String postId;
 
-    public ContentQuote(String postText, String authorAndTime) {
+    public ContentQuote(String postText, String authorAndTime, String postId) {
+        this.postId = postId;
         mQuote = Utils.nullToText(postText) + Utils.nullToText(authorAndTime);
         //replace chinese space and trim
         text = Utils.nullToText(postText).replace("　", " ").replace(String.valueOf((char) 160), " ").trim();
@@ -21,10 +23,13 @@ public class ContentQuote extends ContentAbs {
         }
         if (text.startsWith("回复")) {
             text = text.substring("回复".length()).trim();
-            if (text.indexOf("    ") > 0)
-                to = text.substring(0, text.indexOf("    ")).trim();
-            else if (text.indexOf(" ") > 0)
+            //this is not accurate, will use postId if available
+            int idx = text.indexOf("    ");
+            if (idx > 0 && idx < 10) {
+                to = text.substring(0, idx).trim();
+            } else if (text.indexOf(" ") > 0) {
                 to = text.substring(0, text.indexOf(" ")).trim();
+            }
             if (!TextUtils.isEmpty(to))
                 text = text.substring(to.length() + 1).trim();
         }
@@ -70,6 +75,14 @@ public class ContentQuote extends ContentAbs {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
     public boolean isReplyQuote() {

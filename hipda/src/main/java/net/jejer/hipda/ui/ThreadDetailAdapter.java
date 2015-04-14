@@ -231,11 +231,23 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     }
                     note = floor + "#";
                 } else {
-                    author = ((ContentQuote) content).getAuthor();
-                    if (!TextUtils.isEmpty(((ContentQuote) content).getTo()))
-                        note = "to: " + ((ContentQuote) content).getTo();
-                    time = ((ContentQuote) content).getTime();
-                    text = ((ContentQuote) content).getText();
+                    ContentQuote contentQuote = (ContentQuote) content;
+                    DetailBean detailBean = null;
+                    if (!TextUtils.isEmpty(contentQuote.getPostId()) && TextUtils.isDigitsOnly(contentQuote.getPostId())) {
+                        detailBean = mDetailFragment.getCachedPost(contentQuote.getPostId());
+                    }
+                    if (detailBean != null) {
+                        author = contentQuote.getAuthor();
+                        text = detailBean.getContents().getCopyText(true);
+                        floor = Integer.parseInt(detailBean.getFloor());
+                        note = floor + "#";
+                    } else {
+                        author = ((ContentQuote) content).getAuthor();
+                        if (!TextUtils.isEmpty(((ContentQuote) content).getTo()))
+                            note = "to: " + ((ContentQuote) content).getTo();
+                        time = ((ContentQuote) content).getTime();
+                        text = ((ContentQuote) content).getText();
+                    }
                 }
 
                 text = Utils.trimByClause(text, 100);
