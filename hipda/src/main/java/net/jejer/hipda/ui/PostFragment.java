@@ -4,13 +4,14 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,10 +39,13 @@ import net.jejer.hipda.async.PrePostAsyncTask;
 import net.jejer.hipda.async.UploadImgAsyncTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
+import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.ImageFileInfo;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class PostFragment extends Fragment {
@@ -69,6 +73,8 @@ public class PostFragment extends Fragment {
 
     private Spinner mSpForum;
     private Spinner mSpTypeIds;
+    private Collection<UploadImgButton> uploadImgButtons = new ArrayList<>();
+    private boolean imageWarnShown = false;
 
     private PostAsyncTask.PostListener postListener;
 
@@ -282,6 +288,31 @@ public class PostFragment extends Fragment {
                     return true;
                 }
 
+                if (!imageWarnShown && uploadImgButtons.size() > 0) {
+                    boolean needWarn = false;
+                    for (UploadImgButton uploadBtn : uploadImgButtons) {
+                        if (!TextUtils.isEmpty(uploadBtn.getImgId())
+                                && TextUtils.isDigitsOnly(uploadBtn.getImgId())
+                                && uploadBtn.getImgId().length() > 5) {
+                            String attachStr = "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]";
+                            if (!replyText.contains(attachStr)) {
+                                needWarn = true;
+                                uploadBtn.setTypeface(null, Typeface.BOLD);
+                            }
+                        }
+                    }
+                    if (needWarn) {
+                        Toast.makeText(getActivity(), "有图片未使用，再次点击发送将忽略这些图片", Toast.LENGTH_LONG).show();
+                        imageWarnShown = true;
+                        (new Handler()).postDelayed(new Runnable() {
+                            public void run() {
+                                imageWarnShown = false;
+                            }
+                        }, 5000);
+                        return true;
+                    }
+                }
+
                 //when edit post, pass floor number
                 PostBean postBean = new PostBean();
                 postBean.setContent(replyText);
@@ -312,100 +343,42 @@ public class PostFragment extends Fragment {
         if (resultCode != Activity.RESULT_CANCELED) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-                Log.v(LOG_TAG, selectedImageUri.toString());
-                Log.v(LOG_TAG, selectedImageUri.getPath());
 
                 Bitmap bitmap = null;
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
-                    Log.v(LOG_TAG, String.valueOf(bitmap.getByteCount()));
                 } catch (Exception e) {
                     Log.v(LOG_TAG, "Exception", e);
                 }
 
-                final UploadImgButton b = new UploadImgButton(getActivity());
-                b.setImgName(getImgName(selectedImageUri));
-                b.setOnClickListener(new Button.OnClickListener() {
+                ImageFileInfo imageFileInfo = CursorUtils.getImageFileInfo(getActivity(), selectedImageUri);
+                String fileName = imageFileInfo.getFileName();
+
+                final UploadImgButton uploadBtn = new UploadImgButton(getActivity());
+                uploadBtn.setImgName(fileName);
+                uploadBtn.setOnClickListener(new Button.OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
-                        mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), "[attachimg]" + b.getImgId() + "[/attachimg]");
-                        // Add attach id for post
-                        mPrePostInfo.get("attaches").add(b.getImgId());
+                        if (!TextUtils.isEmpty(uploadBtn.getImgId()) && TextUtils.isDigitsOnly(uploadBtn.getImgId())) {
+                            mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]");
+                            // Add attach id for post
+                            mPrePostInfo.get("attaches").add(uploadBtn.getImgId());
+                            uploadBtn.setTypeface(null, Typeface.NORMAL);
+                        } else {
+                            Toast.makeText(getActivity(), "图片未成功上传", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
+                uploadImgButtons.add(uploadBtn);
 
                 LinearLayout postLayout = (LinearLayout) getActivity().findViewById(R.id.layout_post);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                         RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                postLayout.addView(b, 0, params);
+                postLayout.addView(uploadBtn, 0, params);
 
-                new UploadImgAsyncTask(getActivity(), b, mPrePostInfo.get("uid").get(0), mPrePostInfo.get("hash").get(0)).execute(bitmap);
+                new UploadImgAsyncTask(getActivity(), uploadBtn, imageFileInfo, mPrePostInfo.get("uid").get(0), mPrePostInfo.get("hash").get(0)).execute(bitmap);
             }
         }
-    }
-
-    private String getImgName(Uri uri) {
-        if (uri.getPath().contains(":")) {
-            // Split at colon, use second item in the array
-            String id = uri.getPath().split(":")[1];
-
-            String[] column = {MediaStore.Images.Media.DATA};
-
-            // where id is equal to
-            String sel = MediaStore.Images.Media._ID + "=?";
-
-            CursorLoader cursorloader = new CursorLoader(getActivity(),
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    column,
-                    sel,
-                    new String[]{id},
-                    null);
-            Cursor cursor = cursorloader.loadInBackground();
-
-            if (cursor.moveToFirst()) {
-                for (int i = 0; i < cursor.getColumnCount(); i++) {
-                    Log.v(cursor.getColumnName(i), cursor.getString(i));
-                    String name = cursor.getString(i).toLowerCase(Locale.getDefault());
-                    if (name.endsWith("jpg")
-                            || name.endsWith("jpeg")
-                            || name.endsWith("png")
-                            || name.endsWith("bmp")
-                            || name.endsWith("gif")) {
-                        if (name.contains("/")) {
-                            return name.substring(name.lastIndexOf("/") + 1, name.length());
-                        }
-                    }
-                }
-            }
-
-            cursor.close();
-        } else {
-            CursorLoader cursorloader = new CursorLoader(getActivity(),
-                    uri,
-                    null,
-                    null,
-                    null,
-                    null);
-            Cursor cursor = cursorloader.loadInBackground();
-
-            if (cursor.moveToFirst()) {
-                for (int i = 0; i < cursor.getColumnCount(); i++) {
-                    Log.v(cursor.getColumnName(i), cursor.getString(i));
-                    String name = cursor.getString(i).toLowerCase(Locale.getDefault());
-                    if (name.endsWith("jpg")
-                            || name.endsWith("jpeg")
-                            || name.endsWith("png")
-                            || name.endsWith("bmp")
-                            || name.endsWith("gif")) {
-                        if (name.contains("/")) {
-                            return name.substring(name.lastIndexOf("/") + 1, name.length());
-                        }
-                    }
-                }
-            }
-
-        }
-        return null;
     }
 
     private class PrePostListener implements PrePostAsyncTask.PrePostListener {

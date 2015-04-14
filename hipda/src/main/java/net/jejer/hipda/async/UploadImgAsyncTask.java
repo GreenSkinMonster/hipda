@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.ImageFileInfo;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -35,12 +37,14 @@ public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
     private String mUid;
     private String mHash;
     private String mPicId = "";
+    private ImageFileInfo mImageFileInfo;
 
-    public UploadImgAsyncTask(Context ctx, UploadImgListener v, String uid, String hash) {
+    public UploadImgAsyncTask(Context ctx, UploadImgListener v, ImageFileInfo imageFileInfo, String uid, String hash) {
         //mCtx = ctx;
         mListener = v;
         mUid = uid;
         mHash = hash;
+        mImageFileInfo = imageFileInfo;
     }
 
     public interface UploadImgListener {
@@ -147,7 +151,11 @@ public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
         String sendStr = "";
         try {
             barry = ("--" + BOUNDARYSTR + "--\r\n").getBytes("UTF-8");
-            sendStr = getBoundaryMessage(BOUNDARYSTR, param, imageParamName, "HiPDA_UPLOAD.jpg", fileType);
+            String fileName = (mImageFileInfo.getFileName() != null
+                    && !mImageFileInfo.getFileName().contains(" ")
+                    && !mImageFileInfo.getFileName().contains("'")
+                    && !mImageFileInfo.getFileName().contains("\"")) ? mImageFileInfo.getFileName() : "HiPDA_UPLOAD.jpg";
+            sendStr = getBoundaryMessage(BOUNDARYSTR, param, imageParamName, fileName, fileType);
             contentLength = sendStr.getBytes("UTF-8").length + baos.size() + 2 * barry.length;
         } catch (UnsupportedEncodingException ignored) {
 
@@ -283,6 +291,14 @@ public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
 
         isBm = new ByteArrayInputStream(baos.toByteArray());
         newbitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
+
+        if (mImageFileInfo.getOrientation() > 0) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(mImageFileInfo.getOrientation());
+
+            newbitmap = Bitmap.createBitmap(newbitmap, 0, 0, newbitmap.getWidth(),
+                    newbitmap.getHeight(), matrix, true);
+        }
 
         // HiPDA have 300KB limitation
         int quality = maxQuality;
