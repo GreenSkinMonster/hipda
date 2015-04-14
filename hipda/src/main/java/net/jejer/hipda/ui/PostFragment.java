@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -74,7 +73,6 @@ public class PostFragment extends Fragment {
     private Spinner mSpForum;
     private Spinner mSpTypeIds;
     private Collection<UploadImgButton> uploadImgButtons = new ArrayList<>();
-    private boolean imageWarnShown = false;
 
     private PostAsyncTask.PostListener postListener;
 
@@ -288,12 +286,10 @@ public class PostFragment extends Fragment {
                     return true;
                 }
 
-                if (!imageWarnShown && uploadImgButtons.size() > 0) {
+                if (uploadImgButtons.size() > 0) {
                     boolean needWarn = false;
                     for (UploadImgButton uploadBtn : uploadImgButtons) {
-                        if (!TextUtils.isEmpty(uploadBtn.getImgId())
-                                && TextUtils.isDigitsOnly(uploadBtn.getImgId())
-                                && uploadBtn.getImgId().length() > 5) {
+                        if (isValidImgId(uploadBtn.getImgId())) {
                             String attachStr = "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]";
                             if (!replyText.contains(attachStr)) {
                                 needWarn = true;
@@ -302,13 +298,7 @@ public class PostFragment extends Fragment {
                         }
                     }
                     if (needWarn) {
-                        Toast.makeText(getActivity(), "有图片未使用，再次点击发送将忽略这些图片", Toast.LENGTH_LONG).show();
-                        imageWarnShown = true;
-                        (new Handler()).postDelayed(new Runnable() {
-                            public void run() {
-                                imageWarnShown = false;
-                            }
-                        }, 5000);
+                        Toast.makeText(getActivity(), "有图片未添加到帖子中，长按可删除（保存后生效）", Toast.LENGTH_LONG).show();
                         return true;
                     }
                 }
@@ -359,7 +349,7 @@ public class PostFragment extends Fragment {
                 uploadBtn.setOnClickListener(new Button.OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
-                        if (!TextUtils.isEmpty(uploadBtn.getImgId()) && TextUtils.isDigitsOnly(uploadBtn.getImgId())) {
+                        if (isValidImgId(uploadBtn.getImgId())) {
                             mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]");
                             // Add attach id for post
                             mPrePostInfo.get("attaches").add(uploadBtn.getImgId());
@@ -367,6 +357,18 @@ public class PostFragment extends Fragment {
                         } else {
                             Toast.makeText(getActivity(), "图片未成功上传", Toast.LENGTH_SHORT).show();
                         }
+                    }
+                });
+                uploadBtn.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        if (isValidImgId(uploadBtn.getImgId())) {
+                            mPrePostInfo.get("attaches").remove(uploadBtn.getImgId());
+                            mPrePostInfo.get("attachdel").add(uploadBtn.getImgId());
+                        }
+                        uploadImgButtons.remove(uploadBtn);
+                        uploadBtn.setVisibility(View.GONE);
+                        return true;
                     }
                 });
                 uploadImgButtons.add(uploadBtn);
@@ -449,6 +451,12 @@ public class PostFragment extends Fragment {
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
         }
+    }
+
+    private boolean isValidImgId(String imgId) {
+        return !TextUtils.isEmpty(imgId)
+                && TextUtils.isDigitsOnly(imgId)
+                && imgId.length() > 5;
     }
 
 }

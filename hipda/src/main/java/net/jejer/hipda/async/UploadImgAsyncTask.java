@@ -23,7 +23,10 @@ import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
@@ -151,10 +154,8 @@ public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
         String sendStr = "";
         try {
             barry = ("--" + BOUNDARYSTR + "--\r\n").getBytes("UTF-8");
-            String fileName = (mImageFileInfo.getFileName() != null
-                    && !mImageFileInfo.getFileName().contains(" ")
-                    && !mImageFileInfo.getFileName().contains("'")
-                    && !mImageFileInfo.getFileName().contains("\"")) ? mImageFileInfo.getFileName() : "HiPDA_UPLOAD.jpg";
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmm", Locale.US);
+            String fileName = "HiPDA_UPLOAD_" + formatter.format(new Date()) + ".jpg";
             sendStr = getBoundaryMessage(BOUNDARYSTR, param, imageParamName, fileName, fileType);
             contentLength = sendStr.getBytes("UTF-8").length + baos.size() + 2 * barry.length;
         } catch (UnsupportedEncodingException ignored) {

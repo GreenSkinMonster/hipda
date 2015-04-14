@@ -149,7 +149,10 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
         post_param.put("checkbox", "0");
         post_param.put("message", text[0]);
         for (String attach : mInfo.get("attaches")) {
-            post_param.put("attachnew[" + attach + "][description]", "" + attach);
+            post_param.put("attachnew[" + attach + "][description]", attach);
+        }
+        for (String attach : mInfo.get("attachdel")) {
+            post_param.put("attachdel[" + attach + "]", attach);
         }
         if (mMode == MODE_NEW_THREAD) {
             post_param.put("subject", text[1]);
