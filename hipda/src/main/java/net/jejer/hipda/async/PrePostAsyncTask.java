@@ -96,6 +96,7 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List
         result.put("subject", new ArrayList<String>());
         result.put("typeid_values", new ArrayList<String>());
         result.put("typeid_names", new ArrayList<String>());
+        result.put("attachdel", new ArrayList<String>());
 
         Elements formhashES = doc.select("input[name=formhash]");
         if (formhashES.size() < 1) {
