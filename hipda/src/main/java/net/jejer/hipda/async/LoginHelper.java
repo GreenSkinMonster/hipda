@@ -106,9 +106,9 @@ public class LoginHelper {
         VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
         rspStr = VolleyHelper.getInstance().synchronousPost(HiUtils.LoginStep3, post_param,
                 errorListener);
-        Log.v(LOG_TAG, rspStr);
 
         if (rspStr != null) {
+            Log.v(LOG_TAG, rspStr);
             // response is in XML format
             if (rspStr.contains(mCtx.getString(R.string.login_success))) {
                 Log.v(LOG_TAG, "Login success!");
