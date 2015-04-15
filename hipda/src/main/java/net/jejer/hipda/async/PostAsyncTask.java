@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
+import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
@@ -17,7 +18,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
@@ -34,7 +34,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
     private String mResult;
     private int mStatus = Constants.STATUS_FAIL;
     private Context mCtx;
-    private Map<String, List<String>> mInfo;
+    private PrePostInfoBean mInfo;
 
     private PostListener mPostListenerCallback;
     private String mContent;
@@ -42,7 +42,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
     private String mTitle;
     private String mFloor;
 
-    public PostAsyncTask(Context ctx, int mode, Map<String, List<String>> info, PostListener postListenerCallback) {
+    public PostAsyncTask(Context ctx, int mode, PrePostInfoBean info, PostListener postListenerCallback) {
         mCtx = ctx;
         mMode = mode;
         mInfo = info;
@@ -60,7 +60,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
     protected Void doInBackground(PostBean... postBeans) {
 
         PostBean postBean = postBeans[0];
-        String reply_text = postBean.getContent();
+        String replyText = postBean.getContent();
         String tid = postBean.getTid();
         String pid = postBean.getPid();
         String fid = postBean.getFid();
@@ -74,7 +74,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
         if (!TextUtils.isEmpty(floor) && TextUtils.isDigitsOnly(floor))
             mFloor = floor;
 
-        mContent = reply_text;
+        mContent = replyText;
 
         if (mMode != MODE_EDIT_POST) {
             String tail_text = HiSettingsHelper.getInstance().getTailText();
@@ -84,9 +84,9 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
                     if ((!tail_url.startsWith("http")) && (!tail_url.startsWith("https"))) {
                         tail_url = "http://" + tail_url;
                     }
-                    reply_text = reply_text + "  [url=" + tail_url + "][size=1]" + tail_text + "[/size][/url]";
+                    replyText = replyText + "  [url=" + tail_url + "][size=1]" + tail_text + "[/size][/url]";
                 } else {
-                    reply_text = reply_text + "  [size=1]" + tail_text + "[/size]";
+                    replyText = replyText + "  [size=1]" + tail_text + "[/size]";
                 }
             }
         }
@@ -96,19 +96,19 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
         switch (mMode) {
             case MODE_REPLY_THREAD:
             case MODE_QUICK_REPLY:
-                doPost(url, reply_text);
+                doPost(url, replyText, null, null);
                 break;
             case MODE_REPLY_POST:
             case MODE_QUOTE_POST:
-                doPost(url, mInfo.get("text").get(0) + "\n\n    " + reply_text);
+                doPost(url, mInfo.getText() + "\n\n    " + replyText, null, null);
                 break;
             case MODE_NEW_THREAD:
                 url = HiUtils.NewThreadUrl + fid + "&typeid=" + typeid + "&topicsubmit=yes";
-                doPost(url, reply_text, subject);
+                doPost(url, replyText, subject, null);
                 break;
             case MODE_EDIT_POST:
                 url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
-                doPost(url, reply_text, subject);
+                doPost(url, replyText, subject, typeid);
                 break;
         }
 
@@ -131,10 +131,9 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             mPostListenerCallback.onPostDone(mMode, mStatus, mResult, postBean);
     }
 
-    private void doPost(String url, String... text) {
+    private void doPost(String url, String replyText, String subject, String typeid) {
 
-        String formhash = mInfo.get("formhash").size() > 0
-                ? mInfo.get("formhash").get(0) : null;
+        String formhash = mInfo.getFormhash();
 
         if (TextUtils.isEmpty(formhash)) {
             mResult = "发表失败!";
@@ -147,20 +146,23 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
         post_param.put("posttime", String.valueOf(System.currentTimeMillis()));
         post_param.put("wysiwyg", "0");
         post_param.put("checkbox", "0");
-        post_param.put("message", text[0]);
-        for (String attach : mInfo.get("attaches")) {
+        post_param.put("message", replyText);
+        for (String attach : mInfo.getAttaches()) {
             post_param.put("attachnew[" + attach + "][description]", attach);
         }
-        for (String attach : mInfo.get("attachdel")) {
+        for (String attach : mInfo.getAttachdel()) {
             post_param.put("attachdel[" + attach + "]", attach);
         }
         if (mMode == MODE_NEW_THREAD) {
-            post_param.put("subject", text[1]);
-            mTitle = text[1];
+            post_param.put("subject", subject);
+            mTitle = subject;
         } else if (mMode == MODE_EDIT_POST) {
-            if (!TextUtils.isEmpty(text[1])) {
-                post_param.put("subject", text[1]);
-                mTitle = text[1];
+            if (!TextUtils.isEmpty(subject)) {
+                post_param.put("subject", subject);
+                mTitle = subject;
+                if (!TextUtils.isEmpty(typeid)) {
+                    post_param.put("typeid", typeid);
+                }
             }
         }
 

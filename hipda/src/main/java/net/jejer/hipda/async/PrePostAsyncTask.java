@@ -2,8 +2,10 @@ package net.jejer.hipda.async;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import net.jejer.hipda.bean.PostBean;
+import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
@@ -13,12 +15,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List<String>>> {
+public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean> {
     private final String LOG_TAG = getClass().getSimpleName();
 
     private PrePostListener mListener;
@@ -32,7 +29,7 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List
     }
 
     @Override
-    protected Map<String, List<String>> doInBackground(PostBean... postBeans) {
+    protected PrePostInfoBean doInBackground(PostBean... postBeans) {
 
         PostBean postBean = postBeans[0];
         String tid = postBean.getTid();
@@ -86,72 +83,65 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, Map<String, List
         return parseRsp(doc);
     }
 
-    private Map<String, List<String>> parseRsp(Document doc) {
-        Map<String, List<String>> result = new HashMap<String, List<String>>();
-        result.put("formhash", new ArrayList<String>());
-        result.put("text", new ArrayList<String>());
-        result.put("uid", new ArrayList<String>());
-        result.put("hash", new ArrayList<String>());
-        result.put("attaches", new ArrayList<String>());
-        result.put("subject", new ArrayList<String>());
-        result.put("typeid_values", new ArrayList<String>());
-        result.put("typeid_names", new ArrayList<String>());
-        result.put("attachdel", new ArrayList<String>());
+    private PrePostInfoBean parseRsp(Document doc) {
+        PrePostInfoBean result = new PrePostInfoBean();
 
         Elements formhashES = doc.select("input[name=formhash]");
         if (formhashES.size() < 1) {
             return result;
         } else {
-            result.get("formhash").add(formhashES.first().attr("value"));
+            result.setFormhash(formhashES.first().attr("value"));
         }
 
         Elements addtextES = doc.select("textarea");
         if (addtextES.size() < 1) {
             return result;
         } else {
-            result.get("text").add(addtextES.first().text());
+            result.setText(addtextES.first().text());
         }
 
         Elements scriptES = doc.select("script");
         if (scriptES.size() < 1) {
             return result;
         } else {
-            result.get("uid").add(HttpUtils.getMiddleString(scriptES.first().data(), "discuz_uid = ", ","));
+            result.setUid(HttpUtils.getMiddleString(scriptES.first().data(), "discuz_uid = ", ","));
         }
 
         Elements hashES = doc.select("input[name=hash]");
         if (hashES.size() < 1) {
             return result;
         } else {
-            result.get("hash").add(hashES.first().attr("value"));
+            result.setHash(hashES.first().attr("value"));
         }
 
         //for edit post
         Elements subjectES = doc.select("input[name=subject]");
         if (subjectES.size() > 0) {
-            result.get("subject").add(subjectES.first().attr("value"));
+            result.setSubject(subjectES.first().attr("value"));
         }
 
         Elements typeidES = doc.select("#typeid > option");
         for (int i = 0; i < typeidES.size(); i++) {
             Element typeidEl = typeidES.get(i);
-            result.get("typeid_values").add(typeidEl.val());
-            result.get("typeid_names").add(typeidEl.text());
+            result.addTypeidValues(typeidEl.val());
+            result.addTypeidNames(typeidEl.text());
+            if ("selected".equals(typeidEl.attr("selected")))
+                result.setTypeid(typeidEl.val());
         }
         return result;
     }
 
     @Override
-    protected void onPostExecute(Map<String, List<String>> result) {
+    protected void onPostExecute(PrePostInfoBean result) {
         if (result == null) {
             mListener.PrePostComplete(mMode, false, null);
             return;
         }
-        mListener.PrePostComplete(mMode, !result.get("formhash").isEmpty(), result);
+        mListener.PrePostComplete(mMode, !TextUtils.isEmpty(result.getFormhash()), result);
     }
 
     public interface PrePostListener {
-        void PrePostComplete(int mode, boolean result, Map<String, List<String>> info);
+        void PrePostComplete(int mode, boolean result, PrePostInfoBean info);
     }
 
 }

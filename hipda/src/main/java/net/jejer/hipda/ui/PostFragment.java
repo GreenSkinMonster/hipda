@@ -38,6 +38,7 @@ import net.jejer.hipda.async.PrePostAsyncTask;
 import net.jejer.hipda.async.UploadImgAsyncTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
+import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.ImageFileInfo;
@@ -45,7 +46,6 @@ import net.jejer.hipda.utils.ImageFileInfo;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class PostFragment extends Fragment {
     private static final int SELECT_PICTURE = 1;
@@ -67,7 +67,7 @@ public class PostFragment extends Fragment {
     private TextView mTvSubjectMsg;
     private EditText mTvReplyMsg;
     private PrePostAsyncTask.PrePostListener mPrePostListener = new PrePostListener();
-    private Map<String, List<String>> mPrePostInfo;
+    private PrePostInfoBean mPrePostInfo;
     private PrePostAsyncTask mPrePostAsyncTask;
 
     private Spinner mSpForum;
@@ -269,7 +269,8 @@ public class PostFragment extends Fragment {
                 }
                 return true;
             case R.id.action_post:
-                if (mMode == PostAsyncTask.MODE_NEW_THREAD && "6".equals(mFid) && "0".equals(mTypeid)) {
+                //new thread or edit fist post
+                if (mSpTypeIds.getVisibility() == View.VISIBLE && "6".equals(mFid) && "0".equals(mTypeid)) {
                     Toast.makeText(getActivity(), "B&S版发帖必须指定分类", Toast.LENGTH_LONG).show();
                     return true;
                 }
@@ -352,7 +353,7 @@ public class PostFragment extends Fragment {
                         if (isValidImgId(uploadBtn.getImgId())) {
                             mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]");
                             // Add attach id for post
-                            mPrePostInfo.get("attaches").add(uploadBtn.getImgId());
+                            mPrePostInfo.addAttach(uploadBtn.getImgId());
                             uploadBtn.setTypeface(null, Typeface.NORMAL);
                         } else {
                             Toast.makeText(getActivity(), "图片未成功上传", Toast.LENGTH_SHORT).show();
@@ -363,8 +364,8 @@ public class PostFragment extends Fragment {
                     @Override
                     public boolean onLongClick(View view) {
                         if (isValidImgId(uploadBtn.getImgId())) {
-                            mPrePostInfo.get("attaches").remove(uploadBtn.getImgId());
-                            mPrePostInfo.get("attachdel").add(uploadBtn.getImgId());
+                            mPrePostInfo.removeAttach(uploadBtn.getImgId());
+                            mPrePostInfo.addAttachdel(uploadBtn.getImgId());
                         }
                         uploadImgButtons.remove(uploadBtn);
                         uploadBtn.setVisibility(View.GONE);
@@ -378,7 +379,7 @@ public class PostFragment extends Fragment {
                         RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 postLayout.addView(uploadBtn, 0, params);
 
-                new UploadImgAsyncTask(getActivity(), uploadBtn, imageFileInfo, mPrePostInfo.get("uid").get(0), mPrePostInfo.get("hash").get(0)).execute(bitmap);
+                new UploadImgAsyncTask(getActivity(), uploadBtn, imageFileInfo, mPrePostInfo.getUid(), mPrePostInfo.getHash()).execute(bitmap);
             }
         }
     }
@@ -386,7 +387,7 @@ public class PostFragment extends Fragment {
     private class PrePostListener implements PrePostAsyncTask.PrePostListener {
         @Override
         public void PrePostComplete(int mode, boolean result,
-                                    Map<String, List<String>> info) {
+                                    PrePostInfoBean info) {
             if (result) {
                 mPrePostInfo = info;
                 mTvAdditional.setVisibility(View.GONE);
@@ -394,10 +395,10 @@ public class PostFragment extends Fragment {
 
                 if (mode == PostAsyncTask.MODE_NEW_THREAD) {
                     KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), android.R.layout.simple_list_item_1);
-                    List<String> typeids = info.get("typeid_values");
+                    List<String> typeids = info.getTypeidValues();
                     if (typeids != null && typeids.size() > 0) {
-                        adapter.setEntryValues(info.get("typeid_values").toArray(new String[typeids.size()]));
-                        adapter.setEntries(info.get("typeid_names").toArray(new String[typeids.size()]));
+                        adapter.setEntryValues(info.getTypeidValues().toArray(new String[typeids.size()]));
+                        adapter.setEntries(info.getTypeidNames().toArray(new String[typeids.size()]));
                         mSpTypeIds.setAdapter(adapter);
                         mSpTypeIds.setVisibility(View.VISIBLE);
                     } else {
@@ -411,15 +412,32 @@ public class PostFragment extends Fragment {
                     }
                 }
 
-                if (!info.get("text").isEmpty() && !info.get("text").get(0).isEmpty()) {
+                if (!TextUtils.isEmpty(info.getText())) {
                     if (mode == PostAsyncTask.MODE_EDIT_POST) {
-                        mTvReplyMsg.setText(info.get("text").get(0));
-                        if (!info.get("subject").isEmpty() && !info.get("subject").get(0).isEmpty()) {
-                            mTvSubjectMsg.setText(info.get("subject").get(0));
+                        mTvReplyMsg.setText(info.getText());
+                        if (!TextUtils.isEmpty(info.getSubject())) {
+                            mTvSubjectMsg.setText(info.getSubject());
                             mTvSubjectMsg.setVisibility(View.VISIBLE);
                         }
+                        List<String> typeids = info.getTypeidValues();
+                        if (typeids != null && typeids.size() > 0
+                                && !TextUtils.isEmpty(info.getTypeid())) {
+                            String typeid = info.getTypeid();
+                            KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), android.R.layout.simple_list_item_1);
+                            adapter.setEntryValues(info.getTypeidValues().toArray(new String[typeids.size()]));
+                            adapter.setEntries(info.getTypeidNames().toArray(new String[typeids.size()]));
+                            mSpTypeIds.setAdapter(adapter);
+                            mSpTypeIds.setVisibility(View.VISIBLE);
+                            for (int i = 0; i < typeids.size(); i++) {
+                                String tmpid = typeids.get(i);
+                                if (tmpid.equals(typeid)) {
+                                    mSpTypeIds.setSelection(i);
+                                    break;
+                                }
+                            }
+                        }
                     } else {
-                        mTvAdditional.setText(info.get("text").get(0));
+                        mTvAdditional.setText(info.getText());
                         mTvAdditional.setVisibility(View.VISIBLE);
                     }
                 }
