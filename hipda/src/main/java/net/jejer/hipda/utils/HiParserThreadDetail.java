@@ -159,6 +159,11 @@ public class HiParserThreadDetail {
             //locked user content
             if (postmessageES.size() == 0) {
                 postmessageES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.locked");
+                if (postmessageES.size() > 0) {
+                    content.addNotice(postmessageES.text());
+                    details.add(detail);
+                    continue;
+                }
             }
 
             //poll content
@@ -182,14 +187,14 @@ public class HiParserThreadDetail {
             }
 
             if (postmessageES.size() == 0) {
-                content.addText("[!!找不到帖子内容，可能是该帖被管理员或版主屏蔽!!]");
+                content.addNotice("[[!!找不到帖子内容，可能是该帖被管理员或版主屏蔽!!]]");
                 details.add(detail);
                 continue;
             }
 
             Element postmessageE = postmessageES.first();
             if (postmessageE.childNodeSize() == 0) {
-                content.addText("[[无内容]]");
+                content.addNotice("[[无内容]]");
                 details.add(detail);
                 continue;
             }
@@ -213,12 +218,8 @@ public class HiParserThreadDetail {
                 if (processChildren && contentN.childNodeSize() > 0) {
                     contentN = contentN.childNode(0);
                     level++;
-                    continue;
-                }
-
-                if (contentN.nextSibling() != null) {
+                } else if (contentN.nextSibling() != null) {
                     contentN = contentN.nextSibling();
-                    continue;
                 } else {
                     while (contentN.parent().nextSibling() == null) {
                         contentN = contentN.parent();
@@ -226,7 +227,6 @@ public class HiParserThreadDetail {
                     }
                     contentN = contentN.parent().nextSibling();
                     level--;
-                    continue;
                 }
             }
 
@@ -239,6 +239,27 @@ public class HiParserThreadDetail {
                 }
             }
 
+            // other attachments
+            Elements attachmentES = postE.select("dl.t_attachlist p.attachname");
+            for (int j = 0; j < attachmentES.size(); j++) {
+                Element attachE = attachmentES.get(j);
+                Elements attachLinkES = attachE.select("a[href]");
+
+                if (attachLinkES.size() > 0) {
+                    Element linkE = attachLinkES.first();
+                    if (linkE.attr("href").startsWith("attachment.php?")) {
+                        attachLinkES.remove();
+                        String desc = attachE.text();
+
+                        if (j == 0)
+                            content.addText("<br>");
+                        content.addAttach(linkE.attr("href"), linkE.text(), desc);
+                    }
+
+
+                }
+            }
+
             details.add(detail);
         }
         return details;
@@ -246,13 +267,14 @@ public class HiParserThreadDetail {
 
     // return true for continue children, false for ignore children
     private static boolean parseNode(Node contentN, DetailBean.Contents content) {
-        //Log.v(LOG_TAG, contentN.nodeName());
 
         if (contentN.nodeName().equals("font")) {
             Element elemFont = (Element) contentN;
             Element elemParent = elemFont.parent();
-            if (elemFont.attr("size").equals("1") || (elemParent != null &&
-                    elemParent.nodeName().equals("font") && elemParent.attr("size").equals("1"))) {
+            if (elemFont.attr("size").equals("1")
+                    || (elemParent != null
+                    && elemParent.nodeName().equals("font")
+                    && elemParent.attr("size").equals("1"))) {
                 content.addAppMark(elemFont.text(), null);
                 return false;
             } else {
@@ -293,7 +315,6 @@ public class HiParserThreadDetail {
             }
             return false;
         } else if (contentN.nodeName().equals("li")) {    // list item
-            content.addText("<br>");
             return true;
         } else if (contentN.nodeName().equals("br")) {    // single line break
             content.addText("<br>");
@@ -330,9 +351,7 @@ public class HiParserThreadDetail {
                 //default icon
                 return false;
             } else {
-                //
-                content.addText("[[ERROR:UNPARSED IMG:" + src + "]]");
-                Log.e(LOG_TAG, "[[ERROR:UNPARSED IMG:" + src + "]]");
+                content.addNotice("[[ERROR:UNPARSED IMG:" + src + "]]");
                 return false;
             }
         } else if (contentN.nodeName().equals("span")) {    // a section in a document
@@ -341,7 +360,13 @@ public class HiParserThreadDetail {
             for (int attIdx = 0; attIdx < attachAES.size(); attIdx++) {
                 Element attachAE = attachAES.get(attIdx);
                 if (attachAE.attr("href").startsWith("attachment.php?")) {
-                    content.addAttach(attachAE.attr("href"), attachAE.text());
+                    String desc = "";
+                    Node sibNode = contentN.nextSibling();
+                    if (sibNode.nodeName().equals("#text")) {
+                        desc = sibNode.toString();
+                        sibNode.remove();
+                    }
+                    content.addAttach(attachAE.attr("href"), attachAE.text(), desc);
                     isInternalAttach = true;
                 }
             }
@@ -366,7 +391,7 @@ public class HiParserThreadDetail {
 
             if (url.startsWith("attachment.php?")) {
                 // is Attachment
-                content.addAttach(url, text);
+                content.addAttach(url, text, null);
                 return false;
             }
 
@@ -434,7 +459,7 @@ public class HiParserThreadDetail {
             }
             return false;
         } else {
-            content.addText("[[ERROR:UNPARSED TAG:" + contentN.nodeName() + ":" + contentN.toString() + "]]");
+            content.addNotice("[[ERROR:UNPARSED TAG:" + contentN.nodeName() + ":" + contentN.toString() + "]]");
             Log.e(LOG_TAG, "[[ERROR:UNPARSED TAG:" + contentN.nodeName() + "]]");
             return false;
         }

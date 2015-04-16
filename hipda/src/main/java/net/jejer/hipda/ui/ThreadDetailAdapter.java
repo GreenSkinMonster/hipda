@@ -148,9 +148,9 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     }
                 }
                 if (!"<br>".equals(cnt)) {
+                    if (((ContentText) content).getType() == ContentText.NOTICE)
+                        tv.setTextColor(mCtx.getResources().getColor(R.color.grey));
                     tv.setText(cnt);
-                    //setAutoLinkMask have conflict with setMovementMethod
-                    //tv.setAutoLinkMask(Linkify.WEB_URLS);
                     tv.setFocusable(false);
                     contentView.addView(tv);
                 }

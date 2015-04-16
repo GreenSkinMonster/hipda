@@ -38,6 +38,17 @@ public class DetailBean {
             }
         }
 
+        public void addNotice(String text) {
+            if (newString) {
+                list.add(new ContentText(text, ContentText.NOTICE));
+                lastTextIdx = list.size() - 1;
+                newString = false;
+            } else {
+                ContentText ct = (ContentText) list.get(lastTextIdx);
+                ct.append(unEscapeHtml(text));
+            }
+        }
+
         public void addAppMark(String text, String url) {
             String mark = "[appmark " + text + " ]";
             if (url != null && url.length() > 0) {
@@ -70,8 +81,8 @@ public class DetailBean {
             newString = true;
         }
 
-        public void addAttach(String url, String title) {
-            list.add(new ContentAttach(url, unEscapeHtml(title)));
+        public void addAttach(String url, String title, String desc) {
+            list.add(new ContentAttach(url, unEscapeHtml(title), desc));
             newString = true;
         }
 
