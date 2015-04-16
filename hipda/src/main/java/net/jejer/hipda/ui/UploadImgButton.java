@@ -1,7 +1,9 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.Button;
+import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.UploadImgAsyncTask;
@@ -12,10 +14,12 @@ public class UploadImgButton extends Button implements UploadImgAsyncTask.Upload
     private String mId;
     private String mName;
     private Context mCtx;
+    private PostFragment mPostFragment;
 
-    public UploadImgButton(Context context) {
+    public UploadImgButton(Context context, PostFragment postFragment) {
         super(context);
         mCtx = context;
+        mPostFragment = postFragment;
     }
 
     public void setImgName(String name) {
@@ -44,14 +48,16 @@ public class UploadImgButton extends Button implements UploadImgAsyncTask.Upload
     @Override
     public void complete(boolean result, String id) {
         this.setEnabled(result);
-        if (result) {
+        if (result && !TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
             this.setEnabled(true);
             mId = id;
             this.setText("点击添加" + mName);
             this.setTextColor(mCtx.getResources().getColor(R.color.icon_blue));
+            mPostFragment.appendImage(getImgId());
+            Toast.makeText(mCtx, "图片已经添加至发表内容中", Toast.LENGTH_SHORT).show();
         } else {
-            this.setText("上传失败或图片太大");
-            this.setTextColor(mCtx.getResources().getColor(R.color.red));
+            Toast.makeText(mCtx, "图片上传失败或图片太大", Toast.LENGTH_LONG).show();
+            setVisibility(GONE);
         }
     }
 

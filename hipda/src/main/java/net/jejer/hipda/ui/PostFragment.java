@@ -6,9 +6,12 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,8 +19,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,8 +32,6 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,8 +67,8 @@ public class PostFragment extends Fragment {
     private String mTypeid = "0";
     private int mMode;
     private TextView mTvAdditional;
-    private TextView mTvSubjectMsg;
-    private EditText mTvReplyMsg;
+    private EditText mEtSubjectMsg;
+    private EditText mEtReplyMsg;
     private PrePostAsyncTask.PrePostListener mPrePostListener = new PrePostListener();
     private PrePostInfoBean mPrePostInfo;
     private PrePostAsyncTask mPrePostAsyncTask;
@@ -73,6 +76,7 @@ public class PostFragment extends Fragment {
     private Spinner mSpForum;
     private Spinner mSpTypeIds;
     private Collection<UploadImgButton> uploadImgButtons = new ArrayList<>();
+
 
     private PostAsyncTask.PostListener postListener;
 
@@ -117,7 +121,7 @@ public class PostFragment extends Fragment {
         Log.v(LOG_TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
-        mTvReplyMsg = (EditText) view.findViewById(R.id.et_reply);
+        mEtReplyMsg = (EditText) view.findViewById(R.id.et_reply);
         mTvAdditional = (TextView) view.findViewById(R.id.et_additional);
         mTvAdditional.setText("正在收集信息");
         if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
@@ -137,59 +141,89 @@ public class PostFragment extends Fragment {
         mSpTypeIds = (Spinner) view.findViewById(R.id.sp_typeid);
         mSpTypeIds.setOnItemSelectedListener(new TypeidSelectListener());
 
-        mTvSubjectMsg = (TextView) view.findViewById(R.id.et_subject);
+        mEtSubjectMsg = (EditText) view.findViewById(R.id.et_subject);
 
-        mTvReplyMsg.setTextSize(HiSettingsHelper.getPostTextSize());
+        mEtReplyMsg.setTextSize(HiSettingsHelper.getPostTextSize());
         mTvAdditional.setTextSize(HiSettingsHelper.getPostTextSize());
 
-        // Prepare emoji tabs
-        TabHost th = (TabHost) view.findViewById(R.id.th_emoji);
-        th.setup();
-
-        TabSpec tabSpec1 = th.newTabSpec("tab1");
-        tabSpec1.setIndicator("默认表情");
-        tabSpec1.setContent(R.id.tab1_emoji);
-        th.addTab(tabSpec1);
-
-        TabSpec tabSpec2 = th.newTabSpec("tab2");
-        tabSpec2.setIndicator("酷酷猴");
-        tabSpec2.setContent(R.id.tab2_emoji);
-        th.addTab(tabSpec2);
-
-        TabSpec tabSpec3 = th.newTabSpec("tab3");
-        tabSpec3.setIndicator("呆呆男");
-        tabSpec3.setContent(R.id.tab3_emoji);
-        th.addTab(tabSpec3);
-
-        // Prepare emoji icons
-        final ExpandableHeightGridView gvTab1 = (ExpandableHeightGridView) th.findViewById(R.id.tab1_emoji);
+        final ExpandableHeightGridView gvTab1 = (ExpandableHeightGridView) view.findViewById(R.id.tab1_emoji);
         gvTab1.setExpanded(true);
         gvTab1.setAdapter(new EmojiAdapter(getActivity(), 1));
         gvTab1.setOnItemClickListener(new GridView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), (String) gvTab1.getAdapter().getItem(position));
+                mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), (String) gvTab1.getAdapter().getItem(position));
             }
         });
-        final ExpandableHeightGridView gvTab2 = (ExpandableHeightGridView) th.findViewById(R.id.tab2_emoji);
+        final ExpandableHeightGridView gvTab2 = (ExpandableHeightGridView) view.findViewById(R.id.tab2_emoji);
         gvTab2.setExpanded(true);
         gvTab2.setAdapter(new EmojiAdapter(getActivity(), 2));
         gvTab2.setOnItemClickListener(new GridView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), (String) gvTab2.getAdapter().getItem(position));
+                mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), (String) gvTab2.getAdapter().getItem(position));
             }
         });
-        final ExpandableHeightGridView gvTab3 = (ExpandableHeightGridView) th.findViewById(R.id.tab3_emoji);
+        final ExpandableHeightGridView gvTab3 = (ExpandableHeightGridView) view.findViewById(R.id.tab3_emoji);
         gvTab3.setExpanded(true);
         gvTab3.setAdapter(new EmojiAdapter(getActivity(), 3));
         gvTab3.setOnItemClickListener(new GridView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), (String) gvTab3.getAdapter().getItem(position));
+                mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), (String) gvTab3.getAdapter().getItem(position));
             }
         });
 
+        WindowManager w = getActivity().getWindowManager();
+        Point size = new Point();
+        w.getDefaultDisplay().getSize(size);
+        int measuredWidth = size.x;
+
+        final Button emojiBtn1 = (Button) view.findViewById(R.id.btn1_emoji);
+        final Button emojiBtn2 = (Button) view.findViewById(R.id.btn2_emoji);
+        final Button emojiBtn3 = (Button) view.findViewById(R.id.btn3_emoji);
+        emojiBtn1.setWidth(measuredWidth / 3);
+        emojiBtn2.setWidth(measuredWidth / 3);
+        emojiBtn3.setWidth(measuredWidth / 3);
+        emojiBtn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
+                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
+                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
+                gvTab1.setVisibility(View.VISIBLE);
+                gvTab2.setVisibility(View.GONE);
+                gvTab3.setVisibility(View.GONE);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
+            }
+        });
+        emojiBtn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
+                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
+                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
+                gvTab1.setVisibility(View.GONE);
+                gvTab2.setVisibility(View.VISIBLE);
+                gvTab3.setVisibility(View.GONE);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
+            }
+        });
+        emojiBtn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
+                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
+                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
+                gvTab1.setVisibility(View.GONE);
+                gvTab2.setVisibility(View.GONE);
+                gvTab3.setVisibility(View.VISIBLE);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
+            }
+        });
 
         return view;
     }
@@ -241,7 +275,7 @@ public class PostFragment extends Fragment {
                 getActivity().getActionBar().setTitle(getActivity().getResources().getString(R.string.action_new_thread));
                 mSpForum.setVisibility(View.VISIBLE);
                 mSpTypeIds.setVisibility(View.VISIBLE);
-                mTvSubjectMsg.setVisibility(View.VISIBLE);
+                mEtSubjectMsg.setVisibility(View.VISIBLE);
                 break;
             case PostAsyncTask.MODE_EDIT_POST:
                 getActivity().getActionBar().setTitle(getActivity().getResources().getString(R.string.action_edit));
@@ -275,13 +309,13 @@ public class PostFragment extends Fragment {
                     return true;
                 }
 
-                String subjectText = mTvSubjectMsg.getText().toString();
+                String subjectText = mEtSubjectMsg.getText().toString();
                 if (mMode == PostAsyncTask.MODE_NEW_THREAD && subjectText.length() < 5) {
                     Toast.makeText(getActivity(), "主题字数必须大于5", Toast.LENGTH_LONG).show();
                     return true;
                 }
 
-                String replyText = mTvReplyMsg.getText().toString();
+                String replyText = mEtReplyMsg.getText().toString();
                 if (replyText.length() < 5) {
                     Toast.makeText(getActivity(), "帖子内容字数必须大于5", Toast.LENGTH_LONG).show();
                     return true;
@@ -318,7 +352,7 @@ public class PostFragment extends Fragment {
                 // Close SoftKeyboard
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
                         Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mTvReplyMsg.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
 
                 // Close reply fragment
                 ((MainFrameActivity) getActivity()).popFragment(false);
@@ -345,15 +379,13 @@ public class PostFragment extends Fragment {
                 ImageFileInfo imageFileInfo = CursorUtils.getImageFileInfo(getActivity(), selectedImageUri);
                 String fileName = imageFileInfo.getFileName();
 
-                final UploadImgButton uploadBtn = new UploadImgButton(getActivity());
+                final UploadImgButton uploadBtn = new UploadImgButton(getActivity(), this);
                 uploadBtn.setImgName(fileName);
                 uploadBtn.setOnClickListener(new Button.OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
                         if (isValidImgId(uploadBtn.getImgId())) {
-                            mTvReplyMsg.getText().insert(mTvReplyMsg.getSelectionStart(), "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]");
-                            // Add attach id for post
-                            mPrePostInfo.addAttach(uploadBtn.getImgId());
+                            appendImage(uploadBtn.getImgId());
                             uploadBtn.setTypeface(null, Typeface.NORMAL);
                         } else {
                             Toast.makeText(getActivity(), "图片未成功上传", Toast.LENGTH_SHORT).show();
@@ -369,6 +401,8 @@ public class PostFragment extends Fragment {
                         }
                         uploadImgButtons.remove(uploadBtn);
                         uploadBtn.setVisibility(View.GONE);
+                        if (!TextUtils.isEmpty(mEtReplyMsg.getText()) && isValidImgId(uploadBtn.getImgId()))
+                            mEtReplyMsg.setText(mEtReplyMsg.getText().toString().replace("[attachimg]" + uploadBtn.getImgId() + "[/attachimg]", ""));
                         return true;
                     }
                 });
@@ -381,6 +415,13 @@ public class PostFragment extends Fragment {
 
                 new UploadImgAsyncTask(getActivity(), uploadBtn, imageFileInfo, mPrePostInfo.getUid(), mPrePostInfo.getHash()).execute(bitmap);
             }
+        }
+    }
+
+    public void appendImage(String imgId) {
+        if (isValidImgId(imgId)) {
+            mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), "[attachimg]" + imgId + "[/attachimg]");
+            mPrePostInfo.addAttach(imgId);
         }
     }
 
@@ -414,10 +455,10 @@ public class PostFragment extends Fragment {
 
                 if (!TextUtils.isEmpty(info.getText())) {
                     if (mode == PostAsyncTask.MODE_EDIT_POST) {
-                        mTvReplyMsg.setText(info.getText());
+                        mEtReplyMsg.setText(info.getText());
                         if (!TextUtils.isEmpty(info.getSubject())) {
-                            mTvSubjectMsg.setText(info.getSubject());
-                            mTvSubjectMsg.setVisibility(View.VISIBLE);
+                            mEtSubjectMsg.setText(info.getSubject());
+                            mEtSubjectMsg.setVisibility(View.VISIBLE);
                         }
                         List<String> typeids = info.getTypeidValues();
                         if (typeids != null && typeids.size() > 0
@@ -428,6 +469,7 @@ public class PostFragment extends Fragment {
                             adapter.setEntries(info.getTypeidNames().toArray(new String[typeids.size()]));
                             mSpTypeIds.setAdapter(adapter);
                             mSpTypeIds.setVisibility(View.VISIBLE);
+                            mSpForum.setVisibility(View.VISIBLE);
                             for (int i = 0; i < typeids.size(); i++) {
                                 String tmpid = typeids.get(i);
                                 if (tmpid.equals(typeid)) {
@@ -441,6 +483,27 @@ public class PostFragment extends Fragment {
                         mTvAdditional.setVisibility(View.VISIBLE);
                     }
                 }
+
+                if (mMode == PostAsyncTask.MODE_NEW_THREAD) {
+                    (new Handler()).postDelayed(new Runnable() {
+                        public void run() {
+                            mEtSubjectMsg.requestFocus();
+                            long t = SystemClock.uptimeMillis();
+                            mEtSubjectMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
+                            mEtSubjectMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
+                        }
+                    }, 200);
+                } else {
+                    (new Handler()).postDelayed(new Runnable() {
+                        public void run() {
+                            mEtReplyMsg.requestFocus();
+                            long t = SystemClock.uptimeMillis();
+                            mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
+                            mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
+                        }
+                    }, 200);
+                }
+
             } else {
                 mTvAdditional.setText("收集信息失败，请返回重试");
                 mTvAdditional.setTextColor(getActivity().getResources().getColor(R.color.red));
