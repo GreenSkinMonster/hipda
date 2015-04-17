@@ -5,10 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.ImageFileInfo;
 
@@ -29,71 +33,75 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
+public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
     private final String LOG_TAG = getClass().getSimpleName();
+
+    public final static int STAGE_UPLOADING = -1;
+    public final static int MAX_QUALITY = 90;
+    public final static int MAX_IMAGE_SIZE = 300 * 1024; // max file size 300K
 
     private static final int UPLOAD_CONNECT_TIMEOUT = 15 * 1000;
     private static final int UPLOAD_READ_TIMEOUT = 5 * 60 * 1000;
 
     private UploadImgListener mListener;
-    private boolean mResult = true;
+
     private String mUid;
     private String mHash;
-    private String mPicId = "";
-    private ImageFileInfo mImageFileInfo;
+    private Context mCtx;
 
-    public UploadImgAsyncTask(Context ctx, UploadImgListener v, ImageFileInfo imageFileInfo, String uid, String hash) {
-        //mCtx = ctx;
+    private Uri mCurrentUri;
+    private String mMessage = "";
+    private Bitmap mThumb;
+    private int mTotal;
+    private int mCurrent;
+    private String mCurrentFileName = "";
+
+    public UploadImgAsyncTask(Context ctx, UploadImgListener v, String uid, String hash) {
+        mCtx = ctx;
         mListener = v;
         mUid = uid;
         mHash = hash;
-        mImageFileInfo = imageFileInfo;
     }
 
     public interface UploadImgListener {
-        void updateProgress(int percentage);
+        void updateProgress(Uri uri, int total, int current, int percentage);
 
-        void complete(boolean result, String id);
+        void itemComplete(Uri uri, int total, int current, String currentFileName, String message, String imgId, Bitmap thumbtail);
+
+        void complete();
     }
 
     @Override
-    protected Boolean doInBackground(Bitmap... arg) {
+    protected Void doInBackground(Uri... uris) {
 
         Map<String, String> post_param = new HashMap<String, String>();
 
         post_param.put("uid", mUid);
         post_param.put("hash", mHash);
 
-        Bitmap bitmap = arg[0];
-        String fileType = "image/jpeg";
+        mTotal = uris.length;
 
-        doUploadFile(HiUtils.UploadImgUrl, post_param, bitmap, "Filedata", fileType);
-        // DISCUZUPLOAD|0|1721652|1
-        if (!mPicId.startsWith("DISCUZUPLOAD")) {
-            mResult = false;
-        } else {
-            String[] s = mPicId.split("\\|");
-            if (s.length < 3 || s[2].equals("0")) {
-                mResult = false;
-            } else {
-                mPicId = s[2];
-            }
+        int i = 0;
+        for (Uri uri : uris) {
+            mCurrent = i++;
+            String imgId = doUploadFile(HiUtils.UploadImgUrl, post_param, uri);
+            mListener.itemComplete(uri, mTotal, mCurrent, mCurrentFileName, mMessage, imgId, mThumb);
         }
-        return mResult;
+
+        return null;
     }
 
     @Override
     protected void onProgressUpdate(Integer... progress) {
         if (mListener != null) {
-            mListener.updateProgress(progress[0]);
+            mListener.updateProgress(mCurrentUri, mTotal, mCurrent, progress[0]);
         }
     }
 
     @Override
-    protected void onPostExecute(Boolean result) {
-        Log.v("IMG_UPLOAD:", mPicId);
+    protected void onPostExecute(Void result) {
         if (mListener != null) {
-            mListener.complete(mResult, mPicId);
+            mListener.complete();
         }
     }
 
@@ -130,32 +138,49 @@ public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
         return res.toString();
     }
 
-    public boolean doUploadFile(String urlStr, Map<String, String> param, Bitmap bitmap, String imageParamName, String fileType) {
-        String BOUNDARYSTR = getBoundry();
+    public String doUploadFile(String urlStr, Map<String, String> param, Uri uri) {
+
+        mCurrentUri = uri;
+        mThumb = null;
+        mMessage = "";
+        mCurrentFileName = "";
 
         // update progress for start compress
-        publishProgress(-1);
+        publishProgress(STAGE_UPLOADING);
 
-        if (bitmap == null) {
-            return false;
+        ImageFileInfo imageFileInfo = CursorUtils.getImageFileInfo(mCtx, uri);
+        mCurrentFileName = imageFileInfo.getFileName();
+
+        Bitmap bitmap;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(mCtx.getContentResolver(), uri);
+        } catch (Exception e) {
+            Log.v(LOG_TAG, "Exception", e);
+            mMessage = "图片压缩出现错误 " + e.getMessage();
+            return null;
         }
 
+        String fileType = "image/jpeg";
+        String imageParamName = "Filedata";
 
-        ByteArrayOutputStream baos = compressImage(bitmap);
+
+        ByteArrayOutputStream baos = compressImage(imageFileInfo, bitmap);
         if (baos == null) {
-            return false;
+            return null;
         }
 
         // update progress for start upload
         publishProgress(0);
+
+        String BOUNDARYSTR = getBoundry();
 
         byte[] barry = null;
         int contentLength = 0;
         String sendStr = "";
         try {
             barry = ("--" + BOUNDARYSTR + "--\r\n").getBytes("UTF-8");
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmm", Locale.US);
-            String fileName = "HiPDA_UPLOAD_" + formatter.format(new Date()) + ".jpg";
+            SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd_HHmm", Locale.US);
+            String fileName = "IMG_" + formatter.format(new Date()) + ".jpg";
             sendStr = getBoundaryMessage(BOUNDARYSTR, param, imageParamName, fileName, fileType);
             contentLength = sendStr.getBytes("UTF-8").length + baos.size() + 2 * barry.length;
         } catch (UnsupportedEncodingException ignored) {
@@ -163,6 +188,7 @@ public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
         }
         String lenstr = Integer.toString(contentLength);
 
+        String imgId = "";
         HttpURLConnection urlConnection = null;
         BufferedOutputStream out = null;
         try {
@@ -217,18 +243,21 @@ public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
             int status = urlConnection.getResponseCode();
 
             if (status != HttpURLConnection.HTTP_OK) {
-                mResult = false;
+                mMessage = "上传错误代码 " + status;
+                return null;
             }
             Log.v(LOG_TAG, "uploading image, response : " + urlConnection.getResponseCode() + ", " + urlConnection.getResponseMessage());
             InputStream in = urlConnection.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String inputLine = "";
             while ((inputLine = br.readLine()) != null) {
-                mPicId += inputLine;
+                imgId += inputLine;
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(LOG_TAG, "Error uploading image : " + e.getMessage());
+            mMessage = "上传发生网络错误 " + e.getMessage();
+            return null;
         } finally {
             if (out != null) {
                 try {
@@ -246,20 +275,33 @@ public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
                 urlConnection.disconnect();
         }
 
-        return true;
+        // DISCUZUPLOAD|0|1721652|1
+        if (!imgId.startsWith("DISCUZUPLOAD")) {
+            mMessage = "错误的图片ID : " + imgId;
+            return null;
+        } else {
+            String[] s = imgId.split("\\|");
+            if (s.length < 3 || s[2].equals("0")) {
+                mMessage = "错误的图片ID : " + imgId;
+                return null;
+            } else {
+                imgId = s[2];
+            }
+        }
+
+        return imgId;
     }
 
-    private ByteArrayOutputStream compressImage(Bitmap bitmap) {
-
-        int maxQuality = 90;
-        int maxImageSize = 300 * 1024; // max file size 300K
+    private ByteArrayOutputStream compressImage(ImageFileInfo imageFileInfo, Bitmap bitmap) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(CompressFormat.JPEG, maxQuality, baos);
+        bitmap.compress(CompressFormat.JPEG, MAX_QUALITY, baos);
 
         int origionalSize = baos.size();
-        if (origionalSize < maxImageSize * 0.8f)
+        if (origionalSize <= MAX_IMAGE_SIZE) {
+            mThumb = ThumbnailUtils.extractThumbnail(bitmap, 48, 48);
             return baos;
+        }
 
         //Check and avoid BitmapFactory.decodeStream FC
         if (baos.size() / 1024 > 1024) {
@@ -293,24 +335,26 @@ public class UploadImgAsyncTask extends AsyncTask<Bitmap, Integer, Boolean> {
         isBm = new ByteArrayInputStream(baos.toByteArray());
         newbitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
 
-        if (mImageFileInfo.getOrientation() > 0) {
+        if (imageFileInfo.getOrientation() > 0) {
             Matrix matrix = new Matrix();
-            matrix.postRotate(mImageFileInfo.getOrientation());
+            matrix.postRotate(imageFileInfo.getOrientation());
 
             newbitmap = Bitmap.createBitmap(newbitmap, 0, 0, newbitmap.getWidth(),
                     newbitmap.getHeight(), matrix, true);
         }
 
-        // HiPDA have 300KB limitation
-        int quality = maxQuality;
+        int quality = MAX_QUALITY;
         baos.reset();
         newbitmap.compress(CompressFormat.JPEG, quality, baos);
-        while (baos.toByteArray().length > maxImageSize) {
+        while (baos.toByteArray().length > MAX_IMAGE_SIZE) {
             quality -= 10;
             baos.reset();
             newbitmap.compress(CompressFormat.JPEG, quality, baos);
         }
-        Log.v(LOG_TAG, "Img Compressed: " + quality + "%,  size: " + baos.size() + " bytes, original size: " + origionalSize + " bytes");
+
+        mThumb = ThumbnailUtils.extractThumbnail(newbitmap, 128, 128);
+
+        Log.v(LOG_TAG, "Image Compressed: " + quality + "%,  size: " + baos.size() + " bytes, original size: " + origionalSize + " bytes");
         return baos;
     }
 }

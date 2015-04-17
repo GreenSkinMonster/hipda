@@ -16,23 +16,35 @@ import android.util.Log;
 public class CursorUtils {
 
     public static ImageFileInfo getImageFileInfo(Context context, Uri uri) {
-        if (Build.VERSION.SDK_INT < 19)
-            return getImageInfo_API11to18(context, uri);
-        else
-            return getImageInfo_API19(context, uri);
+        ImageFileInfo result;
+        if (Build.VERSION.SDK_INT < 19 || uri.toString().startsWith("content://media")) {
+            result = getImageInfo_API11to18(context, uri);
+            if (result == null) {
+                result = getImageInfo_API19(context, uri);
+            }
+        } else {
+            result = getImageInfo_API19(context, uri);
+            if (result == null) {
+                result = getImageInfo_API11to18(context, uri);
+            }
+        }
+        if (result == null)
+            return new ImageFileInfo();
+        return result;
     }
 
     private static ImageFileInfo getImageInfo_API19(Context context, Uri uri) {
         ImageFileInfo result = new ImageFileInfo();
         String[] column = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
 
-        String wholeID = DocumentsContract.getDocumentId(uri);
-        String id = wholeID.split(":")[1];
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{id}, null);
+        Cursor cursor = null;
         try {
+            String wholeID = DocumentsContract.getDocumentId(uri);
+            String id = wholeID.split(":")[1];
+            String sel = MediaStore.Images.Media._ID + "=?";
+
+            cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    column, sel, new String[]{id}, null);
             int pathIndex = cursor.getColumnIndex(column[0]);
             int orientationIndex = cursor.getColumnIndex(column[1]);
 
@@ -44,8 +56,11 @@ public class CursorUtils {
             }
         } catch (Exception e) {
             Log.e("ImageFileInfo", e.getMessage());
+            return null;
+        } finally {
+            if (cursor != null)
+                cursor.close();
         }
-        cursor.close();
         return result;
     }
 
@@ -54,29 +69,29 @@ public class CursorUtils {
         ImageFileInfo result = new ImageFileInfo();
         String[] column = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
 
-        CursorLoader cursorLoader = new CursorLoader(
-                context,
-                contentUri, column, null, null, null);
-        Cursor cursor = cursorLoader.loadInBackground();
-
+        Cursor cursor = null;
         try {
-            if (cursor != null) {
-                int pathIndex = cursor.getColumnIndexOrThrow(column[0]);
-                int orientationIndex = cursor.getColumnIndexOrThrow(column[1]);
+            CursorLoader cursorLoader = new CursorLoader(
+                    context,
+                    contentUri, column, null, null, null);
+            cursor = cursorLoader.loadInBackground();
+            int pathIndex = cursor.getColumnIndexOrThrow(column[0]);
+            int orientationIndex = cursor.getColumnIndexOrThrow(column[1]);
 
-                if (cursor.moveToFirst()) {
-                    if (pathIndex >= 0)
-                        result.setFilePath(cursor.getString(pathIndex));
-                    if (orientationIndex >= 0)
-                        result.setOrientation(cursor.getInt(orientationIndex));
-                }
-
+            if (cursor.moveToFirst()) {
+                if (pathIndex >= 0)
+                    result.setFilePath(cursor.getString(pathIndex));
+                if (orientationIndex >= 0)
+                    result.setOrientation(cursor.getInt(orientationIndex));
             }
+
         } catch (Exception e) {
             Log.e("ImageFileInfo", e.getMessage());
+            return null;
+        } finally {
+            if (cursor != null)
+                cursor.close();
         }
-        if (cursor != null)
-            cursor.close();
         return result;
     }
 

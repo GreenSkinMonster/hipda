@@ -1,8 +1,11 @@
 package net.jejer.hipda.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -80,7 +83,9 @@ public class MainFrameActivity extends Activity {
         mSwipeListener = new OnSwipeTouchListener(this) {
             public void onSwipeRight() {
                 //Log.v(LOG_TAG, "onSwipeRight");
-                if (HiSettingsHelper.getInstance().isGestureBack() && !HiSettingsHelper.getInstance().getIsLandscape()) {
+                if (HiSettingsHelper.getInstance().isGestureBack()
+                        && !HiSettingsHelper.getInstance().getIsLandscape()
+                        && !(getFragmentManager().findFragmentByTag(PostFragment.class.getName()) instanceof PostFragment)) {
                     popFragment(false);
                 }
             }
@@ -171,12 +176,31 @@ public class MainFrameActivity extends Activity {
                 return;
         }
 
-        if (!popFragment(true)) {
-            mQuit++;
-            if (mQuit == 1 && HiSettingsHelper.getInstance().getIsLandscape()) {
-                Toast.makeText(this, "再按一次退出HiPDA", Toast.LENGTH_LONG).show();
-            } else {
-                finish();
+        Fragment postFragment = getFragmentManager().findFragmentByTag(PostFragment.class.getName());
+        if (postFragment instanceof PostFragment && ((PostFragment) postFragment).isUserInputted()) {
+            Dialog dialog = new AlertDialog.Builder(this)
+                    .setMessage("确认放弃修改的内容吗？")
+                    .setPositiveButton(getString(android.R.string.ok),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    popFragment(true);
+                                }
+                            })
+                    .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    }).create();
+            dialog.show();
+        } else {
+            if (!popFragment(true)) {
+                mQuit++;
+                if (mQuit == 1 && HiSettingsHelper.getInstance().getIsLandscape()) {
+                    Toast.makeText(this, "再按一次退出HiPDA", Toast.LENGTH_LONG).show();
+                } else {
+                    finish();
+                }
             }
         }
 

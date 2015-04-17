@@ -55,7 +55,6 @@
             android:inputType="none"
             android:singleLine="true"
             android:textSize="20sp"
-            android:textStyle="bold"
             android:visibility="gone" />
 
         <EditText
@@ -67,6 +66,24 @@
             android:minLines="6"
             android:singleLine="false"
             android:textSize="16sp" />
+
+        <HorizontalScrollView
+            android:id="@+id/hsv_images"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/ll_images"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/background_grey" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -80,21 +97,21 @@
                 android:id="@+id/btn1_emoji"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/background_grey"
+                android:background="?attr/background"
                 android:text="默认表情" />
 
             <Button
                 android:id="@+id/btn2_emoji"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/background_silver"
+                android:background="@color/background_grey"
                 android:text="酷酷猴" />
 
             <Button
                 android:id="@+id/btn3_emoji"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/background_silver"
+                android:background="@color/background_grey"
                 android:text="呆呆男" />
 
         </LinearLayout>
@@ -102,7 +119,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/background_grey" />
+            android:background="?attr/background" />
 
         <net.jejer.hipda.ui.ExpandableHeightGridView
             android:id="@+id/tab1_emoji"

@@ -3,18 +3,19 @@ package net.jejer.hipda.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
-import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,8 +30,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,15 +44,16 @@ import net.jejer.hipda.async.UploadImgAsyncTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
-import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.ImageFileInfo;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class PostFragment extends Fragment {
+public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadImgListener {
     private static final int SELECT_PICTURE = 1;
 
     private final String LOG_TAG = getClass().getSimpleName();
@@ -75,8 +78,11 @@ public class PostFragment extends Fragment {
 
     private Spinner mSpForum;
     private Spinner mSpTypeIds;
-    private Collection<UploadImgButton> uploadImgButtons = new ArrayList<>();
 
+    private Map<Uri, UploadImgButton> mUploadImgButtons = new HashMap<>();
+    private HorizontalScrollView mHsvView;
+    private HiProgressDialog mProgressDialog;
+    private boolean mImageUploading = false;
 
     private PostAsyncTask.PostListener postListener;
 
@@ -174,6 +180,10 @@ public class PostFragment extends Fragment {
             }
         });
 
+        TypedValue typedValue = new TypedValue();
+        getActivity().getTheme().resolveAttribute(R.attr.background, typedValue, true);
+        final int selectedBtnColorId = typedValue.resourceId;
+
         WindowManager w = getActivity().getWindowManager();
         Point size = new Point();
         w.getDefaultDisplay().getSize(size);
@@ -188,9 +198,9 @@ public class PostFragment extends Fragment {
         emojiBtn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
-                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
-                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
+                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(selectedBtnColorId));
+                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
+                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
                 gvTab1.setVisibility(View.VISIBLE);
                 gvTab2.setVisibility(View.GONE);
                 gvTab3.setVisibility(View.GONE);
@@ -201,9 +211,9 @@ public class PostFragment extends Fragment {
         emojiBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
-                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
-                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
+                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
+                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(selectedBtnColorId));
+                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
                 gvTab1.setVisibility(View.GONE);
                 gvTab2.setVisibility(View.VISIBLE);
                 gvTab3.setVisibility(View.GONE);
@@ -214,9 +224,9 @@ public class PostFragment extends Fragment {
         emojiBtn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
-                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(R.color.background_silver));
-                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
+                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
+                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
+                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(selectedBtnColorId));
                 gvTab1.setVisibility(View.GONE);
                 gvTab2.setVisibility(View.GONE);
                 gvTab3.setVisibility(View.VISIBLE);
@@ -298,6 +308,8 @@ public class PostFragment extends Fragment {
                     Intent intent = new Intent();
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
+                    if (Build.VERSION.SDK_INT >= 18)
+                        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                     startActivityForResult(Intent.createChooser(intent,
                             "Select Picture"), SELECT_PICTURE);
                 }
@@ -321,19 +333,19 @@ public class PostFragment extends Fragment {
                     return true;
                 }
 
-                if (uploadImgButtons.size() > 0) {
+                if (mUploadImgButtons.size() > 0) {
                     boolean needWarn = false;
-                    for (UploadImgButton uploadBtn : uploadImgButtons) {
+                    for (UploadImgButton uploadBtn : mUploadImgButtons.values()) {
                         if (isValidImgId(uploadBtn.getImgId())) {
                             String attachStr = "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]";
                             if (!replyText.contains(attachStr)) {
                                 needWarn = true;
-                                uploadBtn.setTypeface(null, Typeface.BOLD);
+                                uploadBtn.setBackgroundColor(getResources().getColor(R.color.orange));
                             }
                         }
                     }
                     if (needWarn) {
-                        Toast.makeText(getActivity(), "有图片未添加到帖子中，长按可删除（保存后生效）", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "橙色边框图片未添加到帖子中", Toast.LENGTH_LONG).show();
                         return true;
                     }
                 }
@@ -365,28 +377,53 @@ public class PostFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(LOG_TAG, "onActivityResult");
-        if (resultCode != Activity.RESULT_CANCELED) {
-            if (requestCode == SELECT_PICTURE) {
-                Uri selectedImageUri = data.getData();
+        //avoid double click select button
+        if (mImageUploading) {
+            return;
+        }
+        mImageUploading = true;
+        (new Handler()).postDelayed(new Runnable() {
+            public void run() {
+                mImageUploading = false;
+            }
+        }, 2000);
 
-                Bitmap bitmap = null;
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
-                } catch (Exception e) {
-                    Log.v(LOG_TAG, "Exception", e);
+        if (resultCode == Activity.RESULT_OK && requestCode == SELECT_PICTURE) {
+            boolean findData = false;
+            Collection<Uri> uris = new ArrayList<>();
+            if (Build.VERSION.SDK_INT >= 18) {
+                ClipData clipData = data.getClipData();
+                if (clipData != null && clipData.getItemCount() > 0) {
+                    for (int i = 0; i < clipData.getItemCount(); i++) {
+                        Uri tmp = clipData.getItemAt(i).getUri();
+                        if (!mUploadImgButtons.containsKey(tmp))
+                            uris.add(tmp);
+                    }
+                    findData = true;
                 }
+            }
+            if (!findData && data.getData() != null) {
+                if (!mUploadImgButtons.containsKey(data.getData()))
+                    uris.add(data.getData());
+            }
 
-                ImageFileInfo imageFileInfo = CursorUtils.getImageFileInfo(getActivity(), selectedImageUri);
-                String fileName = imageFileInfo.getFileName();
+            if (uris.size() == 0) {
+                Toast.makeText(getActivity(), "选择的图片重复了", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                final UploadImgButton uploadBtn = new UploadImgButton(getActivity(), this);
-                uploadBtn.setImgName(fileName);
+            mProgressDialog = new HiProgressDialog(getActivity());
+            mProgressDialog.show();
+
+            //generate upload image buttons
+            for (Uri uri : uris) {
+                final UploadImgButton uploadBtn = new UploadImgButton(getActivity());
                 uploadBtn.setOnClickListener(new Button.OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
                         if (isValidImgId(uploadBtn.getImgId())) {
                             appendImage(uploadBtn.getImgId());
-                            uploadBtn.setTypeface(null, Typeface.NORMAL);
+                            uploadBtn.setBackgroundColor(getResources().getColor(R.color.hipda));
                         } else {
                             Toast.makeText(getActivity(), "图片未成功上传", Toast.LENGTH_SHORT).show();
                         }
@@ -399,22 +436,50 @@ public class PostFragment extends Fragment {
                             mPrePostInfo.removeAttach(uploadBtn.getImgId());
                             mPrePostInfo.addAttachdel(uploadBtn.getImgId());
                         }
-                        uploadImgButtons.remove(uploadBtn);
+
+                        Uri key = null;
+                        for (Map.Entry<Uri, UploadImgButton> entry : mUploadImgButtons.entrySet()) {
+                            if (entry.getValue().equals(uploadBtn)) {
+                                key = entry.getKey();
+                                break;
+                            }
+                        }
+                        if (key != null)
+                            mUploadImgButtons.remove(key);
+
                         uploadBtn.setVisibility(View.GONE);
                         if (!TextUtils.isEmpty(mEtReplyMsg.getText()) && isValidImgId(uploadBtn.getImgId()))
                             mEtReplyMsg.setText(mEtReplyMsg.getText().toString().replace("[attachimg]" + uploadBtn.getImgId() + "[/attachimg]", ""));
+                        if (mUploadImgButtons.size() == 0 && mHsvView.getVisibility() == View.VISIBLE)
+                            mHsvView.setVisibility(View.GONE);
                         return true;
                     }
                 });
-                uploadImgButtons.add(uploadBtn);
+                mUploadImgButtons.put(uri, uploadBtn);
 
-                LinearLayout postLayout = (LinearLayout) getActivity().findViewById(R.id.layout_post);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                postLayout.addView(uploadBtn, 0, params);
-
-                new UploadImgAsyncTask(getActivity(), uploadBtn, imageFileInfo, mPrePostInfo.getUid(), mPrePostInfo.getHash()).execute(bitmap);
+                mHsvView = (HorizontalScrollView) getActivity().findViewById(R.id.hsv_images);
+                if (mHsvView.getVisibility() == View.GONE)
+                    mHsvView.setVisibility(View.VISIBLE);
+                LinearLayout imagesLayout = (LinearLayout) getActivity().findViewById(R.id.ll_images);
+                uploadBtn.setLayoutParams(new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+                uploadBtn.setPadding(6, 6, 6, 6);
+                uploadBtn.setBackgroundColor(getResources().getColor(R.color.background_grey));
+                uploadBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_picture));
+                uploadBtn.setAdjustViewBounds(true);
+                uploadBtn.setScaleType(ImageView.ScaleType.FIT_XY);
+                LinearLayout.LayoutParams params =
+                        new LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT);
+                params.setMargins(2, 0, 2, 8);
+                imagesLayout.addView(uploadBtn, params);
             }
+
+            //upload all images
+            new UploadImgAsyncTask(getActivity(), this, mPrePostInfo.getUid(), mPrePostInfo.getHash()).execute(uris.toArray(new Uri[uris.size()]));
+
         }
     }
 
@@ -423,6 +488,55 @@ public class PostFragment extends Fragment {
             mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), "[attachimg]" + imgId + "[/attachimg]");
             mPrePostInfo.addAttach(imgId);
         }
+    }
+
+    @Override
+    public void updateProgress(Uri uri, int total, int current, int percentage) {
+        StringBuilder sb = new StringBuilder();
+        if (total > 1)
+            sb.append("图片 " + (current + 1) + "/" + total).append(" : ");
+        if (percentage == UploadImgAsyncTask.STAGE_UPLOADING) {
+            sb.append("正在压缩(~" + UploadImgAsyncTask.MAX_IMAGE_SIZE / 1024 + "K)...");
+        } else {
+            sb.append("正在上传 " + percentage + "%");
+        }
+        mProgressDialog.setMessage(sb.toString());
+    }
+
+    @Override
+    public void itemComplete(final Uri uri, int total, int current, final String fileName, final String message, final String imgId, final Bitmap thumbtail) {
+        getActivity().runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        UploadImgButton uploadBtn = mUploadImgButtons.get(uri);
+                        if (isValidImgId(imgId)) {
+                            uploadBtn.setImgId(imgId);
+                            uploadBtn.setImageBitmap(thumbtail);
+                            uploadBtn.setBackgroundColor(getResources().getColor(R.color.hipda));
+                            appendImage(imgId);
+                        } else {
+                            Toast.makeText(getActivity(), "图片上传失败："
+                                    + (!TextUtils.isEmpty(fileName) ? fileName : "")
+                                    + "\n"
+                                    + Utils.nullToText(message), Toast.LENGTH_LONG).show();
+                            uploadBtn.setVisibility(View.GONE);
+                            mUploadImgButtons.remove(uri);
+                            if (mUploadImgButtons.size() == 0 && mHsvView.getVisibility() == View.VISIBLE) {
+                                mHsvView.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                }
+        );
+
+    }
+
+    @Override
+    public void complete() {
+        mImageUploading = false;
+        if (mProgressDialog != null)
+            mProgressDialog.dismiss("上传完成", 500);
     }
 
     private class PrePostListener implements PrePostAsyncTask.PrePostListener {
@@ -537,7 +651,13 @@ public class PostFragment extends Fragment {
     private boolean isValidImgId(String imgId) {
         return !TextUtils.isEmpty(imgId)
                 && TextUtils.isDigitsOnly(imgId)
-                && imgId.length() > 5;
+                && imgId.length() > 1;
+    }
+
+    public boolean isUserInputted() {
+        return !TextUtils.isEmpty(mEtReplyMsg.getText())
+                || !TextUtils.isEmpty(mEtSubjectMsg.getText())
+                || mUploadImgButtons.size() > 0;
     }
 
 }
