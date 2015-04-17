@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
-import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 
 public class HiUtils {
@@ -44,15 +43,18 @@ public class HiUtils {
     private static String AVATAR_BASE = "000000000";
     public static int MAX_THREADS_IN_PAGE = 50;
 
-    public static int getForumID(Context ctx, long idx) {
-        final int[] forumsID = ctx.getResources().getIntArray(R.array.forums_id);
-        return forumsID[(int) idx];
+    public static int FID_BS = 6;
+    public static int FID_DISCOVERY = 2;
+    public static String[] FORUMS = {"Discovery", "Buy & Sell", "Geek Talks", "E-INK", "疑似机器人"};
+    public static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, 7, 59, 57};
+
+    public static int getForumID(int idx) {
+        return FORUM_IDS[idx];
     }
 
-    public static int getForumIndexByFid(Context ctx, String fid) {
-        final int[] forumsID = ctx.getResources().getIntArray(R.array.forums_id);
-        for (int i = 0; i < forumsID.length; i++) {
-            if (fid.equals(forumsID[i] + "")) {
+    public static int getForumIndexByFid(String fid) {
+        for (int i = 0; i < FORUM_IDS.length; i++) {
+            if (fid.equals(FORUM_IDS[i] + "")) {
                 return i;
             }
         }

@@ -129,13 +129,13 @@ public class PostFragment extends Fragment {
         }
 
         mSpForum = (Spinner) view.findViewById(R.id.sp_fid);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.forums, android.R.layout.simple_list_item_1);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+        adapter.addAll(HiUtils.FORUMS);
         mSpForum.setAdapter(adapter);
         mSpForum.setOnItemSelectedListener(new FidSelectListener());
         mSpForum.setEnabled(false);
         if (mFid != null) {
-            mSpForum.setSelection(HiUtils.getForumIndexByFid(getActivity(), mFid));
+            mSpForum.setSelection(HiUtils.getForumIndexByFid(mFid));
         }
 
         mSpTypeIds = (Spinner) view.findViewById(R.id.sp_typeid);
@@ -304,7 +304,7 @@ public class PostFragment extends Fragment {
                 return true;
             case R.id.action_post:
                 //new thread or edit fist post
-                if (mSpTypeIds.getVisibility() == View.VISIBLE && "6".equals(mFid) && "0".equals(mTypeid)) {
+                if (mSpTypeIds.getVisibility() == View.VISIBLE && (HiUtils.FID_BS + "").equals(mFid) && "0".equals(mTypeid)) {
                     Toast.makeText(getActivity(), "B&S版发帖必须指定分类", Toast.LENGTH_LONG).show();
                     return true;
                 }
@@ -514,7 +514,7 @@ public class PostFragment extends Fragment {
     private class FidSelectListener implements Spinner.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            mFid = String.valueOf(HiUtils.getForumID(getActivity(), pos));
+            mFid = String.valueOf(HiUtils.getForumID((int) id));
         }
 
         @Override

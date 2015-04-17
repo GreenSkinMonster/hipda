@@ -95,7 +95,7 @@ public class ThreadListFragment extends Fragment
         mCtx = getActivity();
 
         if (getArguments() != null && getArguments().containsKey(ARG_FID_KEY)) {
-            mForumSelect = HiUtils.getForumIndexByFid(mCtx, getArguments().getInt(ARG_FID_KEY) + "");
+            mForumSelect = HiUtils.getForumIndexByFid(getArguments().getInt(ARG_FID_KEY) + "");
         }
 
         setHasOptionsMenu(true);
@@ -109,7 +109,7 @@ public class ThreadListFragment extends Fragment
             @Override
             public boolean onNavigationItemSelected(int position, long itemId) {
                 Log.v(LOG_TAG, "onNavigationItemSelected = " + String.valueOf(position));
-                int forumId = HiUtils.getForumID(mCtx, itemId);
+                int forumId = HiUtils.getForumID((int) itemId);
                 if (mForumId != forumId) {
                     mForumId = forumId;
                     mForumSelect = getActivity().getActionBar().getSelectedNavigationIndex();
@@ -120,8 +120,8 @@ public class ThreadListFragment extends Fragment
                 return true;
             }
         };
-        mSpinnerAdapter = ArrayAdapter.createFromResource(mCtx, R.array.forums,
-                android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerAdapter = new ArrayAdapter<>(mCtx, android.R.layout.simple_spinner_dropdown_item);
+        ((ArrayAdapter) mSpinnerAdapter).addAll(HiUtils.FORUMS);
     }
 
     @Override
