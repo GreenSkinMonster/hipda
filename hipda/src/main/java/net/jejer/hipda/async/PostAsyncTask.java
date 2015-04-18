@@ -153,6 +153,9 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
         for (String attach : mInfo.getAttachdel()) {
             post_param.put("attachdel[" + attach + "]", attach);
         }
+        for (String attach : mInfo.getUnusedImages()) {
+            post_param.put("attachdel[" + attach + "]", attach);
+        }
         if (mMode == MODE_NEW_THREAD) {
             post_param.put("subject", subject);
             mTitle = subject;

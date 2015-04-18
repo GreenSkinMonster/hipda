@@ -18,6 +18,7 @@ public class PrePostInfoBean {
     private List<String> typeidValues = new ArrayList<>();
     private List<String> typeidNames = new ArrayList<>();
     private List<String> attachdel = new ArrayList<>();
+    private List<String> unusedImages = new ArrayList<>();
 
     public List<String> getAttachdel() {
         return attachdel;
@@ -118,4 +119,17 @@ public class PrePostInfoBean {
     public void addAttachdel(String attach) {
         attachdel.add(attach);
     }
+
+    public List<String> getUnusedImages() {
+        return unusedImages;
+    }
+
+    public void setUnusedImages(List<String> unusedImages) {
+        this.unusedImages = unusedImages;
+    }
+
+    public void addUnusedImage(String imgId) {
+        unusedImages.add(imgId);
+    }
+
 }

@@ -1,12 +1,14 @@
 package net.jejer.hipda.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.database.Cursor;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -19,7 +21,7 @@ public class CursorUtils {
         ImageFileInfo result;
         if (Build.VERSION.SDK_INT < 19 || uri.toString().startsWith("content://media")) {
             result = getImageInfo_API11to18(context, uri);
-            if (result == null) {
+            if (result == null && Build.VERSION.SDK_INT >= 19) {
                 result = getImageInfo_API19(context, uri);
             }
         } else {
@@ -30,9 +32,37 @@ public class CursorUtils {
         }
         if (result == null)
             return new ImageFileInfo();
+        if (!TextUtils.isEmpty(result.getFilePath())
+                && result.getOrientation() == -1) {
+            int orientation = getOrientationFromExif(result.getFilePath());
+            result.setOrientation(orientation);
+
+        }
         return result;
     }
 
+    private static int getOrientationFromExif(String path) {
+        int orientation = -1;
+        try {
+            ExifInterface exif = new ExifInterface(path);
+            String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+            orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    orientation = 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    orientation = 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    orientation = 270;
+            }
+        } catch (Exception e) {
+            Log.e("ImageFileInfo", e.getMessage());
+        }
+        return orientation;
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private static ImageFileInfo getImageInfo_API19(Context context, Uri uri) {
         ImageFileInfo result = new ImageFileInfo();
         String[] column = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
@@ -55,7 +85,7 @@ public class CursorUtils {
                     result.setOrientation(cursor.getInt(orientationIndex));
             }
         } catch (Exception e) {
-            Log.e("ImageFileInfo", e.getMessage());
+            Log.e("ImageFileInfo API19", e.getMessage());
             return null;
         } finally {
             if (cursor != null)
@@ -71,10 +101,8 @@ public class CursorUtils {
 
         Cursor cursor = null;
         try {
-            CursorLoader cursorLoader = new CursorLoader(
-                    context,
-                    contentUri, column, null, null, null);
-            cursor = cursorLoader.loadInBackground();
+            cursor = context.getContentResolver().query(contentUri, null, null, null, null);
+
             int pathIndex = cursor.getColumnIndexOrThrow(column[0]);
             int orientationIndex = cursor.getColumnIndexOrThrow(column[1]);
 
@@ -84,9 +112,8 @@ public class CursorUtils {
                 if (orientationIndex >= 0)
                     result.setOrientation(cursor.getInt(orientationIndex));
             }
-
         } catch (Exception e) {
-            Log.e("ImageFileInfo", e.getMessage());
+            Log.e("ImageFileInfo API11to18", e.getMessage());
             return null;
         } finally {
             if (cursor != null)

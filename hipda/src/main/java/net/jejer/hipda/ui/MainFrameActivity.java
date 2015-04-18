@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
@@ -179,20 +180,26 @@ public class MainFrameActivity extends Activity {
         Fragment postFragment = getFragmentManager().findFragmentByTag(PostFragment.class.getName());
         if (postFragment instanceof PostFragment && ((PostFragment) postFragment).isUserInputted()) {
             Dialog dialog = new AlertDialog.Builder(this)
-                    .setMessage("确认放弃修改的内容吗？")
-                    .setPositiveButton(getString(android.R.string.ok),
+                    .setTitle("放弃发表？")
+                    .setMessage("\n确认放弃已输入的内容吗？\n")
+                    .setPositiveButton(getResources().getString(android.R.string.ok),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     popFragment(true);
                                 }
                             })
-                    .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    }).create();
+                    .setNegativeButton(getResources().getString(android.R.string.cancel),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            }).create();
             dialog.show();
+            TextView titleView = (TextView) dialog.findViewById(getResources().getIdentifier("alertTitle", "id", "android"));
+            if (titleView != null) {
+                titleView.setGravity(Gravity.CENTER);
+            }
         } else {
             if (!popFragment(true)) {
                 mQuit++;

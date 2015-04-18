@@ -9,6 +9,7 @@ import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
+import net.jejer.hipda.utils.Utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -118,6 +119,19 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
         Elements subjectES = doc.select("input[name=subject]");
         if (subjectES.size() > 0) {
             result.setSubject(subjectES.first().attr("value"));
+        }
+
+        Elements unusedImagesES = doc.select("div#unusedimgattachlist table.imglist img");
+        for (int i = 0; i < unusedImagesES.size(); i++) {
+            Element imgE = unusedImagesES.get(i);
+            String href = Utils.nullToText(imgE.attr("src"));
+            String imgId = Utils.nullToText(imgE.attr("id"));
+            if (href.startsWith("attachments/") && imgId.contains("_")) {
+                imgId = imgId.substring(imgId.lastIndexOf("_") + 1);
+                if (imgId.length() > 0 && TextUtils.isDigitsOnly(imgId)) {
+                    result.addUnusedImage(imgId);
+                }
+            }
         }
 
         Elements typeidES = doc.select("#typeid > option");

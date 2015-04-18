@@ -414,6 +414,7 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
 
             mProgressDialog = new HiProgressDialog(getActivity());
             mProgressDialog.show();
+            mProgressDialog.setCancelable(false);
 
             //generate upload image buttons
             for (Uri uri : uris) {
@@ -424,8 +425,6 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
                         if (isValidImgId(uploadBtn.getImgId())) {
                             appendImage(uploadBtn.getImgId());
                             uploadBtn.setBackgroundColor(getResources().getColor(R.color.hipda));
-                        } else {
-                            Toast.makeText(getActivity(), "图片未成功上传", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -461,10 +460,7 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
                 if (mHsvView.getVisibility() == View.GONE)
                     mHsvView.setVisibility(View.VISIBLE);
                 LinearLayout imagesLayout = (LinearLayout) getActivity().findViewById(R.id.ll_images);
-                uploadBtn.setLayoutParams(new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
-                uploadBtn.setPadding(6, 6, 6, 6);
+                uploadBtn.setPadding(4, 4, 4, 4);
                 uploadBtn.setBackgroundColor(getResources().getColor(R.color.background_grey));
                 uploadBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_picture));
                 uploadBtn.setAdjustViewBounds(true);
@@ -473,7 +469,7 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
                         new LinearLayout.LayoutParams(
                                 ViewGroup.LayoutParams.WRAP_CONTENT,
                                 ViewGroup.LayoutParams.MATCH_PARENT);
-                params.setMargins(2, 0, 2, 8);
+                params.setMargins(2, 0, 2, 6);
                 imagesLayout.addView(uploadBtn, params);
             }
 
@@ -491,12 +487,16 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
     }
 
     @Override
-    public void updateProgress(Uri uri, int total, int current, int percentage) {
+    public void updateProgress(Uri uri, int total, int current, String fileName, int percentage) {
         StringBuilder sb = new StringBuilder();
         if (total > 1)
-            sb.append("图片 " + (current + 1) + "/" + total).append(" : ");
+            sb.append("(" + (current + 1) + "/" + total + ")");
+
+//        sb.append(!TextUtils.isEmpty(fileName) ? " " + fileName : "");
         if (percentage == UploadImgAsyncTask.STAGE_UPLOADING) {
-            sb.append("正在压缩(~" + UploadImgAsyncTask.MAX_IMAGE_SIZE / 1024 + "K)...");
+            sb.append("正在压缩(~" + UploadImgAsyncTask.MAX_IMAGE_FILE_SIZE / 1024 + "K)...");
+        } else if (percentage == 100) {
+            sb.append("服务器处理中...");
         } else {
             sb.append("正在上传 " + percentage + "%");
         }

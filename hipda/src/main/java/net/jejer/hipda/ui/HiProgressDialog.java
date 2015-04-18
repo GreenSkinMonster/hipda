@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 
 /**
+ * a simple progress dialog
  * Created by GreenSkinMonster on 2015-03-11.
  */
 public class HiProgressDialog extends ProgressDialog {

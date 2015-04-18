@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -38,7 +39,8 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
 
     public final static int STAGE_UPLOADING = -1;
     public final static int MAX_QUALITY = 90;
-    public final static int MAX_IMAGE_SIZE = 300 * 1024; // max file size 300K
+    public final static int MAX_IMAGE_FILE_SIZE = 300 * 1024; // max file size 300K
+    private static final int THUMB_SIZE = 128;
 
     private static final int UPLOAD_CONNECT_TIMEOUT = 15 * 1000;
     private static final int UPLOAD_READ_TIMEOUT = 5 * 60 * 1000;
@@ -64,7 +66,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
     }
 
     public interface UploadImgListener {
-        void updateProgress(Uri uri, int total, int current, int percentage);
+        void updateProgress(Uri uri, int total, int current, String currentFileName, int percentage);
 
         void itemComplete(Uri uri, int total, int current, String currentFileName, String message, String imgId, Bitmap thumbtail);
 
@@ -94,7 +96,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
     @Override
     protected void onProgressUpdate(Integer... progress) {
         if (mListener != null) {
-            mListener.updateProgress(mCurrentUri, mTotal, mCurrent, progress[0]);
+            mListener.updateProgress(mCurrentUri, mTotal, mCurrent, mCurrentFileName, progress[0]);
         }
     }
 
@@ -180,7 +182,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         try {
             barry = ("--" + BOUNDARYSTR + "--\r\n").getBytes("UTF-8");
             SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd_HHmm", Locale.US);
-            String fileName = "IMG_" + formatter.format(new Date()) + ".jpg";
+            String fileName = "Hi_" + formatter.format(new Date()) + ".jpg";
             sendStr = getBoundaryMessage(BOUNDARYSTR, param, imageParamName, fileName, fileType);
             contentLength = sendStr.getBytes("UTF-8").length + baos.size() + 2 * barry.length;
         } catch (UnsupportedEncodingException ignored) {
@@ -217,13 +219,13 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
             int bytesLeft;
             int transferred = 0;
             int postSize;
-            int maxPostSize = 1024;
+            int maxPostSize = 4096;
 
             bytesLeft = baos.size();
             postSize = Math.min(bytesLeft, maxPostSize);
             final Thread thread = Thread.currentThread();
+            long mark = SystemClock.uptimeMillis();
             while (bytesLeft > 0) {
-
                 if (thread.isInterrupted()) {
                     throw new InterruptedIOException();
                 }
@@ -231,8 +233,10 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
                 transferred += postSize;
                 bytesLeft -= postSize;
                 postSize = Math.min(bytesLeft, maxPostSize);
-                if (transferred % 50 == 0)
+                if (SystemClock.uptimeMillis() - mark > 250) {
                     out.flush();
+                    mark = SystemClock.uptimeMillis();
+                }
                 publishProgress((int) ((transferred * 100) / baos.size()));
             }
 
@@ -294,20 +298,30 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
 
     private ByteArrayOutputStream compressImage(ImageFileInfo imageFileInfo, Bitmap bitmap) {
 
+        if (imageFileInfo.getOrientation() > 0) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(imageFileInfo.getOrientation());
+
+            Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                    bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            bitmap = null;
+            bitmap = rotatedBitmap;
+        }
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(CompressFormat.JPEG, MAX_QUALITY, baos);
 
         int origionalSize = baos.size();
-        if (origionalSize <= MAX_IMAGE_SIZE) {
-            mThumb = ThumbnailUtils.extractThumbnail(bitmap, 48, 48);
+
+        if (baos.size() <= MAX_IMAGE_FILE_SIZE) {
+            mThumb = ThumbnailUtils.extractThumbnail(bitmap, THUMB_SIZE, THUMB_SIZE);
+            bitmap.recycle();
+            bitmap = null;
             return baos;
         }
-
-        //Check and avoid BitmapFactory.decodeStream FC
-        if (baos.size() / 1024 > 1024) {
-            baos.reset();
-            bitmap.compress(CompressFormat.JPEG, 50, baos);
-        }
+        bitmap.recycle();
+        bitmap = null;
 
         //ignore ide suggestion, and do not change following 5 lines, unless you know exactly what to do
         ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());
@@ -335,24 +349,18 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         isBm = new ByteArrayInputStream(baos.toByteArray());
         newbitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
 
-        if (imageFileInfo.getOrientation() > 0) {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(imageFileInfo.getOrientation());
-
-            newbitmap = Bitmap.createBitmap(newbitmap, 0, 0, newbitmap.getWidth(),
-                    newbitmap.getHeight(), matrix, true);
-        }
-
         int quality = MAX_QUALITY;
         baos.reset();
         newbitmap.compress(CompressFormat.JPEG, quality, baos);
-        while (baos.toByteArray().length > MAX_IMAGE_SIZE) {
+        while (baos.toByteArray().length > MAX_IMAGE_FILE_SIZE) {
             quality -= 10;
             baos.reset();
             newbitmap.compress(CompressFormat.JPEG, quality, baos);
         }
 
-        mThumb = ThumbnailUtils.extractThumbnail(newbitmap, 128, 128);
+        mThumb = ThumbnailUtils.extractThumbnail(newbitmap, THUMB_SIZE, THUMB_SIZE);
+        newbitmap.recycle();
+        newbitmap = null;
 
         Log.v(LOG_TAG, "Image Compressed: " + quality + "%,  size: " + baos.size() + " bytes, original size: " + origionalSize + " bytes");
         return baos;
