@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
+
+    <EditText
+        android:id="@+id/login_username"
+        android:hint="@string/pref_title_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_margin="8dp" />
+
+    <EditText
+        android:id="@+id/login_password"
+        android:hint="@string/pref_title_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:inputType="textPassword"
+        android:layout_margin="8dp" />
+
+    <Spinner
+        android:id="@+id/login_question"
+        android:hint="@string/pref_title_login_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp" />
+
+    <EditText
+        android:id="@+id/login_answer"
+        android:hint="@string/pref_title_login_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_margin="6dp" />
+
+    <Button
+        android:text="登录"
+        android:id="@+id/login_btn"
+        android:background="@drawable/flat_button_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp" />
+
+</LinearLayout>

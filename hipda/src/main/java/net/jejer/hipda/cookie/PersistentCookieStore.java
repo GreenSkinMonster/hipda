@@ -94,7 +94,7 @@ public class PersistentCookieStore implements CookieStore {
     public boolean removeAll() {
         SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
         prefsWriter.clear();
-        prefsWriter.apply();
+        prefsWriter.commit();
         cookies.clear();
         return true;
     }

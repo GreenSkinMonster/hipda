@@ -21,6 +21,8 @@ import net.jejer.hipda.cookie.PersistentCookieStore;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.HttpCookie;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -33,12 +35,14 @@ public class VolleyHelper {
 
     private Context mCtx;
     private RequestQueue mRequestQueue;
+    private PersistentCookieStore cookieStore;
 
     public void init(Context ctx) {
         mCtx = ctx;
         if (mRequestQueue == null) {
 
-            CookieManager cookieManager = new CookieManager(new PersistentCookieStore(mCtx), CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+            cookieStore = new PersistentCookieStore(mCtx);
+            CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
             CookieHandler.setDefault(cookieManager);
 
             mRequestQueue = Volley.newRequestQueue(mCtx);
@@ -56,6 +60,21 @@ public class VolleyHelper {
                 return true;
             }
         });
+    }
+
+    public void clearCookies() {
+        if (cookieStore != null)
+            cookieStore.removeAll();
+    }
+
+    public boolean isLoggedIn() {
+        List<HttpCookie> cookies = cookieStore.getCookies();
+        for (HttpCookie cookie : cookies) {
+            if ("cdb_auth".equals(cookie.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private VolleyHelper() {

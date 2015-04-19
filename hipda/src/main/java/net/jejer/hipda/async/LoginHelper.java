@@ -36,7 +36,6 @@ public class LoginHelper {
 
     public int login() {
 
-        // Update UI
         if (mHandler != null) {
             Message msg = Message.obtain();
             msg.what = ThreadListFragment.STAGE_RELOGIN;
@@ -45,16 +44,22 @@ public class LoginHelper {
 
         int status = Constants.STATUS_FAIL_ABORT;
 
-        String formhash = getFormhash();
-
-        if (!TextUtils.isEmpty(formhash)) {
-            status = doLogin(formhash);
+        if (HiSettingsHelper.getInstance().isLoginInfoValid()) {
+            String formhash = getFormhash();
+            if (!TextUtils.isEmpty(formhash)) {
+                status = doLogin(formhash);
+            }
+        } else {
+            mErrorMsg = "登录信息不完整";
         }
 
-        // Update UI
-        if (status != Constants.STATUS_SUCCESS && mHandler != null) {
+        if (mHandler != null) {
             Message msg = Message.obtain();
-            msg.what = ThreadListFragment.STAGE_ERROR;
+            if (status == Constants.STATUS_FAIL) {
+                msg.what = ThreadListFragment.STAGE_ERROR;
+            } else if (status == Constants.STATUS_FAIL_ABORT) {
+                msg.what = ThreadListFragment.STAGE_NOT_LOGIN;
+            }
             Bundle b = new Bundle();
             b.putString(ThreadListFragment.STAGE_ERROR_KEY, mErrorMsg);
             msg.setData(b);
@@ -134,7 +139,24 @@ public class LoginHelper {
     }
 
     public static boolean checkLoggedin(Context context, String mRsp) {
-        return !mRsp.contains(context.getString(R.string.not_login));
+        boolean loggedIn = !mRsp.contains(context.getString(R.string.not_login));
+        if (!loggedIn)
+            logout();
+        return loggedIn;
+    }
+
+
+    public static boolean isLoggedIn() {
+        return VolleyHelper.getInstance().isLoggedIn();
+    }
+
+    public static void logout() {
+        HiSettingsHelper.getInstance().setCookieAuth("");
+        VolleyHelper.getInstance().clearCookies();
+    }
+
+    public String getErrorMsg() {
+        return mErrorMsg;
     }
 
 }

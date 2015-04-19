@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.async.VolleyHelper;
@@ -125,17 +126,12 @@ public class MainFrameActivity extends Activity {
             argments.putInt(ThreadListFragment.ARG_FID_KEY, lastForumId);
             threadListFragment.setArguments(argments);
         }
+
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
                 .commit();
 
-        // Check if Account info exist
-        if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
-                    .addToBackStack(SettingsFragment.class.getName())
-                    .commit();
-        } else {
+        if (LoginHelper.isLoggedIn()) {
             if (HiSettingsHelper.getInstance().isUpdateCheckable()) {
                 new UpdateHelper(this, true).check();
             }

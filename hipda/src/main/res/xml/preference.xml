@@ -2,13 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/pref_category_account">
-        <EditTextPreference
+        <Preference
             android:inputType="text"
             android:key="PERF_USERNAME"
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/pref_title_username" />
+        <!--
         <EditTextPreference
             android:inputType="textPassword"
             android:key="PERF_PASSWORD"
@@ -33,6 +34,7 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/pref_title_login_answer" />
+        -->
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_tail">
         <net.jejer.hipda.ui.CustomSwitchPreference

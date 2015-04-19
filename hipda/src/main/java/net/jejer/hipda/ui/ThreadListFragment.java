@@ -36,6 +36,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.ThreadListLoader;
@@ -55,6 +56,7 @@ public class ThreadListFragment extends Fragment
 
     public static final String ARG_FID_KEY = "fid";
 
+    public final static int STAGE_NOT_LOGIN = -2;
     public final static int STAGE_ERROR = -1;
     public final static int STAGE_CLEAN = 0;
     public final static int STAGE_RELOGIN = 1;
@@ -62,6 +64,7 @@ public class ThreadListFragment extends Fragment
     public final static int STAGE_PARSE = 3;
     public final static int STAGE_DONE = 4;
     public final static int STAGE_PREFETCH = 5;
+    public final static int STAGE_REFRESH = 6;
     public final static String STAGE_ERROR_KEY = "ERROR_MSG";
 
     public final static int TITLE_BOLD_ON = 0;
@@ -248,7 +251,13 @@ public class ThreadListFragment extends Fragment
         getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
         getActivity().getActionBar().setSelectedNavigationItem((mForumSelect < 0 || mForumSelect >= mSpinnerAdapter.getCount()) ? 0 : mForumSelect);
 
-        showNotification();
+        if (LoginHelper.isLoggedIn()) {
+            showNotification();
+        } else if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {
+            if (mThreadListAdapter != null)
+                mThreadListAdapter.clear();
+            showLoginDialog();
+        }
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -672,11 +681,10 @@ public class ThreadListFragment extends Fragment
         @Override
         public boolean handleMessage(Message msg) {
             String page = "(第" + mPage + "页)";
-
+            Bundle b = msg.getData();
             switch (msg.what) {
                 case STAGE_ERROR:
                     mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.red));
-                    Bundle b = msg.getData();
                     mTipBar.setText(b.getString(STAGE_ERROR_KEY));
                     Log.e(LOG_TAG, b.getString(STAGE_ERROR_KEY));
                     mTipBar.setVisibility(View.VISIBLE);
@@ -704,8 +712,31 @@ public class ThreadListFragment extends Fragment
                     mTipBar.setText(page + "正在解析页面");
                     mTipBar.setVisibility(View.VISIBLE);
                     break;
+                case STAGE_REFRESH:
+                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
+                    mTipBar.setText("正在刷新");
+                    mTipBar.setVisibility(View.VISIBLE);
+                    refresh();
+                    break;
+                case STAGE_NOT_LOGIN:
+                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.pink));
+                    mTipBar.setText(b.getString(STAGE_ERROR_KEY));
+                    mTipBar.setVisibility(View.VISIBLE);
+                    mThreadListAdapter.clear();
+                    showLoginDialog();
+                    break;
             }
             return false;
+        }
+    }
+
+    private void showLoginDialog() {
+        LoginDialog dialog = LoginDialog.getInstance(getActivity());
+        if (dialog != null) {
+            dialog.setHandler(mMsgHandler);
+            dialog.setTitle("用户登录");
+            dialog.show();
+
         }
     }
 }
