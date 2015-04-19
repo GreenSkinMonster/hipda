@@ -21,6 +21,13 @@
         android:text="@string/pref_title_show_stick_threads" />
 
     <Switch
+        android:id="@+id/sw_show_post_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/pref_title_show_post_type" />
+
+    <Switch
         android:id="@+id/sw_load_pic_on_mobile_network"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

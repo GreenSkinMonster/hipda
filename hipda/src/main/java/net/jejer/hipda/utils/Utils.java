@@ -44,7 +44,6 @@ public class Utils {
                     && c != '\n') {
                 sb.append(c);
             } else {
-                sb.append(c);
                 if (i < text.length() - 1)
                     sb.append(" ....");
                 break;

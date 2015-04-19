@@ -598,6 +598,7 @@ public class ThreadListFragment extends Fragment
         final Switch sSortByPostTime = (Switch) viewlayout.findViewById(R.id.sw_sort_by_post_time);
         final Switch sShowThreadListAvatar = (Switch) viewlayout.findViewById(R.id.sw_threadlist_avatar);
         final Switch sPostRedirect = (Switch) viewlayout.findViewById(R.id.sw_post_redirect);
+        final Switch sShowPostType = (Switch) viewlayout.findViewById(R.id.sw_show_post_type);
 
         sShowPicOnMobileNetwork.setChecked(HiSettingsHelper.getInstance().isLoadImgOnMobileNwk());
         sShowPicOnMobileNetwork.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
@@ -626,6 +627,14 @@ public class ThreadListFragment extends Fragment
             @Override
             public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
                 HiSettingsHelper.getInstance().setShowStickThreads(arg1);
+            }
+        });
+        sShowPostType.setChecked(HiSettingsHelper.getInstance().isShowPostType());
+        sShowPostType.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+                HiSettingsHelper.getInstance().setShowPostType(arg1);
+                mThreadListAdapter.notifyDataSetChanged();
             }
         });
         sSortByPostTime.setChecked(HiSettingsHelper.getInstance().isSortByPostTime(mForumId));

@@ -61,7 +61,8 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
         holder.tv_author.setText(thread.getAuthor());
 
-        if (!TextUtils.isEmpty(thread.getType())) {
+        if (HiSettingsHelper.getInstance().isShowPostType() &&
+                !TextUtils.isEmpty(thread.getType())) {
             holder.tv_title.setText(Html.fromHtml("<font color=grey>[" + thread.getType() + "]</font>" + thread.getTitle()));
         } else {
             holder.tv_title.setText(thread.getTitle());

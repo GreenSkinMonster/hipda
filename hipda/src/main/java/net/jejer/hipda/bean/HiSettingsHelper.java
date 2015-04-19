@@ -29,6 +29,7 @@ public class HiSettingsHelper {
     public static final String PERF_SECANSWER = "PERF_SECANSWER";
     public static final String PERF_COOKIEAUTH = "PERF_COOKIEAUTH";
     public static final String PERF_SHOWSTICKTHREADS = "PERF_SHOWSTICKTHREADS";
+    public static final String PERF_SHOW_POST_TYPE = "PERF_SHOW_POST_TYPE";
     public static final String PERF_LOADIMGONMOBILENWK = "PERF_LOADIMGONMOBILENWK";
     public static final String PERF_THREADLISTAVATAR = "PERF_THREADLISTAVATAR";
     public static final String PERF_PREFETCH = "PERF_PREFETCH";
@@ -64,6 +65,7 @@ public class HiSettingsHelper {
     private String mCookieAuth = "";
 
     private boolean mShowStickThreads = false;
+    private boolean mShowPostType = false;
     private boolean mLoadImgOnMobileNwk = true;
     private boolean mPreFetch = true;
     private boolean mShowThreadListAvatar = true;
@@ -148,6 +150,7 @@ public class HiSettingsHelper {
         getTitleBoldFromPref();
         getPostLineSpacingFromPref();
         getLastForumIdFromPerf();
+        isShowPostTypeFromPref();
     }
 
     public boolean isLoginInfoValid() {
@@ -227,6 +230,21 @@ public class HiSettingsHelper {
         mCookieAuth = cookieAuth;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_COOKIEAUTH, cookieAuth).commit();
+    }
+
+    public boolean isShowPostType() {
+        return mShowPostType;
+    }
+
+    public boolean isShowPostTypeFromPref() {
+        mShowPostType = mSharedPref.getBoolean(PERF_SHOW_POST_TYPE, false);
+        return mShowPostType;
+    }
+
+    public void setShowPostType(boolean showPostType) {
+        mShowPostType = showPostType;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(PERF_SHOW_POST_TYPE, showPostType).commit();
     }
 
     public boolean isShowStickThreads() {
