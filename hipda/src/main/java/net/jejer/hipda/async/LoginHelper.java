@@ -130,7 +130,7 @@ public class LoginHelper {
                 return Constants.STATUS_FAIL_ABORT;
             } else {
                 mErrorMsg = "登录失败,未知错误";
-                return Constants.STATUS_FAIL;
+                return Constants.STATUS_FAIL_ABORT;
             }
         } else {
             mErrorMsg = "登录失败," + errorListener.getErrorText();

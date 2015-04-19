@@ -10,7 +10,7 @@
     <string name="pref_title_login_answer">回答</string>
 
     <string-array name="pref_login_question_list_titles">
-        <item>无</item>
+        <item>无安全提问</item>
         <item>母亲的名字</item>
         <item>爷爷的名字</item>
         <item>父亲出生的城市</item>

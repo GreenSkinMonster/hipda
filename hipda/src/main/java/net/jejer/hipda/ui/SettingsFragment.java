@@ -41,8 +41,6 @@ public class SettingsFragment extends PreferenceFragment {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference);
 
-//        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_USERNAME));
-//        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SECQUESTION));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TAILTEXT));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TAILURL));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_BLANKLIST_USERNAMES));
@@ -57,7 +55,7 @@ public class SettingsFragment extends PreferenceFragment {
         if (LoginHelper.isLoggedIn())
             userPreference.setSummary(Html.fromHtml(HiSettingsHelper.getInstance().getUsername() + "    <font color=grey>(已登录)</font>"));
         else
-            userPreference.setSummary("<font color=grey>(未登录)</font>");
+            userPreference.setSummary(Html.fromHtml("<font color=grey>(未登录)</font>"));
         userPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 if (LoginHelper.isLoggedIn()) {
