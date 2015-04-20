@@ -12,7 +12,6 @@ import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.ImageFileInfo;
@@ -199,7 +198,6 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
             urlConnection = (HttpURLConnection) url.openConnection();
 
             urlConnection.setRequestProperty("User-Agent", HiUtils.UserAgent);
-            urlConnection.setRequestProperty("Cookie", "cdb_auth=" + HiSettingsHelper.getInstance().getCookieAuth());
 
             urlConnection.setConnectTimeout(UPLOAD_CONNECT_TIMEOUT);
             urlConnection.setReadTimeout(UPLOAD_READ_TIMEOUT);

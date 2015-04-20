@@ -109,7 +109,6 @@ public class UpdateHelper {
                                         try {
                                             DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
                                             DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
-                                            req.addRequestHeader("Cookie", "cdb_auth=" + HiSettingsHelper.getInstance().getCookieAuth());
                                             req.addRequestHeader("User-agent", HiUtils.UserAgent);
                                             req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                                             req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);

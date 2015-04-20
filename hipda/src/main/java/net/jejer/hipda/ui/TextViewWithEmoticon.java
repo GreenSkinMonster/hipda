@@ -221,7 +221,6 @@ public class TextViewWithEmoticon extends TextView {
                 try {
                     DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
                     DownloadManager.Request downloadReq = new DownloadManager.Request(Uri.parse(getURL()));
-                    downloadReq.addRequestHeader("Cookie", "cdb_auth=" + HiSettingsHelper.getInstance().getCookieAuth());
                     downloadReq.addRequestHeader("User-agent", HiUtils.UserAgent);
 
                     // FUCK Android, we cannot use pub_download directory and keep original filename!
