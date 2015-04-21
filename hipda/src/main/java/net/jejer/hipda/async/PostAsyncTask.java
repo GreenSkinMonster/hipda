@@ -68,9 +68,12 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
         String subject = postBean.getSubject();
         String typeid = postBean.getTypeid();
 
-        if (mInfo == null) {
+        int count = 0;
+        while (mInfo == null && count < 3) {
+            count++;
             mInfo = new PrePostAsyncTask(mCtx, null, mMode).doInBackground(postBean);
         }
+
         if (!TextUtils.isEmpty(floor) && TextUtils.isDigitsOnly(floor))
             mFloor = floor;
 
@@ -133,10 +136,10 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 
     private void doPost(String url, String replyText, String subject, String typeid) {
 
-        String formhash = mInfo.getFormhash();
+        String formhash = mInfo != null ? mInfo.getFormhash() : null;
 
         if (TextUtils.isEmpty(formhash)) {
-            mResult = "发表失败!";
+            mResult = "发表失败，无法获取必要信息 ！";
             mStatus = Constants.STATUS_FAIL;
             return;
         }
@@ -170,8 +173,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
         }
 
         VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
-        String rsp_str = VolleyHelper.getInstance().synchronousPost(url, post_param,
-                errorListener);
+        String rsp_str = VolleyHelper.getInstance().synchronousPost(url, post_param, errorListener);
 
         //when success, volley will follow 302 redirect get the page content
         if (!TextUtils.isEmpty(rsp_str)) {
@@ -180,7 +182,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
                 mResult = "发表成功!";
                 mStatus = Constants.STATUS_SUCCESS;
             } else {
-                mResult = "发表失败!";
+                mResult = "发表失败，返回结果异常 !";
                 Document doc = Jsoup.parse(rsp_str);
                 Elements error = doc.select("div.alert_info");
                 if (!error.isEmpty()) {
@@ -189,7 +191,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
                 mStatus = Constants.STATUS_FAIL;
             }
         } else {
-            mResult = "发表失败! " + errorListener.getErrorText();
+            mResult = "发表失败，无返回结果! " + errorListener.getErrorText();
             mStatus = Constants.STATUS_FAIL;
         }
 

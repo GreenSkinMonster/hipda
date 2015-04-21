@@ -90,9 +90,11 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 mode.finish();
                 return true;
             case R.id.action_copy:
-                ClipboardManager clipboard = (ClipboardManager) mFragment.getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", mDetailBean.getContents().getCopyText());
-                clipboard.setPrimaryClip(clip);
+                if (mFragment.getActivity() != null) {
+                    ClipboardManager clipboard = (ClipboardManager) mFragment.getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", mDetailBean.getContents().getCopyText());
+                    clipboard.setPrimaryClip(clip);
+                }
                 mode.finish();
                 return true;
             default:
