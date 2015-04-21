@@ -94,4 +94,5 @@ public class HiUtils {
                 + fullUid.substring(7, 9) + "_avatar_middle.jpg";
         return url;
     }
+
 }

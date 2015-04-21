@@ -21,11 +21,12 @@ import org.acra.annotation.ReportsCrashes;
                 ReportField.PHONE_MODEL,
                 ReportField.CUSTOM_DATA,
                 ReportField.STACK_TRACE,
-                ReportField.LOGCAT},
+                ReportField.APPLICATION_LOG,
+                ReportField.LOGCAT
+        },
         mode = ReportingInteractionMode.TOAST,
         resToastText = R.string.crash_toast_text,
         formKey = "")
-
 public class HiApplication extends Application {
 
     @Override
