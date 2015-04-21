@@ -223,8 +223,11 @@ public class TextViewWithEmoticon extends TextView {
                     DownloadManager.Request downloadReq = new DownloadManager.Request(Uri.parse(getURL()));
                     downloadReq.addRequestHeader("User-agent", HiUtils.UserAgent);
 
-                    // FUCK Android, we cannot use pub_download directory and keep original filename!
-                    downloadReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, ((TextView) view).getText().toString());
+                    String fileName = ((TextView) view).getText().toString();
+                    //dirty fix to get rid of ( xxx K ) file size string
+                    if (fileName.contains(" ("))
+                        fileName = fileName.substring(0, fileName.lastIndexOf(" (")).trim();
+                    downloadReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
                     downloadReq.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                     dm.enqueue(downloadReq);
                 } catch (SecurityException e) {
