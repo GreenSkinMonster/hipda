@@ -19,8 +19,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class HiParserThreadDetail {
     public static final String LOG_TAG = "HiParserThreadDetail";
+
+    private static String URL_REGEX = "[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)";
+    private static Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
 
     public static DetailListBean parse(Context ctx, Handler handler, Document doc, boolean parseTid) {
 
@@ -308,10 +314,29 @@ public class HiParserThreadDetail {
             }
             return true;
         } else if (contentN.nodeName().equals("#text")) {
-            //Log.v(LOG_TAG, contentN.toString());
             String text = contentN.toString();
-            if (isHaveText(text)) {
-                content.addText(text);
+
+            Matcher matcher = URL_PATTERN.matcher(text);
+
+            int lastPos = 0;
+            while (matcher.find()) {
+                String t = text.substring(lastPos, matcher.start());
+                String url = text.substring(matcher.start(), matcher.end());
+
+                if (!TextUtils.isEmpty(t.trim())) {
+                    content.addText(t);
+                }
+                if (!url.contains("@"))
+                    content.addLink(url, url);
+                else
+                    content.addText(url);
+                lastPos = matcher.end();
+            }
+            if (lastPos < text.length()) {
+                String t = text.substring(lastPos);
+                if (!TextUtils.isEmpty(t.trim())) {
+                    content.addText(t);
+                }
             }
             return false;
         } else if (contentN.nodeName().equals("li")) {    // list item
@@ -465,7 +490,4 @@ public class HiParserThreadDetail {
         }
     }
 
-    private static Boolean isHaveText(String str) {
-        return !str.trim().isEmpty();
-    }
 }
