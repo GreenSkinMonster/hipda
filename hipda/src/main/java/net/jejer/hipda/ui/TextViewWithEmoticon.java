@@ -12,6 +12,7 @@ import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
@@ -223,10 +224,20 @@ public class TextViewWithEmoticon extends TextView {
                     DownloadManager.Request downloadReq = new DownloadManager.Request(Uri.parse(getURL()));
                     downloadReq.addRequestHeader("User-agent", HiUtils.UserAgent);
 
-                    String fileName = ((TextView) view).getText().toString();
-                    //dirty fix to get rid of ( xxx K ) file size string
-                    if (fileName.contains(" ("))
-                        fileName = fileName.substring(0, fileName.lastIndexOf(" (")).trim();
+                    String fileName = "";
+
+                    //clean way to get fileName
+                    SpannableStringBuilder b = new SpannableStringBuilder(((TextView) view).getText());
+                    URLSpan[] urls = b.getSpans(0, b.length(), URLSpan.class);
+                    if (urls.length > 0) {
+                        fileName = b.toString().substring(b.getSpanStart(urls[0]), b.getSpanEnd(urls[0]));
+                    }
+                    if (TextUtils.isEmpty(fileName)) {
+                        //failsafe dirty way,  to get rid of ( xxx K ) file size string
+                        fileName = ((TextView) view).getText().toString();
+                        if (fileName.contains(" ("))
+                            fileName = fileName.substring(0, fileName.lastIndexOf(" (")).trim();
+                    }
                     downloadReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
                     downloadReq.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                     dm.enqueue(downloadReq);

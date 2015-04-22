@@ -261,8 +261,6 @@ public class HiParserThreadDetail {
                             content.addText("<br>");
                         content.addAttach(linkE.attr("href"), linkE.text(), desc);
                     }
-
-
                 }
             }
 
@@ -384,10 +382,12 @@ public class HiParserThreadDetail {
             Boolean isInternalAttach = false;
             for (int attIdx = 0; attIdx < attachAES.size(); attIdx++) {
                 Element attachAE = attachAES.get(attIdx);
-                if (attachAE.attr("href").startsWith("attachment.php?")) {
+                //it is an attachment and not an image attachment
+                if (attachAE.attr("href").startsWith("attachment.php?")
+                        && !attachAE.attr("href").contains("nothumb=")) {
                     String desc = "";
                     Node sibNode = contentN.nextSibling();
-                    if (sibNode.nodeName().equals("#text")) {
+                    if (sibNode != null && sibNode.nodeName().equals("#text")) {
                         desc = sibNode.toString();
                         sibNode.remove();
                     }
