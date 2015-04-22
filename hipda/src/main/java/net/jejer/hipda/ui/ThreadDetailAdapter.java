@@ -10,7 +10,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,7 +39,7 @@ import net.jejer.hipda.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
+public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
     private Context mCtx;
     private LayoutInflater mInflater;
@@ -51,9 +50,8 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 
     private List<String> loadedImages = new ArrayList<String>();
 
-    public ThreadDetailAdapter(Context context, FragmentManager fm, ThreadDetailFragment detailFragment, int resource,
-                               List<DetailBean> objects, Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
-        super(context, resource, objects);
+    public ThreadDetailAdapter(Context context, FragmentManager fm, ThreadDetailFragment detailFragment,
+                               Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
         mCtx = context;
         mFragmentManager = fm;
         mInflater = LayoutInflater.from(context);
@@ -111,7 +109,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
 
         if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
             holder.avatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(getContext(), holder.avatar, detail.getAvatarUrl());
+            GlideHelper.loadAvatar(mCtx, holder.avatar, detail.getAvatarUrl());
         } else {
             holder.avatar.setVisibility(View.GONE);
         }
@@ -297,7 +295,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
             maxViewWidth = fragment.getView().getWidth();
         }
         if (imageUrl.toLowerCase().endsWith(".gif")) {
-            Glide.with(getContext())
+            Glide.with(mCtx)
                     .load(imageUrl)
                     .asBitmap()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -307,7 +305,7 @@ public class ThreadDetailAdapter extends ArrayAdapter<DetailBean> {
                     .into(new GlideScaleViewTarget(giv, maxViewWidth, imageUrl));
 
         } else {
-            Glide.with(getContext())
+            Glide.with(mCtx)
                     .load(imageUrl)
                     .asBitmap()
                     .cacheDecoder(new FileToStreamDecoder<Bitmap>(new ThreadImageDecoder()))

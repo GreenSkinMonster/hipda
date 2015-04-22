@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,16 +15,12 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
 
-import java.util.List;
-
-public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
+public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
     private LayoutInflater mInflater;
     private Context mCtx;
     private int mType;
 
-    public SimpleListAdapter(Context context, int resource,
-                             List<SimpleListItemBean> objects, int type) {
-        super(context, resource, objects);
+    public SimpleListAdapter(Context context, int type) {
         mInflater = LayoutInflater.from(context);
         mCtx = context;
         mType = type;
@@ -37,7 +32,7 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
 
         ViewHolder holder;
         if (convertView == null || convertView.getTag() == null) {
-            convertView = mInflater.inflate(R.layout.item_simple_list, null);
+            convertView = mInflater.inflate(R.layout.item_simple_list, parent, false);
             holder = new ViewHolder();
             convertView.setTag(holder);
         } else {
@@ -79,7 +74,7 @@ public class SimpleListAdapter extends ArrayAdapter<SimpleListItemBean> {
         if (HiSettingsHelper.getInstance().isShowThreadListAvatar()
                 && mType != SimpleListLoader.TYPE_SEARCH_USER_THREADS) {
             holder.iv_item_indicator.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(getContext(), holder.iv_item_indicator, item.getAvatarUrl());
+            GlideHelper.loadAvatar(mCtx, holder.iv_item_indicator, item.getAvatarUrl());
         } else {
             holder.iv_item_indicator.setVisibility(View.GONE);
         }

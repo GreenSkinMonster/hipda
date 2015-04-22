@@ -80,6 +80,7 @@ public class ThreadListFragment extends Fragment
     private OnNavigationListener mOnNavigationListener;
     private SpinnerAdapter mSpinnerAdapter;
     private ThreadListAdapter mThreadListAdapter;
+    private List<ThreadBean> mThreadBeans = new ArrayList<>();
     private ListView mThreadListView;
     private TextView mTipBar;
     private boolean mInloading = false;
@@ -89,11 +90,13 @@ public class ThreadListFragment extends Fragment
     private FloatingActionMenu mFam;
     private FloatingActionButton mFabNotify;
     private boolean mShowNotifyToast = true;
+    private int mFirstVisibleItem = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
         mCtx = getActivity();
 
@@ -104,7 +107,7 @@ public class ThreadListFragment extends Fragment
         setHasOptionsMenu(true);
         mCallbacks = new ThreadListLoaderCallbacks();
         List<ThreadBean> a = new ArrayList<ThreadBean>();
-        mThreadListAdapter = new ThreadListAdapter(mCtx, R.layout.item_thread_list, a);
+        mThreadListAdapter = new ThreadListAdapter(mCtx);
 
         mMsgHandler = new Handler(new ThreadListMsgHandler());
 
@@ -116,7 +119,8 @@ public class ThreadListFragment extends Fragment
                 if (mForumId != forumId) {
                     mForumId = forumId;
                     mForumSelect = getActivity().getActionBar().getSelectedNavigationIndex();
-                    mThreadListAdapter.clear();
+                    mThreadBeans.clear();
+                    mThreadListAdapter.setBeans(mThreadBeans);
                     HiSettingsHelper.getInstance().setLastForumId(forumId);
                     refresh();
                 }
@@ -212,6 +216,8 @@ public class ThreadListFragment extends Fragment
             });
         }
 
+        mThreadListView.setSelection(mFirstVisibleItem);
+
         return view;
     }
 
@@ -254,8 +260,10 @@ public class ThreadListFragment extends Fragment
         if (LoginHelper.isLoggedIn()) {
             showNotification();
         } else if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {
-            if (mThreadListAdapter != null)
-                mThreadListAdapter.clear();
+            if (mThreadListAdapter != null) {
+                mThreadBeans.clear();
+                mThreadListAdapter.setBeans(mThreadBeans);
+            }
             showLoginDialog();
         }
 
@@ -319,9 +327,15 @@ public class ThreadListFragment extends Fragment
 
     @Override
     public void onDestroy() {
-        //Log.v(LOG_TAG, "onDestory");
+        Log.v(LOG_TAG, "onDestory");
         getLoaderManager().destroyLoader(0);
         super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.v(LOG_TAG, "onDestroyView");
+        super.onDestroyView();
     }
 
     private void refresh() {
@@ -380,20 +394,13 @@ public class ThreadListFragment extends Fragment
 
     public class OnScrollCallback implements AbsListView.OnScrollListener {
 
-        int mLastVisibleItem = 0;
         int mVisibleItemCount = 0;
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem,
                              int visibleItemCount, int totalItemCount) {
 
-//            if (firstVisibleItem > mLastVisibleItem) {
-//                mFam.setVisibility(View.INVISIBLE);
-//            } else if (firstVisibleItem < mLastVisibleItem) {
-//                mFam.setVisibility(View.VISIBLE);
-//            }
-
-            mLastVisibleItem = firstVisibleItem;
+            mFirstVisibleItem = firstVisibleItem;
             mVisibleItemCount = visibleItemCount;
 
             if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
@@ -539,11 +546,12 @@ public class ThreadListFragment extends Fragment
 
             int count = 0;
             if (mPage == 1) {
-                mThreadListAdapter.clear();
+                mThreadBeans.clear();
                 for (ThreadBean newthread : threads.threads) {
-                    mThreadListAdapter.add(newthread);
+                    mThreadBeans.add(newthread);
                     count++;
                 }
+                mThreadListAdapter.setBeans(mThreadBeans);
                 mThreadListView.setSelection(0);
             } else {
                 for (ThreadBean newthread : threads.threads) {
@@ -556,10 +564,11 @@ public class ThreadListFragment extends Fragment
                         }
                     }
                     if (!duplicate) {
-                        mThreadListAdapter.add(newthread);
+                        mThreadBeans.add(newthread);
                         count++;
                     }
                 }
+                mThreadListAdapter.setBeans(mThreadBeans);
             }
             Log.v(LOG_TAG, "New Threads Added: " + count + ", Total = " + mThreadListAdapter.getCount());
 
@@ -731,7 +740,8 @@ public class ThreadListFragment extends Fragment
                     mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.pink));
                     mTipBar.setText(b.getString(STAGE_ERROR_KEY));
                     mTipBar.setVisibility(View.VISIBLE);
-                    mThreadListAdapter.clear();
+                    mThreadBeans.clear();
+                    mThreadListAdapter.setBeans(mThreadBeans);
                     showLoginDialog();
                     break;
             }

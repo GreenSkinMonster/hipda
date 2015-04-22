@@ -29,7 +29,9 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.utils.Constants;
-//import net.jejer.hipda.ui.ThreadDetailFragment.AvatarOnClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListener {
     private final String LOG_TAG = getClass().getSimpleName();
@@ -39,7 +41,8 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
 
     private String mId;
     private String mUid;
-    private SmsAdapter mAdapter;
+    private SmsAdapter mSmsAdapter;
+    private List<SimpleListItemBean> mSmsBeans = new ArrayList<>();
     private SmsListLoaderCallbacks mLoaderCallbacks;
     private ListView mListView;
 
@@ -59,7 +62,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
             mUid = getArguments().getString(ARG_UID);
         }
 
-        mAdapter = new SmsAdapter(getActivity(), R.layout.item_sms_list, new AvatarOnClickListener());
+        mSmsAdapter = new SmsAdapter(getActivity(), new AvatarOnClickListener());
         mLoaderCallbacks = new SmsListLoaderCallbacks();
 
     }
@@ -117,7 +120,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
 
         // destroyLoader called here to avoid onLoadFinished called when onResume
         getLoaderManager().destroyLoader(0);
-        mListView.setAdapter(mAdapter);
+        mListView.setAdapter(mSmsAdapter);
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
     }
 
@@ -182,10 +185,10 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
                 return;
             }
 
-            mAdapter.clear();
-            mAdapter.addAll(list.getAll());
-            mAdapter.notifyDataSetChanged();
-            mListView.setSelection(mAdapter.getCount());
+            mSmsBeans.clear();
+            mSmsBeans.addAll(list.getAll());
+            mSmsAdapter.setBeans(mSmsBeans);
+            mListView.setSelection(mSmsAdapter.getCount());
         }
 
         @Override

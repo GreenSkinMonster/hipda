@@ -6,7 +6,6 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,16 +14,15 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
 
-import java.util.ArrayList;
-
-public class SmsAdapter extends ArrayAdapter<SimpleListItemBean> {
+public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
     private View.OnClickListener mAvatarListener;
     private LayoutInflater mInflater;
+    private Context mCtx;
 
-    public SmsAdapter(Context context, int resource, View.OnClickListener avatarListener) {
-        super(context, resource, new ArrayList<SimpleListItemBean>());
+    public SmsAdapter(Context context, View.OnClickListener avatarListener) {
         mAvatarListener = avatarListener;
         mInflater = LayoutInflater.from(context);
+        mCtx = context;
     }
 
     @Override
@@ -33,7 +31,7 @@ public class SmsAdapter extends ArrayAdapter<SimpleListItemBean> {
 
         ViewHolder holder;
         if (convertView == null || convertView.getTag() == null) {
-            convertView = mInflater.inflate(R.layout.item_sms_list, null);
+            convertView = mInflater.inflate(R.layout.item_sms_list, parent, false);
             holder = new ViewHolder();
             convertView.setTag(holder);
         } else {
@@ -62,7 +60,7 @@ public class SmsAdapter extends ArrayAdapter<SimpleListItemBean> {
 
         if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
             holder.iv_avatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(getContext(), holder.iv_avatar, item.getAvatarUrl());
+            GlideHelper.loadAvatar(mCtx, holder.iv_avatar, item.getAvatarUrl());
         } else {
             holder.iv_avatar.setVisibility(View.GONE);
         }

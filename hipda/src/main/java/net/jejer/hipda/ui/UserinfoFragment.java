@@ -61,6 +61,9 @@ public class UserinfoFragment extends Fragment {
 
     private ListView mThreadListView;
     private SimpleListAdapter mSimpleListAdapter;
+    private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
+    private int mFirstVisibleItem = 0;
+
     private Button mButton;
     private LoaderManager.LoaderCallbacks<SimpleListBean> mCallbacks;
 
@@ -88,7 +91,7 @@ public class UserinfoFragment extends Fragment {
         }
 
         List<SimpleListItemBean> a = new ArrayList<SimpleListItemBean>();
-        mSimpleListAdapter = new SimpleListAdapter(getActivity(), R.layout.item_simple_list, a, SimpleListLoader.TYPE_SEARCH_USER_THREADS);
+        mSimpleListAdapter = new SimpleListAdapter(getActivity(), SimpleListLoader.TYPE_SEARCH_USER_THREADS);
         mCallbacks = new SearchThreadByUidLoaderCallbacks();
 
     }
@@ -248,14 +251,13 @@ public class UserinfoFragment extends Fragment {
 
     public class OnScrollCallback implements AbsListView.OnScrollListener {
 
-        int mLastVisibleItem = 0;
         int mVisibleItemCount = 0;
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem,
                              int visibleItemCount, int totalItemCount) {
 
-            mLastVisibleItem = firstVisibleItem;
+            mFirstVisibleItem = firstVisibleItem;
             mVisibleItemCount = visibleItemCount;
 
             if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
@@ -308,10 +310,10 @@ public class UserinfoFragment extends Fragment {
                 return;
             }
 
-            Log.v(LOG_TAG, "mThreadListAdapter.addAll(arg1.threads) called, added " + list.getCount());
             mSearchIdUrl = list.getSearchIdUrl();
             mMaxPage = list.getMaxPage();
-            mSimpleListAdapter.addAll(list.getAll());
+            mSimpleListItemBeans.addAll(list.getAll());
+            mSimpleListAdapter.setBeans(mSimpleListItemBeans);
             isThreadsLoaded = true;
         }
 

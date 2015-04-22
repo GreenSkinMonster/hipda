@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,22 +16,14 @@ import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.Utils;
 
-import java.util.HashMap;
-import java.util.List;
-
-public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
+public class ThreadListAdapter extends HiAdapter<ThreadBean> {
 
     private LayoutInflater mInflater;
     private Context mCtx;
-    //private List<ThreadBean> threads;
-    private HashMap<String, ViewHolder> holders = new HashMap<String, ViewHolder>();
 
-    public ThreadListAdapter(Context context, int resource,
-                             List<ThreadBean> objects) {
-        super(context, resource, objects);
+    public ThreadListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
         mCtx = context;
-        //threads = objects;
     }
 
     @Override
@@ -41,7 +32,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
         ViewHolder holder;
         if (convertView == null || convertView.getTag() == null) {
-            convertView = mInflater.inflate(R.layout.item_thread_list, null);
+            convertView = mInflater.inflate(R.layout.item_thread_list, parent, false);
             holder = new ViewHolder();
             convertView.setTag(holder);
         } else {
@@ -56,8 +47,6 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
         holder.tv_create_time = (TextView) convertView.findViewById(R.id.tv_create_time);
         holder.tv_update_time = (TextView) convertView.findViewById(R.id.tv_update_time);
         holder.iv_image_indicator = (ImageView) convertView.findViewById(R.id.iv_image_indicator);
-
-        holders.put(thread.getTid(), holder);
 
         holder.tv_author.setText(thread.getAuthor());
 
@@ -94,7 +83,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadBean> {
 
         if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
             holder.avatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(getContext(), holder.avatar, thread.getAvatarUrl());
+            GlideHelper.loadAvatar(mCtx, holder.avatar, thread.getAvatarUrl());
         } else {
             holder.avatar.setVisibility(View.GONE);
         }

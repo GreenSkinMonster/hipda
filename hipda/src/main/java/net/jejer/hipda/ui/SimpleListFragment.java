@@ -45,6 +45,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
     private ListView mThreadListView;
     private TextView mTipBar;
     private SimpleListAdapter mSimpleListAdapter;
+    private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
     private LoaderManager.LoaderCallbacks<SimpleListBean> mCallbacks;
     private String mQuery = "";
     private SearchView searchView = null;
@@ -68,8 +69,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
             mType = getArguments().getInt(ARG_TYPE);
         }
 
-        List<SimpleListItemBean> a = new ArrayList<SimpleListItemBean>();
-        mSimpleListAdapter = new SimpleListAdapter(getActivity(), R.layout.item_simple_list, a, mType);
+        mSimpleListAdapter = new SimpleListAdapter(getActivity(), mType);
         mCallbacks = new SimpleThreadListLoaderCallbacks();
     }
 
@@ -183,7 +183,8 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
                     @Override
                     public boolean onQueryTextSubmit(String query) {
                         mQuery = query;
-                        mSimpleListAdapter.clear();
+                        mSimpleListItemBeans.clear();
+                        mSimpleListAdapter.setBeans(mSimpleListItemBeans);
                         // Close SoftKeyboard
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
                                 Context.INPUT_METHOD_SERVICE);
@@ -225,7 +226,8 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
     private void refresh() {
         mMaxPage = 0;
         mPage = 1;
-        mSimpleListAdapter.clear();
+        mSimpleListItemBeans.clear();
+        mSimpleListAdapter.setBeans(mSimpleListItemBeans);
         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
     }
 
@@ -236,14 +238,14 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
 
     public class OnScrollCallback implements AbsListView.OnScrollListener {
 
-        int mLastVisibleItem = 0;
+        int mFirstVisibleItem = 0;
         int mVisibleItemCount = 0;
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem,
                              int visibleItemCount, int totalItemCount) {
 
-            mLastVisibleItem = firstVisibleItem;
+            mFirstVisibleItem = firstVisibleItem;
             mVisibleItemCount = visibleItemCount;
 
             if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
@@ -381,7 +383,8 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
             }
 
             mMaxPage = list.getMaxPage();
-            mSimpleListAdapter.addAll(list.getAll());
+            mSimpleListItemBeans.addAll(list.getAll());
+            mSimpleListAdapter.setBeans(mSimpleListItemBeans);
         }
 
         @Override

@@ -78,7 +78,8 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     private TextView mTipBar;
     private TextView mTitleView;
     private ThreadListLoaderCallbacks mLoaderCallbacks;
-    private ThreadDetailAdapter mAdapter;
+    private ThreadDetailAdapter mDetailAdapter;
+    private List<DetailBean> mDetailBeans = new ArrayList<>();
     private int mCurrentPage = 1;
     private int mMaxPage = 1;
     private int mGoToPage = 1;
@@ -101,6 +102,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     public void onCreate(Bundle savedInstanceState) {
         Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
         ((MainFrameActivity) getActivity()).registOnSwipeCallback(this);
         mCtx = getActivity();
@@ -123,8 +125,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             mFloorOfPage = getArguments().getInt(ARG_FLOOR_KEY);
         }
         mLoaderCallbacks = new ThreadListLoaderCallbacks();
-        List<DetailBean> a = new ArrayList<DetailBean>();
-        mAdapter = new ThreadDetailAdapter(mCtx, getFragmentManager(), this, R.layout.item_thread_detail, a,
+        mDetailAdapter = new ThreadDetailAdapter(mCtx, getFragmentManager(), this,
                 new GoToFloorOnClickListener(), new AvatarOnClickListener());
 
         mMsgHandler = new Handler(new ThreadDetailMsgHandler());
@@ -299,7 +300,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         Log.v(LOG_TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
 
-        mDetailListView.setAdapter(mAdapter);
+        mDetailListView.setAdapter(mDetailAdapter);
         mDetailListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         mDetailListView.setOnItemLongClickListener(new OnItemLongClickCallback());
         mDetailListView.setOnScrollListener(new OnScrollCallback());
@@ -370,7 +371,8 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                 return true;
             case R.id.action_only_author:
                 mAuthorOnly = !mAuthorOnly;
-                mAdapter.clear();
+                mDetailBeans.clear();
+                mDetailAdapter.setBeans(mDetailBeans);
                 mCurrentPage = 1;
                 if (mAuthorOnly) {
                     mDetailListView.setPullLoadEnable(false);
@@ -453,9 +455,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         public void onScroll(AbsListView view, int firstVisibleItem,
                              int visibleItemCount, int totalItemCount) {
 
-//            if (firstVisibleItem > mLastVisibleItem) {
+//            if (firstVisibleItem > mFirstVisibleItem) {
 //                mFam.setVisibility(View.INVISIBLE);
-//            } else if (firstVisibleItem < mLastVisibleItem) {
+//            } else if (firstVisibleItem < mFirstVisibleItem) {
 //                mFam.setVisibility(View.VISIBLE);
 //            }
 
@@ -526,10 +528,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             if (mInloading) {
                 return null;
             }
-
-            //mAdapter.clear();
-
-//            quickReply.setVisibility(View.INVISIBLE);
 
             // Re-enable after load complete if needed.
             mDetailListView.setPullLoadEnable(false);
@@ -706,12 +704,12 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             mDetailListView.setItemChecked(position, true);
 
             position = position - mDetailListView.getHeaderViewsCount();
-            if (position > mAdapter.getCount()) {
+            if (position > mDetailAdapter.getCount()) {
                 return false;
             }
 
             ThreadDetailActionModeCallback cb = new ThreadDetailActionModeCallback(ThreadDetailFragment.this,
-                    mFid, mTid, mAdapter.getItem(position));
+                    mFid, mTid, mDetailAdapter.getItem(position));
             getActivity().startActionMode(cb);
 
             return true;
@@ -913,12 +911,12 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                 + mTitle);
 
         if (mCache.get(mCurrentPage) != null) {
-            mAdapter.clear();
-            mAdapter.addAll(mCache.get(mCurrentPage).getAll());
-            mAdapter.notifyDataSetChanged();
+            mDetailBeans.clear();
+            mDetailBeans.addAll(mCache.get(mCurrentPage).getAll());
+            mDetailAdapter.setBeans(mDetailBeans);
 
             if (mFloorOfPage == LAST_FLOOR) {
-                mDetailListView.setSelection(mAdapter.getCount() - 1 + mDetailListView.getHeaderViewsCount());
+                mDetailListView.setSelection(mDetailAdapter.getCount() - 1 + mDetailListView.getHeaderViewsCount());
             } else if (mFloorOfPage >= 0) {
                 mDetailListView.setSelection(mFloorOfPage + mDetailListView.getHeaderViewsCount() - 1);
             } else {
@@ -944,9 +942,10 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     private void addAuthorPosts(DetailListBean details) {
         for (DetailBean detail : details.getAll()) {
             if (detail.getAuthor().equals(mCache.get(1).getAll().get(0).getAuthor())) {
-                mAdapter.add(detail);
+                mDetailBeans.add(detail);
             }
         }
+        mDetailAdapter.setBeans(mDetailBeans);
     }
 
     private void showAndLoadAuthorOnly() {
