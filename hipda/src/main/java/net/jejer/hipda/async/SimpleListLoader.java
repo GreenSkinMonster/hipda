@@ -139,6 +139,8 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
                 break;
             case TYPE_FAVORITES:
                 url = HiUtils.FavoritesUrl;
+                if (mPage > 1)
+                    url += "&page=" + mPage;
                 break;
             default:
                 break;
