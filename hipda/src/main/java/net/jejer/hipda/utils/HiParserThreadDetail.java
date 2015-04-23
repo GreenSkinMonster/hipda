@@ -372,8 +372,8 @@ public class HiParserThreadDetail {
             String src = e.attr("src");
 
             if (src.startsWith("images/smilies/")) {
-                //emotion
-                content.addText("[emoticon " + src + "]");
+                //emotion added as img tag, will be parsed in TextViewWithEmoticon later
+                content.addText("<img src=\"" + src + "\"/>");
                 return false;
             } else if (src.equals("images/common/none.gif") || src.startsWith("attachments/day_")) {
                 //internal image

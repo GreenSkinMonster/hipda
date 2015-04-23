@@ -13,7 +13,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
-import android.text.style.ImageSpan;
 import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -28,15 +27,12 @@ import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class TextViewWithEmoticon extends TextView {
     private final static String LOG_TAG = "TextViewWithEmoticon";
     private static Context mCtx;
     private static FragmentManager mFragmentManager;
 
-    private static int TRIM_LENGTH = 60;
+    private static int TRIM_LENGTH = 80;
     private static final Spannable.Factory spannableFactory = Spannable.Factory.getInstance();
 
     private boolean mTrim;
@@ -61,7 +57,7 @@ public class TextViewWithEmoticon extends TextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        Spannable s = getTextWithImages(mCtx, text);
+        Spannable s = getTextWithImages(text);
         super.setText(s, BufferType.SPANNABLE);
     }
 
@@ -69,47 +65,26 @@ public class TextViewWithEmoticon extends TextView {
         mTrim = trim;
     }
 
-    private boolean addImages(Context context, Spannable spannable) {
-        Pattern refImg = Pattern.compile("\\Q[emoticon images/smilies/\\E([a-zA-Z0-9_\\/]+)\\Q.gif]\\E");
-        boolean hasChanges = false;
-
-        Matcher matcher = refImg.matcher(spannable);
-        while (matcher.find()) {
-            boolean set = true;
-            for (ImageSpan span : spannable.getSpans(matcher.start(), matcher.end(), ImageSpan.class)) {
-                if (spannable.getSpanStart(span) >= matcher.start()
-                        && spannable.getSpanEnd(span) <= matcher.end()
-                        ) {
-                    spannable.removeSpan(span);
-                } else {
-                    set = false;
-                    break;
+    private Html.ImageGetter imageGetter = new Html.ImageGetter() {
+        public Drawable getDrawable(String src) {
+            Drawable icon = null;
+            if (src.startsWith("images/smilies/") && src.contains(".")) {
+                src = src.substring("images/smilies/".length(), src.lastIndexOf(".")).replace("/", "_");
+                int id = mCtx.getResources().getIdentifier(src, "drawable", mCtx.getPackageName());
+                if (id != 0) {
+                    icon = mCtx.getResources().getDrawable(id);
+                    if (icon != null)
+                        icon.setBounds(0, 0, getLineHeight(), getLineHeight());
                 }
             }
-            String resname = spannable.subSequence(matcher.start(1), matcher.end(1)).toString().trim();
-            resname = resname.replaceAll("/", "_");
-            int id = context.getResources().getIdentifier(resname, "drawable", context.getPackageName());
-            if (set && id != 0) {
-                hasChanges = true;
-                Drawable icon = context.getResources().getDrawable(id);
-                if (icon != null) {
-                    icon.setBounds(0, 0, getLineHeight(), getLineHeight());
-                    spannable.setSpan(new ImageSpan(icon, ImageSpan.ALIGN_BASELINE),
-                            matcher.start(),
-                            matcher.end(),
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    );
-                }
-            }
+            return icon;
         }
+    };
 
-        return hasChanges;
-    }
-
-    private Spannable getTextWithImages(final Context context, CharSequence text) {
+    private Spannable getTextWithImages(CharSequence text) {
         if (mTrim)
             text = text.toString().replace("<br>", "").trim();
-        SpannableStringBuilder b = (SpannableStringBuilder) Html.fromHtml(text.toString(), null, new HiHtmlTagHandler());
+        SpannableStringBuilder b = (SpannableStringBuilder) Html.fromHtml(text.toString(), imageGetter, new HiHtmlTagHandler());
         if (mTrim && b.length() > TRIM_LENGTH) {
             b = new SpannableStringBuilder(b.subSequence(0, TRIM_LENGTH));
             b.append(" ....");
@@ -136,10 +111,7 @@ public class TextViewWithEmoticon extends TextView {
                 }
             }
         }
-
-        Spannable spannable = spannableFactory.newSpannable(b);
-        addImages(context, spannable);
-        return spannable;
+        return b;
     }
 
     private URLSpan getThreadUrlSpan(final String s_url) {

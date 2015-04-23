@@ -24,10 +24,6 @@ public class HiHtmlTagHandler implements Html.TagHandler {
             processStrike(opening, output);
         } else if (tag.equals("appmark")) {
             processAppmark(opening, output);
-        } else if (tag.equals("emoticon")) {
-            processAttributes(xmlReader);
-            String src = attributes.get("src");
-            processEmoIcon(opening, output, src);
         }
     }
 
@@ -48,22 +44,6 @@ public class HiHtmlTagHandler implements Html.TagHandler {
     }
 
     private void processAppmark(boolean opening, Editable output) {
-        int len = output.length();
-        if (opening) {
-            output.setSpan(new RelativeSizeSpan(0.75f), len, len, Spannable.SPAN_MARK_MARK);
-        } else {
-            Object obj = getLast(output, RelativeSizeSpan.class);
-            int where = output.getSpanStart(obj);
-
-            output.removeSpan(obj);
-
-            if (where != len) {
-                output.setSpan(new RelativeSizeSpan(0.75f), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
-    }
-
-    private void processEmoIcon(boolean opening, Editable output, String src) {
         int len = output.length();
         if (opening) {
             output.setSpan(new RelativeSizeSpan(0.75f), len, len, Spannable.SPAN_MARK_MARK);
