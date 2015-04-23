@@ -9,9 +9,9 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 
 public class HiUtils {
     public static final String UserAgent = "net.jejer.hipda";
-    public static final String ThreadListUrl = "http://www.hi-pda.com/forum/forumdisplay.php?fid=";
-    public static final String DetailListUrl = "http://www.hi-pda.com/forum/viewthread.php?tid=";
     public static final String BaseUrl = "http://www.hi-pda.com/forum/";
+    public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
+    public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
     public static final String ReplyUrl = BaseUrl + "post.php?action=reply&tid=";
     public static final String EditUrl = BaseUrl + "post.php?action=edit";
     public static final String NewThreadUrl = BaseUrl + "post.php?action=newthread&fid=";

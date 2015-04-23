@@ -23,7 +23,6 @@ public class ContentImg extends ContentAbs {
 
     @Override
     public String getContent() {
-        // TODO Auto-generated method stub
         if (mInternal) {
             return HiUtils.getFullUrl(mUrl);
         } else {

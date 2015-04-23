@@ -11,11 +11,9 @@ import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
-import android.text.style.RelativeSizeSpan;
 import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,6 +24,7 @@ import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
@@ -37,7 +36,10 @@ public class TextViewWithEmoticon extends TextView {
     private static Context mCtx;
     private static FragmentManager mFragmentManager;
 
+    private static int TRIM_LENGTH = 60;
     private static final Spannable.Factory spannableFactory = Spannable.Factory.getInstance();
+
+    private boolean mTrim;
 
     public TextViewWithEmoticon(Context context) {
         super(context);
@@ -63,6 +65,9 @@ public class TextViewWithEmoticon extends TextView {
         super.setText(s, BufferType.SPANNABLE);
     }
 
+    public void setTrim(boolean trim) {
+        mTrim = trim;
+    }
 
     private boolean addImages(Context context, Spannable spannable) {
         Pattern refImg = Pattern.compile("\\Q[emoticon images/smilies/\\E([a-zA-Z0-9_\\/]+)\\Q.gif]\\E");
@@ -101,21 +106,14 @@ public class TextViewWithEmoticon extends TextView {
         return hasChanges;
     }
 
-    private SpannableStringBuilder addAppMark(SpannableStringBuilder spannable) {
-        String text = spannable.toString();
-        int idxStart = text.indexOf("[appmark ");
-        if (idxStart >= 0) {
-            int idxEnd = text.indexOf("]", idxStart);
-            if (idxEnd > 0) {
-                spannable.setSpan(new RelativeSizeSpan(0.75f), idxStart, idxEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannable = spannable.delete(idxEnd, idxEnd + 1).delete(idxStart, idxStart + 9);
-            }
-        }
-        return spannable;
-    }
-
     private Spannable getTextWithImages(final Context context, CharSequence text) {
-        SpannableStringBuilder b = (SpannableStringBuilder) Html.fromHtml(text.toString());
+        if (mTrim)
+            text = text.toString().replace("<br>", "").trim();
+        SpannableStringBuilder b = (SpannableStringBuilder) Html.fromHtml(text.toString(), null, new HiHtmlTagHandler());
+        if (mTrim && b.length() > TRIM_LENGTH) {
+            b = new SpannableStringBuilder(b.subSequence(0, TRIM_LENGTH));
+            b.append(" ....");
+        }
         for (URLSpan s : b.getSpans(0, b.length(), URLSpan.class)) {
             String s_url = s.getURL();
             if (s_url.startsWith("http://www.hi-pda.com/forum/attachment.php")) {
@@ -138,8 +136,6 @@ public class TextViewWithEmoticon extends TextView {
                 }
             }
         }
-
-        b = addAppMark(b);
 
         Spannable spannable = spannableFactory.newSpannable(b);
         addImages(context, spannable);

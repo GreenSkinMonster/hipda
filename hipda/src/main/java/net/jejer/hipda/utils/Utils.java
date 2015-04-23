@@ -28,28 +28,4 @@ public class Utils {
         return time;
     }
 
-    public static String trimByClause(String text, int length) {
-        if (text.length() <= length)
-            return text;
-        StringBuilder sb = new StringBuilder();
-        sb.append(text.substring(0, length));
-        for (int i = length; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (c != '，'
-                    && c != '。'
-                    && c != '？'
-                    && c != '!'
-                    && c != '！'
-                    && c != '['
-                    && c != '\n') {
-                sb.append(c);
-            } else {
-                if (i < text.length() - 1)
-                    sb.append(" ....");
-                break;
-            }
-        }
-        return sb.toString();
-    }
-
 }

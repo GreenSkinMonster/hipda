@@ -146,8 +146,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     }
                 }
                 if (!"<br>".equals(cnt)) {
-                    if (((ContentText) content).getType() == ContentText.NOTICE)
-                        tv.setTextColor(mCtx.getResources().getColor(R.color.grey));
                     tv.setText(cnt);
                     tv.setFocusable(false);
                     contentView.addView(tv);
@@ -224,7 +222,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     floor = goToFloor.getFloor();
                     DetailBean detailBean = mDetailFragment.getCachedPost(goToFloor.getPostId());
                     if (detailBean != null) {
-                        text = detailBean.getContents().getCopyText(true);
+                        text = detailBean.getContents().getContent();
                         floor = Integer.parseInt(detailBean.getFloor());
                     }
                     note = floor + "#";
@@ -236,7 +234,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     }
                     if (detailBean != null) {
                         author = contentQuote.getAuthor();
-                        text = detailBean.getContents().getCopyText(true);
+                        text = detailBean.getContents().getContent();
                         floor = Integer.parseInt(detailBean.getFloor());
                         note = floor + "#";
                     } else {
@@ -248,15 +246,15 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     }
                 }
 
-                text = Utils.trimByClause(text, 100);
-
                 LinearLayout quoteLayout = (LinearLayout) LayoutInflater.from(mCtx)
                         .inflate(R.layout.item_quote_text, parent, false);
 
                 TextView tvAuthor = (TextView) quoteLayout.findViewById(R.id.quote_author);
                 TextView tvNote = (TextView) quoteLayout.findViewById(R.id.quote_note);
-                TextView tvContent = (TextView) quoteLayout.findViewById(R.id.quote_content);
+                TextViewWithEmoticon tvContent = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
                 TextView tvTime = (TextView) quoteLayout.findViewById(R.id.quote_post_time);
+
+                tvContent.setTrim(true);
 
                 tvAuthor.setText(Utils.nullToText(author));
                 tvNote.setText(Utils.nullToText(note));

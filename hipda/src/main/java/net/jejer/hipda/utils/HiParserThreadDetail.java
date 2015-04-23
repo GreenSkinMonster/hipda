@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -13,6 +14,8 @@ import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadListFragment;
+import net.jejer.hipda.ui.textstyle.TextStyle;
+import net.jejer.hipda.ui.textstyle.TextStyleHolder;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -215,23 +218,32 @@ public class HiParserThreadDetail {
             }
 
             // Nodes including Elements(have tag) and text without tag
+            TextStyleHolder textStyles = new TextStyleHolder();
             Node contentN = postmessageE.childNode(0);
             int level = 1;
-            boolean processChildren = true;
+            boolean processChildren;
             while (level > 0 && contentN != null) {
-                processChildren = parseNode(contentN, content);
+
+                textStyles.addLevel(level);
+
+                processChildren = parseNode(contentN, content, level, textStyles);
 
                 if (processChildren && contentN.childNodeSize() > 0) {
                     contentN = contentN.childNode(0);
                     level++;
                 } else if (contentN.nextSibling() != null) {
                     contentN = contentN.nextSibling();
+                    textStyles.removeLevel(level);
                 } else {
                     while (contentN.parent().nextSibling() == null) {
                         contentN = contentN.parent();
+                        textStyles.removeLevel(level);
+                        textStyles.removeLevel(level - 1);
                         level--;
                     }
                     contentN = contentN.parent().nextSibling();
+                    textStyles.removeLevel(level);
+                    textStyles.removeLevel(level - 1);
                     level--;
                 }
             }
@@ -270,7 +282,7 @@ public class HiParserThreadDetail {
     }
 
     // return true for continue children, false for ignore children
-    private static boolean parseNode(Node contentN, DetailBean.Contents content) {
+    private static boolean parseNode(Node contentN, DetailBean.Contents content, int level, @NonNull TextStyleHolder textStyles) {
 
         if (contentN.nodeName().equals("font")) {
             Element elemFont = (Element) contentN;
@@ -282,6 +294,7 @@ public class HiParserThreadDetail {
                 content.addAppMark(elemFont.text(), null);
                 return false;
             } else {
+                textStyles.setColor(level, Utils.nullToText(elemFont.attr("color")).trim());
                 return true;
             }
         }
@@ -293,6 +306,7 @@ public class HiParserThreadDetail {
                 || contentN.nodeName().equals("ol")    //ordered list
                 || contentN.nodeName().equals("ul")    //unordered list
                 || contentN.nodeName().equals("hr")) {    //a thematic change in the content(h line)
+            textStyles.addStyle(level, contentN.nodeName());
             //continue parse child node
             return true;
         } else if (contentN.nodeName().equals("strong")) {
@@ -310,9 +324,13 @@ public class HiParserThreadDetail {
                     return false;
                 }
             }
+            textStyles.addStyle(level, contentN.nodeName());
             return true;
         } else if (contentN.nodeName().equals("#text")) {
             String text = contentN.toString();
+            TextStyle ts = null;
+            if (textStyles.getTextStyle(level - 1) != null)
+                ts = textStyles.getTextStyle(level - 1).newInstance();
 
             Matcher matcher = URL_PATTERN.matcher(text);
 
@@ -322,18 +340,19 @@ public class HiParserThreadDetail {
                 String url = text.substring(matcher.start(), matcher.end());
 
                 if (!TextUtils.isEmpty(t.trim())) {
-                    content.addText(t);
+                    content.addText(t, ts);
                 }
-                if (!url.contains("@"))
+                if (url.contains("@") && !url.contains("/")) {
+                    content.addEmail(url);
+                } else {
                     content.addLink(url, url);
-                else
-                    content.addText(url);
+                }
                 lastPos = matcher.end();
             }
             if (lastPos < text.length()) {
                 String t = text.substring(lastPos);
                 if (!TextUtils.isEmpty(t.trim())) {
-                    content.addText(t);
+                    content.addText(t, ts);
                 }
             }
             return false;

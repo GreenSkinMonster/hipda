@@ -1,5 +1,7 @@
 package net.jejer.hipda.bean;
 
+import net.jejer.hipda.ui.textstyle.TextStyle;
+
 import java.util.ArrayList;
 
 public class DetailBean {
@@ -22,37 +24,50 @@ public class DetailBean {
         private Boolean newString;
 
         public Contents() {
-            list = new ArrayList<ContentAbs>();
+            list = new ArrayList<>();
             lastTextIdx = -1;
             newString = true;
         }
 
         public void addText(String text) {
+            addText(text, null);
+        }
+
+        public void addText(String text, TextStyle textStyle) {
+            text = unEscapeHtml(text);
+            if (textStyle != null)
+                text = textStyle.toHtml(text);
             if (newString) {
-                list.add(new ContentText(unEscapeHtml(text)));
+                ContentText ct = new ContentText(text);
+                list.add(ct);
                 lastTextIdx = list.size() - 1;
                 newString = false;
             } else {
                 ContentText ct = (ContentText) list.get(lastTextIdx);
-                ct.append(unEscapeHtml(text));
+                ct.append(text);
             }
         }
 
         public void addNotice(String text) {
+            TextStyle ts = new TextStyle();
+            ts.setColor("Gray");
+            text = ts.toHtml(unEscapeHtml(text));
             if (newString) {
-                list.add(new ContentText(text, ContentText.NOTICE));
+                list.add(new ContentText(text));
                 lastTextIdx = list.size() - 1;
                 newString = false;
             } else {
                 ContentText ct = (ContentText) list.get(lastTextIdx);
-                ct.append(unEscapeHtml(text));
+                ct.append(text);
             }
         }
 
         public void addAppMark(String text, String url) {
-            String mark = "[appmark " + text + " ]";
+            String mark;
             if (url != null && url.length() > 0) {
-                mark = "[appmark <a href=\"" + url + "\">" + text + "</a>]";
+                mark = "<appmark><a href=\"" + url + "\">" + text + "</a></appmark>";
+            } else {
+                mark = "<appmark>" + text + "</appmark>";
             }
             if (newString) {
                 list.add(new ContentText(mark));
@@ -65,7 +80,26 @@ public class DetailBean {
         }
 
         public void addLink(String text, String url) {
-            String link = "[<a href=\"" + url + "\">" + text + "</a>]";
+            String link;
+            if (!url.toLowerCase().startsWith("http://")
+                    && !url.toLowerCase().startsWith("https://")) {
+                url = "http://" + url;
+                link = " <a href=\"" + url + "\">" + text + "</a> ";
+            } else {
+                link = "[<a href=\"" + url + "\">" + text + "</a>]";
+            }
+            if (newString) {
+                list.add(new ContentText(link));
+                lastTextIdx = list.size() - 1;
+                newString = false;
+            } else {
+                ContentText ct = (ContentText) list.get(lastTextIdx);
+                ct.append(link);
+            }
+        }
+
+        public void addEmail(String email) {
+            String link = " <a href=\"mailto:" + email + "\">" + email + "</a> ";
             if (newString) {
                 list.add(new ContentText(link));
                 lastTextIdx = list.size() - 1;
@@ -105,15 +139,21 @@ public class DetailBean {
         }
 
         public String getCopyText() {
-            return getCopyText(false);
-        }
-
-        public String getCopyText(boolean isJustText) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < list.size(); i++) {
                 ContentAbs o = list.get(i);
-                if (!isJustText || o instanceof ContentText)
+                if (o instanceof ContentText)
                     sb.append(o.getCopyText());
+            }
+            return sb.toString();
+        }
+
+        public String getContent() {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                ContentAbs o = list.get(i);
+                if (o instanceof ContentText)
+                    sb.append(o.getContent());
             }
             return sb.toString();
         }

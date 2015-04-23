@@ -40,16 +40,16 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
         int scaledWidth = Math.round((int) (resource.getWidth() * scaleRate));
         int scaledHeight = Math.round((int) (resource.getHeight() * scaleRate));
 
-        if (scaledWidth < maxScaleWidth) {
-            getView().getLayoutParams().width = scaledWidth;
-            getView().getLayoutParams().height = scaledHeight;
-        } else {
+        if (scaledWidth >= maxScaleWidth || mUrl.toLowerCase().endsWith(".gif")) {
             getView().getLayoutParams().width = maxViewWidth;
             getView().getLayoutParams().height = Math.round(maxViewWidth * 1.0f * resource.getHeight() / resource.getWidth());
+        } else {
+            getView().getLayoutParams().width = scaledWidth;
+            getView().getLayoutParams().height = scaledHeight;
         }
 
         if (getView() instanceof GlideImageView) {
-            if (scaledWidth > GlideImageView.MIN_SCALE_WIDTH)
+            if (scaledWidth > GlideImageView.MIN_SCALE_WIDTH || mUrl.toLowerCase().endsWith(".gif"))
                 ((GlideImageView) getView()).setClickToViewBigImage();
         }
 
