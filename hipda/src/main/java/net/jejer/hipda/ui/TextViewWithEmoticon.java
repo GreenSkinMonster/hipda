@@ -82,9 +82,17 @@ public class TextViewWithEmoticon extends TextView {
     };
 
     private Spannable getTextWithImages(CharSequence text) {
+        String t = text.toString().trim();
+        //remove leading spaces
+        while (t.startsWith("&nbsp;") || t.startsWith("<br>")) {
+            if (t.startsWith("&nbsp;"))
+                t = t.substring("&nbsp;".length()).trim();
+            else
+                t = t.substring("<br>".length()).trim();
+        }
         if (mTrim)
-            text = text.toString().replace("<br>", "").trim();
-        SpannableStringBuilder b = (SpannableStringBuilder) Html.fromHtml(text.toString(), imageGetter, new HiHtmlTagHandler());
+            t = t.replace("<br>", "").trim();
+        SpannableStringBuilder b = (SpannableStringBuilder) Html.fromHtml(t, imageGetter, new HiHtmlTagHandler());
         if (mTrim && b.length() > TRIM_LENGTH) {
             b = new SpannableStringBuilder(b.subSequence(0, TRIM_LENGTH));
             b.append(" ....");
