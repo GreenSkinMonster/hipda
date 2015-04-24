@@ -194,7 +194,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 mCtx.getTheme().resolveAttribute(R.attr.quote_text_background, typedValue, true);
                 int colorRscId = typedValue.resourceId;
 
-                TextView tv = new TextView(mCtx);
+                TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
                 tv.setAutoLinkMask(Linkify.WEB_URLS);
                 tv.setText(content.getContent());

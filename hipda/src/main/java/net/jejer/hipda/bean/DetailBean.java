@@ -34,7 +34,6 @@ public class DetailBean {
         }
 
         public void addText(String text, TextStyle textStyle) {
-            text = unEscapeHtml(text);
             if (textStyle != null)
                 text = textStyle.toHtml(text);
             if (newString) {
@@ -51,15 +50,8 @@ public class DetailBean {
         public void addNotice(String text) {
             TextStyle ts = new TextStyle();
             ts.setColor("Gray");
-            text = ts.toHtml(unEscapeHtml(text));
-            if (newString) {
-                list.add(new ContentText(text));
-                lastTextIdx = list.size() - 1;
-                newString = false;
-            } else {
-                ContentText ct = (ContentText) list.get(lastTextIdx);
-                ct.append(text);
-            }
+            text = ts.toHtml(text);
+            addText(text, ts);
         }
 
         public void addAppMark(String text, String url) {
@@ -121,7 +113,7 @@ public class DetailBean {
         }
 
         public void addQuote(String text, String authorAndTime, String postId) {
-            list.add(new ContentQuote(unEscapeHtml(text), authorAndTime, postId));
+            list.add(new ContentQuote(text, authorAndTime, postId));
             newString = true;
         }
 
@@ -142,7 +134,7 @@ public class DetailBean {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < list.size(); i++) {
                 ContentAbs o = list.get(i);
-                if (o instanceof ContentText)
+                if (o instanceof ContentText || o instanceof ContentQuote)
                     sb.append(o.getCopyText());
             }
             return sb.toString();

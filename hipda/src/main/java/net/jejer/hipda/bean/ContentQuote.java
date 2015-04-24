@@ -1,5 +1,6 @@
 package net.jejer.hipda.bean;
 
+import android.text.Html;
 import android.text.TextUtils;
 
 import net.jejer.hipda.utils.Utils;
@@ -37,12 +38,12 @@ public class ContentQuote extends ContentAbs {
 
     @Override
     public String getContent() {
-        return "『" + mQuote + "』";
+        return mQuote;
     }
 
     @Override
     public String getCopyText() {
-        return "『" + mQuote + "』";
+        return "『" + Html.fromHtml(mQuote).toString() + "』";
     }
 
     public String getAuthor() {

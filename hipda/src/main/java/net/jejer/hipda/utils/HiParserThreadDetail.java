@@ -305,7 +305,8 @@ public class HiParserThreadDetail {
                 || contentN.nodeName().equals("strike")    //text strikethrough
                 || contentN.nodeName().equals("ol")    //ordered list
                 || contentN.nodeName().equals("ul")    //unordered list
-                || contentN.nodeName().equals("hr")) {    //a thematic change in the content(h line)
+                || contentN.nodeName().equals("hr")   //a thematic change in the content(h line)
+                || contentN.nodeName().equals("blockquote")) {
             textStyles.addStyle(level, contentN.nodeName());
             //continue parse child node
             return true;
@@ -462,7 +463,12 @@ public class HiParserThreadDetail {
                     authorAndTime = postEls.first().text();
                     postEls.first().remove();
                 }
-                content.addQuote(divE.text(), authorAndTime, postId);
+
+                //remove hidden elements
+                divE.select("[style*=display][style*=none]").remove();
+
+                //only keep line break, text with styles, links
+                content.addQuote(Utils.clean(divE.html()), authorAndTime, postId);
                 return false;
             } else if (divE.hasClass("attach_popup")) {
                 // remove div.attach_popup

@@ -2,6 +2,8 @@ package net.jejer.hipda.ui.textstyle;
 
 import android.text.TextUtils;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
+
 /**
  * store text style
  * Created by GreenSkinMonster on 2015-04-22.
@@ -26,7 +28,8 @@ public class TextStyle {
     }
 
     public void setColor(String color) {
-        if (!"white".equalsIgnoreCase(color)
+        if (!HiSettingsHelper.getInstance().isEinkModeUIEnabled()
+                && !"white".equalsIgnoreCase(color)
                 && !"black".equalsIgnoreCase(color))
             this.color = color;
     }
