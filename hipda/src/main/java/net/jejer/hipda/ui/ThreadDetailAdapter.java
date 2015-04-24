@@ -32,14 +32,16 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GifTransformation;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideScaleViewTarget;
+import net.jejer.hipda.glide.ImageContainer;
+import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
+public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageContainer {
 
     private Context mCtx;
     private LayoutInflater mInflater;
@@ -48,7 +50,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
     private FragmentManager mFragmentManager;
     private ThreadDetailFragment mDetailFragment;
 
-    private List<String> loadedImages = new ArrayList<String>();
+    private Map<String, ImageReadyInfo> loadedImages = new HashMap<>();
 
     public ThreadDetailAdapter(Context context, FragmentManager fm, ThreadDetailFragment detailFragment,
                                Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
@@ -123,7 +125,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
         LinearLayout contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
         contentView.removeAllViews();
-        contentView.bringToFront();
 
         for (int i = 0; i < detail.getContents().getSize(); i++) {
             ContentAbs content = detail.getContents().get(i);
@@ -153,28 +154,33 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
             } else if (content instanceof ContentImg) {
                 final String imageUrl = content.getContent();
 
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 400);
-                params.addRule(RelativeLayout.CENTER_IN_PARENT);
                 final GlideImageView giv = new GlideImageView(mCtx);
                 giv.setFocusable(false);
                 giv.setClickable(true);
-                giv.setLayoutParams(params);
-                giv.setAdjustViewBounds(true);
-                giv.bringToFront();
+                giv.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
+//                giv.setAdjustViewBounds(true);
 
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 400);
+                params.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+                ImageReadyInfo imageReadyInfo = loadedImages.get(imageUrl);
+                if (imageReadyInfo != null && imageReadyInfo.isReady()) {
+                    params.width = imageReadyInfo.getWidth();
+                    params.height = imageReadyInfo.getHeight();
+                } else {
+                    giv.setImageResource(R.drawable.ic_action_picture);
+                }
+                giv.setLayoutParams(params);
                 contentView.addView(giv);
 
                 giv.setUrl(imageUrl);
 
-                if (HiUtils.isAutoLoadImg(mCtx) || loadedImages.contains(imageUrl)) {
-                    giv.setImageResource(R.drawable.ic_action_picture);
+                if (HiUtils.isAutoLoadImg(mCtx) || loadedImages.containsKey(imageUrl)) {
                     loadImage(imageUrl, giv, false);
                 } else {
-                    giv.setImageResource(R.drawable.ic_action_picture);
                     giv.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            loadedImages.add(imageUrl);
                             loadImage(imageUrl, giv, true);
                             giv.setOnClickListener(null);
                         }
@@ -292,27 +298,64 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         if (fragment != null && fragment.getView() != null) {
             maxViewWidth = fragment.getView().getWidth();
         }
-        if (imageUrl.toLowerCase().endsWith(".gif")) {
-            Glide.with(mCtx)
-                    .load(imageUrl)
-                    .asBitmap()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .transform(new GifTransformation(mCtx))
-                    .placeholder(delayedLoading ? R.drawable.loading : R.drawable.ic_action_picture)
-                    .error(R.drawable.tapatalk_image_broken)
-                    .into(new GlideScaleViewTarget(giv, maxViewWidth, imageUrl));
 
+        if (!isImageReady(imageUrl)) {
+            if (imageUrl.toLowerCase().endsWith(".gif")) {
+                Glide.with(mCtx)
+                        .load(imageUrl)
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .transform(new GifTransformation(mCtx))
+                        .placeholder(delayedLoading ? R.drawable.loading : R.drawable.ic_action_picture)
+                        .error(R.drawable.tapatalk_image_broken)
+                        .into(new GlideScaleViewTarget(giv, this, maxViewWidth, imageUrl));
+
+            } else {
+                Glide.with(mCtx)
+                        .load(imageUrl)
+                        .asBitmap()
+                        .cacheDecoder(new FileToStreamDecoder<Bitmap>(new ThreadImageDecoder()))
+                        .imageDecoder(new ThreadImageDecoder())
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(delayedLoading ? R.drawable.loading : R.drawable.ic_action_picture)
+                        .error(R.drawable.tapatalk_image_broken)
+                        .into(new GlideScaleViewTarget(giv, this, maxViewWidth, imageUrl));
+            }
         } else {
-            Glide.with(mCtx)
-                    .load(imageUrl)
-                    .asBitmap()
-                    .cacheDecoder(new FileToStreamDecoder<Bitmap>(new ThreadImageDecoder()))
-                    .imageDecoder(new ThreadImageDecoder())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(delayedLoading ? R.drawable.loading : R.drawable.ic_action_picture)
-                    .error(R.drawable.tapatalk_image_broken)
-                    .into(new GlideScaleViewTarget(giv, maxViewWidth, imageUrl));
+            if (imageUrl.toLowerCase().endsWith(".gif")) {
+                Glide.with(mCtx)
+                        .load(imageUrl)
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .transform(new GifTransformation(mCtx))
+                        .error(R.drawable.tapatalk_image_broken)
+                        .into(new GlideScaleViewTarget(giv, this, maxViewWidth, imageUrl));
+
+            } else {
+                Glide.with(mCtx)
+                        .load(imageUrl)
+                        .asBitmap()
+                        .cacheDecoder(new FileToStreamDecoder<Bitmap>(new ThreadImageDecoder()))
+                        .imageDecoder(new ThreadImageDecoder())
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .error(R.drawable.tapatalk_image_broken)
+                        .into(new GlideScaleViewTarget(giv, this, maxViewWidth, imageUrl));
+            }
         }
+    }
+
+    @Override
+    public void markImageReady(String url, int width, int height) {
+        ImageReadyInfo imageReadyInfo = new ImageReadyInfo();
+        imageReadyInfo.setWidth(width);
+        imageReadyInfo.setHeight(height);
+        loadedImages.put(url, imageReadyInfo);
+    }
+
+    @Override
+    public boolean isImageReady(String url) {
+        ImageReadyInfo info = loadedImages.get(url);
+        return info != null && info.isReady();
     }
 
     private static class ViewHolder {

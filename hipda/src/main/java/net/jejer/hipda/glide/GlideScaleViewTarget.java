@@ -1,7 +1,6 @@
 package net.jejer.hipda.glide;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -15,12 +14,14 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
 
     private int mMaxViewWidth;
     private String mUrl;
+    ImageContainer mImageContainer;
 
-    public GlideScaleViewTarget(ImageView view, int maxViewWidth, String url) {
+    public GlideScaleViewTarget(ImageView view, ImageContainer imageContainer, int maxViewWidth, String url) {
         super(view);
 
         mMaxViewWidth = maxViewWidth;
         mUrl = url;
+        mImageContainer = imageContainer;
     }
 
     @Override
@@ -40,12 +41,23 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
         int scaledWidth = Math.round((int) (resource.getWidth() * scaleRate));
         int scaledHeight = Math.round((int) (resource.getHeight() * scaleRate));
 
+        int displayWidth;
+        int displayHeight;
         if (scaledWidth >= maxScaleWidth || mUrl.toLowerCase().endsWith(".gif")) {
-            getView().getLayoutParams().width = maxViewWidth;
-            getView().getLayoutParams().height = Math.round(maxViewWidth * 1.0f * resource.getHeight() / resource.getWidth());
+            displayWidth = maxViewWidth;
+            displayHeight = Math.round(maxViewWidth * 1.0f * resource.getHeight() / resource.getWidth());
         } else {
-            getView().getLayoutParams().width = scaledWidth;
-            getView().getLayoutParams().height = scaledHeight;
+            displayWidth = scaledWidth;
+            displayHeight = scaledHeight;
+        }
+
+        //only set width/height at first time
+        if (!mImageContainer.isImageReady(mUrl)
+                || getView().getLayoutParams().width != displayWidth) {
+            getView().getLayoutParams().width = displayWidth;
+            getView().getLayoutParams().height = displayHeight;
+
+            mImageContainer.markImageReady(mUrl, displayWidth, displayHeight);
         }
 
         if (getView() instanceof GlideImageView) {
@@ -53,8 +65,8 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
                 ((GlideImageView) getView()).setClickToViewBigImage();
         }
 
-        if (Log.isLoggable(LOG_TAG, Log.VERBOSE))
-            Log.v(LOG_TAG, "mVW=" + maxViewWidth + " mSW=" + maxScaleWidth + ", size=" + resource.getWidth() + "x" + resource.getHeight() + "," + mUrl.substring(mUrl.lastIndexOf("/") + 1));
+//        Log.e(LOG_TAG, "mVW=" + maxViewWidth + " mSW=" + maxScaleWidth + ", size=" + resource.getWidth() + "x" + resource.getHeight() + "," + mUrl.substring(mUrl.lastIndexOf("/") + 1));
+
     }
 
     private int dpToPx(int dp) {
