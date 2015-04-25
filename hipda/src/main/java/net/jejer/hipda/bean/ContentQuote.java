@@ -12,12 +12,14 @@ public class ContentQuote extends ContentAbs {
     private String time;
     private String text;
     private String postId;
+    private String tid;
 
-    public ContentQuote(String postText, String authorAndTime, String postId) {
+    public ContentQuote(String postText, String authorAndTime, String tid, String postId) {
         this.postId = postId;
+        this.tid = tid;
         mQuote = Utils.nullToText(postText) + Utils.nullToText(authorAndTime);
         //replace chinese space and trim
-        text = Utils.nullToText(postText).replace("　", " ").replace(String.valueOf((char) 160), " ").trim();
+        text = Html.fromHtml(postText).toString().replace("　", " ").replace(String.valueOf((char) 160), " ").trim();
         if (!TextUtils.isEmpty(authorAndTime) && authorAndTime.contains("发表于")) {
             author = authorAndTime.substring(0, authorAndTime.indexOf("发表于")).trim();
             time = authorAndTime.substring(authorAndTime.indexOf("发表于") + "发表于".length()).trim();
@@ -82,8 +84,8 @@ public class ContentQuote extends ContentAbs {
         return postId;
     }
 
-    public void setPostId(String postId) {
-        this.postId = postId;
+    public String getTid() {
+        return tid;
     }
 
     public boolean isReplyQuote() {

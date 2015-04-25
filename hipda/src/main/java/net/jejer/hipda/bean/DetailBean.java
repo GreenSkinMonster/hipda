@@ -112,13 +112,13 @@ public class DetailBean {
             newString = true;
         }
 
-        public void addQuote(String text, String authorAndTime, String postId) {
-            list.add(new ContentQuote(text, authorAndTime, postId));
+        public void addQuote(String text, String authorAndTime, String tid, String postId) {
+            list.add(new ContentQuote(text, authorAndTime, tid, postId));
             newString = true;
         }
 
-        public void addGoToFloor(String text, String postId, int floor, String author) {
-            list.add(new ContentGoToFloor(text, postId, floor, author));
+        public void addGoToFloor(String text, String tid, String postId, int floor, String author) {
+            list.add(new ContentGoToFloor(text, tid, postId, floor, author));
             newString = true;
         }
 

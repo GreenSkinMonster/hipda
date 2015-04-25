@@ -313,15 +313,17 @@ public class HiParserThreadDetail {
         } else if (contentN.nodeName().equals("strong")) {
             String tmp = ((Element) contentN).text();
             String postId = "";
+            String tid = "";
             Elements floorLink = ((Element) contentN).select("a[href]");
             if (floorLink.size() > 0) {
                 postId = HttpUtils.getMiddleString(floorLink.first().attr("href"), "pid=", "&");
+                tid = HttpUtils.getMiddleString(floorLink.first().attr("href"), "ptid=", "&");
             }
             if (tmp.startsWith("回复 ") && tmp.length() < (3 + 6 + 15) && tmp.contains("#")) {
                 int floor = HttpUtils.getIntFromString(tmp.substring(0, tmp.indexOf("#")));
                 String author = tmp.substring(tmp.lastIndexOf("#") + 1).trim();
                 if (!TextUtils.isEmpty(postId) && floor > 0) {
-                    content.addGoToFloor(tmp, postId, floor, author);
+                    content.addGoToFloor(tmp, tid, postId, floor, author);
                     return false;
                 }
             }
@@ -448,12 +450,14 @@ public class HiParserThreadDetail {
                 // remove div.t_attach
                 return false;
             } else if (divE.hasClass("quote")) {
-                String postId = null;
+                String tid = "";
+                String postId = "";
                 Elements redirectES = divE.select("a");
                 for (Element element : redirectES) {
                     String href = Utils.nullToText(element.attr("href"));
                     if (href.contains("redirect.php?goto=findpost")) {
                         postId = HttpUtils.getMiddleString(href, "pid=", "&");
+                        tid = HttpUtils.getMiddleString(href, "ptid=", "&");
                         break;
                     }
                 }
@@ -468,7 +472,7 @@ public class HiParserThreadDetail {
                 divE.select("[style*=display][style*=none]").remove();
 
                 //only keep line break, text with styles, links
-                content.addQuote(Utils.clean(divE.html()), authorAndTime, postId);
+                content.addQuote(Utils.clean(divE.html()), authorAndTime, tid, postId);
                 return false;
             } else if (divE.hasClass("attach_popup")) {
                 // remove div.attach_popup
