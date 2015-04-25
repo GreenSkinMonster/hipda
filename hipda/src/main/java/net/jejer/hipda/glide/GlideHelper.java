@@ -39,6 +39,8 @@ public class GlideHelper {
     }
 
     public static void loadAvatar(Context ctx, ImageView view, String avatarUrl) {
+        if (ctx == null)
+            return;
         //use year and week number as cache key
         //avatars will be cache for one week at most
         if (WEEK_KEY == null) {

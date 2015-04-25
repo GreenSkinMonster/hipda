@@ -157,17 +157,16 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                 final GlideImageView giv = new GlideImageView(mCtx);
                 giv.setFocusable(false);
                 giv.setClickable(true);
-                giv.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
-//                giv.setAdjustViewBounds(true);
 
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 400);
-                params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                RelativeLayout.LayoutParams params;
 
                 ImageReadyInfo imageReadyInfo = loadedImages.get(imageUrl);
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-                    params.width = imageReadyInfo.getWidth();
-                    params.height = imageReadyInfo.getHeight();
+                    params = new RelativeLayout.LayoutParams(imageReadyInfo.getWidth(), imageReadyInfo.getHeight());
+                    giv.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
                 } else {
+                    params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 400);
+                    params.addRule(RelativeLayout.CENTER_IN_PARENT);
                     giv.setImageResource(R.drawable.ic_action_picture);
                 }
                 giv.setLayoutParams(params);
@@ -345,10 +344,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
     }
 
     @Override
-    public void markImageReady(String url, int width, int height) {
-        ImageReadyInfo imageReadyInfo = new ImageReadyInfo();
-        imageReadyInfo.setWidth(width);
-        imageReadyInfo.setHeight(height);
+    public void markImageReady(String url, ImageReadyInfo imageReadyInfo) {
         loadedImages.put(url, imageReadyInfo);
     }
 

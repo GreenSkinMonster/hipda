@@ -14,7 +14,7 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
 
     private int mMaxViewWidth;
     private String mUrl;
-    ImageContainer mImageContainer;
+    private ImageContainer mImageContainer;
 
     public GlideScaleViewTarget(ImageView view, ImageContainer imageContainer, int maxViewWidth, String url) {
         super(view);
@@ -27,7 +27,6 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
     @Override
     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
         super.onResourceReady(resource, glideAnimation);
-
         if (resource.getWidth() <= 0)
             return;
 
@@ -51,13 +50,14 @@ public class GlideScaleViewTarget extends BitmapImageViewTarget {
             displayHeight = scaledHeight;
         }
 
-        //only set width/height at first time
+        //only set width/height at the first time
         if (!mImageContainer.isImageReady(mUrl)
                 || getView().getLayoutParams().width != displayWidth) {
+
             getView().getLayoutParams().width = displayWidth;
             getView().getLayoutParams().height = displayHeight;
 
-            mImageContainer.markImageReady(mUrl, displayWidth, displayHeight);
+            mImageContainer.markImageReady(mUrl, new ImageReadyInfo(displayWidth, displayHeight));
         }
 
         if (getView() instanceof GlideImageView) {

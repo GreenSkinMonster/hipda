@@ -5,7 +5,7 @@ package net.jejer.hipda.glide;
  * Created by GreenSkinMonster on 2015-04-24.
  */
 public interface ImageContainer {
-    void markImageReady(String url, int width, int height);
+    void markImageReady(String url, ImageReadyInfo imageReadyInfo);
 
     boolean isImageReady(String url);
 }
