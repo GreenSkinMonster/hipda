@@ -7,5 +7,5 @@ package net.jejer.hipda.glide;
 public interface ImageContainer {
     void markImageReady(String url, ImageReadyInfo imageReadyInfo);
 
-    boolean isImageReady(String url);
+    void loadImage(String url, GlideImageView imageView);
 }

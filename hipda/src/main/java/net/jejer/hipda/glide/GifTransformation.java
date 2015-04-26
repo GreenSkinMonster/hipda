@@ -17,6 +17,8 @@ import net.jejer.hipda.R;
  */
 public class GifTransformation extends BitmapTransformation {
 
+    private static Bitmap scaledGifMark;
+
     private Context mCtx;
 
     public GifTransformation(Context context) {
@@ -24,26 +26,37 @@ public class GifTransformation extends BitmapTransformation {
         mCtx = context;
     }
 
-
     @Override
     protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
 
-        Bitmap gifMark = BitmapFactory.decodeResource(mCtx.getResources(), R.drawable.ic_play_gif);
+        int resultWidth = 360;
+        int markWidth = resultWidth / 5;
 
         Bitmap result = toTransform.copy(Bitmap.Config.RGB_565, true);
 
+        if (result.getWidth() != resultWidth) {
+            float resultScale = 1.0f * resultWidth / result.getWidth();
+            Matrix resultMatrix = new Matrix();
+            resultMatrix.postScale(resultScale, resultScale);
+
+            Bitmap tmp = Bitmap.createBitmap(result, 0, 0, result.getWidth(), result.getHeight(), resultMatrix, true);
+            result.recycle();
+            result = tmp;
+        }
+
+        if (scaledGifMark == null || scaledGifMark.isRecycled()) {
+            Bitmap gifMark = BitmapFactory.decodeResource(mCtx.getResources(), R.drawable.ic_play_gif);
+            float markScale = 1.0f * markWidth / gifMark.getWidth();
+            Matrix markMatrix = new Matrix();
+            markMatrix.postScale(markScale, markScale);
+            scaledGifMark = Bitmap.createBitmap(gifMark, 0, 0, gifMark.getWidth(), gifMark.getHeight(), markMatrix, true);
+        }
+
+        int markHeight = scaledGifMark.getHeight();
+
         Canvas canvas = new Canvas(result);
-
-        float scale = 1.0f * result.getWidth() / outWidth;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
-        Bitmap scaledGifMark = Bitmap.createBitmap(gifMark, 0, 0, gifMark.getHeight(), gifMark.getWidth(), matrix, true);
-
-        int bitmapHeight = scaledGifMark.getHeight();
-        int bitmapWidth = scaledGifMark.getWidth();
-
-        int x = (result.getWidth() - bitmapWidth) / 2;
-        int y = (result.getHeight() - bitmapHeight) / 2;
+        int x = (result.getWidth() - markWidth) / 2;
+        int y = (result.getHeight() - markHeight) / 2;
         canvas.drawBitmap(scaledGifMark, x, y, null);
         return result;
     }
