@@ -14,9 +14,8 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
-            android:contentDescription="@string/iv_avatar"
-            android:padding="4dp"
-            android:src="@drawable/google_user" />
+            android:layout_marginBottom="2dp"
+            android:padding="4dp" />
 
     </RelativeLayout>
 
@@ -28,11 +27,11 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="top"
             android:padding="2dp"
             android:text=""
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="top" />
+            android:textStyle="bold" />
 
         <RelativeLayout
             android:id="@+id/ll_replycounter"
@@ -45,13 +44,13 @@
                 android:id="@+id/tv_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
-                android:padding="1dp"
+                android:layout_alignParentLeft="true"
+                android:padding="2dp"
                 android:singleLine="true"
                 android:text=""
-                android:textSize="16sp"
-                android:textColor="?attr/color_hipda" />
+                android:textColor="?attr/color_hipda"
+                android:textSize="15sp" />
 
 
             <TextView
@@ -61,17 +60,17 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginRight="8dp"
                 android:text=""
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/iv_image_indicator"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
-                android:paddingBottom="2dp"
                 android:layout_alignParentBottom="true"
                 android:layout_toLeftOf="@+id/tv_replycounter"
                 android:contentDescription="@string/iv_thread_indicator"
+                android:paddingBottom="2dp"
                 android:src="@drawable/ic_action_image"
                 android:visibility="gone" />
 
@@ -85,7 +84,8 @@
                 android:padding="2dp"
                 android:singleLine="true"
                 android:text=""
-                android:textColor="?android:textColorSecondary" />
+                android:textColor="?android:textColorSecondary"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tv_viewcounter"
@@ -97,7 +97,8 @@
                 android:padding="2dp"
                 android:singleLine="true"
                 android:text=""
-                android:textColor="?android:textColorSecondary" />
+                android:textColor="?android:textColorSecondary"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tv_create_time"
@@ -109,7 +110,8 @@
                 android:padding="2dp"
                 android:singleLine="true"
                 android:text=""
-                android:textColor="?android:textColorSecondary" />
+                android:textColor="?android:textColorSecondary"
+                android:textSize="14sp" />
 
         </RelativeLayout>
     </RelativeLayout>

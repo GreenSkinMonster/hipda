@@ -107,6 +107,12 @@ public class HiParser {
 
                 item.setTitle(title);
                 item.setTime(time);
+
+                Elements forumES = trE.select("td.forum");
+                if (forumES.size() > 0) {
+                    item.setForum(forumES.first().text());
+                }
+
             } else {
                 list.add(item);
 
@@ -182,6 +188,11 @@ public class HiParser {
             item.setTid(tid);
             item.setTitle(title);
             item.setTime(time);
+
+            Elements forumES = trE.select("td.forum");
+            if (forumES.size() > 0) {
+                item.setForum(forumES.first().text());
+            }
 
             list.add(item);
         }
@@ -342,20 +353,22 @@ public class HiParser {
 
     public static SimpleListItemBean parseNotifyQuoteandReply(Element root) {
         SimpleListItemBean item = new SimpleListItemBean();
-        String info = "";
+
 
         Elements aES = root.select("a");
         for (Element a : aES) {
-            if (a.attr("href").startsWith("http://www.hi-pda.com/forum/viewthread.php")) {
+            String href = a.attr("href");
+            if (href.startsWith("http://www.hi-pda.com/forum/space.php")) {
+                String uid = HttpUtils.getMiddleString(a.attr("href"), "uid=", "");
+                item.setAuthor(a.text());
+                item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
+            } else if (href.startsWith("http://www.hi-pda.com/forum/viewthread.php")) {
                 // Thread Name and TID and PID
                 item.setTitle(a.text());
-                continue;
-            }
-            if (a.attr("href").startsWith("http://www.hi-pda.com/forum/redirect.php?from=notice&goto=findpost")) {
+            } else if (href.startsWith("http://www.hi-pda.com/forum/redirect.php?from=notice&goto=findpost")) {
                 // Thread Name and TID and PID
                 item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", ""));
                 item.setPid(HttpUtils.getMiddleString(a.attr("href"), "pid=", "&"));
-                break;
             }
         }
 
@@ -364,12 +377,19 @@ public class HiParser {
         if (emES.size() == 0) {
             return null;
         }
-        item.setTime(emES.first().text());
+        item.setTime(item.getAuthor() + " " + emES.first().text());
 
         // summary
+        String info = "";
         Elements summaryES = root.select(".summary");
         if (summaryES.size() > 0) {
-            info = summaryES.first().text();
+            Elements ddES = summaryES.select("dd");
+            if (ddES.size() == 2) {
+                info = "<u>您的帖子:</u>" + ddES.get(0).text();
+                info += "<br><u>" + item.getAuthor() + " 说:</u>" + ddES.get(1).text();
+            } else {
+                info = summaryES.first().text();
+            }
         }
 
         // new
@@ -512,6 +532,11 @@ public class HiParser {
                 item.setTime(item.getAuthor() + "  " + timeES.first().text());
             }
 
+            Elements forumES = tbodyE.select("tr td.forum");
+            if (forumES.size() > 0) {
+                item.setForum(forumES.first().text());
+            }
+
             list.add(item);
         }
 
@@ -587,6 +612,10 @@ public class HiParser {
 
             item.setTime(item.getAuthor() + " " + HttpUtils.getMiddleString(postInfoES.get(4).text(), ":", "&"));
 
+            Elements forumES = postInfoES.get(0).select("a");
+            if (forumES.size() > 0)
+                item.setForum(forumES.first().text());
+
             list.add(item);
         }
 
@@ -631,6 +660,16 @@ public class HiParser {
             }
             String href = subjectAES.first().attr("href");
             item.setTid(HttpUtils.getMiddleString(href, "tid=", "&"));
+
+            Elements timeES = trE.select("td.lastpost");
+            if (timeES.size() > 0) {
+                item.setTime(timeES.first().text().trim());
+            }
+
+            Elements forumES = trE.select("td.forum");
+            if (forumES.size() > 0) {
+                item.setForum(forumES.first().text().trim());
+            }
 
             list.add(item);
         }

@@ -18,10 +18,10 @@
                 android:id="@+id/floor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-                android:padding="2dp"
+                android:layout_alignParentRight="true"
                 android:layout_marginRight="2dp"
+                android:padding="2dp"
                 android:text=""
                 android:textColor="?attr/color_hipda"
                 android:textSize="20sp"
@@ -37,27 +37,25 @@
                     android:id="@+id/iv_avatar"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:contentDescription="@string/iv_avatar"
-                    android:padding="4dp"
-                    android:src="@drawable/google_user" />
+                    android:padding="4dp" />
 
                 <TextView
                     android:id="@+id/author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/iv_avatar"
                     android:layout_alignParentBottom="true"
+                    android:layout_toRightOf="@+id/iv_avatar"
                     android:padding="4dp"
                     android:text=""
-                    android:textSize="16sp"
-                    android:textColor="?attr/color_hipda" />
+                    android:textColor="?attr/color_hipda"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
                     android:padding="4dp"
                     android:text="" />
             </RelativeLayout>
@@ -74,8 +72,8 @@
                 android:id="@+id/post_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
                 android:text=""
                 android:textColor="@color/background_grey" />
         </RelativeLayout>
@@ -85,9 +83,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingBottom="4dp"
             android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="4dp" />
+            android:paddingRight="4dp" />
     </LinearLayout>
 
 </LinearLayout>

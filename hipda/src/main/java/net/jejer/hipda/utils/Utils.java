@@ -27,6 +27,10 @@ public class Utils {
         return text;
     }
 
+    public static String trim(String text) {
+        return nullToText(text).replace(String.valueOf((char) 160), " ").trim();
+    }
+
     public static String shortyTime(String time) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-d", Locale.US);
         String today = formatter.format(new Date());

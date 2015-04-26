@@ -1,7 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="?list_item_background">
+    android:background="?list_item_background"
+    android:padding="4dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -13,9 +14,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentLeft="true"
-            android:layout_margin="4dp"
-            android:contentDescription="@string/iv_item_indicator"
-            android:src="@drawable/google_user" />
+            android:padding="4dp" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -28,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:layout_margin="4dp"
+                android:padding="4dp"
                 android:text=""
                 android:textSize="16sp" />
 
@@ -40,8 +39,18 @@
                 android:layout_below="@+id/tv_title"
                 android:padding="4dp"
                 android:text=""
-                android:textSize="16sp"
-                android:textColor="@color/grey" />
+                android:textColor="@color/grey"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_forum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/tv_info"
+                android:padding="4dp"
+                android:singleLine="true"
+                android:text="" />
 
             <TextView
                 android:id="@+id/tv_time"
@@ -51,8 +60,7 @@
                 android:layout_below="@+id/tv_info"
                 android:padding="4dp"
                 android:singleLine="true"
-                android:text=""
-                android:color="@android:color/secondary_text_light" />
+                android:text="" />
         </RelativeLayout>
 
     </RelativeLayout>
