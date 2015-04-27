@@ -3,6 +3,7 @@ package net.jejer.hipda.glide;
 import android.content.Context;
 import android.widget.ImageView;
 
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.volley.VolleyUrlLoader;
@@ -11,9 +12,13 @@ import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.cache.LRUCache;
 
 import java.io.InputStream;
 import java.util.Calendar;
@@ -21,6 +26,7 @@ import java.util.Calendar;
 public class GlideHelper {
 
     private static String WEEK_KEY;
+    private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(512);
 
     public static void init(Context context) {
         if (!Glide.isSetup()) {
@@ -47,15 +53,40 @@ public class GlideHelper {
             Calendar calendar = Calendar.getInstance();
             WEEK_KEY = calendar.get(Calendar.YEAR) + "_" + calendar.get(Calendar.WEEK_OF_YEAR);
         }
-        Glide.with(ctx)
-                .load(avatarUrl)
-                .signature(new StringSignature(avatarUrl + "_" + WEEK_KEY))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .centerCrop()
-                .placeholder(R.drawable.google_user)
-                .error(R.drawable.google_user)
-                .crossFade()
-                .into(view);
+        if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
+            view.setImageDrawable(ctx.getDrawable(R.drawable.google_user));
+        } else {
+            Glide.with(ctx)
+                    .load(avatarUrl)
+                    .signature(new StringSignature(avatarUrl + "_" + WEEK_KEY))
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .centerCrop()
+                    .error(R.drawable.google_user)
+                    .crossFade()
+                    .listener(new AvatarRequestListener())
+                    .into(view);
+        }
+    }
+
+    private static class AvatarRequestListener implements RequestListener<String, GlideDrawable> {
+        @Override
+        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+            if (e != null) {
+                Throwable t = e.getCause();
+                if (t instanceof VolleyError) {
+                    int status = ((VolleyError) t).networkResponse.statusCode;
+                    if (status == 404) {
+                        NOT_FOUND_AVATARS.put(model, "");
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            return false;
+        }
     }
 
 }

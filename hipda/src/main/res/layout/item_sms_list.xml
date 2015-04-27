@@ -15,9 +15,7 @@
             android:layout_height="48dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="4dp"
-            android:contentDescription="@string/iv_avatar"
-            android:src="@drawable/google_user" />
+            android:layout_margin="4dp" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -48,12 +46,12 @@
                 android:id="@+id/tv_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
                 android:layout_alignParentBottom="true"
                 android:layout_below="@+id/tv_author"
-                android:textSize="16sp"
+                android:layout_margin="4dp"
+                android:clickable="true"
                 android:text=""
-                android:clickable="true" />
+                android:textSize="16sp" />
         </RelativeLayout>
 
     </RelativeLayout>

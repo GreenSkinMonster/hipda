@@ -14,24 +14,23 @@
         <ImageView
             android:id="@+id/userinfo_avatar"
             android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/google_user" />
+            android:layout_height="48dp" />
 
         <TextView
             android:id="@+id/userinfo_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/userinfo_avatar"
             android:padding="8dp"
             android:text=""
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_toRightOf="@+id/userinfo_avatar" />
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Button
             android:id="@+id/btn_search_threads"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="搜索帖子"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentRight="true"
+            android:text="搜索帖子" />
 
     </RelativeLayout>
 
