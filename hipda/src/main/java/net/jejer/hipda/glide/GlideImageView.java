@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -72,13 +73,31 @@ public class GlideImageView extends ImageView {
 
             final Dialog dialog = new Dialog(mCtx, android.R.style.Theme_Black_NoTitleBar);
             dialog.setContentView(layout);
-            dialog.getWindow().setWindowAnimations(android.R.anim.slide_in_left);
             dialog.show();
+
+            final RelativeLayout loadingPanel = (RelativeLayout) layout.findViewById(R.id.loadingPanel);
 
             final SubsamplingScaleImageView wvImage = (SubsamplingScaleImageView) layout.findViewById(R.id.wv_image);
             wvImage.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
             wvImage.setImage(ImageSource.uri(mImgeReadyInfo.getPath()));
+            wvImage.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
             wvImage.setMinimumDpi(100);
+
+            wvImage.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener() {
+                @Override
+                public void onImageLoaded() {
+                    loadingPanel.setVisibility(GONE);
+                    wvImage.setVisibility(VISIBLE);
+                }
+
+                @Override
+                public void onImageLoadError(Exception e) {
+                    loadingPanel.setVisibility(GONE);
+                    wvImage.setImage(ImageSource.resource(R.drawable.tapatalk_image_broken));
+                    Toast.makeText(mCtx, "图片加载失败", Toast.LENGTH_LONG).show();
+                    Log.e("GlideImageView", "loading error " + e.getMessage());
+                }
+            });
 
             ImageButton btnDownload = (ImageButton) layout.findViewById(R.id.btn_download_image);
             btnDownload.setOnClickListener(new OnClickListener() {
