@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +20,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
@@ -29,8 +29,6 @@ import java.util.Date;
  * Created by GreenSkinMonster on 2015-03-09.
  */
 public class UpdateHelper {
-
-    private String LOG_TAG = getClass().getName();
 
     private Context mCtx;
     private boolean mSilent;
@@ -114,7 +112,7 @@ public class UpdateHelper {
                                             req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
                                             dm.enqueue(req);
                                         } catch (SecurityException e) {
-                                            Log.e(LOG_TAG, e.getMessage());
+                                            Logger.e(e);
                                             Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
@@ -148,7 +146,7 @@ public class UpdateHelper {
     private class ErrorListener implements Response.ErrorListener {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e(LOG_TAG, error.toString());
+            Logger.e(error);
             if (!mSilent) {
                 pd.dismiss("检查新版本时发生错误 : " + VolleyHelper.getErrorReason(error), 3000);
             }

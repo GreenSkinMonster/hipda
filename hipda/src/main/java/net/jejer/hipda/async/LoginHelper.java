@@ -5,13 +5,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginHelper {
-    private final static String LOG_TAG = "LOGIN_TASK";
 
     private Context mCtx;
     private Handler mHandler;
@@ -113,13 +112,13 @@ public class LoginHelper {
                 errorListener);
 
         if (rspStr != null) {
-            Log.v(LOG_TAG, rspStr);
+            Logger.v(rspStr);
             // response is in XML format
             if (rspStr.contains(mCtx.getString(R.string.login_success))) {
-                Log.v(LOG_TAG, "Login success!");
+                Logger.v("Login success!");
                 return Constants.STATUS_SUCCESS;
             } else if (rspStr.contains(mCtx.getString(R.string.login_fail))) {
-                Log.e(LOG_TAG, "Login FAIL");
+                Logger.e("Login FAIL");
                 int msgIndex = rspStr.indexOf(mCtx.getString(R.string.login_fail));
                 int msgIndexEnd = rspStr.indexOf("次", msgIndex) + 1;
                 if (msgIndexEnd > msgIndex) {

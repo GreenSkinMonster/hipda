@@ -10,11 +10,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.ImageFileInfo;
+import net.jejer.hipda.utils.Logger;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -34,7 +34,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
-    private final String LOG_TAG = getClass().getSimpleName();
 
     public final static int STAGE_UPLOADING = -1;
     public final static int MAX_QUALITY = 90;
@@ -156,7 +155,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         try {
             bitmap = MediaStore.Images.Media.getBitmap(mCtx.getContentResolver(), uri);
         } catch (Exception e) {
-            Log.v(LOG_TAG, "Exception", e);
+            Logger.v("Exception", e);
             mMessage = "图片压缩出现错误 " + e.getMessage();
             return null;
         }
@@ -248,7 +247,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
                 mMessage = "上传错误代码 " + status;
                 return null;
             }
-            Log.v(LOG_TAG, "uploading image, response : " + urlConnection.getResponseCode() + ", " + urlConnection.getResponseMessage());
+            Logger.v("uploading image, response : " + urlConnection.getResponseCode() + ", " + urlConnection.getResponseMessage());
             InputStream in = urlConnection.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String inputLine = "";
@@ -257,7 +256,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
             }
 
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Error uploading image : " + e.getMessage());
+            Logger.e("Error uploading image", e);
             mMessage = "上传发生网络错误 " + e.getMessage();
             return null;
         } finally {
@@ -360,7 +359,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         newbitmap.recycle();
         newbitmap = null;
 
-        Log.v(LOG_TAG, "Image Compressed: " + quality + "%,  size: " + baos.size() + " bytes, original size: " + origionalSize + " bytes");
+        Logger.v("Image Compressed: " + quality + "%,  size: " + baos.size() + " bytes, original size: " + origionalSize + " bytes");
         return baos;
     }
 }

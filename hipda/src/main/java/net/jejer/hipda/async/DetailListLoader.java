@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -18,12 +17,12 @@ import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadDetail;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
-    private final String LOG_TAG = getClass().getSimpleName();
 
     private Context mCtx;
     private Handler mHandler;
@@ -74,9 +73,8 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
             }
             try_count++;
         } while (!fetch_done && try_count < 3);
-        //Log.v(LOG_TAG, "try_count = " + String.valueOf(try_count));
         if (!fetch_done) {
-            Log.e(LOG_TAG, "Load Detail Fail");
+            Logger.e("Load Detail Fail");
             return null;
         }
 
@@ -112,8 +110,6 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
     private class DetailListListener implements Response.Listener<String> {
         @Override
         public void onResponse(String response) {
-            //Log.v(LOG_TAG, "onResponse");
-
             mRsp = response;
             synchronized (mLocker) {
                 mLocker.notify();
@@ -124,7 +120,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
     private class ThreadDetailErrorListener implements Response.ErrorListener {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e(LOG_TAG, error.toString());
+            Logger.e(error);
 
             Message msg = Message.obtain();
             msg.what = ThreadListFragment.STAGE_ERROR;

@@ -5,7 +5,6 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -20,6 +19,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.utils.Logger;
 
 public class GlideImageView extends ImageView {
 
@@ -109,7 +109,7 @@ public class GlideImageView extends ImageView {
                     loadingPanel.setVisibility(GONE);
                     wvImage.setImage(ImageSource.resource(R.drawable.tapatalk_image_broken));
                     Toast.makeText(mCtx, "图片加载失败", Toast.LENGTH_LONG).show();
-                    Log.e("GlideImageView", "loading error " + e.getMessage());
+                    Logger.e("loading error", e);
                 }
             });
 
@@ -124,7 +124,7 @@ public class GlideImageView extends ImageView {
                         req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, mUrl.substring(mUrl.lastIndexOf("/") + 1));
                         dm.enqueue(req);
                     } catch (SecurityException e) {
-                        Log.e("GlideImageView", e.getMessage());
+                        Logger.e(e);
                         Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }

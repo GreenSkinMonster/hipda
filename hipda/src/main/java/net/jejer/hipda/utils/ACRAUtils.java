@@ -15,15 +15,26 @@ import java.io.OutputStreamWriter;
  */
 public class ACRAUtils {
 
-    public static String getLogFile(Context context) {
-        return context.getFilesDir().getPath() + "/hipda.log";
+    private static String LOG_FILE = "";
+
+    public static String getLogFile(Context ctx) {
+        return ctx.getFilesDir().getPath() + "/hipda.log";
     }
 
-    public static boolean writeContentToFile(String file, String content) {
+    public static void init(Context ctx) {
+        LOG_FILE = getLogFile(ctx);
+        ACRA.getConfig().setApplicationLogFile(LOG_FILE);
+        
+        //write a blank file to avoid ACRA file not found error
+        if (!(new File(LOG_FILE).exists()))
+            writeContentToFile("");
+    }
+
+    public static boolean writeContentToFile(String content) {
         BufferedWriter out = null;
         try {
             out = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(file), "UTF-8"));
+                    new FileOutputStream(LOG_FILE), "UTF-8"));
             out.write(content);
             out.close();
             return true;
@@ -40,19 +51,13 @@ public class ACRAUtils {
         return false;
     }
 
-    private static boolean delete(String file) {
-        File logFile = new File(file);
-        if (logFile.exists() && logFile.canWrite())
-            return logFile.delete();
-        return false;
-    }
-
-    public static void acraReport(Context context, String title, String content) {
-        String logFile = getLogFile(context);
-        writeContentToFile(logFile, content);
-        ACRA.getConfig().setApplicationLogFile(logFile);
+    public static void acraReport(String title, String content) {
+        //write content need to be reported
+        writeContentToFile(content);
         ACRA.getErrorReporter().handleException(new Exception(title));
-        delete(logFile);
+
+        //clear file content
+        writeContentToFile("");
         ACRA.getConfig().setApplicationLogFile("");
     }
 

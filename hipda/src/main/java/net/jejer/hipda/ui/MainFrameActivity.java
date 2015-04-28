@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -31,11 +30,12 @@ import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.utils.ACRAUtils;
+import net.jejer.hipda.utils.Logger;
 
 import java.util.Set;
 
 public class MainFrameActivity extends Activity {
-    private final String LOG_TAG = getClass().getSimpleName();
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -46,7 +46,10 @@ public class MainFrameActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreate");
+        Logger.v("onCreate");
+
+        ACRAUtils.init(this);
+
         // Init Settings
         HiSettingsHelper.getInstance().init(this);
         if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
@@ -86,7 +89,6 @@ public class MainFrameActivity extends Activity {
         // Prepare gesture detector
         mSwipeListener = new OnSwipeTouchListener(this) {
             public void onSwipeRight() {
-                //Log.v(LOG_TAG, "onSwipeRight");
                 if (HiSettingsHelper.getInstance().isGestureBack()
                         && !HiSettingsHelper.getInstance().getIsLandscape()
                         && !(getFragmentManager().findFragmentByTag(PostFragment.class.getName()) instanceof PostFragment)) {
@@ -155,7 +157,7 @@ public class MainFrameActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.v(LOG_TAG, "onOptionsItemSelected");
+        Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -257,18 +259,18 @@ public class MainFrameActivity extends Activity {
     }
 
     public boolean popFragment(boolean backPressed) {
-        Log.v(LOG_TAG, "popFragment");
+        Logger.v("popFragment");
         FragmentManager fm = getFragmentManager();
         int count = fm.getBackStackEntryCount();
-        Log.v(LOG_TAG, "before pop, count=" + count);
+        Logger.v("before pop, count=" + count);
         if (count > 0) {
             fm.popBackStackImmediate();
             count = fm.getBackStackEntryCount();
-            Log.v(LOG_TAG, "after pop, count=" + count);
+            Logger.v("after pop, count=" + count);
             if (count > 0) {
                 FragmentManager.BackStackEntry backEntry = getFragmentManager().getBackStackEntryAt(count - 1);
                 String str = backEntry.getName();
-                Log.v(LOG_TAG, "after pop, name=" + str);
+                Logger.v("after pop, name=" + str);
                 Fragment fragment = getFragmentManager().findFragmentByTag(str);
 
                 if (fragment != null) {
@@ -402,15 +404,13 @@ public class MainFrameActivity extends Activity {
 
         @Override
         public void onBackStackChanged() {
-            //Log.v(LOG_TAG, "onBackStackChanged");
-
             // reset back key press counter
             mQuit = 0;
 
             // Make sure drawer only showed in top fragment
             // Make sure swipe only worked in second fragment
             FragmentManager fm = getFragmentManager();
-            Log.v(LOG_TAG, "getBackStackEntryCount = " + String.valueOf(fm.getBackStackEntryCount()));
+            Logger.v("getBackStackEntryCount = " + String.valueOf(fm.getBackStackEntryCount()));
             if (!HiSettingsHelper.getInstance().getIsLandscape()) {
                 if (fm.getBackStackEntryCount() > 0) {
                     mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -426,9 +426,7 @@ public class MainFrameActivity extends Activity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        //Log.v(LOG_TAG, "dispatchTouchEvent");
         if (mEnableSwipe) {
-            //Log.v(LOG_TAG, "do dispatchTouchEvent");
             mSwipeListener.onTouch(null, ev);
         }
         return super.dispatchTouchEvent(ev);

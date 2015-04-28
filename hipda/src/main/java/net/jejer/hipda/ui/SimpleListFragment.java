@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,12 +31,12 @@ import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    private final String LOG_TAG = getClass().getSimpleName();
     public static final String ARG_TYPE = "type";
 
     private int mType;
@@ -62,7 +61,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.v(LOG_TAG, "onCreate");
+        Logger.v("onCreate");
         setHasOptionsMenu(true);
 
         if (getArguments().containsKey(ARG_TYPE)) {
@@ -75,7 +74,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreateView");
+        Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
         mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
         mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
@@ -92,7 +91,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.v(LOG_TAG, "onActivityCreated");
+        Logger.v("onActivityCreated");
 
         // destroyLoader called here to avoid onLoadFinished called when onResume
         getLoaderManager().destroyLoader(0);
@@ -116,7 +115,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.v(LOG_TAG, "onCreateOptionsMenu");
+        Logger.v("onCreateOptionsMenu");
 
         menu.clear();
 
@@ -209,7 +208,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.v(LOG_TAG, "onOptionsItemSelected");
+        Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Implemented in activity
@@ -389,7 +388,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
 
         @Override
         public void onLoaderReset(Loader<SimpleListBean> arg0) {
-            Log.v(LOG_TAG, "onLoaderReset");
+            Logger.v("onLoaderReset");
 
             mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setEnabled(true);

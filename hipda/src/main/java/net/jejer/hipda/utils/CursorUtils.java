@@ -9,7 +9,6 @@ import android.os.Build;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * http://hmkcode.com/android-display-selected-image-and-its-real-path/
@@ -57,7 +56,7 @@ public class CursorUtils {
                     orientation = 270;
             }
         } catch (Exception e) {
-            Log.e("ImageFileInfo", e.getMessage());
+            Logger.e(e);
         }
         return orientation;
     }
@@ -85,7 +84,7 @@ public class CursorUtils {
                     result.setOrientation(cursor.getInt(orientationIndex));
             }
         } catch (Exception e) {
-            Log.e("ImageFileInfo API19", e.getMessage());
+            Logger.e(e);
             return null;
         } finally {
             if (cursor != null)
@@ -113,7 +112,7 @@ public class CursorUtils {
                     result.setOrientation(cursor.getInt(orientationIndex));
             }
         } catch (Exception e) {
-            Log.e("ImageFileInfo API11to18", e.getMessage());
+            Logger.e(e);
             return null;
         } finally {
             if (cursor != null)

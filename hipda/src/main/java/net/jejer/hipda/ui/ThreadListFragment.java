@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,6 +45,7 @@ import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +71,6 @@ public class ThreadListFragment extends Fragment
     public final static int TITLE_BOLD_OFF = 1;
     public final static int TITLE_BOLD_ONLY_NEW = 2;
 
-    private final String LOG_TAG = getClass().getSimpleName();
     private Context mCtx;
     private int mForumId = 0;
     private int mPage = 1;
@@ -94,7 +93,7 @@ public class ThreadListFragment extends Fragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreate");
+        Logger.v("onCreate");
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
@@ -114,7 +113,7 @@ public class ThreadListFragment extends Fragment
         mOnNavigationListener = new OnNavigationListener() {
             @Override
             public boolean onNavigationItemSelected(int position, long itemId) {
-                Log.v(LOG_TAG, "onNavigationItemSelected = " + String.valueOf(position));
+                Logger.v("onNavigationItemSelected = " + String.valueOf(position));
                 int forumId = HiUtils.getForumID((int) itemId);
                 if (mForumId != forumId) {
                     mForumId = forumId;
@@ -133,7 +132,7 @@ public class ThreadListFragment extends Fragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreateView");
+        Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
         mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
         mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
@@ -223,7 +222,7 @@ public class ThreadListFragment extends Fragment
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onActivityCreated");
+        Logger.v("onActivityCreated");
         super.onActivityCreated(savedInstanceState);
 
         // destroyLoader called here to avoid onLoadFinished called when onResume
@@ -246,7 +245,7 @@ public class ThreadListFragment extends Fragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.v(LOG_TAG, "onCreateOptionsMenu");
+        Logger.v("onCreateOptionsMenu");
 
         menu.clear();
         inflater.inflate(R.menu.menu_thread_list, menu);
@@ -272,7 +271,7 @@ public class ThreadListFragment extends Fragment
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.v(LOG_TAG, "onOptionsItemSelected");
+        Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Implemented in activity
@@ -316,25 +315,25 @@ public class ThreadListFragment extends Fragment
     @Override
     public void onPause() {
         super.onPause();
-        //Log.v(LOG_TAG, "onPause");
+        //Logger.v( "onPause");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //Log.v(LOG_TAG, "onResume");
+        //Logger.v( "onResume");
     }
 
     @Override
     public void onDestroy() {
-        Log.v(LOG_TAG, "onDestory");
+        Logger.v("onDestory");
         getLoaderManager().destroyLoader(0);
         super.onDestroy();
     }
 
     @Override
     public void onDestroyView() {
-        Log.v(LOG_TAG, "onDestroyView");
+        Logger.v("onDestroyView");
         super.onDestroyView();
     }
 
@@ -342,7 +341,7 @@ public class ThreadListFragment extends Fragment
         mPage = 1;
         mThreadListView.setSelection(0);
         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-        Log.v(LOG_TAG, "restartLoader() called");
+        Logger.v("restartLoader() called");
     }
 
     @Override
@@ -507,7 +506,7 @@ public class ThreadListFragment extends Fragment
         @Override
         public void onLoadFinished(Loader<ThreadListBean> loader,
                                    ThreadListBean threads) {
-            Log.v(LOG_TAG, "onLoadFinished enter");
+            Logger.v("onLoadFinished enter");
 
             mInloading = false;
             swipeLayout.setEnabled(true);
@@ -570,7 +569,7 @@ public class ThreadListFragment extends Fragment
                 }
                 mThreadListAdapter.setBeans(mThreadBeans);
             }
-            Log.v(LOG_TAG, "New Threads Added: " + count + ", Total = " + mThreadListAdapter.getCount());
+            Logger.v("New Threads Added: " + count + ", Total = " + mThreadListAdapter.getCount());
 
             showNotification();
 
@@ -587,7 +586,7 @@ public class ThreadListFragment extends Fragment
 
         @Override
         public void onLoaderReset(Loader<ThreadListBean> arg0) {
-            Log.v(LOG_TAG, "onLoaderReset enter");
+            Logger.v("onLoaderReset enter");
 
             mInloading = false;
             mTipBar.setVisibility(View.INVISIBLE);
@@ -704,7 +703,7 @@ public class ThreadListFragment extends Fragment
                 case STAGE_ERROR:
                     mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.red));
                     mTipBar.setText(b.getString(STAGE_ERROR_KEY));
-                    Log.e(LOG_TAG, b.getString(STAGE_ERROR_KEY));
+                    Logger.e(b.getString(STAGE_ERROR_KEY));
                     mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case STAGE_CLEAN:

@@ -1,7 +1,5 @@
 package net.jejer.hipda.utils;
 
-import android.util.Log;
-
 public class HttpUtils {
 
     public static String getMiddleString(String source, String start, String end) {
@@ -17,7 +15,7 @@ public class HttpUtils {
         }
 
         if (start_idx <= 0 || end_idx <= 0 || end_idx <= start_idx) {
-            Log.e(HttpUtils.class.getName(), "getValue fail");
+            Logger.e("getValue fail");
             return null;
         }
 

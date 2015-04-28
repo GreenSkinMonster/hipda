@@ -1,7 +1,6 @@
 package net.jejer.hipda.async;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -17,6 +16,7 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 
 import net.jejer.hipda.cookie.PersistentCookieStore;
+import net.jejer.hipda.utils.Logger;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -31,7 +31,6 @@ import java.util.concurrent.TimeoutException;
 public class VolleyHelper {
 
     public final static int REQUEST_TIMEOUT = 15;
-    private static String LOG_TAG = VolleyHelper.class.getSimpleName();
 
     private Context mCtx;
     private RequestQueue mRequestQueue;
@@ -118,11 +117,11 @@ public class VolleyHelper {
         try {
             return future.get(REQUEST_TIMEOUT, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
-            Log.e(LOG_TAG, "Error when synchronousGet : " + url, e);
+            Logger.e("Error when synchronousGet : " + url, e);
             if (errorListener != null)
                 errorListener.onErrorResponse(new VolleyError(e));
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Error when synchronousGet : " + url, e);
+            Logger.e("Error when synchronousGet : " + url, e);
             if (errorListener != null)
                 errorListener.onErrorResponse(new VolleyError(e));
         }
@@ -136,11 +135,11 @@ public class VolleyHelper {
         try {
             return future.get(REQUEST_TIMEOUT, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
-            Log.e(LOG_TAG, "Error when synchronousPost : " + url, e);
+            Logger.e("Error when synchronousPost : " + url, e);
             if (errorListener != null)
                 errorListener.onErrorResponse(new VolleyError(e));
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Error when synchronousPost : " + url, e);
+            Logger.e("Error when synchronousPost : " + url, e);
             if (errorListener != null)
                 errorListener.onErrorResponse(new VolleyError(e));
         }

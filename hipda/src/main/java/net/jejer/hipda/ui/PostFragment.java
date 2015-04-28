@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,6 +44,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
@@ -56,7 +56,6 @@ import java.util.Map;
 public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadImgListener {
     private static final int SELECT_PICTURE = 1;
 
-    private final String LOG_TAG = getClass().getSimpleName();
     public static final String ARG_FID_KEY = "fid";
     public static final String ARG_TID_KEY = "tid";
     public static final String ARG_PID_KEY = "pid";
@@ -92,7 +91,7 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreate");
+        Logger.v("onCreate");
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
@@ -124,7 +123,7 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreateView");
+        Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
         mEtReplyMsg = (EditText) view.findViewById(R.id.et_reply);
@@ -240,20 +239,20 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onActivityCreated");
+        Logger.v("onActivityCreated");
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.v(LOG_TAG, "onDestroy");
+        Logger.v("onDestroy");
         mPrePostAsyncTask.cancel(true);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.v(LOG_TAG, "onCreateOptionsMenu");
+        Logger.v("onCreateOptionsMenu");
 
         menu.clear();
         inflater.inflate(R.menu.menu_reply, menu);
@@ -296,7 +295,7 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.v(LOG_TAG, "onOptionsItemSelected");
+        Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Implemented in activity
@@ -376,7 +375,7 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(LOG_TAG, "onActivityResult");
+        Logger.v("onActivityResult");
         //avoid double click select button
         if (mImageUploading) {
             return;

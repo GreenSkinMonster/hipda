@@ -17,7 +17,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -52,6 +51,7 @@ import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.cache.ThreadDetailCache;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +66,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
     public static final int LAST_FLOOR = Integer.MIN_VALUE;
     public static final int LAST_PAGE = Integer.MIN_VALUE;
-
-    private final String LOG_TAG = getClass().getSimpleName();
 
     private Context mCtx;
     private String mTid;
@@ -100,7 +98,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreate");
+        Logger.v("onCreate");
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
@@ -133,7 +131,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreateView");
+        Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_thread_detail, container, false);
 
         mDetailListView = (XListView) view.findViewById(R.id.lv_thread_details);
@@ -297,7 +295,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onActivityCreated");
+        Logger.v("onActivityCreated");
         super.onActivityCreated(savedInstanceState);
 
         mDetailListView.setAdapter(mDetailAdapter);
@@ -311,7 +309,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.v(LOG_TAG, "onCreateOptionsMenu");
+        Logger.v("onCreateOptionsMenu");
 
         menu.clear();
         inflater.inflate(R.menu.menu_thread_detail, menu);
@@ -325,7 +323,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.v(LOG_TAG, "onOptionsItemSelected");
+        Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Implemented in activity
@@ -395,7 +393,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     }
 
     private void refresh() {
-        //Log.v(LOG_TAG, "refresh() called");
+        //Logger.v( "refresh() called");
         Bundle b = new Bundle();
         b.putInt(LOADER_PAGE_KEY, mCurrentPage);
         getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
@@ -495,25 +493,25 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
     @Override
     public void onResume() {
-        //Log.v(LOG_TAG, "onResume");
+        //Logger.v( "onResume");
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        //Log.v(LOG_TAG, "onPause");
+        //Logger.v( "onPause");
         super.onPause();
     }
 
     @Override
     public void onStop() {
-        //Log.v(LOG_TAG, "onStop");
+        //Logger.v( "onStop");
         super.onStop();
     }
 
     @Override
     public void onDestroy() {
-        //Log.v(LOG_TAG, "onDestory");
+        //Logger.v( "onDestory");
         getLoaderManager().destroyLoader(0);
         ((MainFrameActivity) getActivity()).registOnSwipeCallback(null);
         super.onDestroy();
@@ -523,7 +521,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
         @Override
         public Loader<DetailListBean> onCreateLoader(int id, Bundle args) {
-            Log.v(LOG_TAG, "onCreateLoader");
+            Logger.v("onCreateLoader");
 
             if (mInloading) {
                 return null;
@@ -540,7 +538,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         @Override
         public void onLoadFinished(Loader<DetailListBean> loader,
                                    DetailListBean details) {
-            Log.v(LOG_TAG, "onLoadFinished");
+            Logger.v("onLoadFinished");
 
             mInloading = false;
             mPrefetching = false;
@@ -615,7 +613,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
         @Override
         public void onLoaderReset(Loader<DetailListBean> arg0) {
-            //Log.v(LOG_TAG, "onLoaderReset");
+            //Logger.v( "onLoaderReset");
 
             mInloading = false;
             mPrefetching = false;
@@ -631,7 +629,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             if (page < 1 || page > mMaxPage)
                 return;
             mPrefetching = true;
-            Log.v(LOG_TAG, "prefetch page " + page);
+            Logger.v("prefetch page " + page);
             Bundle b = new Bundle();
             b.putInt(LOADER_PAGE_KEY, page);
             getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
@@ -657,12 +655,12 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     }
 
     public void onSwipeTop() {
-        //Log.v(LOG_TAG, "onSwipeTop");
+        //Logger.v( "onSwipeTop");
 //        quickReply.setVisibility(View.INVISIBLE);
     }
 
     public void onSwipeBottom() {
-        //Log.v(LOG_TAG, "onSwipeBottom");
+        //Logger.v( "onSwipeBottom");
 //        quickReply.bringToFront();
 //        quickReply.setVisibility(View.VISIBLE);
     }
@@ -869,7 +867,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                     mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.red));
                     Bundle b = msg.getData();
                     mTipBar.setText(b.getString(ThreadListFragment.STAGE_ERROR_KEY));
-                    Log.e(LOG_TAG, b.getString(ThreadListFragment.STAGE_ERROR_KEY));
+                    Logger.e(b.getString(ThreadListFragment.STAGE_ERROR_KEY));
                     mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case ThreadListFragment.STAGE_CLEAN:

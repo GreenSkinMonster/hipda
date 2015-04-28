@@ -3,7 +3,6 @@ package net.jejer.hipda.utils;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
@@ -21,7 +20,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class HiParserThreadList {
-    public static final String LOG_TAG = "HiParserThreadList";
 
     public static ThreadListBean parse(Context ctx, Handler handler, Document doc) {
         // Update UI
@@ -187,11 +185,11 @@ public class HiParserThreadList {
                 if (s.contains("私人消息")) {
                     cnt = HttpUtils.getIntFromString(s);
                     NotifyHelper.getInstance().setCntSMS(cnt);
-                    Log.v("NEW SMS:", String.valueOf(cnt));
+                    Logger.v("NEW SMS:" + String.valueOf(cnt));
                 } else if (s.contains("帖子消息")) {
                     cnt = HttpUtils.getIntFromString(s);
                     NotifyHelper.getInstance().setCntThread(cnt);
-                    Log.v("THREAD NOTIFY:", String.valueOf(cnt));
+                    Logger.v("THREAD NOTIFY:" + String.valueOf(cnt));
                 }
             }
 

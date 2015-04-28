@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -17,12 +16,12 @@ import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadList;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
-    private final String LOG_TAG = getClass().getSimpleName();
     private Context mCtx;
     private int mForumId = 0;
     private int mPage = 1;
@@ -41,7 +40,6 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
 
     @Override
     public ThreadListBean loadInBackground() {
-        //Log.v(LOG_TAG, "loadInBackground Enter");
         if (mForumId == 0) {
             return null;
         }
@@ -106,7 +104,7 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
     private class ThreadListErrorListener implements Response.ErrorListener {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e(LOG_TAG, error.toString());
+            Logger.e(error);
 
             Message msg = Message.obtain();
             msg.what = ThreadListFragment.STAGE_ERROR;

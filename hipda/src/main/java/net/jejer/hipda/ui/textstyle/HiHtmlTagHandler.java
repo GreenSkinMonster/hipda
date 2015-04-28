@@ -5,7 +5,8 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StrikethroughSpan;
-import android.util.Log;
+
+import net.jejer.hipda.utils.Logger;
 
 import org.xml.sax.XMLReader;
 
@@ -99,7 +100,7 @@ public class HiHtmlTagHandler implements Html.TagHandler {
             for (int i = 0; i < len; i++)
                 attributes.put(data[i * 5 + 1], data[i * 5 + 4]);
         } catch (Exception e) {
-            Log.d("HiHtmlTagHandler", "Exception: " + e);
+            Logger.d("Exception", e);
         }
     }
 }

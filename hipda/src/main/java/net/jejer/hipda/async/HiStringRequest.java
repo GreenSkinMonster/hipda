@@ -2,7 +2,6 @@ package net.jejer.hipda.async;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -14,6 +13,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
@@ -44,7 +44,7 @@ public class HiStringRequest extends StringRequest {
 
         if (headers == null
                 || headers.equals(Collections.emptyMap())) {
-            headers = new HashMap<String, String>();
+            headers = new HashMap<>();
         }
 
         headers.put("User-agent", HiUtils.UserAgent);
@@ -79,7 +79,7 @@ public class HiStringRequest extends StringRequest {
         try {
             parsed = new String(response.data, encoding);
         } catch (UnsupportedEncodingException e) {
-            Log.e("HiStringRequest", "encoding error", e);
+            Logger.e("encoding error", e);
             parsed = "";
         }
         return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));

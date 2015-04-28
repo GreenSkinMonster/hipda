@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Loader;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,12 +41,12 @@ import net.jejer.hipda.bean.UserInfoBean;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserinfoFragment extends Fragment {
-    private final String LOG_TAG = getClass().getSimpleName();
 
     public static final String ARG_USERNAME = "USERNAME";
     public static final String ARG_UID = "UID";
@@ -79,7 +78,7 @@ public class UserinfoFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.v(LOG_TAG, "onCreate");
+        Logger.v("onCreate");
         setHasOptionsMenu(true);
 
         if (getArguments().containsKey(ARG_USERNAME)) {
@@ -152,7 +151,7 @@ public class UserinfoFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(LOG_TAG, error.toString());
+                        Logger.e(error);
                         mDetailView.setText("获取信息失败, 请重试." + VolleyHelper.getErrorReason(error));
                     }
                 });
@@ -165,7 +164,7 @@ public class UserinfoFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.v(LOG_TAG, "onCreateOptionsMenu");
+        Logger.v("onCreateOptionsMenu");
 
         menu.clear();
         inflater.inflate(R.menu.menu_userinfo, menu);
@@ -297,7 +296,7 @@ public class UserinfoFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<SimpleListBean> loader,
                                    SimpleListBean list) {
-            Log.v(LOG_TAG, "onLoadFinished enter");
+            Logger.v("onLoadFinished enter");
 
             mInloading = false;
 
@@ -305,7 +304,7 @@ public class UserinfoFragment extends Fragment {
                 mButton.setEnabled(true);
 
             if (list == null || list.getCount() == 0) {
-                Log.v(LOG_TAG, "onLoadFinished list == null || list.getCount == 0");
+                Logger.v("onLoadFinished list == null || list.getCount == 0");
                 Toast.makeText(getActivity(), "帖子加载失败", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -320,7 +319,7 @@ public class UserinfoFragment extends Fragment {
         @Override
         public void onLoaderReset(Loader<SimpleListBean> arg0) {
             mInloading = false;
-            Log.v(LOG_TAG, "onLoaderReset");
+            Logger.v("onLoaderReset");
         }
 
     }

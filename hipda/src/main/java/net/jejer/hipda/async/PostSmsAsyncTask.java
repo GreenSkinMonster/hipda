@@ -19,8 +19,6 @@ import java.util.Map;
 
 public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 
-    private String LOG_TAG = getClass().getSimpleName();
-
     private Context mCtx;
     private String mUid;
 

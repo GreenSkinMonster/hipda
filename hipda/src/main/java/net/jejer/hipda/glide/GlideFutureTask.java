@@ -3,11 +3,12 @@ package net.jejer.hipda.glide;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
+
+import net.jejer.hipda.utils.Logger;
 
 import java.io.File;
 
@@ -74,7 +75,7 @@ public class GlideFutureTask extends AsyncTask<Void, Void, ImageReadyInfo> {
 
             return new ImageReadyInfo(cacheFile.getPath(), displayWidth, displayHeight, mime);
         } catch (Exception e) {
-            Log.e("GlideFutureTask", e.getMessage());
+            Logger.e(e);
         }
         return null;
     }

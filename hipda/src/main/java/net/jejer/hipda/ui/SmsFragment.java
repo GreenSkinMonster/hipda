@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,12 +28,12 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListener {
-    private final String LOG_TAG = getClass().getSimpleName();
 
     public static final String ARG_ID = "ID";
     public static final String ARG_UID = "UID";
@@ -52,7 +51,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.v(LOG_TAG, "onCreate");
+        Logger.v("onCreate");
         setHasOptionsMenu(true);
 
         if (getArguments().containsKey(ARG_ID)) {
@@ -69,7 +68,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreateView");
+        Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_sms, container, false);
         mListView = (ListView) view.findViewById(R.id.lv_sms);
         mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -116,7 +115,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.v(LOG_TAG, "onActivityCreated");
+        Logger.v("onActivityCreated");
 
         // destroyLoader called here to avoid onLoadFinished called when onResume
         getLoaderManager().destroyLoader(0);
@@ -126,7 +125,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.v(LOG_TAG, "onCreateOptionsMenu");
+        Logger.v("onCreateOptionsMenu");
 
         menu.clear();
         //inflater.inflate(R.menu.menu_simple_thread_list, menu);
@@ -177,7 +176,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
         public void onLoadFinished(Loader<SimpleListBean> loader,
                                    SimpleListBean list) {
 
-            Log.v(LOG_TAG, "onLoadFinished enter");
+            Logger.v("onLoadFinished enter");
 
             if (list == null || list.getCount() == 0) {
                 Toast.makeText(SmsFragment.this.getActivity(),
@@ -193,7 +192,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
 
         @Override
         public void onLoaderReset(Loader<SimpleListBean> arg0) {
-            Log.v(LOG_TAG, "onLoaderReset");
+            Logger.v("onLoaderReset");
         }
     }
 

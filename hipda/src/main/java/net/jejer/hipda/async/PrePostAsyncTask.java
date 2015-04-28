@@ -17,7 +17,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean> {
-    private final String LOG_TAG = getClass().getSimpleName();
 
     private PrePostListener mListener;
     private Context mCtx;

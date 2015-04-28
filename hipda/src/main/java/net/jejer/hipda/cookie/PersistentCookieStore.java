@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * http://codereview.stackexchange.com/questions/61494/persistent-cookie-support-using-volley-and-httpurlconnection
  */
 public class PersistentCookieStore implements CookieStore {
-    private static final String LOG_TAG = "PersistentCookieStore";
     private static final String COOKIE_PREFS = "CookiePrefsFile";
     private static final String COOKIE_NAME_PREFIX = "cookie_";
 

@@ -14,7 +14,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.text.Html;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,12 +22,12 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class SettingsFragment extends PreferenceFragment {
-    private final String LOG_TAG = getClass().getSimpleName();
 
     private boolean mEinkUi;
     private int mScreenOrietation;
@@ -131,7 +130,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Override
     public void onStop() {
-        Log.v(LOG_TAG, "onStop, reload settings");
+        Logger.v("onStop, reload settings");
         super.onStop();
         HiSettingsHelper.getInstance().reload();
 
@@ -149,7 +148,6 @@ public class SettingsFragment extends PreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
 
-            Log.v("onPreferenceChange", "onPreferenceChange");
             String stringValue = value.toString();
             if (preference instanceof MultiSelectListPreference) {
                 MultiSelectListPreference listPreference = (MultiSelectListPreference) preference;

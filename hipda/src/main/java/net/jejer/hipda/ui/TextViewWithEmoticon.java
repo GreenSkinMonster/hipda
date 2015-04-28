@@ -15,7 +15,6 @@ import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -26,9 +25,9 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
+import net.jejer.hipda.utils.Logger;
 
 public class TextViewWithEmoticon extends TextView {
-    private final static String LOG_TAG = "TextViewWithEmoticon";
     private static Context mCtx;
     private static FragmentManager mFragmentManager;
 
@@ -218,7 +217,7 @@ public class TextViewWithEmoticon extends TextView {
                     downloadReq.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                     dm.enqueue(downloadReq);
                 } catch (SecurityException e) {
-                    Log.e(LOG_TAG, e.getMessage());
+                    Logger.e(e);
                     Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }

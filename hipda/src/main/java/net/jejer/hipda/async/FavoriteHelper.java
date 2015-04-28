@@ -1,7 +1,6 @@
 package net.jejer.hipda.async;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -9,6 +8,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 
 
 public class FavoriteHelper {
@@ -40,7 +40,7 @@ public class FavoriteHelper {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("FavoriteHelper", error.toString());
+                        Logger.e(error);
                         Toast.makeText(ctx, title + " 收藏添加失败, 请重试." + VolleyHelper.getErrorReason(error), Toast.LENGTH_LONG).show();
                     }
                 });
@@ -62,7 +62,7 @@ public class FavoriteHelper {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("FavoriteHelper", error.toString());
+                        Logger.e(error);
                         Toast.makeText(ctx, title + " 收藏删除失败, 请重试." + VolleyHelper.getErrorReason(error), Toast.LENGTH_LONG).show();
                     }
                 });

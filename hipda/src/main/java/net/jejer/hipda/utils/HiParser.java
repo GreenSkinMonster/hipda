@@ -15,7 +15,6 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 public class HiParser {
-    public static final String LOG_TAG = "HiParser";
 
     public static SimpleListBean parseSimpleList(Context ctx, int type, Document doc) {
 

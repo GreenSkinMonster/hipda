@@ -3,7 +3,6 @@ package net.jejer.hipda.async;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -15,6 +14,7 @@ import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,7 +32,6 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     public static final int TYPE_FAVORITES = 6;
     public static final int TYPE_SEARCH_USER_THREADS = 7;
 
-    private final String LOG_TAG = getClass().getSimpleName();
     private Context mCtx;
     private int mType;
     private int mPage = 1;
@@ -51,7 +50,6 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 
     @Override
     public SimpleListBean loadInBackground() {
-        //Log.v(LOG_TAG, "loadInBackground Enter");
 
         int count = 0;
         boolean getOk = false;
@@ -117,7 +115,7 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
                             url += "&page=" + mPage;
                     }
                 } catch (UnsupportedEncodingException e) {
-                    Log.e(LOG_TAG, "Encoding error", e);
+                    Logger.e("Encoding error", e);
                 }
                 break;
             case TYPE_SEARCH_USER_THREADS:
@@ -154,7 +152,6 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     private class ThreadListListener implements Response.Listener<String> {
         @Override
         public void onResponse(String response) {
-            //Log.v(LOG_TAG, "onResponse");
             mRsp = response;
             synchronized (mLocker) {
                 mLocker.notify();
@@ -165,7 +162,7 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     private class ThreadListErrorListener implements Response.ErrorListener {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e(LOG_TAG, error.toString());
+            Logger.e(error);
             Toast.makeText(mCtx,
                     VolleyHelper.getErrorReason(error),
                     Toast.LENGTH_LONG).show();

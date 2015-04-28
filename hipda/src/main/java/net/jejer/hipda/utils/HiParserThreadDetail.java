@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailBean.Contents;
@@ -26,7 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HiParserThreadDetail {
-    public static final String LOG_TAG = "HiParserThreadDetail";
 
     private static String URL_REGEX = "[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)";
     private static Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
@@ -514,7 +512,7 @@ public class HiParserThreadDetail {
             return false;
         } else {
             content.addNotice("[[ERROR:UNPARSED TAG:" + contentN.nodeName() + ":" + contentN.toString() + "]]");
-            Log.e(LOG_TAG, "[[ERROR:UNPARSED TAG:" + contentN.nodeName() + "]]");
+            Logger.e("[[ERROR:UNPARSED TAG:" + contentN.nodeName() + "]]");
             return false;
         }
     }

@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
-    private final String LOG_TAG = getClass().getSimpleName();
 
     public static final int MODE_REPLY_THREAD = 0;
     public static final int MODE_REPLY_POST = 1;

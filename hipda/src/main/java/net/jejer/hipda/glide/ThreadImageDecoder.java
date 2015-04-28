@@ -3,11 +3,12 @@ package net.jejer.hipda.glide;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.util.Log;
 
 import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.resource.SimpleResource;
+
+import net.jejer.hipda.utils.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -18,8 +19,6 @@ import java.io.InputStream;
  * Created by GreenSkinMonster on 2015-03-18.
  */
 public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> {
-
-    private static String LOG_TAG = ThreadImageDecoder.class.getSimpleName();
 
     @Override
     public Resource<Bitmap> decode(InputStream source, int width, int height) throws IOException {
@@ -52,7 +51,7 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
             original.recycle();
 
         } catch (Exception e) {
-            Log.e(LOG_TAG, "error when decoding image", e);
+            Logger.e("error when decoding image", e);
         }
         return result;
     }
