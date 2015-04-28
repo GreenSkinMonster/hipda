@@ -8,7 +8,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.volley.VolleyUrlLoader;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -31,12 +30,10 @@ public class GlideHelper {
     public static void init(Context context) {
         if (!Glide.isSetup()) {
             GlideBuilder gb = new GlideBuilder(context);
-            DiskCache dlw = DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 100 * 1024 * 1024);
 
-            Runtime rt = Runtime.getRuntime();
-            long maxMemory = rt.maxMemory();
+            long maxMemory = Runtime.getRuntime().maxMemory();
             gb.setMemoryCache(new LruResourceCache(Math.round(maxMemory * 0.3f)));
-            gb.setDiskCache(dlw);
+            gb.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 100 * 1024 * 1024));
 
             Glide.setup(gb);
 
@@ -54,7 +51,7 @@ public class GlideHelper {
             WEEK_KEY = calendar.get(Calendar.YEAR) + "_" + calendar.get(Calendar.WEEK_OF_YEAR);
         }
         if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
-            view.setImageDrawable(ctx.getDrawable(R.drawable.google_user));
+            view.setImageDrawable(ctx.getResources().getDrawable(R.drawable.google_user));
         } else {
             Glide.with(ctx)
                     .load(avatarUrl)
@@ -74,10 +71,10 @@ public class GlideHelper {
             if (e != null) {
                 Throwable t = e.getCause();
                 if (t instanceof VolleyError) {
-                    int status = ((VolleyError) t).networkResponse.statusCode;
-                    if (status == 404) {
+                    VolleyError volleyError = (VolleyError) t;
+                    if (volleyError.networkResponse != null
+                            && volleyError.networkResponse.statusCode == 404)
                         NOT_FOUND_AVATARS.put(model, "");
-                    }
                 }
             }
             return false;

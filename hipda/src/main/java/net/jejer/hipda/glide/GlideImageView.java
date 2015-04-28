@@ -35,6 +35,20 @@ public class GlideImageView extends ImageView {
     public GlideImageView(Context context) {
         super(context);
         mCtx = context;
+
+        addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View view) {
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View view) {
+                //clear Glide request reference
+                Glide.clear(view);
+                view.setTag(null);
+            }
+        });
+
     }
 
     public void setUrl(String url) {
