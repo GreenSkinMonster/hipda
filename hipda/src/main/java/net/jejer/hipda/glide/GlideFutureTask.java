@@ -82,12 +82,12 @@ public class GlideFutureTask extends AsyncTask<Void, Void, ImageReadyInfo> {
 
     @Override
     protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
-        if (imageReadyInfo != null) {
-            mImageContainer.markImageReady(mUrl, imageReadyInfo);
-        }
-        if (imageReadyInfo != null && mImageContainer != null)
+        if (mImageContainer != null) {
+            if (imageReadyInfo != null) {
+                mImageContainer.markImageReady(mUrl, imageReadyInfo);
+            }
             mImageContainer.loadImage(mUrl, mGlideImageView);
-
+        }
     }
 
     private int dpToPx(int dp) {
