@@ -9,33 +9,8 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/pref_title_username" />
-        <!--
-        <EditTextPreference
-            android:inputType="textPassword"
-            android:key="PERF_PASSWORD"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/pref_title_password" />
-
-        <ListPreference
-            android:defaultValue="0"
-            android:entries="@array/pref_login_question_list_titles"
-            android:entryValues="@array/pref_login_question_list_values"
-            android:key="PERF_SECQUESTION"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/pref_title_login_question" />
-
-        <EditTextPreference
-            android:inputType="text"
-            android:key="PERF_SECANSWER"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/pref_title_login_answer" />
-        -->
     </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_category_tail">
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="true"
@@ -138,11 +113,16 @@
             android:title="@string/pref_title_about" />
 
         <Preference
+            android:enabled="true"
             android:key="PERF_LAST_UPDATE_CHECK"
             android:selectable="true"
-            android:enabled="true"
-            android:title="@string/pref_title_check_update"
-            android:summary="" />
+            android:summary=""
+            android:title="@string/pref_title_check_update" />
+
+        <net.jejer.hipda.ui.CustomSwitchPreference
+            android:defaultValue="false"
+            android:key="PERF_ERROR_REPORT_MODE"
+            android:title="@string/pref_error_report_mode" />
 
     </PreferenceCategory>
 

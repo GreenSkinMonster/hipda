@@ -53,6 +53,7 @@ public class HiSettingsHelper {
     public static final String PERF_MAX_POSTS_IN_PAGE = "PERF_MAX_POSTS_IN_PAGE";
     public static final String PERF_POST_LINE_SPACING = "PERF_POST_LINE_SPACING";
     public static final String PERF_LAST_FORUM_ID = "PERF_LAST_FORUM_ID";
+    public static final String PERF_ERROR_REPORT_MODE = "PERF_ERROR_REPORT_MODE";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -92,6 +93,7 @@ public class HiSettingsHelper {
     private int mMaxPostsInPage;
     private String mHiPdaColorValue;
     private int mLastForumId = 0;
+    private boolean mErrorReportMode;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -151,6 +153,7 @@ public class HiSettingsHelper {
         getPostLineSpacingFromPref();
         getLastForumIdFromPerf();
         isShowPostTypeFromPref();
+        isErrorReportModeFromPref();
     }
 
     public boolean isLoginInfoValid() {
@@ -438,6 +441,21 @@ public class HiSettingsHelper {
         mEinkMode = einkMode;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putStringSet(PERF_EINK_MODE, einkMode).commit();
+    }
+
+    public boolean isErrorReportMode() {
+        return mErrorReportMode;
+    }
+
+    public void setErrorReportMode(boolean errorReportMode) {
+        mErrorReportMode = errorReportMode;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(PERF_ERROR_REPORT_MODE, errorReportMode).commit();
+    }
+
+    public boolean isErrorReportModeFromPref() {
+        mErrorReportMode = mSharedPref.getBoolean(PERF_ERROR_REPORT_MODE, false);
+        return mErrorReportMode;
     }
 
     public int getTitleBold() {

@@ -4,8 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
+import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
@@ -22,6 +24,8 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
     private Context mCtx;
     private int mMode;
 
+    private String mUrl;
+
     public PrePostAsyncTask(Context ctx, PrePostListener listener, int mode) {
         mCtx = ctx;
         mListener = listener;
@@ -36,32 +40,33 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
         String pid = postBean.getPid();
         String fid = postBean.getFid();
 
-        String url = HiUtils.ReplyUrl + tid;
+        mUrl = HiUtils.ReplyUrl + tid;
         switch (mMode) {
             case PostAsyncTask.MODE_REPLY_THREAD:
             case PostAsyncTask.MODE_QUICK_REPLY:
                 break;
             case PostAsyncTask.MODE_REPLY_POST:
-                url += "&reppost=" + pid;
+                mUrl += "&reppost=" + pid;
                 break;
             case PostAsyncTask.MODE_QUOTE_POST:
-                url += "&repquote=" + pid;
+                mUrl += "&repquote=" + pid;
                 break;
             case PostAsyncTask.MODE_NEW_THREAD:
-                url = HiUtils.NewThreadUrl + fid;
+                mUrl = HiUtils.NewThreadUrl + fid;
                 break;
             case PostAsyncTask.MODE_EDIT_POST:
                 //fid is not really needed, just put a value here
-                url = HiUtils.EditUrl + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
+                mUrl = HiUtils.EditUrl + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
                 break;
         }
 
         String rsp_str;
         Boolean rspOk = false;
         int retry = 0;
+        VolleyHelper.MyErrorListener errorListener;
         do {
-            VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
-            rsp_str = VolleyHelper.getInstance().synchronousGet(url, errorListener);
+            errorListener = VolleyHelper.getInstance().getErrorListener();
+            rsp_str = VolleyHelper.getInstance().synchronousGet(mUrl, errorListener);
             if (rsp_str != null) {
                 if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
                     int status = new LoginHelper(mCtx, null).login();
@@ -76,6 +81,12 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
         } while (!rspOk && retry < 3);
 
         if (!rspOk) {
+            if (HiSettingsHelper.getInstance().isErrorReportMode()) {
+                if (errorListener != null && errorListener.getError() != null)
+                    ACRAUtils.acraReport(errorListener.getError(), "url=" + mUrl + "\nresponse=" + rsp_str);
+                else
+                    ACRAUtils.acraReport("Error when pre posting", "url=" + mUrl + "\nresponse=" + rsp_str);
+            }
             return null;
         }
 

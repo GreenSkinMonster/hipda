@@ -12,8 +12,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.bean.DetailListBean;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadListFragment;
+import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadDetail;
 import net.jejer.hipda.utils.HiUtils;
@@ -32,6 +34,8 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
     private String mGotoPostId;
     private int mPage;
     private String mRsp;
+
+    private String mUrl;
 
     public DetailListLoader(Context context, Handler handler, String tid, String gotoPostId, int page) {
         super(context);
@@ -90,19 +94,18 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         msg.setData(b);
         mHandler.sendMessage(msg);
 
-        String url;
         if (!TextUtils.isEmpty(mGotoPostId)) {
             //volley will fetch content automaticly if response is a 302 redirect
             if (TextUtils.isEmpty(mTid))
-                url = HiUtils.GotoPostUrl.replace("{pid}", mGotoPostId);
+                mUrl = HiUtils.GotoPostUrl.replace("{pid}", mGotoPostId);
             else
-                url = HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", mGotoPostId);
+                mUrl = HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", mGotoPostId);
         } else if (mPage == ThreadDetailFragment.LAST_PAGE) {
-            url = HiUtils.LastPageUrl + mTid;
+            mUrl = HiUtils.LastPageUrl + mTid;
         } else {
-            url = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
+            mUrl = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
         }
-        StringRequest sReq = new HiStringRequest(mCtx, url,
+        StringRequest sReq = new HiStringRequest(mCtx, mUrl,
                 new DetailListListener(), new ThreadDetailErrorListener());
         VolleyHelper.getInstance().add(sReq);
     }
@@ -128,6 +131,9 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
             b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA," + VolleyHelper.getErrorReason(error));
             msg.setData(b);
             mHandler.sendMessage(msg);
+
+            if (HiSettingsHelper.getInstance().isErrorReportMode())
+                ACRAUtils.acraReport(error, "url=" + mUrl);
 
             synchronized (mLocker) {
                 mRsp = null;

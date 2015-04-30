@@ -3,6 +3,7 @@ package net.jejer.hipda.utils;
 import android.util.Log;
 
 import net.jejer.hipda.BuildConfig;
+import net.jejer.hipda.bean.HiSettingsHelper;
 
 /**
  * https://github.com/qii/weiciyuan/blob/0.50/src/org/qii/weiciyuan/support/debug/AppLogger.java
@@ -15,22 +16,22 @@ public class Logger {
     }
 
     public static void v(String msg) {
-        if (BuildConfig.DEBUG)
+        if (isDebug())
             Log.v(TAG, buildMessage(msg));
     }
 
     public static void v(String msg, Throwable thr) {
-        if (BuildConfig.DEBUG)
+        if (isDebug())
             Log.v(TAG, buildMessage(msg), thr);
     }
 
     public static void d(String msg) {
-        if (BuildConfig.DEBUG)
+        if (isDebug())
             Log.d(TAG, buildMessage(msg));
     }
 
     public static void d(String msg, Throwable thr) {
-        if (BuildConfig.DEBUG)
+        if (isDebug())
             Log.d(TAG, buildMessage(msg), thr);
     }
 
@@ -72,6 +73,10 @@ public class Logger {
         return caller.getFileName()
                 + "." + caller.getMethodName()
                 + "(): " + msg;
+    }
+
+    public static boolean isDebug() {
+        return BuildConfig.DEBUG || HiSettingsHelper.getInstance().isErrorReportMode();
     }
 
 }

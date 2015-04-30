@@ -24,7 +24,7 @@ public class ACRAUtils {
     public static void init(Context ctx) {
         LOG_FILE = getLogFile(ctx);
         ACRA.getConfig().setApplicationLogFile(LOG_FILE);
-        
+
         //write a blank file to avoid ACRA file not found error
         if (!(new File(LOG_FILE).exists()))
             writeContentToFile("");
@@ -58,7 +58,15 @@ public class ACRAUtils {
 
         //clear file content
         writeContentToFile("");
-        ACRA.getConfig().setApplicationLogFile("");
+    }
+
+    public static void acraReport(Exception e, String content) {
+        //write content need to be reported
+        writeContentToFile(content);
+        ACRA.getErrorReporter().handleException(e);
+
+        //clear file content
+        writeContentToFile("");
     }
 
 }

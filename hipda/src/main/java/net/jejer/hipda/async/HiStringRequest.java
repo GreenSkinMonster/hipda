@@ -48,7 +48,8 @@ public class HiStringRequest extends StringRequest {
         }
 
         headers.put("User-agent", HiUtils.UserAgent);
-        headers.put("Content-Type", "application/x-www-form-urlencoded");
+        if (getMethod() == Method.POST)
+            headers.put("Content-Type", "application/x-www-form-urlencoded");
 
         return headers;
     }

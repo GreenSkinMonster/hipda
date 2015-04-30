@@ -13,6 +13,7 @@ import com.android.volley.toolbox.StringRequest;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.ui.ThreadListFragment;
+import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadList;
 import net.jejer.hipda.utils.HiUtils;
@@ -28,6 +29,8 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
     private Object mLocker;
     private String mRsp;
     private Handler mHandler;
+
+    private String mUrl;
 
     public ThreadListLoader(Context context, Handler handler, int forumId, int page) {
         super(context);
@@ -82,11 +85,11 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
         msg.what = ThreadListFragment.STAGE_GET_WEBPAGE;
         mHandler.sendMessage(msg);
 
-        String url = HiUtils.ThreadListUrl + mForumId + "&page=" + mPage;
+        mUrl = HiUtils.ThreadListUrl + mForumId + "&page=" + mPage;
         if (HiSettingsHelper.getInstance().isSortByPostTime(mForumId)) {
-            url += "&orderby=dateline";
+            mUrl += "&orderby=dateline";
         }
-        StringRequest sReq = new HiStringRequest(mCtx, url,
+        StringRequest sReq = new HiStringRequest(mCtx, mUrl,
                 new ThreadListListener(), new ThreadListErrorListener());
         VolleyHelper.getInstance().add(sReq);
     }
@@ -112,6 +115,9 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
             b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA," + VolleyHelper.getErrorReason(error));
             msg.setData(b);
             mHandler.sendMessage(msg);
+
+            if (HiSettingsHelper.getInstance().isErrorReportMode())
+                ACRAUtils.acraReport(error, "url=" + mUrl);
 
             synchronized (mLocker) {
                 mRsp = null;
