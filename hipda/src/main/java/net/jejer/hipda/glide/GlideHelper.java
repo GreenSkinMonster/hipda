@@ -2,6 +2,7 @@ package net.jejer.hipda.glide;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.widget.ImageView;
 
 import com.android.volley.VolleyError;
@@ -43,8 +44,11 @@ public class GlideHelper {
     }
 
     public static void loadAvatar(Context ctx, ImageView view, String avatarUrl) {
-        if (ctx == null
-                || (ctx instanceof Activity && ((Activity) ctx).isDestroyed()))
+        if (ctx == null)
+            return;
+        if (Build.VERSION.SDK_INT >= 17
+                && (ctx instanceof Activity)
+                && ((Activity) ctx).isDestroyed())
             return;
         //use year and week number as cache key
         //avatars will be cache for one week at most

@@ -1,8 +1,10 @@
 package net.jejer.hipda.ui;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.TypedValue;
@@ -302,6 +304,13 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
 
     public void loadImage(String imageUrl, GlideImageView giv) {
 
+        if (mCtx == null)
+            return;
+        if (Build.VERSION.SDK_INT >= 17
+                && (mCtx instanceof Activity)
+                && ((Activity) mCtx).isDestroyed())
+            return;
+
         ImageReadyInfo imageReadyInfo = loadedImages.get(imageUrl);
 
         if (imageReadyInfo != null && imageReadyInfo.isReady()) {
@@ -313,7 +322,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
             }
 
             if (imageReadyInfo.isGif()) {
-                Glide.with(mDetailFragment)
+                Glide.with(mCtx)
                         .load(imageUrl)
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -321,7 +330,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                         .override(imageReadyInfo.getWidth(), imageReadyInfo.getHeight())
                         .into(giv);
             } else {
-                Glide.with(mDetailFragment)
+                Glide.with(mCtx)
                         .load(imageUrl)
                         .asBitmap()
                         .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder()))
