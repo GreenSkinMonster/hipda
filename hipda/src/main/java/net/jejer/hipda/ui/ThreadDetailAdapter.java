@@ -310,6 +310,8 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                 && (mCtx instanceof Activity)
                 && ((Activity) mCtx).isDestroyed())
             return;
+        if (!mDetailFragment.isAdded() || mDetailFragment.isDetached())
+            return;
 
         ImageReadyInfo imageReadyInfo = loadedImages.get(imageUrl);
 
