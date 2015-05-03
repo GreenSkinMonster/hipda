@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -130,9 +131,9 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
         menu.clear();
         //inflater.inflate(R.menu.menu_simple_thread_list, menu);
 
-        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActivity().getActionBar().setTitle("与" + mId + "的短消息");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("与" + mId + "的短消息");
 
         super.onCreateOptionsMenu(menu, inflater);
     }

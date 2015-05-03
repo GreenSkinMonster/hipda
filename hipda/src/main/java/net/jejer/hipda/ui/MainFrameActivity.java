@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -11,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -35,7 +35,7 @@ import net.jejer.hipda.utils.Logger;
 
 import java.util.Set;
 
-public class MainFrameActivity extends Activity {
+public class MainFrameActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -52,11 +52,11 @@ public class MainFrameActivity extends Activity {
 
         // Init Settings
         HiSettingsHelper.getInstance().init(this);
-        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-            setTheme(R.style.ThemeEink);
-        } else if (HiSettingsHelper.getInstance().isNightTheme()) {
-            setTheme(R.style.ThemeNight);
-        }
+//        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
+//            setTheme(R.style.ThemeEink);
+//        } else if (HiSettingsHelper.getInstance().isNightTheme()) {
+//            setTheme(R.style.ThemeNight);
+//        }
 
         GlideHelper.init(this);
 
@@ -84,7 +84,7 @@ public class MainFrameActivity extends Activity {
         DrawerAdapter adapter = new DrawerAdapter(this, R.layout.item_drawer, drwerListTitle);
         mDrawerList.setAdapter(adapter);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         // Prepare gesture detector
         mSwipeListener = new OnSwipeTouchListener(this) {
@@ -114,12 +114,11 @@ public class MainFrameActivity extends Activity {
         };
         findViewById(R.id.main_frame_container).setOnTouchListener(mSwipeListener);
 
-        if (findViewById(R.id.thread_detail_container_in_main) != null) {
-            HiSettingsHelper.getInstance().setIsLandscape(true);
-        } else {
-            HiSettingsHelper.getInstance().setIsLandscape(false);
-        }
-
+//        if (findViewById(R.id.thread_detail_container_in_main) != null) {
+//            HiSettingsHelper.getInstance().setIsLandscape(true);
+//        } else {
+//            HiSettingsHelper.getInstance().setIsLandscape(false);
+//        }
 
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());

@@ -30,8 +30,7 @@
             android:gravity="top"
             android:padding="2dp"
             android:text=""
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
 
         <RelativeLayout
             android:id="@+id/ll_replycounter"

@@ -9,6 +9,7 @@ import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -119,31 +120,31 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
 
         menu.clear();
 
-        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         switch (mType) {
             case SimpleListLoader.TYPE_MYREPLY:
-                getActivity().getActionBar().setTitle(R.string.title_drawer_myreply);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_myreply);
                 inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_MYPOST:
-                getActivity().getActionBar().setTitle(R.string.title_drawer_mypost);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_mypost);
                 inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_SMS:
-                getActivity().getActionBar().setTitle(R.string.title_drawer_sms);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_sms);
                 inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_THREADNOTIFY:
-                getActivity().getActionBar().setTitle(R.string.title_drawer_notify);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_notify);
                 inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_FAVORITES:
-                getActivity().getActionBar().setTitle(R.string.title_drawer_favorites);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_favorites);
                 inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_SEARCH:
-                getActivity().getActionBar().setTitle(R.string.title_drawer_search);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_search);
                 mPrefixSearchFullText = getActivity().getResources().getString(R.string.prefix_search_fulltext);
                 mPrefixSearchHistory = getActivity().getResources().getString(R.string.prefix_search_history);
 

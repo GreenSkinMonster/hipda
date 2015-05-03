@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -8,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -169,9 +170,9 @@ public class UserinfoFragment extends Fragment {
         menu.clear();
         inflater.inflate(R.menu.menu_userinfo, menu);
 
-        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActivity().getActionBar().setTitle(mUsername);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mUsername);
 
         super.onCreateOptionsMenu(menu, inflater);
     }

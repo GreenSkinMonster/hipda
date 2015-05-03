@@ -32,30 +32,6 @@
         android:clickable="true"
         android:paddingBottom="8dp" />
 
-    <ImageView
-        android:id="@+id/btn_detail_pageup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="22dp"
-        android:layout_marginTop="60dp"
-        android:contentDescription="@string/btn_pageup"
-        android:src="@drawable/jejer_up"
-        android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/btn_detail_pagedown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="88dp"
-        android:layout_marginRight="22dp"
-        android:contentDescription="@string/btn_pagedown"
-        android:src="@drawable/jejer_down"
-        android:visibility="gone" />
-
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/multiple_actions"
         android:layout_width="wrap_content"

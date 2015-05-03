@@ -10,12 +10,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -31,7 +31,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -184,11 +183,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             mTitleView = (TextView) view.findViewById(R.id.thread_detail_title);
             mTitleView.setTextSize(HiSettingsHelper.getTitleTextSize());
             mTitleView.setText(mTitle);
-            if (ThreadListFragment.TITLE_BOLD_ON == HiSettingsHelper.getInstance().getTitleBold()) {
-                mTitleView.setTypeface(null, Typeface.BOLD);
-            } else {
-                mTitleView.setTypeface(null, Typeface.NORMAL);
-            }
         }
         mDetailListView.setPullLoadEnable(false);
         mDetailListView.setPullRefreshEnable(false);
@@ -271,25 +265,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             }
         });
 
-        if (HiSettingsHelper.getInstance().isEinkModeFloatButtonEnabled()) {
-            ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_detail_pageup);
-            mBtnPageup.setVisibility(View.VISIBLE);
-            mBtnPageup.setOnClickListener(new ImageView.OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    listViewPageUp();
-                }
-            });
-
-            ImageView mBtnPagedown = (ImageView) view.findViewById(R.id.btn_detail_pagedown);
-            mBtnPagedown.setVisibility(View.VISIBLE);
-            mBtnPagedown.setOnClickListener(new ImageView.OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    listViewPageDown();
-                }
-            });
-        }
         return view;
     }
 
@@ -314,9 +289,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         menu.clear();
         inflater.inflate(R.menu.menu_thread_detail, menu);
 
-        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        getActivity().getActionBar().setTitle(mTitle);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mTitle);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -375,7 +350,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                 if (mAuthorOnly) {
                     mDetailListView.setPullLoadEnable(false);
                     mDetailListView.setPullRefreshEnable(false);
-                    getActivity().getActionBar().setTitle("(只看楼主)" + mTitle);
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("(只看楼主)" + mTitle);
                     showAndLoadAuthorOnly();
                 } else {
                     showOrLoadPage();
@@ -904,7 +879,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     }
 
     private void showOrLoadPage() {
-        getActivity().getActionBar().setTitle("(" + (mCurrentPage > 0 ?
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("(" + (mCurrentPage > 0 ?
                 String.valueOf(mCurrentPage) + "/" + String.valueOf(mMaxPage) + ")" : "")
                 + mTitle);
 

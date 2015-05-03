@@ -1,32 +1,23 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-
-
-
-    -->
-    <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-
-
-
-        -->
-    </style>
-
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style>
-
     <!-- Theme Day. -->
-    <style name="ThemeDay" parent="android:Theme.Holo.Light">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/light_blue_700</item>
+        <item name="colorPrimaryDark">@color/light_blue_800</item>
+        <item name="colorAccent">@color/hipda</item>
 
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:actionBarSize">48dp</item>
+        <item name="actionBarSize">48dp</item>
+
+        <!--<item name="android:actionBarStyle">@style/MyActionBar</item>-->
+        <!--<item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>-->
+        <!--<item name="android:actionMenuTextColor">@color/white</item>-->
+
+        <!-- Support library compatibility -->
+        <!--<item name="actionBarStyle">@style/MyActionBar</item>-->
+        <!--<item name="actionBarTabTextStyle">@style/MyActionBarTabText</item>-->
+        <!--<item name="actionMenuTextColor">@color/white</item>-->
+
         <item name="themeName">day</item>
         <item name="background">@color/day_background</item>
         <item name="list_item_background">@color/day_list_item_background</item>
@@ -49,11 +40,32 @@
         <item name="icon_send_sms">@drawable/tapatalk_bubble_reply_day</item>
         <item name="icon_edit">@android:drawable/ic_menu_edit</item>
         <item name="color_hipda">@color/hipda</item>
-        <item name="android:actionBarStyle">@style/DayActionBar</item>
+
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:background">@color/light_blue_700</item>
+        <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
+
+        <!-- Support library compatibility -->
+        <item name="titleTextStyle">@style/MyActionBarTitleText</item>
+    </style>
+
+    <!-- ActionBar title text -->
+    <style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item>
+        <!-- The textColor property is backward compatible with the Support Library -->
+    </style>
+
+    <!-- ActionBar tabs text -->
+    <style name="MyActionBarTabText" parent="@style/Widget.AppCompat.ActionBar.TabText">
+        <item name="android:textColor">@color/white</item>
+        <!-- The textColor property is backward compatible with the Support Library -->
     </style>
 
     <!-- Theme Night. -->
-    <style name="ThemeNight" parent="android:Theme.Holo">
+    <style name="ThemeNight" parent="Theme.AppCompat">
 
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="themeName">night</item>
@@ -82,48 +94,16 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <!-- Theme Eink -->
-    <style name="ThemeEink" parent="android:Theme.Holo.Light">
-
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="themeName">eink</item>
-        <item name="android:textColor">@android:color/black</item>
-        <item name="background">@color/eink_background</item>
-        <item name="list_item_background">@color/day_list_item_background</item>
-        <item name="detail_background">@color/day_detail_background</item>
-        <item name="img_background">@color/day_img_background</item>
-        <item name="replyBarBackground">@color/day_replybarbackground</item>
-        <item name="quote_text_background">@color/eink_quote_text_background</item>
-        <item name="list_item_divider">@color/eink_list_item_divider</item>
-        <item name="icon_refresh">@drawable/ic_action_refresh_eink</item>
-        <item name="icon_send">@drawable/ic_action_send_now_eink</item>
-        <item name="icon_reply">@drawable/tapatalk_bubble_quote_eink</item>
-        <item name="icon_quote">@drawable/tapatalk_bubble_multi_eink</item>
-        <item name="icon_website">@drawable/ic_action_web_site_eink</item>
-        <item name="icon_goto_page">@drawable/tapatalk_bubble_move_eink</item>
-        <item name="icon_settings">@drawable/ic_action_settings_eink</item>
-        <item name="icon_download">@drawable/ic_action_download_eink</item>
-        <item name="icon_copy">@drawable/ic_action_copy_eink</item>
-        <item name="icon_upload_img">@drawable/ic_action_new_picture_eink</item>
-        <item name="icon_search">@drawable/ic_action_search_eink</item>
-        <item name="icon_send_sms">@drawable/tapatalk_bubble_reply_eink</item>
-        <item name="icon_edit">@android:drawable/ic_menu_edit</item>
-        <item name="color_hipda">@color/black</item>
-        <item name="android:actionBarStyle">@style/EinkActionBar</item>
-        <item name="android:actionOverflowButtonStyle">@style/EinkActionBar</item>
+    <style name="DayActionBar" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="titleTextStyle">@style/MyTitleTextStyle</item>
     </style>
 
-    <style name="DayActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/background_silver</item>
+    <style name="MyTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="NightActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/background_silver</item>
-    </style>
-
-    <style name="EinkActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/white</item>
-        <item name="android:src">@drawable/ic_action_menu_eink</item>
     </style>
 
 </resources>

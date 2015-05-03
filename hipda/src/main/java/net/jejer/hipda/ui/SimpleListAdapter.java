@@ -1,7 +1,6 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -51,11 +50,6 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_title.setText(Utils.trim(item.getTitle()));
         if (item.isNew()) {
             holder.tv_title.setTextColor(mCtx.getResources().getColor(R.color.red));
-        }
-        if (ThreadListFragment.TITLE_BOLD_ON == HiSettingsHelper.getInstance().getTitleBold()) {
-            holder.tv_title.setTypeface(null, Typeface.BOLD);
-        } else {
-            holder.tv_title.setTypeface(null, Typeface.NORMAL);
         }
 
         if (TextUtils.isEmpty(item.getInfo())) {

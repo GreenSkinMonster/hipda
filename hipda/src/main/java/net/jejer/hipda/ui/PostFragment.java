@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -266,28 +267,28 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
             }
         }
 
-        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        getActivity().getActionBar().setTitle(R.string.action_reply);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.action_reply);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         switch (mMode) {
             case PostAsyncTask.MODE_REPLY_THREAD:
-                getActivity().getActionBar().setTitle("回复帖子");
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("回复帖子");
                 break;
             case PostAsyncTask.MODE_REPLY_POST:
-                getActivity().getActionBar().setTitle("回复 " + mFloor + "#");
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("回复 " + mFloor + "#");
                 break;
             case PostAsyncTask.MODE_QUOTE_POST:
-                getActivity().getActionBar().setTitle("引用 " + mFloor + "#");
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("引用 " + mFloor + "#");
                 break;
             case PostAsyncTask.MODE_NEW_THREAD:
-                getActivity().getActionBar().setTitle(getActivity().getResources().getString(R.string.action_new_thread));
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getActivity().getResources().getString(R.string.action_new_thread));
                 mSpForum.setVisibility(View.VISIBLE);
                 mSpTypeIds.setVisibility(View.VISIBLE);
                 mEtSubjectMsg.setVisibility(View.VISIBLE);
                 break;
             case PostAsyncTask.MODE_EDIT_POST:
-                getActivity().getActionBar().setTitle(getActivity().getResources().getString(R.string.action_edit));
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getActivity().getResources().getString(R.string.action_edit));
                 break;
         }
         super.onCreateOptionsMenu(menu, inflater);

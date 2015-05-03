@@ -2,7 +2,6 @@ package net.jejer.hipda.ui;
 
 
 import android.app.ActionBar;
-import android.app.ActionBar.OnNavigationListener;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -12,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +24,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SpinnerAdapter;
 import android.widget.Switch;
@@ -67,16 +66,12 @@ public class ThreadListFragment extends Fragment
     public final static int STAGE_REFRESH = 6;
     public final static String STAGE_ERROR_KEY = "ERROR_MSG";
 
-    public final static int TITLE_BOLD_ON = 0;
-    public final static int TITLE_BOLD_OFF = 1;
-    public final static int TITLE_BOLD_ONLY_NEW = 2;
-
     private Context mCtx;
     private int mForumId = 0;
     private int mPage = 1;
     private int mForumSelect = -1;
     private LoaderManager.LoaderCallbacks<ThreadListBean> mCallbacks;
-    private OnNavigationListener mOnNavigationListener;
+    private android.support.v7.app.ActionBar.OnNavigationListener mOnNavigationListener;
     private SpinnerAdapter mSpinnerAdapter;
     private ThreadListAdapter mThreadListAdapter;
     private List<ThreadBean> mThreadBeans = new ArrayList<>();
@@ -110,14 +105,14 @@ public class ThreadListFragment extends Fragment
 
         mMsgHandler = new Handler(new ThreadListMsgHandler());
 
-        mOnNavigationListener = new OnNavigationListener() {
+        mOnNavigationListener = new android.support.v7.app.ActionBar.OnNavigationListener() {
             @Override
             public boolean onNavigationItemSelected(int position, long itemId) {
                 Logger.v("onNavigationItemSelected = " + String.valueOf(position));
                 int forumId = HiUtils.getForumID((int) itemId);
                 if (mForumId != forumId) {
                     mForumId = forumId;
-                    mForumSelect = getActivity().getActionBar().getSelectedNavigationIndex();
+                    mForumSelect = ((AppCompatActivity) getActivity()).getSupportActionBar().getSelectedNavigationIndex();
                     mThreadBeans.clear();
                     mThreadListAdapter.setBeans(mThreadBeans);
                     HiSettingsHelper.getInstance().setLastForumId(forumId);
@@ -193,28 +188,6 @@ public class ThreadListFragment extends Fragment
             }
         });
 
-        if (HiSettingsHelper.getInstance().isEinkModeFloatButtonEnabled()) {
-            ImageView mBtnPageup = (ImageView) view.findViewById(R.id.btn_list_pageup);
-            mBtnPageup.setVisibility(View.VISIBLE);
-            mBtnPageup.setOnClickListener(new ImageView.OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    int index = mThreadListView.getFirstVisiblePosition() - mThreadListView.getChildCount() + 1;
-                    mThreadListView.setSelection(index < 0 ? 0 : index);
-                }
-            });
-
-
-            ImageView mBtnPagedown = (ImageView) view.findViewById(R.id.btn_list_pagedown);
-            mBtnPagedown.setVisibility(View.VISIBLE);
-            mBtnPagedown.setOnClickListener(new ImageView.OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    mThreadListView.setSelection(mThreadListView.getLastVisiblePosition());
-                }
-            });
-        }
-
         mThreadListView.setSelection(mFirstVisibleItem);
 
         return view;
@@ -250,11 +223,11 @@ public class ThreadListFragment extends Fragment
         menu.clear();
         inflater.inflate(R.menu.menu_thread_list, menu);
 
-        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getActivity().getActionBar().setTitle("");
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
-        getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
-        getActivity().getActionBar().setSelectedNavigationItem((mForumSelect < 0 || mForumSelect >= mSpinnerAdapter.getCount()) ? 0 : mForumSelect);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSelectedNavigationItem((mForumSelect < 0 || mForumSelect >= mSpinnerAdapter.getCount()) ? 0 : mForumSelect);
 
         if (LoginHelper.isLoggedIn()) {
             showNotification();
@@ -426,10 +399,6 @@ public class ThreadListFragment extends Fragment
             String tid = thread.getTid();
             String title = thread.getTitle();
             showThreadDetailFragment(tid, title, -1, -1);
-            if (TITLE_BOLD_ONLY_NEW == HiSettingsHelper.getInstance().getTitleBold()) {
-                thread.setNew(false);
-                mThreadListAdapter.notifyDataSetChanged();
-            }
         }
 
     }
@@ -446,10 +415,6 @@ public class ThreadListFragment extends Fragment
                 page = (int) Math.ceil((Integer.parseInt(thread.getCountCmts()) + 1) * 1.0f / maxPostsInPage);
             }
             showThreadDetailFragment(tid, title, page, ThreadDetailFragment.LAST_FLOOR);
-            if (TITLE_BOLD_ONLY_NEW == HiSettingsHelper.getInstance().getTitleBold()) {
-                thread.setNew(false);
-                mThreadListAdapter.notifyDataSetChanged();
-            }
             return true;
         }
     }

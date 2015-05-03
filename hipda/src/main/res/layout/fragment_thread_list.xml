@@ -23,65 +23,41 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <ImageView
-        android:id="@+id/btn_list_pageup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="22dp"
-        android:layout_marginTop="60dp"
-        android:contentDescription="@string/btn_pageup"
-        android:src="@drawable/jejer_up"
-        android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/btn_list_pagedown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="88dp"
-        android:layout_marginRight="22dp"
-        android:contentDescription="@string/btn_pagedown"
-        android:src="@drawable/jejer_down"
-        android:visibility="gone" />
-
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fam_actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="20dp"
+        android:visibility="invisible"
+        fab:menu_animationDelayPerItem="25"
+        fab:menu_buttonSpacing="2dp"
         fab:menu_colorNormal="@color/background_silver"
         fab:menu_colorPressed="@color/background_grey"
-        fab:menu_icon="@drawable/fab_add"
         fab:menu_fab_size="mini"
-        fab:menu_shadowColor="#00000000"
-        fab:menu_buttonSpacing="2dp"
-        fab:menu_animationDelayPerItem="25"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="invisible">
+        fab:menu_icon="@drawable/fab_add"
+        fab:menu_shadowColor="#00000000">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_new_thread"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_write"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
-            android:src="@drawable/ic_action_write"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_refresh_night"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
-            android:src="@drawable/ic_action_refresh_night"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 
@@ -90,13 +66,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_action_notify"
+        android:visibility="gone"
         fab:fab_colorNormal="@color/pink"
         fab:fab_colorPressed="@color/pink_pressed"
-        android:src="@drawable/ic_action_notify"
-        fab:fab_size="mini"
-        android:visibility="gone" />
+        fab:fab_size="mini" />
 
     <TextView
         android:id="@+id/thread_list_tipbar"

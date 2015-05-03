@@ -2,7 +2,7 @@
 <resources>
 
     <attr name="themeName" format="string" />
-    <attr name="background" format="color" />
+    <!--<attr name="background" format="color" />-->
     <attr name="list_item_background" format="color" />
     <attr name="detail_background" format="color" />
     <attr name="img_background" format="color" />
