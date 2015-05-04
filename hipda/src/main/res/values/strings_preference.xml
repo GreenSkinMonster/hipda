@@ -104,28 +104,6 @@
         <item>0</item>
     </string-array>
 
-    <string-array name="pref_title_eink_mode">
-        <item>界面优化</item>
-        <item>浮动按键</item>
-        <item>音量键翻页</item>
-    </string-array>
-    <string-array name="pref_title_eink_mode_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string-array name="pref_title_bold">
-        <item>启用</item>
-        <item>关闭</item>
-        <item>仅新帖</item>
-    </string-array>
-    <string-array name="pref_title_bold_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-
     <string-array name="empty_array" />
 
     <string name="pref_category_tail">小尾巴</string>
@@ -145,13 +123,11 @@
     <string name="pref_title_tail_url">尾巴链接</string>
     <string name="pref_title_encode_utf8">使用UTF8编码</string>
     <string name="pref_title_eink_optimization">EINK优化</string>
-    <string name="pref_title_eink_mode">EINK模式</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
     <string name="pref_title_textsize_adjust_title">标题字号调整</string>
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
     <string name="pref_post_line_spacing_title">帖子行距调整</string>
-    <string name="pref_title_bold_title">标题使用粗体</string>
     <string name="pref_screen_orientation">屏幕方向</string>
     <string name="pref_error_report_mode">汇报错误模式</string>
     <string name="pref_title_about">关于HiPDA</string>

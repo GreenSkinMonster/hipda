@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
@@ -32,8 +31,6 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.Logger;
-
-import java.util.Set;
 
 public class MainFrameActivity extends AppCompatActivity {
 
@@ -199,10 +196,6 @@ public class MainFrameActivity extends AppCompatActivity {
                                 }
                             }).create();
             dialog.show();
-            TextView titleView = (TextView) dialog.findViewById(getResources().getIdentifier("alertTitle", "id", "android"));
-            if (titleView != null) {
-                titleView.setGravity(Gravity.CENTER);
-            }
         } else {
             if (!popFragment(true)) {
                 mQuit++;
@@ -218,42 +211,11 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (HiSettingsHelper.getInstance().isEinkModeVolumeKeyEnabled()) {
-            Fragment fragment = getFragmentManager().findFragmentByTag(ThreadDetailFragment.class.getName());
-            if (fragment == null) {
-                fragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
-            }
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
-                    || keyCode == KeyEvent.KEYCODE_PAGE_DOWN) {
-                if (fragment instanceof ThreadDetailFragment) {
-                    ((ThreadDetailFragment) fragment).onVolumeDown();
-                } else if (fragment instanceof ThreadListFragment) {
-                    ((ThreadListFragment) fragment).onVolumeDown();
-                }
-                return true;
-            } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP
-                    || keyCode == KeyEvent.KEYCODE_PAGE_UP) {
-                if (fragment instanceof ThreadDetailFragment) {
-                    ((ThreadDetailFragment) fragment).onVolumeUp();
-                } else if (fragment instanceof ThreadListFragment) {
-                    ((ThreadListFragment) fragment).onVolumeUp();
-                }
-                return true;
-            }
-        }
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (HiSettingsHelper.getInstance().isEinkModeVolumeKeyEnabled()) {
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
-                    || keyCode == KeyEvent.KEYCODE_PAGE_DOWN
-                    || keyCode == KeyEvent.KEYCODE_VOLUME_UP
-                    || keyCode == KeyEvent.KEYCODE_PAGE_UP) {
-                return true;
-            }
-        }
         return super.onKeyUp(keyCode, event);
     }
 
@@ -381,10 +343,6 @@ public class MainFrameActivity extends AppCompatActivity {
                     break;
                 case 8:    // switch day/night theme
                     //cancel eink mode ui
-                    Set<String> einkMode = HiSettingsHelper.getInstance().getEinkMode();
-                    if (einkMode.contains("1"))
-                        einkMode.remove("1");
-                    HiSettingsHelper.getInstance().setEinkMode(einkMode);
                     HiSettingsHelper.getInstance().setNightTheme(!HiSettingsHelper.getInstance().isNightTheme());
                     Intent intent = getIntent();
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

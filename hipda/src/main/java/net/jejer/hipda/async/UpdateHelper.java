@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -128,12 +126,6 @@ public class UpdateHelper {
                 }).create();
 
                 dialog.show();
-
-                TextView titleView = (TextView) dialog.findViewById(mCtx.getResources().getIdentifier("alertTitle", "id", "android"));
-                if (titleView != null) {
-                    titleView.setGravity(Gravity.CENTER);
-                }
-
             } else {
                 if (!mSilent) {
                     pd.dismiss("没有发现新版本", 3000);

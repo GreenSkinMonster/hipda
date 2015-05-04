@@ -2,8 +2,6 @@ package net.jejer.hipda.utils;
 
 import android.text.TextUtils;
 
-import net.jejer.hipda.bean.HiSettingsHelper;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
@@ -49,16 +47,13 @@ public class Utils {
             mWhitelist.addTags(
                     "a",
                     "br", "p",
-                    "b", "i", "strike", "strong", "u")
+                    "b", "i", "strike", "strong", "u",
+                    "font")
 
                     .addAttributes("a", "href")
+                    .addAttributes("font", "color")
 
-                    .addProtocols("a", "href", "http", "https")
-            ;
-            if (!HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-                mWhitelist.addTags("font")
-                        .addAttributes("font", "color");
-            }
+                    .addProtocols("a", "href", "http", "https");
         }
         return Jsoup.clean(html, "", mWhitelist, new Document.OutputSettings().prettyPrint(false));
     }

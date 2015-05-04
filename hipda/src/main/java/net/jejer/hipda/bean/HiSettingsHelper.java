@@ -40,8 +40,6 @@ public class HiSettingsHelper {
     public static final String PERF_TAILURL = "PERF_TAILURL";
     public static final String PERF_NIGHTTHEME = "PERF_NIGHTTHEME";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
-    public static final String PERF_EINK_MODE = "PERF_EINK_MODE";
-    public static final String PERF_TITLE_BOLD = "PERF_TITLE_BOLD";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
     public static final String PERF_TEXTSIZE_TITLE_ADJ = "PERF_TEXTSIZE_TITLE_ADJ";
@@ -80,8 +78,6 @@ public class HiSettingsHelper {
     private boolean mNightTheme = false;
 
     private boolean mEncodeUtf8 = false;
-    private Set<String> mEinkMode = new HashSet<String>();
-    private int mTitleBold;
 
     private List<String> mBlanklistUsernames = new ArrayList<String>();
 
@@ -142,14 +138,12 @@ public class HiSettingsHelper {
         getTailUrlFromPref();
         isNightThemeFromPref();
         isEncodeUtf8FromPref();
-        getEinkModeFromPref();
         getBlanklistUsernamesFromPref();
         getPostTextsizeAdjFromPref();
         getTitleTextsizeAdjFromPref();
         getScreenOrietationFromPref();
         isGestureBackFromPref();
         isPostRedirectFromPref();
-        getTitleBoldFromPref();
         getPostLineSpacingFromPref();
         getLastForumIdFromPerf();
         isShowPostTypeFromPref();
@@ -428,21 +422,6 @@ public class HiSettingsHelper {
         }
     }
 
-    public Set<String> getEinkMode() {
-        return mEinkMode;
-    }
-
-    public Set<String> getEinkModeFromPref() {
-        mEinkMode = mSharedPref.getStringSet(PERF_EINK_MODE, new HashSet<String>());
-        return mEinkMode;
-    }
-
-    public void setEinkMode(Set<String> einkMode) {
-        mEinkMode = einkMode;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putStringSet(PERF_EINK_MODE, einkMode).commit();
-    }
-
     public boolean isErrorReportMode() {
         return mErrorReportMode;
     }
@@ -456,26 +435,6 @@ public class HiSettingsHelper {
     public boolean isErrorReportModeFromPref() {
         mErrorReportMode = mSharedPref.getBoolean(PERF_ERROR_REPORT_MODE, false);
         return mErrorReportMode;
-    }
-
-    public int getTitleBold() {
-        return mTitleBold;
-    }
-
-    public void setTitleBold(int titleBold) {
-        mTitleBold = titleBold;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_TITLE_BOLD, titleBold + "").commit();
-    }
-
-    public int getTitleBoldFromPref() {
-        String strTitleBold = mSharedPref.getString(PERF_TITLE_BOLD, "0");
-        if (TextUtils.isDigitsOnly(strTitleBold)) {
-            mTitleBold = Integer.parseInt(strTitleBold);
-        } else {
-            mTitleBold = 0;
-        }
-        return mTitleBold;
     }
 
     public List<String> getBlanklistUsernames() {
@@ -675,26 +634,10 @@ public class HiSettingsHelper {
         return 18 + getInstance().getTitleTextsizeAdj();
     }
 
-    public boolean isEinkModeUIEnabled() {
-        return getEinkMode().contains("1");
-    }
-
-
-    public boolean isEinkModeFloatButtonEnabled() {
-        return getEinkMode().contains("2");
-    }
-
-    public boolean isEinkModeVolumeKeyEnabled() {
-        return getEinkMode().contains("3");
-    }
-
     @SuppressWarnings("ResourceType")
     public String getHiPdaColorValue() {
         if (mHiPdaColorValue == null) {
-            if (isEinkModeUIEnabled())
-                mHiPdaColorValue = mCtx.getResources().getString(R.color.black);
-            else
-                mHiPdaColorValue = mCtx.getResources().getString(R.color.hipda);
+            mHiPdaColorValue = mCtx.getResources().getString(R.color.hipda);
             if (mHiPdaColorValue.length() == 9) {
                 mHiPdaColorValue = "#" + mHiPdaColorValue.substring(3);
             }

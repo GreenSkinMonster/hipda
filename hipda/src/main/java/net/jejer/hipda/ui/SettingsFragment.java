@@ -15,8 +15,6 @@ import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.view.Gravity;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
@@ -47,8 +45,6 @@ public class SettingsFragment extends PreferenceFragment {
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_POST_ADJ));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_TITLE_ADJ));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
-        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_EINK_MODE));
-        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TITLE_BOLD));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_POST_LINE_SPACING));
 
         final Preference userPreference = findPreference(HiSettingsHelper.PERF_USERNAME);
@@ -81,10 +77,6 @@ public class SettingsFragment extends PreferenceFragment {
                                         }
                                     }).create();
                     dialog.show();
-                    TextView titleView = (TextView) dialog.findViewById(getResources().getIdentifier("alertTitle", "id", "android"));
-                    if (titleView != null) {
-                        titleView.setGravity(Gravity.CENTER);
-                    }
                 } else {
                     Toast.makeText(getActivity(), "已经退出登录，返回可以重新登录", Toast.LENGTH_SHORT).show();
                 }
@@ -116,7 +108,6 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        mEinkUi = HiSettingsHelper.getInstance().isEinkModeUIEnabled();
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
     }
 
@@ -135,8 +126,7 @@ public class SettingsFragment extends PreferenceFragment {
         super.onStop();
         HiSettingsHelper.getInstance().reload();
 
-        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled() != mEinkUi
-                || HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation) {
+        if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation) {
             Intent intent = getActivity().getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             getActivity().finish();

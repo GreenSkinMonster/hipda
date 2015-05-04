@@ -130,9 +130,6 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
         mEtReplyMsg = (EditText) view.findViewById(R.id.et_reply);
         mTvAdditional = (TextView) view.findViewById(R.id.et_additional);
         mTvAdditional.setText("正在收集信息");
-        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-            mTvAdditional.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
-        }
 
         mSpForum = (Spinner) view.findViewById(R.id.sp_fid);
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);

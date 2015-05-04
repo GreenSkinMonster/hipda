@@ -38,15 +38,11 @@ public class TextViewWithEmoticon extends TextView {
     public TextViewWithEmoticon(Context context) {
         super(context);
         mCtx = context;
-        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled())
-            setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
     }
 
     public TextViewWithEmoticon(Context context, AttributeSet attrs) {
         super(context, attrs);
         mCtx = context;
-        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled())
-            setLinkTextColor(mCtx.getResources().getColor(R.color.grey));
     }
 
     public void setFragmentManager(FragmentManager fm) {
@@ -137,18 +133,11 @@ public class TextViewWithEmoticon extends TextView {
                             .commit();
                 } else {
                     mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
-                    if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-                        mFragmentManager.beginTransaction()
-                                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                                .addToBackStack(ThreadDetailFragment.class.getName())
-                                .commit();
-                    } else {
-                        mFragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                                .addToBackStack(ThreadDetailFragment.class.getName())
-                                .commit();
-                    }
+                    mFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                            .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                            .addToBackStack(ThreadDetailFragment.class.getName())
+                            .commit();
                 }
             }
         };
@@ -173,18 +162,11 @@ public class TextViewWithEmoticon extends TextView {
                             .addToBackStack(ThreadDetailFragment.class.getName())
                             .commit();
                 } else {
-                    if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-                        mFragmentManager.beginTransaction()
-                                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                                .addToBackStack(ThreadDetailFragment.class.getName())
-                                .commit();
-                    } else {
-                        mFragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                                .addToBackStack(ThreadDetailFragment.class.getName())
-                                .commit();
-                    }
+                    mFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                            .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                            .addToBackStack(ThreadDetailFragment.class.getName())
+                            .commit();
                 }
             }
         };

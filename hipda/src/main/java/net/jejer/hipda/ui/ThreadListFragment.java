@@ -444,18 +444,11 @@ public class ThreadListFragment extends Fragment
                 arguments.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, floor);
             ThreadDetailFragment fragment = new ThreadDetailFragment();
             fragment.setArguments(arguments);
-            if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-                getFragmentManager().beginTransaction()
-                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            } else {
-                getFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            }
+            getFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                    .addToBackStack(ThreadDetailFragment.class.getName())
+                    .commit();
         }
     }
 

@@ -2,8 +2,6 @@ package net.jejer.hipda.ui.textstyle;
 
 import android.text.TextUtils;
 
-import net.jejer.hipda.bean.HiSettingsHelper;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,8 +31,7 @@ public class TextStyle {
     }
 
     public void setColor(String color) {
-        if (!HiSettingsHelper.getInstance().isEinkModeUIEnabled()
-                && !TextUtils.isEmpty(color)) {
+        if (!TextUtils.isEmpty(color)) {
             if (!color.startsWith("#")) {
                 color = COLORS.get(color.toLowerCase());
             } else if (color.length() == 5) {

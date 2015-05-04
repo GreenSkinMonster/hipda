@@ -18,7 +18,6 @@ import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -784,12 +783,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         });
 
         dialog.show();
-
-        //set dialog title to center
-        TextView titleView = (TextView) dialog.findViewById(mCtx.getResources().getIdentifier("alertTitle", "id", "android"));
-        if (titleView != null) {
-            titleView.setGravity(Gravity.CENTER);
-        }
     }
 
     public boolean hideQuickReply() {
@@ -953,18 +946,11 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                         .addToBackStack(ThreadDetailFragment.class.getName())
                         .commit();
             } else {
-                if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-                    getFragmentManager().beginTransaction()
-                            .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                            .addToBackStack(ThreadDetailFragment.class.getName())
-                            .commit();
-                } else {
-                    getFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                            .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                            .addToBackStack(ThreadDetailFragment.class.getName())
-                            .commit();
-                }
+                getFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                        .addToBackStack(ThreadDetailFragment.class.getName())
+                        .commit();
             }
         }
     }
