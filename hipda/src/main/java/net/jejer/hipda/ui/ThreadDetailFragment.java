@@ -940,18 +940,12 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             fragment.setArguments(arguments);
 
             setHasOptionsMenu(false);
-            if (HiSettingsHelper.getInstance().getIsLandscape()) {
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            } else {
-                getFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            }
+
+            getFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                    .addToBackStack(ThreadDetailFragment.class.getName())
+                    .commit();
         }
     }
 

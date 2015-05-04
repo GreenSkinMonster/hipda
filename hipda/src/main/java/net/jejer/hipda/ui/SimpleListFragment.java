@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
@@ -10,6 +9,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.SimpleListLoader;
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.utils.Logger;
@@ -294,17 +293,11 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
                 fragment = new ThreadDetailFragment();
             }
             fragment.setArguments(bun);
-            if (HiSettingsHelper.getInstance().getIsLandscape()) {
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            } else {
-                getFragmentManager().beginTransaction()
-                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            }
+
+            getFragmentManager().beginTransaction()
+                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                    .addToBackStack(ThreadDetailFragment.class.getName())
+                    .commit();
         }
     }
 
@@ -332,17 +325,11 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
                 fragment = new ThreadDetailFragment();
             }
             fragment.setArguments(bun);
-            if (HiSettingsHelper.getInstance().getIsLandscape()) {
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            } else {
-                getFragmentManager().beginTransaction()
-                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            }
+
+            getFragmentManager().beginTransaction()
+                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                    .addToBackStack(ThreadDetailFragment.class.getName())
+                    .commit();
 
             return true;
         }

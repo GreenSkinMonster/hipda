@@ -421,35 +421,21 @@ public class ThreadListFragment extends Fragment
 
     private void showThreadDetailFragment(String tid, String title, int page, int floor) {
         setHasOptionsMenu(false);
-        if (HiSettingsHelper.getInstance().getIsLandscape()) {
-            Bundle arguments = new Bundle();
-            arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
-            arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
-            if (page > 0)
-                arguments.putInt(ThreadDetailFragment.ARG_PAGE_KEY, page);
-            if (floor != -1)
-                arguments.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, floor);
-            ThreadDetailFragment fragment = new ThreadDetailFragment();
-            fragment.setArguments(arguments);
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-                    .commit();
-        } else {
-            Bundle arguments = new Bundle();
-            arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
-            arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
-            if (page != -1)
-                arguments.putInt(ThreadDetailFragment.ARG_PAGE_KEY, page);
-            if (floor != -1)
-                arguments.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, floor);
-            ThreadDetailFragment fragment = new ThreadDetailFragment();
-            fragment.setArguments(arguments);
-            getFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                    .addToBackStack(ThreadDetailFragment.class.getName())
-                    .commit();
-        }
+
+        Bundle arguments = new Bundle();
+        arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
+        arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
+        if (page != -1)
+            arguments.putInt(ThreadDetailFragment.ARG_PAGE_KEY, page);
+        if (floor != -1)
+            arguments.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, floor);
+        ThreadDetailFragment fragment = new ThreadDetailFragment();
+        fragment.setArguments(arguments);
+        getFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                .addToBackStack(ThreadDetailFragment.class.getName())
+                .commit();
     }
 
     private class ThreadListLoaderCallbacks implements LoaderManager.LoaderCallbacks<ThreadListBean> {

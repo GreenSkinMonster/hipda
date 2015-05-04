@@ -146,20 +146,12 @@ public class TextViewWithEmoticon extends TextView {
                 ThreadDetailFragment fragment = new ThreadDetailFragment();
                 fragment.setArguments(arguments);
 
-                if (HiSettingsHelper.getInstance().getIsLandscape()) {
-                    mFragmentManager.findFragmentById(R.id.thread_detail_container_in_main).setHasOptionsMenu(false);
-                    mFragmentManager.beginTransaction()
-                            .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-                            .addToBackStack(ThreadDetailFragment.class.getName())
-                            .commit();
-                } else {
-                    mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
-                    mFragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                            .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                            .addToBackStack(ThreadDetailFragment.class.getName())
-                            .commit();
-                }
+                mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
+                mFragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                        .addToBackStack(ThreadDetailFragment.class.getName())
+                        .commit();
             }
         };
     }
@@ -177,18 +169,12 @@ public class TextViewWithEmoticon extends TextView {
                 UserinfoFragment fragment = new UserinfoFragment();
                 fragment.setArguments(arguments);
 
-                if (HiSettingsHelper.getInstance().getIsLandscape()) {
-                    mFragmentManager.beginTransaction()
-                            .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-                            .addToBackStack(ThreadDetailFragment.class.getName())
-                            .commit();
-                } else {
-                    mFragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                            .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                            .addToBackStack(ThreadDetailFragment.class.getName())
-                            .commit();
-                }
+                mFragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                        .addToBackStack(ThreadDetailFragment.class.getName())
+                        .commit();
+
             }
         };
     }

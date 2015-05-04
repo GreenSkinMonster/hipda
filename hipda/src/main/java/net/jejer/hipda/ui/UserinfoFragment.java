@@ -339,17 +339,10 @@ public class UserinfoFragment extends Fragment {
             bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
             Fragment fragment = new ThreadDetailFragment();
             fragment.setArguments(bun);
-            if (HiSettingsHelper.getInstance().getIsLandscape()) {
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.thread_detail_container_in_main, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            } else {
-                getFragmentManager().beginTransaction()
-                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            }
+            getFragmentManager().beginTransaction()
+                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                    .addToBackStack(ThreadDetailFragment.class.getName())
+                    .commit();
         }
     }
 
