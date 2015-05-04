@@ -15,6 +15,9 @@ import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
@@ -28,7 +31,6 @@ import java.util.Set;
 
 public class SettingsFragment extends PreferenceFragment {
 
-    private boolean mEinkUi;
     private int mScreenOrietation;
 
     @Override
@@ -109,6 +111,13 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        view.setBackgroundColor(getResources().getColor(HiSettingsHelper.getInstance().getBackgroundColor()));
+        return view;
     }
 
     @Override

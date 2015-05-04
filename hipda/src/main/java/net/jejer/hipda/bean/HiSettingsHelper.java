@@ -95,6 +95,7 @@ public class HiSettingsHelper {
     private int mDefaultTextColor = 0;
     private int mSecondaryTextColor = 0;
     private int mQuoteTextBackgroundColor = 0;
+    private int mBackgroundColor = 0;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -675,6 +676,15 @@ public class HiSettingsHelper {
             mQuoteTextBackgroundColor = typedValue.resourceId;
         }
         return mQuoteTextBackgroundColor;
+    }
+
+    public int getBackgroundColor() {
+        if (mBackgroundColor == 0) {
+            TypedValue typedValue = new TypedValue();
+            mCtx.getTheme().resolveAttribute(R.attr.background, typedValue, true);
+            mBackgroundColor = typedValue.resourceId;
+        }
+        return mBackgroundColor;
     }
 
 }
