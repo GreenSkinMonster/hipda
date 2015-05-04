@@ -38,11 +38,32 @@ public class TextViewWithEmoticon extends TextView {
     public TextViewWithEmoticon(Context context) {
         super(context);
         mCtx = context;
+        init();
     }
 
     public TextViewWithEmoticon(Context context, AttributeSet attrs) {
         super(context, attrs);
         mCtx = context;
+        init();
+    }
+
+    private void init() {
+        setTextColor(mCtx.getResources().getColor(HiSettingsHelper.getInstance().getDefaultTextColor()));
+        setLinkTextColor(mCtx.getResources().getColor(R.color.hipda));
+
+        float lineSpacingExtra = 2;
+        float lineSpacingMultiplier = 1.1f;
+        if (HiSettingsHelper.getInstance().getPostLineSpacing() == 1) {
+            lineSpacingExtra = 4;
+            lineSpacingMultiplier = 1.2f;
+        } else if (HiSettingsHelper.getInstance().getPostLineSpacing() == 2) {
+            lineSpacingExtra = 6;
+            lineSpacingMultiplier = 1.3f;
+        } else if (HiSettingsHelper.getInstance().getPostLineSpacing() == 3) {
+            lineSpacingExtra = 8;
+            lineSpacingMultiplier = 1.4f;
+        }
+        setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
     }
 
     public void setFragmentManager(FragmentManager fm) {

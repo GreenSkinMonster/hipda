@@ -43,8 +43,7 @@
         android:id="@+id/quote_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textColor="@color/abc_primary_text_material_light" />
+        android:padding="8dp" />
 
     <View
         android:layout_width="match_parent"

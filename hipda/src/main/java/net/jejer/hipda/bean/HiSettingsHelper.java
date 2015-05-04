@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.TypedValue;
 
 import net.jejer.hipda.R;
 
@@ -87,9 +88,13 @@ public class HiSettingsHelper {
     private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
     private boolean mGestureBack = true;
     private int mMaxPostsInPage;
-    private String mHiPdaColorValue;
     private int mLastForumId = 0;
     private boolean mErrorReportMode;
+
+    private String mHiPdaColorValue;
+    private int mDefaultTextColor = 0;
+    private int mSecondaryTextColor = 0;
+    private int mQuoteTextBackgroundColor = 0;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -643,6 +648,33 @@ public class HiSettingsHelper {
             }
         }
         return mHiPdaColorValue;
+    }
+
+    public int getDefaultTextColor() {
+        if (mDefaultTextColor == 0) {
+            TypedValue typedValue = new TypedValue();
+            mCtx.getTheme().resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+            mDefaultTextColor = typedValue.resourceId;
+        }
+        return mDefaultTextColor;
+    }
+
+    public int getSecondaryTextColor() {
+        if (mSecondaryTextColor == 0) {
+            TypedValue typedValue = new TypedValue();
+            mCtx.getTheme().resolveAttribute(android.R.attr.textColorSecondary, typedValue, true);
+            mSecondaryTextColor = typedValue.resourceId;
+        }
+        return mSecondaryTextColor;
+    }
+
+    public int getQuoteTextBackgroundColor() {
+        if (mQuoteTextBackgroundColor == 0) {
+            TypedValue typedValue = new TypedValue();
+            mCtx.getTheme().resolveAttribute(R.attr.quote_text_background, typedValue, true);
+            mQuoteTextBackgroundColor = typedValue.resourceId;
+        }
+        return mQuoteTextBackgroundColor;
     }
 
 }

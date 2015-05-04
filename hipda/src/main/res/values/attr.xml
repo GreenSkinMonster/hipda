@@ -23,5 +23,6 @@
     <attr name="icon_search" format="reference" />
     <attr name="icon_send_sms" format="reference" />
     <attr name="color_hipda" format="color" />
-
+    <attr name="default_text_color" format="color" />
+    <attr name="secondary_text_color" format="color" />
 </resources>

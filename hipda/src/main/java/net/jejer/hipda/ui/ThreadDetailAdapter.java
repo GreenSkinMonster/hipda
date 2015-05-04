@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 import android.text.util.Linkify;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,19 +66,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
 
         ViewHolder holder;
 
-        float lineSpacingExtra = 2;
-        float lineSpacingMultiplier = 1.1f;
-        if (HiSettingsHelper.getInstance().getPostLineSpacing() == 1) {
-            lineSpacingExtra = 4;
-            lineSpacingMultiplier = 1.2f;
-        } else if (HiSettingsHelper.getInstance().getPostLineSpacing() == 2) {
-            lineSpacingExtra = 6;
-            lineSpacingMultiplier = 1.3f;
-        } else if (HiSettingsHelper.getInstance().getPostLineSpacing() == 3) {
-            lineSpacingExtra = 8;
-            lineSpacingMultiplier = 1.4f;
-        }
-
         if (convertView == null || convertView.getTag() == null) {
             convertView = mInflater.inflate(R.layout.item_thread_detail, parent, false);
 
@@ -132,7 +118,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                 tv.setFragmentManager(mFragmentManager);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize());
                 tv.setPadding(8, 8, 8, 8);
-                tv.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
 
                 //dirty hack, remove extra <br>
                 String cnt = content.getContent();
@@ -205,18 +190,13 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                 contentView.addView(tv);
             } else if (content instanceof ContentQuote && !((ContentQuote) content).isReplyQuote()) {
 
-                TypedValue typedValue = new TypedValue();
-                mCtx.getTheme().resolveAttribute(R.attr.quote_text_background, typedValue, true);
-                int colorRscId = typedValue.resourceId;
-
                 TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
                 tv.setAutoLinkMask(Linkify.WEB_URLS);
                 tv.setText(content.getContent());
                 tv.setFocusable(false);    // make convertView long clickable.
                 tv.setPadding(16, 16, 16, 16);
-                tv.setBackgroundColor(mCtx.getResources().getColor(colorRscId));
-                tv.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
+                tv.setBackgroundColor(mCtx.getResources().getColor(HiSettingsHelper.getInstance().getQuoteTextBackgroundColor()));
 
                 contentView.addView(tv);
                 trimBr = true;
@@ -279,8 +259,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                 tvNote.setTextSize(HiSettingsHelper.getPostTextSize() - 2);
                 tvContent.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
                 tvTime.setTextSize(HiSettingsHelper.getPostTextSize() - 4);
-
-                tvContent.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
 
                 if (floor > 0) {
                     tvNote.setTag(floor);
