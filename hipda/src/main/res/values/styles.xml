@@ -1,7 +1,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Theme Day. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/light_blue_700</item>
         <item name="colorPrimaryDark">@color/light_blue_800</item>
         <item name="colorAccent">@color/hipda</item>

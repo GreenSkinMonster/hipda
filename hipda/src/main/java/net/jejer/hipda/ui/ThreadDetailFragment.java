@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -15,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.GestureDetector;
