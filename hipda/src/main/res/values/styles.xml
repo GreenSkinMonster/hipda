@@ -6,6 +6,10 @@
         <item name="colorPrimaryDark">@color/light_blue_800</item>
         <item name="colorAccent">@color/hipda</item>
 
+        <item name="android:textColorPrimary">@color/abc_primary_text_material_light</item>
+        <item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
+        <!--<item name="actionMenuTextColor">@color/abc_primary_text_material_light</item>-->
+
         <item name="android:actionBarSize">48dp</item>
         <item name="actionBarSize">48dp</item>
 

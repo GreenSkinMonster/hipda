@@ -32,7 +32,6 @@ public class TextViewWithEmoticon extends TextView {
     private static FragmentManager mFragmentManager;
 
     private static int TRIM_LENGTH = 80;
-    private static final Spannable.Factory spannableFactory = Spannable.Factory.getInstance();
 
     private boolean mTrim;
 

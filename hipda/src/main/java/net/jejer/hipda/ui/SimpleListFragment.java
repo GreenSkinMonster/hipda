@@ -8,6 +8,7 @@ import android.content.Loader;
 import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -149,7 +150,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
                 mPrefixSearchHistory = getActivity().getResources().getString(R.string.prefix_search_history);
 
                 inflater.inflate(R.menu.menu_search, menu);
-                searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+                searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
                 searchView.setIconified(false);
                 searchView.setQueryHint("按标题搜索");
                 if (!TextUtils.isEmpty(mQuery)) {

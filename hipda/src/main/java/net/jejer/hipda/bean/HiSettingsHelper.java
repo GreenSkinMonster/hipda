@@ -668,7 +668,7 @@ public class HiSettingsHelper {
     }
 
     public static int getPostTextSize() {
-        return 17 + getInstance().getPostTextsizeAdj();
+        return 18 + getInstance().getPostTextsizeAdj();
     }
 
     public static int getTitleTextSize() {

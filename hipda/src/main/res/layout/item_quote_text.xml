@@ -2,8 +2,8 @@
     android:id="@+id/quote_text_layout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="?attr/quote_text_background">
+    android:background="?attr/quote_text_background"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -13,24 +13,24 @@
             android:id="@+id/quote_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentLeft="true"
+            android:padding="8dp" />
 
         <TextView
             android:id="@+id/quote_post_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_toRightOf="@+id/quote_author"
             android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/quote_author"
+            android:padding="8dp"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/quote_note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentRight="true"
+            android:padding="8dp" />
 
     </RelativeLayout>
 
@@ -43,7 +43,8 @@
         android:id="@+id/quote_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:textColor="@color/abc_primary_text_material_light" />
 
     <View
         android:layout_width="match_parent"
