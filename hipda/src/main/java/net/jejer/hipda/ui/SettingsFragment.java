@@ -15,6 +15,9 @@ import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.text.Html;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -117,6 +120,13 @@ public class SettingsFragment extends PreferenceFragment {
 
         mEinkUi = HiSettingsHelper.getInstance().isEinkModeUIEnabled();
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        view.setBackgroundColor(getResources().getColor(HiSettingsHelper.getInstance().getBackgroundColor()));
+        return view;
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.TypedValue;
 
 import net.jejer.hipda.R;
 
@@ -91,9 +92,10 @@ public class HiSettingsHelper {
     private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
     private boolean mGestureBack = true;
     private int mMaxPostsInPage;
-    private String mHiPdaColorValue;
     private int mLastForumId = 0;
     private boolean mErrorReportMode;
+
+    private String mHiPdaColorValue;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -700,6 +702,12 @@ public class HiSettingsHelper {
             }
         }
         return mHiPdaColorValue;
+    }
+
+    public int getBackgroundColor() {
+        TypedValue typedValue = new TypedValue();
+        mCtx.getTheme().resolveAttribute(R.attr.background, typedValue, true);
+        return typedValue.resourceId;
     }
 
 }
