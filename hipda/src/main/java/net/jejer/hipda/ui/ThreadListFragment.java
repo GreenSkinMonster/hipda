@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -204,12 +203,11 @@ public class ThreadListFragment extends Fragment
         menu.clear();
         inflater.inflate(R.menu.menu_thread_list, menu);
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         int forumIdx = HiUtils.getForumIndexByFid(mForumId + "");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(HiUtils.FORUMS[forumIdx]);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((MainFrameActivity) getActivity()).drawResult.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+        ((MainFrameActivity) getActivity()).drawerResult.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
         if (LoginHelper.isLoggedIn()) {
             showNotification();

@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.GestureDetector;
@@ -288,7 +287,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         menu.clear();
         inflater.inflate(R.menu.menu_thread_detail, menu);
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mTitle);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

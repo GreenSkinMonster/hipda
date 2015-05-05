@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ClipData;
@@ -129,9 +128,7 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
         Logger.v("onCreateOptionsMenu");
 
         menu.clear();
-        //inflater.inflate(R.menu.menu_simple_thread_list, menu);
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("与" + mId + "的短消息");
 

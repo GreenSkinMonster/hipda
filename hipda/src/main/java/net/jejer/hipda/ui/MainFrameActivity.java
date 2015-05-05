@@ -20,9 +20,9 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import net.jejer.hipda.R;
@@ -41,22 +41,14 @@ public class MainFrameActivity extends AppCompatActivity {
     private Fragment mOnSwipeCallback = null;
     private int mQuit = 0;
 
-    public Drawer.Result drawResult;
+    public Drawer.Result drawerResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.v("onCreate");
 
         ACRAUtils.init(this);
-
-        // Init Settings
         HiSettingsHelper.getInstance().init(this);
-//        if (HiSettingsHelper.getInstance().isEinkModeUIEnabled()) {
-//            setTheme(R.style.ThemeEink);
-//        } else if (HiSettingsHelper.getInstance().isNightTheme()) {
-//            setTheme(R.style.ThemeNight);
-//        }
-
         GlideHelper.init(this);
 
         // Init Volley
@@ -78,29 +70,39 @@ public class MainFrameActivity extends AppCompatActivity {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
 
-        drawResult = new Drawer()
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Logger.v("toolbar.setNavigationOnClickListener");
+                onBackPressed();
+            }
+        });
+
+        drawerResult = new Drawer()
                 .withActivity(this)
                 .withToolbar(toolbar)
-//                .withHeader(R.layout.header)
+                .withHeader(R.layout.header)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search),
-                        new PrimaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_grade),
-                        new PrimaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_location_city),
-                        new PrimaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite),
-                        new PrimaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_sms),
-                        new PrimaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications),
-                        new DividerDrawerItem(),
-                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[0]).withIdentifier(100 + HiUtils.FORUM_IDS[0]).withIcon(GoogleMaterial.Icon.gmd_notifications),
-                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[1]).withIdentifier(100 + HiUtils.FORUM_IDS[1]).withIcon(GoogleMaterial.Icon.gmd_notifications),
-                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[2]).withIdentifier(100 + HiUtils.FORUM_IDS[2]).withIcon(GoogleMaterial.Icon.gmd_notifications),
-                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[3]).withIdentifier(100 + HiUtils.FORUM_IDS[3]).withIcon(GoogleMaterial.Icon.gmd_notifications),
-                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[4]).withIdentifier(100 + HiUtils.FORUM_IDS[4]).withIcon(GoogleMaterial.Icon.gmd_notifications),
-                        new DividerDrawerItem(),
-                        new PrimaryDrawerItem().withName(R.string.title_drawer_setting).withIdentifier(DrawerItem.SETTINGS.id).withIcon(GoogleMaterial.Icon.gmd_settings)
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_grade),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_forum),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_sms),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications),
+                        new SecondaryDrawerItem()
+                                .withName(R.string.title_drawer_setting)
+                                .withIdentifier(DrawerItem.SETTINGS.id)
+                                .withIcon(GoogleMaterial.Icon.gmd_settings)
+                ).addStickyDrawerItems(
+                        new SecondaryDrawerItem().withName(HiUtils.FORUMS[0]).withIdentifier(100 + HiUtils.FORUM_IDS[0]).withIcon(FontAwesome.Icon.faw_cc_discover),
+                        new SecondaryDrawerItem().withName(HiUtils.FORUMS[1]).withIdentifier(100 + HiUtils.FORUM_IDS[1]).withIcon(FontAwesome.Icon.faw_shopping_cart),
+                        new SecondaryDrawerItem().withName(HiUtils.FORUMS[2]).withIdentifier(100 + HiUtils.FORUM_IDS[2]).withIcon(FontAwesome.Icon.faw_forumbee),
+                        new SecondaryDrawerItem().withName(HiUtils.FORUMS[3]).withIdentifier(100 + HiUtils.FORUM_IDS[3]).withIcon(FontAwesome.Icon.faw_book),
+                        new SecondaryDrawerItem().withName(HiUtils.FORUMS[4]).withIdentifier(100 + HiUtils.FORUM_IDS[4]).withIcon(FontAwesome.Icon.faw_reddit)
                 )
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
+                .withSelectedItem(-1)
                 .build();
-
 
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
@@ -258,6 +260,7 @@ public class MainFrameActivity extends AppCompatActivity {
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+            Logger.v("DrawerItemClickListener");
             switch (iDrawerItem.getIdentifier()) {
                 case 1:    // search
                     Bundle searchBundle = new Bundle();

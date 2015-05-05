@@ -13,14 +13,7 @@
         <item name="android:actionBarSize">48dp</item>
         <item name="actionBarSize">48dp</item>
 
-        <!--<item name="android:actionBarStyle">@style/MyActionBar</item>-->
-        <!--<item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>-->
-        <!--<item name="android:actionMenuTextColor">@color/white</item>-->
-
-        <!-- Support library compatibility -->
-        <!--<item name="actionBarStyle">@style/MyActionBar</item>-->
-        <!--<item name="actionBarTabTextStyle">@style/MyActionBarTabText</item>-->
-        <!--<item name="actionMenuTextColor">@color/white</item>-->
+        <item name="material_drawer_secondary_text">@color/material_drawer_primary_text</item>
 
         <item name="themeName">day</item>
         <item name="background">@color/day_background</item>
@@ -83,20 +76,7 @@
         <item name="icon_send_sms">@drawable/tapatalk_bubble_reply_night</item>
         <item name="icon_edit">@android:drawable/ic_menu_edit</item>
         <item name="color_hipda">@color/hipda</item>
-        <item name="android:actionBarStyle">@style/NightActionBar</item>
         <item name="android:windowContentOverlay">@null</item>
-    </style>
-
-    <style name="DayActionBar" parent="@style/Widget.AppCompat.ActionBar.Solid">
-        <item name="titleTextStyle">@style/MyTitleTextStyle</item>
-    </style>
-
-    <style name="MyTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="NightActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/background_silver</item>
     </style>
 
 </resources>
