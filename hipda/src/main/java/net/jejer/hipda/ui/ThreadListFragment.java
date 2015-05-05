@@ -205,9 +205,8 @@ public class ThreadListFragment extends Fragment
 
         int forumIdx = HiUtils.getForumIndexByFid(mForumId + "");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(HiUtils.FORUMS[forumIdx]);
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((MainFrameActivity) getActivity()).drawerResult.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+        ((MainFrameActivity) getActivity()).drawerResult.getActionBarDrawerToggle().syncState();
 
         if (LoginHelper.isLoggedIn()) {
             showNotification();
