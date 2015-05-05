@@ -70,8 +70,8 @@ public class UpdateHelper {
 
             String version = HiSettingsHelper.getInstance().getAppVersion();
             String newVersion = "";
-            final String url;
-            final String filename;
+            String url = "";
+            String filename = "";
             String updateNotes = "";
             if (response.contains("postnum29887924"))
                 response = response.substring(response.indexOf("postnum29887924"));
@@ -80,20 +80,24 @@ public class UpdateHelper {
 
             boolean found = false;
 
-            String firstAttachment = HttpUtils.getMiddleString(response, "<a href=\"attachment.php?", "</a>");
-            if (firstAttachment != null && firstAttachment.contains("hipda-release-")) {
-                String args = firstAttachment.substring(0, firstAttachment.indexOf("\""));
-                url = HiUtils.BaseUrl + "attachment.php?" + args;
-                filename = HttpUtils.getMiddleString(firstAttachment, "<strong>", "</strong>");
-                newVersion = HttpUtils.getMiddleString(filename, "hipda-release-", ".apk");
-                updateNotes = Utils.nullToText(HttpUtils.getMiddleString(response.substring(response.indexOf("更新记录")), "<ul>", "</ul>"));
-                found = !TextUtils.isEmpty(args) && !TextUtils.isEmpty(filename) && newer(version, newVersion);
-            } else {
-                url = "";
-                filename = "";
+            while (!found && response.contains("<a href=\"attachment.php?") && response.contains("hipda-release")) {
+                String firstAttachment = HttpUtils.getMiddleString(response, "<a href=\"attachment.php?", "</a>");
+                if (firstAttachment != null && firstAttachment.contains("hipda-release-")) {
+                    String args = firstAttachment.substring(0, firstAttachment.indexOf("\""));
+                    url = HiUtils.BaseUrl + "attachment.php?" + args;
+                    filename = HttpUtils.getMiddleString(firstAttachment, "<strong>", "</strong>");
+                    newVersion = HttpUtils.getMiddleString(filename, "hipda-release-", ".apk");
+                    updateNotes = Utils.nullToText(HttpUtils.getMiddleString(response.substring(response.indexOf("更新记录")), "<ul>", "</ul>"));
+                    found = !TextUtils.isEmpty(args) && !TextUtils.isEmpty(filename) && newer(version, newVersion);
+                }
+                if (!found)
+                    response = response.substring(response.indexOf("<a href=\"attachment.php?") + "<a href=\"attachment.php?".length());
             }
 
             if (found) {
+                final String fUrl = url;
+                final String fFilename = filename;
+
                 if (!mSilent) {
                     pd.dismiss();
                 }
@@ -106,10 +110,10 @@ public class UpdateHelper {
                                     public void onClick(DialogInterface dialog, int which) {
                                         try {
                                             DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
-                                            DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+                                            DownloadManager.Request req = new DownloadManager.Request(Uri.parse(fUrl));
                                             req.addRequestHeader("User-agent", HiUtils.UserAgent);
                                             req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                                            req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                                            req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fFilename);
                                             dm.enqueue(req);
                                         } catch (SecurityException e) {
                                             Logger.e(e);
