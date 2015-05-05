@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
@@ -32,18 +33,15 @@ import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.ACRAUtils;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
 public class MainFrameActivity extends AppCompatActivity {
 
-    //    private DrawerLayout mDrawerLayout;
-//    private ListView mDrawerList;
-    private boolean mEnableSwipe = false;
-    //    private OnSwipeTouchListener mSwipeListener;
     private Fragment mOnSwipeCallback = null;
     private int mQuit = 0;
 
-    public Drawer.Result result;
+    public Drawer.Result drawResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,69 +76,31 @@ public class MainFrameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_frame);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
-//        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
 
-        result = new Drawer()
+        drawResult = new Drawer()
                 .withActivity(this)
                 .withToolbar(toolbar)
 //                .withHeader(R.layout.header)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search),
                         new PrimaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_grade),
-//                        new SectionDrawerItem().withName(R.string.category_section_categories),
                         new PrimaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_location_city),
                         new PrimaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite),
-                        new PrimaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_local_florist),
-                        new PrimaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_style),
-                        new PrimaryDrawerItem().withName(R.string.title_drawer_setting).withIdentifier(DrawerItem.SETTINGS.id).withIcon(GoogleMaterial.Icon.gmd_person)
+                        new PrimaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_sms),
+                        new PrimaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications),
+                        new DividerDrawerItem(),
+                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[0]).withIdentifier(100 + HiUtils.FORUM_IDS[0]).withIcon(GoogleMaterial.Icon.gmd_notifications),
+                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[1]).withIdentifier(100 + HiUtils.FORUM_IDS[1]).withIcon(GoogleMaterial.Icon.gmd_notifications),
+                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[2]).withIdentifier(100 + HiUtils.FORUM_IDS[2]).withIcon(GoogleMaterial.Icon.gmd_notifications),
+                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[3]).withIdentifier(100 + HiUtils.FORUM_IDS[3]).withIcon(GoogleMaterial.Icon.gmd_notifications),
+                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[4]).withIdentifier(100 + HiUtils.FORUM_IDS[4]).withIcon(GoogleMaterial.Icon.gmd_notifications),
+                        new DividerDrawerItem(),
+                        new PrimaryDrawerItem().withName(R.string.title_drawer_setting).withIdentifier(DrawerItem.SETTINGS.id).withIcon(GoogleMaterial.Icon.gmd_settings)
                 )
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .build();
 
-        // Prepare Drawer
-//        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-//        String[] drwerListTitle = getResources().getStringArray(R.array.left_menu);
-//        DrawerAdapter adapter = new DrawerAdapter(this, R.layout.item_drawer, drwerListTitle);
-//        mDrawerList.setAdapter(adapter);
-//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-//        getSupportActionBar().setHomeButtonEnabled(true);
-
-
-        // Prepare gesture detector
-//        mSwipeListener = new OnSwipeTouchListener(this) {
-//            public void onSwipeRight() {
-//                if (HiSettingsHelper.getInstance().isGestureBack()
-//                        && !HiSettingsHelper.getInstance().getIsLandscape()
-//                        && !(getFragmentManager().findFragmentByTag(PostFragment.class.getName()) instanceof PostFragment)) {
-//                    popFragment(false);
-//                }
-//            }
-//
-//            public void onSwipeTop() {
-//                if (mOnSwipeCallback != null) {
-//                    if (mOnSwipeCallback instanceof ThreadDetailFragment) {
-//                        ((ThreadDetailFragment) mOnSwipeCallback).onSwipeTop();
-//                    }
-//                }
-//            }
-//
-//            public void onSwipeBottom() {
-//                if (mOnSwipeCallback != null) {
-//                    if (mOnSwipeCallback instanceof ThreadDetailFragment) {
-//                        ((ThreadDetailFragment) mOnSwipeCallback).onSwipeBottom();
-//                    }
-//                }
-//            }
-//        };
-//        findViewById(R.id.main_frame_container).setOnTouchListener(mSwipeListener);
-
-//        if (findViewById(R.id.thread_detail_container_in_main) != null) {
-//            HiSettingsHelper.getInstance().setIsLandscape(true);
-//        } else {
-//            HiSettingsHelper.getInstance().setIsLandscape(false);
-//        }
 
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
@@ -296,96 +256,6 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {
-
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            switch (position) {
-                case 0:    // forum
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, new ThreadListFragment(), ThreadListFragment.class.getName())
-                            .commit();
-                    break;
-                case 1:    // search
-                    Bundle searchBundle = new Bundle();
-                    searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SEARCH);
-                    SimpleListFragment searchFragment = new SimpleListFragment();
-                    searchFragment.setArguments(searchBundle);
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, searchFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
-                    break;
-                case 2:    // my posts
-                    Bundle postsBundle = new Bundle();
-                    postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYPOST);
-                    SimpleListFragment postsFragment = new SimpleListFragment();
-                    postsFragment.setArguments(postsBundle);
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
-                    break;
-                case 3:    // my reply
-                    Bundle replyBundle = new Bundle();
-                    replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYREPLY);
-                    SimpleListFragment replyFragment = new SimpleListFragment();
-                    replyFragment.setArguments(replyBundle);
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, replyFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
-                    break;
-                case 4:    // my favorites
-                    Bundle favBundle = new Bundle();
-                    favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_FAVORITES);
-                    SimpleListFragment favFragment = new SimpleListFragment();
-                    favFragment.setArguments(favBundle);
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, favFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
-                    break;
-                case 5:    // sms
-                    Bundle smsBundle = new Bundle();
-                    smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
-                    SimpleListFragment smsFragment = new SimpleListFragment();
-                    smsFragment.setArguments(smsBundle);
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
-                    break;
-                case 6:    // thread notify
-                    Bundle notifyBundle = new Bundle();
-                    notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREADNOTIFY);
-                    SimpleListFragment notifyFragment = new SimpleListFragment();
-                    notifyFragment.setArguments(notifyBundle);
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
-                    break;
-                case 7:    // settings
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
-                            .addToBackStack(SettingsFragment.class.getName())
-                            .commit();
-                    break;
-                case 8:    // switch day/night theme
-                    //cancel eink mode ui
-                    HiSettingsHelper.getInstance().setNightTheme(!HiSettingsHelper.getInstance().isNightTheme());
-                    Intent intent = getIntent();
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    finish();
-                    startActivity(intent);
-                    break;
-                default:
-                    break;
-            }
-
-//            mDrawerLayout.closeDrawer(mDrawerList);
-        }
-
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
             switch (iDrawerItem.getIdentifier()) {
@@ -463,6 +333,19 @@ public class MainFrameActivity extends AppCompatActivity {
                     finish();
                     startActivity(intent);
                     break;
+                case 102:    // go to forums
+                case 106:
+                case 107:
+                case 157:
+                case 159:
+                    ThreadListFragment threadListFragment = new ThreadListFragment();
+                    Bundle argments = new Bundle();
+                    argments.putInt(ThreadListFragment.ARG_FID_KEY, iDrawerItem.getIdentifier() - 100);
+                    threadListFragment.setArguments(argments);
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
+                            .commit();
+                    break;
                 default:
                     break;
             }
@@ -483,10 +366,8 @@ public class MainFrameActivity extends AppCompatActivity {
             if (!HiSettingsHelper.getInstance().getIsLandscape()) {
                 if (fm.getBackStackEntryCount() > 0) {
 //                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                    mEnableSwipe = true;
                 } else {
 //                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                    mEnableSwipe = false;
                 }
             }
         }

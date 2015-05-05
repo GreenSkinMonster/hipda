@@ -338,9 +338,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
             case R.id.action_refresh_detail:
                 refresh();
                 return true;
-            case R.id.action_goto:
-                showGotoPageDialog();
-                return true;
+//            case R.id.action_goto:
+//                showGotoPageDialog();
+//                return true;
             case R.id.action_only_author:
                 mAuthorOnly = !mAuthorOnly;
                 mDetailBeans.clear();
@@ -626,25 +626,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                 mDetailListView.setPullLoadEnable(true);
             }
         }
-    }
-
-    public void onSwipeTop() {
-        //Logger.v( "onSwipeTop");
-//        quickReply.setVisibility(View.INVISIBLE);
-    }
-
-    public void onSwipeBottom() {
-        //Logger.v( "onSwipeBottom");
-//        quickReply.bringToFront();
-//        quickReply.setVisibility(View.VISIBLE);
-    }
-
-    public void onVolumeUp() {
-        listViewPageUp();
-    }
-
-    public void onVolumeDown() {
-        listViewPageDown();
     }
 
     private void listViewPageUp() {

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
     <item
         android:id="@+id/action_goto"
         android:icon="?icon_goto_page"
         android:title="@string/action_goto_page"
         app:showAsAction="ifRoom" />
+     -->
     <item
         android:id="@+id/action_reply"
         android:icon="?icon_reply"

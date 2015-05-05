@@ -22,10 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,10 +67,7 @@ public class ThreadListFragment extends Fragment
     private Context mCtx;
     private int mForumId = 0;
     private int mPage = 1;
-    private int mForumSelect = -1;
     private LoaderManager.LoaderCallbacks<ThreadListBean> mCallbacks;
-    private android.support.v7.app.ActionBar.OnNavigationListener mOnNavigationListener;
-    private SpinnerAdapter mSpinnerAdapter;
     private ThreadListAdapter mThreadListAdapter;
     private List<ThreadBean> mThreadBeans = new ArrayList<>();
     private ListView mThreadListView;
@@ -95,8 +90,13 @@ public class ThreadListFragment extends Fragment
         mCtx = getActivity();
 
         if (getArguments() != null && getArguments().containsKey(ARG_FID_KEY)) {
-            mForumSelect = HiUtils.getForumIndexByFid(getArguments().getInt(ARG_FID_KEY) + "");
+            mForumId = getArguments().getInt(ARG_FID_KEY);
         }
+        if (mForumId <= 0) {
+            mForumId = HiUtils.FID_BS;
+        }
+
+        HiSettingsHelper.getInstance().setLastForumId(mForumId);
 
         setHasOptionsMenu(true);
         mCallbacks = new ThreadListLoaderCallbacks();
@@ -104,25 +104,6 @@ public class ThreadListFragment extends Fragment
         mThreadListAdapter = new ThreadListAdapter(mCtx);
 
         mMsgHandler = new Handler(new ThreadListMsgHandler());
-
-        mOnNavigationListener = new android.support.v7.app.ActionBar.OnNavigationListener() {
-            @Override
-            public boolean onNavigationItemSelected(int position, long itemId) {
-                Logger.v("onNavigationItemSelected = " + String.valueOf(position));
-                int forumId = HiUtils.getForumID((int) itemId);
-                if (mForumId != forumId) {
-                    mForumId = forumId;
-                    mForumSelect = ((AppCompatActivity) getActivity()).getSupportActionBar().getSelectedNavigationIndex();
-                    mThreadBeans.clear();
-                    mThreadListAdapter.setBeans(mThreadBeans);
-                    HiSettingsHelper.getInstance().setLastForumId(forumId);
-                    refresh();
-                }
-                return true;
-            }
-        };
-        mSpinnerAdapter = new ArrayAdapter<>(mCtx, android.R.layout.simple_spinner_dropdown_item);
-        ((ArrayAdapter) mSpinnerAdapter).addAll(HiUtils.FORUMS);
     }
 
     @Override
@@ -198,9 +179,6 @@ public class ThreadListFragment extends Fragment
         Logger.v("onActivityCreated");
         super.onActivityCreated(savedInstanceState);
 
-        // destroyLoader called here to avoid onLoadFinished called when onResume
-        //LoaderManager.enableDebugLogging(true);
-        getLoaderManager().initLoader(0, null, mCallbacks);
         mThreadListView.setAdapter(mThreadListAdapter);
         mThreadListView.setOnItemClickListener(new OnItemClickCallback());
         mThreadListView.setOnItemLongClickListener(new OnItemLongClickCallback());
@@ -214,6 +192,9 @@ public class ThreadListFragment extends Fragment
                 return false;
             }
         });
+
+        getLoaderManager().initLoader(0, null, mCallbacks);
+        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
     }
 
     @Override
@@ -223,11 +204,12 @@ public class ThreadListFragment extends Fragment
         menu.clear();
         inflater.inflate(R.menu.menu_thread_list, menu);
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        int forumIdx = HiUtils.getForumIndexByFid(mForumId + "");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(HiUtils.FORUMS[forumIdx]);
+
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setSelectedNavigationItem((mForumSelect < 0 || mForumSelect >= mSpinnerAdapter.getCount()) ? 0 : mForumSelect);
+        ((MainFrameActivity) getActivity()).drawResult.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
         if (LoginHelper.isLoggedIn()) {
             showNotification();
@@ -249,9 +231,9 @@ public class ThreadListFragment extends Fragment
             case android.R.id.home:
                 // Implemented in activity
                 return false;
-            case R.id.action_refresh_list:
-                refresh();
-                return true;
+//            case R.id.action_refresh_list:
+//                refresh();
+//                return true;
             case R.id.action_thread_list_settings:
                 showThreadListSettingsDialog();
                 return true;
@@ -353,15 +335,6 @@ public class ThreadListFragment extends Fragment
     @Override
     public void onRefresh() {
         refresh();
-    }
-
-    public void onVolumeUp() {
-        int index = mThreadListView.getFirstVisiblePosition() - mThreadListView.getChildCount() + 1;
-        mThreadListView.setSelection(index < 0 ? 0 : index);
-    }
-
-    public void onVolumeDown() {
-        mThreadListView.setSelection(mThreadListView.getLastVisiblePosition());
     }
 
     public class OnScrollCallback implements AbsListView.OnScrollListener {
