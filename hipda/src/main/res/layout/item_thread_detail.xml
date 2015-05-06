@@ -12,53 +12,48 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="32dp"
             android:paddingBottom="4dp">
+
+            <ImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="2dp" />
+
+            <TextView
+                android:id="@+id/author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/iv_avatar"
+                android:padding="4dp"
+                android:text=""
+                android:textColor="?attr/color_hipda"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/floor"
+                android:padding="4dp"
+                android:text=""
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/floor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="2dp"
                 android:padding="2dp"
                 android:text=""
                 android:textColor="?attr/color_hipda"
                 android:textSize="20sp"
                 android:textStyle="bold" />
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/floor">
-
-                <ImageView
-                    android:id="@+id/iv_avatar"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="4dp" />
-
-                <TextView
-                    android:id="@+id/author"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_toRightOf="@+id/iv_avatar"
-                    android:padding="4dp"
-                    android:text=""
-                    android:textColor="?attr/color_hipda"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"
-                    android:padding="4dp"
-                    android:text="" />
-            </RelativeLayout>
 
         </RelativeLayout>
 
