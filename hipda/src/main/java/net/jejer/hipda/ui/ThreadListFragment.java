@@ -84,7 +84,6 @@ public class ThreadListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         Logger.v("onCreate");
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
 
         mCtx = getActivity();
 
@@ -99,7 +98,6 @@ public class ThreadListFragment extends Fragment
 
         setHasOptionsMenu(true);
         mCallbacks = new ThreadListLoaderCallbacks();
-        List<ThreadBean> a = new ArrayList<ThreadBean>();
         mThreadListAdapter = new ThreadListAdapter(mCtx);
 
         mMsgHandler = new Handler(new ThreadListMsgHandler());
@@ -192,8 +190,10 @@ public class ThreadListFragment extends Fragment
             }
         });
 
-        getLoaderManager().initLoader(0, null, mCallbacks);
-        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+        if (mThreadListAdapter.getCount() == 0) {
+            getLoaderManager().initLoader(0, null, mCallbacks);
+            getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+        }
     }
 
     @Override
@@ -293,7 +293,6 @@ public class ThreadListFragment extends Fragment
         mPage = 1;
         mThreadListView.setSelection(0);
         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-        Logger.v("restartLoader() called");
     }
 
     @Override
@@ -624,9 +623,9 @@ public class ThreadListFragment extends Fragment
                     mTipBar.setVisibility(View.INVISIBLE);
                     break;
                 case STAGE_DONE:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
-                    mTipBar.setText(page + "加载完成");
-                    mTipBar.setVisibility(View.VISIBLE);
+//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
+//                    mTipBar.setText(page + "加载完成");
+//                    mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case STAGE_RELOGIN:
                     mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));

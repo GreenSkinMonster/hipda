@@ -661,7 +661,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
 
             ThreadDetailActionModeCallback cb = new ThreadDetailActionModeCallback(ThreadDetailFragment.this,
                     mFid, mTid, mDetailAdapter.getItem(position));
-            getActivity().startActionMode(cb);
+            ((AppCompatActivity) getActivity()).startSupportActionMode(cb);
 
             return true;
         }

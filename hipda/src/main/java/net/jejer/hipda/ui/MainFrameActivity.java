@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -260,7 +259,6 @@ public class MainFrameActivity extends AppCompatActivity {
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
-            Logger.v("DrawerItemClickListener");
             switch (iDrawerItem.getIdentifier()) {
                 case 1:    // search
                     Bundle searchBundle = new Bundle();
@@ -327,14 +325,6 @@ public class MainFrameActivity extends AppCompatActivity {
                             .replace(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
                             .addToBackStack(SettingsFragment.class.getName())
                             .commit();
-                    break;
-                case 8:    // switch day/night theme
-                    //cancel eink mode ui
-                    HiSettingsHelper.getInstance().setNightTheme(!HiSettingsHelper.getInstance().isNightTheme());
-                    Intent intent = getIntent();
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    finish();
-                    startActivity(intent);
                     break;
                 case 102:    // go to forums
                 case 106:
