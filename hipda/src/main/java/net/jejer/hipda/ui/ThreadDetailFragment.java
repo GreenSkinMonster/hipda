@@ -97,7 +97,6 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     public void onCreate(Bundle savedInstanceState) {
         Logger.v("onCreate");
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
 
         ((MainFrameActivity) getActivity()).registOnSwipeCallback(this);
         mCtx = getActivity();

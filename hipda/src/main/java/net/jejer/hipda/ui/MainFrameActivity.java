@@ -66,16 +66,8 @@ public class MainFrameActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main_frame);
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Logger.v("toolbar.setNavigationOnClickListener");
-                onBackPressed();
-            }
-        });
 
         drawerResult = new Drawer()
                 .withActivity(this)
@@ -102,6 +94,17 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .withSelectedItem(-1)
                 .build();
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                popFragment(false);
+            }
+        });
 
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
@@ -196,18 +199,14 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     public boolean popFragment(boolean backPressed) {
-        Logger.v("popFragment");
         FragmentManager fm = getFragmentManager();
         int count = fm.getBackStackEntryCount();
-        Logger.v("before pop, count=" + count);
         if (count > 0) {
             fm.popBackStackImmediate();
             count = fm.getBackStackEntryCount();
-            Logger.v("after pop, count=" + count);
             if (count > 0) {
                 FragmentManager.BackStackEntry backEntry = getFragmentManager().getBackStackEntryAt(count - 1);
                 String str = backEntry.getName();
-                Logger.v("after pop, name=" + str);
                 Fragment fragment = getFragmentManager().findFragmentByTag(str);
 
                 if (fragment != null) {
@@ -222,12 +221,10 @@ public class MainFrameActivity extends AppCompatActivity {
             return true;
         } else {
             if (!backPressed) {
-//                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-//                if (!mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-//                    mDrawerLayout.openDrawer(Gravity.LEFT);
-//                } else {
-//                    mDrawerLayout.closeDrawers();
-//                }
+                if (drawerResult.isDrawerOpen())
+                    drawerResult.closeDrawer();
+                else
+                    drawerResult.openDrawer();
             }
             return false;
         }
@@ -251,7 +248,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
         public final int id;
 
-        private DrawerItem(int id) {
+        DrawerItem(int id) {
             this.id = id;
         }
     }
@@ -335,7 +332,15 @@ public class MainFrameActivity extends AppCompatActivity {
                     Bundle argments = new Bundle();
                     argments.putInt(ThreadListFragment.ARG_FID_KEY, iDrawerItem.getIdentifier() - 100);
                     threadListFragment.setArguments(argments);
-                    getFragmentManager().beginTransaction()
+
+                    //clear all backStacks
+                    FragmentManager fm = getFragmentManager();
+                    int backStackCount = fm.getBackStackEntryCount();
+                    for (int cnt = 0; cnt < backStackCount; cnt++) {
+                        int backStackId = fm.getBackStackEntryAt(cnt).getId();
+                        fm.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                    fm.beginTransaction()
                             .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
                             .commit();
                     break;
