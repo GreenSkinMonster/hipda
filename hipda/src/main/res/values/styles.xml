@@ -12,10 +12,14 @@
         <item name="android:actionBarSize">48dp</item>
         <item name="actionBarSize">48dp</item>
 
+        <!-- make ActionMode overlap Toolbar -->
         <item name="windowActionModeOverlay">true</item>
-        <!--<item name="actionModeStyle">@style/MyActionMode</item>-->
 
+        <!-- change smaller drawer item's color -->
         <item name="material_drawer_secondary_text">@color/material_drawer_primary_text</item>
+
+        <!-- change searchView suggestion background color-->
+        <item name="android:autoCompleteTextViewStyle">@style/MyAutoCompleteTextView</item>
 
         <item name="themeName">day</item>
         <item name="background">@color/day_background</item>
@@ -43,6 +47,10 @@
 
     <style name="MyActionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="background">?colorPrimary</item>
+    </style>
+
+    <style name="MyAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:popupBackground">?background</item>
     </style>
 
     <!-- Theme Night. -->
