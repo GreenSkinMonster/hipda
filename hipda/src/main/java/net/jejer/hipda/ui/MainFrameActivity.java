@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
@@ -73,6 +74,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .withHeader(R.layout.header)
+                .withTranslucentStatusBar(false)
                 .addDrawerItems(
                         new SecondaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search),
                         new SecondaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_grade),
@@ -85,11 +87,11 @@ public class MainFrameActivity extends AppCompatActivity {
                                 .withIdentifier(DrawerItem.SETTINGS.id)
                                 .withIcon(GoogleMaterial.Icon.gmd_settings)
                 ).addStickyDrawerItems(
-                        new SecondaryDrawerItem().withName(HiUtils.FORUMS[0]).withIdentifier(100 + HiUtils.FORUM_IDS[0]).withIcon(FontAwesome.Icon.faw_cc_discover),
-                        new SecondaryDrawerItem().withName(HiUtils.FORUMS[1]).withIdentifier(100 + HiUtils.FORUM_IDS[1]).withIcon(FontAwesome.Icon.faw_shopping_cart),
-                        new SecondaryDrawerItem().withName(HiUtils.FORUMS[2]).withIdentifier(100 + HiUtils.FORUM_IDS[2]).withIcon(FontAwesome.Icon.faw_forumbee),
-                        new SecondaryDrawerItem().withName(HiUtils.FORUMS[3]).withIdentifier(100 + HiUtils.FORUM_IDS[3]).withIcon(FontAwesome.Icon.faw_book),
-                        new SecondaryDrawerItem().withName(HiUtils.FORUMS[4]).withIdentifier(100 + HiUtils.FORUM_IDS[4]).withIcon(FontAwesome.Icon.faw_reddit)
+                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[0]).withIdentifier(100 + HiUtils.FORUM_IDS[0]).withIcon(FontAwesome.Icon.faw_cc_discover),
+                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[1]).withIdentifier(100 + HiUtils.FORUM_IDS[1]).withIcon(FontAwesome.Icon.faw_shopping_cart),
+                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[2]).withIdentifier(100 + HiUtils.FORUM_IDS[2]).withIcon(FontAwesome.Icon.faw_forumbee),
+                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[3]).withIdentifier(100 + HiUtils.FORUM_IDS[3]).withIcon(FontAwesome.Icon.faw_book),
+                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[4]).withIdentifier(100 + HiUtils.FORUM_IDS[4]).withIcon(FontAwesome.Icon.faw_reddit)
                 )
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .withSelectedItem(-1)

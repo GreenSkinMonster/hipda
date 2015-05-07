@@ -6,12 +6,6 @@
     android:layout_height="match_parent"
     android:background="?detail_background">
 
-    <include
-        android:id="@+id/inc_quick_reply"
-        android:layout_alignParentBottom="true"
-        layout="@layout/view_quick_reply"
-        android:visibility="invisible" />
-
     <TextView
         android:id="@+id/thread_detail_tipbar"
         android:layout_width="fill_parent"
@@ -27,9 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
+        android:clickable="true"
         android:divider="?list_item_divider"
         android:dividerHeight="1dp"
-        android:clickable="true"
         android:paddingBottom="8dp" />
 
     <com.github.clans.fab.FloatingActionMenu
@@ -37,47 +31,88 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="20dp"
+        fab:menu_animationDelayPerItem="25"
+        fab:menu_buttonSpacing="2dp"
         fab:menu_colorNormal="@color/background_silver"
         fab:menu_colorPressed="@color/background_grey"
-        fab:menu_icon="@drawable/fab_add"
-        fab:menu_showShadow="true"
-        fab:menu_shadowColor="#00000000"
         fab:menu_fab_size="mini"
-        fab:menu_buttonSpacing="2dp"
-        fab:menu_animationDelayPerItem="25"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginEnd="16dp">
+        fab:menu_icon="@drawable/fab_add"
+        fab:menu_shadowColor="#00000000"
+        fab:menu_showShadow="true">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_goto_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/tapatalk_bubble_move_night"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
-            android:src="@drawable/tapatalk_bubble_move_night"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_refresh_night"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
-            android:src="@drawable/ic_action_refresh_night"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_quick_reply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_quick_reply"
             fab:fab_colorNormal="@color/blue_normal"
             fab:fab_colorPressed="@color/blue_pressed"
-            android:src="@drawable/ic_action_quick_reply"
             fab:fab_size="mini" />
 
     </com.github.clans.fab.FloatingActionMenu>
+
+    <RelativeLayout
+        android:id="@+id/quick_reply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="?replyBarBackground"
+        android:visibility="invisible">
+
+        <View
+            android:id="@+id/border_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/silver" />
+
+        <EditText
+            android:id="@+id/tv_reply_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_toLeftOf="@+id/ib_reply_post"
+            android:hint="@string/action_quick_reply"
+            android:inputType="textMultiLine"
+            android:maxLines="6"
+            android:minLines="1"
+            android:scrollHorizontally="false"
+            android:scrollbars="vertical"
+            android:singleLine="false"
+            android:text="@string/txt_quick_mark" />
+
+        <ImageButton
+            android:id="@+id/ib_reply_post"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignBottom="@+id/tv_reply_text"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@string/ib_quick_send"
+            android:src="?icon_send" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

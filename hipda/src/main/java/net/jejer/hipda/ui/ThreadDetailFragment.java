@@ -236,7 +236,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         });
 
 
-        quickReply = view.findViewById(R.id.inc_quick_reply);
+        quickReply = view.findViewById(R.id.quick_reply);
         mReplyTextTv = (TextView) quickReply.findViewById(R.id.tv_reply_text);
         mReplyTextTv.setTextSize(HiSettingsHelper.getPostTextSize());
         mPostReplyIb = (ImageButton) quickReply.findViewById(R.id.ib_reply_post);

@@ -3,7 +3,7 @@
     android:layout_height="wrap_content"
     android:background="?list_item_background"
     android:orientation="vertical"
-    android:padding="6dp">
+    android:padding="8dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
