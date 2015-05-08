@@ -30,6 +30,7 @@ import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.glide.GifTransformation;
+import net.jejer.hipda.glide.GlideBitmapTarget;
 import net.jejer.hipda.glide.GlideFutureTask;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageView;
@@ -302,8 +303,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .transform(new GifTransformation(mCtx))
-                        .override(imageReadyInfo.getWidth(), imageReadyInfo.getHeight())
-                        .into(giv);
+                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
             } else {
                 Glide.with(mCtx)
                         .load(imageUrl)
@@ -311,8 +311,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                         .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder()))
                         .imageDecoder(new ThreadImageDecoder())
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .override(imageReadyInfo.getWidth(), imageReadyInfo.getHeight())
-                        .into(giv);
+                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
             }
         } else {
             giv.setImageResource(R.drawable.tapatalk_image_broken);
