@@ -2,11 +2,8 @@ package net.jejer.hipda.async;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -103,12 +100,7 @@ public class UpdateHelper {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         try {
-                                            DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
-                                            DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
-                                            req.addRequestHeader("User-agent", HiUtils.UserAgent);
-                                            req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                                            req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-                                            dm.enqueue(req);
+                                            HttpUtils.download(mCtx, url, filename);
                                         } catch (SecurityException e) {
                                             Logger.e(e);
                                             Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();

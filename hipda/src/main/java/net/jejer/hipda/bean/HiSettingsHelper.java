@@ -62,8 +62,6 @@ public class HiSettingsHelper {
     private String mSecQuestion = "";
     private String mSecAnswer = "";
 
-    private String mCookieAuth = "";
-
     private boolean mShowStickThreads = false;
     private boolean mShowPostType = false;
     private boolean mLoadImgOnMobileNwk = true;
@@ -133,7 +131,6 @@ public class HiSettingsHelper {
         getPasswordFromPref();
         getSecQuestionFromPref();
         getSecAnswerFromPref();
-        getCookieAuthFromPref();
         isShowStickThreadsFromPref();
         isLoadImgOnMobileNwkFromPref();
         isShowThreadListAvatarFromPref();
@@ -218,21 +215,6 @@ public class HiSettingsHelper {
         mSecAnswer = secAnswer;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_SECANSWER, secAnswer).commit();
-    }
-
-    public String getCookieAuth() {
-        return mCookieAuth;
-    }
-
-    public String getCookieAuthFromPref() {
-        mCookieAuth = mSharedPref.getString(PERF_COOKIEAUTH, "");
-        return mCookieAuth;
-    }
-
-    public void setCookieAuth(String cookieAuth) {
-        mCookieAuth = cookieAuth;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_COOKIEAUTH, cookieAuth).commit();
     }
 
     public boolean isShowPostType() {

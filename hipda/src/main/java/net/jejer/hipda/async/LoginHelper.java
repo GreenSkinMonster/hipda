@@ -150,7 +150,6 @@ public class LoginHelper {
     }
 
     public static void logout() {
-        HiSettingsHelper.getInstance().setCookieAuth("");
         VolleyHelper.getInstance().clearCookies();
     }
 
