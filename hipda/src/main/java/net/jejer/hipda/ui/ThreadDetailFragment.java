@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,6 +37,8 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.DetailListLoader;
@@ -139,6 +142,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         mFam.setVisibility(View.INVISIBLE);
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
+        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE));
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,6 +153,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         });
 
         FloatingActionButton fabQuickReply = (FloatingActionButton) view.findViewById(R.id.action_fab_quick_reply);
+        fabQuickReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_reply).color(Color.WHITE));
         fabQuickReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,6 +172,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         });
 
         FloatingActionButton fabGotoPage = (FloatingActionButton) view.findViewById(R.id.action_fab_goto_page);
+        fabGotoPage.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_swap_horiz).color(Color.WHITE));
         fabGotoPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -674,10 +680,10 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         mGoToPage = mCurrentPage;
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View viewlayout = inflater.inflate(R.layout.dialog_goto_page, null);
-        final ImageButton btnFirstPage = (ImageButton) viewlayout.findViewById(R.id.btn_fisrt_page);
-        final ImageButton btnLastPage = (ImageButton) viewlayout.findViewById(R.id.btn_last_page);
-        final ImageButton btnNextPage = (ImageButton) viewlayout.findViewById(R.id.btn_next_page);
-        final ImageButton btnPreviousPage = (ImageButton) viewlayout.findViewById(R.id.btn_previous_page);
+        final Button btnFirstPage = (Button) viewlayout.findViewById(R.id.btn_fisrt_page);
+        final Button btnLastPage = (Button) viewlayout.findViewById(R.id.btn_last_page);
+        final Button btnNextPage = (Button) viewlayout.findViewById(R.id.btn_next_page);
+        final Button btnPreviousPage = (Button) viewlayout.findViewById(R.id.btn_previous_page);
         final SeekBar sbGotoPage = (SeekBar) viewlayout.findViewById(R.id.sb_page);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final AlertDialog dialog;

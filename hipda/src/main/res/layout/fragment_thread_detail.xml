@@ -49,27 +49,24 @@
             android:id="@+id/action_fab_goto_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/tapatalk_bubble_move_night"
-            fab:fab_colorNormal="@color/blue_normal"
-            fab:fab_colorPressed="@color/blue_pressed"
+            fab:fab_colorNormal="?colorPrimary"
+            fab:fab_colorPressed="?colorPrimaryDark"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_refresh_night"
-            fab:fab_colorNormal="@color/blue_normal"
-            fab:fab_colorPressed="@color/blue_pressed"
+            fab:fab_colorNormal="?colorPrimary"
+            fab:fab_colorPressed="?colorPrimaryDark"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_quick_reply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_quick_reply"
-            fab:fab_colorNormal="@color/blue_normal"
-            fab:fab_colorPressed="@color/blue_pressed"
+            fab:fab_colorNormal="?colorPrimary"
+            fab:fab_colorPressed="?colorPrimaryDark"
             fab:fab_size="mini" />
 
     </com.github.clans.fab.FloatingActionMenu>

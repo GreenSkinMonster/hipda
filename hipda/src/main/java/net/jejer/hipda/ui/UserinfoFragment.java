@@ -6,6 +6,7 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Loader;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -28,6 +29,8 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.HiStringRequest;
@@ -104,9 +107,11 @@ public class UserinfoFragment extends Fragment {
 
         mUsernameView = (TextView) view.findViewById(R.id.userinfo_username);
         mUsernameView.setText(mUsername);
+        mUsernameView.setTextSize(HiSettingsHelper.getPostTextSize() + 2);
 
         mDetailView = (TextView) view.findViewById(R.id.userinfo_detail);
         mDetailView.setText("正在获取信息...");
+        mDetailView.setTextSize(HiSettingsHelper.getPostTextSize());
 
         //to avoid click through this view
         view.setOnTouchListener(new View.OnTouchListener() {
@@ -168,6 +173,7 @@ public class UserinfoFragment extends Fragment {
 
         menu.clear();
         inflater.inflate(R.menu.menu_userinfo, menu);
+        menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_message).actionBarSize().color(Color.WHITE));
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mUsername);

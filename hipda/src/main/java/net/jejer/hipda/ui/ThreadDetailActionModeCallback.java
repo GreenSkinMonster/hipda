@@ -3,11 +3,15 @@ package net.jejer.hipda.ui;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostAsyncTask;
@@ -109,6 +113,11 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
 
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.contextual_menu_thread_detail, menu);
+
+        menu.findItem(R.id.action_edit).setIcon(new IconicsDrawable(mFragment.getActivity(), GoogleMaterial.Icon.gmd_edit).actionBarSize().color(Color.WHITE));
+        menu.findItem(R.id.action_reply).setIcon(new IconicsDrawable(mFragment.getActivity(), GoogleMaterial.Icon.gmd_reply).actionBarSize().color(Color.WHITE));
+        menu.findItem(R.id.action_quote).setIcon(new IconicsDrawable(mFragment.getActivity(), GoogleMaterial.Icon.gmd_format_quote).actionBarSize().color(Color.WHITE));
+        menu.findItem(R.id.action_copy).setIcon(new IconicsDrawable(mFragment.getActivity(), GoogleMaterial.Icon.gmd_content_copy).actionBarSize().color(Color.WHITE));
 
         if (!mDetailBean.getAuthor().equals(HiSettingsHelper.getInstance().getUsername())) {
             MenuItem item = menu.findItem(R.id.action_edit);

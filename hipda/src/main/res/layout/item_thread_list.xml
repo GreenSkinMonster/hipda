@@ -3,13 +3,16 @@
     android:layout_height="wrap_content"
     android:background="?list_item_background"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:paddingBottom="4dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:minHeight="32dp"
-        android:paddingBottom="2dp">
+        android:paddingBottom="4dp">
 
         <ImageView
             android:id="@+id/iv_avatar"
@@ -40,37 +43,36 @@
             android:textSize="15sp"
             android:visibility="gone" />
 
-        <ImageView
+        <android.view.IconicsTextView
             android:id="@+id/iv_image_indicator"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/tv_replycounter"
-            android:contentDescription="@string/iv_thread_indicator"
             android:padding="2dp"
-            android:src="@drawable/ic_action_image"
+            android:text="{faw-image}"
+            android:textColor="?attr/color_hipda"
+            android:textSize="15sp"
             android:visibility="gone" />
 
-        <TextView
+        <android.view.IconicsTextView
             android:id="@+id/tv_replycounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/tv_viewcounter"
-            android:drawableLeft="@drawable/tapatalk_topic_icon"
             android:padding="2dp"
             android:singleLine="true"
             android:text=""
             android:textColor="?android:textColorSecondary"
             android:textSize="15sp" />
 
-        <TextView
+        <android.view.IconicsTextView
             android:id="@+id/tv_viewcounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/tv_create_time"
-            android:drawableLeft="@drawable/tapatalk_view_icon"
             android:padding="2dp"
             android:singleLine="true"
             android:text=""

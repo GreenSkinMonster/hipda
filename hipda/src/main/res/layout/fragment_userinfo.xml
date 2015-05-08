@@ -23,7 +23,7 @@
             android:layout_toRightOf="@+id/userinfo_avatar"
             android:padding="8dp"
             android:text=""
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btn_search_threads"
@@ -50,8 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text=""
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:text="" />
         </LinearLayout>
     </ScrollView>
 

@@ -2,15 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:orientation="vertical">
 
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp"
-        android:layout_margin="4dp">
+        android:layout_margin="4dp"
+        android:padding="4dp">
 
         <SeekBar
             android:id="@+id/sb_page"
@@ -24,52 +24,52 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp"
-        android:layout_margin="4dp">
+        android:layout_margin="4dp"
+        android:padding="4dp">
 
-        <ImageButton
+        <android.view.IconicsButton
             android:id="@+id/btn_fisrt_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_action_first"
             android:layout_margin="4dp"
-            android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="?attr/color_hipda" />
+            android:text="{faw-fast-backward}"
+            android:textColor="?colorAccent"
+            android:textSize="24dp" />
 
-        <ImageButton
+        <android.view.IconicsButton
             android:id="@+id/btn_previous_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
             android:layout_toRightOf="@+id/btn_fisrt_page"
-            android:src="@drawable/ic_action_previous"
-            android:layout_margin="4dp"
-            android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="?attr/color_hipda" />
+            android:text="{faw-step-backward}"
+            android:textColor="?colorAccent"
+            android:textSize="24dp" />
 
-        <ImageButton
+        <android.view.IconicsButton
             android:id="@+id/btn_next_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
             android:layout_toLeftOf="@+id/btn_last_page"
-            android:src="@drawable/ic_action_next"
-            android:layout_margin="4dp"
-            android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="?attr/color_hipda" />
+            android:text="{faw-step-forward}"
+            android:textColor="?colorAccent"
+            android:textSize="24dp" />
 
-        <ImageButton
+        <android.view.IconicsButton
             android:id="@+id/btn_last_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_action_last"
             android:layout_margin="4dp"
-            android:padding="10dp"
             android:background="?android:selectableItemBackground"
-            android:tint="?attr/color_hipda" />
+            android:text="{faw-fast-forward}"
+            android:textColor="?colorAccent"
+            android:textSize="24dp" />
 
     </RelativeLayout>
 

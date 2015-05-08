@@ -4,7 +4,6 @@
 
     <item
         android:id="@+id/action_send_sms"
-        android:icon="?icon_send_sms"
         android:title="@string/action_send_sms"
         app:showAsAction="ifRoom|collapseActionView" />
 

@@ -123,23 +123,23 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
         switch (mType) {
             case SimpleListLoader.TYPE_MYREPLY:
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_myreply);
-                inflater.inflate(R.menu.menu_simple_thread_list, menu);
+//                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_MYPOST:
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_mypost);
-                inflater.inflate(R.menu.menu_simple_thread_list, menu);
+//                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_SMS:
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_sms);
-                inflater.inflate(R.menu.menu_simple_thread_list, menu);
+//                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_THREADNOTIFY:
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_notify);
-                inflater.inflate(R.menu.menu_simple_thread_list, menu);
+//                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_FAVORITES:
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_favorites);
-                inflater.inflate(R.menu.menu_simple_thread_list, menu);
+//                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_SEARCH:
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_search);

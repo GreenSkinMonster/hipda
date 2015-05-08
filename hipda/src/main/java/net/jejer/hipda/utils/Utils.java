@@ -18,6 +18,11 @@ public class Utils {
 
     private static Whitelist mWhitelist = null;
 
+    private static String THIS_YEAR;
+    private static String TODAY;
+    private static String YESTERDAY;
+    private static long UPDATE_TIME = 0;
+
     public static String nullToText(String text) {
         if (TextUtils.isEmpty(text)) {
             return "";
@@ -30,10 +35,25 @@ public class Utils {
     }
 
     public static String shortyTime(String time) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-d", Locale.US);
-        String today = formatter.format(new Date());
-        if (time.contains(today)) {
-            return time.replace(today, "今天");
+        if (TextUtils.isEmpty(time))
+            return "";
+
+        if (System.currentTimeMillis() - UPDATE_TIME > 10 * 60 * 1000 || THIS_YEAR == null) {
+            SimpleDateFormat dayFormatter = new SimpleDateFormat("yyyy-M-d", Locale.US);
+            SimpleDateFormat yearFormatter = new SimpleDateFormat("yyyy", Locale.US);
+            Date now = new Date();
+            THIS_YEAR = yearFormatter.format(now) + "-";
+            TODAY = dayFormatter.format(now);
+            YESTERDAY = dayFormatter.format(new Date(now.getTime() - 24 * 60 * 60 * 1000));
+            UPDATE_TIME = System.currentTimeMillis();
+        }
+
+        if (time.contains(TODAY)) {
+            time = time.replace(TODAY, "今天");
+        } else if (time.contains(YESTERDAY)) {
+            time = time.replace(YESTERDAY, "昨天");
+        } else if (time.startsWith(THIS_YEAR)) {
+            time = time.substring(THIS_YEAR.length());
         }
         return time;
     }

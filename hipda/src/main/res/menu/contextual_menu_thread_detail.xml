@@ -4,22 +4,18 @@
 
     <item
         android:id="@+id/action_edit"
-        android:icon="?icon_edit"
         android:title="@string/action_edit"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_reply"
-        android:icon="?icon_reply"
         android:title="@string/action_reply"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_quote"
-        android:icon="?icon_quote"
         android:title="@string/action_quote"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_copy"
-        android:icon="?icon_copy"
         android:title="@string/action_copy"
         app:showAsAction="ifRoom" />
 

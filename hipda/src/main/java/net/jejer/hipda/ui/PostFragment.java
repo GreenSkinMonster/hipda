@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -35,6 +36,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostAsyncTask;
@@ -253,6 +257,10 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
 
         menu.clear();
         inflater.inflate(R.menu.menu_reply, menu);
+
+        menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_now_wallpaper).actionBarSize().color(Color.WHITE));
+        menu.findItem(R.id.action_post).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).actionBarSize().color(Color.WHITE));
+
 
         if (menu.getItem(1).getTitle().equals("发送")) {
             // Disable and Enable send button

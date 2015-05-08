@@ -4,12 +4,10 @@
 
     <item
         android:id="@+id/action_upload_img"
-        android:icon="?icon_upload_img"
         android:title="@string/action_upload_img"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_post"
-        android:icon="?icon_send"
         android:title="@string/action_send"
         app:showAsAction="ifRoom" />
 

@@ -41,11 +41,11 @@ public class ThreadListAdapter extends HiAdapter<ThreadBean> {
         holder.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
         holder.tv_author = (TextView) convertView.findViewById(R.id.tv_author);
         holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
-        holder.tv_viewcounter = (TextView) convertView.findViewById(R.id.tv_viewcounter);
+//        holder.tv_viewcounter = (TextView) convertView.findViewById(R.id.tv_viewcounter);
         holder.tv_replycounter = (TextView) convertView.findViewById(R.id.tv_replycounter);
         holder.tv_create_time = (TextView) convertView.findViewById(R.id.tv_create_time);
-        holder.tv_update_time = (TextView) convertView.findViewById(R.id.tv_update_time);
-        holder.iv_image_indicator = (ImageView) convertView.findViewById(R.id.iv_image_indicator);
+//        holder.tv_update_time = (TextView) convertView.findViewById(R.id.tv_update_time);
+        holder.iv_image_indicator = (TextView) convertView.findViewById(R.id.iv_image_indicator);
 
         holder.tv_author.setText(thread.getAuthor());
 
@@ -58,14 +58,13 @@ public class ThreadListAdapter extends HiAdapter<ThreadBean> {
 
         holder.tv_title.setTextSize(HiSettingsHelper.getTitleTextSize());
 
-        if (thread.getCountCmts() != null) {
-            holder.tv_replycounter.setText(thread.getCountCmts());
-        }
-        if (thread.getCountViews() != null) {
-            holder.tv_viewcounter.setText(thread.getCountViews());
-        }
+        holder.tv_replycounter.setText(thread.getCountCmts() + "/" + thread.getCountViews());
+
+//        if (thread.getCountViews() != null) {
+//            holder.tv_viewcounter.setText(thread.getCountViews());
+//        }
         holder.tv_create_time.setText(Utils.shortyTime(thread.getTimeCreate()));
-        holder.tv_update_time.setText(Utils.shortyTime(thread.getTimeUpdate()));
+//        holder.tv_update_time.setText(Utils.shortyTime(thread.getTimeUpdate()));
 
         if (thread.getHavePic()) {
             holder.iv_image_indicator.setVisibility(View.VISIBLE);
@@ -89,10 +88,10 @@ public class ThreadListAdapter extends HiAdapter<ThreadBean> {
         ImageView avatar;
         TextView tv_title;
         TextView tv_author;
-        TextView tv_viewcounter;
+        //        TextView tv_viewcounter;
         TextView tv_replycounter;
         TextView tv_create_time;
-        TextView tv_update_time;
-        ImageView iv_image_indicator;
+        //        TextView tv_update_time;
+        TextView iv_image_indicator;
     }
 }

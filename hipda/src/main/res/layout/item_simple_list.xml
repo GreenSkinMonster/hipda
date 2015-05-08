@@ -2,7 +2,10 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="?list_item_background"
-    android:padding="4dp">
+    android:paddingBottom="4dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -11,10 +14,10 @@
 
         <ImageView
             android:id="@+id/iv_item_indicator"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_alignParentLeft="true"
-            android:padding="4dp" />
+            android:padding="2dp" />
 
         <RelativeLayout
             android:layout_width="fill_parent"

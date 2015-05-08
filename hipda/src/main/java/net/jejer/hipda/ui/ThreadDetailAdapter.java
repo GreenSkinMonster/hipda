@@ -82,7 +82,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
         }
 
         holder.author.setText(detail.getAuthor());
-        holder.time.setText(detail.getTimePost());
+        holder.time.setText(Utils.shortyTime(detail.getTimePost()));
         holder.floor.setText(detail.getFloor() + "#");
 
         boolean trimBr = false;

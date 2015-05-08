@@ -46,18 +46,16 @@
             android:id="@+id/action_fab_new_thread"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_write"
-            fab:fab_colorNormal="@color/blue_normal"
-            fab:fab_colorPressed="@color/blue_pressed"
+            fab:fab_colorNormal="?colorPrimary"
+            fab:fab_colorPressed="?colorPrimaryDark"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_refresh_night"
-            fab:fab_colorNormal="@color/blue_normal"
-            fab:fab_colorPressed="@color/blue_pressed"
+            fab:fab_colorNormal="?colorPrimary"
+            fab:fab_colorPressed="?colorPrimaryDark"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 
@@ -68,7 +66,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_action_notify"
         android:visibility="gone"
         fab:fab_colorNormal="@color/pink"
         fab:fab_colorPressed="@color/pink_pressed"

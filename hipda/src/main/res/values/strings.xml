@@ -20,7 +20,6 @@
     <string name="action_send_sms">发短消息</string>
     <string name="action_blacklist">加入黑名单</string>
     <string name="iv_avatar">头像</string>
-    <string name="iv_thread_indicator">帖子在此</string>
     <string name="action_send">发送</string>
     <string name="action_new_thread">发表新帖</string>
     <string name="action_quick_reply">快速回复</string>

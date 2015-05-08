@@ -13,6 +13,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.utils.Utils;
 
 public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
     private View.OnClickListener mAvatarListener;
@@ -50,12 +51,11 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         }
 
         holder.tv_author.setText(item.getAuthor());
-        holder.tv_time.setText(item.getTime());
+        holder.tv_time.setText(Utils.shortyTime(item.getTime()));
         holder.tv_content.setText(item.getInfo());
         holder.tv_content.setFocusable(false);
         holder.tv_content.setAutoLinkMask(Linkify.WEB_URLS);
 
-        holder.tv_author.setTextSize(HiSettingsHelper.getPostTextSize());
         holder.tv_content.setTextSize(HiSettingsHelper.getPostTextSize());
 
         if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
