@@ -13,7 +13,6 @@ import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
-import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
@@ -53,9 +52,8 @@ public class UpdateHelper {
         HiSettingsHelper.getInstance().setAutoUpdateCheck(true);
         HiSettingsHelper.getInstance().setLastUpdateCheckTime(new Date());
 
-        String url = HiUtils.UpdateUrl;
-
-        StringRequest sReq = new HiStringRequest(mCtx, url, new SuccessListener(), new ErrorListener());
+        String updateUrl = "https://api.github.com/repos/GreenSkinMonster/hipda/releases/latest";
+        StringRequest sReq = new HiStringRequest(mCtx, updateUrl, new SuccessListener(), new ErrorListener());
         VolleyHelper.getInstance().add(sReq);
     }
 
@@ -64,58 +62,45 @@ public class UpdateHelper {
         public void onResponse(String response) {
 
             String version = HiSettingsHelper.getInstance().getAppVersion();
-            String newVersion = "";
-            final String url;
-            final String filename;
-            String updateNotes = "";
-            if (response.contains("postnum29887924"))
-                response = response.substring(response.indexOf("postnum29887924"));
-            else
-                return;
+            String newVersion = HttpUtils.getMiddleString(response, "\"tag_name\":\"", "\"");
+            String updateNotes = HttpUtils.getMiddleString(response, "\"body\":\"", "\"");
 
-            boolean found = false;
+            final String url = Utils.nullToText(HttpUtils.getMiddleString(response, "\"browser_download_url\":\"", "\"")).trim();
+            final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
 
-            String firstAttachment = HttpUtils.getMiddleString(response, "<a href=\"attachment.php?", "</a>");
-            if (firstAttachment != null && firstAttachment.contains("hipda-release-")) {
-                String args = firstAttachment.substring(0, firstAttachment.indexOf("\""));
-                url = HiUtils.BaseUrl + "attachment.php?" + args;
-                filename = HttpUtils.getMiddleString(firstAttachment, "<strong>", "</strong>");
-                newVersion = HttpUtils.getMiddleString(filename, "hipda-release-", ".apk");
-                updateNotes = Utils.nullToText(HttpUtils.getMiddleString(response.substring(response.indexOf("更新记录")), "<ul>", "</ul>"));
-                found = !TextUtils.isEmpty(args) && !TextUtils.isEmpty(filename) && newer(version, newVersion);
-            } else {
-                url = "";
-                filename = "";
-            }
+            boolean found = !TextUtils.isEmpty(newVersion)
+                    && !TextUtils.isEmpty(url)
+                    && !TextUtils.isEmpty(updateNotes)
+                    && newer(version, newVersion);
 
             if (found) {
                 if (!mSilent) {
                     pd.dismiss();
                 }
 
-                Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion).setMessage(
-                        updateNotes.replace("<ul>", "").replace("<li>", "").replace("<br />", "")).
-                        setPositiveButton("下载",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        try {
-                                            HttpUtils.download(mCtx, url, filename);
-                                        } catch (SecurityException e) {
-                                            Logger.e(e);
-                                            Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                }).setNeutralButton("不再提醒", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        HiSettingsHelper.getInstance().setAutoUpdateCheck(false);
-                    }
-                }).create();
+                Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
+                        .setMessage(updateNotes.replace("\\r\\n", "\n")).
+                                setPositiveButton("下载",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                try {
+                                                    HttpUtils.download(mCtx, url, filename);
+                                                } catch (SecurityException e) {
+                                                    Logger.e(e);
+                                                    Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }).setNeutralButton("不再提醒", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                HiSettingsHelper.getInstance().setAutoUpdateCheck(false);
+                            }
+                        }).create();
 
                 dialog.show();
             } else {
