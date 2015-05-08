@@ -5,24 +5,11 @@
     <!--<attr name="background" format="color" />-->
     <attr name="list_item_background" format="color" />
     <attr name="detail_background" format="color" />
-    <attr name="img_background" format="color" />
     <attr name="replyBarBackground" format="color" />
     <attr name="list_item_divider" format="color" />
     <attr name="quote_text_background" format="color" />
-    <attr name="icon_refresh" format="reference" />
     <attr name="icon_send" format="reference" />
-    <attr name="icon_reply" format="reference" />
-    <attr name="icon_edit" format="reference" />
-    <attr name="icon_quote" format="reference" />
-    <attr name="icon_website" format="reference" />
-    <attr name="icon_goto_page" format="reference" />
-    <attr name="icon_settings" format="reference" />
     <attr name="icon_download" format="reference" />
-    <attr name="icon_copy" format="reference" />
-    <attr name="icon_upload_img" format="reference" />
-    <attr name="icon_search" format="reference" />
-    <attr name="icon_send_sms" format="reference" />
+
     <attr name="color_hipda" format="color" />
-    <attr name="default_text_color" format="color" />
-    <attr name="secondary_text_color" format="color" />
 </resources>

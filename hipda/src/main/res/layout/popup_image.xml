@@ -32,7 +32,6 @@
         android:id="@+id/btn_download_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/btn_close_image_popup"
         android:src="?icon_download" />
 
 </FrameLayout>

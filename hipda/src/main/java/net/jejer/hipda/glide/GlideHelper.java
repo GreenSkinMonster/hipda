@@ -2,6 +2,8 @@ package net.jejer.hipda.glide;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.widget.ImageView;
 
@@ -17,8 +19,9 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
-import net.jejer.hipda.R;
 import net.jejer.hipda.cache.LRUCache;
 
 import java.io.InputStream;
@@ -28,6 +31,8 @@ public class GlideHelper {
 
     private static String WEEK_KEY;
     private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(512);
+
+    private static Drawable DEFAULT_USER_ICON;
 
     public static void init(Context context) {
         if (!Glide.isSetup()) {
@@ -50,6 +55,10 @@ public class GlideHelper {
                 && (ctx instanceof Activity)
                 && ((Activity) ctx).isDestroyed())
             return;
+
+        if (DEFAULT_USER_ICON == null)
+            DEFAULT_USER_ICON = new IconicsDrawable(ctx, GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY);
+
         //use year and week number as cache key
         //avatars will be cache for one week at most
         if (WEEK_KEY == null) {
@@ -57,14 +66,14 @@ public class GlideHelper {
             WEEK_KEY = calendar.get(Calendar.YEAR) + "_" + calendar.get(Calendar.WEEK_OF_YEAR);
         }
         if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
-            view.setImageDrawable(ctx.getResources().getDrawable(R.drawable.google_user));
+            view.setImageDrawable(DEFAULT_USER_ICON);
         } else {
             Glide.with(ctx)
                     .load(avatarUrl)
                     .signature(new StringSignature(avatarUrl + "_" + WEEK_KEY))
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .centerCrop()
-                    .error(R.drawable.google_user)
+                    .error(DEFAULT_USER_ICON)
                     .crossFade()
                     .listener(new AvatarRequestListener())
                     .into(view);

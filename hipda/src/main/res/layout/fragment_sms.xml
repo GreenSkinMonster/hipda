@@ -10,9 +10,9 @@
         android:id="@+id/lv_sms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/border_line"
         android:stackFromBottom="true"
-        android:transcriptMode="normal"
-        android:layout_above="@+id/border_line"/>
+        android:transcriptMode="normal" />
 
     <View
         android:id="@+id/border_line"
@@ -23,34 +23,35 @@
 
     <RelativeLayout
         android:id="@+id/rl_input"
-        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:background="?replyBarBackground"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/et_sms"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
+            android:layout_toLeftOf="@+id/ib_send_sms"
+            android:gravity="bottom"
             android:hint="@string/txt_quick_hint"
             android:inputType="textMultiLine"
-            android:singleLine="false"
-            android:minLines="1"
             android:maxLines="6"
+            android:minLines="1"
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
-            android:gravity="bottom"
-            android:text="@string/txt_quick_mark"
-            android:layout_toLeftOf="@+id/ib_send_sms"/>
+            android:singleLine="false"
+            android:text="" />
 
         <ImageButton
             android:id="@+id/ib_send_sms"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:contentDescription="@string/ib_quick_send"
-            android:layout_alignParentRight="true"
             android:layout_alignBottom="@+id/et_sms"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@string/ib_quick_send"
             android:src="?icon_send" />
     </RelativeLayout>
 

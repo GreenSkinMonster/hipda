@@ -10,11 +10,9 @@
      -->
     <item
         android:id="@+id/action_reply"
-        android:icon="?icon_reply"
         android:title="@string/action_reply" />
     <item
         android:id="@+id/action_refresh_detail"
-        android:icon="?icon_refresh"
         android:title="@string/action_refresh" />
     <item
         android:id="@+id/action_add_favorite"
@@ -27,7 +25,6 @@
         android:title="@string/action_only_author" />
     <item
         android:id="@+id/action_open_url"
-        android:icon="?icon_website"
         android:title="@string/action_open_url" />
 
     <item

@@ -72,10 +72,12 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_screen_orientation" />
 
+        <!--
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="true"
             android:key="PERF_GESTURE_BACK"
             android:title="@string/pref_title_gesture_back" />
+            -->
 
     </PreferenceCategory>
 

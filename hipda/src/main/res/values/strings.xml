@@ -24,16 +24,8 @@
     <string name="action_new_thread">发表新帖</string>
     <string name="action_quick_reply">快速回复</string>
 
-    <string name="iv_drawer_color_block"></string>
-    <string name="iv_drawer_icon"></string>
-    <string name="txt_quick_mark"></string>
     <string name="txt_quick_hint">回复</string>
     <string name="ib_quick_send">发送</string>
-    <string name="iv_item_indicator">simple list item indicator</string>
-    <string name="btn_pageup">page up</string>
-    <string name="btn_pagedown">page down</string>
-    <string name="btn_close_image_popup">close image view</string>
-    <string name="iv_item_emoji">emoji</string>
 
     <!-- Pull to refresh related -->
     <string name="header_hint_refresh_normal">下拉加载前一页</string>

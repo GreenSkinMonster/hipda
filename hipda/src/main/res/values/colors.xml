@@ -46,16 +46,9 @@
     <item name="night_img_background" type="color">#2B2C2D</item>
     <item name="night_replybarbackground" type="color">#000000</item>
     <item name="night_list_item_divider" type="color">@color/background_grey</item>
-    <item name="eink_background" type="color">#FFFFFF</item>
-    <item name="eink_list_item_divider" type="color">@color/background_silver</item>
     <item name="day_quote_text_background" type="color">#33C0C0C0</item>
     <item name="night_quote_text_background" type="color">#22C0C0C0</item>
-    <item name="eink_quote_text_background" type="color">#33C0C0C0</item>
 
-    <color name="black_semi_transparent">#C0000000</color>
-    <color name="half_black">#808080</color>
-    <color name="white_normal">#fafafa</color>
-    <color name="white_pressed">#f1f1f1</color>
     <color name="pink">#e91e63</color>
     <color name="pink_pressed">#ec407a</color>
     <color name="blue_semi_transparent">#805677fc</color>

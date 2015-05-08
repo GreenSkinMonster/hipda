@@ -99,7 +99,7 @@
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
             android:singleLine="false"
-            android:text="@string/txt_quick_mark" />
+            android:text="" />
 
         <ImageButton
             android:id="@+id/ib_reply_post"
