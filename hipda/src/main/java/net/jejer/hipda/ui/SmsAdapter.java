@@ -42,6 +42,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_author = (TextView) convertView.findViewById(R.id.tv_author);
         holder.tv_content = (TextView) convertView.findViewById(R.id.tv_content);
         holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
+        holder.tv_isnew = (TextView) convertView.findViewById(R.id.tv_isnew);
         holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
 
         holder.iv_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
@@ -65,6 +66,11 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
             holder.iv_avatar.setVisibility(View.GONE);
         }
 
+        if (item.isNew())
+            holder.tv_isnew.setVisibility(View.VISIBLE);
+        else
+            holder.tv_isnew.setVisibility(View.GONE);
+
         return convertView;
     }
 
@@ -72,6 +78,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         TextView tv_author;
         TextView tv_content;
         TextView tv_time;
+        TextView tv_isnew;
         ImageView iv_avatar;
     }
 }

@@ -36,6 +36,16 @@
                 android:textColor="?android:textColorSecondary"
                 android:textSize="15sp" />
 
+            <android.view.IconicsTextView
+                android:id="@+id/tv_isnew"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/tv_time"
+                android:text="{gmd-email}"
+                android:textColor="@color/red"
+                android:textSize="20sp"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/tv_time"
                 android:layout_width="wrap_content"

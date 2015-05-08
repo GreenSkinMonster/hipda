@@ -463,6 +463,14 @@ public class HiParser {
             }
             item.setInfo(summaryES.first().text());
 
+            // new
+            Elements imgES = pciteES.first().select("img");
+            if (imgES.size() > 0) {
+                if (imgES.first().attr("src").equals("images/default/notice_newpm.gif")) {
+                    item.setNew(true);
+                }
+            }
+
             list.add(item);
         }
 
