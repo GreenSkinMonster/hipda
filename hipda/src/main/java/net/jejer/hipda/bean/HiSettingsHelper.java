@@ -688,7 +688,7 @@ public class HiSettingsHelper {
 
     public int getBackgroundColor() {
         TypedValue typedValue = new TypedValue();
-        mCtx.getTheme().resolveAttribute(R.attr.background, typedValue, true);
+        mCtx.getTheme().resolveAttribute(R.attr.list_item_background, typedValue, true);
         return typedValue.resourceId;
     }
 
