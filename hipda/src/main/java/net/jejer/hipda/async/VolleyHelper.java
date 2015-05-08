@@ -76,6 +76,16 @@ public class VolleyHelper {
         return false;
     }
 
+    public String getAuthCookie() {
+        List<HttpCookie> cookies = cookieStore.getCookies();
+        for (HttpCookie cookie : cookies) {
+            if ("cdb_auth".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
     private VolleyHelper() {
     }
 

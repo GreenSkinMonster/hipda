@@ -1,5 +1,14 @@
 package net.jejer.hipda.utils;
 
+import android.app.DownloadManager;
+import android.content.Context;
+import android.net.Uri;
+import android.os.Environment;
+import android.text.TextUtils;
+import android.widget.Toast;
+
+import net.jejer.hipda.async.VolleyHelper;
+
 public class HttpUtils {
 
     public static String getMiddleString(String source, String start, String end) {
@@ -30,4 +39,25 @@ public class HttpUtils {
             return 0;
         }
     }
+
+    public static void download(Context ctx, String url, String filename) throws SecurityException {
+        String authCookie = VolleyHelper.getInstance().getAuthCookie();
+
+        if (TextUtils.isEmpty(url) || TextUtils.isEmpty(filename)
+                || (url.startsWith(HiUtils.BaseUrl) && TextUtils.isEmpty(authCookie))) {
+            Toast.makeText(ctx, "下载信息不完整，无法进行下载", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        DownloadManager dm = (DownloadManager) ctx.getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+        req.addRequestHeader("User-agent", HiUtils.UserAgent);
+        if (url.startsWith(HiUtils.BaseUrl)) {
+            req.addRequestHeader("Cookie", "cdb_auth=" + authCookie);
+        }
+        req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+        dm.enqueue(req);
+    }
+
 }

@@ -1,12 +1,9 @@
 package net.jejer.hipda.ui;
 
-import android.app.DownloadManager;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
@@ -23,7 +20,6 @@ import android.widget.Toast;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
-import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 
@@ -195,10 +191,6 @@ public class TextViewWithEmoticon extends TextView {
         return new URLSpan(s_url) {
             public void onClick(View view) {
                 try {
-                    DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
-                    DownloadManager.Request downloadReq = new DownloadManager.Request(Uri.parse(getURL()));
-                    downloadReq.addRequestHeader("User-agent", HiUtils.UserAgent);
-
                     String fileName = "";
 
                     //clean way to get fileName
@@ -213,9 +205,8 @@ public class TextViewWithEmoticon extends TextView {
                         if (fileName.contains(" ("))
                             fileName = fileName.substring(0, fileName.lastIndexOf(" (")).trim();
                     }
-                    downloadReq.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-                    downloadReq.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                    dm.enqueue(downloadReq);
+
+                    HttpUtils.download(mCtx, getURL(), fileName);
                 } catch (SecurityException e) {
                     Logger.e(e);
                     Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();

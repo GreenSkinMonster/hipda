@@ -1,10 +1,7 @@
 package net.jejer.hipda.glide;
 
 import android.app.Dialog;
-import android.app.DownloadManager;
 import android.content.Context;
-import android.net.Uri;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -19,6 +16,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 
 public class GlideImageView extends ImageView {
@@ -118,11 +116,8 @@ public class GlideImageView extends ImageView {
                 @Override
                 public void onClick(View arg0) {
                     try {
-                        DownloadManager dm = (DownloadManager) mCtx.getSystemService(Context.DOWNLOAD_SERVICE);
-                        DownloadManager.Request req = new DownloadManager.Request(Uri.parse(mUrl));
-                        req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                        req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, mUrl.substring(mUrl.lastIndexOf("/") + 1));
-                        dm.enqueue(req);
+                        String filename = mUrl.substring(mUrl.lastIndexOf("/") + 1);
+                        HttpUtils.download(mCtx, mUrl, filename);
                     } catch (SecurityException e) {
                         Logger.e(e);
                         Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
