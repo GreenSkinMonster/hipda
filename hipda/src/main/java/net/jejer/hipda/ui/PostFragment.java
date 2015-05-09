@@ -1,7 +1,6 @@
 package net.jejer.hipda.ui;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -57,7 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadImgListener {
+public class PostFragment extends BaseFragment implements UploadImgAsyncTask.UploadImgListener {
     private static final int SELECT_PICTURE = 1;
 
     public static final String ARG_FID_KEY = "fid";
@@ -271,27 +269,27 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
             }
         }
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.action_reply);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setActionBarTitle(R.string.action_reply);
+        setActionBarDisplayHomeAsUpEnabled(true);
 
         switch (mMode) {
             case PostAsyncTask.MODE_REPLY_THREAD:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("回复帖子");
+                setActionBarTitle("回复帖子");
                 break;
             case PostAsyncTask.MODE_REPLY_POST:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("回复 " + mFloor + "#");
+                setActionBarTitle("回复 " + mFloor + "#");
                 break;
             case PostAsyncTask.MODE_QUOTE_POST:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("引用 " + mFloor + "#");
+                setActionBarTitle("引用 " + mFloor + "#");
                 break;
             case PostAsyncTask.MODE_NEW_THREAD:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getActivity().getResources().getString(R.string.action_new_thread));
+                setActionBarTitle(getActivity().getResources().getString(R.string.action_new_thread));
                 mSpForum.setVisibility(View.VISIBLE);
                 mSpTypeIds.setVisibility(View.VISIBLE);
                 mEtSubjectMsg.setVisibility(View.VISIBLE);
                 break;
             case PostAsyncTask.MODE_EDIT_POST:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getActivity().getResources().getString(R.string.action_edit));
+                setActionBarTitle(getActivity().getResources().getString(R.string.action_edit));
                 break;
         }
         super.onCreateOptionsMenu(menu, inflater);

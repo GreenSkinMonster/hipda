@@ -34,6 +34,7 @@ import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.ACRAUtils;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
@@ -90,11 +91,21 @@ public class MainFrameActivity extends AppCompatActivity {
                                 .withIdentifier(DrawerItem.SETTINGS.id)
                                 .withIcon(GoogleMaterial.Icon.gmd_settings),
                         new DividerDrawerItem(),
-                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[0]).withIdentifier(100 + HiUtils.FORUM_IDS[0]).withIcon(FontAwesome.Icon.faw_cc_discover),
-                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[1]).withIdentifier(100 + HiUtils.FORUM_IDS[1]).withIcon(FontAwesome.Icon.faw_shopping_cart),
-                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[2]).withIdentifier(100 + HiUtils.FORUM_IDS[2]).withIcon(FontAwesome.Icon.faw_forumbee),
-                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[3]).withIdentifier(100 + HiUtils.FORUM_IDS[3]).withIcon(FontAwesome.Icon.faw_book),
-                        new PrimaryDrawerItem().withName(HiUtils.FORUMS[4]).withIdentifier(100 + HiUtils.FORUM_IDS[4]).withIcon(FontAwesome.Icon.faw_reddit)
+                        new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_DISCOVERY))
+                                .withIdentifier(HiUtils.FID_DISCOVERY)
+                                .withIcon(FontAwesome.Icon.faw_cc_discover),
+                        new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_BS))
+                                .withIdentifier(HiUtils.FID_BS)
+                                .withIcon(FontAwesome.Icon.faw_shopping_cart),
+                        new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_GEEK))
+                                .withIdentifier(HiUtils.FID_GEEK)
+                                .withIcon(FontAwesome.Icon.faw_forumbee),
+                        new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_EINK))
+                                .withIdentifier(HiUtils.FID_EINK)
+                                .withIcon(FontAwesome.Icon.faw_book),
+                        new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_ROBOT))
+                                .withIdentifier(HiUtils.FID_ROBOT)
+                                .withIcon(FontAwesome.Icon.faw_reddit)
                 )
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .withSelectedItem(-1)
@@ -159,12 +170,16 @@ public class MainFrameActivity extends AppCompatActivity {
             default:
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
+
+        if (drawerResult.isDrawerOpen()) {
+            drawerResult.closeDrawer();
+            return;
+        }
 
         if (mOnSwipeCallback instanceof ThreadDetailFragment) {
             if (((ThreadDetailFragment) mOnSwipeCallback).hideQuickReply())
@@ -243,13 +258,13 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     public enum DrawerItem {
-        SEARCH(1),
-        MY_POST(2),
-        MY_REPLY(3),
-        MY_FAVORITES(4),
-        SMS(5),
-        THREAD_NOTIFY(6),
-        SETTINGS(7);
+        SEARCH(Constants.DRAWER_SEARCH),
+        MY_POST(Constants.DRAWER_MYPOST),
+        MY_REPLY(Constants.DRAWER_MYREPLY),
+        MY_FAVORITES(Constants.DRAWER_FAVORITES),
+        SMS(Constants.DRAWER_SMS),
+        THREAD_NOTIFY(Constants.DRAWER_THREADNOTIFY),
+        SETTINGS(Constants.DRAWER_SETTINGS);
 
         public final int id;
 
@@ -262,7 +277,7 @@ public class MainFrameActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
             switch (iDrawerItem.getIdentifier()) {
-                case 1:    // search
+                case Constants.DRAWER_SEARCH:    // search
                     Bundle searchBundle = new Bundle();
                     searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SEARCH);
                     SimpleListFragment searchFragment = new SimpleListFragment();
@@ -272,7 +287,7 @@ public class MainFrameActivity extends AppCompatActivity {
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
-                case 2:    // my posts
+                case Constants.DRAWER_MYPOST:    // my posts
                     Bundle postsBundle = new Bundle();
                     postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYPOST);
                     SimpleListFragment postsFragment = new SimpleListFragment();
@@ -282,7 +297,7 @@ public class MainFrameActivity extends AppCompatActivity {
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
-                case 3:    // my reply
+                case Constants.DRAWER_MYREPLY:    // my reply
                     Bundle replyBundle = new Bundle();
                     replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYREPLY);
                     SimpleListFragment replyFragment = new SimpleListFragment();
@@ -292,7 +307,7 @@ public class MainFrameActivity extends AppCompatActivity {
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
-                case 4:    // my favorites
+                case Constants.DRAWER_FAVORITES:    // my favorites
                     Bundle favBundle = new Bundle();
                     favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_FAVORITES);
                     SimpleListFragment favFragment = new SimpleListFragment();
@@ -302,7 +317,7 @@ public class MainFrameActivity extends AppCompatActivity {
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
-                case 5:    // sms
+                case Constants.DRAWER_SMS:    // sms
                     Bundle smsBundle = new Bundle();
                     smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
                     SimpleListFragment smsFragment = new SimpleListFragment();
@@ -312,7 +327,7 @@ public class MainFrameActivity extends AppCompatActivity {
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
-                case 6:    // thread notify
+                case SimpleListLoader.TYPE_THREADNOTIFY:    // thread notify
                     Bundle notifyBundle = new Bundle();
                     notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREADNOTIFY);
                     SimpleListFragment notifyFragment = new SimpleListFragment();
@@ -322,36 +337,36 @@ public class MainFrameActivity extends AppCompatActivity {
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
-                case 7:    // settings
+                case Constants.DRAWER_SETTINGS:    // settings
                     getFragmentManager().beginTransaction()
                             .replace(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
                             .addToBackStack(SettingsFragment.class.getName())
                             .commit();
                     break;
-                case 102:    // go to forums
-                case 106:
-                case 107:
-                case 157:
-                case 159:
+                default:
+                    //for forums
                     ThreadListFragment threadListFragment = new ThreadListFragment();
                     Bundle argments = new Bundle();
-                    argments.putInt(ThreadListFragment.ARG_FID_KEY, iDrawerItem.getIdentifier() - 100);
+                    argments.putInt(ThreadListFragment.ARG_FID_KEY, iDrawerItem.getIdentifier());
                     threadListFragment.setArguments(argments);
 
                     //clear all backStacks
                     FragmentManager fm = getFragmentManager();
-                    int backStackCount = fm.getBackStackEntryCount();
-                    for (int cnt = 0; cnt < backStackCount; cnt++) {
-                        int backStackId = fm.getBackStackEntryAt(cnt).getId();
-                        fm.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    }
+                    clearBackStacks(fm);
+
                     fm.beginTransaction()
                             .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
                             .commit();
                     break;
-                default:
-                    break;
             }
+        }
+    }
+
+    private void clearBackStacks(FragmentManager fm) {
+        int backStackCount = fm.getBackStackEntryCount();
+        for (int cnt = 0; cnt < backStackCount; cnt++) {
+            int backStackId = fm.getBackStackEntryAt(cnt).getId();
+            fm.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
 

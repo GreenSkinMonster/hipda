@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -8,7 +7,6 @@ import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +31,7 @@ import net.jejer.hipda.utils.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListener {
+public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostListener {
 
     public static final String ARG_ID = "ID";
     public static final String ARG_UID = "UID";
@@ -129,8 +127,8 @@ public class SmsFragment extends Fragment implements PostSmsAsyncTask.PostListen
 
         menu.clear();
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("与" + mId + "的短消息");
+        setActionBarDisplayHomeAsUpEnabled(true);
+        setActionBarTitle("与" + mId + "的短消息");
 
         super.onCreateOptionsMenu(menu, inflater);
     }

@@ -1,7 +1,6 @@
 package net.jejer.hipda.ui;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -57,7 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ThreadDetailFragment extends Fragment implements PostAsyncTask.PostListener {
+public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.PostListener {
     public static final String ARG_TID_KEY = "tid";
     public static final String ARG_PID_KEY = "pid";
     public static final String ARG_TITLE_KEY = "title";
@@ -292,8 +291,8 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         menu.clear();
         inflater.inflate(R.menu.menu_thread_detail, menu);
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mTitle);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setActionBarTitle(mTitle);
+        setActionBarDisplayHomeAsUpEnabled(true);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -856,8 +855,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
     }
 
     private void showOrLoadPage() {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("(" + (mCurrentPage > 0 ?
-                String.valueOf(mCurrentPage) + "/" + String.valueOf(mMaxPage) + ")" : "")
+
+        setActionBarTitle("("
+                + (mCurrentPage > 0 ? String.valueOf(mCurrentPage) + "/" + String.valueOf(mMaxPage) + ")" : "")
                 + mTitle);
 
         if (mCache.get(mCurrentPage) != null) {

@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,7 +48,7 @@ import net.jejer.hipda.utils.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserinfoFragment extends Fragment {
+public class UserinfoFragment extends BaseFragment {
 
     public static final String ARG_USERNAME = "USERNAME";
     public static final String ARG_UID = "UID";
@@ -175,8 +174,8 @@ public class UserinfoFragment extends Fragment {
         inflater.inflate(R.menu.menu_userinfo, menu);
         menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_message).actionBarSize().color(Color.WHITE));
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mUsername);
+        setActionBarDisplayHomeAsUpEnabled(true);
+        setActionBarTitle(mUsername);
 
         super.onCreateOptionsMenu(menu, inflater);
     }

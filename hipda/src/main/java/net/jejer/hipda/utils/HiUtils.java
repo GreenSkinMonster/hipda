@@ -40,13 +40,17 @@ public class HiUtils {
     public static final String LoginStep3 = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
     public static final String LoginStep2 = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
 
-    private static String AVATAR_BASE = "000000000";
+    private final static String AVATAR_BASE = "000000000";
     public static int MAX_THREADS_IN_PAGE = 50;
 
-    public static int FID_BS = 6;
-    public static int FID_DISCOVERY = 2;
+    public final static int FID_BS = 6;
+    public final static int FID_DISCOVERY = 2;
+    public final static int FID_GEEK = 7;
+    public final static int FID_EINK = 59;
+    public final static int FID_ROBOT = 57;
+
     public static String[] FORUMS = {"Discovery", "Buy & Sell", "Geek Talks", "E-INK", "疑似机器人"};
-    public static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, 7, 59, 57};
+    public static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, FID_GEEK, FID_EINK, FID_ROBOT};
 
     public static int getForumID(int idx) {
         return FORUM_IDS[idx];
@@ -59,6 +63,10 @@ public class HiUtils {
             }
         }
         return -1;
+    }
+
+    public static String getForumName(int fid) {
+        return FORUMS[getForumIndexByFid(fid + "")];
     }
 
     public static String getFullUrl(String particalUrl) {

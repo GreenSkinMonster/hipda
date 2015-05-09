@@ -2,7 +2,6 @@ package net.jejer.hipda.ui;
 
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -50,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ThreadListFragment extends Fragment
+public class ThreadListFragment extends BaseFragment
         implements PostAsyncTask.PostListener, SwipeRefreshLayout.OnRefreshListener {
 
     public static final String ARG_FID_KEY = "fid";
@@ -210,9 +208,10 @@ public class ThreadListFragment extends Fragment
         inflater.inflate(R.menu.menu_thread_list, menu);
 
         int forumIdx = HiUtils.getForumIndexByFid(mForumId + "");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(HiUtils.FORUMS[forumIdx]);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((MainFrameActivity) getActivity()).drawerResult.getActionBarDrawerToggle().syncState();
+
+        setActionBarTitle(HiUtils.FORUMS[forumIdx]);
+        setActionBarDisplayHomeAsUpEnabled(false);
+        syncActionBarState();
 
         if (LoginHelper.isLoggedIn()) {
             showNotification();
@@ -594,12 +593,12 @@ public class ThreadListFragment extends Fragment
             StringBuilder sb = new StringBuilder();
             sb.append("您有 ");
             if (smsCount > 0) {
-                sb.append(smsCount + " 条新的短消息");
+                sb.append(smsCount).append(" 条新的短消息");
             }
             if (threadCount > 0) {
                 if (sb.length() > 3)
                     sb.append(", ");
-                sb.append(threadCount + " 条新的帖子通知");
+                sb.append(threadCount).append(" 条新的帖子通知");
             }
             if (mShowNotifyToast) {
                 Toast.makeText(mCtx, sb.toString(), Toast.LENGTH_SHORT).show();

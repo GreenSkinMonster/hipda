@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,7 +35,7 @@ import net.jejer.hipda.utils.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String ARG_TYPE = "type";
 
     private int mType;
@@ -119,30 +118,30 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
 
         menu.clear();
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setActionBarDisplayHomeAsUpEnabled(true);
         switch (mType) {
             case SimpleListLoader.TYPE_MYREPLY:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_myreply);
+                setActionBarTitle(R.string.title_drawer_myreply);
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_MYPOST:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_mypost);
+                setActionBarTitle(R.string.title_drawer_mypost);
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_SMS:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_sms);
+                setActionBarTitle(R.string.title_drawer_sms);
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_THREADNOTIFY:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_notify);
+                setActionBarTitle(R.string.title_drawer_notify);
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_FAVORITES:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_favorites);
+                setActionBarTitle(R.string.title_drawer_favorites);
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_SEARCH:
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_drawer_search);
+                setActionBarTitle(R.string.title_drawer_search);
                 mPrefixSearchFullText = getActivity().getResources().getString(R.string.prefix_search_fulltext);
                 mPrefixSearchHistory = getActivity().getResources().getString(R.string.prefix_search_history);
 
@@ -403,7 +402,7 @@ public class SimpleListFragment extends Fragment implements SwipeRefreshLayout.O
             private ArrayList<String> mResults;
 
             public SuggestionsCursor(CharSequence constraint) {
-                mResults = new ArrayList<String>();
+                mResults = new ArrayList<>();
                 String query = (constraint != null ? constraint.toString() : "").trim();
                 query = query.startsWith(SimpleListFragment.mPrefixSearchFullText) ? query.substring(SimpleListFragment.mPrefixSearchFullText.length()).trim() : query;
                 mResults.add(SimpleListFragment.mPrefixSearchFullText + query);
