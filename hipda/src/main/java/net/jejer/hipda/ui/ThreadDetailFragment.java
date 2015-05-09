@@ -351,7 +351,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 if (mAuthorOnly) {
                     mDetailListView.setPullLoadEnable(false);
                     mDetailListView.setPullRefreshEnable(false);
-                    ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("(只看楼主)" + mTitle);
+                    setActionBarTitle("(只看楼主)" + mTitle);
                     showAndLoadAuthorOnly();
                 } else {
                     showOrLoadPage();
@@ -369,7 +369,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     }
 
     private void refresh() {
-        //Logger.v( "refresh() called");
         Bundle b = new Bundle();
         b.putInt(LOADER_PAGE_KEY, mCurrentPage);
         getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
@@ -377,11 +376,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     @Override
     public void onPrePost() {
-        if (HiSettingsHelper.getInstance().isPostReirect()) {
-            postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
-        } else {
-            Toast.makeText(mCtx, "正在发表...", Toast.LENGTH_LONG).show();
-        }
+        postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
     }
 
     @Override
@@ -393,7 +388,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
             }
 
-            if (!mAuthorOnly && HiSettingsHelper.getInstance().isPostReirect()) {
+            if (!mAuthorOnly) {
                 if (mode != PostAsyncTask.MODE_EDIT_POST)
                     mCurrentPage = mMaxPage;
 
@@ -627,28 +622,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             } else {
                 mDetailListView.setPullLoadEnable(true);
             }
-        }
-    }
-
-    private void listViewPageUp() {
-        int index = mDetailListView.getFirstVisiblePosition() - mDetailListView.getChildCount() + 1;
-        mDetailListView.setSelection(index < 0 ? 0 : index);
-    }
-
-    private void listViewPageDown() {
-        if (mDetailListView.getLastVisiblePosition() == mDetailListView.getFirstVisiblePosition()) {
-            int offset = mDetailListView.getChildAt(0).getTop();
-            int height = mDetailListView.getHeight();
-            int item_height = mDetailListView.getChildAt(0).getHeight();
-            if (item_height < Math.abs(offset)) {
-                if (mDetailListView.getFirstVisiblePosition() + 1 < mDetailListView.getCount()) {
-                    mDetailListView.setSelection(mDetailListView.getFirstVisiblePosition() + 1);
-                }
-            } else {
-                mDetailListView.setSelectionFromTop(mDetailListView.getFirstVisiblePosition(), offset - height);
-            }
-        } else {
-            mDetailListView.setSelection(mDetailListView.getLastVisiblePosition());
         }
     }
 

@@ -95,9 +95,10 @@
             android:singleLine="true"
             android:title="@string/pref_title_blanklist" />
 
-        <Preference
-            android:key="PERF_ABOUT"
-            android:title="@string/pref_title_about" />
+        <net.jejer.hipda.ui.CustomSwitchPreference
+            android:defaultValue="false"
+            android:key="PERF_ERROR_REPORT_MODE"
+            android:title="@string/pref_error_report_mode" />
 
         <Preference
             android:enabled="true"
@@ -106,10 +107,9 @@
             android:summary=""
             android:title="@string/pref_title_check_update" />
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
-            android:defaultValue="false"
-            android:key="PERF_ERROR_REPORT_MODE"
-            android:title="@string/pref_error_report_mode" />
+        <Preference
+            android:key="PERF_ABOUT"
+            android:title="@string/pref_title_about" />
 
     </PreferenceCategory>
 

@@ -25,14 +25,12 @@ public class HiSettingsHelper {
     public static final String PERF_PASSWORD = "PERF_PASSWORD";
     public static final String PERF_SECQUESTION = "PERF_SECQUESTION";
     public static final String PERF_SECANSWER = "PERF_SECANSWER";
-    public static final String PERF_COOKIEAUTH = "PERF_COOKIEAUTH";
     public static final String PERF_SHOWSTICKTHREADS = "PERF_SHOWSTICKTHREADS";
     public static final String PERF_SHOW_POST_TYPE = "PERF_SHOW_POST_TYPE";
     public static final String PERF_LOADIMGONMOBILENWK = "PERF_LOADIMGONMOBILENWK";
     public static final String PERF_THREADLISTAVATAR = "PERF_THREADLISTAVATAR";
     public static final String PERF_PREFETCH = "PERF_PREFETCH";
     public static final String PERF_SORTBYPOSTTIME_BY_FORUM = "PERF_SORTBYPOSTTIME_BY_FORUM";
-    public static final String PERF_POST_REDIRECT = "PERF_POST_REDIRECT";
     public static final String PERF_ADDTAIL = "PERF_ADDTAIL";
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
     public static final String PERF_TAILURL = "PERF_TAILURL";
@@ -64,7 +62,6 @@ public class HiSettingsHelper {
     private boolean mLoadImgOnMobileNwk = true;
     private boolean mPreFetch = true;
     private boolean mShowThreadListAvatar = true;
-    private boolean mPostRedirect = true;
     private Set<String> mSortByPostTimeByForum;
 
     private boolean mAddTail = true;
@@ -137,7 +134,6 @@ public class HiSettingsHelper {
         getTitleTextsizeAdjFromPref();
         getScreenOrietationFromPref();
         isGestureBackFromPref();
-        isPostRedirectFromPref();
         getPostLineSpacingFromPref();
         getLastForumIdFromPerf();
         isShowPostTypeFromPref();
@@ -301,21 +297,6 @@ public class HiSettingsHelper {
     public Set<String> isSortByPostTimeByForumFromPref() {
         mSortByPostTimeByForum = mSharedPref.getStringSet(PERF_SORTBYPOSTTIME_BY_FORUM, new HashSet<String>());
         return mSortByPostTimeByForum;
-    }
-
-    public boolean isPostReirect() {
-        return mPostRedirect;
-    }
-
-    public boolean isPostRedirectFromPref() {
-        mPostRedirect = mSharedPref.getBoolean(PERF_POST_REDIRECT, true);
-        return mPostRedirect;
-    }
-
-    public void setPostRedirect(boolean postRedirect) {
-        mPostRedirect = postRedirect;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_POST_REDIRECT, postRedirect).apply();
     }
 
     public boolean isAddTail() {

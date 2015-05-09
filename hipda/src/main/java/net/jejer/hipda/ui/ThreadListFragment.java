@@ -302,11 +302,7 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public void onPrePost() {
-        if (HiSettingsHelper.getInstance().isPostReirect()) {
-            postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
-        } else {
-            Toast.makeText(mCtx, "正在发表...", Toast.LENGTH_LONG).show();
-        }
+        postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
     }
 
     @Override
@@ -318,9 +314,8 @@ public class ThreadListFragment extends BaseFragment
                 Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
             }
 
-            if (HiSettingsHelper.getInstance().isPostReirect()) {
-                showThreadDetailFragment(postBean.getTid(), postBean.getSubject(), -1, -1);
-            }
+            showThreadDetailFragment(postBean.getTid(), postBean.getSubject(), -1, -1);
+
             //refresh thread list
             refresh();
 
@@ -523,7 +518,6 @@ public class ThreadListFragment extends BaseFragment
         final Switch sShowStickThreads = (Switch) viewlayout.findViewById(R.id.sw_show_stick_threads);
         final Switch sSortByPostTime = (Switch) viewlayout.findViewById(R.id.sw_sort_by_post_time);
         final Switch sShowThreadListAvatar = (Switch) viewlayout.findViewById(R.id.sw_threadlist_avatar);
-        final Switch sPostRedirect = (Switch) viewlayout.findViewById(R.id.sw_post_redirect);
         final Switch sShowPostType = (Switch) viewlayout.findViewById(R.id.sw_show_post_type);
 
         sShowPicOnMobileNetwork.setChecked(HiSettingsHelper.getInstance().isLoadImgOnMobileNwk());
@@ -568,13 +562,6 @@ public class ThreadListFragment extends BaseFragment
             @Override
             public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
                 HiSettingsHelper.getInstance().setSortByPostTime(mForumId, arg0.isChecked());
-            }
-        });
-        sPostRedirect.setChecked(HiSettingsHelper.getInstance().isPostReirect());
-        sPostRedirect.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                HiSettingsHelper.getInstance().setPostRedirect(arg1);
             }
         });
 
