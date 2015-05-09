@@ -37,6 +37,7 @@ import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageContainer;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.glide.ThreadImageDecoder;
+import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -197,7 +198,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                 tv.setText(content.getContent());
                 tv.setFocusable(false);    // make convertView long clickable.
                 tv.setPadding(16, 16, 16, 16);
-                tv.setBackgroundColor(mCtx.getResources().getColor(HiSettingsHelper.getInstance().getQuoteTextBackgroundColor()));
+                tv.setBackgroundColor(ColorUtils.getQuoteTextBackgroundColor(mCtx));
 
                 contentView.addView(tv);
                 trimBr = true;

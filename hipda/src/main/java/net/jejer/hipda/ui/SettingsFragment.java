@@ -23,6 +23,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Logger;
 
 import java.util.HashSet;
@@ -115,7 +116,7 @@ public class SettingsFragment extends PreferenceFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        view.setBackgroundColor(getResources().getColor(HiSettingsHelper.getInstance().getBackgroundColor()));
+        view.setBackgroundColor(ColorUtils.getListBackgroundColor(getActivity()));
         return view;
     }
 

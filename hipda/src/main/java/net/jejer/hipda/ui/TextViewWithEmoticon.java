@@ -20,6 +20,7 @@ import android.widget.Toast;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
+import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 
@@ -44,8 +45,8 @@ public class TextViewWithEmoticon extends TextView {
     }
 
     private void init() {
-        setTextColor(mCtx.getResources().getColor(HiSettingsHelper.getInstance().getDefaultTextColor()));
-        setLinkTextColor(mCtx.getResources().getColor(R.color.hipda));
+        setTextColor(ColorUtils.getDefaultTextColor(mCtx));
+        setLinkTextColor(ColorUtils.getColorAccent(mCtx));
 
         float lineSpacingExtra = 2;
         float lineSpacingMultiplier = 1.1f;

@@ -30,7 +30,7 @@
             android:padding="4dp"
             android:singleLine="true"
             android:text=""
-            android:textColor="?attr/color_hipda"
+            android:textColor="?attr/colorAccent"
             android:textSize="15sp" />
 
         <TextView
@@ -51,7 +51,7 @@
             android:layout_toLeftOf="@+id/tv_replycounter"
             android:padding="2dp"
             android:text="{faw-image}"
-            android:textColor="?attr/color_hipda"
+            android:textColor="?attr/colorAccent"
             android:textSize="15sp"
             android:visibility="gone" />
 

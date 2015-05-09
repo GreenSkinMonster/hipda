@@ -14,8 +14,10 @@
 
         <!-- make ActionMode overlap Toolbar -->
         <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/MyActionMode</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
 
-        <!-- change smaller drawer item's color -->
+        <!-- MaterialDrawer : change smaller drawer item's color -->
         <item name="material_drawer_secondary_text">@color/material_drawer_primary_text</item>
 
         <!-- change searchView suggestion background color-->
@@ -30,11 +32,22 @@
         <item name="list_item_divider">@color/day_list_item_divider</item>
         <item name="icon_send">@drawable/ic_action_send_now_day</item>
         <item name="icon_download">@drawable/ic_action_download_day</item>
-        <item name="color_hipda">@color/hipda</item>
+        <item name="action_mode_text_color">@android:color/white</item>
     </style>
 
     <style name="MyActionMode" parent="@style/Widget.AppCompat.ActionMode">
-        <item name="background">?colorPrimary</item>
+        <item name="background">?colorPrimaryDark</item>
+        <item name="titleTextStyle">@style/MyActionModeTitleStyle</item>
+        <item name="subtitleTextStyle">@style/MyActionModeSubtitleStyle</item>
+    </style>
+
+    <style name="MyActionModeTitleStyle" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">?action_mode_text_color</item>
+        <!--<item name="android:textSize">20sp</item>-->
+    </style>
+
+    <style name="MyActionModeSubtitleStyle" parent="TextAppearance.AppCompat.Widget.ActionMode.Subtitle">
+        <item name="android:textColor">?action_mode_text_color</item>
     </style>
 
     <style name="MyAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
@@ -54,8 +67,6 @@
         <item name="list_item_divider">@color/night_list_item_divider</item>
         <item name="icon_send">@drawable/ic_action_send_now_night</item>
         <item name="icon_download">@drawable/ic_action_download_night</item>
-        <item name="color_hipda">@color/hipda</item>
-        <item name="android:windowContentOverlay">@null</item>
     </style>
 
 </resources>

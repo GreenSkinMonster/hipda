@@ -11,5 +11,6 @@
     <attr name="icon_send" format="reference" />
     <attr name="icon_download" format="reference" />
 
-    <attr name="color_hipda" format="color" />
+    <attr name="action_mode_text_color" format="color" />
+
 </resources>

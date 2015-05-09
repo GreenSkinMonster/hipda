@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
     android:layout_alignParentTop="true"
-    android:background="?attr/color_hipda"
     android:clickable="true"
     android:paddingBottom="1dp">
 
@@ -13,11 +12,11 @@
         android:id="@+id/thread_detail_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="2dp"
+        android:background="?detail_background"
         android:gravity="center"
+        android:padding="2dp"
         android:text=""
         android:textSize="18sp"
-        android:background="?detail_background"
         android:visibility="visible" />
 
 </LinearLayout>
