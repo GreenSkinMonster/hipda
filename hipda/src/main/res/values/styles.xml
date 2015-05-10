@@ -16,9 +16,11 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/MyActionMode</item>
         <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
 
         <!-- MaterialDrawer : change smaller drawer item's color -->
         <item name="material_drawer_secondary_text">@color/material_drawer_primary_text</item>
+        <item name="material_drawer_selected_text">?colorAccent</item>
 
         <!-- change searchView suggestion background color-->
         <item name="android:autoCompleteTextViewStyle">@style/MyAutoCompleteTextView</item>

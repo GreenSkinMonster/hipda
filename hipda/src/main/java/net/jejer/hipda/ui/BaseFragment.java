@@ -5,6 +5,8 @@ import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
+import com.mikepenz.materialdrawer.Drawer;
+
 /**
  * a base fragment
  * Created by GreenSkinMonster on 2015-05-09.
@@ -37,6 +39,16 @@ public abstract class BaseFragment extends Fragment {
 
     void syncActionBarState() {
         ((MainFrameActivity) getActivity()).drawerResult.getActionBarDrawerToggle().syncState();
+    }
+
+    void setDrawerSelection(int identifier) {
+        //this only set DrawerItem, not StickyDrawerItem
+        try {
+            Drawer.Result drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
+            if (drawerResult.getPositionFromIdentifier(identifier) != drawerResult.getCurrentSelection())
+                drawerResult.setSelectionByIdentifier(identifier, false);
+        } catch (Exception ignored) {
+        }
     }
 
 }

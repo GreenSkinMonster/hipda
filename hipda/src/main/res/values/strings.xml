@@ -55,6 +55,6 @@
     <string name="prefix_search_fulltext">全文搜索：</string>
     <string name="prefix_search_history">搜索记录：</string>
 
-    <string name="crash_toast_text">HiPDA怪兽版发生了意外，请协助通过邮件反馈错误信息</string>
+    <string name="crash_toast_text">HiPDA-NG 发生了意外，请协助通过邮件反馈错误信息</string>
 
 </resources>

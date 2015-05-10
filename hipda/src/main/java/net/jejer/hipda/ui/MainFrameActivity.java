@@ -78,13 +78,11 @@ public class MainFrameActivity extends AppCompatActivity {
 //                .withHeader(R.layout.header)
                 .withTranslucentStatusBar(false)
                 .addDrawerItems(
-
-                ).addStickyDrawerItems(
                         new SecondaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search),
                         new SecondaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_grade),
                         new SecondaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_forum),
                         new SecondaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_sms),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_mail),
                         new SecondaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications),
                         new SecondaryDrawerItem()
                                 .withName(R.string.title_drawer_setting)
@@ -106,9 +104,9 @@ public class MainFrameActivity extends AppCompatActivity {
                         new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_ROBOT))
                                 .withIdentifier(HiUtils.FID_ROBOT)
                                 .withIcon(FontAwesome.Icon.faw_reddit)
+                ).addStickyDrawerItems(
                 )
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
-                .withSelectedItem(-1)
                 .build();
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -276,6 +274,9 @@ public class MainFrameActivity extends AppCompatActivity {
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+            //clear all backStacks from menu click
+            clearBackStacks();
+
             switch (iDrawerItem.getIdentifier()) {
                 case Constants.DRAWER_SEARCH:    // search
                     Bundle searchBundle = new Bundle();
@@ -327,7 +328,7 @@ public class MainFrameActivity extends AppCompatActivity {
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
-                case SimpleListLoader.TYPE_THREADNOTIFY:    // thread notify
+                case Constants.DRAWER_THREADNOTIFY:    // thread notify
                     Bundle notifyBundle = new Bundle();
                     notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREADNOTIFY);
                     SimpleListFragment notifyFragment = new SimpleListFragment();
@@ -345,16 +346,13 @@ public class MainFrameActivity extends AppCompatActivity {
                     break;
                 default:
                     //for forums
+                    int forumId = iDrawerItem.getIdentifier();
                     ThreadListFragment threadListFragment = new ThreadListFragment();
                     Bundle argments = new Bundle();
-                    argments.putInt(ThreadListFragment.ARG_FID_KEY, iDrawerItem.getIdentifier());
+                    argments.putInt(ThreadListFragment.ARG_FID_KEY, forumId);
                     threadListFragment.setArguments(argments);
 
-                    //clear all backStacks
-                    FragmentManager fm = getFragmentManager();
-                    clearBackStacks(fm);
-
-                    fm.beginTransaction()
+                    getFragmentManager().beginTransaction()
                             .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
                             .commit();
                     break;
@@ -362,12 +360,18 @@ public class MainFrameActivity extends AppCompatActivity {
         }
     }
 
-    private void clearBackStacks(FragmentManager fm) {
-        int backStackCount = fm.getBackStackEntryCount();
-        for (int cnt = 0; cnt < backStackCount; cnt++) {
-            int backStackId = fm.getBackStackEntryAt(cnt).getId();
-            fm.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    private void clearBackStacks() {
+        FragmentManager fm = getFragmentManager();
+//        int backStackCount = fm.getBackStackEntryCount();
+//        for (int cnt = 0; cnt < backStackCount; cnt++) {
+//            int backStackId = fm.getBackStackEntryAt(cnt).getId();
+//            fm.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//        }
+        while (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStackImmediate();
+            Logger.e("BackStackEntryCount " + fm.getBackStackEntryCount());
         }
+
     }
 
     private class BackStackChangedListener implements FragmentManager.OnBackStackChangedListener {

@@ -91,8 +91,9 @@ public class ThreadListFragment extends BaseFragment
         if (getArguments() != null && getArguments().containsKey(ARG_FID_KEY)) {
             mForumId = getArguments().getInt(ARG_FID_KEY);
         }
-        if (mForumId <= 0) {
-            mForumId = HiUtils.FID_BS;
+        int forumIdx = HiUtils.getForumIndexByFid(mForumId + "");
+        if (forumIdx == -1) {
+            mForumId = HiUtils.FID_DISCOVERY;
         }
 
         HiSettingsHelper.getInstance().setLastForumId(mForumId);
@@ -212,6 +213,8 @@ public class ThreadListFragment extends BaseFragment
         setActionBarTitle(HiUtils.FORUMS[forumIdx]);
         setActionBarDisplayHomeAsUpEnabled(false);
         syncActionBarState();
+
+        setDrawerSelection(mForumId);
 
         if (LoginHelper.isLoggedIn()) {
             showNotification();
