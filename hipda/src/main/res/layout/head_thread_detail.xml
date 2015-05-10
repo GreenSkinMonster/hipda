@@ -12,7 +12,7 @@
         android:id="@+id/thread_detail_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="?detail_background"
+        android:background="?list_item_background"
         android:gravity="center"
         android:padding="2dp"
         android:text=""

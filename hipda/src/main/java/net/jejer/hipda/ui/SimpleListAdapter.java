@@ -44,7 +44,7 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_info = (TextView) convertView.findViewById(R.id.tv_info);
         holder.tv_forum = (TextView) convertView.findViewById(R.id.tv_forum);
         holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
-        holder.iv_item_indicator = (ImageView) convertView.findViewById(R.id.iv_item_indicator);
+        holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
 
         holder.tv_title.setTextSize(HiSettingsHelper.getPostTextSize());
         holder.tv_title.setText(Utils.trim(item.getTitle()));
@@ -78,10 +78,10 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
                 && mType != SimpleListLoader.TYPE_FAVORITES
                 && mType != SimpleListLoader.TYPE_MYPOST
                 && mType != SimpleListLoader.TYPE_MYREPLY) {
-            holder.iv_item_indicator.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(mCtx, holder.iv_item_indicator, item.getAvatarUrl());
+            holder.iv_avatar.setVisibility(View.VISIBLE);
+            GlideHelper.loadAvatar(mCtx, holder.iv_avatar, item.getAvatarUrl());
         } else {
-            holder.iv_item_indicator.setVisibility(View.GONE);
+            holder.iv_avatar.setVisibility(View.GONE);
         }
 
         return convertView;
@@ -92,6 +92,6 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         TextView tv_forum;
         TextView tv_info;
         TextView tv_time;
-        ImageView iv_item_indicator;
+        ImageView iv_avatar;
     }
 }

@@ -4,7 +4,7 @@
     android:id="@+id/fragment_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?detail_background">
+    android:background="?list_item_background">
 
     <TextView
         android:id="@+id/thread_detail_tipbar"
@@ -76,7 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="?replyBarBackground"
+        android:background="?list_item_background"
         android:visibility="invisible">
 
         <View

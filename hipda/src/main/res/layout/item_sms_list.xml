@@ -7,7 +7,7 @@
     android:paddingRight="8dp"
     android:paddingTop="4dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -18,43 +18,14 @@
             android:layout_height="36dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginRight="4dp"
+            android:layout_marginTop="6dp"
             android:padding="2dp" />
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/iv_avatar">
-
-            <TextView
-                android:id="@+id/tv_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:text=""
-                android:textColor="?android:textColorSecondary"
-                android:textSize="15sp" />
-
-            <android.view.IconicsTextView
-                android:id="@+id/tv_isnew"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/tv_time"
-                android:text="{gmd-email}"
-                android:textColor="@color/red"
-                android:textSize="20sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:text=""
-                android:textColor="?android:textColorSecondary"
-                android:textSize="15sp" />
+            android:layout_toRightOf="@+id/iv_avatar"
+            android:orientation="vertical">
 
             <net.jejer.hipda.ui.TextViewWithEmoticon
                 android:id="@+id/tv_content"
@@ -62,13 +33,48 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_below="@+id/tv_author"
-                android:layout_marginTop="4dp"
                 android:clickable="true"
+                android:padding="4dp"
                 android:text=""
-                android:textColor="?android:textColorSecondary"
                 android:textSize="16sp" />
-        </RelativeLayout>
 
-    </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:paddingLeft="4dp"
+                    android:text=""
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text=""
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="15sp" />
+
+                <android.view.IconicsTextView
+                    android:id="@+id/tv_isnew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/tv_time"
+                    android:text="{gmd-email}"
+                    android:textColor="@color/red"
+                    android:textSize="20sp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
