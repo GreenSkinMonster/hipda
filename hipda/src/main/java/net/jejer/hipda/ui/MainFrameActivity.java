@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -82,10 +83,9 @@ public class MainFrameActivity extends AppCompatActivity {
                         new SecondaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_grade),
                         new SecondaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_forum),
                         new SecondaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_mail),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications),
-                        new SecondaryDrawerItem()
-                                .withName(R.string.title_drawer_setting)
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_mail).withBadgeTextColor(Color.RED),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications).withBadgeTextColor(Color.RED),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_setting)
                                 .withIdentifier(DrawerItem.SETTINGS.id)
                                 .withIcon(GoogleMaterial.Icon.gmd_settings),
                         new DividerDrawerItem(),
@@ -253,7 +253,32 @@ public class MainFrameActivity extends AppCompatActivity {
         if (mOnSwipeCallback instanceof ThreadListFragment) {
             ((ThreadListFragment) mOnSwipeCallback).showNotification();
         }
+
+        int smsCount = NotifyHelper.getInstance().getCntSMS();
+        int threadCount = NotifyHelper.getInstance().getCntThread();
+        if (smsCount + threadCount > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("您有 ");
+            sb.append(smsCount).append(" 条新的短消息");
+        }
+        int threadNotifyIndex = drawerResult.getPositionFromIdentifier(Constants.DRAWER_THREADNOTIFY);
+        if (threadNotifyIndex != -1) {
+            if (threadCount > 0) {
+                drawerResult.updateBadge(threadCount + "", threadNotifyIndex);
+            } else {
+                drawerResult.updateBadge("", threadNotifyIndex);
+            }
+        }
+        int smsNotifyIndex = drawerResult.getPositionFromIdentifier(Constants.DRAWER_SMS);
+        if (smsNotifyIndex != -1) {
+            if (smsCount > 0) {
+                drawerResult.updateBadge(smsCount + "", smsNotifyIndex);
+            } else {
+                drawerResult.updateBadge("", smsNotifyIndex);
+            }
+        }
     }
+
 
     public enum DrawerItem {
         SEARCH(Constants.DRAWER_SEARCH),

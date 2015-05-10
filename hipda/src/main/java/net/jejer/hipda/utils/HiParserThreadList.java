@@ -205,7 +205,7 @@ public class HiParserThreadList {
             }
 
             // Update UI
-            //NotifyHelper.getInstance().updateDrawer();
+            NotifyHelper.getInstance().updateDrawer();
         }
     }
 }

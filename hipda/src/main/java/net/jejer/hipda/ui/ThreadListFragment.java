@@ -594,6 +594,12 @@ public class ThreadListFragment extends BaseFragment
                 Toast.makeText(mCtx, sb.toString(), Toast.LENGTH_SHORT).show();
                 mShowNotifyToast = false;
             }
+
+            if (smsCount > 0)
+                mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail).color(Color.WHITE));
+            else
+                mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_notifications).color(Color.WHITE));
+
             mFabNotify.setVisibility(View.VISIBLE);
         } else {
             mShowNotifyToast = true;
