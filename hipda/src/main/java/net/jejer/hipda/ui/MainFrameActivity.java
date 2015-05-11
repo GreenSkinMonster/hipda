@@ -77,7 +77,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withToolbar(toolbar)
 //                .withHeader(R.layout.header)
-                .withTranslucentStatusBar(false)
+                .withTranslucentStatusBar(true)
                 .addDrawerItems(
                         new SecondaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search),
                         new SecondaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_grade),
@@ -108,6 +108,9 @@ public class MainFrameActivity extends AppCompatActivity {
                 )
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .build();
+
+        //fix input layout problem when withTranslucentStatusBar enabled
+        drawerResult.keyboardSupportEnabled(this, true);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

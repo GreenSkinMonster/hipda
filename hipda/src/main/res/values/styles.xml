@@ -36,7 +36,7 @@
     </style>
 
     <style name="MyActionMode" parent="@style/Widget.AppCompat.ActionMode">
-        <item name="background">?colorPrimaryDark</item>
+        <item name="background">@color/black</item>
         <item name="titleTextStyle">@style/MyActionModeTitleStyle</item>
         <item name="subtitleTextStyle">@style/MyActionModeSubtitleStyle</item>
     </style>

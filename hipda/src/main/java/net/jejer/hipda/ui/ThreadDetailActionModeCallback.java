@@ -124,7 +124,7 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
             item.setVisible(false);
         }
 
-        mode.setTitle(mDetailBean.getFloor() + "#");
+        mode.setTitle(mDetailBean.getFloor() + "# " + mDetailBean.getAuthor());
         return true;
     }
 
