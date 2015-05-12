@@ -383,7 +383,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     break;
                 case Constants.DRAWER_SETTINGS:    // settings
                     getFragmentManager().beginTransaction()
-                            .add(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
+                            .replace(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
                             .addToBackStack(SettingsFragment.class.getName())
                             .commit();
                     break;
@@ -423,8 +423,6 @@ public class MainFrameActivity extends AppCompatActivity {
             // reset back key press counter
             mQuit = 0;
 
-            // Make sure drawer only showed in top fragment
-            // Make sure swipe only worked in second fragment
             FragmentManager fm = getFragmentManager();
             Logger.v("getBackStackEntryCount = " + String.valueOf(fm.getBackStackEntryCount()));
             if (!HiSettingsHelper.getInstance().getIsLandscape()) {

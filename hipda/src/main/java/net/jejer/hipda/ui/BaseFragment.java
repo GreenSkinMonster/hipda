@@ -48,7 +48,8 @@ public abstract class BaseFragment extends Fragment {
         //this only set DrawerItem, not StickyDrawerItem
         try {
             Drawer.Result drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
-            if (drawerResult.getPositionFromIdentifier(identifier) != drawerResult.getCurrentSelection())
+            if (!drawerResult.isDrawerOpen()
+                    && drawerResult.getPositionFromIdentifier(identifier) != drawerResult.getCurrentSelection())
                 drawerResult.setSelectionByIdentifier(identifier, false);
         } catch (Exception ignored) {
         }
