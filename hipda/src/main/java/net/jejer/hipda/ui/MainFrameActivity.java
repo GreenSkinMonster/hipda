@@ -45,6 +45,7 @@ public class MainFrameActivity extends AppCompatActivity {
     private int mQuit = 0;
 
     public Drawer.Result drawerResult;
+    private long volleyInitTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,7 @@ public class MainFrameActivity extends AppCompatActivity {
         GlideHelper.init(this);
 
         // Init Volley
+        volleyInitTime = System.currentTimeMillis();
         VolleyHelper.getInstance().init(this);
         NotifyHelper.getInstance().init(this);
 
@@ -146,8 +148,21 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (System.currentTimeMillis() - volleyInitTime > 30 * 1000) {
+            VolleyHelper.getInstance().init(this);
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -312,7 +327,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment searchFragment = new SimpleListFragment();
                     searchFragment.setArguments(searchBundle);
                     getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, searchFragment, SimpleListFragment.class.getName())
+                            .add(R.id.main_frame_container, searchFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
@@ -322,7 +337,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment postsFragment = new SimpleListFragment();
                     postsFragment.setArguments(postsBundle);
                     getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
+                            .add(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
@@ -332,7 +347,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment replyFragment = new SimpleListFragment();
                     replyFragment.setArguments(replyBundle);
                     getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, replyFragment, SimpleListFragment.class.getName())
+                            .add(R.id.main_frame_container, replyFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
@@ -342,7 +357,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment favFragment = new SimpleListFragment();
                     favFragment.setArguments(favBundle);
                     getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, favFragment, SimpleListFragment.class.getName())
+                            .add(R.id.main_frame_container, favFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
@@ -352,7 +367,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment smsFragment = new SimpleListFragment();
                     smsFragment.setArguments(smsBundle);
                     getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
+                            .add(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
@@ -362,13 +377,13 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment notifyFragment = new SimpleListFragment();
                     notifyFragment.setArguments(notifyBundle);
                     getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
+                            .add(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
                 case Constants.DRAWER_SETTINGS:    // settings
                     getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
+                            .add(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
                             .addToBackStack(SettingsFragment.class.getName())
                             .commit();
                     break;
@@ -381,7 +396,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     threadListFragment.setArguments(argments);
 
                     getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
+                            .add(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
                             .commit();
                     break;
             }
@@ -397,7 +412,6 @@ public class MainFrameActivity extends AppCompatActivity {
 //        }
         while (fm.getBackStackEntryCount() > 0) {
             fm.popBackStackImmediate();
-            Logger.e("BackStackEntryCount " + fm.getBackStackEntryCount());
         }
 
     }

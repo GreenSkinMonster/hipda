@@ -1,11 +1,14 @@
 package net.jejer.hipda.ui;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 import com.mikepenz.materialdrawer.Drawer;
+
+import net.jejer.hipda.utils.Logger;
 
 /**
  * a base fragment
@@ -51,4 +54,15 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        Logger.v("onAttach : " + getClass().getName());
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Logger.v("onDetach : " + getClass().getName());
+    }
 }
