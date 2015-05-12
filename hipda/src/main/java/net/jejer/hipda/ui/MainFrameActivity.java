@@ -327,6 +327,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment searchFragment = new SimpleListFragment();
                     searchFragment.setArguments(searchBundle);
                     getFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                             .add(R.id.main_frame_container, searchFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
@@ -337,6 +338,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment postsFragment = new SimpleListFragment();
                     postsFragment.setArguments(postsBundle);
                     getFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                             .add(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
@@ -347,6 +349,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment replyFragment = new SimpleListFragment();
                     replyFragment.setArguments(replyBundle);
                     getFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                             .add(R.id.main_frame_container, replyFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
@@ -357,6 +360,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment favFragment = new SimpleListFragment();
                     favFragment.setArguments(favBundle);
                     getFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                             .add(R.id.main_frame_container, favFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
@@ -367,6 +371,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment smsFragment = new SimpleListFragment();
                     smsFragment.setArguments(smsBundle);
                     getFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                             .add(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
@@ -377,6 +382,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     SimpleListFragment notifyFragment = new SimpleListFragment();
                     notifyFragment.setArguments(notifyBundle);
                     getFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                             .add(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();

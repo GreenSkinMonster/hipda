@@ -292,6 +292,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             fragment.setArguments(bun);
 
             getFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                     .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
                     .addToBackStack(ThreadDetailFragment.class.getName())
                     .commit();
@@ -324,6 +325,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             fragment.setArguments(bun);
 
             getFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                     .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
                     .addToBackStack(ThreadDetailFragment.class.getName())
                     .commit();
