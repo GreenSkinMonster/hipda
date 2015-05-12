@@ -105,7 +105,7 @@ public class UpdateHelper {
                 dialog.show();
             } else {
                 if (!mSilent) {
-                    pd.dismiss("没有发现新版本", 3000);
+                    pd.dismiss("没有发现新版本");
                 }
             }
 
@@ -117,7 +117,7 @@ public class UpdateHelper {
         public void onErrorResponse(VolleyError error) {
             Logger.e(error);
             if (!mSilent) {
-                pd.dismiss("检查新版本时发生错误 : " + VolleyHelper.getErrorReason(error), 3000);
+                pd.dismissError("检查新版本时发生错误 : " + VolleyHelper.getErrorReason(error));
             }
         }
     }

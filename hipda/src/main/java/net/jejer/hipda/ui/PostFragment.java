@@ -537,7 +537,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
     public void complete() {
         mImageUploading = false;
         if (mProgressDialog != null)
-            mProgressDialog.dismiss("上传完成", 500);
+            mProgressDialog.dismiss("上传完成");
     }
 
     private class PrePostListener implements PrePostAsyncTask.PrePostListener {

@@ -156,7 +156,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
             }.start();
             postProgressDialog.dismiss(message);
         } else {
-            postProgressDialog.dismiss(message, 3000);
+            postProgressDialog.dismissError(message);
         }
 
     }

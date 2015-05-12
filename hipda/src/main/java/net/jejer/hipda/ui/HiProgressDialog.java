@@ -5,11 +5,19 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+
+import net.jejer.hipda.R;
+
 /**
  * a simple progress dialog
  * Created by GreenSkinMonster on 2015-03-11.
  */
 public class HiProgressDialog extends ProgressDialog {
+
+    public final static int INFO = 0;
+    public final static int ERROR = 9;
 
     public HiProgressDialog(Context context) {
         super(context);
@@ -22,16 +30,27 @@ public class HiProgressDialog extends ProgressDialog {
     }
 
     public void dismiss(String message) {
-        dismiss(message, 1000);
+        dismiss(message, 1000, INFO);
     }
 
-    public void dismiss(String message, int millisToWait) {
+    public void dismissError(String message) {
+        dismiss(message, 3000, ERROR);
+    }
+
+    private void dismiss(String message, int millisToWait, int status) {
         if (message != null)
             setMessage(message);
-        setCancelable(true);
-        setIndeterminateDrawable(getContext().getResources().getDrawable(android.R.drawable.ic_dialog_info));
+        if (status == ERROR) {
+            setIndeterminateDrawable(new IconicsDrawable(getContext(),
+                    GoogleMaterial.Icon.gmd_error).sizeDp(48)
+                    .color(getContext().getResources().getColor(R.color.red)));
+        } else {
+            setIndeterminateDrawable(new IconicsDrawable(getContext(),
+                    GoogleMaterial.Icon.gmd_info).sizeDp(48)
+                    .color(getContext().getResources().getColor(R.color.green_300)));
+        }
         setIndeterminate(true);
-        new CountDownTimer(millisToWait, 1000) {
+        new CountDownTimer(millisToWait, millisToWait) {
             public void onTick(long millisUntilFinished) {
             }
 

@@ -404,7 +404,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
         } else {
             if (postProgressDialog != null) {
-                postProgressDialog.dismiss(message, 3000);
+                postProgressDialog.dismissError(message);
             } else {
                 Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
             }
