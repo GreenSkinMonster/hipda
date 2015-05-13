@@ -44,6 +44,8 @@ public class MainFrameActivity extends Activity {
     private Fragment mOnSwipeCallback = null;
     private int mQuit = 0;
 
+    private long volleyInitTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.v("onCreate");
@@ -141,6 +143,13 @@ public class MainFrameActivity extends Activity {
             }
         }
 
+    }
+
+    protected void onStart() {
+        super.onStart();
+        if (System.currentTimeMillis() - volleyInitTime > 30 * 1000) {
+            VolleyHelper.getInstance().init(this);
+        }
     }
 
     @Override
