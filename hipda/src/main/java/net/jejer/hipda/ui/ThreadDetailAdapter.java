@@ -37,7 +37,6 @@ import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageContainer;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.glide.ThreadImageDecoder;
-import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -192,15 +191,16 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                 contentView.addView(tv);
             } else if (content instanceof ContentQuote && !((ContentQuote) content).isReplyQuote()) {
 
-                TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
+                LinearLayout quoteLayout = (LinearLayout) LayoutInflater.from(mCtx)
+                        .inflate(R.layout.item_quote_text_simple, parent, false);
+                TextViewWithEmoticon tv = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
+
                 tv.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
                 tv.setAutoLinkMask(Linkify.WEB_URLS);
                 tv.setText(content.getContent());
                 tv.setFocusable(false);    // make convertView long clickable.
-                tv.setPadding(16, 16, 16, 16);
-                tv.setBackgroundColor(ColorUtils.getQuoteTextBackgroundColor(mCtx));
 
-                contentView.addView(tv);
+                contentView.addView(quoteLayout);
                 trimBr = true;
             } else if (content instanceof ContentGoToFloor || content instanceof ContentQuote) {
 

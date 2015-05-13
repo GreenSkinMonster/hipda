@@ -35,10 +35,6 @@ public class ColorUtils {
         return getColorIdByAttr(ctx, R.attr.colorAccent);
     }
 
-    public static int getQuoteTextBackgroundColor(Context ctx) {
-        return getColorIdByAttr(ctx, R.attr.quote_text_background);
-    }
-
     public static int getListBackgroundColor(Context ctx) {
         return getColorIdByAttr(ctx, R.attr.list_item_background);
     }

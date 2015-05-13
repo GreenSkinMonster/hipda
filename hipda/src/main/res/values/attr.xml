@@ -5,7 +5,6 @@
     <!--<attr name="background" format="color" />-->
     <attr name="list_item_background" format="color" />
     <attr name="list_item_divider" format="color" />
-    <attr name="quote_text_background" format="color" />
     <attr name="icon_send" format="reference" />
     <attr name="icon_download" format="reference" />
 

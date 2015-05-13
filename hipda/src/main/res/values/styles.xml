@@ -12,7 +12,6 @@
         <item name="themeName">day</item>
         <item name="background">@color/day_background</item>
         <item name="list_item_background">@color/day_list_item_background</item>
-        <item name="quote_text_background">@color/day_quote_text_background</item>
         <item name="list_item_divider">@color/day_list_item_divider</item>
         <item name="icon_send">@drawable/ic_action_send_now_day</item>
         <item name="icon_download">@drawable/ic_action_download_day</item>
@@ -31,7 +30,6 @@
         <item name="themeName">night</item>
         <item name="background">@color/night_background</item>
         <item name="list_item_background">@color/night_list_item_background</item>
-        <item name="quote_text_background">@color/night_quote_text_background</item>
         <item name="list_item_divider">@color/night_list_item_divider</item>
         <item name="icon_send">@drawable/ic_action_send_now_night</item>
         <item name="icon_download">@drawable/ic_action_download_night</item>
