@@ -33,11 +33,11 @@ public abstract class BaseFragment extends Fragment {
     }
 
     void setActionBarDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
-        if (getActivity() != null) {
-            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-            if (actionBar != null)
-                actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
-        }
+//        if (getActivity() != null) {
+//            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+//            if (actionBar != null)
+//                actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
+//        }
     }
 
     void syncActionBarState() {

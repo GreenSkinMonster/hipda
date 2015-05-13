@@ -426,18 +426,21 @@ public class MainFrameActivity extends AppCompatActivity {
 
         @Override
         public void onBackStackChanged() {
-            // reset back key press counter
             mQuit = 0;
 
             FragmentManager fm = getFragmentManager();
-            Logger.v("getBackStackEntryCount = " + String.valueOf(fm.getBackStackEntryCount()));
-            if (!HiSettingsHelper.getInstance().getIsLandscape()) {
-                if (fm.getBackStackEntryCount() > 0) {
-//                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                } else {
-//                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                }
+
+            if (fm.getBackStackEntryCount() > 0) {
+                drawerResult.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+                if (getSupportActionBar() != null)
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            } else {
+                if (getSupportActionBar() != null)
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                drawerResult.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
             }
+
+            Logger.v("getBackStackEntryCount = " + String.valueOf(fm.getBackStackEntryCount()));
         }
 
     }
