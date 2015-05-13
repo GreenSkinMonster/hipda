@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">HiPDA</string>
+    <string name="app_name">HiPDA·NG</string>
     <string name="action_refresh">刷新</string>
     <string name="action_reply">回复</string>
     <string name="action_edit">编辑</string>
@@ -55,6 +55,6 @@
     <string name="prefix_search_fulltext">全文搜索：</string>
     <string name="prefix_search_history">搜索记录：</string>
 
-    <string name="crash_toast_text">HiPDA-NG 发生了意外，请协助通过邮件反馈错误信息</string>
+    <string name="crash_toast_text">HiPDA·NG 发生了意外，请协助通过邮件反馈错误信息</string>
 
 </resources>

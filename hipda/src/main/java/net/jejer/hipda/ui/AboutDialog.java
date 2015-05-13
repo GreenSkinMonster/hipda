@@ -41,7 +41,7 @@ public class AboutDialog extends Dialog implements SeekBar.OnSeekBarChangeListen
         String version = HiSettingsHelper.getInstance().getAppVersion();
 
         TextView versionView = (TextView) view.findViewById(R.id.version);
-        versionView.setText("HiPDA怪兽版 " + version);
+        versionView.setText(getContext().getResources().getString(R.string.app_name) + " " + version);
 
         mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
         mSeekBar.setOnSeekBarChangeListener(this);
