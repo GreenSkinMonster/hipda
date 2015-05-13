@@ -162,6 +162,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
         }
         if (mMode == MODE_NEW_THREAD) {
             post_param.put("subject", subject);
+            post_param.put("attention_add", "1");
             mTitle = subject;
         } else if (mMode == MODE_EDIT_POST) {
             if (!TextUtils.isEmpty(subject)) {
@@ -178,22 +179,27 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 
         //when success, volley will follow 302 redirect get the page content
         if (!TextUtils.isEmpty(rsp_str)) {
+            String tid = "";
             if (rsp_str.contains("tid = parseInt('")) {
-                mTid = HttpUtils.getMiddleString(rsp_str, "tid = parseInt('", "'");
+                tid = HttpUtils.getMiddleString(rsp_str, "tid = parseInt('", "'");
+            }
+            if (!TextUtils.isEmpty(tid) && TextUtils.isDigitsOnly(tid) && Integer.parseInt(tid) > 0) {
+                mTid = tid;
                 mResult = "发表成功!";
                 mStatus = Constants.STATUS_SUCCESS;
             } else {
-                mResult = "发表失败，返回结果异常 !";
-                Document doc = Jsoup.parse(rsp_str);
-                Elements error = doc.select("div.alert_info");
-                if (!error.isEmpty()) {
-                    mResult += error.text();
-                }
+                Logger.e(rsp_str);
+                mResult = "发表失败! ";
                 mStatus = Constants.STATUS_FAIL;
 
-                //response not contains tid
-                if (HiSettingsHelper.getInstance().isErrorReportMode())
-                    ACRAUtils.acraReport("Error when posting but with response", rsp_str);
+                Document doc = Jsoup.parse(rsp_str);
+                Elements error = doc.select("div.alert_info");
+                if (error != null && error.size() > 0) {
+                    mResult += error.text();
+                } else {
+                    if (HiSettingsHelper.getInstance().isErrorReportMode())
+                        ACRAUtils.acraReport("Error when posting but with response", rsp_str);
+                }
             }
         } else {
             Logger.e(errorListener.getError());
