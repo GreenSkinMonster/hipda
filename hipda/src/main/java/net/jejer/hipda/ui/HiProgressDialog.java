@@ -47,7 +47,7 @@ public class HiProgressDialog extends ProgressDialog {
         } else {
             setIndeterminateDrawable(new IconicsDrawable(getContext(),
                     GoogleMaterial.Icon.gmd_info).sizeDp(48)
-                    .color(getContext().getResources().getColor(R.color.green_300)));
+                    .color(getContext().getResources().getColor(R.color.md_green_300)));
         }
         setIndeterminate(true);
         new CountDownTimer(millisToWait, millisToWait) {

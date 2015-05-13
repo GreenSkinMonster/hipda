@@ -1,9 +1,27 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="ThemeDay" parent="BaseTheme">
+    <style name="ThemeDay" parent="MaterialDrawerTheme.Light">
 
-        <item name="colorPrimary">@color/grey_700</item>
-        <item name="colorPrimaryDark">@color/grey_800</item>
+        <item name="android:actionBarSize">48dp</item>
+        <item name="actionBarSize">48dp</item>
+
+        <!-- make ActionMode overlap Toolbar -->
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/MyActionMode</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+
+        <item name="action_mode_text_color">@android:color/white</item>
+
+        <!-- MaterialDrawer : change smaller drawer item's color -->
+        <item name="material_drawer_secondary_text">?material_drawer_primary_text</item>
+        <item name="material_drawer_selected_text">?colorAccent</item>
+
+        <!-- change searchView suggestion background color-->
+        <item name="android:autoCompleteTextViewStyle">@style/MyAutoCompleteTextView</item>
+
+        <item name="colorPrimary">@color/md_grey_700</item>
+        <item name="colorPrimaryDark">@color/md_grey_800</item>
         <item name="colorAccent">@color/hipda</item>
 
         <item name="android:textColorPrimary">@color/abc_primary_text_material_light</item>
@@ -18,10 +36,28 @@
 
     </style>
 
-    <style name="ThemeNight" parent="BaseTheme">
+    <style name="ThemeNight" parent="MaterialDrawerTheme.TranslucentStatus">
 
-        <item name="colorPrimary">@color/grey_700</item>
-        <item name="colorPrimaryDark">@color/grey_800</item>
+        <item name="android:actionBarSize">48dp</item>
+        <item name="actionBarSize">48dp</item>
+
+        <!-- make ActionMode overlap Toolbar -->
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/MyActionMode</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+
+        <item name="action_mode_text_color">@android:color/white</item>
+
+        <!-- MaterialDrawer : change smaller drawer item's color -->
+        <item name="material_drawer_secondary_text">?material_drawer_primary_text</item>
+        <item name="material_drawer_selected_text">?colorAccent</item>
+
+        <!-- change searchView suggestion background color-->
+        <item name="android:autoCompleteTextViewStyle">@style/MyAutoCompleteTextView</item>
+
+        <item name="colorPrimary">@color/md_grey_900</item>
+        <item name="colorPrimaryDark">@color/md_black_1000</item>
         <item name="colorAccent">@color/hipda</item>
 
         <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
@@ -36,27 +72,6 @@
 
     </style>
 
-    <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
-
-        <item name="android:actionBarSize">48dp</item>
-        <item name="actionBarSize">48dp</item>
-
-        <!-- make ActionMode overlap Toolbar -->
-        <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeStyle">@style/MyActionMode</item>
-        <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
-        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
-
-        <item name="action_mode_text_color">@android:color/white</item>
-
-        <!-- MaterialDrawer : change smaller drawer item's color -->
-        <item name="material_drawer_secondary_text">@color/material_drawer_primary_text</item>
-        <item name="material_drawer_selected_text">?colorAccent</item>
-
-        <!-- change searchView suggestion background color-->
-        <item name="android:autoCompleteTextViewStyle">@style/MyAutoCompleteTextView</item>
-
-    </style>
 
     <style name="MyActionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="background">@color/black</item>
