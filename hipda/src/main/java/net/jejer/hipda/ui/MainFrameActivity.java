@@ -402,7 +402,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     threadListFragment.setArguments(argments);
 
                     getFragmentManager().beginTransaction()
-                            .add(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
+                            .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
                             .commit();
                     break;
             }

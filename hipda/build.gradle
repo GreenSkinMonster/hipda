@@ -35,7 +35,7 @@ dependencies {
     compile 'ch.acra:acra:4.5.0'
     compile 'com.github.clans:fab:1.4.0'
     compile 'net.frakbot.creditsroll:creditsroll:1.0@aar'
-    compile('com.mikepenz.materialdrawer:library:2.9.5@aar') { transitive = true }
+    compile('com.mikepenz.materialdrawer:library:2.9.6@aar') { transitive = true }
     compile 'com.android.support:support-v4:22.1.1'
     compile 'com.android.support:appcompat-v7:22.1.1'
 }
