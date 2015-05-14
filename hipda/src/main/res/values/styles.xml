@@ -16,6 +16,8 @@
         <!-- MaterialDrawer : change smaller drawer item's color -->
         <item name="material_drawer_secondary_text">?material_drawer_primary_text</item>
         <item name="material_drawer_selected_text">?colorAccent</item>
+        <!-- Hamburger-Icon color -->
+        <item name="drawerArrowStyle">@style/MaterialDrawer.DrawerArrowStyle</item>
 
         <!-- change searchView suggestion background color-->
         <item name="android:autoCompleteTextViewStyle">@style/MyAutoCompleteTextView</item>
@@ -36,7 +38,7 @@
 
     </style>
 
-    <style name="ThemeNight" parent="MaterialDrawerTheme.TranslucentStatus">
+    <style name="ThemeNight" parent="MaterialDrawerTheme">
 
         <item name="android:actionBarSize">48dp</item>
         <item name="actionBarSize">48dp</item>
@@ -90,6 +92,11 @@
 
     <style name="MyAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
         <item name="android:popupBackground">?background</item>
+    </style>
+
+    <style name="MaterialDrawer.DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">false</item>
+        <item name="color">@android:color/white</item>
     </style>
 
 </resources>
