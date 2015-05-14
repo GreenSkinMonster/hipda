@@ -669,6 +669,8 @@ public class ThreadListFragment extends Fragment
     }
 
     public void showNotification() {
+        if (mFabNotify == null)
+            return;
         int smsCount = NotifyHelper.getInstance().getCntSMS();
         int threadCount = NotifyHelper.getInstance().getCntThread();
         if (smsCount + threadCount > 0) {
