@@ -1,20 +1,12 @@
-# HiPDA 简洁论坛客户端 怪兽版
+# HiPDA·NG - HiPDA论坛非官方客户端
 
-这是HiPDA简洁论坛客户端的一个分支
+论坛帖子地址 http://www.hi-pda.com/forum/viewthread.php?tid=1579403   
 
-因为我做的改动较大，所以另外发布了这个版本
+这是HiPDA简洁论坛客户端的一个分支，曾用名怪兽版   
+因为我做的改动较大，所以另外发布了这个版本   
 
-多谢原作者 jejer 的劳动
-
-http://www.hi-pda.com/forum/space.php?uid=261684
-
-原项目发布页面
-
-http://www.hi-pda.com/forum/viewthread.php?tid=1408844
-
-源代码发布在
-
-https://bitbucket.org/jejer/hipda/
+多谢原作者 jejer 的劳动   
+原项目发布帖 http://www.hi-pda.com/forum/viewthread.php?tid=1408844   
 
 #Credits
 - jejer - https://bitbucket.org/jejer/hipda/
