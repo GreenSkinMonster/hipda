@@ -16,3 +16,10 @@ http://www.hi-pda.com/forum/viewthread.php?tid=1408844
 
 https://bitbucket.org/jejer/hipda/
 
+#Credits
+- jejer - https://bitbucket.org/jejer/hipda/
+- sjudd - https://github.com/bumptech/glide
+- davemorrissey - https://github.com/davemorrissey/subsampling-scale-image-view
+- Clans - https://github.com/Clans/FloatingActionButton
+- mikepenz - https://github.com/mikepenz/MaterialDrawer
+- rock3r - https://github.com/frakbot/CreditsRoll
