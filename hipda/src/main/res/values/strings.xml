@@ -50,7 +50,6 @@
     <string name="title_drawer_notify">帖子消息</string>
     <string name="title_drawer_newpost">发表新帖</string>
     <string name="title_drawer_setting">设置</string>
-    <string name="title_drawer_theme">切换主题</string>
 
     <string name="prefix_search_fulltext">全文搜索：</string>
     <string name="prefix_search_history">搜索记录：</string>

@@ -1,6 +1,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="ThemeDay" parent="MaterialDrawerTheme.Light">
+    <style name="ThemeLight" parent="MaterialDrawerTheme.Light">
 
         <item name="android:actionBarSize">48dp</item>
         <item name="actionBarSize">48dp</item>
@@ -12,6 +12,8 @@
         <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
 
         <item name="action_mode_text_color">@android:color/white</item>
+        <item name="fabColorNormal">?colorPrimary</item>
+        <item name="fabColorPressed">?colorPrimaryDark</item>
 
         <!-- MaterialDrawer : change smaller drawer item's color -->
         <item name="material_drawer_secondary_text">?material_drawer_primary_text</item>
@@ -29,7 +31,6 @@
         <item name="android:textColorPrimary">@color/abc_primary_text_material_light</item>
         <item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
 
-        <item name="themeName">day</item>
         <item name="background">@color/day_background</item>
         <item name="list_item_background">@color/day_list_item_background</item>
         <item name="list_item_divider">@color/day_list_item_divider</item>
@@ -38,7 +39,7 @@
 
     </style>
 
-    <style name="ThemeNight" parent="MaterialDrawerTheme">
+    <style name="ThemeDark" parent="MaterialDrawerTheme">
 
         <item name="android:actionBarSize">48dp</item>
         <item name="actionBarSize">48dp</item>
@@ -50,6 +51,8 @@
         <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
 
         <item name="action_mode_text_color">@android:color/white</item>
+        <item name="fabColorNormal">@color/md_grey_600</item>
+        <item name="fabColorPressed">@color/md_grey_800</item>
 
         <!-- MaterialDrawer : change smaller drawer item's color -->
         <item name="material_drawer_secondary_text">?material_drawer_primary_text</item>
@@ -58,20 +61,23 @@
         <!-- change searchView suggestion background color-->
         <item name="android:autoCompleteTextViewStyle">@style/MyAutoCompleteTextView</item>
 
-        <item name="colorPrimary">@color/md_grey_900</item>
+        <item name="colorPrimary">@color/md_grey_800</item>
         <item name="colorPrimaryDark">@color/md_black_1000</item>
         <item name="colorAccent">@color/hipda</item>
 
         <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
         <item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>
 
-        <item name="themeName">night</item>
         <item name="background">@color/night_background</item>
         <item name="list_item_background">@color/night_list_item_background</item>
         <item name="list_item_divider">@color/night_list_item_divider</item>
         <item name="icon_send">@drawable/ic_action_send_now_night</item>
         <item name="icon_download">@drawable/ic_action_download_night</item>
 
+    </style>
+
+    <style name="ThemeBlack" parent="ThemeDark">
+        <item name="list_item_background">@color/black</item>
     </style>
 
 
@@ -97,6 +103,13 @@
     <style name="MaterialDrawer.DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">false</item>
         <item name="color">@android:color/white</item>
+    </style>
+
+    <!-- FAB Style-->
+    <style name="FloatingButtonsStyle">
+        <item name="fab_size">mini</item>
+        <item name="fab_colorNormal">?fabColorNormal</item>
+        <item name="fab_colorPressed">?fabColorPressed</item>
     </style>
 
 </resources>

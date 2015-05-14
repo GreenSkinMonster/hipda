@@ -92,6 +92,17 @@
         <item>8</item>
     </string-array>
 
+    <string-array name="pref_title_theme_names">
+        <item>浅色</item>
+        <item>深色</item>
+        <item>纯黑</item>
+    </string-array>
+    <string-array name="pref_title_theme_values">
+        <item>light</item>
+        <item>dark</item>
+        <item>black</item>
+    </string-array>
+
     <!--  value should match ActivityInfo.SCREEN_ORIENTATION_*-->
     <string-array name="pref_screen_orientation">
         <item>@string/screen_auto</item>
@@ -125,6 +136,7 @@
     <string name="pref_title_eink_optimization">EINK优化</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
+    <string name="pref_title_theme">界面主题</string>
     <string name="pref_title_textsize_adjust_title">标题字号调整</string>
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
     <string name="pref_post_line_spacing_title">帖子行距调整</string>

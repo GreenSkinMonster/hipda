@@ -42,19 +42,15 @@
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_new_thread"
+            style="@style/FloatingButtonsStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="?colorPrimary"
-            fab:fab_colorPressed="?colorPrimaryDark"
-            fab:fab_size="mini" />
+            android:layout_height="wrap_content" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_refresh"
+            style="@style/FloatingButtonsStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="?colorPrimary"
-            fab:fab_colorPressed="?colorPrimaryDark"
-            fab:fab_size="mini" />
+            android:layout_height="wrap_content" />
     </com.github.clans.fab.FloatingActionMenu>
 
     <com.github.clans.fab.FloatingActionButton

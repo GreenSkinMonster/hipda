@@ -34,7 +34,7 @@ public class HiSettingsHelper {
     public static final String PERF_ADDTAIL = "PERF_ADDTAIL";
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
     public static final String PERF_TAILURL = "PERF_TAILURL";
-    public static final String PERF_NIGHTTHEME = "PERF_NIGHTTHEME";
+    public static final String PERF_THEME = "PERF_THEME";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
@@ -68,7 +68,7 @@ public class HiSettingsHelper {
     private String mTailText = "";
     private String mTailUrl = "";
 
-    private boolean mNightTheme = false;
+    private String mTheme = "";
 
     private boolean mEncodeUtf8 = false;
 
@@ -127,7 +127,7 @@ public class HiSettingsHelper {
         isAddTailFromPref();
         getTailTextFromPref();
         getTailUrlFromPref();
-        isNightThemeFromPref();
+        getThemeFromPref();
         isEncodeUtf8FromPref();
         getBlanklistUsernamesFromPref();
         getPostTextsizeAdjFromPref();
@@ -344,19 +344,19 @@ public class HiSettingsHelper {
         editor.putString(PERF_TAILURL, tailUrl).commit();
     }
 
-    public boolean isNightTheme() {
-        return mNightTheme;
+    public String getTheme() {
+        return mTheme;
     }
 
-    public boolean isNightThemeFromPref() {
-        mNightTheme = mSharedPref.getBoolean(PERF_NIGHTTHEME, false);
-        return mNightTheme;
+    public String getThemeFromPref() {
+        mTheme = mSharedPref.getString(PERF_THEME, "light");
+        return mTheme;
     }
 
-    public void setNightTheme(boolean nightTheme) {
-        mNightTheme = nightTheme;
+    public void setTheme(String theme) {
+        mTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_NIGHTTHEME, nightTheme).commit();
+        editor.putString(PERF_THEME, theme).commit();
     }
 
     public boolean isEncodeUtf8() {

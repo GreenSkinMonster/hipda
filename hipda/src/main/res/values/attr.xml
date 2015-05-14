@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <attr name="themeName" format="string" />
     <!--<attr name="background" format="color" />-->
     <attr name="list_item_background" format="color" />
     <attr name="list_item_divider" format="color" />
@@ -9,5 +8,7 @@
     <attr name="icon_download" format="reference" />
 
     <attr name="action_mode_text_color" format="color" />
+    <attr name="fabColorNormal" format="color" />
+    <attr name="fabColorPressed" format="color" />
 
 </resources>

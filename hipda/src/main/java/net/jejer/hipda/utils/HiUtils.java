@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
+import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 
 public class HiUtils {
@@ -101,6 +102,18 @@ public class HiUtils {
                 + fullUid.substring(5, 7) + "/"
                 + fullUid.substring(7, 9) + "_avatar_middle.jpg";
         return url;
+    }
+
+    public static int getThemeValue(String theme) {
+        if ("light".equals(theme)) {
+            return R.style.ThemeLight;
+        } else if ("dark".equals(theme)) {
+            return R.style.ThemeDark;
+        } else if ("black".equals(theme)) {
+            return R.style.ThemeBlack;
+        }
+        HiSettingsHelper.getInstance().setTheme("light");
+        return R.style.ThemeLight;
     }
 
 }

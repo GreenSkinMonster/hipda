@@ -15,6 +15,10 @@ public class ColorUtils {
 
     private static HashMap<Integer, Integer> COLOR_IDS = new HashMap<>();
 
+    public static void clear() {
+        COLOR_IDS.clear();
+    }
+
     public static int getColorIdByAttr(Context ctx, int attrId) {
         if (COLOR_IDS.containsKey(attrId))
             return COLOR_IDS.get(attrId);

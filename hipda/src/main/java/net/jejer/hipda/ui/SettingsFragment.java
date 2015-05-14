@@ -32,6 +32,7 @@ import java.util.Set;
 public class SettingsFragment extends PreferenceFragment {
 
     private int mScreenOrietation;
+    private String mTheme;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class SettingsFragment extends PreferenceFragment {
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_TITLE_ADJ));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_POST_LINE_SPACING));
+        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_THEME));
 
         final Preference userPreference = findPreference(HiSettingsHelper.PERF_USERNAME);
         if (LoginHelper.isLoggedIn())
@@ -111,6 +113,7 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
+        mTheme = HiSettingsHelper.getInstance().getTheme();
     }
 
     @Override
@@ -134,7 +137,9 @@ public class SettingsFragment extends PreferenceFragment {
         super.onStop();
         HiSettingsHelper.getInstance().reload();
 
-        if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation) {
+        if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
+                || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)) {
+            ColorUtils.clear();
             Intent intent = getActivity().getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             getActivity().finish();

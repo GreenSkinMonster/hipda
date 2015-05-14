@@ -70,6 +70,8 @@ public class MainFrameActivity extends AppCompatActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
         }
 
+        setTheme(HiUtils.getThemeValue(HiSettingsHelper.getInstance().getTheme()));
+
         setContentView(R.layout.activity_main_frame);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
