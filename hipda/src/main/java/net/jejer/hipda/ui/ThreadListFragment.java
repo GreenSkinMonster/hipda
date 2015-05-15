@@ -91,8 +91,8 @@ public class ThreadListFragment extends BaseFragment
         if (getArguments() != null && getArguments().containsKey(ARG_FID_KEY)) {
             mForumId = getArguments().getInt(ARG_FID_KEY);
         }
-        int forumIdx = HiUtils.getForumIndexByFid(mForumId + "");
-        if (forumIdx == -1 || !isDrawerContains(mForumId)) {
+        int forumIdx = HiUtils.getForumIndexByFid(mForumId);
+        if (forumIdx == -1 || !HiUtils.isForumEnabled(mForumId)) {
             mForumId = HiUtils.FID_DISCOVERY;
         }
 
@@ -208,7 +208,7 @@ public class ThreadListFragment extends BaseFragment
         menu.clear();
         inflater.inflate(R.menu.menu_thread_list, menu);
 
-        int forumIdx = HiUtils.getForumIndexByFid(mForumId + "");
+        int forumIdx = HiUtils.getForumIndexByFid(mForumId);
 
         setActionBarTitle(HiUtils.FORUMS[forumIdx]);
         setActionBarDisplayHomeAsUpEnabled(false);

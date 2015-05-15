@@ -5,6 +5,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
+import com.mikepenz.iconics.typeface.FontAwesome;
+import com.mikepenz.iconics.typeface.IIcon;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 
@@ -47,28 +50,38 @@ public class HiUtils {
     public final static int FID_BS = 6;
     public final static int FID_DISCOVERY = 2;
     public final static int FID_GEEK = 7;
-    public final static int FID_EINK = 59;
-    public final static int FID_ROBOT = 57;
-    public final static int FID_PALMOS = 12;
 
     public static String[] FORUMS = {"Discovery", "Buy & Sell", "Geek Talks", "E-INK", "PalmOS", "疑似机器人"};
-    public static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, FID_GEEK, FID_EINK, FID_PALMOS, FID_ROBOT};
+    public static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, FID_GEEK, 59, 12, 57};
+    public static IIcon[] FORUM_ICONS = {
+            FontAwesome.Icon.faw_cc_discover,
+            FontAwesome.Icon.faw_shopping_cart,
+            FontAwesome.Icon.faw_forumbee,
+            FontAwesome.Icon.faw_book,
+            FontAwesome.Icon.faw_mobile_phone,
+            FontAwesome.Icon.faw_reddit
+    };
 
     public static int getForumID(int idx) {
         return FORUM_IDS[idx];
     }
 
-    public static int getForumIndexByFid(String fid) {
+    public static int getForumIndexByFid(int fid) {
         for (int i = 0; i < FORUM_IDS.length; i++) {
-            if (fid.equals(FORUM_IDS[i] + "")) {
+            if (fid == FORUM_IDS[i]) {
                 return i;
             }
         }
         return -1;
     }
 
-    public static String getForumName(int fid) {
-        return FORUMS[getForumIndexByFid(fid + "")];
+    public static boolean isForumEnabled(int fid) {
+        if (getForumIndexByFid(fid) >= 0) {
+            if (getForumIndexByFid(fid) <= 3
+                    || HiSettingsHelper.getInstance().getForums().contains(fid + ""))
+                return true;
+        }
+        return false;
     }
 
     public static String getFullUrl(String particalUrl) {
@@ -115,6 +128,12 @@ public class HiUtils {
         }
         HiSettingsHelper.getInstance().setTheme("light");
         return R.style.ThemeLight;
+    }
+
+    class Forum {
+        int fid;
+        int name;
+        IIcon icon;
     }
 
 }

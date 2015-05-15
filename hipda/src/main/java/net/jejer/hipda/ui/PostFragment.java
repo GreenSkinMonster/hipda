@@ -133,13 +133,13 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         mTvAdditional.setText("正在收集信息");
 
         mSpForum = (Spinner) view.findViewById(R.id.sp_fid);
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_row);
         adapter.addAll(HiUtils.FORUMS);
         mSpForum.setAdapter(adapter);
         mSpForum.setOnItemSelectedListener(new FidSelectListener());
         mSpForum.setEnabled(false);
-        if (mFid != null) {
-            mSpForum.setSelection(HiUtils.getForumIndexByFid(mFid));
+        if (mFid != null && TextUtils.isDigitsOnly(mFid)) {
+            mSpForum.setSelection(HiUtils.getForumIndexByFid(Integer.parseInt(mFid)));
         }
 
         mSpTypeIds = (Spinner) view.findViewById(R.id.sp_typeid);
@@ -550,7 +550,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                 getActivity().invalidateOptionsMenu();
 
                 if (mode == PostAsyncTask.MODE_NEW_THREAD) {
-                    KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), android.R.layout.simple_list_item_1);
+                    KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
                     List<String> typeids = info.getTypeidValues();
                     if (typeids != null && typeids.size() > 0) {
                         adapter.setEntryValues(info.getTypeidValues().toArray(new String[typeids.size()]));
@@ -579,7 +579,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                         if (typeids != null && typeids.size() > 0
                                 && !TextUtils.isEmpty(info.getTypeid())) {
                             String typeid = info.getTypeid();
-                            KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), android.R.layout.simple_list_item_1);
+                            KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
                             adapter.setEntryValues(info.getTypeidValues().toArray(new String[typeids.size()]));
                             adapter.setEntries(info.getTypeidNames().toArray(new String[typeids.size()]));
                             mSpTypeIds.setAdapter(adapter);
