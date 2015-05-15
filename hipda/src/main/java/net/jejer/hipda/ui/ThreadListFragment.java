@@ -92,7 +92,7 @@ public class ThreadListFragment extends BaseFragment
             mForumId = getArguments().getInt(ARG_FID_KEY);
         }
         int forumIdx = HiUtils.getForumIndexByFid(mForumId + "");
-        if (forumIdx == -1 || !isDrawerContains(forumIdx)) {
+        if (forumIdx == -1 || !isDrawerContains(mForumId)) {
             mForumId = HiUtils.FID_DISCOVERY;
         }
 
