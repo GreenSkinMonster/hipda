@@ -39,6 +39,8 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
+import java.util.ArrayList;
+
 public class MainFrameActivity extends AppCompatActivity {
 
     private Fragment mOnSwipeCallback = null;
@@ -74,58 +76,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main_frame);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
-        setSupportActionBar(toolbar);
-
-        drawerResult = new Drawer()
-                .withActivity(this)
-                .withToolbar(toolbar)
-//                .withHeader(R.layout.header)
-                .withTranslucentStatusBar(true)
-                .addDrawerItems(
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_grade),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_forum),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_mail).withBadgeTextColor(Color.RED),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications).withBadgeTextColor(Color.RED),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_setting)
-                                .withIdentifier(DrawerItem.SETTINGS.id)
-                                .withIcon(GoogleMaterial.Icon.gmd_settings),
-                        new DividerDrawerItem(),
-                        new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_DISCOVERY))
-                                .withIdentifier(HiUtils.FID_DISCOVERY)
-                                .withIcon(FontAwesome.Icon.faw_cc_discover),
-                        new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_BS))
-                                .withIdentifier(HiUtils.FID_BS)
-                                .withIcon(FontAwesome.Icon.faw_shopping_cart),
-                        new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_GEEK))
-                                .withIdentifier(HiUtils.FID_GEEK)
-                                .withIcon(FontAwesome.Icon.faw_forumbee),
-                        new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_EINK))
-                                .withIdentifier(HiUtils.FID_EINK)
-                                .withIcon(FontAwesome.Icon.faw_book),
-                        new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_ROBOT))
-                                .withIdentifier(HiUtils.FID_ROBOT)
-                                .withIcon(FontAwesome.Icon.faw_reddit)
-                ).addStickyDrawerItems(
-                )
-                .withOnDrawerItemClickListener(new DrawerItemClickListener())
-                .build();
-
-        //fix input layout problem when withTranslucentStatusBar enabled
-        drawerResult.keyboardSupportEnabled(this, true);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-                popFragment(false);
-            }
-        });
+        setupDrawer();
 
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
@@ -147,6 +98,67 @@ public class MainFrameActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void setupDrawer() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
+        setSupportActionBar(toolbar);
+
+        ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
+        drawerItems.add(new SecondaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search));
+        drawerItems.add(new SecondaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_grade));
+        drawerItems.add(new SecondaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_forum));
+        drawerItems.add(new SecondaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite));
+        drawerItems.add(new SecondaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_mail).withBadgeTextColor(Color.RED));
+        drawerItems.add(new SecondaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications).withBadgeTextColor(Color.RED));
+        drawerItems.add(new SecondaryDrawerItem().withName(R.string.title_drawer_setting)
+                .withIdentifier(DrawerItem.SETTINGS.id)
+                .withIcon(GoogleMaterial.Icon.gmd_settings));
+        drawerItems.add(new DividerDrawerItem());
+        drawerItems.add(new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_DISCOVERY))
+                .withIdentifier(HiUtils.FID_DISCOVERY)
+                .withIcon(FontAwesome.Icon.faw_cc_discover));
+        drawerItems.add(new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_BS))
+                .withIdentifier(HiUtils.FID_BS)
+                .withIcon(FontAwesome.Icon.faw_shopping_cart));
+        drawerItems.add(new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_GEEK))
+                .withIdentifier(HiUtils.FID_GEEK)
+                .withIcon(FontAwesome.Icon.faw_forumbee));
+        drawerItems.add(new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_EINK))
+                .withIdentifier(HiUtils.FID_EINK)
+                .withIcon(FontAwesome.Icon.faw_book));
+        if (HiSettingsHelper.getInstance().getForums().contains(HiUtils.FID_PALMOS + ""))
+            drawerItems.add(new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_PALMOS))
+                    .withIdentifier(HiUtils.FID_PALMOS)
+                    .withIcon(FontAwesome.Icon.faw_mobile_phone));
+        if (HiSettingsHelper.getInstance().getForums().contains(HiUtils.FID_ROBOT + ""))
+            drawerItems.add(new PrimaryDrawerItem().withName(HiUtils.getForumName(HiUtils.FID_ROBOT))
+                    .withIdentifier(HiUtils.FID_ROBOT)
+                    .withIcon(FontAwesome.Icon.faw_reddit));
+
+        drawerResult = new Drawer()
+                .withActivity(this)
+                .withToolbar(toolbar)
+//                .withHeader(R.layout.header)
+                .withTranslucentStatusBar(true)
+                .withDrawerItems(drawerItems)
+                .addStickyDrawerItems()
+                .withOnDrawerItemClickListener(new DrawerItemClickListener())
+                .build();
+
+        //fix input layout problem when withTranslucentStatusBar enabled
+        drawerResult.keyboardSupportEnabled(this, true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                popFragment(false);
+            }
+        });
     }
 
     @Override

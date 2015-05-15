@@ -49,9 +49,10 @@ public class HiUtils {
     public final static int FID_GEEK = 7;
     public final static int FID_EINK = 59;
     public final static int FID_ROBOT = 57;
+    public final static int FID_PALMOS = 12;
 
-    public static String[] FORUMS = {"Discovery", "Buy & Sell", "Geek Talks", "E-INK", "疑似机器人"};
-    public static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, FID_GEEK, FID_EINK, FID_ROBOT};
+    public static String[] FORUMS = {"Discovery", "Buy & Sell", "Geek Talks", "E-INK", "PalmOS", "疑似机器人"};
+    public static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, FID_GEEK, FID_EINK, FID_PALMOS, FID_ROBOT};
 
     public static int getForumID(int idx) {
         return FORUM_IDS[idx];

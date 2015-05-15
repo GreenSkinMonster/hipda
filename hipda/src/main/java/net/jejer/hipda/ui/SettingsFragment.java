@@ -33,6 +33,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     private int mScreenOrietation;
     private String mTheme;
+    private Set<String> mForums;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class SettingsFragment extends PreferenceFragment {
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_POST_LINE_SPACING));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_THEME));
+        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FORUMS));
 
         final Preference userPreference = findPreference(HiSettingsHelper.PERF_USERNAME);
         if (LoginHelper.isLoggedIn())
@@ -114,6 +116,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
         mTheme = HiSettingsHelper.getInstance().getTheme();
+        mForums = HiSettingsHelper.getInstance().getForums();
     }
 
     @Override
@@ -138,7 +141,8 @@ public class SettingsFragment extends PreferenceFragment {
         HiSettingsHelper.getInstance().reload();
 
         if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
-                || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)) {
+                || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)
+                || !HiSettingsHelper.getInstance().getForums().equals(mForums)) {
             ColorUtils.clear();
             Intent intent = getActivity().getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

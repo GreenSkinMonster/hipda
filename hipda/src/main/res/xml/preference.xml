@@ -44,6 +44,13 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_theme" />
 
+        <MultiSelectListPreference
+            android:defaultValue="@array/empty_array"
+            android:entries="@array/pref_title_forum_names"
+            android:entryValues="@array/pref_title_forum_values"
+            android:key="PERF_FORUMS"
+            android:title="@string/pref_title_forum" />
+
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/pref_title_textsize_adjust_titles"

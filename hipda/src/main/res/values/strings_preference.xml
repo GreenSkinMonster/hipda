@@ -103,6 +103,15 @@
         <item>black</item>
     </string-array>
 
+    <string-array name="pref_title_forum_names">
+        <item>PalmOS</item>
+        <item>疑似机器人</item>
+    </string-array>
+    <string-array name="pref_title_forum_values">
+        <item>12</item>
+        <item>57</item>
+    </string-array>
+
     <!--  value should match ActivityInfo.SCREEN_ORIENTATION_*-->
     <string-array name="pref_screen_orientation">
         <item>@string/screen_auto</item>
@@ -137,6 +146,7 @@
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
     <string name="pref_title_theme">界面主题</string>
+    <string name="pref_title_forum">版面选择</string>
     <string name="pref_title_textsize_adjust_title">标题字号调整</string>
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
     <string name="pref_post_line_spacing_title">帖子行距调整</string>

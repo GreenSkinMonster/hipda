@@ -35,6 +35,7 @@ public class HiSettingsHelper {
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
     public static final String PERF_TAILURL = "PERF_TAILURL";
     public static final String PERF_THEME = "PERF_THEME";
+    public static final String PERF_FORUMS = "PERF_FORUMS";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
@@ -69,6 +70,7 @@ public class HiSettingsHelper {
     private String mTailUrl = "";
 
     private String mTheme = "";
+    private Set<String> mForums = new HashSet<>();
 
     private boolean mEncodeUtf8 = false;
 
@@ -138,6 +140,7 @@ public class HiSettingsHelper {
         getLastForumIdFromPerf();
         isShowPostTypeFromPref();
         isErrorReportModeFromPref();
+        getForumsFromPref();
     }
 
     public boolean isLoginInfoValid() {
@@ -357,6 +360,21 @@ public class HiSettingsHelper {
         mTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_THEME, theme).commit();
+    }
+
+    public Set<String> getForums() {
+        return mForums;
+    }
+
+    public Set<String> getForumsFromPref() {
+        mForums = mSharedPref.getStringSet(PERF_FORUMS, new HashSet<String>());
+        return mForums;
+    }
+
+    public void setForums(Set<String> forums) {
+        mForums = forums;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putStringSet(PERF_FORUMS, forums).commit();
     }
 
     public boolean isEncodeUtf8() {

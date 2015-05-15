@@ -55,6 +55,12 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    boolean isDrawerContains(int identifier) {
+        //this only set DrawerItem, not StickyDrawerItem
+        Drawer.Result drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
+        return drawerResult.getPositionFromIdentifier(identifier) != -1;
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
