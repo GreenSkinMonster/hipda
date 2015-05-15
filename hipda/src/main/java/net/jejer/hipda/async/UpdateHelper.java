@@ -5,8 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -15,7 +13,6 @@ import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
-import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
@@ -55,84 +52,67 @@ public class UpdateHelper {
         HiSettingsHelper.getInstance().setAutoUpdateCheck(true);
         HiSettingsHelper.getInstance().setLastUpdateCheckTime(new Date());
 
-        String url = HiUtils.UpdateUrl;
-
-        StringRequest sReq = new HiStringRequest(mCtx, url, new SuccessListener(), new ErrorListener());
+        String updateUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda.md";
+        StringRequest sReq = new HiStringRequest(mCtx, updateUrl, new SuccessListener(), new ErrorListener());
         VolleyHelper.getInstance().add(sReq);
     }
 
     private class SuccessListener implements Response.Listener<String> {
         @Override
         public void onResponse(String response) {
+            response = Utils.nullToText(response).replace("\r\n", "\n").trim();
 
             String version = HiSettingsHelper.getInstance().getAppVersion();
+
             String newVersion = "";
-            String url = "";
-            String filename = "";
             String updateNotes = "";
-            if (response.contains("postnum29887924"))
-                response = response.substring(response.indexOf("postnum29887924"));
-            else
-                return;
 
-            boolean found = false;
-
-            while (!found && response.contains("<a href=\"attachment.php?") && response.contains("hipda-release")) {
-                String firstAttachment = HttpUtils.getMiddleString(response, "<a href=\"attachment.php?", "</a>");
-                if (firstAttachment != null && firstAttachment.contains("hipda-release-")) {
-                    String args = firstAttachment.substring(0, firstAttachment.indexOf("\""));
-                    url = HiUtils.BaseUrl + "attachment.php?" + args;
-                    filename = HttpUtils.getMiddleString(firstAttachment, "<strong>", "</strong>");
-                    newVersion = HttpUtils.getMiddleString(filename, "hipda-release-", ".apk");
-                    updateNotes = Utils.nullToText(HttpUtils.getMiddleString(response.substring(response.indexOf("更新记录")), "<ul>", "</ul>"));
-                    found = !TextUtils.isEmpty(args) && !TextUtils.isEmpty(filename) && newer(version, newVersion);
-                }
-                if (!found)
-                    response = response.substring(response.indexOf("<a href=\"attachment.php?") + "<a href=\"attachment.php?".length());
+            int firstLineIndex = response.indexOf("\n");
+            if (response.startsWith("v") && firstLineIndex > 0) {
+                newVersion = response.substring(1, firstLineIndex).trim();
+                updateNotes = response.substring(firstLineIndex + 1).trim();
             }
 
-            if (found) {
-                final String fUrl = url;
-                final String fFilename = filename;
+            boolean found = !TextUtils.isEmpty(newVersion)
+                    && !TextUtils.isEmpty(updateNotes)
+                    && newer(version, newVersion);
 
+            if (found) {
                 if (!mSilent) {
                     pd.dismiss();
                 }
 
-                Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion).setMessage(
-                        updateNotes.replace("<ul>", "").replace("<li>", "").replace("<br />", "")).
-                        setPositiveButton("下载",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        try {
-                                            HttpUtils.download(mCtx, fUrl, fFilename);
-                                        } catch (SecurityException e) {
-                                            Logger.e(e);
-                                            Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                }).setNeutralButton("不再提醒", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        HiSettingsHelper.getInstance().setAutoUpdateCheck(false);
-                    }
-                }).create();
+                final String url = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-release-" + newVersion + ".apk";
+                final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
+
+                Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
+                        .setMessage(updateNotes).
+                                setPositiveButton("下载",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                try {
+                                                    HttpUtils.download(mCtx, url, filename);
+                                                } catch (SecurityException e) {
+                                                    Logger.e(e);
+                                                    Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }).setNeutralButton("不再提醒", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                HiSettingsHelper.getInstance().setAutoUpdateCheck(false);
+                            }
+                        }).create();
 
                 dialog.show();
-
-                TextView titleView = (TextView) dialog.findViewById(mCtx.getResources().getIdentifier("alertTitle", "id", "android"));
-                if (titleView != null) {
-                    titleView.setGravity(Gravity.CENTER);
-                }
-
             } else {
                 if (!mSilent) {
-                    pd.dismiss("没有发现新版本", 3000);
+                    pd.dismiss("没有发现新版本");
                 }
             }
 
