@@ -52,7 +52,7 @@ public class UpdateHelper {
         HiSettingsHelper.getInstance().setAutoUpdateCheck(true);
         HiSettingsHelper.getInstance().setLastUpdateCheckTime(new Date());
 
-        String updateUrl = "https://api.github.com/repos/GreenSkinMonster/hipda/releases/latest";
+        String updateUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda-ng.md";
         StringRequest sReq = new HiStringRequest(mCtx, updateUrl, new SuccessListener(), new ErrorListener());
         VolleyHelper.getInstance().add(sReq);
     }
@@ -60,16 +60,20 @@ public class UpdateHelper {
     private class SuccessListener implements Response.Listener<String> {
         @Override
         public void onResponse(String response) {
+            response = Utils.nullToText(response).replace("\r\n", "\n").trim();
 
             String version = HiSettingsHelper.getInstance().getAppVersion();
-            String newVersion = HttpUtils.getMiddleString(response, "\"tag_name\":\"", "\"");
-            String updateNotes = HttpUtils.getMiddleString(response, "\"body\":\"", "\"");
 
-            final String url = Utils.nullToText(HttpUtils.getMiddleString(response, "\"browser_download_url\":\"", "\"")).trim();
-            final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
+            String newVersion = "";
+            String updateNotes = "";
+
+            int firstLineIndex = response.indexOf("\n");
+            if (response.startsWith("v") && firstLineIndex > 0) {
+                newVersion = response.substring(1, firstLineIndex).trim();
+                updateNotes = response.substring(firstLineIndex + 1).trim();
+            }
 
             boolean found = !TextUtils.isEmpty(newVersion)
-                    && !TextUtils.isEmpty(url)
                     && !TextUtils.isEmpty(updateNotes)
                     && newer(version, newVersion);
 
@@ -78,8 +82,11 @@ public class UpdateHelper {
                     pd.dismiss();
                 }
 
+                final String url = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-ng-release-" + newVersion + ".apk";
+                final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
+
                 Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
-                        .setMessage(updateNotes.replace("\\r\\n", "\n")).
+                        .setMessage(updateNotes).
                                 setPositiveButton("下载",
                                         new DialogInterface.OnClickListener() {
                                             @Override
