@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.jejer.hipda"
     android:versionCode="30"
-    android:versionName="2.0.01">
+    android:versionName="2.0.02">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -16,7 +16,8 @@
         android:theme="@style/ThemeLight">
         <activity
             android:name="net.jejer.hipda.ui.MainFrameActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
