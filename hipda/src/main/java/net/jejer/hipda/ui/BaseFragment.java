@@ -41,16 +41,23 @@ public abstract class BaseFragment extends Fragment {
     }
 
     void syncActionBarState() {
-        ((MainFrameActivity) getActivity()).drawerResult.getActionBarDrawerToggle().syncState();
+        if (getActivity() != null) {
+            Drawer.Result drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
+            if (drawerResult != null)
+                drawerResult.getActionBarDrawerToggle().syncState();
+        }
     }
 
     void setDrawerSelection(int identifier) {
         //this only set DrawerItem, not StickyDrawerItem
         try {
-            Drawer.Result drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
-            if (!drawerResult.isDrawerOpen()
-                    && drawerResult.getPositionFromIdentifier(identifier) != drawerResult.getCurrentSelection())
-                drawerResult.setSelectionByIdentifier(identifier, false);
+            if (getActivity() != null) {
+                Drawer.Result drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
+                if (drawerResult != null
+                        && !drawerResult.isDrawerOpen()
+                        && drawerResult.getPositionFromIdentifier(identifier) != drawerResult.getCurrentSelection())
+                    drawerResult.setSelectionByIdentifier(identifier, false);
+            }
         } catch (Exception ignored) {
         }
     }
