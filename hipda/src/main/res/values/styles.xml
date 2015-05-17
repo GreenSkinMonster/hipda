@@ -28,8 +28,8 @@
         <item name="colorPrimaryDark">@color/md_grey_800</item>
         <item name="colorAccent">@color/hipda</item>
 
-        <item name="android:textColorPrimary">@color/abc_primary_text_material_light</item>
-        <item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
+        <item name="android:textColorPrimary">@color/textColorPrimaryLight</item>
+        <item name="android:textColorSecondary">@color/textColorSecondaryLight</item>
 
         <item name="background">@color/day_background</item>
         <item name="list_item_background">@color/day_list_item_background</item>
@@ -65,8 +65,8 @@
         <item name="colorPrimaryDark">@color/md_black_1000</item>
         <item name="colorAccent">@color/hipda</item>
 
-        <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
-        <item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>
+        <item name="android:textColorPrimary">@color/textColorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/textColorSecondaryDark</item>
 
         <item name="background">@color/night_background</item>
         <item name="list_item_background">@color/night_list_item_background</item>

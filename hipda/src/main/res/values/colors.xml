@@ -19,18 +19,11 @@
     <item name="background_grey" type="color">#4E808080</item>
     <item name="background_silver" type="color">#4EC0C0C0</item>
 
-    <integer-array name="androidcolors">
-        <item>@color/blue</item>
-        <item>@color/purple</item>
-        <item>@color/green</item>
-        <item>@color/orange</item>
-        <item>@color/red</item>
-        <item>@color/darkblue</item>
-        <item>@color/darkpurple</item>
-        <item>@color/darkgreen</item>
-        <item>@color/darkorange</item>
-        <item>@color/darkred</item>
-    </integer-array>
+    <item name="textColorPrimaryLight" type="color">#de000000</item>
+    <item name="textColorSecondaryLight" type="color">#8a000000</item>
+
+    <item name="textColorPrimaryDark" type="color">#ffe6e6e6</item>
+    <item name="textColorSecondaryDark" type="color">#b3ffffff</item>
 
     <item name="hipda" type="color">#33B6EA</item>
     <item name="icon_blue" type="color">#2196F3</item>
