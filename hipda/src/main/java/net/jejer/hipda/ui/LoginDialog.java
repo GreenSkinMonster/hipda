@@ -84,6 +84,7 @@ public class LoginDialog extends Dialog {
                 HiSettingsHelper.getInstance().setPassword(etPassword.getText().toString());
                 HiSettingsHelper.getInstance().setSecQuestion(adapter.getEntryValue(spSecQuestion.getSelectedItemPosition()));
                 HiSettingsHelper.getInstance().setSecAnswer(etSecAnswer.getText().toString());
+                HiSettingsHelper.getInstance().setUid("");
 
                 progressDialog = HiProgressDialog.show(mCtx, "正在登录...");
                 progressDialog.setCancelable(false);

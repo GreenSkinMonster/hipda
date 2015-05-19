@@ -3,6 +3,7 @@ package net.jejer.hipda.utils;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
@@ -29,6 +30,22 @@ public class HiParserThreadList {
 
         // Async check notify
         new parseNotifyRunnable(ctx, doc, true).run();
+
+        //parse uid
+        if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())) {
+            Elements spaceES = doc.select("#umenu cite a");
+            if (spaceES.size() == 1) {
+                String spaceUrl = spaceES.first().attr("href");
+                if (!TextUtils.isEmpty(spaceUrl)) {
+                    String uid = HttpUtils.getMiddleString(spaceUrl, "space.php?uid=", "&");
+                    if (!TextUtils.isEmpty(uid)
+                            && TextUtils.isDigitsOnly(uid)
+                            && !HiSettingsHelper.getInstance().getUid().equals(uid)) {
+                        HiSettingsHelper.getInstance().setUid(uid);
+                    }
+                }
+            }
+        }
 
         ThreadListBean threads = new ThreadListBean();
         Elements tbodyES = doc.select("tbody[id]");

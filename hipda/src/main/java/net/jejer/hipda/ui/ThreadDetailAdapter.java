@@ -155,6 +155,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                 contentView.addView(giv);
 
                 giv.setUrl(imageUrl);
+                giv.bringToFront();
 
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
                     loadImage(imageUrl, giv);

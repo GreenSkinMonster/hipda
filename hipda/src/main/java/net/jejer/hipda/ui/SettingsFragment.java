@@ -72,6 +72,7 @@ public class SettingsFragment extends PreferenceFragment {
                                             HiSettingsHelper.getInstance().setPassword("");
                                             HiSettingsHelper.getInstance().setSecQuestion("");
                                             HiSettingsHelper.getInstance().setSecAnswer("");
+                                            HiSettingsHelper.getInstance().setUid("");
                                             LoginHelper.logout();
                                             userPreference.setSummary(Html.fromHtml("<font color=grey>(未登录)</font>"));
                                         }

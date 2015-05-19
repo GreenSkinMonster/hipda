@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,13 +19,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
@@ -46,6 +53,7 @@ public class MainFrameActivity extends AppCompatActivity {
     private int mQuit = 0;
 
     public Drawer.Result drawerResult;
+    public AccountHeader.Result headerResult;
     private long volleyInitTime = 0;
 
     @Override
@@ -115,6 +123,37 @@ public class MainFrameActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
 
+        DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+                Glide.with(imageView.getContext()).load(uri).into(imageView);
+            }
+
+            @Override
+            public void cancel(ImageView imageView) {
+            }
+
+            @Override
+            public Drawable placeholder(Context ctx) {
+                return null;
+            }
+        });
+
+        // Create the AccountHeader
+        String username = VolleyHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
+        String avatarUrl = VolleyHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
+        headerResult = new AccountHeader()
+                .withActivity(this)
+                .withHeaderBackground(R.drawable.header)
+                .withCompactStyle(true)
+                .withSelectionListEnabled(false)
+                .addProfiles(
+                        new ProfileDrawerItem()
+                                .withEmail(username)
+                                .withIcon(avatarUrl)
+                )
+                .build();
+
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_grade));
@@ -139,6 +178,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withToolbar(toolbar)
 //                .withHeader(R.layout.header)
+                .withAccountHeader(headerResult)
                 .withTranslucentStatusBar(true)
                 .withDrawerItems(drawerItems)
                 .addStickyDrawerItems()

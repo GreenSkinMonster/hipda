@@ -23,6 +23,7 @@ public class HiSettingsHelper {
      * */
     public static final String PERF_USERNAME = "PERF_USERNAME";
     public static final String PERF_PASSWORD = "PERF_PASSWORD";
+    public static final String PERF_UID = "PERF_UID";
     public static final String PERF_SECQUESTION = "PERF_SECQUESTION";
     public static final String PERF_SECANSWER = "PERF_SECANSWER";
     public static final String PERF_SHOWSTICKTHREADS = "PERF_SHOWSTICKTHREADS";
@@ -57,6 +58,7 @@ public class HiSettingsHelper {
     private String mPassword = "";
     private String mSecQuestion = "";
     private String mSecAnswer = "";
+    private String mUid = "";
 
     private boolean mShowStickThreads = false;
     private boolean mShowPostType = false;
@@ -119,6 +121,7 @@ public class HiSettingsHelper {
     public void reload() {
         getUsernameFromPref();
         getPasswordFromPref();
+        getUidFromPref();
         getSecQuestionFromPref();
         getSecAnswerFromPref();
         isShowStickThreadsFromPref();
@@ -175,6 +178,21 @@ public class HiSettingsHelper {
         mPassword = password;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_PASSWORD, password).commit();
+    }
+
+    public String getUid() {
+        return mUid;
+    }
+
+    public String getUidFromPref() {
+        mUid = mSharedPref.getString(PERF_UID, "");
+        return mUid;
+    }
+
+    public void setUid(String uid) {
+        mUid = uid;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_UID, uid).commit();
     }
 
     public String getSecQuestion() {
