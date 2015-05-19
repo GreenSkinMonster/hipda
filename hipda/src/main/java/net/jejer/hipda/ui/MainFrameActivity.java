@@ -24,9 +24,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
@@ -126,7 +127,11 @@ public class MainFrameActivity extends AppCompatActivity {
         DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-                Glide.with(imageView.getContext()).load(uri).into(imageView);
+                Drawable defaultIconDrawable = new IconicsDrawable(imageView.getContext(), FontAwesome.Icon.faw_user).color(Color.WHITE);
+                Glide.with(imageView.getContext())
+                        .load(uri)
+                        .error(defaultIconDrawable)
+                        .into(imageView);
             }
 
             @Override
@@ -165,11 +170,10 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withIdentifier(DrawerItem.SETTINGS.id)
                 .withIcon(GoogleMaterial.Icon.gmd_settings));
 
-        drawerItems.add(new DividerDrawerItem());
-
+        ArrayList<IDrawerItem> stickyDrawerItems = new ArrayList<>();
         for (int i = 0; i < HiUtils.FORUM_IDS.length; i++) {
             if (HiUtils.isForumEnabled(HiUtils.FORUM_IDS[i]))
-                drawerItems.add(new PrimaryDrawerItem().withName(HiUtils.FORUMS[i])
+                stickyDrawerItems.add(new PrimaryDrawerItem().withName(HiUtils.FORUMS[i])
                         .withIdentifier(HiUtils.FORUM_IDS[i])
                         .withIcon(HiUtils.FORUM_ICONS[i]));
         }
@@ -177,11 +181,10 @@ public class MainFrameActivity extends AppCompatActivity {
         drawerResult = new Drawer()
                 .withActivity(this)
                 .withToolbar(toolbar)
-//                .withHeader(R.layout.header)
                 .withAccountHeader(headerResult)
                 .withTranslucentStatusBar(true)
                 .withDrawerItems(drawerItems)
-                .addStickyDrawerItems()
+                .withStickyDrawerItems(stickyDrawerItems)
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .build();
 
