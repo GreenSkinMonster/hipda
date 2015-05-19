@@ -125,6 +125,14 @@ public class HiUtils {
             return R.style.ThemeDark;
         } else if ("black".equals(theme)) {
             return R.style.ThemeBlack;
+        } else if ("light-deep_orange".equals(theme)) {
+            return R.style.ThemeLight_DeepOrange;
+        } else if ("light-blue_grey".equals(theme)) {
+            return R.style.ThemeLight_BlueGrey;
+        } else if ("light-teal".equals(theme)) {
+            return R.style.ThemeLight_Teal;
+        } else if ("light-indigo".equals(theme)) {
+            return R.style.ThemeLight_Indigo;
         }
         HiSettingsHelper.getInstance().setTheme("light");
         return R.style.ThemeLight;

@@ -96,11 +96,19 @@
         <item>浅色</item>
         <item>深色</item>
         <item>纯黑</item>
+        <item>浅色(橙)</item>
+        <item>浅色(蓝灰)</item>
+        <item>浅色(蓝绿)</item>
+        <item>浅色(靛青)</item>
     </string-array>
     <string-array name="pref_title_theme_values">
         <item>light</item>
         <item>dark</item>
         <item>black</item>
+        <item>light-deep_orange</item>
+        <item>light-blue_grey</item>
+        <item>light-teal</item>
+        <item>light-indigo</item>
     </string-array>
 
     <string-array name="pref_title_forum_names">
