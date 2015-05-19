@@ -41,6 +41,7 @@ import java.util.ArrayList;
 
 public class MainFrameActivity extends AppCompatActivity {
 
+    private OnSwipeTouchListener mSwipeListener;
     private Fragment mOnSwipeCallback = null;
     private int mQuit = 0;
 
@@ -75,6 +76,18 @@ public class MainFrameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_frame);
 
         setupDrawer();
+
+        // Prepare gesture detector
+        mSwipeListener = new OnSwipeTouchListener(this) {
+            public void onSwipeRight() {
+                if (HiSettingsHelper.getInstance().isGestureBack()
+                        && !HiSettingsHelper.getInstance().getIsLandscape()
+                        && !(getFragmentManager().findFragmentByTag(PostFragment.class.getName()) instanceof PostFragment)) {
+                    popFragment(false);
+                }
+            }
+        };
+        findViewById(R.id.main_frame_container).setOnTouchListener(mSwipeListener);
 
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
@@ -449,9 +462,9 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-//        if (mEnableSwipe) {
-//            mSwipeListener.onTouch(null, ev);
-//        }
+        if (HiSettingsHelper.getInstance().isGestureBack()) {
+            mSwipeListener.onTouch(null, ev);
+        }
         return super.dispatchTouchEvent(ev);
     }
 

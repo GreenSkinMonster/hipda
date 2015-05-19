@@ -7,6 +7,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import net.jejer.hipda.utils.Logger;
+
 //import android.util.Log;
 
 public class OnSwipeTouchListener implements OnTouchListener {
@@ -51,7 +53,7 @@ public class OnSwipeTouchListener implements OnTouchListener {
                     }
                 }
             } catch (Exception exception) {
-                exception.printStackTrace();
+                Logger.e(exception);
             }
             return result;
         }
