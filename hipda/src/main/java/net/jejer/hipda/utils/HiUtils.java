@@ -49,10 +49,9 @@ public class HiUtils {
 
     public final static int FID_BS = 6;
     public final static int FID_DISCOVERY = 2;
-    public final static int FID_GEEK = 7;
 
     public static String[] FORUMS = {"Discovery", "Buy & Sell", "Geek Talks", "E-INK", "PalmOS", "疑似机器人"};
-    public static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, FID_GEEK, 59, 12, 57};
+    public static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, 7, 59, 12, 57};
     public static IIcon[] FORUM_ICONS = {
             FontAwesome.Icon.faw_cc_discover,
             FontAwesome.Icon.faw_shopping_cart,
@@ -76,9 +75,11 @@ public class HiUtils {
     }
 
     public static boolean isForumEnabled(int fid) {
+        if (fid == FID_DISCOVERY) {
+            return true;
+        }
         if (getForumIndexByFid(fid) >= 0) {
-            if (getForumIndexByFid(fid) <= 3
-                    || HiSettingsHelper.getInstance().getForums().contains(fid + ""))
+            if (HiSettingsHelper.getInstance().getForums().contains(fid + ""))
                 return true;
         }
         return false;

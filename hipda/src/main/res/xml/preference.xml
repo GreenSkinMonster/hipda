@@ -45,7 +45,7 @@
             android:title="@string/pref_title_theme" />
 
         <MultiSelectListPreference
-            android:defaultValue="@array/empty_array"
+            android:defaultValue="@array/default_forum_values"
             android:entries="@array/pref_title_forum_names"
             android:entryValues="@array/pref_title_forum_values"
             android:key="PERF_FORUMS"

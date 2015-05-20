@@ -112,12 +112,23 @@
     </string-array>
 
     <string-array name="pref_title_forum_names">
+        <item>Buy &amp; Sell</item>
+        <item>Geek Talks</item>
+        <item>E-INK</item>
         <item>PalmOS</item>
         <item>疑似机器人</item>
     </string-array>
     <string-array name="pref_title_forum_values">
+        <item>6</item>
+        <item>7</item>
+        <item>59</item>
         <item>12</item>
         <item>57</item>
+    </string-array>
+    <string-array name="default_forum_values">
+        <item>6</item>
+        <item>7</item>
+        <item>59</item>
     </string-array>
 
     <!--  value should match ActivityInfo.SCREEN_ORIENTATION_*-->
