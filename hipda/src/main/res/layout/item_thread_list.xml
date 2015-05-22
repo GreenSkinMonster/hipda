@@ -43,7 +43,7 @@
             android:textSize="15sp"
             android:visibility="gone" />
 
-        <android.view.IconicsTextView
+        <com.mikepenz.iconics.view.IconicsTextView
             android:id="@+id/iv_image_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
             android:textSize="15sp"
             android:visibility="gone" />
 
-        <android.view.IconicsTextView
+        <com.mikepenz.iconics.view.IconicsTextView
             android:id="@+id/tv_replycounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             android:textColor="?android:textColorSecondary"
             android:textSize="15sp" />
 
-        <android.view.IconicsTextView
+        <com.mikepenz.iconics.view.IconicsTextView
             android:id="@+id/tv_viewcounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

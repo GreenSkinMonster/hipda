@@ -27,7 +27,7 @@
         android:layout_margin="4dp"
         android:padding="4dp">
 
-        <android.view.IconicsButton
+        <com.mikepenz.iconics.view.IconicsButton
             android:id="@+id/btn_fisrt_page"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -38,7 +38,7 @@
             android:textColor="?colorAccent"
             android:textSize="24dp" />
 
-        <android.view.IconicsButton
+        <com.mikepenz.iconics.view.IconicsButton
             android:id="@+id/btn_previous_page"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -49,7 +49,7 @@
             android:textColor="?colorAccent"
             android:textSize="24dp" />
 
-        <android.view.IconicsButton
+        <com.mikepenz.iconics.view.IconicsButton
             android:id="@+id/btn_next_page"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -60,7 +60,7 @@
             android:textColor="?colorAccent"
             android:textSize="24dp" />
 
-        <android.view.IconicsButton
+        <com.mikepenz.iconics.view.IconicsButton
             android:id="@+id/btn_last_page"
             android:layout_width="48dp"
             android:layout_height="48dp"

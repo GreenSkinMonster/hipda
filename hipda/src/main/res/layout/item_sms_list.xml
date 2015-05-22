@@ -61,7 +61,7 @@
                     android:textColor="?android:textColorSecondary"
                     android:textSize="15sp" />
 
-                <android.view.IconicsTextView
+                <com.mikepenz.iconics.view.IconicsTextView
                     android:id="@+id/tv_isnew"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
