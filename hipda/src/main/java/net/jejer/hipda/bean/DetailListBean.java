@@ -12,15 +12,20 @@ public class DetailListBean {
     private String mFid;
     private String mTid;
     private HashMap<String, DetailBean> mPostIdBeans;
+    private int mImagesCount = 0;
 
     public DetailListBean() {
-        mDetailBeans = new ArrayList<DetailBean>();
-        mPostIdBeans = new HashMap<String, DetailBean>();
+        mDetailBeans = new ArrayList<>();
+        mPostIdBeans = new HashMap<>();
     }
 
     public void add(DetailBean detailBean) {
         mDetailBeans.add(detailBean);
         mPostIdBeans.put(detailBean.getPostId(), detailBean);
+        for (ContentImg contentImg : detailBean.getImages()) {
+            contentImg.setFloor(detailBean.getFloor());
+            contentImg.setIndexInPage(mImagesCount++);
+        }
     }
 
     public int getCount() {
@@ -74,4 +79,18 @@ public class DetailListBean {
     public void setTid(String tid) {
         mTid = tid;
     }
+
+    public int getImagesCount() {
+        return mImagesCount;
+    }
+
+    public List<ContentImg> getContentImages() {
+        List<ContentImg> result = new ArrayList<>();
+        for (DetailBean detail : mDetailBeans) {
+            result.addAll(detail.getImages());
+        }
+        return result;
+    }
+
+
 }

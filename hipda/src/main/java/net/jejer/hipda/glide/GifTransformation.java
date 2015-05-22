@@ -10,6 +10,7 @@ import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.utils.ImageSizeUtils;
 
 /**
  * draw a mark on gif
@@ -29,7 +30,7 @@ public class GifTransformation extends BitmapTransformation {
     @Override
     protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
 
-        int resultWidth = 360;
+        int resultWidth = ImageSizeUtils.GIF_DECODE_WIDTH;
         int markWidth = resultWidth / 5;
 
         Bitmap result = toTransform.copy(Bitmap.Config.RGB_565, true);

@@ -8,6 +8,7 @@ import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.resource.SimpleResource;
 
+import net.jejer.hipda.utils.ImageSizeUtils;
 import net.jejer.hipda.utils.Logger;
 
 import java.io.BufferedInputStream;
@@ -20,10 +21,15 @@ import java.io.InputStream;
  */
 public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> {
 
+    private int mMaxWidth = ImageSizeUtils.NORMAL_IMAGE_DECODE_WIDTH;
+
+    public ThreadImageDecoder(int maxWidth) {
+        mMaxWidth = maxWidth;
+    }
+
     @Override
     public Resource<Bitmap> decode(InputStream source, int width, int height) throws IOException {
         Resource<Bitmap> result = null;
-        int maxWidth = 450;
         try {
             BitmapFactory.Options bitmapLoadingOptions = new BitmapFactory.Options();
             bitmapLoadingOptions.inPreferredConfig = Bitmap.Config.RGB_565;
@@ -32,14 +38,14 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
             int originalWidth = original.getWidth();
             int originalHeight = original.getHeight();
 
-            if (originalWidth <= maxWidth) {
+            if (originalWidth <= mMaxWidth) {
                 return new SimpleResource<>(original);
             }
 
-            if (originalHeight > 3 * originalWidth)
-                maxWidth = 400;
+            if (ImageSizeUtils.isLongImage(originalWidth, originalHeight))
+                mMaxWidth *= ImageSizeUtils.LONG_IMAGE_DECODE_WIDTH;
 
-            int newWidth = originalWidth > maxWidth ? maxWidth : originalWidth;
+            int newWidth = originalWidth > mMaxWidth ? mMaxWidth : originalWidth;
             float scale = ((float) newWidth) / originalWidth;
 
             Matrix matrix = new Matrix();

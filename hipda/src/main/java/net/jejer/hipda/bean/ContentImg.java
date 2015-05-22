@@ -4,30 +4,20 @@ import net.jejer.hipda.utils.HiUtils;
 
 public class ContentImg extends ContentAbs {
     private String mUrl;
-    private boolean mInternal;
+    private String mFloor;
+    private int mIndexInPage;
 
     public ContentImg(String url, boolean isInternal) {
-        mInternal = isInternal;
-        mUrl = url;
-    }
-
-    public void setInternalUrl(String url) {
-        mUrl = url;
-        mInternal = true;
-    }
-
-    public void setExternalUrl(String url) {
-        mUrl = url;
-        mInternal = false;
+        if (isInternal) {
+            mUrl = HiUtils.getFullUrl(url);
+        } else {
+            mUrl = url;
+        }
     }
 
     @Override
     public String getContent() {
-        if (mInternal) {
-            return HiUtils.getFullUrl(mUrl);
-        } else {
-            return mUrl;
-        }
+        return mUrl;
     }
 
     @Override
@@ -35,4 +25,19 @@ public class ContentImg extends ContentAbs {
         return "[图片:" + mUrl + "]";
     }
 
+    public String getFloor() {
+        return mFloor;
+    }
+
+    public void setFloor(String floor) {
+        mFloor = floor;
+    }
+
+    public int getIndexInPage() {
+        return mIndexInPage;
+    }
+
+    public void setIndexInPage(int indexInPage) {
+        mIndexInPage = indexInPage;
+    }
 }

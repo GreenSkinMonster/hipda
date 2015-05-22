@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ClipData;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,6 +36,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -47,9 +52,16 @@ import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
+import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ThreadDetailCache;
+import net.jejer.hipda.glide.GifTransformation;
+import net.jejer.hipda.glide.GlideBitmapTarget;
+import net.jejer.hipda.glide.GlideImageView;
+import net.jejer.hipda.glide.ImageReadyInfo;
+import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.ImageSizeUtils;
 import net.jejer.hipda.utils.Logger;
 
 import java.util.ArrayList;
@@ -77,6 +89,10 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     private ThreadListLoaderCallbacks mLoaderCallbacks;
     private ThreadDetailAdapter mDetailAdapter;
     private List<DetailBean> mDetailBeans = new ArrayList<>();
+
+    private int mMaxImageDecodeWidth = ImageSizeUtils.NORMAL_IMAGE_DECODE_WIDTH;
+    public static int MAX_VIEW_WIDTH = 1080;
+
     private int mCurrentPage = 1;
     private int mMaxPage = 1;
     private int mGoToPage = 1;
@@ -424,11 +440,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         public void onScroll(AbsListView view, int firstVisibleItem,
                              int visibleItemCount, int totalItemCount) {
 
-//            if (firstVisibleItem > mFirstVisibleItem) {
-//                mFam.setVisibility(View.INVISIBLE);
-//            } else if (firstVisibleItem < mFirstVisibleItem) {
-//                mFam.setVisibility(View.VISIBLE);
-//            }
 
             if (!mInloading && !mPrefetching) {
                 if (mLastVisibleItem < firstVisibleItem) {
@@ -453,11 +464,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
-//			if (scrollState == SCROLL_STATE_FLING) {
-//				Glide.with(mCtx).pauseRequests();
-//			} else if (scrollState == SCROLL_STATE_IDLE) {
-//				Glide.with(mCtx).resumeRequests();
-//			}
         }
 
     }
@@ -510,6 +516,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         public void onLoadFinished(Loader<DetailListBean> loader,
                                    DetailListBean details) {
             Logger.v("onLoadFinished");
+
+            if (getView() != null)
+                MAX_VIEW_WIDTH = getView().getWidth();
 
             mInloading = false;
             mPrefetching = false;
@@ -571,6 +580,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             }
 
             mCache.put(details.getPage(), details);
+
+            //set image's decode/display size base on image count
+            mMaxImageDecodeWidth = ImageSizeUtils.getDecodeSize(details.getImagesCount());
 
             if (!mAuthorOnly && mCurrentPage == details.getPage()) {
                 showOrLoadPage();
@@ -884,6 +896,49 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         }
     }
 
+    public void loadImage(String imageUrl, GlideImageView giv) {
+
+        if (mCtx == null)
+            return;
+        if (Build.VERSION.SDK_INT >= 17
+                && (mCtx instanceof Activity)
+                && ((Activity) mCtx).isDestroyed())
+            return;
+        if (!isAdded() || isDetached())
+            return;
+
+        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
+
+        if (imageReadyInfo != null && imageReadyInfo.isReady()) {
+            giv.getLayoutParams().width = imageReadyInfo.getWidth();
+            giv.getLayoutParams().height = imageReadyInfo.getHeight();
+            if (imageReadyInfo.getWidth() > GlideImageView.MIN_SCALE_WIDTH
+                    || imageReadyInfo.isGif()) {
+                giv.setImageReadyInfo(imageReadyInfo);
+                giv.setClickToViewBigImage();
+            }
+
+            if (imageReadyInfo.isGif()) {
+                Glide.with(mCtx)
+                        .load(imageUrl)
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .transform(new GifTransformation(mCtx))
+                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
+            } else {
+                Glide.with(mCtx)
+                        .load(imageUrl)
+                        .asBitmap()
+                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth)))
+                        .imageDecoder(new ThreadImageDecoder(mMaxImageDecodeWidth))
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
+            }
+        } else {
+            giv.setImageResource(R.drawable.tapatalk_image_broken);
+        }
+    }
+
     class AvatarOnClickListener extends OnSingleClickListener {
         @Override
         public void onSingleClick(View arg0) {
@@ -904,6 +959,11 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                     .addToBackStack(ThreadDetailFragment.class.getName())
                     .commit();
         }
+    }
+
+    public void startImageGallery(int imageIndex) {
+        PopupImageDialog popupImageDialog = new PopupImageDialog(mCtx, mCache.get(mCurrentPage), imageIndex);
+        popupImageDialog.show();
     }
 
 }

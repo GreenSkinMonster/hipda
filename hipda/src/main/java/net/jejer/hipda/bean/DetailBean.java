@@ -3,6 +3,7 @@ package net.jejer.hipda.bean;
 import net.jejer.hipda.ui.textstyle.TextStyle;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class DetailBean {
     private String mAuthor;
@@ -13,6 +14,7 @@ public class DetailBean {
     private String mFloor;
     private String mPostStatus;
     private Contents mContents;
+    private Collection<ContentImg> mImages = new ArrayList<>();
 
     public DetailBean() {
         mContents = new Contents();
@@ -103,7 +105,9 @@ public class DetailBean {
         }
 
         public void addImg(String url, Boolean isInternal) {
-            list.add(new ContentImg(url, isInternal));
+            ContentImg contentImg = new ContentImg(url, isInternal);
+            list.add(contentImg);
+            mImages.add(contentImg);
             newString = true;
         }
 
@@ -207,6 +211,10 @@ public class DetailBean {
 
     public void setContents(Contents contents) {
         this.mContents = contents;
+    }
+
+    public Collection<ContentImg> getImages() {
+        return mImages;
     }
 
     public String getAvatarUrl() {

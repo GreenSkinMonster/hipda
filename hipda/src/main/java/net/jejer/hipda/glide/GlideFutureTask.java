@@ -8,6 +8,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 
+import net.jejer.hipda.cache.ImageContainer;
+import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.utils.Logger;
 
 import java.io.File;
@@ -19,17 +21,11 @@ import java.io.File;
 public class GlideFutureTask extends AsyncTask<Void, Void, ImageReadyInfo> {
 
     private Context mCtx;
-    private GlideImageView mGlideImageView;
-    private int mMaxViewWidth;
     private String mUrl;
-    private ImageContainer mImageContainer;
 
-    public GlideFutureTask(Context context, ImageContainer imageContainer, GlideImageView giv, int maxViewWidth, String url) {
+    public GlideFutureTask(Context context, String url) {
         mCtx = context;
-        mGlideImageView = giv;
-        mMaxViewWidth = maxViewWidth;
         mUrl = url;
-        mImageContainer = imageContainer;
     }
 
     @Override
@@ -54,7 +50,7 @@ public class GlideFutureTask extends AsyncTask<Void, Void, ImageReadyInfo> {
             //calculate display size for image
 
             //leave 12dp on both left and right side, this should match layout setup
-            int maxViewWidth = mMaxViewWidth - dpToPx(12 * 2);
+            int maxViewWidth = ThreadDetailFragment.MAX_VIEW_WIDTH - dpToPx(12 * 2);
 
             //if image width < half maxViewWidth, scale it up for better view
             int maxScaleWidth = Math.round(maxViewWidth * 0.5f);
@@ -65,7 +61,8 @@ public class GlideFutureTask extends AsyncTask<Void, Void, ImageReadyInfo> {
 
             int displayWidth;
             int displayHeight;
-            if (scaledWidth >= maxScaleWidth || mime.toLowerCase().contains("gif")) {
+            if (scaledWidth >= maxScaleWidth ||
+                    (mime.toLowerCase().contains("gif") && scaledWidth >= maxScaleWidth / 2)) {
                 displayWidth = maxViewWidth;
                 displayHeight = Math.round(maxViewWidth * 1.0f * height / width);
             } else {
@@ -73,21 +70,14 @@ public class GlideFutureTask extends AsyncTask<Void, Void, ImageReadyInfo> {
                 displayHeight = scaledHeight;
             }
 
-            return new ImageReadyInfo(cacheFile.getPath(), displayWidth, displayHeight, mime);
+            ImageReadyInfo imageReadyInfo = new ImageReadyInfo(cacheFile.getPath(), displayWidth, displayHeight, mime);
+            ImageContainer.markImageReady(mUrl, imageReadyInfo);
+
+            return imageReadyInfo;
         } catch (Exception e) {
             Logger.e(e);
         }
         return null;
-    }
-
-    @Override
-    protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
-        if (mImageContainer != null) {
-            if (imageReadyInfo != null) {
-                mImageContainer.markImageReady(mUrl, imageReadyInfo);
-            }
-            mImageContainer.loadImage(mUrl, mGlideImageView);
-        }
     }
 
     private int dpToPx(int dp) {

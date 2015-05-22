@@ -1,10 +1,7 @@
 package net.jejer.hipda.ui;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.os.Build;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -15,10 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentAbs;
 import net.jejer.hipda.bean.ContentAttach;
@@ -28,19 +21,15 @@ import net.jejer.hipda.bean.ContentQuote;
 import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.cache.LRUCache;
-import net.jejer.hipda.glide.GifTransformation;
-import net.jejer.hipda.glide.GlideBitmapTarget;
+import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.GlideFutureTask;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageView;
-import net.jejer.hipda.glide.ImageContainer;
 import net.jejer.hipda.glide.ImageReadyInfo;
-import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
-public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageContainer {
+public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
     private Context mCtx;
     private LayoutInflater mInflater;
@@ -48,8 +37,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
     private View.OnClickListener mAvatarListener;
     private FragmentManager mFragmentManager;
     private ThreadDetailFragment mDetailFragment;
-
-    private static LRUCache<String, ImageReadyInfo> loadedImages = new LRUCache<>(1024);
 
     public ThreadDetailAdapter(Context context, FragmentManager fm, ThreadDetailFragment detailFragment,
                                Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
@@ -111,6 +98,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
 
         LinearLayout contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
         contentView.removeAllViews();
+        contentView.bringToFront();
 
         for (int i = 0; i < detail.getContents().getSize(); i++) {
             ContentAbs content = detail.getContents().get(i);
@@ -137,11 +125,11 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
             } else if (content instanceof ContentImg) {
                 final String imageUrl = content.getContent();
 
-                final GlideImageView giv = new GlideImageView(mCtx);
+                final GlideImageView giv = new GlideImageView(mCtx, mDetailFragment);
                 giv.setFocusable(false);
                 giv.setClickable(true);
 
-                ImageReadyInfo imageReadyInfo = loadedImages.get(imageUrl);
+                ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
 
                 LinearLayout.LayoutParams params;
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
@@ -155,28 +143,30 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
                 contentView.addView(giv);
 
                 giv.setUrl(imageUrl);
+                giv.setImageIndex(((ContentImg) content).getIndexInPage());
                 giv.bringToFront();
 
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-                    loadImage(imageUrl, giv);
+                    mDetailFragment.loadImage(imageUrl, giv);
                 } else {
-                    final int maxViewWidth;
-                    //this fragment could be replaced by UserinfoFragment, so DO NOT cast it
-                    Fragment fragment = mFragmentManager.findFragmentByTag(ThreadDetailFragment.class.getName());
-                    if (fragment != null && fragment.getView() != null) {
-                        maxViewWidth = fragment.getView().getWidth();
-                    } else {
-                        maxViewWidth = 1080;
-                    }
-
                     if (HiUtils.isAutoLoadImg(mCtx)) {
-                        new GlideFutureTask(mCtx, this, giv, maxViewWidth, imageUrl).execute();
+                        new GlideFutureTask(mCtx, imageUrl) {
+                            @Override
+                            protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
+                                mDetailFragment.loadImage(imageUrl, giv);
+                            }
+                        }.execute();
                     } else {
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 giv.setImageResource(R.drawable.loading);
-                                new GlideFutureTask(mCtx, ThreadDetailAdapter.this, giv, maxViewWidth, imageUrl).execute();
+                                new GlideFutureTask(mCtx, imageUrl) {
+                                    @Override
+                                    protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
+                                        mDetailFragment.loadImage(imageUrl, giv);
+                                    }
+                                }.execute();
                                 giv.setOnClickListener(null);
                             }
                         });
@@ -278,52 +268,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
         return convertView;
     }
 
-    public void loadImage(String imageUrl, GlideImageView giv) {
-
-        if (mCtx == null)
-            return;
-        if (Build.VERSION.SDK_INT >= 17
-                && (mCtx instanceof Activity)
-                && ((Activity) mCtx).isDestroyed())
-            return;
-        if (!mDetailFragment.isAdded() || mDetailFragment.isDetached())
-            return;
-
-        ImageReadyInfo imageReadyInfo = loadedImages.get(imageUrl);
-
-        if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-            giv.getLayoutParams().width = imageReadyInfo.getWidth();
-            giv.getLayoutParams().height = imageReadyInfo.getHeight();
-            if (imageReadyInfo.getWidth() > GlideImageView.MIN_SCALE_WIDTH || imageReadyInfo.isGif()) {
-                giv.setImageReadyInfo(imageReadyInfo);
-                giv.setClickToViewBigImage();
-            }
-
-            if (imageReadyInfo.isGif()) {
-                Glide.with(mCtx)
-                        .load(imageUrl)
-                        .asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .transform(new GifTransformation(mCtx))
-                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
-            } else {
-                Glide.with(mCtx)
-                        .load(imageUrl)
-                        .asBitmap()
-                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder()))
-                        .imageDecoder(new ThreadImageDecoder())
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
-            }
-        } else {
-            giv.setImageResource(R.drawable.tapatalk_image_broken);
-        }
-    }
-
-    @Override
-    public void markImageReady(String url, ImageReadyInfo imageReadyInfo) {
-        loadedImages.put(url, imageReadyInfo);
-    }
 
     private static class ViewHolder {
         ImageView avatar;
