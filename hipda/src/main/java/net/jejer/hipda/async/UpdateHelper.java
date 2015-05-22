@@ -17,7 +17,9 @@ import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
+import java.io.File;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by GreenSkinMonster on 2015-03-09.
@@ -138,6 +140,51 @@ public class UpdateHelper {
         } catch (Exception ignored) {
         }
         return false;
+    }
+
+    public static void updateApp(Context context) {
+        String installedVersion = HiSettingsHelper.getInstance().getInstalledVersion();
+        String currentVersion = HiSettingsHelper.getInstance().getAppVersion();
+        if (TextUtils.isEmpty(installedVersion)) {
+            // <= v2.0.02
+
+            //add default forums, BS/Eink/Geek
+            Set<String> forums = HiSettingsHelper.getInstance().getForums();
+            if (!forums.contains("6"))
+                forums.add("6");
+            if (!forums.contains("7"))
+                forums.add("7");
+            if (!forums.contains("59"))
+                forums.add("59");
+            HiSettingsHelper.getInstance().setForums(forums);
+
+            //clear cache
+            try {
+                File cache = context.getCacheDir();
+                if (cache != null && cache.isDirectory()) {
+                    deleteDir(cache);
+                }
+            } catch (Exception ignored) {
+            }
+
+        }
+
+        if (!currentVersion.equals(installedVersion)) {
+            HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
+        }
+    }
+
+    private static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (String aChildren : children) {
+                boolean success = deleteDir(new File(dir, aChildren));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
     }
 
 }

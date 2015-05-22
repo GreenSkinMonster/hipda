@@ -61,8 +61,10 @@ public class MainFrameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Logger.v("onCreate");
 
-        ACRAUtils.init(this);
         HiSettingsHelper.getInstance().init(this);
+        UpdateHelper.updateApp(this);
+
+        ACRAUtils.init(this);
         GlideHelper.init(this);
 
         // Init Volley

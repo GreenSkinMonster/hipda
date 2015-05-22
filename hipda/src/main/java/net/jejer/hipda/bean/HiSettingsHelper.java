@@ -50,6 +50,7 @@ public class HiSettingsHelper {
     public static final String PERF_POST_LINE_SPACING = "PERF_POST_LINE_SPACING";
     public static final String PERF_LAST_FORUM_ID = "PERF_LAST_FORUM_ID";
     public static final String PERF_ERROR_REPORT_MODE = "PERF_ERROR_REPORT_MODE";
+    public static final String PERF_INSTALLED_VERSION = "PERF_INSTALLED_VERSION";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -611,6 +612,15 @@ public class HiSettingsHelper {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Date lastCheck = HiSettingsHelper.getInstance().getLastUpdateCheckTime();
         return lastCheck == null || !formatter.format(now).equals(formatter.format(lastCheck));
+    }
+
+    public void setInstalledVersion(String version) {
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(HiSettingsHelper.PERF_INSTALLED_VERSION, version).apply();
+    }
+
+    public String getInstalledVersion() {
+        return mSharedPref.getString(PERF_INSTALLED_VERSION, "");
     }
 
     public String getAppVersion() {
