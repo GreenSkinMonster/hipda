@@ -75,6 +75,7 @@ public class SettingsFragment extends PreferenceFragment {
                                             HiSettingsHelper.getInstance().setUid("");
                                             LoginHelper.logout();
                                             userPreference.setSummary(Html.fromHtml("<font color=grey>(未登录)</font>"));
+                                            ((MainFrameActivity) getActivity()).updateAccountHeader();
                                         }
                                     })
                             .setNegativeButton(getResources().getString(android.R.string.cancel),

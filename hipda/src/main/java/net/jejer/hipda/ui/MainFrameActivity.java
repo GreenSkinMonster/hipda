@@ -54,7 +54,7 @@ public class MainFrameActivity extends AppCompatActivity {
     private int mQuit = 0;
 
     public Drawer.Result drawerResult;
-    public AccountHeader.Result headerResult;
+    private AccountHeader.Result headerResult;
     private long volleyInitTime = 0;
 
     @Override
@@ -130,6 +130,8 @@ public class MainFrameActivity extends AppCompatActivity {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
                 Drawable defaultIconDrawable = new IconicsDrawable(imageView.getContext(), FontAwesome.Icon.faw_user).color(Color.WHITE);
+                //clear tag or glide will throw execption
+                imageView.setTag(null);
                 Glide.with(imageView.getContext())
                         .load(uri)
                         .error(defaultIconDrawable)
@@ -204,6 +206,15 @@ public class MainFrameActivity extends AppCompatActivity {
                 popFragment(false);
             }
         });
+    }
+
+    public void updateAccountHeader() {
+        String username = VolleyHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
+        String avatarUrl = VolleyHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
+        headerResult.removeProfile(0);
+        headerResult.addProfile(new ProfileDrawerItem()
+                .withEmail(username)
+                .withIcon(avatarUrl), 0);
     }
 
     @Override

@@ -459,6 +459,13 @@ public class ThreadListFragment extends BaseFragment
                 return;
             }
 
+            if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())
+                    && !TextUtils.isEmpty(threads.getUid())) {
+                HiSettingsHelper.getInstance().setUid(threads.getUid());
+                if (getActivity() != null)
+                    ((MainFrameActivity) getActivity()).updateAccountHeader();
+            }
+
             int count = 0;
             if (mPage == 1) {
                 mThreadBeans.clear();

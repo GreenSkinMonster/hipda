@@ -31,6 +31,8 @@ public class HiParserThreadList {
         // Async check notify
         new parseNotifyRunnable(ctx, doc, true).run();
 
+        ThreadListBean threads = new ThreadListBean();
+
         //parse uid
         if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())) {
             Elements spaceES = doc.select("#umenu cite a");
@@ -41,13 +43,12 @@ public class HiParserThreadList {
                     if (!TextUtils.isEmpty(uid)
                             && TextUtils.isDigitsOnly(uid)
                             && !HiSettingsHelper.getInstance().getUid().equals(uid)) {
-                        HiSettingsHelper.getInstance().setUid(uid);
+                        threads.setUid(uid);
                     }
                 }
             }
         }
 
-        ThreadListBean threads = new ThreadListBean();
         Elements tbodyES = doc.select("tbody[id]");
         for (int i = 0; i < tbodyES.size(); ++i) {
 

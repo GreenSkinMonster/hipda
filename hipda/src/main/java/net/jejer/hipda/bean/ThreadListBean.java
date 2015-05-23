@@ -7,6 +7,7 @@ public class ThreadListBean {
 
     public int count;
     public boolean parsed = false;
+    private String uid;
     public List<ThreadBean> threads = new ArrayList<ThreadBean>();
 
     public ThreadListBean() {
@@ -18,4 +19,11 @@ public class ThreadListBean {
         count++;
     }
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 }
