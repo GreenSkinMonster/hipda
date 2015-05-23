@@ -1,50 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/login_username"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:hint="@string/pref_title_username"
-        android:textSize="18sp" />
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <EditText
-        android:id="@+id/login_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:hint="@string/pref_title_password"
-        android:inputType="textPassword"
-        android:textSize="18sp" />
+        <EditText
+            android:id="@+id/login_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:hint="@string/pref_title_username"
+            android:textSize="18sp" />
 
-    <Spinner
-        android:id="@+id/login_question"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:hint="@string/pref_title_login_question" />
+        <EditText
+            android:id="@+id/login_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:hint="@string/pref_title_password"
+            android:inputType="textPassword"
+            android:textSize="18sp" />
 
-    <EditText
-        android:id="@+id/login_answer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:hint="@string/pref_title_login_answer"
-        android:textSize="18sp" />
+        <Spinner
+            android:id="@+id/login_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:hint="@string/pref_title_login_question" />
 
-    <Button
-        android:id="@+id/login_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="@drawable/flat_button_selector"
-        android:text="登录"
-        android:textSize="18sp" />
+        <EditText
+            android:id="@+id/login_answer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:hint="@string/pref_title_login_answer"
+            android:textSize="18sp" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/login_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/flat_button_selector"
+            android:text="登录"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</ScrollView>
