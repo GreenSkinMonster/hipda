@@ -12,6 +12,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -144,6 +145,10 @@ public class SettingsFragment extends PreferenceFragment {
         Logger.v("onStop, reload settings");
         super.onStop();
         HiSettingsHelper.getInstance().reload();
+
+        if (!HiSettingsHelper.getInstance().isGestureBack()
+                && getActivity() != null)
+            ((MainFrameActivity) getActivity()).drawerResult.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
         if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)

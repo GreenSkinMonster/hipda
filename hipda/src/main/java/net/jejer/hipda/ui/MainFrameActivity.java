@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
@@ -539,6 +540,13 @@ public class MainFrameActivity extends AppCompatActivity {
                 drawerResult.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
             }
 
+            if (HiSettingsHelper.getInstance().isGestureBack()) {
+                if (fm.getBackStackEntryCount() > 0) {
+                    drawerResult.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                } else {
+                    drawerResult.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                }
+            }
             Logger.v("getBackStackEntryCount = " + String.valueOf(fm.getBackStackEntryCount()));
         }
 
