@@ -36,6 +36,7 @@ public class HiSettingsHelper {
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
     public static final String PERF_TAILURL = "PERF_TAILURL";
     public static final String PERF_THEME = "PERF_THEME";
+    public static final String PERF_NAVBAR_COLORED = "PERF_NAVBAR_COLORED";
     public static final String PERF_FORUMS = "PERF_FORUMS";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
@@ -73,6 +74,7 @@ public class HiSettingsHelper {
     private String mTailUrl = "";
 
     private String mTheme = "";
+    private boolean mNavBarColor = false;
     private Set<String> mForums = new HashSet<>();
 
     private boolean mEncodeUtf8 = false;
@@ -134,6 +136,7 @@ public class HiSettingsHelper {
         getTailTextFromPref();
         getTailUrlFromPref();
         getThemeFromPref();
+        isNavBarColoredFromPref();
         isEncodeUtf8FromPref();
         getBlanklistUsernamesFromPref();
         getPostTextsizeAdjFromPref();
@@ -379,6 +382,21 @@ public class HiSettingsHelper {
         mTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_THEME, theme).commit();
+    }
+
+    public boolean isNavBarColored() {
+        return mNavBarColor;
+    }
+
+    public boolean isNavBarColoredFromPref() {
+        mNavBarColor = mSharedPref.getBoolean(PERF_NAVBAR_COLORED, false);
+        return mNavBarColor;
+    }
+
+    public void setNavBarColored(boolean navBarColored) {
+        mNavBarColor = navBarColored;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(PERF_NAVBAR_COLORED, navBarColored).commit();
     }
 
     public Set<String> getForums() {

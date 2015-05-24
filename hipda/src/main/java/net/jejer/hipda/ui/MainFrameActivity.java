@@ -10,6 +10,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -42,6 +43,7 @@ import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.ACRAUtils;
+import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -85,6 +87,9 @@ public class MainFrameActivity extends AppCompatActivity {
         }
 
         setTheme(HiUtils.getThemeValue(HiSettingsHelper.getInstance().getTheme()));
+        if (Build.VERSION.SDK_INT >= 21 && HiSettingsHelper.getInstance().isNavBarColored()) {
+            getWindow().setNavigationBarColor(ColorUtils.getColorPrimary(this));
+        }
 
         setContentView(R.layout.activity_main_frame);
 

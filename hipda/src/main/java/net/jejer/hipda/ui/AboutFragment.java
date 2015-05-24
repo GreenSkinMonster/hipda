@@ -1,7 +1,6 @@
 package net.jejer.hipda.ui;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,10 +25,8 @@ public class AboutFragment extends BaseFragment {
         setHasOptionsMenu(true);
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_about, container, false);
 
         ViewGroup aboutLayout = (ViewGroup) view.findViewById(R.id.about_layout);

@@ -39,6 +39,10 @@ public class ColorUtils {
         return getColorIdByAttr(ctx, R.attr.colorAccent);
     }
 
+    public static int getColorPrimary(Context ctx) {
+        return getColorIdByAttr(ctx, R.attr.colorPrimary);
+    }
+
     public static int getListBackgroundColor(Context ctx) {
         return getColorIdByAttr(ctx, R.attr.list_item_background);
     }

@@ -34,6 +34,7 @@ public class SettingsFragment extends PreferenceFragment {
     private int mScreenOrietation;
     private String mTheme;
     private Set<String> mForums;
+    private boolean mNavBarColored;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,6 +121,7 @@ public class SettingsFragment extends PreferenceFragment {
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
         mTheme = HiSettingsHelper.getInstance().getTheme();
         mForums = HiSettingsHelper.getInstance().getForums();
+        mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
     }
 
     @Override
@@ -145,7 +147,8 @@ public class SettingsFragment extends PreferenceFragment {
 
         if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)
-                || !HiSettingsHelper.getInstance().getForums().equals(mForums)) {
+                || !HiSettingsHelper.getInstance().getForums().equals(mForums)
+                || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored) {
             ColorUtils.clear();
             Intent intent = getActivity().getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

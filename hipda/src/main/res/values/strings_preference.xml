@@ -165,6 +165,7 @@
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
     <string name="pref_title_theme">界面主题</string>
+    <string name="pref_title_navbar_colored">虚拟按键区颜色(5.0+)</string>
     <string name="pref_title_forum">版面选择</string>
     <string name="pref_title_textsize_adjust_title">标题字号调整</string>
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
