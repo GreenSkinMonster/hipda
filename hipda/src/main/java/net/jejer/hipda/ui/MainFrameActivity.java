@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,6 +56,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
     public Drawer.Result drawerResult;
     private AccountHeader.Result headerResult;
+    private ActionMode mActionMode;
     private long volleyInitTime = 0;
 
     @Override
@@ -304,6 +306,19 @@ public class MainFrameActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public ActionMode startSupportActionMode(ActionMode.Callback callback) {
+        ActionMode actionMode = super.startSupportActionMode(callback);
+        mActionMode = actionMode;
+        return actionMode;
+    }
+
+    @Override
+    public void onSupportActionModeFinished(ActionMode mode) {
+        super.onSupportActionModeFinished(mode);
+        mActionMode = null;
+    }
+
     public boolean popFragment(boolean backPressed) {
         FragmentManager fm = getFragmentManager();
         int count = fm.getBackStackEntryCount();
@@ -498,6 +513,14 @@ public class MainFrameActivity extends AppCompatActivity {
         @Override
         public void onBackStackChanged() {
             mQuit = 0;
+
+            if (mActionMode != null) {
+                try {
+                    mActionMode.finish();
+                    mActionMode = null;
+                } catch (Exception ignored) {
+                }
+            }
 
             FragmentManager fm = getFragmentManager();
 
