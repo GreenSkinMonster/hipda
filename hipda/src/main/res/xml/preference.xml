@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <Preference
+        android:key="PERF_ABOUT"
+        android:title="@string/pref_title_about" />
+
     <PreferenceCategory android:title="@string/pref_category_account">
         <Preference
             android:inputType="text"
@@ -119,10 +123,6 @@
             android:selectable="true"
             android:summary=""
             android:title="@string/pref_title_check_update" />
-
-        <Preference
-            android:key="PERF_ABOUT"
-            android:title="@string/pref_title_about" />
 
     </PreferenceCategory>
 

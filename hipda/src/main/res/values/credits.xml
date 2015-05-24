@@ -1,64 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="credits">
-<![CDATA[
-来自D版带着爱\n
-作者 jejer\n
-作者 绿皮怪兽\n
-\n
-感谢以下网友捐助：\n
-\n
-linux57\n
-zyzwork\n
-huxidong\n
-husunqian\n
-diony\n
-onlyalex\n
-Kindle-KWP\n
-奶嘴\n
-geka\n
-aayyooh\n
-氓风\n
-bt4wang\n
-chjrg\n
-安德猴\n
-jckimi\n
-yebiw\n
-asakawalan\n
-waterfish007\n
-netrascal\n
-lsxf999\n
-david_lee\n
-孙涛\n
-kairyu\n
-绿皮怪兽\n
-lunhui\n
-bingtuan\n
-咫尺天涯21\n
-非羊\n
-tonyzh\n
-zeal620\n
-xcode\n
-wherefree\n
-江南大稻\n
-蓝色小药丸\n
-haobatou\n
-tianshizhie\n
-wodebei\n
-\n
-未留ID的朋友请告诉我你的ID：\n
-\n
-2014052900001000550079105348\n
-2014052900001000450079669986\n
-2014060300001000560003075962\n
-2014070100001000520019842858\n
-2014071000001000240024692924\n
-20140922000040011100590002302097\n
-20141025000040011100710027407749\n
-\n
-\n
-\n
-THE END\n
-]]>
-</string>
+
+    <string-array name="credits">
+    <item>
+        <![CDATA[
+        <a href="http://www.hi-pda.com/forum/viewthread.php??tid=1579403">查看信息或反馈问题给作者：绿皮怪兽</a>
+        ]]>
+    </item>
+    <item>
+        <![CDATA[
+        <a href="http://www.hi-pda.com/forum/viewthread.php?tid=1408844">感谢原作者：jejer的分享</a>
+        ]]>
+    </item>
+    <item>
+        <![CDATA[
+           <a href="http://www.hi-pda.com/forum/viewthread.php?tid=1566769">另一很棒的客户端 “有只梨” by ledjzero</a>
+        ]]>
+    </item>
+    <item>
+        <![CDATA[
+        感谢以下网友对原版的捐助：<br>
+        <br>
+        linux57<br>
+        zyzwork<br>
+        huxidong<br>
+        husunqian<br>
+        diony<br>
+        onlyalex<br>
+        Kindle-KWP<br>
+        奶嘴<br>
+        geka<br>
+        aayyooh<br>
+        氓风<br>
+        bt4wang<br>
+        chjrg<br>
+        安德猴<br>
+        jckimi<br>
+        yebiw<br>
+        asakawalan<br>
+        waterfish007<br>
+        netrascal<br>
+        lsxf999<br>
+        david_lee<br>
+        孙涛<br>
+        kairyu<br>
+        绿皮怪兽<br>
+        lunhui<br>
+        bingtuan<br>
+        咫尺天涯21<br>
+        非羊<br>
+        tonyzh<br>
+        zeal620<br>
+        xcode<br>
+        wherefree<br>
+        江南大稻<br>
+        蓝色小药丸<br>
+        haobatou<br>
+        tianshizhie<br>
+        wodebei<br>
+        <br>
+        未留ID的朋友：<br>
+        <br>
+        2014052900001000550079105348<br>
+        2014052900001000450079669986<br>
+        2014060300001000560003075962<br>
+        2014070100001000520019842858<br>
+        2014071000001000240024692924<br>
+        20140922000040011100590002302097<br>
+        20141025000040011100710027407749<br>
+        ]]>
+</item>
+    </string-array>
 </resources>

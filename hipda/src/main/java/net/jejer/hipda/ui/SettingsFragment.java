@@ -39,7 +39,6 @@ public class SettingsFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference);
 
@@ -97,9 +96,11 @@ public class SettingsFragment extends PreferenceFragment {
         dialogPref.setSummary(HiSettingsHelper.getInstance().getAppVersion());
         dialogPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                final Dialog dialog = new AboutDialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
-                dialog.getWindow().setWindowAnimations(android.R.anim.fade_in);
-                dialog.show();
+                getFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                        .add(R.id.main_frame_container, new AboutFragment(), AboutFragment.class.getName())
+                        .addToBackStack(AboutFragment.class.getName())
+                        .commit();
                 return true;
             }
         });
