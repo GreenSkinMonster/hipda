@@ -38,7 +38,9 @@
             android:singleLine="true"
             android:title="@string/pref_title_tail_url" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_category_ui">
+    <PreferenceCategory
+        android:key="@string/pref_category_ui"
+        android:title="@string/pref_category_ui">
         <ListPreference
             android:defaultValue="light"
             android:entries="@array/pref_title_theme_names"

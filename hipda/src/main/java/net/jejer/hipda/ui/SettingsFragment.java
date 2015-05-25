@@ -4,12 +4,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.v4.widget.DrawerLayout;
@@ -110,14 +112,15 @@ public class SettingsFragment extends PreferenceFragment {
         Preference checkPreference = findPreference(HiSettingsHelper.PERF_LAST_UPDATE_CHECK);
         checkPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                if (LoginHelper.isLoggedIn()) {
-                    new UpdateHelper(getActivity(), false).check();
-                } else {
-                    Toast.makeText(getActivity(), "登录后才可以检查更新", Toast.LENGTH_SHORT).show();
-                }
+                new UpdateHelper(getActivity(), false).check();
                 return true;
             }
         });
+
+        if (Build.VERSION.SDK_INT < 21) {
+            Preference navBarColoredPreference = findPreference(HiSettingsHelper.PERF_NAVBAR_COLORED);
+            ((PreferenceGroup) findPreference(getResources().getString(R.string.pref_category_ui))).removePreference(navBarColoredPreference);
+        }
 
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
         mTheme = HiSettingsHelper.getInstance().getTheme();
