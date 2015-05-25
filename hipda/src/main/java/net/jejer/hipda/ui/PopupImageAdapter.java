@@ -80,6 +80,9 @@ public class PopupImageAdapter extends PagerAdapter {
         final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.loadingPanel);
         final ImageView gifImageView = (ImageView) rootView.findViewById(R.id.gif_image);
 
+        gifImageView.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
+        wvImage.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
+
         if (imageReadyInfo == null) {
             gifImageView.setVisibility(View.VISIBLE);
             wvImage.setVisibility(View.GONE);
@@ -102,7 +105,6 @@ public class PopupImageAdapter extends PagerAdapter {
                 gifImageView.setVisibility(View.GONE);
                 wvImage.setVisibility(View.VISIBLE);
 
-//                wvImage.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
                 wvImage.setMinimumDpi(100);
                 wvImage.setMinimumTileDpi(160);
                 wvImage.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);

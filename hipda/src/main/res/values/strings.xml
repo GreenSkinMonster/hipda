@@ -3,6 +3,7 @@
 
     <string name="app_name">HiPDA·NG</string>
     <string name="action_refresh">刷新</string>
+    <string name="action_image_gallery">图片浏览</string>
     <string name="action_reply">回复</string>
     <string name="action_edit">编辑</string>
     <string name="action_search">搜索帖子</string>

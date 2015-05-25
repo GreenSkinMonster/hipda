@@ -356,6 +356,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             case R.id.action_refresh_detail:
                 refresh();
                 return true;
+            case R.id.action_image_gallery:
+                startImageGallery(0);
+                return true;
 //            case R.id.action_goto:
 //                showGotoPageDialog();
 //                return true;
@@ -962,8 +965,21 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     }
 
     public void startImageGallery(int imageIndex) {
-        PopupImageDialog popupImageDialog = new PopupImageDialog(mCtx, mCache.get(mCurrentPage), imageIndex);
-        popupImageDialog.show();
+        if (mAuthorOnly) {
+            Toast.makeText(getActivity(), "请先退出只看楼主模式", Toast.LENGTH_LONG).show();
+            return;
+        }
+        DetailListBean detailListBean = mCache.get(mCurrentPage);
+        if (detailListBean == null) {
+            Toast.makeText(getActivity(), "帖子还未加载完成", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (detailListBean.getContentImages().size() > 0) {
+            PopupImageDialog popupImageDialog = new PopupImageDialog(mCtx, detailListBean, imageIndex);
+            popupImageDialog.show();
+        } else {
+            Toast.makeText(mCtx, "本页没有图片", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
