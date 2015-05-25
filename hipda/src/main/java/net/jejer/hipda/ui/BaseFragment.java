@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.mikepenz.materialdrawer.Drawer;
 
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
 /**
@@ -42,21 +43,36 @@ public abstract class BaseFragment extends Fragment {
 
     void syncActionBarState() {
         if (getActivity() != null) {
-            Drawer.Result drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
+            Drawer drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
             if (drawerResult != null)
                 drawerResult.getActionBarDrawerToggle().syncState();
         }
     }
 
     void setDrawerSelection(int identifier) {
-        //this only set DrawerItem, not StickyDrawerItem
+        //re-select forum on back
         try {
             if (getActivity() != null) {
-                Drawer.Result drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
-                if (drawerResult != null
-                        && !drawerResult.isDrawerOpen()
-                        && drawerResult.getPositionFromIdentifier(identifier) != drawerResult.getCurrentSelection())
-                    drawerResult.setSelectionByIdentifier(identifier, false);
+                Drawer drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
+
+                //seems bug in getFooterPositionFromIdentifier
+                //get postion in my way
+                int position = -1;
+                for (int i = 0; i < HiUtils.FORUM_IDS.length; i++) {
+                    if (HiUtils.isForumEnabled(HiUtils.FORUM_IDS[i])
+                            && identifier == HiUtils.FORUM_IDS[i]) {
+                        position = i;
+                        break;
+                    }
+                }
+
+                if (drawerResult != null && !drawerResult.isDrawerOpen()) {
+//                int postion = drawerResult.getFooterPositionFromIdentifier(identifier);
+//                if (postion != -1 && postion != drawerResult.getCurrentFooterSelection())
+                    if (position != -1
+                            && position != drawerResult.getCurrentFooterSelection())
+                        drawerResult.setFooterSelection(position, false);
+                }
             }
         } catch (Exception ignored) {
         }

@@ -30,7 +30,9 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
+import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
@@ -57,8 +59,8 @@ public class MainFrameActivity extends AppCompatActivity {
     private Fragment mOnSwipeCallback = null;
     private int mQuit = 0;
 
-    public Drawer.Result drawerResult;
-    private AccountHeader.Result headerResult;
+    public Drawer drawerResult;
+    private AccountHeader headerResult;
     private ActionMode mActionMode;
     private long volleyInitTime = 0;
 
@@ -159,7 +161,7 @@ public class MainFrameActivity extends AppCompatActivity {
         // Create the AccountHeader
         String username = VolleyHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
         String avatarUrl = VolleyHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
-        headerResult = new AccountHeader()
+        headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
                 .withCompactStyle(true)
@@ -190,7 +192,7 @@ public class MainFrameActivity extends AppCompatActivity {
                         .withIcon(HiUtils.FORUM_ICONS[i]));
         }
 
-        drawerResult = new Drawer()
+        drawerResult = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .withAccountHeader(headerResult)
@@ -407,7 +409,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {
         @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+        public boolean onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
             //clear all backStacks from menu click
             clearBackStacks();
 
@@ -498,6 +500,8 @@ public class MainFrameActivity extends AppCompatActivity {
                             .commit();
                     break;
             }
+
+            return false;
         }
     }
 
