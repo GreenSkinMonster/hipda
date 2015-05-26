@@ -37,6 +37,7 @@ public class HiSettingsHelper {
     public static final String PERF_TAILURL = "PERF_TAILURL";
     public static final String PERF_THEME = "PERF_THEME";
     public static final String PERF_NAVBAR_COLORED = "PERF_NAVBAR_COLORED";
+    public static final String PERF_FONT = "PERF_FONT";
     public static final String PERF_FORUMS = "PERF_FORUMS";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
@@ -75,6 +76,7 @@ public class HiSettingsHelper {
 
     private String mTheme = "";
     private boolean mNavBarColor = false;
+    private String mFont = "";
     private Set<String> mForums = new HashSet<>();
 
     private boolean mEncodeUtf8 = false;
@@ -137,6 +139,7 @@ public class HiSettingsHelper {
         getTailUrlFromPref();
         getThemeFromPref();
         isNavBarColoredFromPref();
+        getFontFromPref();
         isEncodeUtf8FromPref();
         getBlanklistUsernamesFromPref();
         getPostTextsizeAdjFromPref();
@@ -382,6 +385,21 @@ public class HiSettingsHelper {
         mTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_THEME, theme).commit();
+    }
+
+    public String getFont() {
+        return mFont;
+    }
+
+    public String getFontFromPref() {
+        mFont = mSharedPref.getString(PERF_FONT, "");
+        return mFont;
+    }
+
+    public void setFont(String font) {
+        mFont = font;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(mFont, font).commit();
     }
 
     public boolean isNavBarColored() {

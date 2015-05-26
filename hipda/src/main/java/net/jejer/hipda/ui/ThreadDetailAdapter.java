@@ -103,7 +103,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         for (int i = 0; i < detail.getContents().getSize(); i++) {
             ContentAbs content = detail.getContents().get(i);
             if (content instanceof ContentText) {
-                TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
+                TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, parent, false);
                 tv.setFragmentManager(mFragmentManager);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize());
                 tv.setPadding(8, 8, 8, 8);
@@ -174,7 +174,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 }
 
             } else if (content instanceof ContentAttach) {
-                TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
+                TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, parent, false);
                 tv.setFragmentManager(mFragmentManager);
                 tv.setTextSize(HiSettingsHelper.getPostTextSize());
                 tv.setText(content.getContent());
@@ -182,8 +182,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 contentView.addView(tv);
             } else if (content instanceof ContentQuote && !((ContentQuote) content).isReplyQuote()) {
 
-                LinearLayout quoteLayout = (LinearLayout) LayoutInflater.from(mCtx)
-                        .inflate(R.layout.item_quote_text_simple, parent, false);
+                LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text_simple, parent, false);
                 TextViewWithEmoticon tv = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
 
                 tv.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
@@ -233,8 +232,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     }
                 }
 
-                LinearLayout quoteLayout = (LinearLayout) LayoutInflater.from(mCtx)
-                        .inflate(R.layout.item_quote_text, parent, false);
+                LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text, parent, false);
 
                 TextView tvAuthor = (TextView) quoteLayout.findViewById(R.id.quote_author);
                 TextView tvNote = (TextView) quoteLayout.findViewById(R.id.quote_note);

@@ -53,6 +53,8 @@ import net.jejer.hipda.utils.Logger;
 
 import java.util.ArrayList;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class MainFrameActivity extends AppCompatActivity {
 
     private OnSwipeTouchListener mSwipeListener;
@@ -130,6 +132,11 @@ public class MainFrameActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     private void setupDrawer() {

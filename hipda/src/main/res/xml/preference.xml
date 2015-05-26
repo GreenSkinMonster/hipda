@@ -55,6 +55,15 @@
             android:key="PERF_NAVBAR_COLORED"
             android:title="@string/pref_title_navbar_colored" />
 
+        <ListPreference
+            android:defaultValue=""
+            android:entries="@array/pref_font_titles"
+            android:entryValues="@array/pref_font_values"
+            android:key="PERF_FONT"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_font" />
+
         <MultiSelectListPreference
             android:defaultValue="@array/default_forum_values"
             android:entries="@array/pref_title_forum_names"

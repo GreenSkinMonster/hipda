@@ -38,6 +38,7 @@ public class SettingsFragment extends PreferenceFragment {
     private String mTheme;
     private Set<String> mForums;
     private boolean mNavBarColored;
+    private String mFont;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class SettingsFragment extends PreferenceFragment {
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_POST_LINE_SPACING));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_THEME));
+        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FONT));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FORUMS));
 
         final Preference userPreference = findPreference(HiSettingsHelper.PERF_USERNAME);
@@ -126,6 +128,7 @@ public class SettingsFragment extends PreferenceFragment {
         mTheme = HiSettingsHelper.getInstance().getTheme();
         mForums = HiSettingsHelper.getInstance().getForums();
         mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
+        mFont = HiSettingsHelper.getInstance().getFont();
     }
 
     @Override
@@ -156,12 +159,13 @@ public class SettingsFragment extends PreferenceFragment {
         if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
-                || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored) {
+                || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
+                || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
             ColorUtils.clear();
-            Intent intent = getActivity().getIntent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             getActivity().finish();
-            startActivity(intent);
+
+            startActivity(new Intent(getActivity().getApplicationContext(), getActivity().getClass()));
+            System.exit(0);
         }
 
     }

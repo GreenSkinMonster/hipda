@@ -1,13 +1,19 @@
 package net.jejer.hipda.ui;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.Constants;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
  * for error report
@@ -33,6 +39,15 @@ public class HiApplication extends Application {
     public void onCreate() {
         super.onCreate();
         ACRA.init(this);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (Constants.FONT_ROBOTO_SLAB.equals(prefs.getString(HiSettingsHelper.PERF_FONT, ""))) {
+            CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                            .setDefaultFontPath("fonts/RobotoSlab-Regular.ttf")
+                            .setFontAttrId(R.attr.fontPath)
+                            .build()
+            );
+        }
     }
 
 }
