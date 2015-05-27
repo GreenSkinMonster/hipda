@@ -16,6 +16,8 @@ import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
+import net.jejer.hipda.volley.HiStringRequest;
+import net.jejer.hipda.volley.VolleyHelper;
 
 import java.io.File;
 import java.util.Date;

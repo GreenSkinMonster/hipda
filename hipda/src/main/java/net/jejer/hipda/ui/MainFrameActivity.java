@@ -42,7 +42,6 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.UpdateHelper;
-import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.ACRAUtils;
@@ -50,6 +49,7 @@ import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.volley.VolleyHelper;
 
 import java.util.ArrayList;
 

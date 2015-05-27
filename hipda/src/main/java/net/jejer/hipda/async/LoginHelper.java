@@ -12,6 +12,8 @@ import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.volley.SimpleErrorListener;
+import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -70,9 +72,8 @@ public class LoginHelper {
 
     private String getFormhash() {
 
-        VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
-        String rstStr = VolleyHelper.getInstance().synchronousGet(HiUtils.LoginStep2,
-                errorListener);
+        SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
+        String rstStr = VolleyHelper.getInstance().synchronousGet(HiUtils.LoginStep2, errorListener);
 
         if (!TextUtils.isEmpty(rstStr)) {
             Document doc = Jsoup.parse(rstStr);
@@ -107,7 +108,7 @@ public class LoginHelper {
 
         String rspStr;
 
-        VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
+        SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
         rspStr = VolleyHelper.getInstance().synchronousPost(HiUtils.LoginStep3, post_param,
                 errorListener);
 

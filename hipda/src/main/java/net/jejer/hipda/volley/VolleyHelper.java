@@ -1,4 +1,4 @@
-package net.jejer.hipda.async;
+package net.jejer.hipda.volley;
 
 import android.content.Context;
 
@@ -14,7 +14,9 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
+import com.squareup.okhttp.OkHttpClient;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cookie.PersistentCookieStore;
 import net.jejer.hipda.utils.Logger;
 
@@ -44,7 +46,14 @@ public class VolleyHelper {
             CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
             CookieHandler.setDefault(cookieManager);
 
-            mRequestQueue = Volley.newRequestQueue(mCtx);
+            if (HiSettingsHelper.getInstance().isNewNetLib()) {
+                OkHttpClient client = new OkHttpClient();
+                if (Logger.isDebug())
+                    client.interceptors().add(new LoggingInterceptor());
+                mRequestQueue = Volley.newRequestQueue(mCtx, new OkHttpStack(client));
+            } else {
+                mRequestQueue = Volley.newRequestQueue(mCtx);
+            }
         }
     }
 
@@ -156,25 +165,8 @@ public class VolleyHelper {
         return null;
     }
 
-    class MyErrorListener implements Response.ErrorListener {
-        private VolleyError mError;
-
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            mError = error;
-        }
-
-        public VolleyError getError() {
-            return mError;
-        }
-
-        public String getErrorText() {
-            return getErrorReason(mError);
-        }
-    }
-
-    public MyErrorListener getErrorListener() {
-        return new MyErrorListener();
+    public SimpleErrorListener getErrorListener() {
+        return new SimpleErrorListener();
     }
 
 

@@ -1,4 +1,4 @@
-package net.jejer.hipda.async;
+package net.jejer.hipda.volley;
 
 import android.content.Context;
 import android.text.TextUtils;

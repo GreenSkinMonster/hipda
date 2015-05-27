@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.volley.SimpleErrorListener;
+import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -43,7 +45,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
         Boolean done = false;
         int retry = 0;
         do {
-            VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
+            SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
             rsp_str = VolleyHelper.getInstance().synchronousGet(HiUtils.SMSPreparePostUrl + mUid,
                     errorListener);
             if (!TextUtils.isEmpty(rsp_str)) {
@@ -88,7 +90,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 
         mText = content;
 
-        VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
+        SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
         String rsp_str = VolleyHelper.getInstance().synchronousPost(url, post_param,
                 errorListener);
 

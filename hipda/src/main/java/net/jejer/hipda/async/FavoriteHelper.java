@@ -9,6 +9,8 @@ import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.volley.HiStringRequest;
+import net.jejer.hipda.volley.VolleyHelper;
 
 
 public class FavoriteHelper {

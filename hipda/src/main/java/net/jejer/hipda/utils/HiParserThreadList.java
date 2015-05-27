@@ -8,13 +8,13 @@ import android.text.TextUtils;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 
-import net.jejer.hipda.async.HiStringRequest;
-import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.ui.NotifyHelper;
 import net.jejer.hipda.ui.ThreadListFragment;
+import net.jejer.hipda.volley.HiStringRequest;
+import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

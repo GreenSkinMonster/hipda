@@ -52,6 +52,7 @@ public class HiSettingsHelper {
     public static final String PERF_POST_LINE_SPACING = "PERF_POST_LINE_SPACING";
     public static final String PERF_LAST_FORUM_ID = "PERF_LAST_FORUM_ID";
     public static final String PERF_ERROR_REPORT_MODE = "PERF_ERROR_REPORT_MODE";
+    public static final String PERF_NEW_NET_LIB = "PERF_NEW_NET_LIB";
     public static final String PERF_INSTALLED_VERSION = "PERF_INSTALLED_VERSION";
 
     private Context mCtx;
@@ -91,6 +92,7 @@ public class HiSettingsHelper {
     private int mMaxPostsInPage;
     private int mLastForumId = 0;
     private boolean mErrorReportMode;
+    private boolean mNewNetLib;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -141,6 +143,7 @@ public class HiSettingsHelper {
         isNavBarColoredFromPref();
         getFontFromPref();
         isEncodeUtf8FromPref();
+        isNewNetLibFromPref();
         getBlanklistUsernamesFromPref();
         getPostTextsizeAdjFromPref();
         getTitleTextsizeAdjFromPref();
@@ -469,6 +472,22 @@ public class HiSettingsHelper {
         mErrorReportMode = mSharedPref.getBoolean(PERF_ERROR_REPORT_MODE, false);
         return mErrorReportMode;
     }
+
+    public boolean isNewNetLib() {
+        return mNewNetLib;
+    }
+
+    public void setNewNetLib(boolean newNetLib) {
+        mNewNetLib = newNetLib;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(PERF_NEW_NET_LIB, newNetLib).commit();
+    }
+
+    public boolean isNewNetLibFromPref() {
+        mNewNetLib = mSharedPref.getBoolean(PERF_NEW_NET_LIB, true);
+        return mNewNetLib;
+    }
+
 
     public List<String> getBlanklistUsernames() {
         return mBlanklistUsernames;

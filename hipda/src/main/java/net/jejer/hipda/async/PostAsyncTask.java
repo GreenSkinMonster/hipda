@@ -14,6 +14,8 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.volley.SimpleErrorListener;
+import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -174,7 +176,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             }
         }
 
-        VolleyHelper.MyErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
+        SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
         String rsp_str = VolleyHelper.getInstance().synchronousPost(url, post_param, errorListener);
 
         //when success, volley will follow 302 redirect get the page content

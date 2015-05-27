@@ -12,6 +12,8 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Utils;
+import net.jejer.hipda.volley.SimpleErrorListener;
+import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -63,7 +65,7 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
         String rsp_str;
         Boolean rspOk = false;
         int retry = 0;
-        VolleyHelper.MyErrorListener errorListener;
+        SimpleErrorListener errorListener;
         do {
             errorListener = VolleyHelper.getInstance().getErrorListener();
             rsp_str = VolleyHelper.getInstance().synchronousGet(mUrl, errorListener);

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
 import com.bumptech.glide.integration.volley.VolleyUrlLoader;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
@@ -22,6 +23,7 @@ import com.bumptech.glide.signature.StringSignature;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.LRUCache;
 
 import java.io.InputStream;
@@ -44,7 +46,12 @@ public class GlideHelper {
 
             Glide.setup(gb);
 
-            Glide.get(context).register(GlideUrl.class, InputStream.class, new VolleyUrlLoader.Factory(context));
+            if (HiSettingsHelper.getInstance().isNewNetLib()) {
+                Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory());
+            } else {
+                Glide.get(context).register(GlideUrl.class, InputStream.class, new VolleyUrlLoader.Factory(context));
+            }
+
         }
     }
 

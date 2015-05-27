@@ -32,10 +32,8 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.HiStringRequest;
 import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
-import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
@@ -44,6 +42,8 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.volley.HiStringRequest;
+import net.jejer.hipda.volley.VolleyHelper;
 
 import java.util.ArrayList;
 import java.util.List;

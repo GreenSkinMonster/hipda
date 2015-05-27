@@ -18,6 +18,8 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadList;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.volley.HiStringRequest;
+import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

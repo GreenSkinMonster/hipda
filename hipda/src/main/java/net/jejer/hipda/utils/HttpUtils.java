@@ -7,7 +7,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import net.jejer.hipda.async.VolleyHelper;
+import net.jejer.hipda.volley.VolleyHelper;
 
 public class HttpUtils {
 
