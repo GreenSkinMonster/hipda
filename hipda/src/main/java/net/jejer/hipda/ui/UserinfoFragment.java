@@ -91,7 +91,6 @@ public class UserinfoFragment extends BaseFragment {
             mUid = getArguments().getString(ARG_UID);
         }
 
-        List<SimpleListItemBean> a = new ArrayList<SimpleListItemBean>();
         mSimpleListAdapter = new SimpleListAdapter(getActivity(), SimpleListLoader.TYPE_SEARCH_USER_THREADS);
         mCallbacks = new SearchThreadByUidLoaderCallbacks();
 

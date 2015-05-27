@@ -675,6 +675,14 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final AlertDialog dialog;
 
+        //hack for IconicsButton conflict with custom font
+        if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getFont())) {
+            btnFirstPage.setText("首");
+            btnLastPage.setText("尾");
+            btnNextPage.setText("后");
+            btnPreviousPage.setText("前");
+        }
+
         builder.setTitle("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
         builder.setView(viewlayout);
 
