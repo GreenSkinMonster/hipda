@@ -21,8 +21,10 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
 import net.jejer.hipda.utils.ColorUtils;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 public class TextViewWithEmoticon extends TextView {
     private static Context mCtx;
@@ -80,8 +82,10 @@ public class TextViewWithEmoticon extends TextView {
     private Html.ImageGetter imageGetter = new Html.ImageGetter() {
         public Drawable getDrawable(String src) {
             Drawable icon = null;
-            if (!TextUtils.isEmpty(src) && src.startsWith("images/smilies/") && src.contains(".")) {
-                src = src.substring("images/smilies/".length(), src.lastIndexOf(".")).replace("/", "_");
+            src = Utils.nullToText(src);
+            int idx = src.indexOf(HiUtils.SMILE_PATH);
+            if (idx != -1 && src.indexOf(".", idx) != -1) {
+                src = src.substring(src.indexOf(HiUtils.SMILE_PATH) + HiUtils.SMILE_PATH.length(), src.lastIndexOf(".")).replace("/", "_");
                 int id = mCtx.getResources().getIdentifier(src, "drawable", mCtx.getPackageName());
                 if (id != 0) {
                     icon = mCtx.getResources().getDrawable(id);
@@ -111,18 +115,18 @@ public class TextViewWithEmoticon extends TextView {
         }
         for (URLSpan s : b.getSpans(0, b.length(), URLSpan.class)) {
             String s_url = s.getURL();
-            if (s_url.startsWith("http://www.hi-pda.com/forum/attachment.php")) {
+            if (s_url.startsWith(HiUtils.BaseUrl + "attachment.php")) {
                 URLSpan newSpan = getDownloadUrlSpan(s_url);
                 b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                 b.removeSpan(s);
-            } else if (s_url.startsWith("http://www.hi-pda.com/forum/viewthread.php")) {
+            } else if (s_url.startsWith(HiUtils.BaseUrl + "viewthread.php")) {
                 String tid = HttpUtils.getMiddleString(s_url, "tid=", "&");
                 if (tid != null) {
                     URLSpan newSpan = getThreadUrlSpan(s_url);
                     b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                     b.removeSpan(s);
                 }
-            } else if (s_url.startsWith("http://www.hi-pda.com/forum/space.php")) {
+            } else if (s_url.startsWith(HiUtils.BaseUrl + "space.php")) {
                 String uid = HttpUtils.getMiddleString(s_url, "uid=", "&");
                 if (uid != null) {
                     URLSpan newSpan = getUserInfoUrlSpan(s_url);

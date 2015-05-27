@@ -96,9 +96,9 @@ public class LoginHelper {
     }
 
     private int doLogin(String formhash) {
-        Map<String, String> post_param = new HashMap<String, String>();
+        Map<String, String> post_param = new HashMap<>();
         post_param.put("m_formhash", formhash);
-        post_param.put("referer", "http://www.hi-pda.com/forum/index.php");
+        post_param.put("referer", HiUtils.BaseUrl + "index.php");
         post_param.put("loginfield", "username");
         post_param.put("username", HiSettingsHelper.getInstance().getUsername());
         post_param.put("password", HiSettingsHelper.getInstance().getPassword());

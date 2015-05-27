@@ -59,7 +59,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
             mUid = getArguments().getString(ARG_UID);
         }
 
-        mSmsAdapter = new SmsAdapter(getActivity(), new AvatarOnClickListener());
+        mSmsAdapter = new SmsAdapter(getActivity(), getFragmentManager(), new AvatarOnClickListener());
         mLoaderCallbacks = new SmsListLoaderCallbacks();
 
     }

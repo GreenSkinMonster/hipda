@@ -1,8 +1,8 @@
 package net.jejer.hipda.ui;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.text.TextUtils;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +19,13 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
     private View.OnClickListener mAvatarListener;
     private LayoutInflater mInflater;
     private Context mCtx;
+    private FragmentManager mFragmentManager;
 
-    public SmsAdapter(Context context, View.OnClickListener avatarListener) {
+    public SmsAdapter(Context context, FragmentManager fm, View.OnClickListener avatarListener) {
         mAvatarListener = avatarListener;
         mInflater = LayoutInflater.from(context);
         mCtx = context;
+        mFragmentManager = fm;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         }
 
         holder.tv_author = (TextView) convertView.findViewById(R.id.tv_author);
-        holder.tv_content = (TextView) convertView.findViewById(R.id.tv_content);
+        holder.tv_content = (TextViewWithEmoticon) convertView.findViewById(R.id.tv_content);
         holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
         holder.tv_isnew = (TextView) convertView.findViewById(R.id.tv_isnew);
         holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
@@ -53,9 +55,10 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
 
         holder.tv_author.setText(item.getAuthor());
         holder.tv_time.setText(Utils.shortyTime(item.getTime()));
+        holder.tv_content.setFragmentManager(mFragmentManager);
         holder.tv_content.setText(item.getInfo());
         holder.tv_content.setFocusable(false);
-        holder.tv_content.setAutoLinkMask(Linkify.WEB_URLS);
+//        holder.tv_content.setAutoLinkMask(Linkify.WEB_URLS);
 
         holder.tv_content.setTextSize(HiSettingsHelper.getPostTextSize());
 
@@ -76,7 +79,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
 
     private static class ViewHolder {
         TextView tv_author;
-        TextView tv_content;
+        TextViewWithEmoticon tv_content;
         TextView tv_time;
         TextView tv_isnew;
         ImageView iv_avatar;

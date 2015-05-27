@@ -38,11 +38,12 @@ public class HiUtils {
     public static final String FavoriteAddUrl = BaseUrl + "my.php?item=favorites&inajax=1&ajaxtarget=favorite_msg&tid=";
     public static final String FavoriteRemoveUrl = BaseUrl + "my.php?item=favorites&action=remove&inajax=1&ajaxtarget=favorite_msg&tid=";
     public static final String UserInfoUrl = BaseUrl + "space.php?uid=";
-    public static final String UpdateUrl = BaseUrl + "viewthread.php?tid=1579403";
     public static final String AvatarBaseUrl = BaseUrl + "uc_server/data/avatar/";
 
     public static final String LoginStep3 = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
     public static final String LoginStep2 = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
+
+    public final static String SMILE_PATH = "images/smilies/";
 
     private final static String AVATAR_BASE = "000000000";
     public static int MAX_THREADS_IN_PAGE = 50;

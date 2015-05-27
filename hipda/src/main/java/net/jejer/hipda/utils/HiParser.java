@@ -320,7 +320,7 @@ public class HiParser {
 
         Elements aES = root.select("a");
         for (Element a : aES) {
-            if (a.attr("href").startsWith("http://www.hi-pda.com/forum/redirect.php?from=notice&goto=findpost")) {
+            if (a.attr("href").startsWith(HiUtils.BaseUrl + "redirect.php?from=notice&goto=findpost")) {
                 // Thread Name and TID and PID
                 item.setTitle(a.text());
                 item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", ""));
@@ -357,14 +357,14 @@ public class HiParser {
         Elements aES = root.select("a");
         for (Element a : aES) {
             String href = a.attr("href");
-            if (href.startsWith("http://www.hi-pda.com/forum/space.php")) {
+            if (href.startsWith(HiUtils.BaseUrl + "space.php")) {
                 String uid = HttpUtils.getMiddleString(a.attr("href"), "uid=", "");
                 item.setAuthor(a.text());
                 item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
-            } else if (href.startsWith("http://www.hi-pda.com/forum/viewthread.php")) {
+            } else if (href.startsWith(HiUtils.BaseUrl + "viewthread.php")) {
                 // Thread Name and TID and PID
                 item.setTitle(a.text());
-            } else if (href.startsWith("http://www.hi-pda.com/forum/redirect.php?from=notice&goto=findpost")) {
+            } else if (href.startsWith(HiUtils.BaseUrl + "redirect.php?from=notice&goto=findpost")) {
                 // Thread Name and TID and PID
                 item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", ""));
                 item.setPid(HttpUtils.getMiddleString(a.attr("href"), "pid=", "&"));
@@ -461,7 +461,7 @@ public class HiParser {
             if (summaryES.size() == 0) {
                 continue;
             }
-            item.setInfo(summaryES.first().text());
+            item.setInfo(summaryES.first().html());
 
             // new
             Elements imgES = pciteES.first().select("img");
