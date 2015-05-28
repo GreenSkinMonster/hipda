@@ -1,11 +1,16 @@
 package net.jejer.hipda.ui;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,16 +23,23 @@ import com.mikepenz.iconics.IconicsDrawable;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.DetailListBean;
+import net.jejer.hipda.cache.ImageContainer;
+import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
+import java.io.File;
 import java.util.List;
 
 /**
  * image gallery
  * Created by GreenSkinMonster on 2015-05-20.
  */
-public class PopupImageDialog extends Dialog {
+public class PopupImageDialog extends DialogFragment {
+
+    private final static int IMAGE_SHARE_ACTION = 1;
+    private String localAbsoluteFilePath = "";
 
     private Context mCtx;
     private DetailListBean mDetailListBean;
@@ -35,24 +47,30 @@ public class PopupImageDialog extends Dialog {
 
     private LayoutInflater mInflater;
 
-    public PopupImageDialog(Context context, DetailListBean detailListBean, int imageIndex) {
-        super(context, android.R.style.Theme_Black_NoTitleBar);
-        mCtx = context;
+    public PopupImageDialog() {
+    }
+
+    public void init(DetailListBean detailListBean, int imageIndex) {
         mDetailListBean = detailListBean;
         mImageIndex = imageIndex;
+    }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mCtx = getActivity();
         mInflater = (LayoutInflater) mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         View layout = mInflater.inflate(R.layout.popup_image, null);
 
-        setContentView(layout);
+        final Dialog dialog = new Dialog(mCtx, android.R.style.Theme_Black_NoTitleBar);
+        dialog.setContentView(layout);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+        final ViewPager viewPager = (ViewPager) layout.findViewById(R.id.view_pager);
         final TextView tvImageInfo = (TextView) layout.findViewById(R.id.tv_image_info);
         final TextView tvFloorInfo = (TextView) layout.findViewById(R.id.tv_floor_info);
 
@@ -100,5 +118,59 @@ public class PopupImageDialog extends Dialog {
 
         );
 
+        ImageButton btnShare = (ImageButton) layout.findViewById(R.id.btn_share_image);
+        btnShare.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_share).sizeDp(20).color(Color.WHITE));
+
+        btnShare.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View arg0) {
+                                            String url = images.get(viewPager.getCurrentItem()).getContent();
+
+                                            //generate a random file name, will be deleted after share
+                                            String filename = url.substring(url.lastIndexOf("/") + 1);
+                                            if (filename.contains("?"))
+                                                filename = filename.substring(0, filename.indexOf("?"));
+                                            filename = "HiPDA-Share-" + filename;
+
+                                            ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
+
+                                            File destFile = new File(Environment.getExternalStoragePublicDirectory(
+                                                    Environment.DIRECTORY_DOWNLOADS), filename);
+
+                                            try {
+                                                Utils.copy(new File(imageReadyInfo.getPath()), destFile);
+
+                                                localAbsoluteFilePath = destFile.getAbsolutePath();
+
+                                                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                                                shareIntent.setType(imageReadyInfo.getMime());
+                                                Uri uri = Uri.fromFile(destFile);
+                                                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                                                startActivity(Intent.createChooser(shareIntent, "分享图片"));
+                                            } catch (Exception e) {
+                                                Logger.e(e);
+                                                Toast.makeText(mCtx, "分享时发生错误", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    }
+
+        );
+        return dialog;
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == IMAGE_SHARE_ACTION) {
+            if (!TextUtils.isEmpty(localAbsoluteFilePath)) {
+                File file = new File(localAbsoluteFilePath);
+                if (file.exists())
+                    file.delete();
+                localAbsoluteFilePath = "";
+            }
+        }
+
+    }
+
 }

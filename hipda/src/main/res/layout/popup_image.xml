@@ -39,6 +39,15 @@
             android:minHeight="42dp"
             android:minWidth="42dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark" />
+
+        <ImageButton
+            android:id="@+id/btn_share_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/btn_download_image"
+            android:minHeight="42dp"
+            android:minWidth="42dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark" />
     </RelativeLayout>
 
     <LinearLayout

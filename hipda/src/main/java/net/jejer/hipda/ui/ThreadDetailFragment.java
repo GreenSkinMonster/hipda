@@ -983,8 +983,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             return;
         }
         if (detailListBean.getContentImages().size() > 0) {
-            PopupImageDialog popupImageDialog = new PopupImageDialog(mCtx, detailListBean, imageIndex);
-            popupImageDialog.show();
+            PopupImageDialog popupImageDialog = new PopupImageDialog();
+            popupImageDialog.init(detailListBean, imageIndex);
+            popupImageDialog.show(getFragmentManager(), PopupImageDialog.class.getName());
         } else {
             Toast.makeText(mCtx, "本页没有图片", Toast.LENGTH_SHORT).show();
         }
