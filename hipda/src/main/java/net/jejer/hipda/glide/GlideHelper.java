@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.android.volley.VolleyError;
@@ -26,6 +27,7 @@ import com.mikepenz.iconics.IconicsDrawable;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.LRUCache;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
@@ -91,12 +93,21 @@ public class GlideHelper {
         @Override
         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
             if (e != null) {
-                Throwable t = e.getCause();
-                if (t instanceof VolleyError) {
-                    VolleyError volleyError = (VolleyError) t;
-                    if (volleyError.networkResponse != null
-                            && volleyError.networkResponse.statusCode == 404)
+                if (HiSettingsHelper.getInstance().isNewNetLib()) {
+                    //Volley with OkHttp
+                    if (e instanceof IOException
+                            && !TextUtils.isEmpty(e.getMessage())
+                            && e.getMessage().contains("404"))
                         NOT_FOUND_AVATARS.put(model, "");
+                } else {
+                    //stock Volley
+                    Throwable t = e.getCause();
+                    if (t instanceof VolleyError) {
+                        VolleyError volleyError = (VolleyError) t;
+                        if (volleyError.networkResponse != null
+                                && volleyError.networkResponse.statusCode == 404)
+                            NOT_FOUND_AVATARS.put(model, "");
+                    }
                 }
             }
             return false;
