@@ -1,5 +1,6 @@
 package net.jejer.hipda.utils;
 
+import android.text.Html;
 import android.text.TextUtils;
 
 import org.jsoup.Jsoup;
@@ -82,6 +83,10 @@ public class Utils {
                     .addProtocols("a", "href", "http", "https");
         }
         return Jsoup.clean(html, "", mWhitelist, new Document.OutputSettings().prettyPrint(false));
+    }
+
+    public static CharSequence fromHtmlAndStrip(String s) {
+        return Html.fromHtml(s).toString().replace((char) 160, (char) 32).replace((char) 65532, (char) 32);
     }
 
     public static void copy(File src, File dst) throws IOException {

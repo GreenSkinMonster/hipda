@@ -3,6 +3,7 @@ package net.jejer.hipda.ui;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.view.ActionMode;
@@ -17,6 +18,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.utils.HiUtils;
 
 public class ThreadDetailActionModeCallback implements ActionMode.Callback {
     private ThreadDetailFragment mFragment;
@@ -99,6 +101,17 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                     ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", mDetailBean.getContents().getCopyText());
                     clipboard.setPrimaryClip(clip);
                 }
+                mode.finish();
+                return true;
+            case R.id.action_share_post:
+
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = HiUtils.DetailListUrl + mTid + "\n"
+                        + mDetailBean.getFloor() + "#  作者：" + mDetailBean.getAuthor() + "\n\n"
+                        + mDetailBean.getContents().getCopyText();
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                mFragment.startActivity(Intent.createChooser(sharingIntent, "分享文字内容"));
                 mode.finish();
                 return true;
             default:

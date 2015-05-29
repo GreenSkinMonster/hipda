@@ -45,7 +45,7 @@ public class ContentQuote extends ContentAbs {
 
     @Override
     public String getCopyText() {
-        return "『" + Html.fromHtml(mQuote).toString() + "』";
+        return "『" + Utils.fromHtmlAndStrip(mQuote) + "』";
     }
 
     public String getAuthor() {

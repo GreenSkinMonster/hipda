@@ -19,4 +19,9 @@
         android:title="@string/action_copy"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_share_post"
+        android:title="@string/action_share"
+        app:showAsAction="ifRoom" />
+
 </menu>

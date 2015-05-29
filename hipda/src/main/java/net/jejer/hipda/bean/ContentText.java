@@ -1,6 +1,6 @@
 package net.jejer.hipda.bean;
 
-import android.text.Html;
+import net.jejer.hipda.utils.Utils;
 
 public class ContentText extends ContentAbs {
 
@@ -22,7 +22,7 @@ public class ContentText extends ContentAbs {
 
     @Override
     public String getCopyText() {
-        return Html.fromHtml(mSb.toString()).toString();
+        return Utils.fromHtmlAndStrip(mSb.toString()).toString();
     }
 
 }
