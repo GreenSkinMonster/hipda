@@ -441,16 +441,13 @@ public class HiParser {
             // avatar
             Elements avatarES = smsE.select("a.avatar");
             if (avatarES.size() > 0) {
-                Elements avatarImgES = avatarES.first().select("img");
-                if (avatarImgES.size() > 0) {
-                    item.setAvatarUrl(avatarImgES.first().attr("src"));
-                }
                 if (item.getAuthor().equals(myUsername)) {
                     item.setUid(myUid);
                 } else {
                     String spaceUrl = Utils.nullToText(avatarES.first().attr("href"));
                     item.setUid(HttpUtils.getMiddleString(spaceUrl, "uid=", "&"));
                 }
+                item.setAvatarUrl(HiUtils.getAvatarUrlByUid(item.getUid()));
             }
 
             // time

@@ -47,10 +47,16 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_isnew = (TextView) convertView.findViewById(R.id.tv_isnew);
         holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
 
-        holder.iv_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
-        holder.iv_avatar.setTag(R.id.avatar_tag_username, item.getAuthor());
-        if (!TextUtils.isEmpty(item.getUid())) {
-            holder.iv_avatar.setOnClickListener(mAvatarListener);
+        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+            holder.iv_avatar.setVisibility(View.VISIBLE);
+            holder.iv_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
+            holder.iv_avatar.setTag(R.id.avatar_tag_username, item.getAuthor());
+            if (!TextUtils.isEmpty(item.getUid())) {
+                holder.iv_avatar.setOnClickListener(mAvatarListener);
+            }
+            GlideHelper.loadAvatar(mCtx, holder.iv_avatar, item.getAvatarUrl());
+        } else {
+            holder.iv_avatar.setVisibility(View.GONE);
         }
 
         holder.tv_author.setText(item.getAuthor());
@@ -58,16 +64,8 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_content.setFragmentManager(mFragmentManager);
         holder.tv_content.setText(item.getInfo());
         holder.tv_content.setFocusable(false);
-//        holder.tv_content.setAutoLinkMask(Linkify.WEB_URLS);
 
         holder.tv_content.setTextSize(HiSettingsHelper.getPostTextSize());
-
-        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
-            holder.iv_avatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(mCtx, holder.iv_avatar, item.getAvatarUrl());
-        } else {
-            holder.iv_avatar.setVisibility(View.GONE);
-        }
 
         if (item.isNew())
             holder.tv_isnew.setVisibility(View.VISIBLE);
