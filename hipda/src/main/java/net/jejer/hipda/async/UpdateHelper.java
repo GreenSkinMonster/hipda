@@ -173,6 +173,7 @@ public class UpdateHelper {
 
         if (!currentVersion.equals(installedVersion)) {
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
+            HiSettingsHelper.getInstance().setErrorReportMode(false);
         }
     }
 
