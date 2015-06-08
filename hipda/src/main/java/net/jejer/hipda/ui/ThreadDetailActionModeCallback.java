@@ -104,7 +104,6 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 mode.finish();
                 return true;
             case R.id.action_share_post:
-
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
                 String shareBody = HiUtils.DetailListUrl + mTid + "\n"

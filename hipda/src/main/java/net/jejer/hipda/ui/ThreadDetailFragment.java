@@ -332,6 +332,16 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(mCtx, "帖子地址已经复制到粘贴板", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.action_share_thread:
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = HiUtils.DetailListUrl + mTid + "\n"
+                        + "主题：" + mTitle + "\n";
+                if (mCache.get(1) != null && mCache.get(1).getAll().size() > 0)
+                    shareBody += ("作者：" + mCache.get(1).getAll().get(0).getAuthor());
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, "分享帖子"));
+                return true;
             case R.id.action_reply:
                 setHasOptionsMenu(false);
                 Bundle arguments = new Bundle();
