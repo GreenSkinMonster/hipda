@@ -19,6 +19,7 @@ import net.jejer.hipda.ui.textstyle.TextStyleHolder;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.util.regex.Matcher;
@@ -328,7 +329,7 @@ public class HiParserThreadDetail {
             textStyles.addStyle(level, contentN.nodeName());
             return true;
         } else if (contentN.nodeName().equals("#text")) {
-            String text = contentN.toString();
+            String text = ((TextNode) contentN).text();
             TextStyle ts = null;
             if (textStyles.getTextStyle(level - 1) != null)
                 ts = textStyles.getTextStyle(level - 1).newInstance();
