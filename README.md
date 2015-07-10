@@ -11,10 +11,11 @@
 原项目发布于 http://www.hi-pda.com/forum/viewthread.php?tid=1408844   
 
 #Credits
-- jejer - https://bitbucket.org/jejer/hipda/
-- sjudd - https://github.com/bumptech/glide
-- davemorrissey - https://github.com/davemorrissey/subsampling-scale-image-view
-- Clans - https://github.com/Clans/FloatingActionButton
-- mikepenz - https://github.com/mikepenz/MaterialDrawer
-- rock3r - https://github.com/frakbot/CreditsRoll
+- HiPDA简洁版 - https://bitbucket.org/jejer/hipda/
+- Glide - https://github.com/bumptech/glide
+- Subsampling Scale Image View - https://github.com/davemorrissey/subsampling-scale-image-view
+- FloatingActionButton - https://github.com/Clans/FloatingActionButton
+- MaterialDrawer - https://github.com/mikepenz/MaterialDrawer
 - ACRA - https://github.com/ACRA/acra
+- Volley - https://github.com/mcxiaoke/android-volley
+- OkHttp - https://github.com/square/okhttp
