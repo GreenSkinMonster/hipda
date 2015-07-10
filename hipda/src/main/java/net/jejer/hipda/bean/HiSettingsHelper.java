@@ -54,6 +54,7 @@ public class HiSettingsHelper {
     public static final String PERF_ERROR_REPORT_MODE = "PERF_ERROR_REPORT_MODE";
     public static final String PERF_NEW_NET_LIB = "PERF_NEW_NET_LIB";
     public static final String PERF_INSTALLED_VERSION = "PERF_INSTALLED_VERSION";
+    public static final String PERF_CLEAR_CACHE = "PERF_CLEAR_CACHE";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;

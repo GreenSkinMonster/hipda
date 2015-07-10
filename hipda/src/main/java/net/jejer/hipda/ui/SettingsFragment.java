@@ -40,6 +40,7 @@ public class SettingsFragment extends PreferenceFragment {
     private boolean mNavBarColored;
     private String mFont;
     private boolean mNewNetLib;
+    private boolean mCacheCleared;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,6 +121,16 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+        Preference clearPreference = findPreference(HiSettingsHelper.PERF_CLEAR_CACHE);
+        clearPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                UpdateHelper.clearCache(getActivity());
+                Toast.makeText(getActivity(), "缓存已经清除", Toast.LENGTH_SHORT).show();
+                mCacheCleared = true;
+                return true;
+            }
+        });
+
         if (Build.VERSION.SDK_INT < 21) {
             Preference navBarColoredPreference = findPreference(HiSettingsHelper.PERF_NAVBAR_COLORED);
             ((PreferenceGroup) findPreference(getResources().getString(R.string.pref_category_ui))).removePreference(navBarColoredPreference);
@@ -158,7 +169,8 @@ public class SettingsFragment extends PreferenceFragment {
                 && getActivity() != null)
             ((MainFrameActivity) getActivity()).drawerResult.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-        if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
+        if (mCacheCleared ||
+                HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored

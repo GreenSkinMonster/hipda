@@ -142,6 +142,13 @@
 
         <Preference
             android:enabled="true"
+            android:key="PERF_CLEAR_CACHE"
+            android:selectable="true"
+            android:summary=""
+            android:title="@string/pref_title_clear_cache" />
+
+        <Preference
+            android:enabled="true"
             android:key="PERF_LAST_UPDATE_CHECK"
             android:selectable="true"
             android:summary=""

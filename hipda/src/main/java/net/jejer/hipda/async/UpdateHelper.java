@@ -160,15 +160,7 @@ public class UpdateHelper {
                 forums.add("59");
             HiSettingsHelper.getInstance().setForums(forums);
 
-            //clear cache
-            try {
-                File cache = context.getCacheDir();
-                if (cache != null && cache.isDirectory()) {
-                    deleteDir(cache);
-                }
-            } catch (Exception ignored) {
-            }
-
+            clearCache(context);
         }
 
         if (!currentVersion.equals(installedVersion)) {
@@ -188,6 +180,16 @@ public class UpdateHelper {
             }
         }
         return dir.delete();
+    }
+
+    public static void clearCache(Context context) {
+        try {
+            File cache = context.getCacheDir();
+            if (cache != null && cache.isDirectory()) {
+                deleteDir(cache);
+            }
+        } catch (Exception ignored) {
+        }
     }
 
 }

@@ -140,10 +140,4 @@ public class HiUtils {
         return R.style.ThemeLight;
     }
 
-    class Forum {
-        int fid;
-        int name;
-        IIcon icon;
-    }
-
 }

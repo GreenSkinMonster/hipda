@@ -185,4 +185,5 @@
     <string name="pref_error_report_mode">汇报错误模式</string>
     <string name="pref_title_about">关于HiPDA·NG</string>
     <string name="pref_title_check_update">检查更新</string>
+    <string name="pref_title_clear_cache">清除缓存</string>
 </resources>
