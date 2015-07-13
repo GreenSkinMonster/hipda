@@ -256,7 +256,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         menu.clear();
         inflater.inflate(R.menu.menu_reply, menu);
 
-        menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_now_wallpaper).actionBarSize().color(Color.WHITE));
+        menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_wallpaper).actionBarSize().color(Color.WHITE));
         menu.findItem(R.id.action_post).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).actionBarSize().color(Color.WHITE));
 
 

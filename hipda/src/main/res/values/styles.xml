@@ -28,6 +28,7 @@
         <item name="colorPrimaryDark">@color/md_grey_800</item>
         <item name="colorAccent">@color/hipda</item>
 
+        <item name="android:textColor">@color/textColorPrimaryLight</item>
         <item name="android:textColorPrimary">@color/textColorPrimaryLight</item>
         <item name="android:textColorSecondary">@color/textColorSecondaryLight</item>
 
@@ -85,6 +86,7 @@
         <item name="colorPrimaryDark">@color/md_black_1000</item>
         <item name="colorAccent">@color/hipda</item>
 
+        <item name="android:textColor">@color/textColorPrimaryDark</item>
         <item name="android:textColorPrimary">@color/textColorPrimaryDark</item>
         <item name="android:textColorSecondary">@color/textColorSecondaryDark</item>
 
