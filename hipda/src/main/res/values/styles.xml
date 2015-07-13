@@ -31,6 +31,7 @@
         <item name="android:textColor">@color/textColorPrimaryLight</item>
         <item name="android:textColorPrimary">@color/textColorPrimaryLight</item>
         <item name="android:textColorSecondary">@color/textColorSecondaryLight</item>
+        <item name="panelMenuListTheme">@style/Theme.CompactMenu.Light</item>
 
         <item name="background">@color/day_background</item>
         <item name="list_item_background">@color/day_list_item_background</item>
@@ -89,6 +90,7 @@
         <item name="android:textColor">@color/textColorPrimaryDark</item>
         <item name="android:textColorPrimary">@color/textColorPrimaryDark</item>
         <item name="android:textColorSecondary">@color/textColorSecondaryDark</item>
+        <item name="panelMenuListTheme">@style/Theme.CompactMenu.Dark</item>
 
         <item name="background">@color/night_background</item>
         <item name="list_item_background">@color/night_list_item_background</item>
@@ -140,6 +142,27 @@
         <item name="fab_size">mini</item>
         <item name="fab_colorNormal">?fabColorNormal</item>
         <item name="fab_colorPressed">?fabColorPressed</item>
+    </style>
+
+    <!-- hardware menu key popup menu style -->
+    <style name="Theme.CompactMenu.Light" parent="@style/Theme.AppCompat.CompactMenu">
+        <item name="android:itemTextAppearance">
+            @style/TextAppearance.Material.CompactMenu.Light
+        </item>
+    </style>
+
+    <style name="TextAppearance.Material.CompactMenu.Light" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/textColorPrimaryLight</item>
+    </style>
+
+    <style name="Theme.CompactMenu.Dark" parent="@style/Theme.AppCompat.CompactMenu">
+        <item name="android:itemTextAppearance">
+            @style/TextAppearance.Material.CompactMenu.Dark
+        </item>
+    </style>
+
+    <style name="TextAppearance.Material.CompactMenu.Dark" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/textColorPrimaryDark</item>
     </style>
 
 </resources>
