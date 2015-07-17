@@ -155,6 +155,11 @@ public class HiSettingsHelper {
         isShowPostTypeFromPref();
         isErrorReportModeFromPref();
         getForumsFromPref();
+
+        //always use OkHttp, this setting should be removed in future
+        if (!isNewNetLib())
+            setNewNetLib(true);
+
     }
 
     public boolean isLoginInfoValid() {

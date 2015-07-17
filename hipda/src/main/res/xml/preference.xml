@@ -120,10 +120,12 @@
             android:key="PERF_ENCODEUTF8"
             android:title="@string/pref_title_encode_utf8" />
 
+        <!--
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="true"
             android:key="PERF_NEW_NET_LIB"
             android:title="@string/pref_title_new_net_lib" />
+        -->
 
         <EditTextPreference
             android:inputType="text"
