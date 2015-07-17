@@ -124,9 +124,25 @@ public class SettingsFragment extends PreferenceFragment {
         Preference clearPreference = findPreference(HiSettingsHelper.PERF_CLEAR_CACHE);
         clearPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                UpdateHelper.clearCache(getActivity());
-                Toast.makeText(getActivity(), "缓存已经清除", Toast.LENGTH_SHORT).show();
-                mCacheCleared = true;
+                Dialog dialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("清除缓存？")
+                        .setMessage("继续操作将清除已经下载的缓存资源，需要时重新下载。\n\n在频繁出现网络连接错误情况下，可以使用本功能看问题是否能解决。")
+                        .setPositiveButton(getResources().getString(android.R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        UpdateHelper.clearCache(getActivity());
+                                        Toast.makeText(getActivity(), "缓存已经清除", Toast.LENGTH_SHORT).show();
+                                        mCacheCleared = true;
+                                    }
+                                })
+                        .setNegativeButton(getResources().getString(android.R.string.cancel),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                }).create();
+                dialog.show();
                 return true;
             }
         });
