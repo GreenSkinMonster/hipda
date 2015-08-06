@@ -41,11 +41,4 @@
         android:layout_margin="8dp"
         android:text="@string/pref_threadlist_avatar" />
 
-    <Switch
-        android:id="@+id/sw_prefetch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/pref_title_prefetch" />
-
 </LinearLayout>

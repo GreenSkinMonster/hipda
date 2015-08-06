@@ -102,6 +102,11 @@ public class UserinfoFragment extends BaseFragment {
         view.setClickable(false);
 
         mAvatarView = (ImageView) view.findViewById(R.id.userinfo_avatar);
+        if (HiSettingsHelper.getInstance().isLoadAvatar()) {
+            mAvatarView.setVisibility(View.VISIBLE);
+        } else {
+            mAvatarView.setVisibility(View.GONE);
+        }
 
         mUsernameView = (TextView) view.findViewById(R.id.userinfo_username);
         mUsernameView.setText(mUsername);

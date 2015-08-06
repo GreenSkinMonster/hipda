@@ -524,7 +524,6 @@ public class ThreadListFragment extends BaseFragment
         final View viewlayout = inflater.inflate(R.layout.dialog_thread_list_settings, null);
 
         final Switch sShowPicOnMobileNetwork = (Switch) viewlayout.findViewById(R.id.sw_load_pic_on_mobile_network);
-        final Switch sPrefetch = (Switch) viewlayout.findViewById(R.id.sw_prefetch);
         final Switch sShowStickThreads = (Switch) viewlayout.findViewById(R.id.sw_show_stick_threads);
         final Switch sSortByPostTime = (Switch) viewlayout.findViewById(R.id.sw_sort_by_post_time);
         final Switch sShowThreadListAvatar = (Switch) viewlayout.findViewById(R.id.sw_threadlist_avatar);
@@ -543,13 +542,6 @@ public class ThreadListFragment extends BaseFragment
             public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
                 HiSettingsHelper.getInstance().setShowThreadListAvatar(arg1);
                 mThreadListAdapter.notifyDataSetChanged();
-            }
-        });
-        sPrefetch.setChecked(HiSettingsHelper.getInstance().isPreFetch());
-        sPrefetch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                HiSettingsHelper.getInstance().setPreFetch(arg1);
             }
         });
         sShowStickThreads.setChecked(HiSettingsHelper.getInstance().isShowStickThreads());

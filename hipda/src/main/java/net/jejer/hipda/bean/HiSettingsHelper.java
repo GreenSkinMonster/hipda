@@ -32,7 +32,6 @@ public class HiSettingsHelper {
     public static final String PERF_SHOW_POST_TYPE = "PERF_SHOW_POST_TYPE";
     public static final String PERF_LOADIMGONMOBILENWK = "PERF_LOADIMGONMOBILENWK";
     public static final String PERF_THREADLISTAVATAR = "PERF_THREADLISTAVATAR";
-    public static final String PERF_PREFETCH = "PERF_PREFETCH";
     public static final String PERF_SORTBYPOSTTIME_BY_FORUM = "PERF_SORTBYPOSTTIME_BY_FORUM";
     public static final String PERF_ADDTAIL = "PERF_ADDTAIL";
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
@@ -160,7 +159,6 @@ public class HiSettingsHelper {
         isShowStickThreadsFromPref();
         isLoadImgOnMobileNwkFromPref();
         isShowThreadListAvatarFromPref();
-        isPreFetchFromPref();
         isSortByPostTimeByForumFromPref();
         isAddTailFromPref();
         getTailTextFromPref();
@@ -325,21 +323,6 @@ public class HiSettingsHelper {
         mLoadImgOnMobileNwk = loadImgOnMobileNwk;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putBoolean(PERF_LOADIMGONMOBILENWK, loadImgOnMobileNwk).commit();
-    }
-
-    public boolean isPreFetch() {
-        return mPreFetch;
-    }
-
-    public boolean isPreFetchFromPref() {
-        mPreFetch = mSharedPref.getBoolean(PERF_PREFETCH, true);
-        return mPreFetch;
-    }
-
-    public void setPreFetch(boolean preFetch) {
-        mPreFetch = preFetch;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_PREFETCH, preFetch).commit();
     }
 
     public boolean isSortByPostTime(int fid) {

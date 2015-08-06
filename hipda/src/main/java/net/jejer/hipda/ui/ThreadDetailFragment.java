@@ -619,7 +619,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     private void prefetchNextPage(int pageOffset) {
         if (!mPrefetching && !mAuthorOnly
-                && HiSettingsHelper.getInstance().isPreFetch()
                 && mCache.get(mCurrentPage + pageOffset) == null) {
             int page = mCurrentPage + pageOffset;
             if (page < 1 || page > mMaxPage)
