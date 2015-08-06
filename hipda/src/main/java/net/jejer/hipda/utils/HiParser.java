@@ -232,8 +232,7 @@ public class HiParser {
             if (citeES.size() == 0) {
                 continue;
             }
-//            item.setAuthor(citeES.first().text());
-            item.setTitle(citeES.first().text());
+            item.setAuthor(citeES.first().text());
             item.setForum(item.getAuthor());
             Elements uidAES = citeES.first().select("a");
             if (uidAES.size() == 0) {
@@ -258,8 +257,7 @@ public class HiParser {
             if (summaryES.size() == 0) {
                 continue;
             }
-//            item.setTitle(citeES.first().text());
-            item.setInfo(summaryES.first().text());
+            item.setTitle(summaryES.first().text());
 
             list.add(item);
         }
