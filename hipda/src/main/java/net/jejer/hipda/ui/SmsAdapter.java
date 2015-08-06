@@ -47,7 +47,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_isnew = (TextView) convertView.findViewById(R.id.tv_isnew);
         holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
 
-        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+        if (HiSettingsHelper.getInstance().isLoadAvatar()) {
             holder.iv_avatar.setVisibility(View.VISIBLE);
             holder.iv_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
             holder.iv_avatar.setTag(R.id.avatar_tag_username, item.getAuthor());

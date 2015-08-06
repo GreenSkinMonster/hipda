@@ -59,6 +59,7 @@ public class HiParserThreadDetail {
 
         // Async check notify
         new HiParserThreadList.parseNotifyRunnable(ctx, doc, true).run();
+        HiSettingsHelper.getInstance().updateMobileNetworkStatus();
 
         DetailListBean details = new DetailListBean();
         details.setPage(page);

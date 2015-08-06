@@ -73,7 +73,7 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
             holder.tv_forum.setText(item.getForum());
         }
 
-        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()
+        if (HiSettingsHelper.getInstance().isLoadAvatar()
                 && mType != SimpleListLoader.TYPE_SEARCH_USER_THREADS
                 && mType != SimpleListLoader.TYPE_FAVORITES
                 && mType != SimpleListLoader.TYPE_MYPOST

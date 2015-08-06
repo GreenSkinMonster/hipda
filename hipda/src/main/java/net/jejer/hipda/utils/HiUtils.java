@@ -1,8 +1,5 @@
 package net.jejer.hipda.utils;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import com.mikepenz.iconics.typeface.FontAwesome;
@@ -88,21 +85,6 @@ public class HiUtils {
 
     public static String getFullUrl(String particalUrl) {
         return BaseUrl + particalUrl;
-    }
-
-    public static Boolean isAutoLoadImg(Context ctx) {
-        if (HiSettingsHelper.getInstance().isLoadImgOnMobileNwk()) {
-            return true;
-        } else {
-            ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo info = cm.getActiveNetworkInfo();
-            if (info == null || !info.isConnected() || info.getType() != ConnectivityManager.TYPE_WIFI) {
-                //Mobile Network
-                return false;
-            } else {
-                return true;
-            }
-        }
     }
 
     public static String getAvatarUrlByUid(String uid) {

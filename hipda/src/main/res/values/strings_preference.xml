@@ -160,7 +160,7 @@
     <!-- General settings -->
     <string name="pref_category_general">其他</string>
     <string name="pref_title_load_img_without_wifi">移动网络加载图片</string>
-    <string name="pref_threadlist_avatar">显示用户头像</string>
+    <string name="pref_threadlist_avatar">移动网络显示头像</string>
     <string name="pref_title_prefetch">预加载</string>
     <string name="pref_title_show_stick_threads">显示置顶帖</string>
     <string name="pref_title_sort_by_post_time">本版按发帖排序</string>

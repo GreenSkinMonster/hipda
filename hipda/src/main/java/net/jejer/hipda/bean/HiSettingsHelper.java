@@ -6,6 +6,8 @@ import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import net.jejer.hipda.utils.Connectivity;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,6 +108,29 @@ public class HiSettingsHelper {
         return mIsLandscape;
     }
 
+    private boolean mMobileNetwork;
+
+    public void setMobileNetwork(boolean mobileNetwork) {
+        mMobileNetwork = mobileNetwork;
+    }
+
+    public boolean isMobileNetwork() {
+        return mMobileNetwork;
+    }
+
+    public boolean isLoadImage() {
+        return !isMobileNetwork() || isLoadImgOnMobileNwk();
+    }
+
+    public boolean isLoadAvatar() {
+        return !isMobileNetwork() || isShowThreadListAvatar();
+    }
+
+    public void updateMobileNetworkStatus() {
+        if (mCtx != null)
+            setMobileNetwork(Connectivity.isConnected(mCtx) && !Connectivity.isConnectedWifi(mCtx));
+    }
+
     // --------------- THIS IS NOT IN PERF -----------
 
 
@@ -160,6 +185,7 @@ public class HiSettingsHelper {
         if (!isNewNetLib())
             setNewNetLib(true);
 
+        updateMobileNetworkStatus();
     }
 
     public boolean isLoginInfoValid() {

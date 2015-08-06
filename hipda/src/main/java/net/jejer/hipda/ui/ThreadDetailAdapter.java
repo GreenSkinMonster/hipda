@@ -26,7 +26,6 @@ import net.jejer.hipda.glide.GlideFutureTask;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
-import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
 public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
@@ -82,7 +81,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
             holder.postStatus.setVisibility(View.GONE);
         }
 
-        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+        if (HiSettingsHelper.getInstance().isLoadAvatar()) {
             holder.avatar.setVisibility(View.VISIBLE);
             GlideHelper.loadAvatar(mCtx, holder.avatar, detail.getAvatarUrl());
         } else {
@@ -149,7 +148,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
                     mDetailFragment.loadImage(imageUrl, giv);
                 } else {
-                    if (HiUtils.isAutoLoadImg(mCtx)) {
+                    if (HiSettingsHelper.getInstance().isLoadImage()) {
                         new GlideFutureTask(mCtx, imageUrl) {
                             @Override
                             protected void onPostExecute(ImageReadyInfo imageReadyInfo) {

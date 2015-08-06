@@ -72,7 +72,7 @@ public class ThreadListAdapter extends HiAdapter<ThreadBean> {
             holder.iv_image_indicator.setVisibility(View.GONE);
         }
 
-        if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+        if (HiSettingsHelper.getInstance().isLoadAvatar()) {
             holder.avatar.setVisibility(View.VISIBLE);
             GlideHelper.loadAvatar(mCtx, holder.avatar, thread.getAvatarUrl());
         } else {

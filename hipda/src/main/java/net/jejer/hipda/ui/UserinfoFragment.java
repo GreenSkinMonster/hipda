@@ -213,7 +213,7 @@ public class UserinfoFragment extends BaseFragment {
         public void onResponse(String response) {
             UserInfoBean info = HiParser.parseUserInfo(response);
             if (info != null) {
-                if (HiSettingsHelper.getInstance().isShowThreadListAvatar()) {
+                if (HiSettingsHelper.getInstance().isLoadAvatar()) {
                     mAvatarView.setVisibility(View.VISIBLE);
                     GlideHelper.loadAvatar(getActivity(), mAvatarView, info.getAvatarUrl());
                 } else {

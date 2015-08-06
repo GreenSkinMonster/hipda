@@ -30,6 +30,7 @@ public class HiParserThreadList {
 
         // Async check notify
         new parseNotifyRunnable(ctx, doc, true).run();
+        HiSettingsHelper.getInstance().updateMobileNetworkStatus();
 
         ThreadListBean threads = new ThreadListBean();
 
