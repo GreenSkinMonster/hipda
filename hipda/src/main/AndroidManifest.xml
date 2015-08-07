@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.jejer.hipda"
     android:versionCode="31"
-    android:versionName="2.0.04">
+    android:versionName="2.0.05">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -20,7 +20,6 @@
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
