@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -26,6 +27,9 @@ import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.LRUCache;
+import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Utils;
+import net.jejer.hipda.volley.VolleyHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -117,6 +121,19 @@ public class GlideHelper {
         public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
             return false;
         }
+    }
+
+    public static GlideUrl getGlideUrl(String url) {
+        GlideUrl glideUrl;
+        if (Utils.nullToText(url).startsWith(HiUtils.BaseUrl)) {
+            glideUrl = new GlideUrl(url, new LazyHeaders.Builder()
+                    .setHeader("User-Agent", HiUtils.UserAgent)
+                    .addHeader("Cookie", "cdb_auth=" + VolleyHelper.getInstance().getAuthCookie())
+                    .build());
+        } else {
+            glideUrl = new GlideUrl(url);
+        }
+        return glideUrl;
     }
 
 }
