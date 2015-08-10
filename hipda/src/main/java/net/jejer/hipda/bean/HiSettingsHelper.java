@@ -126,8 +126,8 @@ public class HiSettingsHelper {
     }
 
     public void updateMobileNetworkStatus() {
-        if (mCtx != null)
-            setMobileNetwork(Connectivity.isConnected(mCtx) && !Connectivity.isConnectedWifi(mCtx));
+        if (mCtx != null && Connectivity.isConnected(mCtx))
+            setMobileNetwork(!Connectivity.isConnectedWifi(mCtx));
     }
 
     // --------------- THIS IS NOT IN PERF -----------
