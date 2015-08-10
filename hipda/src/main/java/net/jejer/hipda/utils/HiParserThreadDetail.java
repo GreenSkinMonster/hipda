@@ -250,7 +250,7 @@ public class HiParserThreadDetail {
             Elements postimgES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.t_msgfontfix div.postattachlist img");
             for (int j = 0; j < postimgES.size(); j++) {
                 Element imgE = postimgES.get(j);
-                if (imgE.attr("file").startsWith("attachments/day_")) {
+                if (imgE.attr("file").startsWith("attachments/day_") || imgE.attr("file").startsWith("attachment.php")) {
                     content.addImg(imgE.attr("file"), true);
                 }
             }
@@ -376,7 +376,7 @@ public class HiParserThreadDetail {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
                 return false;
-            } else if (src.equals("images/common/none.gif") || src.startsWith("attachments/day_")) {
+            } else if (src.equals("images/common/none.gif") || src.startsWith("attachments/day_") || src.startsWith("attachment.php")) {
                 //internal image
                 content.addImg(e.attr("file"), true);
                 return false;

@@ -14,9 +14,11 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
+import com.squareup.okhttp.OkHttpClient;
 
 import net.jejer.hipda.cookie.PersistentCookieStore;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.volley.OkHttpStack;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -44,7 +46,10 @@ public class VolleyHelper {
             CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
             CookieHandler.setDefault(cookieManager);
 
-            mRequestQueue = Volley.newRequestQueue(mCtx);
+            OkHttpClient client = new OkHttpClient();
+            mRequestQueue = Volley.newRequestQueue(mCtx, new OkHttpStack(client));
+
+            //mRequestQueue = Volley.newRequestQueue(mCtx);
         }
     }
 

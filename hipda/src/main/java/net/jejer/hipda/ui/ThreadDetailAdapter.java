@@ -326,14 +326,14 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> implements ImageC
 
             if (imageReadyInfo.isGif()) {
                 Glide.with(mCtx)
-                        .load(imageUrl)
+                        .load(GlideHelper.getGlideUrl(imageUrl))
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .transform(new GifTransformation(mCtx))
                         .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
             } else {
                 Glide.with(mCtx)
-                        .load(imageUrl)
+                        .load(GlideHelper.getGlideUrl(imageUrl))
                         .asBitmap()
                         .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder()))
                         .imageDecoder(new ThreadImageDecoder())

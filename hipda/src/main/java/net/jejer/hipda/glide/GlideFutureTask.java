@@ -9,6 +9,7 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
 
@@ -37,7 +38,7 @@ public class GlideFutureTask extends AsyncTask<Void, Void, ImageReadyInfo> {
         try {
             FutureTarget<File> future =
                     Glide.with(mCtx)
-                            .load(mUrl)
+                            .load(GlideHelper.getGlideUrl(mUrl))
                             .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             File cacheFile = future.get();
             Glide.clear(future);
@@ -49,7 +50,7 @@ public class GlideFutureTask extends AsyncTask<Void, Void, ImageReadyInfo> {
             BitmapFactory.decodeFile(cacheFile.getPath(), options);
             int width = options.outWidth;
             int height = options.outHeight;
-            String mime = options.outMimeType;
+            String mime = Utils.nullToText(options.outMimeType);
 
             //calculate display size for image
 
