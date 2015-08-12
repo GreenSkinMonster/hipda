@@ -8,6 +8,10 @@ import com.mikepenz.iconics.typeface.IIcon;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class HiUtils {
     public static final String UserAgent = "net.jejer.hipda " + HiSettingsHelper.getInstance().getAppVersion();
     public static final String BaseUrl = "http://www.hi-pda.com/forum/";
@@ -120,6 +124,22 @@ public class HiUtils {
         }
         HiSettingsHelper.getInstance().setTheme("light");
         return R.style.ThemeLight;
+    }
+
+    public static String getImageFilename(String prefix, String mime) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd_HHmmss", Locale.US);
+        String filename = prefix + "_" + formatter.format(new Date());
+
+        String suffix = "jpg";
+        if (mime.toLowerCase().contains("gif")) {
+            suffix = "gif";
+        } else if (mime.toLowerCase().contains("png")) {
+            suffix = "png";
+        } else if (mime.toLowerCase().contains("bmp")) {
+            suffix = "bmp";
+        }
+        return filename + "." + suffix;
     }
 
 }

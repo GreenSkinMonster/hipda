@@ -25,6 +25,7 @@ import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.ImageReadyInfo;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
@@ -107,9 +108,10 @@ public class PopupImageDialog extends DialogFragment {
                                            public void onClick(View arg0) {
                                                try {
                                                    String url = images.get(viewPager.getCurrentItem()).getContent();
-                                                   String filename = url.substring(url.lastIndexOf("/") + 1);
+                                                   ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
+                                                   String filename = HiUtils.getImageFilename("Hi_IMG", imageReadyInfo.getMime());
                                                    HttpUtils.download(mCtx, url, filename);
-                                               } catch (SecurityException e) {
+                                               } catch (Exception e) {
                                                    Logger.e(e);
                                                    Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                }
@@ -127,12 +129,8 @@ public class PopupImageDialog extends DialogFragment {
                                             String url = images.get(viewPager.getCurrentItem()).getContent();
 
                                             //generate a random file name, will be deleted after share
-                                            String filename = url.substring(url.lastIndexOf("/") + 1);
-                                            if (filename.contains("?"))
-                                                filename = filename.substring(0, filename.indexOf("?"));
-                                            filename = "HiPDA-Share-" + filename;
-
                                             ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
+                                            String filename = HiUtils.getImageFilename("Hi_Share", imageReadyInfo.getMime());
 
                                             File destFile = new File(Environment.getExternalStoragePublicDirectory(
                                                     Environment.DIRECTORY_DOWNLOADS), filename);
