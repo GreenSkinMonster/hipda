@@ -24,11 +24,14 @@ import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.squareup.okhttp.OkHttpClient;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
+import net.jejer.hipda.volley.LoggingInterceptor;
 import net.jejer.hipda.volley.VolleyHelper;
 
 import java.io.IOException;
@@ -53,7 +56,10 @@ public class GlideHelper {
             Glide.setup(gb);
 
             if (HiSettingsHelper.getInstance().isNewNetLib()) {
-                Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory());
+                OkHttpClient client = new OkHttpClient();
+                if (Logger.isDebug())
+                    client.interceptors().add(new LoggingInterceptor());
+                Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
             } else {
                 Glide.get(context).register(GlideUrl.class, InputStream.class, new VolleyUrlLoader.Factory(context));
             }
