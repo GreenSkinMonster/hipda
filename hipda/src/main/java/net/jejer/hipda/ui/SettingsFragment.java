@@ -157,7 +157,6 @@ public class SettingsFragment extends PreferenceFragment {
         mForums = HiSettingsHelper.getInstance().getForums();
         mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
         mFont = HiSettingsHelper.getInstance().getFont();
-        mNewNetLib = HiSettingsHelper.getInstance().isNewNetLib();
     }
 
     @Override
@@ -190,8 +189,7 @@ public class SettingsFragment extends PreferenceFragment {
                 || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
-                || !HiSettingsHelper.getInstance().getFont().equals(mFont)
-                || HiSettingsHelper.getInstance().isNewNetLib() != mNewNetLib) {
+                || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
             ColorUtils.clear();
             getActivity().finish();
 

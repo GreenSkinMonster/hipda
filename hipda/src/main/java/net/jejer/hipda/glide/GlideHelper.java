@@ -8,11 +8,9 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
-import com.bumptech.glide.integration.volley.VolleyUrlLoader;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
@@ -26,7 +24,6 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.squareup.okhttp.OkHttpClient;
 
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -55,14 +52,10 @@ public class GlideHelper {
 
             Glide.setup(gb);
 
-            if (HiSettingsHelper.getInstance().isNewNetLib()) {
-                OkHttpClient client = new OkHttpClient();
-                if (Logger.isDebug())
-                    client.interceptors().add(new LoggingInterceptor());
-                Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
-            } else {
-                Glide.get(context).register(GlideUrl.class, InputStream.class, new VolleyUrlLoader.Factory(context));
-            }
+            OkHttpClient client = new OkHttpClient();
+            if (Logger.isDebug())
+                client.interceptors().add(new LoggingInterceptor());
+            Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
 
         }
     }
@@ -103,22 +96,11 @@ public class GlideHelper {
         @Override
         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
             if (e != null) {
-                if (HiSettingsHelper.getInstance().isNewNetLib()) {
-                    //Volley with OkHttp
-                    if (e instanceof IOException
-                            && !TextUtils.isEmpty(e.getMessage())
-                            && e.getMessage().contains("404"))
-                        NOT_FOUND_AVATARS.put(model, "");
-                } else {
-                    //stock Volley
-                    Throwable t = e.getCause();
-                    if (t instanceof VolleyError) {
-                        VolleyError volleyError = (VolleyError) t;
-                        if (volleyError.networkResponse != null
-                                && volleyError.networkResponse.statusCode == 404)
-                            NOT_FOUND_AVATARS.put(model, "");
-                    }
-                }
+                //Volley with OkHttp
+                if (e instanceof IOException
+                        && !TextUtils.isEmpty(e.getMessage())
+                        && e.getMessage().contains("404"))
+                    NOT_FOUND_AVATARS.put(model, "");
             }
             return false;
         }
