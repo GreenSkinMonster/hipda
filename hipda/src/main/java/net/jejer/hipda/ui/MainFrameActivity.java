@@ -146,12 +146,12 @@ public class MainFrameActivity extends AppCompatActivity {
         DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-                Drawable defaultIconDrawable = new IconicsDrawable(imageView.getContext(), FontAwesome.Icon.faw_user).color(Color.WHITE);
                 //clear tag or glide will throw execption
-                imageView.setTag(null);
+                //imageView.setTag(null);
                 Glide.with(imageView.getContext())
                         .load(uri)
-                        .error(defaultIconDrawable)
+                        .placeholder(placeholder)
+                        .error(placeholder)
                         .into(imageView);
             }
 
@@ -161,7 +161,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
             @Override
             public Drawable placeholder(Context ctx) {
-                return null;
+                return new IconicsDrawable(ctx, FontAwesome.Icon.faw_user).color(Color.WHITE);
             }
         });
 
