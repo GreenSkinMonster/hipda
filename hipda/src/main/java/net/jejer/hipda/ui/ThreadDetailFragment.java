@@ -32,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,6 +112,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     private HiProgressDialog postProgressDialog;
     private FloatingActionMenu mFam;
+    private ProgressBar loadingProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -152,10 +154,13 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         mDetailListView = (XListView) view.findViewById(R.id.lv_thread_details);
         mDetailListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         mTipBar = (TextView) view.findViewById(R.id.thread_detail_tipbar);
+        mTipBar.setVisibility(View.INVISIBLE);
         mTipBar.bringToFront();
 
         mFam = (FloatingActionMenu) view.findViewById(R.id.multiple_actions);
         mFam.setVisibility(View.INVISIBLE);
+
+        loadingProgressBar = (ProgressBar) view.findViewById(R.id.detail_loading);
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
         fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE));
@@ -458,7 +463,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             if (!mInloading && !mPrefetching) {
                 if (mLastVisibleItem < firstVisibleItem) {
                     //scroll down, prefetch next page
-                    if (firstVisibleItem > Math.round(0.2f * totalItemCount)) {
+                    if (firstVisibleItem > Math.round(0.5f * totalItemCount)) {
                         prefetchNextPage(1);
                     }
                 }
@@ -536,6 +541,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
             mInloading = false;
             mPrefetching = false;
+            loadingProgressBar.setVisibility(View.INVISIBLE);
+
             mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
             mFam.setVisibility(View.VISIBLE);
 
@@ -614,6 +621,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
             mInloading = false;
             mPrefetching = false;
+
+            loadingProgressBar.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -831,9 +840,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                     mTipBar.setVisibility(View.INVISIBLE);
                     break;
                 case ThreadListFragment.STAGE_DONE:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
-                    mTipBar.setText(pageStr + "加载完成");
-                    mTipBar.setVisibility(View.VISIBLE);
+//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
+//                    mTipBar.setText(pageStr + "加载完成");
+//                    mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case ThreadListFragment.STAGE_RELOGIN:
                     mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
@@ -841,19 +850,20 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                     mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case ThreadListFragment.STAGE_GET_WEBPAGE:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
-                    mTipBar.setText(pageStr + "正在获取页面");
-                    mTipBar.setVisibility(View.VISIBLE);
+                    loadingProgressBar.setVisibility(View.VISIBLE);
+//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
+//                    mTipBar.setText(pageStr + "正在获取页面");
+//                    mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case ThreadListFragment.STAGE_PARSE:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
-                    mTipBar.setText(pageStr + "正在解析页面");
-                    mTipBar.setVisibility(View.VISIBLE);
+//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
+//                    mTipBar.setText(pageStr + "正在解析页面");
+//                    mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case ThreadListFragment.STAGE_PREFETCH:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
-                    mTipBar.setText("正在预读下一页");
-                    mTipBar.setVisibility(View.VISIBLE);
+//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
+//                    mTipBar.setText("正在预读下一页");
+//                    mTipBar.setVisibility(View.VISIBLE);
                     break;
             }
             return false;

@@ -22,6 +22,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,6 +79,7 @@ public class ThreadListFragment extends BaseFragment
     private SwipeRefreshLayout swipeLayout;
     private FloatingActionMenu mFam;
     private FloatingActionButton mFabNotify;
+    private ProgressBar loadingProgressBar;
     private boolean mShowNotifyToast = true;
     private int mFirstVisibleItem = 0;
 
@@ -117,6 +119,8 @@ public class ThreadListFragment extends BaseFragment
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeResources(R.color.icon_blue);
+
+        loadingProgressBar = (ProgressBar) view.findViewById(R.id.list_loading);
 
         mFam = (FloatingActionMenu) view.findViewById(R.id.fam_actions);
         mFam.setVisibility(View.INVISIBLE);
@@ -415,7 +419,7 @@ public class ThreadListFragment extends BaseFragment
         @Override
         public Loader<ThreadListBean> onCreateLoader(int arg0, Bundle arg1) {
             if (!swipeLayout.isRefreshing())
-                swipeLayout.setEnabled(false);
+                loadingProgressBar.setVisibility(View.VISIBLE);
             return new ThreadListLoader(mCtx, mMsgHandler, mForumId, mPage);
         }
 
@@ -425,8 +429,8 @@ public class ThreadListFragment extends BaseFragment
             Logger.v("onLoadFinished enter");
 
             mInloading = false;
-            swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
+            loadingProgressBar.setVisibility(View.INVISIBLE);
 
             if (threads == null) {
                 if (mPage > 1) {
@@ -513,8 +517,8 @@ public class ThreadListFragment extends BaseFragment
 
             mInloading = false;
             mTipBar.setVisibility(View.INVISIBLE);
-            swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
+            loadingProgressBar.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -635,19 +639,19 @@ public class ThreadListFragment extends BaseFragment
                     mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case STAGE_GET_WEBPAGE:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
-                    mTipBar.setText(page + "正在获取页面");
-                    mTipBar.setVisibility(View.VISIBLE);
+//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
+//                    mTipBar.setText(page + "正在获取页面");
+//                    mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case STAGE_PARSE:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
-                    mTipBar.setText(page + "正在解析页面");
-                    mTipBar.setVisibility(View.VISIBLE);
+//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
+//                    mTipBar.setText(page + "正在解析页面");
+//                    mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case STAGE_REFRESH:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
-                    mTipBar.setText("正在刷新");
-                    mTipBar.setVisibility(View.VISIBLE);
+//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
+//                    mTipBar.setText("正在刷新");
+//                    mTipBar.setVisibility(View.VISIBLE);
                     refresh();
                     break;
                 case STAGE_NOT_LOGIN:
@@ -669,7 +673,6 @@ public class ThreadListFragment extends BaseFragment
             dialog.setHandler(mMsgHandler);
             dialog.setTitle("用户登录");
             dialog.show();
-
         }
     }
 }

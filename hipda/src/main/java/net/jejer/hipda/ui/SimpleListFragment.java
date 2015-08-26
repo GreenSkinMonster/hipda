@@ -21,6 +21,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -48,6 +49,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
     private String mQuery = "";
     private SearchView searchView = null;
     private SwipeRefreshLayout swipeLayout;
+    private ProgressBar loadingProgressBar;
 
     private int mPage = 1;
     private boolean mInloading = false;
@@ -83,6 +85,8 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeResources(R.color.icon_blue);
         swipeLayout.setEnabled(false);
+
+        loadingProgressBar = (ProgressBar) view.findViewById(R.id.list_loading);
 
         return view;
     }
@@ -338,14 +342,17 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
 
         @Override
         public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-            if (mMaxPage > 1)
-                mTipBar.setText("正在加载" +
-                        (mMaxPage > 1 ? ("第 " + mPage + " 页，共 " + mMaxPage + " 页") : ""));
-            else
-                mTipBar.setText("加载中...");
+//            if (mMaxPage > 1)
+//                mTipBar.setText("正在加载" +
+//                        (mMaxPage > 1 ? ("第 " + mPage + " 页，共 " + mMaxPage + " 页") : ""));
+//            else
+//                mTipBar.setText("加载中...");
 
-            mTipBar.setVisibility(View.VISIBLE);
-            mTipBar.bringToFront();
+            if (!swipeLayout.isRefreshing())
+                loadingProgressBar.setVisibility(View.VISIBLE);
+
+//            mTipBar.setVisibility(View.VISIBLE);
+//            mTipBar.bringToFront();
             if (!swipeLayout.isRefreshing())
                 swipeLayout.setEnabled(false);
 
@@ -361,6 +368,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
+            loadingProgressBar.setVisibility(View.INVISIBLE);
             mInloading = false;
 
             if (list == null || list.getCount() == 0) {
@@ -381,6 +389,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
+            loadingProgressBar.setVisibility(View.INVISIBLE);
             mInloading = false;
         }
 

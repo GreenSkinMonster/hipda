@@ -75,5 +75,11 @@
         android:textColor="@android:color/primary_text_dark"
         android:visibility="visible" />
 
+    <ProgressBar
+        android:id="@+id/list_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true" />
 
 </RelativeLayout>
