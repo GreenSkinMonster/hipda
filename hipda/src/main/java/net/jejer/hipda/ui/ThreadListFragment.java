@@ -22,7 +22,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,7 +78,7 @@ public class ThreadListFragment extends BaseFragment
     private SwipeRefreshLayout swipeLayout;
     private FloatingActionMenu mFam;
     private FloatingActionButton mFabNotify;
-    private ProgressBar loadingProgressBar;
+    private ContentLoadingProgressBar loadingProgressBar;
     private boolean mShowNotifyToast = true;
     private int mFirstVisibleItem = 0;
 
@@ -120,7 +119,8 @@ public class ThreadListFragment extends BaseFragment
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeResources(R.color.icon_blue);
 
-        loadingProgressBar = (ProgressBar) view.findViewById(R.id.list_loading);
+        loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);
+        loadingProgressBar.show();
 
         mFam = (FloatingActionMenu) view.findViewById(R.id.fam_actions);
         mFam.setVisibility(View.INVISIBLE);
@@ -419,7 +419,7 @@ public class ThreadListFragment extends BaseFragment
         @Override
         public Loader<ThreadListBean> onCreateLoader(int arg0, Bundle arg1) {
             if (!swipeLayout.isRefreshing())
-                loadingProgressBar.setVisibility(View.VISIBLE);
+                loadingProgressBar.show();
             return new ThreadListLoader(mCtx, mMsgHandler, mForumId, mPage);
         }
 
@@ -430,7 +430,7 @@ public class ThreadListFragment extends BaseFragment
 
             mInloading = false;
             swipeLayout.setRefreshing(false);
-            loadingProgressBar.setVisibility(View.INVISIBLE);
+            loadingProgressBar.hide();
 
             if (threads == null) {
                 if (mPage > 1) {
@@ -518,7 +518,7 @@ public class ThreadListFragment extends BaseFragment
             mInloading = false;
             mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setRefreshing(false);
-            loadingProgressBar.setVisibility(View.INVISIBLE);
+            loadingProgressBar.hide();
         }
 
     }

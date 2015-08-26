@@ -21,7 +21,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -49,7 +48,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
     private String mQuery = "";
     private SearchView searchView = null;
     private SwipeRefreshLayout swipeLayout;
-    private ProgressBar loadingProgressBar;
+    private ContentLoadingProgressBar loadingProgressBar;
 
     private int mPage = 1;
     private boolean mInloading = false;
@@ -86,7 +85,8 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
         swipeLayout.setColorSchemeResources(R.color.icon_blue);
         swipeLayout.setEnabled(false);
 
-        loadingProgressBar = (ProgressBar) view.findViewById(R.id.list_loading);
+        loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);
+        loadingProgressBar.show();
 
         return view;
     }
@@ -349,7 +349,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
 //                mTipBar.setText("加载中...");
 
             if (!swipeLayout.isRefreshing())
-                loadingProgressBar.setVisibility(View.VISIBLE);
+                loadingProgressBar.show();
 
 //            mTipBar.setVisibility(View.VISIBLE);
 //            mTipBar.bringToFront();
@@ -368,7 +368,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
-            loadingProgressBar.setVisibility(View.INVISIBLE);
+            loadingProgressBar.hide();
             mInloading = false;
 
             if (list == null || list.getCount() == 0) {

@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -77,22 +76,23 @@ public class PopupImageAdapter extends PagerAdapter {
     private void displayImage(View rootView, ImageReadyInfo imageReadyInfo) {
 
         final SubsamplingScaleImageView wvImage = (SubsamplingScaleImageView) rootView.findViewById(R.id.wv_image);
-        final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.loadingPanel);
+        final ContentLoadingProgressBar progressBar = (ContentLoadingProgressBar) rootView.findViewById(R.id.loadingPanel);
         final ImageView gifImageView = (ImageView) rootView.findViewById(R.id.gif_image);
 
         gifImageView.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
         wvImage.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
+        progressBar.show();
 
         if (imageReadyInfo == null) {
             gifImageView.setVisibility(View.VISIBLE);
             wvImage.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
+            progressBar.hide();
             gifImageView.setImageDrawable(mCtx.getResources().getDrawable(R.drawable.tapatalk_image_broken));
         } else {
             if (imageReadyInfo.isGif()) {
                 gifImageView.setVisibility(View.VISIBLE);
                 wvImage.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
+                progressBar.hide();
                 Glide.with(mCtx)
                         .load(imageReadyInfo.getPath())
                         .asGif()
@@ -113,12 +113,12 @@ public class PopupImageAdapter extends PagerAdapter {
                 wvImage.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener() {
                     @Override
                     public void onImageLoaded() {
-                        progressBar.setVisibility(View.GONE);
+                        progressBar.hide();
                     }
 
                     @Override
                     public void onImageLoadError(Exception e) {
-                        progressBar.setVisibility(View.GONE);
+                        progressBar.hide();
                         wvImage.setImage(ImageSource.resource(R.drawable.tapatalk_image_broken));
 //                        Toast.makeText(mCtx, "图片加载失败", Toast.LENGTH_LONG).show();
                         Logger.e("loading error", e);

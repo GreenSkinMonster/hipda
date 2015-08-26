@@ -32,7 +32,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -112,7 +111,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     private HiProgressDialog postProgressDialog;
     private FloatingActionMenu mFam;
-    private ProgressBar loadingProgressBar;
+    private ContentLoadingProgressBar loadingProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -160,7 +159,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         mFam = (FloatingActionMenu) view.findViewById(R.id.multiple_actions);
         mFam.setVisibility(View.INVISIBLE);
 
-        loadingProgressBar = (ProgressBar) view.findViewById(R.id.detail_loading);
+        loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.detail_loading);
+        loadingProgressBar.show();
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
         fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE));
@@ -541,7 +541,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
             mInloading = false;
             mPrefetching = false;
-            loadingProgressBar.setVisibility(View.INVISIBLE);
+            loadingProgressBar.hide();
 
             mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
             mFam.setVisibility(View.VISIBLE);
@@ -622,7 +622,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             mInloading = false;
             mPrefetching = false;
 
-            loadingProgressBar.setVisibility(View.INVISIBLE);
+            loadingProgressBar.hide();
         }
 
     }
@@ -850,7 +850,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                     mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case ThreadListFragment.STAGE_GET_WEBPAGE:
-                    loadingProgressBar.setVisibility(View.VISIBLE);
+                    loadingProgressBar.show();
 //                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
 //                    mTipBar.setText(pageStr + "正在获取页面");
 //                    mTipBar.setVisibility(View.VISIBLE);
