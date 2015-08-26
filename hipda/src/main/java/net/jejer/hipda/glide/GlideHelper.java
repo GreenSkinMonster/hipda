@@ -54,9 +54,9 @@ public class GlideHelper {
             Glide.setup(gb);
 
             OkHttpClient client = new OkHttpClient();
-            client.setConnectTimeout(VolleyHelper.SOCKET_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-            client.setReadTimeout(VolleyHelper.SOCKET_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-            client.setWriteTimeout(VolleyHelper.SOCKET_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            client.setConnectTimeout(VolleyHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+            client.setReadTimeout(VolleyHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+            client.setWriteTimeout(VolleyHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
 
             if (Logger.isDebug())
                 client.interceptors().add(new LoggingInterceptor());

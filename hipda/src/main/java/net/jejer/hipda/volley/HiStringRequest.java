@@ -29,7 +29,7 @@ public class HiStringRequest extends StringRequest {
                            ErrorListener errorListener) {
         super(url, listener, errorListener);
         setRetryPolicy(new DefaultRetryPolicy(
-                VolleyHelper.SOCKET_TIMEOUT_MS,
+                VolleyHelper.NETWORK_TIMEOUT_SECS * 1000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
@@ -37,7 +37,7 @@ public class HiStringRequest extends StringRequest {
     public HiStringRequest(int method, String url, Listener<String> listener, ErrorListener errorListener) {
         super(method, url, listener, errorListener);
         setRetryPolicy(new DefaultRetryPolicy(
-                VolleyHelper.SOCKET_TIMEOUT_MS,
+                VolleyHelper.NETWORK_TIMEOUT_SECS * 1000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
@@ -45,7 +45,7 @@ public class HiStringRequest extends StringRequest {
     public HiStringRequest(int method, String url, Map<String, String> params, Listener<String> listener, ErrorListener errorListener) {
         super(method, url, listener, errorListener);
         setRetryPolicy(new DefaultRetryPolicy(
-                VolleyHelper.SOCKET_TIMEOUT_MS,
+                VolleyHelper.NETWORK_TIMEOUT_SECS * 1000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mParams = params;

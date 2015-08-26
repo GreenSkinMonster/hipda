@@ -31,8 +31,8 @@ import java.util.concurrent.TimeoutException;
 
 public class VolleyHelper {
 
-    public final static int REQUEST_TIMEOUT_SECS = 15;
-    public final static int SOCKET_TIMEOUT_MS = 8000;
+    public final static int REQUEST_TIMEOUT_SECS = 20;
+    public final static int NETWORK_TIMEOUT_SECS = 10;
 
     private Context mCtx;
     private RequestQueue mRequestQueue;
