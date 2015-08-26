@@ -75,16 +75,22 @@ public class HiParserThreadDetail {
         }
 
         //get forum id
-        Elements threadTitleES = doc.select("#threadtitle a");
-        if (threadTitleES.size() > 0) {
-            String forumUrl = threadTitleES.first().attr("href");
-            if (!TextUtils.isEmpty(forumUrl))
-                details.setFid(HttpUtils.getMiddleString(forumUrl, "fid=", "&"));
+        Elements divNavLinkES = doc.select("div#nav a");
+        if (divNavLinkES.size() > 0) {
+            for (int i = 0; i < divNavLinkES.size(); i++) {
+                Element forumLink = divNavLinkES.get(i);
+                String forumUrl = Utils.nullToText(forumLink.attr("href"));
+                if (forumUrl.indexOf("fid=") > 0) {
+                    details.setFid(HttpUtils.getMiddleString(forumUrl, "fid=", "&"));
+                    break;
+                }
+            }
         }
 
         //Title
         Elements threadtitleES = doc.select("div#threadtitle");
         if (threadtitleES.size() > 0) {
+            threadtitleES.select("a").remove();
             details.setTitle(threadtitleES.first().text());
         }
 
