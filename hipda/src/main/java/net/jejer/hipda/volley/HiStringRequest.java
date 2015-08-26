@@ -1,9 +1,9 @@
 package net.jejer.hipda.volley;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
@@ -22,19 +22,32 @@ import java.util.Map;
 
 public class HiStringRequest extends StringRequest {
 
+
     private Map<String, String> mParams;
 
-    public HiStringRequest(Context ctx, String url, Listener<String> listener,
+    public HiStringRequest(String url, Listener<String> listener,
                            ErrorListener errorListener) {
         super(url, listener, errorListener);
+        setRetryPolicy(new DefaultRetryPolicy(
+                VolleyHelper.SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     public HiStringRequest(int method, String url, Listener<String> listener, ErrorListener errorListener) {
         super(method, url, listener, errorListener);
+        setRetryPolicy(new DefaultRetryPolicy(
+                VolleyHelper.SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     public HiStringRequest(int method, String url, Map<String, String> params, Listener<String> listener, ErrorListener errorListener) {
         super(method, url, listener, errorListener);
+        setRetryPolicy(new DefaultRetryPolicy(
+                VolleyHelper.SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mParams = params;
     }
 

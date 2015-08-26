@@ -57,7 +57,7 @@ public class UpdateHelper {
         HiSettingsHelper.getInstance().setLastUpdateCheckTime(new Date());
 
         String updateUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda-ng.md";
-        StringRequest sReq = new HiStringRequest(mCtx, updateUrl, new SuccessListener(), new ErrorListener());
+        StringRequest sReq = new HiStringRequest(updateUrl, new SuccessListener(), new ErrorListener());
         VolleyHelper.getInstance().add(sReq);
     }
 

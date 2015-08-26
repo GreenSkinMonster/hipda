@@ -214,7 +214,7 @@ public class HiParserThreadList {
 
             if (mCheckSMS) {
                 // Trigger Refresh SMS, result will show in next load.
-                StringRequest sReq = new HiStringRequest(mCtx, HiUtils.CheckSMS,
+                StringRequest sReq = new HiStringRequest(HiUtils.CheckSMS,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {

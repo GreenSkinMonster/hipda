@@ -34,6 +34,7 @@ import net.jejer.hipda.volley.VolleyHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public class GlideHelper {
 
@@ -53,6 +54,10 @@ public class GlideHelper {
             Glide.setup(gb);
 
             OkHttpClient client = new OkHttpClient();
+            client.setConnectTimeout(VolleyHelper.SOCKET_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            client.setReadTimeout(VolleyHelper.SOCKET_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            client.setWriteTimeout(VolleyHelper.SOCKET_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+
             if (Logger.isDebug())
                 client.interceptors().add(new LoggingInterceptor());
             Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));

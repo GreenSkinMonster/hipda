@@ -91,8 +91,7 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
         if (HiSettingsHelper.getInstance().isSortByPostTime(mForumId)) {
             mUrl += "&orderby=dateline";
         }
-        StringRequest sReq = new HiStringRequest(mCtx, mUrl,
-                new ThreadListListener(), new ThreadListErrorListener());
+        StringRequest sReq = new HiStringRequest(mUrl, new ThreadListListener(), new ThreadListErrorListener());
         VolleyHelper.getInstance().add(sReq);
     }
 

@@ -107,8 +107,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         } else {
             mUrl = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
         }
-        StringRequest sReq = new HiStringRequest(mCtx, mUrl,
-                new DetailListListener(), new ThreadDetailErrorListener());
+        StringRequest sReq = new HiStringRequest(mUrl, new DetailListListener(), new ThreadDetailErrorListener());
         VolleyHelper.getInstance().add(sReq);
     }
 
