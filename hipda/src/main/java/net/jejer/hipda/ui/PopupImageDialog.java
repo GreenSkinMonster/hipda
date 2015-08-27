@@ -33,6 +33,8 @@ import net.jejer.hipda.utils.Utils;
 import java.io.File;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * image gallery
  * Created by GreenSkinMonster on 2015-05-20.
@@ -47,6 +49,7 @@ public class PopupImageDialog extends DialogFragment {
     private int mImageIndex;
 
     private LayoutInflater mInflater;
+    private PagerAdapter mPagerAdapter;
 
     public PopupImageDialog() {
     }
@@ -76,8 +79,10 @@ public class PopupImageDialog extends DialogFragment {
         final TextView tvFloorInfo = (TextView) layout.findViewById(R.id.tv_floor_info);
 
         final List<ContentImg> images = mDetailListBean.getContentImages();
-        PagerAdapter adapter = new PopupImageAdapter(mCtx, images);
-        viewPager.setAdapter(adapter);
+        mPagerAdapter = new PopupImageAdapter(mCtx, images);
+        viewPager.setAdapter(mPagerAdapter);
+
+        EventBus.getDefault().register(mPagerAdapter);
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -171,4 +176,9 @@ public class PopupImageDialog extends DialogFragment {
 
     }
 
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(mPagerAdapter);
+        super.onDestroy();
+    }
 }

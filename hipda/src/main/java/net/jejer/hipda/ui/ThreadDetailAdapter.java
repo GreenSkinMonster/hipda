@@ -22,8 +22,10 @@ import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
-import net.jejer.hipda.glide.GlideFutureTask;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.glide.GlideImageEvent;
+import net.jejer.hipda.glide.GlideImageJob;
+import net.jejer.hipda.glide.GlideImageManager;
 import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.utils.Utils;
@@ -149,23 +151,25 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     mDetailFragment.loadImage(imageUrl, giv);
                 } else {
                     if (HiSettingsHelper.getInstance().isLoadImage()) {
-                        new GlideFutureTask(mCtx, imageUrl) {
-                            @Override
-                            protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
-                                mDetailFragment.loadImage(imageUrl, giv);
-                            }
-                        }.execute();
+                        GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1, giv));
+//                        new GlideFutureTask(mCtx, imageUrl) {
+//                            @Override
+//                            protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
+//                                mDetailFragment.loadImage(imageUrl, giv);
+//                            }
+//                        }.execute();
                     } else {
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 giv.setImageResource(R.drawable.loading);
-                                new GlideFutureTask(mCtx, imageUrl) {
-                                    @Override
-                                    protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
-                                        mDetailFragment.loadImage(imageUrl, giv);
-                                    }
-                                }.execute();
+                                GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1, giv));
+//                                new GlideFutureTask(mCtx, imageUrl) {
+//                                    @Override
+//                                    protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
+//                                        mDetailFragment.loadImage(imageUrl, giv);
+//                                    }
+//                                }.execute();
                                 giv.setOnClickListener(null);
                             }
                         });
@@ -265,6 +269,15 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         return convertView;
     }
 
+    @SuppressWarnings("unused")
+    public void onEventMainThread(GlideImageEvent event) {
+        if (event.getImageUrl() != null
+                && !TextUtils.isEmpty(event.getImageUrl())
+                && event.getView() instanceof GlideImageView) {
+            GlideImageView giv = (GlideImageView) event.getView();
+            mDetailFragment.loadImage(event.getImageUrl(), giv);
+        }
+    }
 
     private static class ViewHolder {
         ImageView avatar;

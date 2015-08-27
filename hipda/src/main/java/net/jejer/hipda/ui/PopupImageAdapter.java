@@ -16,7 +16,9 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.cache.ImageContainer;
-import net.jejer.hipda.glide.GlideFutureTask;
+import net.jejer.hipda.glide.GlideImageEvent;
+import net.jejer.hipda.glide.GlideImageJob;
+import net.jejer.hipda.glide.GlideImageManager;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.utils.Logger;
 
@@ -55,17 +57,20 @@ public class PopupImageAdapter extends PagerAdapter {
             mInflater = (LayoutInflater) mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         final View rootView = mInflater.inflate(R.layout.popup_image_page, container, false);
+        ContentLoadingProgressBar progressBar = (ContentLoadingProgressBar) rootView.findViewById(R.id.loadingPanel);
+        progressBar.show();
 
         final String imageUrl = mImages.get(position).getContent();
         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
 
         if (imageReadyInfo == null || !(new File(imageReadyInfo.getPath())).exists()) {
-            new GlideFutureTask(mCtx, imageUrl) {
-                @Override
-                protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
-                    displayImage(rootView, imageReadyInfo);
-                }
-            }.execute();
+            GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 9, rootView));
+//            new GlideFutureTask(mCtx, imageUrl) {
+//                @Override
+//                protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
+//                    displayImage(rootView, imageReadyInfo);
+//                }
+//            }.execute();
         } else {
             displayImage(rootView, imageReadyInfo);
         }
@@ -131,6 +136,12 @@ public class PopupImageAdapter extends PagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
+    }
+
+    @SuppressWarnings("unused")
+    public void onEventMainThread(GlideImageEvent event) {
+        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(event.getImageUrl());
+        displayImage(event.getView(), imageReadyInfo);
     }
 
 }

@@ -44,6 +44,7 @@ import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.glide.GlideImageManager;
 import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
@@ -72,6 +73,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
         HiSettingsHelper.getInstance().init(this);
         UpdateHelper.updateApp(this);
+        GlideImageManager.init(this);
 
         ACRAUtils.init(this);
         GlideHelper.init(this);

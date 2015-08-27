@@ -68,6 +68,8 @@ import net.jejer.hipda.utils.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 
 public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.PostListener {
     public static final String ARG_TID_KEY = "tid";
@@ -141,6 +143,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         mLoaderCallbacks = new ThreadListLoaderCallbacks();
         mDetailAdapter = new ThreadDetailAdapter(mCtx, getFragmentManager(), this,
                 new GoToFloorOnClickListener(), new AvatarOnClickListener());
+
+        EventBus.getDefault().register(mDetailAdapter);
 
         mMsgHandler = new Handler(new ThreadDetailMsgHandler());
     }
@@ -511,6 +515,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         //Logger.v( "onDestory");
         getLoaderManager().destroyLoader(0);
         ((MainFrameActivity) getActivity()).registOnSwipeCallback(null);
+        EventBus.getDefault().unregister(mDetailAdapter);
         super.onDestroy();
     }
 
