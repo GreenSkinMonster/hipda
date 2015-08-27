@@ -152,24 +152,12 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 } else {
                     if (HiSettingsHelper.getInstance().isLoadImage()) {
                         GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1, giv));
-//                        new GlideFutureTask(mCtx, imageUrl) {
-//                            @Override
-//                            protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
-//                                mDetailFragment.loadImage(imageUrl, giv);
-//                            }
-//                        }.execute();
                     } else {
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 giv.setImageResource(R.drawable.loading);
                                 GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1, giv));
-//                                new GlideFutureTask(mCtx, imageUrl) {
-//                                    @Override
-//                                    protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
-//                                        mDetailFragment.loadImage(imageUrl, giv);
-//                                    }
-//                                }.execute();
                                 giv.setOnClickListener(null);
                             }
                         });

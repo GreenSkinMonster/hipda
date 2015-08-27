@@ -65,12 +65,6 @@ public class PopupImageAdapter extends PagerAdapter {
 
         if (imageReadyInfo == null || !(new File(imageReadyInfo.getPath())).exists()) {
             GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 9, rootView));
-//            new GlideFutureTask(mCtx, imageUrl) {
-//                @Override
-//                protected void onPostExecute(ImageReadyInfo imageReadyInfo) {
-//                    displayImage(rootView, imageReadyInfo);
-//                }
-//            }.execute();
         } else {
             displayImage(rootView, imageReadyInfo);
         }
@@ -83,6 +77,10 @@ public class PopupImageAdapter extends PagerAdapter {
         final SubsamplingScaleImageView wvImage = (SubsamplingScaleImageView) rootView.findViewById(R.id.wv_image);
         final ContentLoadingProgressBar progressBar = (ContentLoadingProgressBar) rootView.findViewById(R.id.loadingPanel);
         final ImageView gifImageView = (ImageView) rootView.findViewById(R.id.gif_image);
+
+        //imageView could be null if display image on GlideImageEvent
+        if (wvImage == null || gifImageView == null)
+            return;
 
         gifImageView.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
         wvImage.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
@@ -141,7 +139,8 @@ public class PopupImageAdapter extends PagerAdapter {
     @SuppressWarnings("unused")
     public void onEventMainThread(GlideImageEvent event) {
         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(event.getImageUrl());
-        displayImage(event.getView(), imageReadyInfo);
+        if (event.getView() != null)
+            displayImage(event.getView(), imageReadyInfo);
     }
 
 }

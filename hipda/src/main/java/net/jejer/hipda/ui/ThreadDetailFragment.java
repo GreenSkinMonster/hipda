@@ -935,7 +935,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     public void loadImage(String imageUrl, GlideImageView giv) {
 
-        if (mCtx == null)
+        if (mCtx == null || giv == null)
             return;
         if (Build.VERSION.SDK_INT >= 17
                 && (mCtx instanceof Activity)
