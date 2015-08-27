@@ -225,6 +225,20 @@ public class MainFrameActivity extends AppCompatActivity {
                 popFragment(false);
             }
         });
+
+        toolbar.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                if (mOnSwipeCallback instanceof ThreadDetailFragment) {
+                    ((ThreadDetailFragment) mOnSwipeCallback).scrollToTop();
+                } else {
+                    Fragment fragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+                    if (fragment instanceof ThreadListFragment)
+                        ((ThreadListFragment) fragment).scrollToTop();
+                }
+            }
+        });
+
     }
 
     public void updateAccountHeader() {

@@ -520,6 +520,10 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         super.onDestroy();
     }
 
+    public void scrollToTop() {
+        mDetailListView.setSelection(0);
+    }
+
     public class ThreadListLoaderCallbacks implements LoaderManager.LoaderCallbacks<DetailListBean> {
 
         @Override

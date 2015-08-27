@@ -339,6 +339,7 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onRefresh() {
         refresh();
+        loadingProgressBar.hide();
     }
 
     public class OnScrollCallback implements AbsListView.OnScrollListener {
@@ -612,6 +613,10 @@ public class ThreadListFragment extends BaseFragment
             if (mFabNotify.getVisibility() == View.VISIBLE)
                 mFabNotify.setVisibility(View.GONE);
         }
+    }
+
+    public void scrollToTop() {
+        mThreadListView.setSelection(0);
     }
 
     private class ThreadListMsgHandler implements Handler.Callback {
