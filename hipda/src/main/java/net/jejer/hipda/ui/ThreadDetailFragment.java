@@ -208,10 +208,10 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         });
 
         if (!HiSettingsHelper.getInstance().getIsLandscape()) {
-            mDetailListView.addHeaderView(inflater.inflate(R.layout.head_thread_detail, null));
-            mTitleView = (TextView) view.findViewById(R.id.thread_detail_title);
-            mTitleView.setTextSize(HiSettingsHelper.getTitleTextSize());
-            mTitleView.setText(mTitle);
+//            mDetailListView.addHeaderView(inflater.inflate(R.layout.head_thread_detail, null));
+//            mTitleView = (TextView) view.findViewById(R.id.thread_detail_title);
+//            mTitleView.setTextSize(HiSettingsHelper.getTitleTextSize());
+//            mTitleView.setText(mTitle);
         }
         mDetailListView.setPullLoadEnable(false);
         mDetailListView.setPullRefreshEnable(false);
@@ -243,13 +243,14 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         final GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                if (mDetailListView.isFastScrollEnabled()) {
-                    mDetailListView.setFastScrollEnabled(false);
-                    mDetailListView.setFastScrollAlwaysVisible(false);
-                } else {
-                    mDetailListView.setFastScrollEnabled(true);
-                    mDetailListView.setFastScrollAlwaysVisible(true);
-                }
+                showGotoPageDialog();
+//                if (mDetailListView.isFastScrollEnabled()) {
+//                    mDetailListView.setFastScrollEnabled(false);
+//                    mDetailListView.setFastScrollAlwaysVisible(false);
+//                } else {
+//                    mDetailListView.setFastScrollEnabled(true);
+//                    mDetailListView.setFastScrollAlwaysVisible(true);
+//                }
                 return true;
             }
         };
