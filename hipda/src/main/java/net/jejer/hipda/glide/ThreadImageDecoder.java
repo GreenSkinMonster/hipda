@@ -43,7 +43,7 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
             }
 
             if (ImageSizeUtils.isLongImage(originalWidth, originalHeight))
-                mMaxWidth *= ImageSizeUtils.LONG_IMAGE_DECODE_WIDTH;
+                mMaxWidth = ImageSizeUtils.LONG_IMAGE_DECODE_WIDTH;
 
             int newWidth = originalWidth > mMaxWidth ? mMaxWidth : originalWidth;
             float scale = ((float) newWidth) / originalWidth;
