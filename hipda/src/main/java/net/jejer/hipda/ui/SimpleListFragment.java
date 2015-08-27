@@ -86,7 +86,8 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
         swipeLayout.setEnabled(false);
 
         loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);
-        loadingProgressBar.show();
+        if (mType != SimpleListLoader.TYPE_SEARCH)
+            loadingProgressBar.show();
 
         return view;
     }
@@ -389,7 +390,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
-            loadingProgressBar.setVisibility(View.INVISIBLE);
+            loadingProgressBar.hide();
             mInloading = false;
         }
 

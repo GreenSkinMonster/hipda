@@ -168,6 +168,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             @Override
             public void onClick(View view) {
                 mFam.close(true);
+                loadingProgressBar.showNow();
                 mFloorOfPage = LAST_FLOOR;
                 refresh();
             }

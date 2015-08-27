@@ -131,6 +131,7 @@ public class ThreadListFragment extends BaseFragment
             @Override
             public void onClick(View view) {
                 mFam.close(true);
+                loadingProgressBar.showNow();
                 refresh();
             }
         });

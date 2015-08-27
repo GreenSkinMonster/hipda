@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.View;
@@ -54,6 +55,11 @@ public class ContentLoadingProgressBar extends ProgressBar {
     public ContentLoadingProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mIsShown = getVisibility() == View.VISIBLE;
+
+        //set indeterminate circle color
+        getIndeterminateDrawable().setColorFilter(
+                Color.LTGRAY,
+                android.graphics.PorterDuff.Mode.SRC_IN);
     }
 
     @Override
@@ -115,6 +121,21 @@ public class ContentLoadingProgressBar extends ProgressBar {
                 removeCallbacks(mDelayedHide);
                 if (mStartTime == -1L) {
                     postDelayed(mDelayedShow, MIN_DELAY);
+                }
+            }
+        }
+    }
+
+    /**
+     * hack, show progress without delay
+     */
+    public void showNow() {
+        if (!mIsShown) {
+            mIsShown = true;
+            if (mIsAttachedToWindow) {
+                removeCallbacks(mDelayedHide);
+                if (mStartTime == -1L) {
+                    postDelayed(mDelayedShow, 0);
                 }
             }
         }

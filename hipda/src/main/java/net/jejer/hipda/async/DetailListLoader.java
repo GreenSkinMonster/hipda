@@ -31,6 +31,9 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
     private Context mCtx;
     private Handler mHandler;
 
+    private final static int MAX_TIMES = 3;
+    private int count = 0;
+
     private Object mLocker;
     private String mTid;
     private String mGotoPostId;
@@ -56,9 +59,9 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
             return null;
         }
 
-        int try_count = 0;
-        boolean fetch_done = false;
+        boolean getOk = false;
         do {
+            count++;
             fetchDetail();
             synchronized (mLocker) {
                 try {
@@ -74,12 +77,11 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
                         break;
                     }
                 } else {
-                    fetch_done = true;
+                    getOk = true;
                 }
             }
-            try_count++;
-        } while (!fetch_done && try_count < 3);
-        if (!fetch_done) {
+        } while (!getOk && count <= MAX_TIMES);
+        if (!getOk) {
             Logger.e("Load Detail Fail");
             return null;
         }
@@ -129,7 +131,8 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
             Message msg = Message.obtain();
             msg.what = ThreadListFragment.STAGE_ERROR;
             Bundle b = new Bundle();
-            b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA," + VolleyHelper.getErrorReason(error));
+            String text = "无法访问HiPDA, " + VolleyHelper.getErrorReason(error);
+            b.putString(ThreadListFragment.STAGE_ERROR_KEY, text);
             msg.setData(b);
             mHandler.sendMessage(msg);
 

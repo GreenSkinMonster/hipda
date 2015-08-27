@@ -32,6 +32,9 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
     private String mRsp;
     private Handler mHandler;
 
+    private final static int MAX_TIMES = 3;
+    private int count = 0;
+
     private String mUrl;
 
     public ThreadListLoader(Context context, Handler handler, int forumId, int page) {
@@ -49,9 +52,9 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
             return null;
         }
 
-        int count = 0;
         boolean getOk = false;
         do {
+            count++;
             fetchForumList();
 
             synchronized (mLocker) {
@@ -71,8 +74,7 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
                     getOk = true;
                 }
             }
-            count++;
-        } while (!getOk && count < 3);
+        } while (!getOk && count <= MAX_TIMES);
 
         if (!getOk) {
             return null;
@@ -113,7 +115,8 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
             Message msg = Message.obtain();
             msg.what = ThreadListFragment.STAGE_ERROR;
             Bundle b = new Bundle();
-            b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA," + VolleyHelper.getErrorReason(error));
+            String text = "无法访问HiPDA, " + VolleyHelper.getErrorReason(error);
+            b.putString(ThreadListFragment.STAGE_ERROR_KEY, text);
             msg.setData(b);
             mHandler.sendMessage(msg);
 
