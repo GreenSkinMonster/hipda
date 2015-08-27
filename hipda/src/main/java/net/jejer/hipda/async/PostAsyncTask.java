@@ -185,7 +185,10 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             if (rsp_str.contains("tid = parseInt('")) {
                 tid = HttpUtils.getMiddleString(rsp_str, "tid = parseInt('", "'");
             }
-            if (!TextUtils.isEmpty(tid) && TextUtils.isDigitsOnly(tid) && Integer.parseInt(tid) > 0) {
+            if (!TextUtils.isEmpty(tid)
+                    && TextUtils.isDigitsOnly(tid)
+                    && Integer.parseInt(tid) > 0
+                    && !rsp_str.contains("alert_info")) {
                 mTid = tid;
                 mResult = "发表成功!";
                 mStatus = Constants.STATUS_SUCCESS;
