@@ -32,7 +32,8 @@ import java.util.concurrent.TimeoutException;
 
 public class VolleyHelper {
 
-    public final static int REQUEST_TIMEOUT = 15;
+    public final static int REQUEST_TIMEOUT_SECS = 20;
+    public final static int NETWORK_TIMEOUT_SECS = 10;
 
     private Context mCtx;
     private RequestQueue mRequestQueue;
@@ -130,7 +131,7 @@ public class VolleyHelper {
         HiStringRequest request = new HiStringRequest(Request.Method.GET, url, future, future);
         mRequestQueue.add(request);
         try {
-            return future.get(REQUEST_TIMEOUT, TimeUnit.SECONDS);
+            return future.get(REQUEST_TIMEOUT_SECS, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             Logger.e("Error when synchronousGet : " + url, e);
             if (errorListener != null)
@@ -148,7 +149,7 @@ public class VolleyHelper {
         HiStringRequest request = new HiStringRequest(Request.Method.POST, url, params, future, future);
         mRequestQueue.add(request);
         try {
-            return future.get(REQUEST_TIMEOUT, TimeUnit.SECONDS);
+            return future.get(REQUEST_TIMEOUT_SECS, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             Logger.e("Error when synchronousPost : " + url, e);
             if (errorListener != null)

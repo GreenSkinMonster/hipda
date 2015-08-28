@@ -144,8 +144,7 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
                 break;
         }
 
-        StringRequest sReq = new HiStringRequest(mCtx, url,
-                new ThreadListListener(), new ThreadListErrorListener());
+        StringRequest sReq = new HiStringRequest(url, new ThreadListListener(), new ThreadListErrorListener());
         VolleyHelper.getInstance().add(sReq);
     }
 

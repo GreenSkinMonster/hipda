@@ -146,7 +146,7 @@ public class UserinfoFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        StringRequest sReq = new HiStringRequest(getActivity(), HiUtils.UserInfoUrl + mUid,
+        StringRequest sReq = new HiStringRequest(HiUtils.UserInfoUrl + mUid,
                 new OnDetailLoadComplete(),
                 new Response.ErrorListener() {
                     @Override

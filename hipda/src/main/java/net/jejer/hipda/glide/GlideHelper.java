@@ -3,9 +3,9 @@ package net.jejer.hipda.glide;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
@@ -18,6 +18,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
+import com.squareup.okhttp.OkHttpClient;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.VolleyHelper;
@@ -25,8 +26,10 @@ import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public class GlideHelper {
 
@@ -43,8 +46,12 @@ public class GlideHelper {
 
             Glide.setup(gb);
 
-            Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory());
-            // Glide.get(context).register(GlideUrl.class, InputStream.class, new VolleyUrlLoader.Factory(context));
+            OkHttpClient client = new OkHttpClient();
+            client.setConnectTimeout(VolleyHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+            client.setReadTimeout(VolleyHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+            client.setWriteTimeout(VolleyHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+
+            Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
         }
     }
 
@@ -80,13 +87,11 @@ public class GlideHelper {
         @Override
         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
             if (e != null) {
-                Throwable t = e.getCause();
-                if (t instanceof VolleyError) {
-                    VolleyError volleyError = (VolleyError) t;
-                    if (volleyError.networkResponse != null
-                            && volleyError.networkResponse.statusCode == 404)
-                        NOT_FOUND_AVATARS.put(model, "");
-                }
+                //Volley with OkHttp
+                if (e instanceof IOException
+                        && !TextUtils.isEmpty(e.getMessage())
+                        && e.getMessage().contains("404"))
+                    NOT_FOUND_AVATARS.put(model, "");
             }
             return false;
         }

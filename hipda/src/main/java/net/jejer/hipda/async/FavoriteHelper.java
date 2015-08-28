@@ -25,7 +25,7 @@ public class FavoriteHelper {
     }
 
     public void addFavorite(final Context ctx, final String tid, final String title) {
-        StringRequest sReq = new HiStringRequest(ctx, HiUtils.FavoriteAddUrl + tid,
+        StringRequest sReq = new HiStringRequest(HiUtils.FavoriteAddUrl + tid,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -48,7 +48,7 @@ public class FavoriteHelper {
     }
 
     public void removeFavorite(final Context ctx, final String tid, final String title) {
-        StringRequest sReq = new HiStringRequest(ctx, HiUtils.FavoriteRemoveUrl + tid,
+        StringRequest sReq = new HiStringRequest(HiUtils.FavoriteRemoveUrl + tid,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
