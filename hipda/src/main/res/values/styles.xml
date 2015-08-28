@@ -165,4 +165,9 @@
         <item name="android:textColor">@color/textColorPrimaryDark</item>
     </style>
 
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_in_left</item>
+        <item name="android:windowExitAnimation">@anim/dialong_out_right</item>
+    </style>
+
 </resources>

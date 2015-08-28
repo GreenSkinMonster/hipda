@@ -9,8 +9,6 @@ import android.view.View.OnTouchListener;
 
 import net.jejer.hipda.utils.Logger;
 
-//import android.util.Log;
-
 public class OnSwipeTouchListener implements OnTouchListener {
 
     private final GestureDetector gestureDetector;
