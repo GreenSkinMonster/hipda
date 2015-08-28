@@ -41,6 +41,11 @@ public class Utils {
         return nullToText(text).replace(String.valueOf((char) 160), " ").trim();
     }
 
+    public static int getWordCount(String s) {
+        s = s.replaceAll("[^\\x00-\\xff]", "**");
+        return s.length();
+    }
+
     public static String shortyTime(String time) {
         if (TextUtils.isEmpty(time))
             return "";

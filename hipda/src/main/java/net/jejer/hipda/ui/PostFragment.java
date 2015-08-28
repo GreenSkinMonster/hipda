@@ -323,13 +323,13 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                 }
 
                 String subjectText = mEtSubjectMsg.getText().toString();
-                if (mMode == PostAsyncTask.MODE_NEW_THREAD && subjectText.length() < 5) {
+                if (mMode == PostAsyncTask.MODE_NEW_THREAD && Utils.getWordCount(subjectText) < 5) {
                     Toast.makeText(getActivity(), "主题字数必须大于5", Toast.LENGTH_LONG).show();
                     return true;
                 }
 
                 String replyText = mEtReplyMsg.getText().toString();
-                if (replyText.length() < 5) {
+                if (Utils.getWordCount(replyText) < 5) {
                     Toast.makeText(getActivity(), "帖子内容字数必须大于5", Toast.LENGTH_LONG).show();
                     return true;
                 }

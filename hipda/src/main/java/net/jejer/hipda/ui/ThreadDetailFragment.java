@@ -64,6 +64,7 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.ImageSizeUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -277,7 +278,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             @Override
             public void onClick(View v) {
                 String replyText = mReplyTextTv.getText().toString();
-                if (replyText.length() < 5) {
+                if (Utils.getWordCount(replyText) < 5) {
                     Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
                 } else {
                     mReplyTextTv.setText("");
