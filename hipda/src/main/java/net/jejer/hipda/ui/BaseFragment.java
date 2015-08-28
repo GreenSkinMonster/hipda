@@ -71,4 +71,16 @@ public abstract class BaseFragment extends Fragment {
         super.onDetach();
         Logger.v("onDetach : " + getClass().getName());
     }
+
+    public void scrollToTop() {
+    }
+
+    public void stopScroll() {
+    }
+
+    @Override
+    public void onDestroyView() {
+        stopScroll();
+        super.onDestroyView();
+    }
 }

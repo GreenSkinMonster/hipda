@@ -229,12 +229,10 @@ public class MainFrameActivity extends AppCompatActivity {
         toolbar.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                if (mOnSwipeCallback instanceof ThreadDetailFragment) {
-                    ((ThreadDetailFragment) mOnSwipeCallback).scrollToTop();
-                } else {
-                    Fragment fragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
-                    if (fragment instanceof ThreadListFragment)
-                        ((ThreadListFragment) fragment).scrollToTop();
+                //get top displaying fragment
+                Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+                if (fg instanceof BaseFragment) {
+                    ((BaseFragment) fg).scrollToTop();
                 }
             }
         });

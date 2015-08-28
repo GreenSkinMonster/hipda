@@ -7,6 +7,7 @@ import android.content.Loader;
 import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -236,6 +238,15 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
     @Override
     public void onRefresh() {
         refresh();
+    }
+
+    public void scrollToTop() {
+        stopScroll();
+        mThreadListView.setSelection(0);
+    }
+
+    public void stopScroll() {
+        mThreadListView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
     }
 
     public class OnScrollCallback implements AbsListView.OnScrollListener {

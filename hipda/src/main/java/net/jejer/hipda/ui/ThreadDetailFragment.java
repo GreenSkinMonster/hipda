@@ -521,7 +521,12 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     }
 
     public void scrollToTop() {
+        stopScroll();
         mDetailListView.setSelection(0);
+    }
+
+    public void stopScroll() {
+        mDetailListView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
     }
 
     public class ThreadListLoaderCallbacks implements LoaderManager.LoaderCallbacks<DetailListBean> {

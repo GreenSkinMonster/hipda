@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -616,7 +617,12 @@ public class ThreadListFragment extends BaseFragment
     }
 
     public void scrollToTop() {
+        stopScroll();
         mThreadListView.setSelection(0);
+    }
+
+    public void stopScroll() {
+        mThreadListView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
     }
 
     private class ThreadListMsgHandler implements Handler.Callback {
