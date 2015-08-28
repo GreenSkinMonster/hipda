@@ -22,8 +22,9 @@ import java.util.Map;
 
 public class HiStringRequest extends StringRequest {
 
-
     private Map<String, String> mParams;
+
+    private String mForceResponseEncoding;
 
     public HiStringRequest(String url, Listener<String> listener,
                            ErrorListener errorListener) {
@@ -83,7 +84,9 @@ public class HiStringRequest extends StringRequest {
         String parsed;
         String encoding = HiSettingsHelper.getInstance().getEncode();
         String contextType = response.headers.get("Content-Type");
-        if (!TextUtils.isEmpty(contextType)) {
+        if (!TextUtils.isEmpty(mForceResponseEncoding)) {
+            encoding = mForceResponseEncoding;
+        } else if (!TextUtils.isEmpty(contextType)) {
             if (contextType.toUpperCase().contains("UTF")) {
                 encoding = "UTF-8";
             } else if (contextType.toUpperCase().contains("GBK")) {
@@ -99,4 +102,7 @@ public class HiStringRequest extends StringRequest {
         return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
     }
 
+    public void setForceResponseEncoding(String mForceResponseEncoding) {
+        this.mForceResponseEncoding = mForceResponseEncoding;
+    }
 }

@@ -393,7 +393,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 if (mAuthorOnly) {
                     mDetailListView.setPullLoadEnable(false);
                     mDetailListView.setPullRefreshEnable(false);
-                    setActionBarTitle("(只看楼主)" + mTitle);
+                    setActionBarTitle("(只看楼主) " + mTitle);
                     showAndLoadAuthorOnly();
                 } else {
                     showOrLoadPage();
@@ -890,7 +890,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     private void showOrLoadPage() {
 
         setActionBarTitle("("
-                + (mCurrentPage > 0 ? String.valueOf(mCurrentPage) + "/" + String.valueOf(mMaxPage) + ")" : "")
+                + (mCurrentPage > 0 ? String.valueOf(mCurrentPage) + "/" + String.valueOf(mMaxPage) + ") " : "")
                 + mTitle);
 
         if (mCache.get(mCurrentPage) != null) {

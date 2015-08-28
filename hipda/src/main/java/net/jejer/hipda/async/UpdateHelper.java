@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
@@ -24,6 +23,7 @@ import java.util.Date;
 import java.util.Set;
 
 /**
+ * check and download update file
  * Created by GreenSkinMonster on 2015-03-09.
  */
 public class UpdateHelper {
@@ -33,12 +33,26 @@ public class UpdateHelper {
 
     private HiProgressDialog pd;
 
+    private String checkUrl = "";
+    private String downloadUrl = "";
+
     public UpdateHelper(Context ctx, boolean isSilent) {
         mCtx = ctx;
         mSilent = isSilent;
+
+        if (isSilent) {
+            checkUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda-ng.md";
+            downloadUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-ng-release-{version}.apk";
+        } else {
+            checkUrl = "https://bitbucket.org/GreenSkinMonster/hipda/downloads/hipda-ng.md";
+            downloadUrl = "https://bitbucket.org/GreenSkinMonster/hipda/downloads/hipda-ng-release-{version}.apk";
+        }
     }
 
     public void check() {
+        HiSettingsHelper.getInstance().setAutoUpdateCheck(true);
+        HiSettingsHelper.getInstance().setLastUpdateCheckTime(new Date());
+
         if (mSilent) {
             doCheck();
         } else {
@@ -53,11 +67,8 @@ public class UpdateHelper {
     }
 
     private void doCheck() {
-        HiSettingsHelper.getInstance().setAutoUpdateCheck(true);
-        HiSettingsHelper.getInstance().setLastUpdateCheckTime(new Date());
-
-        String updateUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda-ng.md";
-        StringRequest sReq = new HiStringRequest(updateUrl, new SuccessListener(), new ErrorListener());
+        HiStringRequest sReq = new HiStringRequest(checkUrl, new SuccessListener(), new ErrorListener());
+        sReq.setForceResponseEncoding("UTF-8");
         VolleyHelper.getInstance().add(sReq);
     }
 
@@ -86,7 +97,7 @@ public class UpdateHelper {
                     pd.dismiss();
                 }
 
-                final String url = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-ng-release-" + newVersion + ".apk";
+                final String url = downloadUrl.replace("{version}", newVersion);
                 final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
 
                 Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
@@ -99,7 +110,7 @@ public class UpdateHelper {
                                                     HttpUtils.download(mCtx, url, filename);
                                                 } catch (SecurityException e) {
                                                     Logger.e(e);
-                                                    Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(mCtx, "抱歉，下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
