@@ -329,7 +329,8 @@ public class HiSettingsHelper {
             mSortByPostTimeByForum.remove(fid + "");
         }
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putStringSet(PERF_SORTBYPOSTTIME_BY_FORUM, mSortByPostTimeByForum).commit();
+        editor.remove(PERF_SORTBYPOSTTIME_BY_FORUM).apply();
+        editor.putStringSet(PERF_SORTBYPOSTTIME_BY_FORUM, mSortByPostTimeByForum).apply();
     }
 
     public Set<String> isSortByPostTimeByForumFromPref() {
@@ -439,7 +440,8 @@ public class HiSettingsHelper {
     public void setForums(Set<String> forums) {
         mForums = forums;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putStringSet(PERF_FORUMS, forums).commit();
+        editor.remove(PERF_FORUMS).apply();
+        editor.putStringSet(PERF_FORUMS, forums).apply();
     }
 
     public boolean isEncodeUtf8() {
