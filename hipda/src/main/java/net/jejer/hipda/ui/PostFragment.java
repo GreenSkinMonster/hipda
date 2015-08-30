@@ -368,7 +368,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                 imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
 
                 // Close reply fragment
-                ((MainFrameActivity) getActivity()).popFragment(false);
+                //((MainFrameActivity) getActivity()).popFragment(false);
                 return true;
             default:
                 return false;
@@ -607,7 +607,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                             mEtSubjectMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
                             mEtSubjectMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
                         }
-                    }, 200);
+                    }, 100);
                 } else {
                     (new Handler()).postDelayed(new Runnable() {
                         public void run() {
@@ -616,7 +616,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                             mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
                             mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
                         }
-                    }, 200);
+                    }, 100);
                 }
 
             } else {

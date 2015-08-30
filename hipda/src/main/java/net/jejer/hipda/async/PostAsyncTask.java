@@ -1,7 +1,5 @@
 package net.jejer.hipda.async;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -123,12 +121,12 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 
     @Override
     protected void onPostExecute(Void avoid) {
-        if (mStatus != Constants.STATUS_SUCCESS && !TextUtils.isEmpty(mContent)) {
-            ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", mContent);
-            clipboard.setPrimaryClip(clip);
-            mResult += "\n请注意：发表失败的内容已经复制到粘贴板";
-        }
+//        if (mStatus != Constants.STATUS_SUCCESS && !TextUtils.isEmpty(mContent)) {
+//            ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
+//            ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", mContent);
+//            clipboard.setPrimaryClip(clip);
+//            mResult += "\n请注意：发表失败的内容已经复制到粘贴板";
+//        }
         PostBean postBean = new PostBean();
         postBean.setSubject(mTitle);
         postBean.setFloor(mFloor);
@@ -147,7 +145,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             return;
         }
 
-        Map<String, String> post_param = new HashMap<String, String>();
+        Map<String, String> post_param = new HashMap<>();
         post_param.put("formhash", formhash);
         post_param.put("posttime", String.valueOf(System.currentTimeMillis()));
         post_param.put("wysiwyg", "0");

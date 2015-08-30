@@ -2,6 +2,7 @@ package net.jejer.hipda.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -194,7 +195,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                         mReplyTextTv.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
                         mReplyTextTv.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
                     }
-                }, 200);
+                }, 100);
             }
         });
 
@@ -281,8 +282,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 if (Utils.getWordCount(replyText) < 5) {
                     Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
                 } else {
-                    mReplyTextTv.setText("");
-                    quickReply.setVisibility(View.INVISIBLE);
                     PostBean postBean = new PostBean();
                     postBean.setContent(replyText);
                     postBean.setTid(mTid);
@@ -320,7 +319,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         menu.clear();
         inflater.inflate(R.menu.menu_thread_detail, menu);
 
-        setActionBarTitle(mTitle);
+        setActionBarTitle("(" + (mCurrentPage > 0 ? mCurrentPage + "/" + mMaxPage + ") " : "")
+                + mTitle);
         setActionBarDisplayHomeAsUpEnabled(true);
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -419,11 +419,21 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     @Override
     public void onPrePost() {
         postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
+        postProgressDialog.setCancelable(false);
     }
 
     @Override
     public void onPostDone(int mode, int status, String message, PostBean postBean) {
         if (status == Constants.STATUS_SUCCESS) {
+            //pop post fragment on success
+            Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+            if (fg instanceof PostFragment) {
+                ((MainFrameActivity) getActivity()).popFragment(false);
+            } else if (quickReply.getVisibility() == View.VISIBLE) {
+                mReplyTextTv.setText("");
+                quickReply.setVisibility(View.INVISIBLE);
+            }
+
             if (postProgressDialog != null) {
                 postProgressDialog.dismiss(message);
             } else {
@@ -889,8 +899,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     private void showOrLoadPage() {
 
-        setActionBarTitle("("
-                + (mCurrentPage > 0 ? String.valueOf(mCurrentPage) + "/" + String.valueOf(mMaxPage) + ") " : "")
+        setActionBarTitle("(" + (mCurrentPage > 0 ? mCurrentPage + "/" + mMaxPage + ") " : "")
                 + mTitle);
 
         if (mCache.get(mCurrentPage) != null) {

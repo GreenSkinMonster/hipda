@@ -2,6 +2,7 @@ package net.jejer.hipda.ui;
 
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
@@ -312,11 +313,18 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onPrePost() {
         postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
+        postProgressDialog.setCancelable(false);
     }
 
     @Override
     public void onPostDone(int mode, int status, String message, PostBean postBean) {
         if (status == Constants.STATUS_SUCCESS) {
+            //pop post fragment on success
+            Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+            if (fg instanceof PostFragment) {
+                ((MainFrameActivity) getActivity()).popFragment(false);
+            }
+
             if (postProgressDialog != null) {
                 postProgressDialog.dismiss(message);
             } else {
