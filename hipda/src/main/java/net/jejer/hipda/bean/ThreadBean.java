@@ -21,6 +21,7 @@ public class ThreadBean {
     private Boolean mHavePic;
     private boolean mNew;
     private String mType;
+    private int mMaxPage;
 
     public ThreadBean() {
         mIsStick = false;
@@ -169,5 +170,14 @@ public class ThreadBean {
 
     public void setType(String type) {
         mType = type;
+    }
+
+
+    public int getMaxPage() {
+        return mMaxPage;
+    }
+
+    public void setMaxPage(int lastPage) {
+        this.mMaxPage = lastPage;
     }
 }

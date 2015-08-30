@@ -331,7 +331,7 @@ public class ThreadListFragment extends BaseFragment
                 Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
             }
 
-            showThreadDetailFragment(postBean.getTid(), postBean.getSubject(), -1, -1);
+            showThreadDetailFragment(postBean.getTid(), postBean.getSubject(), -1, -1, -1);
 
             //refresh thread list
             refresh();
@@ -385,7 +385,7 @@ public class ThreadListFragment extends BaseFragment
             ThreadBean thread = mThreadListAdapter.getItem(position);
             String tid = thread.getTid();
             String title = thread.getTitle();
-            showThreadDetailFragment(tid, title, -1, -1);
+            showThreadDetailFragment(tid, title, -1, -1, thread.getMaxPage());
         }
 
     }
@@ -401,17 +401,18 @@ public class ThreadListFragment extends BaseFragment
             if (maxPostsInPage > 0 && TextUtils.isDigitsOnly(thread.getCountCmts())) {
                 page = (int) Math.ceil((Integer.parseInt(thread.getCountCmts()) + 1) * 1.0f / maxPostsInPage);
             }
-            showThreadDetailFragment(tid, title, page, ThreadDetailFragment.LAST_FLOOR);
+            showThreadDetailFragment(tid, title, page, ThreadDetailFragment.LAST_FLOOR, thread.getMaxPage());
             return true;
         }
     }
 
-    private void showThreadDetailFragment(String tid, String title, int page, int floor) {
+    private void showThreadDetailFragment(String tid, String title, int page, int floor, int maxPage) {
         setHasOptionsMenu(false);
 
         Bundle arguments = new Bundle();
         arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
         arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
+        arguments.putInt(ThreadDetailFragment.ARG_MAX_PAGE_KEY, maxPage);
         if (page != -1)
             arguments.putInt(ThreadDetailFragment.ARG_PAGE_KEY, page);
         if (floor != -1)

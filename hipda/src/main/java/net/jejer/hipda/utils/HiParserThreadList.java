@@ -173,6 +173,19 @@ public class HiParserThreadList {
                 }
             }
 
+            //get max page number
+            Elements pages = tbodyE.select("span.threadpages a");
+            int maxPage = 1;
+            if (pages.size() > 0) {
+                Element pageLink = pages.get(pages.size() - 1);
+                if (!TextUtils.isEmpty(pageLink.attr("href"))) {
+                    String lastPage = HttpUtils.getMiddleString(pageLink.attr("href"), "page=", "&");
+                    if (!TextUtils.isEmpty(lastPage) && TextUtils.isDigitsOnly(lastPage))
+                        maxPage = Integer.parseInt(lastPage);
+                }
+            }
+            thread.setMaxPage(maxPage);
+
             threads.add(thread);
         }
 

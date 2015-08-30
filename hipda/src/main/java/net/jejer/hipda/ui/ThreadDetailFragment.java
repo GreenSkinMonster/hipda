@@ -79,6 +79,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     public static final String ARG_TITLE_KEY = "title";
     public static final String ARG_FLOOR_KEY = "floor";
     public static final String ARG_PAGE_KEY = "page";
+    public static final String ARG_MAX_PAGE_KEY = "maxPage";
 
     public static final int LAST_FLOOR = Integer.MIN_VALUE;
     public static final int LAST_PAGE = Integer.MIN_VALUE;
@@ -90,7 +91,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     private String mFid;
     private XListView mDetailListView;
     private TextView mTipBar;
-    private TextView mTitleView;
     private ThreadListLoaderCallbacks mLoaderCallbacks;
     private ThreadDetailAdapter mDetailAdapter;
     private List<DetailBean> mDetailBeans = new ArrayList<>();
@@ -99,7 +99,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     public static int MAX_VIEW_WIDTH = 1080;
 
     private int mCurrentPage = 1;
-    private int mMaxPage = 1;
+    private int mMaxPage = 0;
     private int mGoToPage = 1;
     private int mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();    // user can configure max posts per page in forum setting
     private int mFloorOfPage = -1;    // for every page start form 1
@@ -138,6 +138,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         }
         if (getArguments().containsKey(ARG_PAGE_KEY)) {
             mCurrentPage = getArguments().getInt(ARG_PAGE_KEY);
+        }
+        if (getArguments().containsKey(ARG_MAX_PAGE_KEY)) {
+            mMaxPage = getArguments().getInt(ARG_MAX_PAGE_KEY);
         }
         if (getArguments().containsKey(ARG_FLOOR_KEY)) {
             mFloorOfPage = getArguments().getInt(ARG_FLOOR_KEY);
@@ -209,12 +212,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             }
         });
 
-        if (!HiSettingsHelper.getInstance().getIsLandscape()) {
-//            mDetailListView.addHeaderView(inflater.inflate(R.layout.head_thread_detail, null));
-//            mTitleView = (TextView) view.findViewById(R.id.thread_detail_title);
-//            mTitleView.setTextSize(HiSettingsHelper.getTitleTextSize());
-//            mTitleView.setText(mTitle);
-        }
         mDetailListView.setPullLoadEnable(false);
         mDetailListView.setPullRefreshEnable(false);
         mDetailListView.setXListViewListener(new XListView.IXListViewListener() {
@@ -319,7 +316,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         menu.clear();
         inflater.inflate(R.menu.menu_thread_detail, menu);
 
-        setActionBarTitle("(" + (mCurrentPage > 0 ? mCurrentPage + "/" + mMaxPage + ") " : "")
+        setActionBarTitle((mCurrentPage > 0 && mMaxPage > 0 ? "(" + mCurrentPage + "/" + mMaxPage + ") " : "")
                 + mTitle);
         setActionBarDisplayHomeAsUpEnabled(true);
 
@@ -596,9 +593,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             // Set title
             if (details.getTitle() != null && !details.getTitle().isEmpty()) {
                 mTitle = details.getTitle();
-                if (mTitleView != null) {
-                    mTitleView.setText(mTitle);
-                }
             }
 
             mFid = details.getFid();
@@ -899,7 +893,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     private void showOrLoadPage() {
 
-        setActionBarTitle("(" + (mCurrentPage > 0 ? mCurrentPage + "/" + mMaxPage + ") " : "")
+        setActionBarTitle((mCurrentPage > 0 && mMaxPage > 0 ? "(" + mCurrentPage + "/" + mMaxPage + ") " : "")
                 + mTitle);
 
         if (mCache.get(mCurrentPage) != null) {
