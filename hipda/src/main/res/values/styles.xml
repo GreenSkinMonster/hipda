@@ -1,11 +1,18 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="ThemeLight" parent="MaterialDrawerTheme.Light">
-
+    <style name="ThemeLightBase" parent="MaterialDrawerTheme.Light">
         <item name="android:actionBarSize">48dp</item>
         <item name="actionBarSize">48dp</item>
+    </style>
 
-        <!-- make ActionMode overlap Toolbar -->
+    <style name="ThemeDarkBase" parent="MaterialDrawerTheme">
+        <item name="android:actionBarSize">48dp</item>
+        <item name="actionBarSize">48dp</item>
+    </style>
+
+    <style name="ThemeLight" parent="ThemeLightBase">
+
+    <!-- make ActionMode overlap Toolbar -->
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/MyActionMode</item>
         <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
@@ -61,10 +68,7 @@
         <item name="colorPrimaryDark">@color/md_teal_800</item>
     </style>
 
-    <style name="ThemeDark" parent="MaterialDrawerTheme">
-
-        <item name="android:actionBarSize">48dp</item>
-        <item name="actionBarSize">48dp</item>
+    <style name="ThemeDark" parent="ThemeDarkBase">
 
         <!-- make ActionMode overlap Toolbar -->
         <item name="windowActionModeOverlay">true</item>

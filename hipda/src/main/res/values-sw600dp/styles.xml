@@ -1,0 +1,8 @@
+<resources>
+
+    <!--use default actionBarSize -->
+    <style name="ThemeLightBase" parent="MaterialDrawerTheme.Light" />
+
+    <style name="ThemeDarkBase" parent="MaterialDrawerTheme" />
+
+</resources>
