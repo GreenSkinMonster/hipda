@@ -43,6 +43,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
     private List<SimpleListItemBean> mSmsBeans = new ArrayList<>();
     private SmsListLoaderCallbacks mLoaderCallbacks;
     private ListView mListView;
+    private EditText mEtSms;
 
     private HiProgressDialog postProgressDialog;
 
@@ -50,7 +51,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Logger.v("onCreate");
         setHasOptionsMenu(true);
 
         if (getArguments().containsKey(ARG_ID)) {
@@ -67,7 +67,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_sms, container, false);
         mListView = (ListView) view.findViewById(R.id.lv_sms);
         mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -92,18 +91,17 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
         });
 
         ImageButton postIb = (ImageButton) view.findViewById(R.id.ib_send_sms);
-        final EditText etSms = (EditText) view.findViewById(R.id.et_sms);
-        etSms.setTextSize(HiSettingsHelper.getPostTextSize());
+        mEtSms = (EditText) view.findViewById(R.id.et_sms);
+        mEtSms.setTextSize(HiSettingsHelper.getPostTextSize());
         postIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String replyText = etSms.getText().toString();
+                String replyText = mEtSms.getText().toString();
                 if (replyText.length() > 0) {
                     new PostSmsAsyncTask(getActivity(), mUid, SmsFragment.this).execute(replyText);
                     // Close SoftKeyboard
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(etSms.getWindowToken(), 0);
-                    etSms.setText("");
+                    imm.hideSoftInputFromWindow(mEtSms.getWindowToken(), 0);
                 }
             }
         });
@@ -137,11 +135,13 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
     @Override
     public void onPrePost() {
         postProgressDialog = HiProgressDialog.show(getActivity(), "正在发送...");
+        postProgressDialog.setCancelable(false);
     }
 
     @Override
     public void onPostDone(int status, String message) {
         if (status == Constants.STATUS_SUCCESS) {
+            mEtSms.setText("");
             //new sms has some delay, so this is a dirty hack
             new CountDownTimer(1000, 1000) {
                 public void onTick(long millisUntilFinished) {
