@@ -8,13 +8,11 @@ import android.text.TextUtils;
 
 import net.jejer.hipda.utils.Connectivity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 public class HiSettingsHelper {
@@ -653,13 +651,13 @@ public class HiSettingsHelper {
         return mLastForumId;
     }
 
-    public boolean isUpdateCheckable() {
+    public boolean isAutoUpdateCheckable() {
         if (!isAutoUpdateCheck())
             return false;
-        Date now = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Date lastCheck = HiSettingsHelper.getInstance().getLastUpdateCheckTime();
-        return lastCheck == null || !formatter.format(now).equals(formatter.format(lastCheck));
+        //check update if last check is older than 12 hours
+        return lastCheck == null
+                || System.currentTimeMillis() > lastCheck.getTime() + 12 * 60 * 60 * 1000;
     }
 
     public void setInstalledVersion(String version) {

@@ -20,6 +20,7 @@ import net.jejer.hipda.volley.VolleyHelper;
 
 import java.io.File;
 import java.util.Date;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -33,6 +34,7 @@ public class UpdateHelper {
 
     private HiProgressDialog pd;
 
+    private String checkSite = "";
     private String checkUrl = "";
     private String downloadUrl = "";
 
@@ -40,10 +42,14 @@ public class UpdateHelper {
         mCtx = ctx;
         mSilent = isSilent;
 
-        if (isSilent) {
+        Random random = new Random();
+
+        if (isSilent || random.nextBoolean()) {
+            checkSite = "gitcafe";
             checkUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda-ng.md";
             downloadUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-ng-release-{version}.apk";
         } else {
+            checkSite = "bitbucket";
             checkUrl = "https://bitbucket.org/GreenSkinMonster/hipda/downloads/hipda-ng.md";
             downloadUrl = "https://bitbucket.org/GreenSkinMonster/hipda/downloads/hipda-ng-release-{version}.apk";
         }
@@ -139,7 +145,7 @@ public class UpdateHelper {
         public void onErrorResponse(VolleyError error) {
             Logger.e(error);
             if (!mSilent) {
-                pd.dismissError("检查新版本时发生错误 : " + VolleyHelper.getErrorReason(error));
+                pd.dismissError("检查新版本时发生错误 (" + checkSite + ") : " + VolleyHelper.getErrorReason(error));
             }
         }
     }

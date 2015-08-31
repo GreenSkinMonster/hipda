@@ -39,7 +39,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -128,10 +127,8 @@ public class MainFrameActivity extends AppCompatActivity {
                 .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
                 .commit();
 
-        if (LoginHelper.isLoggedIn()) {
-            if (HiSettingsHelper.getInstance().isUpdateCheckable()) {
-                new UpdateHelper(this, true).check();
-            }
+        if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
+            new UpdateHelper(this, true).check();
         }
 
     }
