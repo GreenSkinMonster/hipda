@@ -108,4 +108,25 @@ public class Utils {
         out.close();
     }
 
+    public static String getImageFileName(String prefix, String mime) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd_HHmmss", Locale.US);
+        String filename = prefix + "_" + formatter.format(new Date());
+
+        String suffix = getImageFileSuffix(mime);
+        return filename + "." + suffix;
+    }
+
+    public static String getImageFileSuffix(String mime) {
+        String suffix = "jpg";
+        if (mime.toLowerCase().contains("gif")) {
+            suffix = "gif";
+        } else if (mime.toLowerCase().contains("png")) {
+            suffix = "png";
+        } else if (mime.toLowerCase().contains("bmp")) {
+            suffix = "bmp";
+        }
+        return suffix;
+    }
+
 }

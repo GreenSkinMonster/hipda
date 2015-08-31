@@ -3,12 +3,15 @@ package net.jejer.hipda.utils;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+
+import java.io.File;
 
 /**
  * http://hmkcode.com/android-display-selected-image-and-its-real-path/
@@ -31,11 +34,28 @@ public class CursorUtils {
         }
         if (result == null)
             return new ImageFileInfo();
-        if (!TextUtils.isEmpty(result.getFilePath())
-                && result.getOrientation() == -1) {
+
+        File imageFile = new File(result.getFilePath());
+        if (TextUtils.isEmpty(result.getFilePath()) || !imageFile.exists())
+            return new ImageFileInfo();
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+
+        //Returns null, sizes are in the options variable
+        BitmapFactory.decodeFile(result.getFilePath(), options);
+        int width = options.outWidth;
+        int height = options.outHeight;
+        String mime = Utils.nullToText(options.outMimeType);
+
+        result.setMime(mime);
+        result.setFileSize(imageFile.length());
+        result.setWidth(width);
+        result.setHeight(height);
+
+        if (result.getOrientation() == -1) {
             int orientation = getOrientationFromExif(result.getFilePath());
             result.setOrientation(orientation);
-
         }
         return result;
     }

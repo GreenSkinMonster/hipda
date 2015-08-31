@@ -15,11 +15,13 @@ import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.ImageFileInfo;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,8 +39,10 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
 
     public final static int STAGE_UPLOADING = -1;
     public final static int MAX_QUALITY = 90;
-    public final static int MAX_IMAGE_FILE_SIZE = 300 * 1024; // max file size 300K
     private static final int THUMB_SIZE = 128;
+
+    public final static int MAX_IMAGE_FILE_SIZE = 300 * 1024; // max file size 300K
+    public final static int MAX_GIF_FILE_SIZE = 4 * 1024 * 1024; // max upload file size : 8M
 
     private static final int UPLOAD_CONNECT_TIMEOUT = 15 * 1000;
     private static final int UPLOAD_READ_TIMEOUT = 5 * 60 * 1000;
@@ -74,7 +78,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
     @Override
     protected Void doInBackground(Uri... uris) {
 
-        Map<String, String> post_param = new HashMap<String, String>();
+        Map<String, String> post_param = new HashMap<>();
 
         post_param.put("uid", mUid);
         post_param.put("hash", mHash);
@@ -151,23 +155,13 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         ImageFileInfo imageFileInfo = CursorUtils.getImageFileInfo(mCtx, uri);
         mCurrentFileName = imageFileInfo.getFileName();
 
-        Bitmap bitmap;
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(mCtx.getContentResolver(), uri);
-        } catch (Exception e) {
-            Logger.v("Exception", e);
-            mMessage = "图片压缩出现错误 " + e.getMessage();
-            return null;
-        }
-
-        String fileType = "image/jpeg";
-        String imageParamName = "Filedata";
-
-
-        ByteArrayOutputStream baos = compressImage(imageFileInfo, bitmap);
+        ByteArrayOutputStream baos = compressImage(uri, imageFileInfo);
         if (baos == null) {
             return null;
         }
+
+        String fileType = imageFileInfo.getMime();
+        String imageParamName = "Filedata";
 
         // update progress for start upload
         publishProgress(0);
@@ -180,7 +174,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         try {
             barry = ("--" + BOUNDARYSTR + "--\r\n").getBytes("UTF-8");
             SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd_HHmm", Locale.US);
-            String fileName = "Hi_" + formatter.format(new Date()) + ".jpg";
+            String fileName = "Hi_" + formatter.format(new Date()) + "." + Utils.getImageFileSuffix(imageFileInfo.getMime());
             sendStr = getBoundaryMessage(BOUNDARYSTR, param, imageParamName, fileName, fileType);
             contentLength = sendStr.getBytes("UTF-8").length + baos.size() + 2 * barry.length;
         } catch (UnsupportedEncodingException ignored) {
@@ -244,7 +238,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
             int status = urlConnection.getResponseCode();
 
             if (status != HttpURLConnection.HTTP_OK) {
-                mMessage = "上传错误代码 " + status;
+                mMessage = "上传错误代码 : " + status;
                 return null;
             }
             Logger.v("uploading image, response : " + urlConnection.getResponseCode() + ", " + urlConnection.getResponseMessage());
@@ -257,7 +251,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
 
         } catch (Exception e) {
             Logger.e("Error uploading image", e);
-            mMessage = "上传发生网络错误 " + e.getMessage();
+            mMessage = "上传发生网络错误 : " + e.getMessage();
             return null;
         } finally {
             if (out != null) {
@@ -293,7 +287,29 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         return imgId;
     }
 
-    private ByteArrayOutputStream compressImage(ImageFileInfo imageFileInfo, Bitmap bitmap) {
+    private ByteArrayOutputStream compressImage(Uri uri, ImageFileInfo imageFileInfo) {
+
+        if (imageFileInfo.getMime().toLowerCase().contains("gif")
+                && imageFileInfo.getFileSize() > MAX_GIF_FILE_SIZE) {
+            mMessage = "GIF图片大小不能超过" + MAX_GIF_FILE_SIZE / 1024 + "K";
+            return null;
+        }
+
+        Bitmap bitmap;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(mCtx.getContentResolver(), uri);
+        } catch (Exception e) {
+            Logger.v("Exception", e);
+            mMessage = "无法获取图片 : " + e.getMessage();
+            return null;
+        }
+
+        //gif or small jpg/png etc
+        if (isDirectUploadable(imageFileInfo)) {
+            mThumb = ThumbnailUtils.extractThumbnail(bitmap, THUMB_SIZE, THUMB_SIZE);
+            bitmap.recycle();
+            return readFileToStream(imageFileInfo.getFilePath());
+        }
 
         if (imageFileInfo.getOrientation() > 0) {
             Matrix matrix = new Matrix();
@@ -361,5 +377,42 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
 
         Logger.v("Image Compressed: " + quality + "%,  size: " + baos.size() + " bytes, original size: " + origionalSize + " bytes");
         return baos;
+    }
+
+    private boolean isDirectUploadable(ImageFileInfo imageFileInfo) {
+        String mime = Utils.nullToText(imageFileInfo.getMime()).toLowerCase();
+        long fileSize = imageFileInfo.getFileSize();
+
+        if (mime.contains("gif") && fileSize <= MAX_GIF_FILE_SIZE)
+            return true;
+
+        if ((mime.contains("jpg") || mime.contains("jpeg") || mime.contains("bmp") || mime.contains("png"))
+                && fileSize <= MAX_IMAGE_FILE_SIZE)
+            return true;
+
+        return false;
+    }
+
+    private static ByteArrayOutputStream readFileToStream(String file) {
+        FileInputStream fileInputStream = null;
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            fileInputStream = new FileInputStream(file);
+            int readedBytes;
+            byte[] buf = new byte[1024];
+            while ((readedBytes = fileInputStream.read(buf)) > 0) {
+                bos.write(buf, 0, readedBytes);
+            }
+            return bos;
+        } catch (Exception e) {
+            return null;
+        } finally {
+            try {
+                if (fileInputStream != null)
+                    fileInputStream.close();
+            } catch (Exception ignored) {
+
+            }
+        }
     }
 }
