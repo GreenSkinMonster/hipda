@@ -34,16 +34,22 @@ public class HiParserThreadList {
 
         ThreadListBean threads = new ThreadListBean();
 
-        //parse uid
+        //parse uid and re-set username if necessary
         if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())) {
             Elements spaceES = doc.select("#umenu cite a");
             if (spaceES.size() == 1) {
                 String spaceUrl = spaceES.first().attr("href");
                 if (!TextUtils.isEmpty(spaceUrl)) {
                     String uid = HttpUtils.getMiddleString(spaceUrl, "space.php?uid=", "&");
+                    String username = Utils.nullToText(spaceES.first().text()).trim();
                     if (!TextUtils.isEmpty(uid)
                             && TextUtils.isDigitsOnly(uid)
                             && !HiSettingsHelper.getInstance().getUid().equals(uid)) {
+                        //re-set username if it is not exactly SAME to user inputted with case sensitive
+                        if (!HiSettingsHelper.getInstance().getUsername().equals(username)
+                                && HiSettingsHelper.getInstance().getUsername().equalsIgnoreCase(username))
+                            HiSettingsHelper.getInstance().setUsername(username);
+                        //uid will be setted later
                         threads.setUid(uid);
                     }
                 }
