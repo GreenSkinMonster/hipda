@@ -138,6 +138,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         }
         if (getArguments().containsKey(ARG_PAGE_KEY)) {
             mCurrentPage = getArguments().getInt(ARG_PAGE_KEY);
+            if (mCurrentPage <= 0 && mCurrentPage != LAST_PAGE)
+                mCurrentPage = 1;
         }
         if (getArguments().containsKey(ARG_MAX_PAGE_KEY)) {
             mMaxPage = getArguments().getInt(ARG_MAX_PAGE_KEY);
@@ -332,9 +334,14 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 return false;
             case R.id.action_open_url:
                 String url = HiUtils.DetailListUrl + mTid;
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
+                if (mCurrentPage > 1)
+                    url += "&page=" + mCurrentPage;
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.parse(url), "text/html");
+                    startActivity(intent);
+                } catch (Exception ignored) {
+                }
                 return true;
             case R.id.action_copy_url:
                 ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);

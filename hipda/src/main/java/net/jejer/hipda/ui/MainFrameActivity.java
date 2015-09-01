@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -115,22 +116,35 @@ public class MainFrameActivity extends AppCompatActivity {
 
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
-        int lastForumId = HiSettingsHelper.getInstance().getLastForumId();
-        ThreadListFragment threadListFragment = new ThreadListFragment();
-        Bundle argments = new Bundle();
-        if (lastForumId > 0) {
-            argments.putInt(ThreadListFragment.ARG_FID_KEY, lastForumId);
-            threadListFragment.setArguments(argments);
-        }
+        int fid = HiSettingsHelper.getInstance().getLastForumId();
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
-                .commit();
+        FragmentArgs args = FragmentUtils.parse(getIntent());
+        if (args != null && args.getType() == FragmentArgs.TYPE_FORUM)
+            fid = args.getFid();
+
+        clearBackStacks();
+        FragmentUtils.showForum(getFragmentManager(), fid);
+
+        if (args != null && args.getType() == FragmentArgs.TYPE_THREAD)
+            FragmentUtils.showThread(getFragmentManager(), args.getTid() + "", "", args.getPage(), -1, -1);
 
         if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
             new UpdateHelper(this, true).check();
         }
 
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        FragmentArgs args = FragmentUtils.parse(intent);
+        clearBackStacks();
+
+        if (args != null && args.getType() == FragmentArgs.TYPE_FORUM)
+            FragmentUtils.showForum(getFragmentManager(), args.getFid());
+
+        if (args != null && args.getType() == FragmentArgs.TYPE_THREAD)
+            FragmentUtils.showThread(getFragmentManager(), args.getTid() + "", "", args.getPage(), -1, -1);
     }
 
     @Override

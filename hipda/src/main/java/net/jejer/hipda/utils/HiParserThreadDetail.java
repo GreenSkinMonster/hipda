@@ -75,23 +75,33 @@ public class HiParserThreadDetail {
         }
 
         //get forum id
-        Elements divNavLinkES = doc.select("div#nav a");
-        if (divNavLinkES.size() > 0) {
-            for (int i = 0; i < divNavLinkES.size(); i++) {
-                Element forumLink = divNavLinkES.get(i);
-                String forumUrl = Utils.nullToText(forumLink.attr("href"));
-                if (forumUrl.indexOf("fid=") > 0) {
-                    details.setFid(HttpUtils.getMiddleString(forumUrl, "fid=", "&"));
-                    break;
+        Elements divNavES = doc.select("div#nav");
+        if (divNavES.size() > 0) {
+            Elements divNavLinkES = divNavES.first().select("a");
+            if (divNavLinkES.size() > 0) {
+                for (int i = 0; i < divNavLinkES.size(); i++) {
+                    Element forumLink = divNavLinkES.get(i);
+                    String forumUrl = Utils.nullToText(forumLink.attr("href"));
+                    if (forumUrl.indexOf("fid=") > 0) {
+                        details.setFid(HttpUtils.getMiddleString(forumUrl, "fid=", "&"));
+                        break;
+                    }
                 }
             }
+            //get thread title from nav div
+            divNavLinkES.remove();
+            String title = divNavES.text();
+            title = title.replace("»", "").trim();
+            details.setTitle(title);
         }
 
-        //Title
-        Elements threadtitleES = doc.select("div#threadtitle");
-        if (threadtitleES.size() > 0) {
-            threadtitleES.select("a").remove();
-            details.setTitle(threadtitleES.first().text());
+        //Title, only avaliable in first page
+        if (TextUtils.isEmpty(details.getTitle())) {
+            Elements threadtitleES = doc.select("div#threadtitle");
+            if (threadtitleES.size() > 0) {
+                threadtitleES.select("a").remove();
+                details.setTitle(threadtitleES.first().text());
+            }
         }
 
         Elements rootES = doc.select("div#wrap div#postlist");
