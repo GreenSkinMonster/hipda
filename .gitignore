@@ -9,6 +9,8 @@ local.properties
 .idea/inspectionProfiles/Project_Default.xml
 .idea/inspectionProfiles/Serializable.xml
 .idea/inspectionProfiles/profiles_settings.xml
+.idea/codeStyleSettings.xml
+.idea/runConfigurations.xml
 *.iml
 
 .navigation
