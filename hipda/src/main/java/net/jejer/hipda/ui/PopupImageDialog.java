@@ -119,6 +119,10 @@ public class PopupImageDialog extends DialogFragment {
                                                try {
                                                    String url = images.get(viewPager.getCurrentItem()).getContent();
                                                    ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
+                                                   if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
+                                                       Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
+                                                       return;
+                                                   }
                                                    String filename = Utils.getImageFileName("Hi_IMG", imageReadyInfo.getMime());
 
                                                    File destFile = new File(Environment.getExternalStoragePublicDirectory(
@@ -150,6 +154,10 @@ public class PopupImageDialog extends DialogFragment {
 
                                             //generate a random file name, will be deleted after share
                                             ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
+                                            if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
+                                                Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
                                             String filename = Utils.getImageFileName("Hi_Share", imageReadyInfo.getMime());
 
                                             File destFile = new File(Environment.getExternalStoragePublicDirectory(

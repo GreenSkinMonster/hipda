@@ -980,8 +980,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 Glide.with(mCtx)
                         .load(GlideHelper.getGlideUrl(imageUrl))
                         .asBitmap()
-                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth)))
-                        .imageDecoder(new ThreadImageDecoder(mMaxImageDecodeWidth))
+                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo.getOrientation())))
+                        .imageDecoder(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo.getOrientation()))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
             }

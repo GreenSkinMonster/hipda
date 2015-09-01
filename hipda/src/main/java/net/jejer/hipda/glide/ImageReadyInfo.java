@@ -11,6 +11,7 @@ public class ImageReadyInfo {
     private int height;
     private String path;
     private String mime;
+    private int orientation;
 
     public ImageReadyInfo(String path, int width, int height, String mime) {
         this.width = width;
@@ -41,5 +42,13 @@ public class ImageReadyInfo {
 
     public boolean isGif() {
         return mime != null && mime.contains("gif");
+    }
+
+    public int getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
     }
 }

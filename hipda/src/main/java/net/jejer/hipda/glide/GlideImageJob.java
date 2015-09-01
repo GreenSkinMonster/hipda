@@ -2,6 +2,7 @@ package net.jejer.hipda.glide;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -62,6 +63,24 @@ public class GlideImageJob extends Job {
             int height = options.outHeight;
             String mime = Utils.nullToText(options.outMimeType);
 
+            int orientation = 0;
+            if (mime.toLowerCase().contains("jpeg")
+                    || mime.toLowerCase().contains("jpg")
+                    || mime.toLowerCase().contains("png")) {
+                try {
+                    ExifInterface exif = new ExifInterface(cacheFile.getPath());
+                    orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
+                } catch (Exception e) {
+                    Logger.e(e);
+                }
+            }
+
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_90
+                    || orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                width = options.outHeight;
+                height = options.outWidth;
+            }
+
             //calculate display size for image
 
             //leave 12dp on both left and right side, this should match layout setup
@@ -86,6 +105,8 @@ public class GlideImageJob extends Job {
             }
 
             ImageReadyInfo imageReadyInfo = new ImageReadyInfo(cacheFile.getPath(), displayWidth, displayHeight, mime);
+            if (orientation > 0)
+                imageReadyInfo.setOrientation(orientation);
             ImageContainer.markImageReady(mUrl, imageReadyInfo);
 
             EventBus.getDefault().post(new GlideImageEvent(mUrl, mImageView, Constants.STATUS_SUCCESS));

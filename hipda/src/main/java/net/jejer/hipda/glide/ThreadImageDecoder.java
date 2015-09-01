@@ -3,6 +3,7 @@ package net.jejer.hipda.glide;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 
 import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.engine.Resource;
@@ -22,9 +23,11 @@ import java.io.InputStream;
 public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> {
 
     private int mMaxWidth = ImageSizeUtils.NORMAL_IMAGE_DECODE_WIDTH;
+    private int mOrientation = -1;
 
-    public ThreadImageDecoder(int maxWidth) {
+    public ThreadImageDecoder(int maxWidth, int orientation) {
         mMaxWidth = maxWidth;
+        mOrientation = orientation;
     }
 
     @Override
@@ -34,6 +37,15 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
             BitmapFactory.Options bitmapLoadingOptions = new BitmapFactory.Options();
             bitmapLoadingOptions.inPreferredConfig = Bitmap.Config.RGB_565;
             Bitmap original = BitmapFactory.decodeStream(new BufferedInputStream(source), null, bitmapLoadingOptions);
+
+            int degree = 0;
+            if (mOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
+                degree = 90;
+            } else if (mOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                degree = 180;
+            } else if (mOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                degree = 270;
+            }
 
             int originalWidth = original.getWidth();
             int originalHeight = original.getHeight();
@@ -50,6 +62,7 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
 
             Matrix matrix = new Matrix();
             matrix.postScale(scale, scale);
+            matrix.postRotate(degree);
 
             Bitmap bitmap = Bitmap.createBitmap(original, 0, 0, originalWidth, originalHeight, matrix, true);
             result = new SimpleResource<>(bitmap);
