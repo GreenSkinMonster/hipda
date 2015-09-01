@@ -2,7 +2,7 @@
 <set>
 
     <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-        android:duration="300"
+        android:duration="250"
         android:propertyName="x"
         android:valueFrom="1000"
         android:valueTo="0"
