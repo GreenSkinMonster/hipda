@@ -76,6 +76,7 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         if (HiSettingsHelper.getInstance().isLoadAvatar()
                 && mType != SimpleListLoader.TYPE_SEARCH_USER_THREADS
                 && mType != SimpleListLoader.TYPE_FAVORITES
+                && mType != SimpleListLoader.TYPE_ATTENTION
                 && mType != SimpleListLoader.TYPE_MYPOST
                 && mType != SimpleListLoader.TYPE_MYREPLY) {
             holder.iv_avatar.setVisibility(View.VISIBLE);

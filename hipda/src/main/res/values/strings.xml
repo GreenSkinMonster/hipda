@@ -18,9 +18,13 @@
     <string name="action_thread_list_settings">帖子设置</string>
     <string name="action_upload_img">上传图片</string>
     <string name="action_add_favorite">添加收藏</string>
-    <string name="action_remove_favorite">删除收藏</string>
+    <string name="action_remove_favorite">取消收藏</string>
+    <string name="action_add_attention">添加关注</string>
+    <string name="action_remove_attention">取消关注</string>
     <string name="action_send_sms">发短消息</string>
     <string name="action_blacklist">加入黑名单</string>
+    <string name="action_favorites">查看收藏</string>
+    <string name="action_attention">查看关注</string>
     <string name="iv_avatar">头像</string>
     <string name="action_send">发送</string>
     <string name="action_new_thread">发表新帖</string>
@@ -47,11 +51,14 @@
     <string name="title_drawer_search">搜索</string>
     <string name="title_drawer_mypost">我的帖子</string>
     <string name="title_drawer_myreply">我的回复</string>
-    <string name="title_drawer_favorites">我的收藏</string>
+    <string name="title_drawer_favorites">收藏与关注</string>
     <string name="title_drawer_sms">短消息</string>
     <string name="title_drawer_notify">帖子消息</string>
     <string name="title_drawer_newpost">发表新帖</string>
     <string name="title_drawer_setting">设置</string>
+
+    <string name="title_my_favorites">我的收藏</string>
+    <string name="title_my_attention">我的关注</string>
 
     <string name="prefix_search_fulltext">全文搜索：</string>
     <string name="prefix_search_history">搜索记录：</string>

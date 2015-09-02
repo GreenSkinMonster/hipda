@@ -12,8 +12,16 @@ import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.volley.HiStringRequest;
 import net.jejer.hipda.volley.VolleyHelper;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
+
 
 public class FavoriteHelper {
+
+    public final static String TYPE_FAVORITE = "favorites";
+    public final static String TYPE_ATTENTION = "attention";
 
     private FavoriteHelper() {
     }
@@ -26,46 +34,53 @@ public class FavoriteHelper {
         return SingletonHolder.INSTANCE;
     }
 
-    public void addFavorite(final Context ctx, final String tid, final String title) {
-        StringRequest sReq = new HiStringRequest(HiUtils.FavoriteAddUrl + tid,
+    public void addFavorite(final Context ctx, String item, final String tid) {
+        String url = HiUtils.FavoriteAddUrl.replace("{item}", item).replace("{tid}", tid);
+        StringRequest sReq = new HiStringRequest(url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        if (response.contains("此主题已成功添加到收藏夹中")
-                                || response.contains("您曾经收藏过这个主题")) {
-                            Toast.makeText(ctx, title + " 收藏添加成功", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(ctx, title + " 收藏添加失败, 请重试", Toast.LENGTH_LONG).show();
+                        String result = "";
+                        Document doc = Jsoup.parse(response, "", Parser.xmlParser());
+                        for (Element e : doc.select("root")) {
+                            result = e.text();
+                            if (result.contains("<"))
+                                result = result.substring(0, result.indexOf("<"));
                         }
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Logger.e(error);
-                        Toast.makeText(ctx, title + " 收藏添加失败, 请重试." + VolleyHelper.getErrorReason(error), Toast.LENGTH_LONG).show();
+                        Toast.makeText(ctx, " 添加失败 : " + VolleyHelper.getErrorReason(error), Toast.LENGTH_LONG).show();
                     }
                 });
         VolleyHelper.getInstance().add(sReq);
     }
 
-    public void removeFavorite(final Context ctx, final String tid, final String title) {
-        StringRequest sReq = new HiStringRequest(HiUtils.FavoriteRemoveUrl + tid,
+    public void removeFavorite(final Context ctx, String item, final String tid) {
+        String url = HiUtils.FavoriteRemoveUrl.replace("{item}", item).replace("{tid}", tid);
+        StringRequest sReq = new HiStringRequest(url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        if (response.contains("此主题已成功从您的收藏夹中移除")) {
-                            Toast.makeText(ctx, title + " 收藏删除成功", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(ctx, title + " 收藏删除失败, 请重试", Toast.LENGTH_LONG).show();
+                        String result = "";
+                        Document doc = Jsoup.parse(response, "", Parser.xmlParser());
+                        for (Element e : doc.select("root")) {
+                            result = e.text();
+                            if (result.contains("<"))
+                                result = result.substring(0, result.indexOf("<"));
                         }
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Logger.e(error);
-                        Toast.makeText(ctx, title + " 收藏删除失败, 请重试." + VolleyHelper.getErrorReason(error), Toast.LENGTH_LONG).show();
+                        Toast.makeText(ctx, "删除失败 : " + VolleyHelper.getErrorReason(error), Toast.LENGTH_LONG).show();
                     }
                 });
         VolleyHelper.getInstance().add(sReq);

@@ -59,6 +59,8 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
     private static String mPrefixSearchFullText;
     private static String mPrefixSearchHistory;
 
+    private MenuItem mFavoritesMenuItem;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +114,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             case SimpleListLoader.TYPE_SMS:
             case SimpleListLoader.TYPE_THREADNOTIFY:
             case SimpleListLoader.TYPE_FAVORITES:
+            case SimpleListLoader.TYPE_ATTENTION:
                 getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
                 break;
             case SimpleListLoader.TYPE_SEARCH:
@@ -144,8 +147,16 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListLoader.TYPE_FAVORITES:
-                setActionBarTitle(R.string.title_drawer_favorites);
-//                inflater.inflate(R.menu.menu_simple_thread_list, menu);
+                setActionBarTitle(R.string.title_my_favorites);
+                inflater.inflate(R.menu.menu_favorites, menu);
+                mFavoritesMenuItem = menu.getItem(0);
+                mFavoritesMenuItem.setTitle(R.string.action_attention);
+                break;
+            case SimpleListLoader.TYPE_ATTENTION:
+                setActionBarTitle(R.string.title_my_attention);
+                inflater.inflate(R.menu.menu_favorites, menu);
+                mFavoritesMenuItem = menu.getItem(0);
+                mFavoritesMenuItem.setTitle(R.string.action_favorites);
                 break;
             case SimpleListLoader.TYPE_SEARCH:
                 setActionBarTitle(R.string.title_drawer_search);
@@ -219,6 +230,19 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                 // Implemented in activity
                 return false;
             case R.id.action_refresh:
+                refresh();
+                return true;
+            case R.id.action_favories:
+                Logger.e(mFavoritesMenuItem.getTitle().toString());
+                if (mFavoritesMenuItem.getTitle().toString().equals(getString(R.string.action_attention))) {
+                    mFavoritesMenuItem.setTitle(R.string.action_favorites);
+                    mType = SimpleListLoader.TYPE_ATTENTION;
+                    setActionBarTitle(R.string.title_my_attention);
+                } else {
+                    mFavoritesMenuItem.setTitle(R.string.action_attention);
+                    mType = SimpleListLoader.TYPE_FAVORITES;
+                    setActionBarTitle(R.string.title_my_favorites);
+                }
                 refresh();
                 return true;
             default:

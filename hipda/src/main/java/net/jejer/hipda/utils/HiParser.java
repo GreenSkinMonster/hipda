@@ -38,6 +38,8 @@ public class HiParser {
                 return parseSearch(doc);
             case SimpleListLoader.TYPE_FAVORITES:
                 return parseFavorites(doc);
+            case SimpleListLoader.TYPE_ATTENTION:
+                return parseFavorites(doc);
         }
 
         return null;

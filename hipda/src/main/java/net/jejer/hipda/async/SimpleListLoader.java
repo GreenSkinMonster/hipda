@@ -33,6 +33,7 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     public static final int TYPE_SMSDETAIL = 5;
     public static final int TYPE_FAVORITES = 6;
     public static final int TYPE_SEARCH_USER_THREADS = 7;
+    public static final int TYPE_ATTENTION = 8;
 
     private Context mCtx;
     private int mType;
@@ -139,6 +140,13 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
                 break;
             case TYPE_FAVORITES:
                 url = HiUtils.FavoritesUrl;
+                url = url.replace("{item}", FavoriteHelper.TYPE_FAVORITE);
+                if (mPage > 1)
+                    url += "&page=" + mPage;
+                break;
+            case TYPE_ATTENTION:
+                url = HiUtils.FavoritesUrl;
+                url = url.replace("{item}", FavoriteHelper.TYPE_ATTENTION);
                 if (mPage > 1)
                     url += "&page=" + mPage;
                 break;
