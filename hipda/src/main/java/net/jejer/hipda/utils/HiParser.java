@@ -323,7 +323,7 @@ public class HiParser {
             if (a.attr("href").startsWith(HiUtils.BaseUrl + "redirect.php?from=notice&goto=findpost")) {
                 // Thread Name and TID and PID
                 item.setTitle(a.text());
-                item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", ""));
+                item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", "&"));
                 item.setPid(HttpUtils.getMiddleString(a.attr("href"), "pid=", "&"));
                 break;
             }
@@ -358,7 +358,7 @@ public class HiParser {
         for (Element a : aES) {
             String href = a.attr("href");
             if (href.startsWith(HiUtils.BaseUrl + "space.php")) {
-                String uid = HttpUtils.getMiddleString(a.attr("href"), "uid=", "");
+                String uid = HttpUtils.getMiddleString(a.attr("href"), "uid=", "&");
                 item.setAuthor(a.text());
                 item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
             } else if (href.startsWith(HiUtils.BaseUrl + "viewthread.php")) {
@@ -366,7 +366,7 @@ public class HiParser {
                 item.setTitle(a.text());
             } else if (href.startsWith(HiUtils.BaseUrl + "redirect.php?from=notice&goto=findpost")) {
                 // Thread Name and TID and PID
-                item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", ""));
+                item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", "&"));
                 item.setPid(HttpUtils.getMiddleString(a.attr("href"), "pid=", "&"));
             }
         }
@@ -696,7 +696,7 @@ public class HiParser {
 
         Elements uidES = doc.select("div#profilecontent div.itemtitle ul li");
         if (uidES.size() > 0) {
-            info.setUid(Utils.nullToText(HttpUtils.getMiddleString(uidES.first().text(), "(UID:", ")")).trim());
+            info.setUid(HttpUtils.getMiddleString(uidES.first().text(), "(UID:", ")").trim());
         }
 
         Elements avatarES = doc.select("div.side div.profile_side div.avatar img");

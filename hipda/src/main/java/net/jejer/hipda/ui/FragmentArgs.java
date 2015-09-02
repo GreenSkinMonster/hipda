@@ -8,12 +8,15 @@ public class FragmentArgs {
 
     public final static int TYPE_FORUM = 0;
     public final static int TYPE_THREAD = 1;
+    public final static int TYPE_SPACE = 2;
 
     private int type;
     private int fid;
     private int tid;
     private int page;
     private int floor;
+    private int postId;
+    private int uid;
 
     public int getFid() {
         return fid;
@@ -53,5 +56,21 @@ public class FragmentArgs {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 }

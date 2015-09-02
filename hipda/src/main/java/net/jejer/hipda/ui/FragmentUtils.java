@@ -27,20 +27,20 @@ public class FragmentUtils {
     }
 
     public static FragmentArgs parse(String url) {
-        if (url.startsWith("http://www.hi-pda.com/forum/forumdisplay.php")) {
+        if (url.startsWith(HiUtils.BaseUrl + "forumdisplay.php")) {
             if (url.contains("fid")) {
                 String fid = HttpUtils.getMiddleString(url, "fid=", "&");
-                if (!TextUtils.isEmpty(fid) && TextUtils.isDigitsOnly(fid) && HiUtils.isForumEnabled(Integer.parseInt(fid))) {
+                if (HiUtils.isValidId(fid) && HiUtils.isForumEnabled(Integer.parseInt(fid))) {
                     FragmentArgs args = new FragmentArgs();
                     args.setType(FragmentArgs.TYPE_FORUM);
                     args.setFid(Integer.parseInt(fid));
                     return args;
                 }
             }
-        } else if (url.startsWith("http://www.hi-pda.com/forum/viewthread.php")) {
+        } else if (url.startsWith(HiUtils.BaseUrl + "viewthread.php")) {
             if (url.contains("tid")) {
                 String tid = HttpUtils.getMiddleString(url, "tid=", "&");
-                if (!TextUtils.isEmpty(tid) && TextUtils.isDigitsOnly(tid)) {
+                if (HiUtils.isValidId(tid)) {
                     FragmentArgs args = new FragmentArgs();
                     args.setType(FragmentArgs.TYPE_THREAD);
 
@@ -51,6 +51,60 @@ public class FragmentUtils {
 
                     return args;
                 }
+            }
+        } else if (url.startsWith(HiUtils.BaseUrl + "redirect.php")) {
+            String gotoStr = HttpUtils.getMiddleString(url, "goto=", "&");
+            if (!TextUtils.isEmpty(gotoStr)) {
+                if ("lastpost".equals(gotoStr)) {
+                    //goto last post
+                    String tid = HttpUtils.getMiddleString(url, "tid=", "&");
+                    if (HiUtils.isValidId(tid)) {
+                        FragmentArgs args = new FragmentArgs();
+                        args.setType(FragmentArgs.TYPE_THREAD);
+
+                        args.setTid(Integer.parseInt(tid));
+                        args.setPage(ThreadDetailFragment.LAST_PAGE);
+                        args.setFloor(ThreadDetailFragment.LAST_FLOOR);
+
+                        return args;
+                    }
+                } else if ("findpost".equals(gotoStr)) {
+                    //goto specific post by post id
+                    String tid = HttpUtils.getMiddleString(url, "ptid=", "&");
+                    String postId = HttpUtils.getMiddleString(url, "pid=", "&");
+
+                    if (HiUtils.isValidId(tid) && HiUtils.isValidId(postId)) {
+                        FragmentArgs args = new FragmentArgs();
+                        args.setType(FragmentArgs.TYPE_THREAD);
+
+                        args.setTid(Integer.parseInt(tid));
+                        args.setPostId(Integer.parseInt(postId));
+
+                        return args;
+                    }
+                }
+            }
+        } else if (url.startsWith(HiUtils.BaseUrl + "gotopost.php")) {
+            //goto post by post id
+            String postId = HttpUtils.getMiddleString(url, "pid=", "&");
+
+            if (HiUtils.isValidId(postId)) {
+                FragmentArgs args = new FragmentArgs();
+                args.setType(FragmentArgs.TYPE_THREAD);
+
+                args.setPostId(Integer.parseInt(postId));
+
+                return args;
+            }
+        } else if (url.startsWith(HiUtils.BaseUrl + "space.php")) {
+            //goto post by post id
+            String uid = HttpUtils.getMiddleString(url, "uid=", "&");
+
+            if (HiUtils.isValidId(uid)) {
+                FragmentArgs args = new FragmentArgs();
+                args.setType(FragmentArgs.TYPE_SPACE);
+                args.setUid(Integer.parseInt(uid));
+                return args;
             }
         }
         return null;
@@ -67,8 +121,7 @@ public class FragmentUtils {
                 .commit();
     }
 
-
-    public static void showThread(FragmentManager fragmentManager, String tid, String title, int page, int floor, int maxPage) {
+    public static void showThread(FragmentManager fragmentManager, String tid, String title, int page, int floor, int pid, int maxPage) {
         Bundle arguments = new Bundle();
         arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
         arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
@@ -77,6 +130,8 @@ public class FragmentUtils {
             arguments.putInt(ThreadDetailFragment.ARG_PAGE_KEY, page);
         if (floor != -1)
             arguments.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, floor);
+        if (pid > -0)
+            arguments.putString(ThreadDetailFragment.ARG_PID_KEY, pid + "");
         ThreadDetailFragment fragment = new ThreadDetailFragment();
         fragment.setArguments(arguments);
         fragmentManager.beginTransaction()
@@ -84,6 +139,27 @@ public class FragmentUtils {
                 .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
                 .addToBackStack(ThreadDetailFragment.class.getName())
                 .commit();
+    }
+
+    public static void showSpace(FragmentManager fragmentManager, int uid) {
+        Bundle arguments = new Bundle();
+        arguments.putString(UserinfoFragment.ARG_UID, uid + "");
+        arguments.putString(UserinfoFragment.ARG_USERNAME, "");
+        UserinfoFragment fragment = new UserinfoFragment();
+        fragment.setArguments(arguments);
+
+        fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                .addToBackStack(ThreadDetailFragment.class.getName())
+                .commit();
+    }
+
+    public static void show(FragmentManager fragmentManager, FragmentArgs args) {
+        if (args.getType() == FragmentArgs.TYPE_THREAD)
+            FragmentUtils.showThread(fragmentManager, args.getTid() + "", "", args.getPage(), args.getFloor(), args.getPostId(), -1);
+        else if (args.getType() == FragmentArgs.TYPE_SPACE)
+            FragmentUtils.showSpace(fragmentManager, args.getUid());
     }
 
 }

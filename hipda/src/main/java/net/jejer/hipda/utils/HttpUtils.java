@@ -24,10 +24,8 @@ public class HttpUtils {
         }
 
         if (start_idx <= 0 || end_idx <= 0 || end_idx <= start_idx) {
-            Logger.e("getValue fail");
-            return null;
+            return "";
         }
-
         return source.substring(start_idx, end_idx);
     }
 

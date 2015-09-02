@@ -125,8 +125,8 @@ public class MainFrameActivity extends AppCompatActivity {
         clearBackStacks();
         FragmentUtils.showForum(getFragmentManager(), fid);
 
-        if (args != null && args.getType() == FragmentArgs.TYPE_THREAD)
-            FragmentUtils.showThread(getFragmentManager(), args.getTid() + "", "", args.getPage(), -1, -1);
+        if (args != null)
+            FragmentUtils.show(getFragmentManager(), args);
 
         if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
             new UpdateHelper(this, true).check();
@@ -140,11 +140,8 @@ public class MainFrameActivity extends AppCompatActivity {
         FragmentArgs args = FragmentUtils.parse(intent);
         clearBackStacks();
 
-        if (args != null && args.getType() == FragmentArgs.TYPE_FORUM)
-            FragmentUtils.showForum(getFragmentManager(), args.getFid());
-
-        if (args != null && args.getType() == FragmentArgs.TYPE_THREAD)
-            FragmentUtils.showThread(getFragmentManager(), args.getTid() + "", "", args.getPage(), -1, -1);
+        if (args != null)
+            FragmentUtils.show(getFragmentManager(), args);
     }
 
     @Override

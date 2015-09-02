@@ -3,7 +3,6 @@ package net.jejer.hipda.ui;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
@@ -119,17 +118,10 @@ public class TextViewWithEmoticon extends TextView {
                 URLSpan newSpan = getDownloadUrlSpan(s_url);
                 b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                 b.removeSpan(s);
-            } else if (s_url.startsWith(HiUtils.BaseUrl + "viewthread.php")) {
-                String tid = HttpUtils.getMiddleString(s_url, "tid=", "&");
-                if (tid != null) {
-                    URLSpan newSpan = getThreadUrlSpan(s_url);
-                    b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
-                    b.removeSpan(s);
-                }
-            } else if (s_url.startsWith(HiUtils.BaseUrl + "space.php")) {
-                String uid = HttpUtils.getMiddleString(s_url, "uid=", "&");
-                if (uid != null) {
-                    URLSpan newSpan = getUserInfoUrlSpan(s_url);
+            } else {
+                FragmentArgs args = FragmentUtils.parse(s_url);
+                if (args != null) {
+                    URLSpan newSpan = getFragmentArgsUrlSpan(s_url);
                     b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                     b.removeSpan(s);
                 }
@@ -138,44 +130,14 @@ public class TextViewWithEmoticon extends TextView {
         return b;
     }
 
-    private URLSpan getThreadUrlSpan(final String s_url) {
+    private URLSpan getFragmentArgsUrlSpan(final String s_url) {
         return new URLSpan(s_url) {
             public void onClick(View view) {
-                Bundle arguments = new Bundle();
-                arguments.putString(ThreadDetailFragment.ARG_TID_KEY, HttpUtils.getMiddleString(getURL(), "tid=", "&"));
-                arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, "");
-                ThreadDetailFragment fragment = new ThreadDetailFragment();
-                fragment.setArguments(arguments);
-
-                mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
-                mFragmentManager.beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-            }
-        };
-    }
-
-    private URLSpan getUserInfoUrlSpan(final String s_url) {
-        return new URLSpan(s_url) {
-            public void onClick(View view) {
-
-                String uid = HttpUtils.getMiddleString(s_url, "uid=", "&");
-                String username = "";
-
-                Bundle arguments = new Bundle();
-                arguments.putString(UserinfoFragment.ARG_UID, uid);
-                arguments.putString(UserinfoFragment.ARG_USERNAME, username);
-                UserinfoFragment fragment = new UserinfoFragment();
-                fragment.setArguments(arguments);
-
-                mFragmentManager.beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                        .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                        .addToBackStack(ThreadDetailFragment.class.getName())
-                        .commit();
-
+                FragmentArgs args = FragmentUtils.parse(s_url);
+                if (args != null) {
+                    mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
+                    FragmentUtils.show(mFragmentManager, args);
+                }
             }
         };
     }
@@ -184,6 +146,7 @@ public class TextViewWithEmoticon extends TextView {
         return new URLSpan(s_url) {
             public void onClick(View view) {
                 try {
+
                     String fileName = "";
 
                     //clean way to get fileName

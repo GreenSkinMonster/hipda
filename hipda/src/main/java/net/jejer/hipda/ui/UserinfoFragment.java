@@ -228,6 +228,7 @@ public class UserinfoFragment extends BaseFragment {
                 if (TextUtils.isEmpty(mUsername)) {
                     mUsername = info.getUsername();
                     mUsernameView.setText(mUsername);
+                    setActionBarTitle(mUsername);
                 }
             } else {
                 mDetailView.setText("解析信息失败, 请重试.");
@@ -347,6 +348,7 @@ public class UserinfoFragment extends BaseFragment {
             Fragment fragment = new ThreadDetailFragment();
             fragment.setArguments(bun);
             getFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                     .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
                     .addToBackStack(ThreadDetailFragment.class.getName())
                     .commit();
