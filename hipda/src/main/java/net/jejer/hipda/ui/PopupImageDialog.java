@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -93,7 +92,7 @@ public class PopupImageDialog extends DialogFragment {
 
         EventBus.getDefault().register(mPagerAdapter);
 
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
@@ -144,7 +143,8 @@ public class PopupImageDialog extends DialogFragment {
         );
 
         ImageButton btnDownload = (ImageButton) layout.findViewById(R.id.btn_download_image);
-        btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_file_download).sizeDp(20).color(Color.GRAY));
+        btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_file_download)
+                .sizeDp(20).color(getResources().getColor(R.color.silver)));
         btnDownload.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -178,7 +178,8 @@ public class PopupImageDialog extends DialogFragment {
         );
 
         ImageButton btnShare = (ImageButton) layout.findViewById(R.id.btn_share_image);
-        btnShare.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_share).sizeDp(20).color(Color.GRAY));
+        btnShare.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_share)
+                .sizeDp(20).color(getResources().getColor(R.color.silver)));
 
         btnShare.setOnClickListener(
                 new View.OnClickListener() {
@@ -216,7 +217,8 @@ public class PopupImageDialog extends DialogFragment {
         );
 
         ImageButton btnNext = (ImageButton) layout.findViewById(R.id.btn_next_image);
-        btnNext.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_navigate_next).sizeDp(20).color(Color.GRAY));
+        btnNext.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_navigate_next)
+                .sizeDp(20).color(getResources().getColor(R.color.silver)));
         btnNext.setOnClickListener(
                 new OnSingleClickListener() {
                     @Override
@@ -238,7 +240,8 @@ public class PopupImageDialog extends DialogFragment {
         );
 
         ImageButton btnPrev = (ImageButton) layout.findViewById(R.id.btn_previous_image);
-        btnPrev.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_navigate_before).sizeDp(20).color(Color.GRAY));
+        btnPrev.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_navigate_before)
+                .sizeDp(20).color(getResources().getColor(R.color.silver)));
         btnPrev.setOnClickListener(
                 new OnSingleClickListener() {
                     @Override

@@ -9,6 +9,7 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.ui.OnSingleClickListener;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 
 public class GlideImageView extends ImageView {
@@ -61,9 +62,9 @@ public class GlideImageView extends ImageView {
         setOnClickListener(new GlideImageViewClickHandler());
     }
 
-    private class GlideImageViewClickHandler implements OnClickListener {
+    private class GlideImageViewClickHandler extends OnSingleClickListener {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             if (mImageReadyInfo != null && mImageReadyInfo.isReady()) {
                 if (mUrl.equals(currentUrl)) {
                     stopCurrentGif();

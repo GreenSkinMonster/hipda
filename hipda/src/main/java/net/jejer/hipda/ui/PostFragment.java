@@ -544,6 +544,8 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         @Override
         public void PrePostComplete(int mode, boolean result,
                                     PrePostInfoBean info) {
+            if (mTvAdditional == null)
+                return;
             if (result) {
                 mPrePostInfo = info;
                 mTvAdditional.setVisibility(View.GONE);

@@ -199,10 +199,10 @@ public class FavoriteHelper {
     public void addToCahce(String item, Set<String> tids) {
         for (String tid : tids) {
             if (TYPE_FAVORITE.equals(item)) {
-                if (mFavoritesCache.contains(tid))
+                if (!mFavoritesCache.contains(tid))
                     mFavoritesCache.add(tid);
             } else if (TYPE_ATTENTION.equals(item)) {
-                if (mAttentionCache.contains(tid))
+                if (!mAttentionCache.contains(tid))
                     mAttentionCache.add(tid);
             }
         }
