@@ -275,10 +275,6 @@ public class MainFrameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
-        if (fg instanceof ThreadListFragment) {
-            clearBackStacks();
-        }
     }
 
     @Override

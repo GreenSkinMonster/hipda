@@ -6,6 +6,7 @@ public class ContentImg extends ContentAbs {
     private String mUrl;
     private String mFloor;
     private int mIndexInPage;
+    private String mAuthor;
 
     public ContentImg(String url, boolean isInternal) {
         if (isInternal) {
@@ -39,5 +40,13 @@ public class ContentImg extends ContentAbs {
 
     public void setIndexInPage(int indexInPage) {
         mIndexInPage = indexInPage;
+    }
+
+    public String getAuthor() {
+        return mAuthor;
+    }
+
+    public void setAuthor(String mAuthor) {
+        this.mAuthor = mAuthor;
     }
 }

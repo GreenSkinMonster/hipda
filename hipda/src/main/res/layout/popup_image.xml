@@ -8,10 +8,63 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:background="@color/black_semi_transparent"
+        android:paddingLeft="16dp"
+        android:paddingRight="8dp">
+
+        <TextView
+            android:id="@+id/tv_floor_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/grey"
+            android:textSize="22sp" />
+
+        <ImageButton
+            android:id="@+id/btn_download_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@color/black"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark" />
+
+        <ImageButton
+            android:id="@+id/btn_share_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/btn_download_image"
+            android:background="@color/black"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark" />
+    </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/black_semi_transparent"
         android:paddingLeft="8dp"
         android:paddingRight="8dp">
+
+        <ImageButton
+            android:id="@+id/btn_previous_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@color/black"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark" />
 
         <TextView
             android:id="@+id/tv_image_info"
@@ -19,47 +72,18 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"
-            android:textColor="@color/white"
+            android:textColor="@color/grey"
             android:textSize="22sp" />
 
-        <TextView
-            android:id="@+id/tv_floor_info"
+        <ImageButton
+            android:id="@+id/btn_next_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:textColor="@color/white"
-            android:textSize="22sp" />
-
-        <ImageButton
-            android:id="@+id/btn_download_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:minHeight="42dp"
-            android:minWidth="42dp"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark" />
-
-        <ImageButton
-            android:id="@+id/btn_share_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/btn_download_image"
-            android:minHeight="42dp"
-            android:minWidth="42dp"
+            android:background="@color/black"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark" />
     </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="4dp">
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
 
 </LinearLayout>

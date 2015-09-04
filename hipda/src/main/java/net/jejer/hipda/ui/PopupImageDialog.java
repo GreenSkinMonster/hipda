@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -50,6 +51,9 @@ public class PopupImageDialog extends DialogFragment {
     private LayoutInflater mInflater;
     private PagerAdapter mPagerAdapter;
 
+    private boolean lastClicked = false;
+    private boolean firstClicked = false;
+
     public PopupImageDialog() {
     }
 
@@ -74,7 +78,7 @@ public class PopupImageDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        View layout = mInflater.inflate(R.layout.popup_image, null);
+        final View layout = mInflater.inflate(R.layout.popup_image, null);
 
         final Dialog dialog = new Dialog(mCtx, android.R.style.Theme_Black_NoTitleBar);
         dialog.setContentView(layout);
@@ -97,7 +101,7 @@ public class PopupImageDialog extends DialogFragment {
             @Override
             public void onPageSelected(int position) {
                 ContentImg contentImg = images.get(position);
-                tvFloorInfo.setText(contentImg.getFloor() + "# ");
+                tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
                 tvImageInfo.setText((position + 1) + " / " + images.size());
             }
 
@@ -108,79 +112,153 @@ public class PopupImageDialog extends DialogFragment {
 
         viewPager.setCurrentItem(mImageIndex);
         ContentImg contentImg = images.get(mImageIndex);
-        tvFloorInfo.setText(contentImg.getFloor() + "# ");
+        tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
         tvImageInfo.setText((mImageIndex + 1) + " / " + images.size());
 
+        tvImageInfo.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View arg0) {
+                        String url = images.get(viewPager.getCurrentItem()).getContent();
+                        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
+                        if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
+                            Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
+                        } else {
+                            File f = new File(imageReadyInfo.getPath());
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inJustDecodeBounds = true;
+
+                            BitmapFactory.decodeFile(imageReadyInfo.getPath(), options);
+                            int width = options.outWidth;
+                            int height = options.outHeight;
+
+                            String sizeInK = Math.round(1.0 * f.length() / 1024) + "K";
+                            String msg = "格式　: " + imageReadyInfo.getMime()
+                                    + "\n分辨率: " + width + "x" + height
+                                    + "\n大小　: " + sizeInK;
+
+                            Toast.makeText(mCtx, msg, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+        );
+
         ImageButton btnDownload = (ImageButton) layout.findViewById(R.id.btn_download_image);
-        btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_file_download).sizeDp(20).color(Color.WHITE));
-        btnDownload.setOnClickListener(new View.OnClickListener() {
-                                           @Override
-                                           public void onClick(View arg0) {
-                                               try {
-                                                   String url = images.get(viewPager.getCurrentItem()).getContent();
-                                                   ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
-                                                   if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
-                                                       Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
-                                                       return;
-                                                   }
-                                                   String filename = Utils.getImageFileName("Hi_IMG", imageReadyInfo.getMime());
+        btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_file_download).sizeDp(20).color(Color.GRAY));
+        btnDownload.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View arg0) {
+                        try {
+                            String url = images.get(viewPager.getCurrentItem()).getContent();
+                            ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
+                            if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
+                                Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            String filename = Utils.getImageFileName("Hi_IMG", imageReadyInfo.getMime());
 
-                                                   File destFile = new File(Environment.getExternalStoragePublicDirectory(
-                                                           Environment.DIRECTORY_DOWNLOADS), filename);
-                                                   Utils.copy(new File(imageReadyInfo.getPath()), destFile);
-                                                   Toast.makeText(mCtx, "图片已经保存至下载目录 <" + filename + ">", Toast.LENGTH_SHORT).show();
-                                                   //HttpUtils.download(mCtx, url, filename);
+                            File destFile = new File(Environment.getExternalStoragePublicDirectory(
+                                    Environment.DIRECTORY_DOWNLOADS), filename);
+                            Utils.copy(new File(imageReadyInfo.getPath()), destFile);
+                            Toast.makeText(mCtx, "图片已经保存至下载目录 <" + filename + ">", Toast.LENGTH_SHORT).show();
+                            //HttpUtils.download(mCtx, url, filename);
 
-                                                   MediaScannerConnection.scanFile(mCtx,
-                                                           new String[]{destFile.getPath()}, null, null);
+                            MediaScannerConnection.scanFile(mCtx,
+                                    new String[]{destFile.getPath()}, null, null);
 
-                                               } catch (Exception e) {
-                                                   Logger.e(e);
-                                                   Toast.makeText(mCtx, "保存图片文件时发生错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();
-                                               }
+                        } catch (Exception e) {
+                            Logger.e(e);
+                            Toast.makeText(mCtx, "保存图片文件时发生错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
 
-                                           }
-                                       }
+                    }
+                }
 
         );
 
         ImageButton btnShare = (ImageButton) layout.findViewById(R.id.btn_share_image);
-        btnShare.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_share).sizeDp(20).color(Color.WHITE));
+        btnShare.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_share).sizeDp(20).color(Color.GRAY));
 
-        btnShare.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View arg0) {
-                                            String url = images.get(viewPager.getCurrentItem()).getContent();
+        btnShare.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View arg0) {
+                        String url = images.get(viewPager.getCurrentItem()).getContent();
 
-                                            //generate a random file name, will be deleted after share
-                                            ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
-                                            if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
-                                                Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
-                                                return;
-                                            }
-                                            String filename = Utils.getImageFileName("Hi_Share", imageReadyInfo.getMime());
+                        //generate a random file name, will be deleted after share
+                        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
+                        if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
+                            Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        String filename = Utils.getImageFileName("Hi_Share", imageReadyInfo.getMime());
 
-                                            File destFile = new File(Environment.getExternalStoragePublicDirectory(
-                                                    Environment.DIRECTORY_DOWNLOADS), filename);
+                        File destFile = new File(Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_DOWNLOADS), filename);
 
-                                            try {
-                                                Utils.copy(new File(imageReadyInfo.getPath()), destFile);
+                        try {
+                            Utils.copy(new File(imageReadyInfo.getPath()), destFile);
 
-                                                localAbsoluteFilePath = destFile.getAbsolutePath();
+                            localAbsoluteFilePath = destFile.getAbsolutePath();
 
-                                                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                                                shareIntent.setType(imageReadyInfo.getMime());
-                                                Uri uri = Uri.fromFile(destFile);
-                                                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                                                startActivity(Intent.createChooser(shareIntent, "分享图片"));
-                                            } catch (Exception e) {
-                                                Logger.e(e);
-                                                Toast.makeText(mCtx, "分享时发生错误", Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    }
+                            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                            shareIntent.setType(imageReadyInfo.getMime());
+                            Uri uri = Uri.fromFile(destFile);
+                            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                            startActivity(Intent.createChooser(shareIntent, "分享图片"));
+                        } catch (Exception e) {
+                            Logger.e(e);
+                            Toast.makeText(mCtx, "分享时发生错误", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+        );
+
+        ImageButton btnNext = (ImageButton) layout.findViewById(R.id.btn_next_image);
+        btnNext.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_navigate_next).sizeDp(20).color(Color.GRAY));
+        btnNext.setOnClickListener(
+                new OnSingleClickListener() {
+                    @Override
+                    public void onSingleClick(View v) {
+                        if (viewPager.getCurrentItem() < images.size() - 1) {
+                            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                            firstClicked = false;
+                        } else {
+                            if (!lastClicked) {
+                                Toast.makeText(mCtx, "已经是最后一张，再次点击关闭.", Toast.LENGTH_SHORT).show();
+                                lastClicked = true;
+                            } else {
+                                dismiss();
+                            }
+                        }
+                    }
+                }
 
         );
+
+        ImageButton btnPrev = (ImageButton) layout.findViewById(R.id.btn_previous_image);
+        btnPrev.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_navigate_before).sizeDp(20).color(Color.GRAY));
+        btnPrev.setOnClickListener(
+                new OnSingleClickListener() {
+                    @Override
+                    public void onSingleClick(View v) {
+                        if (viewPager.getCurrentItem() > 0) {
+                            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+                            lastClicked = false;
+                        } else {
+                            if (!firstClicked) {
+                                Toast.makeText(mCtx, "已经是第一张，再次点击关闭.", Toast.LENGTH_SHORT).show();
+                                firstClicked = true;
+                            } else {
+                                dismiss();
+                            }
+                        }
+                    }
+                }
+
+        );
+
         return dialog;
     }
 

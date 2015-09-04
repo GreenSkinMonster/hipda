@@ -24,6 +24,7 @@ public class DetailListBean {
         mPostIdBeans.put(detailBean.getPostId(), detailBean);
         for (ContentImg contentImg : detailBean.getImages()) {
             contentImg.setFloor(detailBean.getFloor());
+            contentImg.setAuthor(detailBean.getAuthor());
             contentImg.setIndexInPage(mImagesCount++);
         }
     }
