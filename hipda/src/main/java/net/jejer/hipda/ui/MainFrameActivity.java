@@ -40,6 +40,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -82,6 +83,7 @@ public class MainFrameActivity extends AppCompatActivity {
         volleyInitTime = System.currentTimeMillis();
         VolleyHelper.getInstance().init(this);
         NotifyHelper.getInstance().init(this);
+        FavoriteHelper.getInstance().init(this);
 
         super.onCreate(savedInstanceState);
 
@@ -132,6 +134,7 @@ public class MainFrameActivity extends AppCompatActivity {
             new UpdateHelper(this, true).check();
         }
 
+        FavoriteHelper.getInstance().updateCache();
     }
 
     @Override
@@ -272,6 +275,10 @@ public class MainFrameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+        if (fg instanceof ThreadListFragment) {
+            clearBackStacks();
+        }
     }
 
     @Override

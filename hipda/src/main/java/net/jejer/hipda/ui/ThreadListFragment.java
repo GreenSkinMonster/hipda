@@ -134,6 +134,8 @@ public class ThreadListFragment extends BaseFragment
             public void onClick(View view) {
                 mFam.close(true);
                 loadingProgressBar.showNow();
+                if (swipeLayout.isShown())
+                    swipeLayout.setRefreshing(false);
                 refresh();
             }
         });
@@ -453,7 +455,6 @@ public class ThreadListFragment extends BaseFragment
                 b.putString(STAGE_ERROR_KEY, "页面加载失败");
                 msgError.setData(b);
                 mMsgHandler.sendMessage(msgError);
-
                 return;
             }
 
@@ -464,13 +465,9 @@ public class ThreadListFragment extends BaseFragment
                     ((MainFrameActivity) getActivity()).updateAccountHeader();
             }
 
-            int count = 0;
             if (mPage == 1) {
                 mThreadBeans.clear();
-                for (ThreadBean newthread : threads.threads) {
-                    mThreadBeans.add(newthread);
-                    count++;
-                }
+                mThreadBeans.addAll(threads.threads);
                 mThreadListAdapter.setBeans(mThreadBeans);
                 mThreadListView.setSelection(0);
             } else {
@@ -485,12 +482,10 @@ public class ThreadListFragment extends BaseFragment
                     }
                     if (!duplicate) {
                         mThreadBeans.add(newthread);
-                        count++;
                     }
                 }
                 mThreadListAdapter.setBeans(mThreadBeans);
             }
-            Logger.v("New Threads Added: " + count + ", Total = " + mThreadListAdapter.getCount());
 
             showNotification();
 

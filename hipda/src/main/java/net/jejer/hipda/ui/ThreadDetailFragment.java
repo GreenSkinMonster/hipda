@@ -326,6 +326,24 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem favoritesMenuItem = menu.findItem(R.id.action_add_favorite);
+        if (FavoriteHelper.getInstance().isInFavortie(mTid)) {
+            favoritesMenuItem.setTitle(R.string.action_remove_favorite);
+        } else {
+            favoritesMenuItem.setTitle(R.string.action_add_favorite);
+        }
+
+        MenuItem attentionMenuItem = menu.findItem(R.id.action_add_attention);
+        if (FavoriteHelper.getInstance().isInAttention(mTid)) {
+            attentionMenuItem.setTitle(R.string.action_remove_attention);
+        } else {
+            attentionMenuItem.setTitle(R.string.action_add_attention);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
@@ -386,9 +404,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             case R.id.action_image_gallery:
                 startImageGallery(0);
                 return true;
-//            case R.id.action_goto:
-//                showGotoPageDialog();
-//                return true;
             case R.id.action_only_author:
                 mAuthorOnly = !mAuthorOnly;
                 mDetailBeans.clear();
@@ -404,16 +419,16 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 }
                 return true;
             case R.id.action_add_favorite:
-                FavoriteHelper.getInstance().addFavorite(mCtx, FavoriteHelper.TYPE_FAVORITE, mTid);
-                return true;
-            case R.id.action_remove_favorite:
-                FavoriteHelper.getInstance().removeFavorite(mCtx, FavoriteHelper.TYPE_FAVORITE, mTid);
+                if (FavoriteHelper.getInstance().isInFavortie(mTid))
+                    FavoriteHelper.getInstance().removeFavorite(mCtx, FavoriteHelper.TYPE_FAVORITE, mTid);
+                else
+                    FavoriteHelper.getInstance().addFavorite(mCtx, FavoriteHelper.TYPE_FAVORITE, mTid);
                 return true;
             case R.id.action_add_attention:
-                FavoriteHelper.getInstance().addFavorite(mCtx, FavoriteHelper.TYPE_ATTENTION, mTid);
-                return true;
-            case R.id.action_remove_attention:
-                FavoriteHelper.getInstance().removeFavorite(mCtx, FavoriteHelper.TYPE_ATTENTION, mTid);
+                if (FavoriteHelper.getInstance().isInAttention(mTid))
+                    FavoriteHelper.getInstance().removeFavorite(mCtx, FavoriteHelper.TYPE_ATTENTION, mTid);
+                else
+                    FavoriteHelper.getInstance().addFavorite(mCtx, FavoriteHelper.TYPE_ATTENTION, mTid);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

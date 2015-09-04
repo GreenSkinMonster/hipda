@@ -29,13 +29,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.utils.Logger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String ARG_TYPE = "type";
@@ -57,7 +60,6 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
     private int mMaxPage;
 
     private static String mPrefixSearchFullText;
-    private static String mPrefixSearchHistory;
 
     private MenuItem mFavoritesMenuItem;
 
@@ -161,7 +163,6 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             case SimpleListLoader.TYPE_SEARCH:
                 setActionBarTitle(R.string.title_drawer_search);
                 mPrefixSearchFullText = getActivity().getResources().getString(R.string.prefix_search_fulltext);
-                mPrefixSearchHistory = getActivity().getResources().getString(R.string.prefix_search_history);
 
                 inflater.inflate(R.menu.menu_search, menu);
                 searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
@@ -180,9 +181,6 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                     @Override
                     public boolean onSuggestionClick(int position) {
                         String s = searchView.getSuggestionsAdapter().getCursor().getString(1);
-                        if (s.startsWith(mPrefixSearchHistory)) {
-                            s = s.substring(mPrefixSearchHistory.length()).trim();
-                        }
                         searchView.setQuery(s, true);
                         searchView.clearFocus();
                         return true;
@@ -233,7 +231,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                 refresh();
                 return true;
             case R.id.action_favories:
-                Logger.e(mFavoritesMenuItem.getTitle().toString());
+                loadingProgressBar.showNow();
                 if (mFavoritesMenuItem.getTitle().toString().equals(getString(R.string.action_attention))) {
                     mFavoritesMenuItem.setTitle(R.string.action_favorites);
                     mType = SimpleListLoader.TYPE_ATTENTION;
@@ -254,8 +252,6 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
     private void refresh() {
         mMaxPage = 0;
         mPage = 1;
-        mSimpleListItemBeans.clear();
-        mSimpleListAdapter.setBeans(mSimpleListItemBeans);
         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
     }
 
@@ -302,7 +298,6 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
         }
-
 
     }
 
@@ -378,17 +373,9 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
 
         @Override
         public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-//            if (mMaxPage > 1)
-//                mTipBar.setText("正在加载" +
-//                        (mMaxPage > 1 ? ("第 " + mPage + " 页，共 " + mMaxPage + " 页") : ""));
-//            else
-//                mTipBar.setText("加载中...");
-
-            if (!swipeLayout.isRefreshing())
+            if (!swipeLayout.isRefreshing() && !loadingProgressBar.isShown())
                 loadingProgressBar.show();
 
-//            mTipBar.setVisibility(View.VISIBLE);
-//            mTipBar.bringToFront();
             if (!swipeLayout.isRefreshing())
                 swipeLayout.setEnabled(false);
 
@@ -413,9 +400,24 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                 return;
             }
 
+            if (mType == SimpleListLoader.TYPE_FAVORITES
+                    || mType == SimpleListLoader.TYPE_ATTENTION) {
+                String item = mType == SimpleListLoader.TYPE_FAVORITES ? FavoriteHelper.TYPE_FAVORITE : FavoriteHelper.TYPE_ATTENTION;
+                Set<String> tids = new HashSet<>();
+                List<SimpleListItemBean> beans = list.getAll();
+                for (SimpleListItemBean itemBean : beans) {
+                    tids.add(itemBean.getTid());
+                }
+                FavoriteHelper.getInstance().addToCahce(item, tids);
+            }
+
+            if (mPage == 1) {
+                mSimpleListItemBeans.clear();
+            }
             mMaxPage = list.getMaxPage();
             mSimpleListItemBeans.addAll(list.getAll());
             mSimpleListAdapter.setBeans(mSimpleListItemBeans);
+
         }
 
         @Override
@@ -453,10 +455,6 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                 String query = (constraint != null ? constraint.toString() : "").trim();
                 query = query.startsWith(SimpleListFragment.mPrefixSearchFullText) ? query.substring(SimpleListFragment.mPrefixSearchFullText.length()).trim() : query;
                 mResults.add(SimpleListFragment.mPrefixSearchFullText + query);
-                //not finished yet, maybe don't need search history at all
-//                for (int i = 0; i < count; i++) {
-//                    mResults.add(mPrefixSearchHistory + (i + 1));
-//                }
             }
 
             @Override

@@ -152,6 +152,7 @@ public class LoginHelper {
 
     public static void logout() {
         VolleyHelper.getInstance().clearCookies();
+        FavoriteHelper.getInstance().clearAll();
     }
 
     public String getErrorMsg() {
