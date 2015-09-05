@@ -252,6 +252,17 @@ public class MainFrameActivity extends AppCompatActivity {
             }
         });
 
+        toolbar.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+                if (fg instanceof ThreadDetailFragment) {
+                    ((ThreadDetailFragment) fg).showTheadTitle();
+                }
+                return true;
+            }
+        });
+
     }
 
     public void updateAccountHeader() {

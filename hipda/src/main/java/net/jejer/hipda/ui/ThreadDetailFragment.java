@@ -441,6 +441,10 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
     }
 
+    public void showTheadTitle() {
+        Toast.makeText(mCtx, mTitle, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onPrePost() {
         postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
