@@ -37,6 +37,7 @@
 
                 <data android:scheme="http" />
                 <data android:host="www.hi-pda.com" />
+                <data android:pathPrefix="/forum/" />
                 <data android:pathPrefix="/forum/forumdisplay.php" />
                 <data android:pathPrefix="/forum/viewthread.php" />
                 <data android:pathPrefix="/forum/gotopost.php" />

@@ -281,6 +281,13 @@ public class ThreadListFragment extends BaseFragment
         }
     }
 
+    public void resetActionBarTitle() {
+        int forumIdx = HiUtils.getForumIndexByFid(mForumId);
+        setActionBarTitle(HiUtils.FORUMS[forumIdx]);
+        setActionBarDisplayHomeAsUpEnabled(false);
+        syncActionBarState();
+    }
+
     @Override
     public void onPause() {
         super.onPause();

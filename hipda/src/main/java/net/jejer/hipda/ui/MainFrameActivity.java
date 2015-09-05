@@ -124,7 +124,7 @@ public class MainFrameActivity extends AppCompatActivity {
         if (args != null && args.getType() == FragmentArgs.TYPE_FORUM)
             fid = args.getFid();
 
-        clearBackStacks();
+        clearBackStacks(false);
         FragmentUtils.showForum(getFragmentManager(), fid);
 
         if (args != null)
@@ -141,10 +141,14 @@ public class MainFrameActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         FragmentArgs args = FragmentUtils.parse(intent);
-        clearBackStacks();
 
-        if (args != null)
+        if (args != null) {
+            clearBackStacks(false);
             FragmentUtils.show(getFragmentManager(), args);
+        } else {
+            clearBackStacks(true);
+        }
+
     }
 
     @Override
@@ -443,7 +447,7 @@ public class MainFrameActivity extends AppCompatActivity {
         @Override
         public boolean onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
             //clear all backStacks from menu click
-            clearBackStacks();
+            clearBackStacks(false);
 
             switch (iDrawerItem.getIdentifier()) {
                 case Constants.DRAWER_SEARCH:    // search
@@ -537,15 +541,17 @@ public class MainFrameActivity extends AppCompatActivity {
         }
     }
 
-    private void clearBackStacks() {
+    private void clearBackStacks(boolean resetActionBarTitle) {
         FragmentManager fm = getFragmentManager();
-//        int backStackCount = fm.getBackStackEntryCount();
-//        for (int cnt = 0; cnt < backStackCount; cnt++) {
-//            int backStackId = fm.getBackStackEntryAt(cnt).getId();
-//            fm.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//        }
         while (fm.getBackStackEntryCount() > 0) {
             fm.popBackStackImmediate();
+        }
+
+        if (resetActionBarTitle) {
+            Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+            if (fg instanceof ThreadListFragment) {
+                ((ThreadListFragment) fg).resetActionBarTitle();
+            }
         }
 
     }
