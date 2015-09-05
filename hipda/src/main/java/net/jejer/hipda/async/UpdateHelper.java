@@ -43,15 +43,14 @@ public class UpdateHelper {
         mSilent = isSilent;
 
         Random random = new Random();
-
-        if (isSilent || random.nextBoolean()) {
+        if (random.nextBoolean()) {
             checkSite = "gitcafe";
             checkUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda-ng.md";
             downloadUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-ng-release-{version}.apk";
         } else {
-            checkSite = "bitbucket";
-            checkUrl = "https://bitbucket.org/GreenSkinMonster/hipda/downloads/hipda-ng.md";
-            downloadUrl = "https://bitbucket.org/GreenSkinMonster/hipda/downloads/hipda-ng-release-{version}.apk";
+            checkSite = "coding";
+            checkUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda-ng.md";
+            downloadUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/releases/hipda-ng-release-{version}.apk";
         }
     }
 
