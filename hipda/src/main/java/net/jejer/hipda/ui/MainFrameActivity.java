@@ -141,14 +141,10 @@ public class MainFrameActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         FragmentArgs args = FragmentUtils.parse(intent);
-
         if (args != null) {
             clearBackStacks(false);
             FragmentUtils.show(getFragmentManager(), args);
-        } else {
-            clearBackStacks(true);
         }
-
     }
 
     @Override
@@ -290,6 +286,10 @@ public class MainFrameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+        if (fg instanceof ThreadListFragment) {
+            clearBackStacks(true);
+        }
     }
 
     @Override
