@@ -66,7 +66,6 @@ public class MainFrameActivity extends AppCompatActivity {
     public Drawer drawerResult;
     private AccountHeader headerResult;
     private ActionMode mActionMode;
-    private long volleyInitTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +79,6 @@ public class MainFrameActivity extends AppCompatActivity {
         GlideHelper.init(this);
 
         // Init Volley
-        volleyInitTime = System.currentTimeMillis();
         VolleyHelper.getInstance().init(this);
         NotifyHelper.getInstance().init(this);
         FavoriteHelper.getInstance().init(this);
@@ -273,9 +271,6 @@ public class MainFrameActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (System.currentTimeMillis() - volleyInitTime > 30 * 1000) {
-            VolleyHelper.getInstance().init(this);
-        }
     }
 
     @Override
