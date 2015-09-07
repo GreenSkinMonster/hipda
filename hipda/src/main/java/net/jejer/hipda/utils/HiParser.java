@@ -696,6 +696,11 @@ public class HiParser {
             info.setUsername(Utils.nullToText(usernameES.first().text()).trim());
         }
 
+        Elements onlineImgES = doc.select("div#profilecontent div.itemtitle img");
+        if (onlineImgES.size() > 0) {
+            info.setOnline(Utils.nullToText(onlineImgES.first().attr("src")).contains("online"));
+        }
+
         Elements uidES = doc.select("div#profilecontent div.itemtitle ul li");
         if (uidES.size() > 0) {
             info.setUid(HttpUtils.getMiddleString(uidES.first().text(), "(UID:", ")").trim());
@@ -708,10 +713,22 @@ public class HiParser {
 
         StringBuilder sb = new StringBuilder();
 
-        Elements detailES = doc.select("div.main div.s_clear ul.commonlist li");
-        for (Element detail : detailES) {
-            sb.append(detail.text()).append('\n');
+        Elements titleES = doc.select("h3.blocktitle");
+        int i = 0;
+        for (Element titleEl : titleES) {
+            sb.append(titleEl.text()).append("\n\n");
+            if (i == 0) {
+                Elements detailES = doc.select("div.main div.s_clear ul.commonlist li");
+                for (Element detail : detailES) {
+                    sb.append(detail.text()).append('\n');
+                }
+            }
+            i++;
+            sb.append("\n");
+            if (i >= 2)
+                break;
         }
+
 
         info.setDetail(sb.toString());
 

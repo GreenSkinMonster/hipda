@@ -59,6 +59,7 @@ public class UserinfoFragment extends BaseFragment {
     private ImageView mAvatarView;
     private TextView mDetailView;
     private TextView mUsernameView;
+    private TextView mOnlineView;
 
     private ListView mThreadListView;
     private SimpleListAdapter mSimpleListAdapter;
@@ -111,6 +112,9 @@ public class UserinfoFragment extends BaseFragment {
         mUsernameView = (TextView) view.findViewById(R.id.userinfo_username);
         mUsernameView.setText(mUsername);
         mUsernameView.setTextSize(HiSettingsHelper.getPostTextSize() + 2);
+
+        mOnlineView = (TextView) view.findViewById(R.id.user_online);
+        mOnlineView.setVisibility(View.INVISIBLE);
 
         mDetailView = (TextView) view.findViewById(R.id.userinfo_detail);
         mDetailView.setText("正在获取信息...");
@@ -229,6 +233,11 @@ public class UserinfoFragment extends BaseFragment {
                     mUsername = info.getUsername();
                     mUsernameView.setText(mUsername);
                     setActionBarTitle(mUsername);
+                }
+                if (info.isOnline()) {
+                    mOnlineView.setVisibility(View.VISIBLE);
+                } else {
+                    mOnlineView.setVisibility(View.INVISIBLE);
                 }
             } else {
                 mDetailView.setText("解析信息失败, 请重试.");

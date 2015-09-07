@@ -21,9 +21,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/userinfo_avatar"
-            android:padding="8dp"
-            android:text=""
-            android:textStyle="bold" />
+            android:paddingBottom="2dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/user_online"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/userinfo_username"
+            android:layout_toRightOf="@+id/userinfo_avatar"
+            android:paddingBottom="2dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:text="@string/user_online" />
 
         <Button
             android:id="@+id/btn_search_threads"

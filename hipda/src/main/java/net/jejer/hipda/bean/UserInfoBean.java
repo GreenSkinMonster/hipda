@@ -6,6 +6,7 @@ public class UserInfoBean {
     private String mDetail;
     private String mUsername;
     private String mUid;
+    private boolean mOnline;
 
     public UserInfoBean() {
     }
@@ -40,5 +41,13 @@ public class UserInfoBean {
 
     public void setUsername(String mUsername) {
         this.mUsername = mUsername;
+    }
+
+    public boolean isOnline() {
+        return mOnline;
+    }
+
+    public void setOnline(boolean online) {
+        this.mOnline = online;
     }
 }
