@@ -6,7 +6,6 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.ui.ThreadListFragment;
@@ -204,9 +203,8 @@ public class HiParserThreadList {
 
         @Override
         public void run() {
-            NotificationBean bean = NotificationMgr.fetchNotification(mDoc);
-            NotificationMgr.showNotification(mCtx, bean);
-            NotificationMgr.isAlarmRnning(mCtx);
+            NotificationMgr.fetchNotification(mDoc);
+            NotificationMgr.showNotification(mCtx);
         }
     }
 }

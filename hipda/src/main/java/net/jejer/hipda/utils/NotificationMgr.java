@@ -39,23 +39,10 @@ public class NotificationMgr {
     private final static int REQUEST_CODE = 0;
     public final static int MIN_REPEAT_MINUTTES = 5;
 
-    private static int mSmsCount = 0;
-    private static int mThreanCount = 0;
+    private final static NotificationBean mCurrentBean = new NotificationBean();
 
-    public static int getSmsCount() {
-        return mSmsCount;
-    }
-
-    public static void setSmsCount(int smsCount) {
-        NotificationMgr.mSmsCount = smsCount;
-    }
-
-    public static int getThreanCount() {
-        return mThreanCount;
-    }
-
-    public static void setThreanCount(int threanCount) {
-        NotificationMgr.mThreanCount = threanCount;
+    public static NotificationBean getCurrentNotification() {
+        return mCurrentBean;
     }
 
     public static void startAlarm(Context context) {
@@ -94,10 +81,9 @@ public class NotificationMgr {
         isAlarmRnning(context);
     }
 
-    public static NotificationBean fetchNotification(Document doc) {
+    public static void fetchNotification(Document doc) {
         int smsCount = 0;
         int threadCount = 0;
-        NotificationBean bean = new NotificationBean();
 
         if (doc == null || HiSettingsHelper.getInstance().isCheckSms()) {
             HiSettingsHelper.getInstance().setLastCheckSmsTime(System.currentTimeMillis());
@@ -109,9 +95,9 @@ public class NotificationMgr {
                     smsCount = listBean.getCount();
                     if (smsCount == 1) {
                         SimpleListItemBean itemBean = listBean.getAll().get(0);
-                        bean.setSenderUsername(itemBean.getAuthor());
-                        bean.setSenderUid(itemBean.getUid());
-                        bean.setContent(itemBean.getTitle());
+                        mCurrentBean.setAuthor(itemBean.getAuthor());
+                        mCurrentBean.setUid(itemBean.getUid());
+                        mCurrentBean.setContent(itemBean.getTitle());
                     }
                 }
             }
@@ -131,41 +117,41 @@ public class NotificationMgr {
             }
         }
 
-        bean.setSmsCount(smsCount);
-        bean.setThreadCount(threadCount);
-        Logger.i(bean.toString());
-        return bean;
+        mCurrentBean.setSmsCount(smsCount);
+        mCurrentBean.setThreadCount(threadCount);
+
+        Logger.i(mCurrentBean.toString());
     }
 
-    public static void showNotification(Context context, NotificationBean bean) {
-        setSmsCount(bean.getSmsCount());
-        setThreanCount(bean.getThreadCount());
+    public static void showNotification(Context context) {
         if (!HiApplication.isActivityVisible()) {
-            if (bean.hasNew()) {
+            if (mCurrentBean.hasNew()) {
                 Intent intent = new Intent(context, MainFrameActivity.class);
                 intent.setAction(Constants.INTENT_NOTIFICATION);
-                intent.putExtra(Constants.EXTRA_SMS_COUNT, bean.getSmsCount());
-                intent.putExtra(Constants.EXTRA_THREAD_COUNT, bean.getThreadCount());
+                intent.putExtra(Constants.EXTRA_SMS_COUNT, mCurrentBean.getSmsCount());
+                intent.putExtra(Constants.EXTRA_THREAD_COUNT, mCurrentBean.getThreadCount());
+                if (!TextUtils.isEmpty(mCurrentBean.getAuthor()))
+                    intent.putExtra(Constants.EXTRA_AUTHOR, mCurrentBean.getAuthor());
+                if (HiUtils.isValidId(mCurrentBean.getUid()))
+                    intent.putExtra(Constants.EXTRA_UID, mCurrentBean.getUid());
                 PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 String title = "HiPDA论坛提醒";
-                String content = getContentText(bean);
+                String content = getContentText(mCurrentBean);
                 Bitmap icon = null;
 
                 int color = context.getResources().getColor(R.color.icon_blue);
 
-                if (bean.getSmsCount() + bean.getThreadCount() == 1) {
-                    if (bean.getSmsCount() == 1) {
-                        title = bean.getSenderUsername() + " 的短消息";
-                        content = bean.getContent();
-                        if (GlideHelper.ready())
-                            GlideHelper.init(context);
-                        File avatarFile = GlideHelper.getAvatarFile(context, HiUtils.getAvatarUrlByUid(bean.getSenderUid()));
-                        if (avatarFile != null && avatarFile.exists()) {
-                            BitmapFactory.Options options = new BitmapFactory.Options();
-                            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                            icon = BitmapFactory.decodeFile(avatarFile.getPath(), options);
-                        }
+                if (mCurrentBean.getSmsCount() == 1 && mCurrentBean.getThreadCount() == 0) {
+                    title = mCurrentBean.getAuthor() + " 的短消息";
+                    content = mCurrentBean.getContent();
+                    if (GlideHelper.ready())
+                        GlideHelper.init(context);
+                    File avatarFile = GlideHelper.getAvatarFile(context, HiUtils.getAvatarUrlByUid(mCurrentBean.getUid()));
+                    if (avatarFile != null && avatarFile.exists()) {
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                        icon = BitmapFactory.decodeFile(avatarFile.getPath(), options);
                     }
                 }
 
@@ -214,12 +200,9 @@ public class NotificationMgr {
     }
 
     public static boolean isAlarmRnning(Context context) {
-        boolean alarmRunning = (PendingIntent.getBroadcast(context, REQUEST_CODE,
+        return (PendingIntent.getBroadcast(context, REQUEST_CODE,
                 new Intent(context, NotificationReceiver.class),
                 PendingIntent.FLAG_NO_CREATE) != null);
-
-        Logger.i("Alarm is running = " + alarmRunning);
-        return alarmRunning;
     }
 
 }

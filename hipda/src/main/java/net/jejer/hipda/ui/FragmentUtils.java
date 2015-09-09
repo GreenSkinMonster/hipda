@@ -24,7 +24,10 @@ public class FragmentUtils {
             if (Constants.INTENT_NOTIFICATION.equals(intent.getAction())) {
                 return parseNotification(
                         intent.getIntExtra(Constants.EXTRA_SMS_COUNT, -1),
-                        intent.getIntExtra(Constants.EXTRA_THREAD_COUNT, -1));
+                        intent.getIntExtra(Constants.EXTRA_THREAD_COUNT, -1),
+                        intent.getStringExtra(Constants.EXTRA_UID),
+                        intent.getStringExtra(Constants.EXTRA_AUTHOR)
+                );
             } else {
                 Uri data = intent.getData();
                 if (data != null) {
@@ -35,9 +38,16 @@ public class FragmentUtils {
         return null;
     }
 
-    private static FragmentArgs parseNotification(int smsCount, int threadCount) {
+    private static FragmentArgs parseNotification(int smsCount, int threadCount, String uid, String author) {
         FragmentArgs args = null;
-        if (smsCount > 0) {
+        if (smsCount == 1
+                && threadCount == 0
+                && HiUtils.isValidId(uid)
+                && !TextUtils.isEmpty(author)) {
+            args = new FragmentArgs();
+            args.setType(FragmentArgs.TYPE_SMS_DETAIL);
+            args.setUid(uid);
+        } else if (smsCount > 0) {
             args = new FragmentArgs();
             args.setType(FragmentArgs.TYPE_SMS);
         } else if (threadCount > 0) {
@@ -124,7 +134,7 @@ public class FragmentUtils {
             if (HiUtils.isValidId(uid)) {
                 FragmentArgs args = new FragmentArgs();
                 args.setType(FragmentArgs.TYPE_SPACE);
-                args.setUid(Integer.parseInt(uid));
+                args.setUid(uid);
                 return args;
             }
         }
@@ -135,10 +145,10 @@ public class FragmentUtils {
         Bundle argments = new Bundle();
         if (HiUtils.isForumEnabled(fid))
             argments.putInt(ThreadListFragment.ARG_FID_KEY, fid);
-        ThreadListFragment threadListFragment = new ThreadListFragment();
-        threadListFragment.setArguments(argments);
+        ThreadListFragment fragment = new ThreadListFragment();
+        fragment.setArguments(argments);
         fragmentManager.beginTransaction()
-                .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
+                .replace(R.id.main_frame_container, fragment, fragment.getClass().getName())
                 .commit();
     }
 
@@ -157,21 +167,21 @@ public class FragmentUtils {
         fragment.setArguments(arguments);
         fragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                .add(R.id.main_frame_container, fragment, fragment.getClass().getName())
                 .addToBackStack(ThreadDetailFragment.class.getName())
                 .commit();
     }
 
-    public static void showSpace(FragmentManager fragmentManager, int uid) {
+    public static void showSpace(FragmentManager fragmentManager, String uid) {
         Bundle arguments = new Bundle();
-        arguments.putString(UserinfoFragment.ARG_UID, uid + "");
+        arguments.putString(UserinfoFragment.ARG_UID, uid);
         arguments.putString(UserinfoFragment.ARG_USERNAME, "");
         UserinfoFragment fragment = new UserinfoFragment();
         fragment.setArguments(arguments);
 
         fragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                .add(R.id.main_frame_container, fragment, fragment.getClass().getName())
                 .addToBackStack(ThreadDetailFragment.class.getName())
                 .commit();
     }
@@ -179,11 +189,11 @@ public class FragmentUtils {
     public static void showThreadNotify(FragmentManager fragmentManager) {
         Bundle notifyBundle = new Bundle();
         notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREAD_NOTIFY);
-        SimpleListFragment notifyFragment = new SimpleListFragment();
-        notifyFragment.setArguments(notifyBundle);
+        SimpleListFragment fragment = new SimpleListFragment();
+        fragment.setArguments(notifyBundle);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
-        transaction.replace(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
+        transaction.replace(R.id.main_frame_container, fragment, fragment.getClass().getName())
                 .addToBackStack(SimpleListFragment.class.getName())
                 .commit();
     }
@@ -191,12 +201,25 @@ public class FragmentUtils {
     public static void showSms(FragmentManager fragmentManager) {
         Bundle smsBundle = new Bundle();
         smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
-        SimpleListFragment smsFragment = new SimpleListFragment();
-        smsFragment.setArguments(smsBundle);
+        SimpleListFragment fragment = new SimpleListFragment();
+        fragment.setArguments(smsBundle);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
-        transaction.replace(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
+        transaction.replace(R.id.main_frame_container, fragment, fragment.getClass().getName())
                 .addToBackStack(SimpleListFragment.class.getName())
+                .commit();
+    }
+
+    public static void showSmsDetail(FragmentManager fragmentManager, String uid, String author) {
+        Bundle smsBundle = new Bundle();
+        smsBundle.putString(SmsFragment.ARG_AUTHOR, author);
+        smsBundle.putString(SmsFragment.ARG_UID, uid);
+        SmsFragment fragment = new SmsFragment();
+        fragment.setArguments(smsBundle);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
+        transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
+                .addToBackStack(ThreadDetailFragment.class.getName())
                 .commit();
     }
 
@@ -207,8 +230,11 @@ public class FragmentUtils {
             showSpace(fragmentManager, args.getUid());
         else if (args.getType() == FragmentArgs.TYPE_SMS)
             showSms(fragmentManager);
+        else if (args.getType() == FragmentArgs.TYPE_SMS_DETAIL)
+            showSmsDetail(fragmentManager, args.getUid(), args.getAuthor());
         else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY)
             showThreadNotify(fragmentManager);
     }
+
 
 }

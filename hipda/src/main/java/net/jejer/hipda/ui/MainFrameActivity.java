@@ -583,8 +583,8 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     public void updateDrawerBadge() {
-        int smsCount = NotificationMgr.getSmsCount();
-        int threadCount = NotificationMgr.getThreanCount();
+        int smsCount = NotificationMgr.getCurrentNotification().getSmsCount();
+        int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
         int threadNotifyIndex = drawerResult.getPositionFromIdentifier(Constants.DRAWER_THREADNOTIFY);
         if (threadNotifyIndex != -1) {
             if (threadCount > 0) {

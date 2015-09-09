@@ -312,9 +312,9 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
 
             Bundle bun = new Bundle();
-            Fragment fragment = null;
+            Fragment fragment;
             if (mType == SimpleListLoader.TYPE_SMS) {
-                bun.putString(SmsFragment.ARG_ID, item.getAuthor());
+                bun.putString(SmsFragment.ARG_AUTHOR, item.getAuthor());
                 bun.putString(SmsFragment.ARG_UID, item.getUid());
                 fragment = new SmsFragment();
             } else {
@@ -329,7 +329,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
 
             getFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
+                    .add(R.id.main_frame_container, fragment, fragment.getClass().getName())
                     .addToBackStack(ThreadDetailFragment.class.getName())
                     .commit();
         }
@@ -412,9 +412,9 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             }
 
             if (mType == SimpleListLoader.TYPE_SMS)
-                NotificationMgr.setSmsCount(0);
+                NotificationMgr.getCurrentNotification().setSmsCount(0);
             if (mType == SimpleListLoader.TYPE_THREAD_NOTIFY)
-                NotificationMgr.setThreanCount(0);
+                NotificationMgr.getCurrentNotification().setThreadCount(0);
 
             if (mPage == 1) {
                 mSimpleListItemBeans.clear();

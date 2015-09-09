@@ -11,6 +11,7 @@ public class FragmentArgs {
     public final static int TYPE_SPACE = 2;
     public final static int TYPE_SMS = 3;
     public final static int TYPE_THREAD_NOTIFY = 4;
+    public final static int TYPE_SMS_DETAIL = 5;
 
     private int type;
     private int fid;
@@ -18,7 +19,8 @@ public class FragmentArgs {
     private int page;
     private int floor;
     private int postId;
-    private int uid;
+    private String uid;
+    private String author;
 
     public int getFid() {
         return fid;
@@ -68,11 +70,19 @@ public class FragmentArgs {
         this.postId = postId;
     }
 
-    public int getUid() {
+    public String getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

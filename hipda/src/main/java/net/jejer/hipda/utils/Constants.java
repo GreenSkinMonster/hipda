@@ -25,5 +25,7 @@ public class Constants {
 
     public static final String EXTRA_SMS_COUNT = "sms_count";
     public static final String EXTRA_THREAD_COUNT = "thread_count";
+    public static final String EXTRA_AUTHOR = "author";
+    public static final String EXTRA_UID = "uid";
 
 }

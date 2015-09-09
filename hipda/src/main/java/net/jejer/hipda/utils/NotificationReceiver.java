@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.volley.VolleyHelper;
 
 /**
@@ -36,8 +35,8 @@ public class NotificationReceiver extends BroadcastReceiver {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        NotificationBean bean = NotificationMgr.fetchNotification(null);
-                        NotificationMgr.showNotification(context, bean);
+                        NotificationMgr.fetchNotification(null);
+                        NotificationMgr.showNotification(context);
                     }
                 }).start();
             } catch (Exception e) {

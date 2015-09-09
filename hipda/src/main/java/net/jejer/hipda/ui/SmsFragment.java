@@ -34,10 +34,10 @@ import java.util.List;
 
 public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostListener {
 
-    public static final String ARG_ID = "ID";
+    public static final String ARG_AUTHOR = "AUTHOR";
     public static final String ARG_UID = "UID";
 
-    private String mId;
+    private String mAuthor;
     private String mUid;
     private SmsAdapter mSmsAdapter;
     private List<SimpleListItemBean> mSmsBeans = new ArrayList<>();
@@ -54,8 +54,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
 
         setHasOptionsMenu(true);
 
-        if (getArguments().containsKey(ARG_ID)) {
-            mId = getArguments().getString(ARG_ID);
+        if (getArguments().containsKey(ARG_AUTHOR)) {
+            mAuthor = getArguments().getString(ARG_AUTHOR);
         }
         if (getArguments().containsKey(ARG_UID)) {
             mUid = getArguments().getString(ARG_UID);
@@ -130,7 +130,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
         menu.clear();
 
         setActionBarDisplayHomeAsUpEnabled(true);
-        setActionBarTitle("与" + mId + "的短消息");
+        setActionBarTitle("与" + mAuthor + "的短消息");
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -177,6 +177,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
                                    SimpleListBean list) {
 
             Logger.v("onLoadFinished enter");
+            loadingProgressBar.hide();
 
             if (list == null || list.getCount() == 0) {
                 Toast.makeText(SmsFragment.this.getActivity(),
@@ -188,7 +189,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
             mSmsBeans.addAll(list.getAll());
             mSmsAdapter.setBeans(mSmsBeans);
             mListView.setSelection(mSmsAdapter.getCount());
-            loadingProgressBar.hide();
         }
 
         @Override

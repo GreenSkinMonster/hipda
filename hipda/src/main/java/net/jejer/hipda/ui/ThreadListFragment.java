@@ -38,6 +38,7 @@ import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.PostAsyncTask;
 import net.jejer.hipda.async.ThreadListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
@@ -153,9 +154,15 @@ public class ThreadListFragment extends BaseFragment
         mFabNotify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (NotificationMgr.getSmsCount() > 0) {
+                NotificationBean bean = NotificationMgr.getCurrentNotification();
+                if (bean.getSmsCount() == 1
+                        && bean.getThreadCount() == 0
+                        && HiUtils.isValidId(bean.getUid())
+                        && !TextUtils.isEmpty(bean.getAuthor())) {
+                    FragmentUtils.showSmsDetail(getFragmentManager(), bean.getUid(), bean.getAuthor());
+                } else if (bean.getSmsCount() > 0) {
                     FragmentUtils.showSms(getFragmentManager());
-                } else if (NotificationMgr.getThreanCount() > 0) {
+                } else if (bean.getThreadCount() > 0) {
                     FragmentUtils.showThreadNotify(getFragmentManager());
                 } else {
                     Toast.makeText(mCtx, "没有未处理的通知", Toast.LENGTH_SHORT).show();
@@ -562,8 +569,8 @@ public class ThreadListFragment extends BaseFragment
     public void showNotification() {
         if (mFabNotify == null)
             return;
-        int smsCount = NotificationMgr.getSmsCount();
-        int threadCount = NotificationMgr.getThreanCount();
+        int smsCount = NotificationMgr.getCurrentNotification().getSmsCount();
+        int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
         if (smsCount + threadCount > 0) {
             if (smsCount > 0)
                 mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail).color(Color.WHITE));
