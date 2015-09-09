@@ -14,11 +14,19 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Logger.v("isConnected=" + Connectivity.isConnected(context));
+        if (!HiSettingsHelper.getInstance().ready())
+            HiSettingsHelper.getInstance().init(context);
+
         HiSettingsHelper.getInstance().updateMobileNetworkStatus();
-        Logger.v("isConnected=" + Connectivity.isConnected(context)
-                + ",  isConnectedFast=" + Connectivity.isConnectedFast(context)
-                + ", isConnectedWifi=" + Connectivity.isConnectedWifi(context)
-                + ", isConnectedMobile=" + Connectivity.isConnectedMobile(context)
-                + ", networkClass=" + Connectivity.getNetworkClass(context));
+
+        if (Connectivity.isConnected(context)) {
+            if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
+                if (!NotificationMgr.isAlarmRnning(context))
+                    NotificationMgr.startAlarm(context);
+            } else if (NotificationMgr.isAlarmRnning(context)) {
+                NotificationMgr.cancelAlarm(context);
+            }
+        }
     }
 }

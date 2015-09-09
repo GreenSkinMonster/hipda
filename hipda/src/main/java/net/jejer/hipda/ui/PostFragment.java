@@ -147,8 +147,8 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
 
         mEtSubjectMsg = (EditText) view.findViewById(R.id.et_subject);
 
-        mEtReplyMsg.setTextSize(HiSettingsHelper.getPostTextSize());
-        mTvAdditional.setTextSize(HiSettingsHelper.getPostTextSize());
+        mEtReplyMsg.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+        mTvAdditional.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
 
         final ExpandableHeightGridView gvTab1 = (ExpandableHeightGridView) view.findViewById(R.id.tab1_emoji);
         gvTab1.setExpanded(true);

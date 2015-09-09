@@ -65,7 +65,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_content.setText(item.getInfo());
         holder.tv_content.setFocusable(false);
 
-        holder.tv_content.setTextSize(HiSettingsHelper.getPostTextSize());
+        holder.tv_content.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
 
         if (item.isNew())
             holder.tv_isnew.setVisibility(View.VISIBLE);

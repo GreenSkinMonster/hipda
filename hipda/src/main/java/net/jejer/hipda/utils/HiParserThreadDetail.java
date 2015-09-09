@@ -58,7 +58,7 @@ public class HiParserThreadDetail {
         handler.sendMessage(msgStartParse);
 
         // Async check notify
-        new HiParserThreadList.parseNotifyRunnable(ctx, doc, true).run();
+        new HiParserThreadList.parseNotifyRunnable(ctx, doc).run();
         HiSettingsHelper.getInstance().updateMobileNetworkStatus();
 
         DetailListBean details = new DetailListBean();
@@ -515,7 +515,7 @@ public class HiParserThreadDetail {
             // video
             String html = contentN.toString();
             String url = HttpUtils.getMiddleString(html, "'src', '", "'");
-            if (url != null && url.startsWith("http://player.youku.com/player.php")) {
+            if (url.startsWith("http://player.youku.com/player.php")) {
                 //http://player.youku.com/player.php/sid/XNzIyMTUxMzEy.html/v.swf
                 //http://v.youku.com/v_show/id_XNzIyMTUxMzEy.html
                 url = HttpUtils.getMiddleString(url, "sid/", "/v.swf");
@@ -524,7 +524,7 @@ public class HiParserThreadDetail {
                     url = url + ".html";
                 }
                 content.addLink("YouKu视频自动转换手机通道 " + url, url);
-            } else if (url != null && url.startsWith("http")) {
+            } else if (url.startsWith("http")) {
                 content.addLink("FLASH VIDEO,手机可能不支持 " + url, url);
             }
             return false;

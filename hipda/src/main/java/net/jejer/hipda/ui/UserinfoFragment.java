@@ -111,14 +111,14 @@ public class UserinfoFragment extends BaseFragment {
 
         mUsernameView = (TextView) view.findViewById(R.id.userinfo_username);
         mUsernameView.setText(mUsername);
-        mUsernameView.setTextSize(HiSettingsHelper.getPostTextSize() + 2);
+        mUsernameView.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() + 2);
 
         mOnlineView = (TextView) view.findViewById(R.id.user_online);
         mOnlineView.setVisibility(View.INVISIBLE);
 
         mDetailView = (TextView) view.findViewById(R.id.userinfo_detail);
         mDetailView.setText("正在获取信息...");
-        mDetailView.setTextSize(HiSettingsHelper.getPostTextSize());
+        mDetailView.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
 
         //to avoid click through this view
         view.setOnTouchListener(new View.OnTouchListener() {

@@ -152,13 +152,30 @@
         <item>0</item>
     </string-array>
 
+    <!--  value should match ActivityInfo.SCREEN_ORIENTATION_*-->
+    <string-array name="pref_noti_repeat_minute">
+        <item>5分钟</item>
+        <item>10分钟</item>
+        <item>15分钟</item>
+        <item>30分钟</item>
+        <item>1小时</item>
+    </string-array>
+    <string-array name="pref_noti_repeat_minute_values">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+
     <string-array name="empty_array" />
 
     <string name="pref_category_tail">小尾巴</string>
-    <string name="pref_category_ui">UI</string>
+    <string name="pref_category_ui">界面选项</string>
 
     <!-- General settings -->
     <string name="pref_category_general">其他</string>
+    <string name="pref_category_notification">消息提醒</string>
     <string name="pref_title_load_img_without_wifi">移动网络加载图片</string>
     <string name="pref_threadlist_avatar">移动网络显示头像</string>
     <string name="pref_title_prefetch">预加载</string>
@@ -170,8 +187,6 @@
     <string name="pref_title_tail_text">尾巴文字</string>
     <string name="pref_title_tail_url">尾巴链接</string>
     <string name="pref_title_encode_utf8">使用UTF8编码</string>
-    <string name="pref_title_new_net_lib">新的网络访问库</string>
-    <string name="pref_title_eink_optimization">EINK优化</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
     <string name="pref_title_theme">界面主题</string>
@@ -186,4 +201,12 @@
     <string name="pref_title_about">关于HiPDA·NG</string>
     <string name="pref_title_check_update">检查更新</string>
     <string name="pref_title_clear_cache">清除缓存</string>
+    <string name="pref_noti_task_enabled">接收通知</string>
+    <string name="pref_noti_repeat_minuets">接收通知间隔</string>
+    <string name="pref_noti_led_light">LED通知灯</string>
+    <string name="pref_noti_sound">通知声音</string>
+    <string name="pref_noti_silent_mode">免打扰时段</string>
+    <string name="pref_noti_silent_begin">免打扰开始</string>
+    <string name="pref_noti_silent_end">免打扰结束</string>
+    <string name="pref_noti_float_button">底部浮动通知按钮</string>
 </resources>

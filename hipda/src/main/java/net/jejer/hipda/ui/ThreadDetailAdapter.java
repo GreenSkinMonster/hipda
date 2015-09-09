@@ -106,7 +106,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
             if (content instanceof ContentText) {
                 TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, parent, false);
                 tv.setFragmentManager(mFragmentManager);
-                tv.setTextSize(HiSettingsHelper.getPostTextSize());
+                tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                 tv.setPadding(8, 8, 8, 8);
 
                 //dirty hack, remove extra <br>
@@ -167,7 +167,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
             } else if (content instanceof ContentAttach) {
                 TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, parent, false);
                 tv.setFragmentManager(mFragmentManager);
-                tv.setTextSize(HiSettingsHelper.getPostTextSize());
+                tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                 tv.setText(content.getContent());
                 tv.setFocusable(false);
                 contentView.addView(tv);
@@ -176,7 +176,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text_simple, parent, false);
                 TextViewWithEmoticon tv = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
 
-                tv.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
+                tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
                 tv.setAutoLinkMask(Linkify.WEB_URLS);
                 tv.setText(content.getContent());
                 tv.setFocusable(false);    // make convertView long clickable.
@@ -237,10 +237,10 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 tvContent.setText(Utils.nullToText(text));
                 tvTime.setText(Utils.nullToText(time));
 
-                tvAuthor.setTextSize(HiSettingsHelper.getPostTextSize() - 2);
-                tvNote.setTextSize(HiSettingsHelper.getPostTextSize() - 2);
-                tvContent.setTextSize(HiSettingsHelper.getPostTextSize() - 1);
-                tvTime.setTextSize(HiSettingsHelper.getPostTextSize() - 4);
+                tvAuthor.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 2);
+                tvNote.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 2);
+                tvContent.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
+                tvTime.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 4);
 
                 if (floor > 0) {
                     tvNote.setTag(floor);

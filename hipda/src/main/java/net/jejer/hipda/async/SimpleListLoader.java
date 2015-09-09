@@ -29,8 +29,8 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     public static final int TYPE_MYPOST = 1;
     public static final int TYPE_SEARCH = 2;
     public static final int TYPE_SMS = 3;
-    public static final int TYPE_THREADNOTIFY = 4;
-    public static final int TYPE_SMSDETAIL = 5;
+    public static final int TYPE_THREAD_NOTIFY = 4;
+    public static final int TYPE_SMS_DETAIL = 5;
     public static final int TYPE_FAVORITES = 6;
     public static final int TYPE_SEARCH_USER_THREADS = 7;
     public static final int TYPE_ATTENTION = 8;
@@ -99,10 +99,10 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
             case TYPE_SMS:
                 url = HiUtils.SMSUrl;
                 break;
-            case TYPE_THREADNOTIFY:
+            case TYPE_THREAD_NOTIFY:
                 url = HiUtils.ThreadNotifyUrl;
                 break;
-            case TYPE_SMSDETAIL:
+            case TYPE_SMS_DETAIL:
                 url = HiUtils.SMSDetailUrl + mExtra;
                 break;
             case TYPE_SEARCH:

@@ -16,9 +16,14 @@ public class Constants {
     public static final int DRAWER_MYREPLY = 1000 + SimpleListLoader.TYPE_MYREPLY;
     public static final int DRAWER_FAVORITES = 1000 + SimpleListLoader.TYPE_FAVORITES;
     public static final int DRAWER_SMS = 1000 + SimpleListLoader.TYPE_SMS;
-    public static final int DRAWER_THREADNOTIFY = 1000 + SimpleListLoader.TYPE_THREADNOTIFY;
+    public static final int DRAWER_THREADNOTIFY = 1000 + SimpleListLoader.TYPE_THREAD_NOTIFY;
     public static final int DRAWER_SETTINGS = 10000;
 
     public static final String FONT_ROBOTO_SLAB = "RobotoSlab";
+
+    public static final String INTENT_NOTIFICATION = "notification";
+
+    public static final String EXTRA_SMS_COUNT = "sms_count";
+    public static final String EXTRA_THREAD_COUNT = "thread_count";
 
 }

@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
@@ -31,6 +32,7 @@ import net.jejer.hipda.utils.Utils;
 import net.jejer.hipda.volley.LoggingInterceptor;
 import net.jejer.hipda.volley.VolleyHelper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
@@ -63,6 +65,10 @@ public class GlideHelper {
             Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
 
         }
+    }
+
+    public static boolean ready() {
+        return Glide.isSetup();
     }
 
     public static void loadAvatar(Context ctx, ImageView view, String avatarUrl) {
@@ -127,6 +133,19 @@ public class GlideHelper {
             glideUrl = new GlideUrl(url);
         }
         return glideUrl;
+    }
+
+    public static File getAvatarFile(Context ctx, String avatarUrl) {
+        File f = null;
+        try {
+            FutureTarget<File> future = Glide.with(ctx)
+                    .load(avatarUrl)
+                    .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+            f = future.get();
+            Glide.clear(future);
+        } catch (Exception ignored) {
+        }
+        return f;
     }
 
 }

@@ -272,7 +272,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
         quickReply = view.findViewById(R.id.quick_reply);
         mReplyTextTv = (TextView) quickReply.findViewById(R.id.tv_reply_text);
-        mReplyTextTv.setTextSize(HiSettingsHelper.getPostTextSize());
+        mReplyTextTv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         mPostReplyIb = (ImageButton) quickReply.findViewById(R.id.ib_reply_post);
         mPostReplyIb.setOnClickListener(new View.OnClickListener() {
             @Override

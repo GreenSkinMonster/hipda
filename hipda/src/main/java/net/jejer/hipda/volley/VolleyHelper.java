@@ -53,6 +53,10 @@ public class VolleyHelper {
         }
     }
 
+    public boolean ready() {
+        return mCtx != null && mRequestQueue != null && cookieStore != null;
+    }
+
     public <T> void add(Request<T> req) {
         mRequestQueue.add(req);
     }

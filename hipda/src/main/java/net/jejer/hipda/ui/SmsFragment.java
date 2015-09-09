@@ -85,14 +85,14 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
                 ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", ((SimpleListItemBean) adapterView.getItemAtPosition(i)).getInfo());
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(getActivity(), "短信息内容已经复制至粘贴板", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "短消息内容已经复制至粘贴板", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
 
         ImageButton postIb = (ImageButton) view.findViewById(R.id.ib_send_sms);
         mEtSms = (EditText) view.findViewById(R.id.et_sms);
-        mEtSms.setTextSize(HiSettingsHelper.getPostTextSize());
+        mEtSms.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         postIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,7 +166,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
 
         @Override
         public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-            return new SimpleListLoader(SmsFragment.this.getActivity(), SimpleListLoader.TYPE_SMSDETAIL, 1, mUid);
+            return new SimpleListLoader(SmsFragment.this.getActivity(), SimpleListLoader.TYPE_SMS_DETAIL, 1, mUid);
         }
 
         @Override

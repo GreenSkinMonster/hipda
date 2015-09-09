@@ -5,16 +5,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
-
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
-import net.jejer.hipda.ui.NotifyHelper;
 import net.jejer.hipda.ui.ThreadListFragment;
-import net.jejer.hipda.volley.HiStringRequest;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,14 +17,14 @@ import org.jsoup.select.Elements;
 
 public class HiParserThreadList {
 
-    public static ThreadListBean parse(Context ctx, Handler handler, Document doc) {
+    public static ThreadListBean parse(Context context, Handler handler, Document doc) {
         // Update UI
         Message msgStartParse = Message.obtain();
         msgStartParse.what = ThreadListFragment.STAGE_PARSE;
         handler.sendMessage(msgStartParse);
 
         // Async check notify
-        new parseNotifyRunnable(ctx, doc, true).run();
+        new parseNotifyRunnable(context, doc).run();
         HiSettingsHelper.getInstance().updateMobileNetworkStatus();
 
         ThreadListBean threads = new ThreadListBean();
@@ -199,51 +194,19 @@ public class HiParserThreadList {
     }
 
     public static class parseNotifyRunnable implements Runnable {
-        private Context mCtx;
         private Document mDoc;
-        private boolean mCheckSMS;
+        private Context mCtx;
 
-        public parseNotifyRunnable(Context ctx, Document doc, boolean checkSMS) {
-            mCtx = ctx;
+        public parseNotifyRunnable(Context context, Document doc) {
             mDoc = doc;
-            mCheckSMS = checkSMS;
+            mCtx = context;
         }
 
         @Override
         public void run() {
-            Elements promptcontentES = mDoc.select("div.promptcontent");
-            if (promptcontentES.size() < 1) {
-                return;
-            }
-
-            String notifyStr = promptcontentES.first().text();
-            //私人消息 (1) 公共消息 (0) 系统消息 (0) 好友消息 (0) 帖子消息 (0)
-            int cnt = 0;
-            for (String s : notifyStr.split("\\) ")) {
-                if (s.contains("私人消息")) {
-                    cnt = HttpUtils.getIntFromString(s);
-                    NotifyHelper.getInstance().setCntSMS(cnt);
-                    Logger.v("NEW SMS:" + String.valueOf(cnt));
-                } else if (s.contains("帖子消息")) {
-                    cnt = HttpUtils.getIntFromString(s);
-                    NotifyHelper.getInstance().setCntThread(cnt);
-                    Logger.v("THREAD NOTIFY:" + String.valueOf(cnt));
-                }
-            }
-
-            if (mCheckSMS) {
-                // Trigger Refresh SMS, result will show in next load.
-                StringRequest sReq = new HiStringRequest(HiUtils.CheckSMS,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                            }
-                        }, null);
-                VolleyHelper.getInstance().add(sReq);
-            }
-
-            // Update UI
-            NotifyHelper.getInstance().updateDrawer();
+            NotificationBean bean = NotificationMgr.fetchNotification(mDoc);
+            NotificationMgr.showNotification(mCtx, bean);
+            NotificationMgr.isAlarmRnning(mCtx);
         }
     }
 }

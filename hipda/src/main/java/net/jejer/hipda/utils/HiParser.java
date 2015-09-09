@@ -19,7 +19,7 @@ public class HiParser {
     public static SimpleListBean parseSimpleList(Context ctx, int type, Document doc) {
 
         // Async check notify
-        new HiParserThreadList.parseNotifyRunnable(ctx, doc, false).run();
+        new HiParserThreadList.parseNotifyRunnable(ctx, doc).run();
 
         switch (type) {
             case SimpleListLoader.TYPE_MYREPLY:
@@ -28,9 +28,9 @@ public class HiParser {
                 return parseMyPost(ctx, doc);
             case SimpleListLoader.TYPE_SMS:
                 return parseSMS(doc);
-            case SimpleListLoader.TYPE_THREADNOTIFY:
+            case SimpleListLoader.TYPE_THREAD_NOTIFY:
                 return parseNotify(doc);
-            case SimpleListLoader.TYPE_SMSDETAIL:
+            case SimpleListLoader.TYPE_SMS_DETAIL:
                 return parseSmsDetail(doc);
             case SimpleListLoader.TYPE_SEARCH:
                 return parseSearch(doc);

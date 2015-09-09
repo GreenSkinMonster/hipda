@@ -28,6 +28,7 @@ import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.NotificationMgr;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +40,6 @@ public class SettingsFragment extends PreferenceFragment {
     private Set<String> mForums;
     private boolean mNavBarColored;
     private String mFont;
-    private boolean mNewNetLib;
     private boolean mCacheCleared;
 
     @Override
@@ -59,6 +59,9 @@ public class SettingsFragment extends PreferenceFragment {
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_THEME));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FONT));
         bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FORUMS));
+        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_NOTI_REPEAT_MINUETS));
+        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN));
+        bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_NOTI_SILENT_END));
 
         final Preference userPreference = findPreference(HiSettingsHelper.PERF_USERNAME);
         if (LoginHelper.isLoggedIn())
@@ -152,11 +155,35 @@ public class SettingsFragment extends PreferenceFragment {
             ((PreferenceGroup) findPreference(getResources().getString(R.string.pref_category_ui))).removePreference(navBarColoredPreference);
         }
 
+        final Preference notiEnablePreference = findPreference(HiSettingsHelper.PERF_NOTI_TASK_ENABLED);
+        if (NotificationMgr.isAlarmRnning(getActivity()))
+            notiEnablePreference.setTitle(notiEnablePreference.getTitle() + "*");
+        notiEnablePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if (newValue instanceof Boolean) {
+                    enableNotiItems((Boolean) newValue);
+                }
+                return true;
+            }
+        });
+
+        enableNotiItems(HiSettingsHelper.getInstance().isNotiTaskEnabled());
+
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
         mTheme = HiSettingsHelper.getInstance().getTheme();
         mForums = HiSettingsHelper.getInstance().getForums();
         mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
         mFont = HiSettingsHelper.getInstance().getFont();
+    }
+
+    private void enableNotiItems(boolean isNotiTaskEnabled) {
+        findPreference(HiSettingsHelper.PERF_NOTI_REPEAT_MINUETS).setEnabled(isNotiTaskEnabled);
+        findPreference(HiSettingsHelper.PERF_NOTI_LED_LIGHT).setEnabled(isNotiTaskEnabled);
+        findPreference(HiSettingsHelper.PERF_NOTI_SOUND).setEnabled(isNotiTaskEnabled);
+        findPreference(HiSettingsHelper.PERF_NOTI_SILENT_MODE).setEnabled(isNotiTaskEnabled);
+        findPreference(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN).setEnabled(isNotiTaskEnabled);
+        findPreference(HiSettingsHelper.PERF_NOTI_SILENT_END).setEnabled(isNotiTaskEnabled);
     }
 
     @Override
@@ -178,7 +205,16 @@ public class SettingsFragment extends PreferenceFragment {
     public void onStop() {
         Logger.v("onStop, reload settings");
         super.onStop();
+
         HiSettingsHelper.getInstance().reload();
+
+        if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
+            if (NotificationMgr.isAlarmRnning(getActivity()))
+                NotificationMgr.cancelAlarm(getActivity());
+            NotificationMgr.startAlarm(getActivity());
+        } else {
+            NotificationMgr.cancelAlarm(getActivity());
+        }
 
         if (!HiSettingsHelper.getInstance().isGestureBack()
                 && getActivity() != null)
@@ -242,8 +278,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     private static void bindPreferenceSummaryToValue(Preference preference) {
         // Set the listener to watch for value changes.
-        preference
-                .setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
         // Trigger the listener immediately with the preference's
         // current value.

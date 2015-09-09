@@ -51,6 +51,7 @@ import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.volley.VolleyHelper;
 
 import java.util.ArrayList;
@@ -80,7 +81,6 @@ public class MainFrameActivity extends AppCompatActivity {
 
         // Init Volley
         VolleyHelper.getInstance().init(this);
-        NotifyHelper.getInstance().init(this);
         FavoriteHelper.getInstance().init(this);
 
         super.onCreate(savedInstanceState);
@@ -133,6 +133,11 @@ public class MainFrameActivity extends AppCompatActivity {
         }
 
         FavoriteHelper.getInstance().updateCache();
+
+        if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
+            if (!NotificationMgr.isAlarmRnning(this))
+                NotificationMgr.startAlarm(this);
+        }
     }
 
     @Override
@@ -279,12 +284,24 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        HiApplication.activityResumed();
         Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
         if (fg instanceof ThreadListFragment) {
             clearBackStacks(true);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        HiApplication.activityPaused();
     }
 
     @Override
@@ -402,37 +419,6 @@ public class MainFrameActivity extends AppCompatActivity {
 
     }
 
-    public void onNotification() {
-        if (mOnSwipeCallback instanceof ThreadListFragment) {
-            ((ThreadListFragment) mOnSwipeCallback).showNotification();
-        }
-
-        int smsCount = NotifyHelper.getInstance().getCntSMS();
-        int threadCount = NotifyHelper.getInstance().getCntThread();
-        if (smsCount + threadCount > 0) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("您有 ");
-            sb.append(smsCount).append(" 条新的短消息");
-        }
-        int threadNotifyIndex = drawerResult.getPositionFromIdentifier(Constants.DRAWER_THREADNOTIFY);
-        if (threadNotifyIndex != -1) {
-            if (threadCount > 0) {
-                drawerResult.updateBadge(threadCount + "", threadNotifyIndex);
-            } else {
-                drawerResult.updateBadge("", threadNotifyIndex);
-            }
-        }
-        int smsNotifyIndex = drawerResult.getPositionFromIdentifier(Constants.DRAWER_SMS);
-        if (smsNotifyIndex != -1) {
-            if (smsCount > 0) {
-                drawerResult.updateBadge(smsCount + "", smsNotifyIndex);
-            } else {
-                drawerResult.updateBadge("", smsNotifyIndex);
-            }
-        }
-    }
-
-
     public enum DrawerItem {
         SEARCH(Constants.DRAWER_SEARCH),
         MY_POST(Constants.DRAWER_MYPOST),
@@ -501,26 +487,10 @@ public class MainFrameActivity extends AppCompatActivity {
                             .commit();
                     break;
                 case Constants.DRAWER_SMS:    // sms
-                    Bundle smsBundle = new Bundle();
-                    smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
-                    SimpleListFragment smsFragment = new SimpleListFragment();
-                    smsFragment.setArguments(smsBundle);
-                    getFragmentManager().beginTransaction()
-                            .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .replace(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
+                    FragmentUtils.showSms(getFragmentManager());
                     break;
                 case Constants.DRAWER_THREADNOTIFY:    // thread notify
-                    Bundle notifyBundle = new Bundle();
-                    notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREADNOTIFY);
-                    SimpleListFragment notifyFragment = new SimpleListFragment();
-                    notifyFragment.setArguments(notifyBundle);
-                    getFragmentManager().beginTransaction()
-                            .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .replace(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
+                    FragmentUtils.showThreadNotify(getFragmentManager());
                     break;
                 case Constants.DRAWER_SETTINGS:    // settings
                     getFragmentManager().beginTransaction()
@@ -611,4 +581,26 @@ public class MainFrameActivity extends AppCompatActivity {
     public void registOnSwipeCallback(Fragment f) {
         mOnSwipeCallback = f;
     }
+
+    public void updateDrawerBadge() {
+        int smsCount = NotificationMgr.getSmsCount();
+        int threadCount = NotificationMgr.getThreanCount();
+        int threadNotifyIndex = drawerResult.getPositionFromIdentifier(Constants.DRAWER_THREADNOTIFY);
+        if (threadNotifyIndex != -1) {
+            if (threadCount > 0) {
+                drawerResult.updateBadge(threadCount + "", threadNotifyIndex);
+            } else {
+                drawerResult.updateBadge("", threadNotifyIndex);
+            }
+        }
+        int smsNotifyIndex = drawerResult.getPositionFromIdentifier(Constants.DRAWER_SMS);
+        if (smsNotifyIndex != -1) {
+            if (smsCount > 0) {
+                drawerResult.updateBadge(smsCount + "", smsNotifyIndex);
+            } else {
+                drawerResult.updateBadge("", smsNotifyIndex);
+            }
+        }
+    }
+
 }

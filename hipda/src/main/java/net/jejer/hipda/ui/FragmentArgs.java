@@ -9,6 +9,8 @@ public class FragmentArgs {
     public final static int TYPE_FORUM = 0;
     public final static int TYPE_THREAD = 1;
     public final static int TYPE_SPACE = 2;
+    public final static int TYPE_SMS = 3;
+    public final static int TYPE_THREAD_NOTIFY = 4;
 
     private int type;
     private int fid;

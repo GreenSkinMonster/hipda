@@ -1,12 +1,15 @@
 package net.jejer.hipda.ui;
 
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 
@@ -18,15 +21,33 @@ public class FragmentUtils {
 
     public static FragmentArgs parse(Intent intent) {
         if (intent != null) {
-            Uri data = intent.getData();
-            if (data != null) {
-                return FragmentUtils.parse(data.toString());
+            if (Constants.INTENT_NOTIFICATION.equals(intent.getAction())) {
+                return parseNotification(
+                        intent.getIntExtra(Constants.EXTRA_SMS_COUNT, -1),
+                        intent.getIntExtra(Constants.EXTRA_THREAD_COUNT, -1));
+            } else {
+                Uri data = intent.getData();
+                if (data != null) {
+                    return FragmentUtils.parseUrl(data.toString());
+                }
             }
         }
         return null;
     }
 
-    public static FragmentArgs parse(String url) {
+    private static FragmentArgs parseNotification(int smsCount, int threadCount) {
+        FragmentArgs args = null;
+        if (smsCount > 0) {
+            args = new FragmentArgs();
+            args.setType(FragmentArgs.TYPE_SMS);
+        } else if (threadCount > 0) {
+            args = new FragmentArgs();
+            args.setType(FragmentArgs.TYPE_THREAD_NOTIFY);
+        }
+        return args;
+    }
+
+    public static FragmentArgs parseUrl(String url) {
         if (url.startsWith(HiUtils.BaseUrl + "forumdisplay.php")) {
             if (url.contains("fid")) {
                 String fid = HttpUtils.getMiddleString(url, "fid=", "&");
@@ -155,11 +176,39 @@ public class FragmentUtils {
                 .commit();
     }
 
+    public static void showThreadNotify(FragmentManager fragmentManager) {
+        Bundle notifyBundle = new Bundle();
+        notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREAD_NOTIFY);
+        SimpleListFragment notifyFragment = new SimpleListFragment();
+        notifyFragment.setArguments(notifyBundle);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
+        transaction.replace(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
+                .addToBackStack(SimpleListFragment.class.getName())
+                .commit();
+    }
+
+    public static void showSms(FragmentManager fragmentManager) {
+        Bundle smsBundle = new Bundle();
+        smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
+        SimpleListFragment smsFragment = new SimpleListFragment();
+        smsFragment.setArguments(smsBundle);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
+        transaction.replace(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
+                .addToBackStack(SimpleListFragment.class.getName())
+                .commit();
+    }
+
     public static void show(FragmentManager fragmentManager, FragmentArgs args) {
         if (args.getType() == FragmentArgs.TYPE_THREAD)
-            FragmentUtils.showThread(fragmentManager, args.getTid() + "", "", args.getPage(), args.getFloor(), args.getPostId(), -1);
+            showThread(fragmentManager, args.getTid() + "", "", args.getPage(), args.getFloor(), args.getPostId(), -1);
         else if (args.getType() == FragmentArgs.TYPE_SPACE)
-            FragmentUtils.showSpace(fragmentManager, args.getUid());
+            showSpace(fragmentManager, args.getUid());
+        else if (args.getType() == FragmentArgs.TYPE_SMS)
+            showSms(fragmentManager);
+        else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY)
+            showThreadNotify(fragmentManager);
     }
 
 }

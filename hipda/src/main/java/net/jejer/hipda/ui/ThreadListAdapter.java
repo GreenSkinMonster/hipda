@@ -56,7 +56,7 @@ public class ThreadListAdapter extends HiAdapter<ThreadBean> {
             holder.tv_title.setText(thread.getTitle());
         }
 
-        holder.tv_title.setTextSize(HiSettingsHelper.getTitleTextSize());
+        holder.tv_title.setTextSize(HiSettingsHelper.getInstance().getTitleTextSize());
 
         holder.tv_replycounter.setText(thread.getCountCmts() + "/" + thread.getCountViews());
 

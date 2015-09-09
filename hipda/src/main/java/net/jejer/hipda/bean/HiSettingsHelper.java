@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import net.jejer.hipda.utils.Connectivity;
+import net.jejer.hipda.utils.NotificationMgr;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +55,14 @@ public class HiSettingsHelper {
     public static final String PERF_ERROR_REPORT_MODE = "PERF_ERROR_REPORT_MODE";
     public static final String PERF_INSTALLED_VERSION = "PERF_INSTALLED_VERSION";
     public static final String PERF_CLEAR_CACHE = "PERF_CLEAR_CACHE";
+    public static final String PERF_NOTI_TASK_ENABLED = "PERF_NOTI_TASK_ENABLED";
+    public static final String PERF_NOTI_REPEAT_MINUETS = "PERF_NOTI_REPEAT_MINUETS";
+    public static final String PERF_NOTI_LED_LIGHT = "PERF_NOTI_LED_LIGHT";
+    public static final String PERF_NOTI_SOUND = "PERF_NOTI_SOUND";
+    public static final String PERF_NOTI_FLOAT_BUTTON = "PERF_NOTI_FLOAT_BUTTON";
+    public static final String PERF_NOTI_SILENT_MODE = "PERF_NOTI_SILENT_MODE";
+    public static final String PERF_NOTI_SILENT_BEGIN = "PERF_NOTI_SILENT_BEGIN";
+    public static final String PERF_NOTI_SILENT_END = "PERF_NOTI_SILENT_END";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -80,7 +90,7 @@ public class HiSettingsHelper {
 
     private boolean mEncodeUtf8 = false;
 
-    private List<String> mBlanklistUsernames = new ArrayList<String>();
+    private List<String> mBlanklistUsernames = new ArrayList<>();
 
     private String mPostTextSizeAdj = "";
     private int mPostLineSpacing = 0;
@@ -90,6 +100,11 @@ public class HiSettingsHelper {
     private int mMaxPostsInPage;
     private int mLastForumId = 0;
     private boolean mErrorReportMode;
+
+    private boolean mNotiTaskEnabled;
+    private int mNotiRepeatMinutes;
+    private boolean mNotiLedLight;
+    private boolean mNotiFloatButton;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -125,6 +140,20 @@ public class HiSettingsHelper {
             setMobileNetwork(!Connectivity.isConnectedWifi(mCtx));
     }
 
+    private long mLastCheckSmsTime;
+
+    public long getLastCheckSmsTime() {
+        return mLastCheckSmsTime;
+    }
+
+    public void setLastCheckSmsTime(long lastCheckSmsTime) {
+        mLastCheckSmsTime = lastCheckSmsTime;
+    }
+
+    public boolean isCheckSms() {
+        return System.currentTimeMillis() > mLastCheckSmsTime + 30 * 1000;
+    }
+
     // --------------- THIS IS NOT IN PERF -----------
 
 
@@ -143,6 +172,10 @@ public class HiSettingsHelper {
         mCtx = ctx;
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(mCtx);
         reload();
+    }
+
+    public boolean ready() {
+        return mCtx != null && mSharedPref != null;
     }
 
     public void reload() {
@@ -172,6 +205,10 @@ public class HiSettingsHelper {
         isShowPostTypeFromPref();
         isErrorReportModeFromPref();
         getForumsFromPref();
+        isNotiFloatButtonFromPref();
+        isNotiLedLightFromPref();
+        isNotiTaskEnabledFromPref();
+        getNotiRepeatMinutesFromPref();
 
         updateMobileNetworkStatus();
     }
@@ -480,6 +517,70 @@ public class HiSettingsHelper {
         return mErrorReportMode;
     }
 
+    public boolean isNotiTaskEnabled() {
+        return mNotiTaskEnabled;
+    }
+
+    public void setNotiTaskEnabled(boolean notiTaskEnabled) {
+        mNotiTaskEnabled = notiTaskEnabled;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(PERF_NOTI_TASK_ENABLED, mNotiTaskEnabled).apply();
+    }
+
+    public boolean isNotiTaskEnabledFromPref() {
+        mNotiTaskEnabled = mSharedPref.getBoolean(PERF_NOTI_TASK_ENABLED, false);
+        return mNotiTaskEnabled;
+    }
+
+    public boolean isNotiLedLight() {
+        return mNotiLedLight;
+    }
+
+    public void setNotiLedLight(boolean notiLedLight) {
+        mNotiLedLight = notiLedLight;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(PERF_NOTI_LED_LIGHT, mNotiLedLight).apply();
+    }
+
+    public boolean isNotiLedLightFromPref() {
+        mNotiLedLight = mSharedPref.getBoolean(PERF_NOTI_LED_LIGHT, true);
+        return mNotiLedLight;
+    }
+
+    public boolean isNotiFloatButton() {
+        return mNotiFloatButton;
+    }
+
+    public void setNotiFloatButton(boolean notiFloatButton) {
+        mNotiFloatButton = notiFloatButton;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(PERF_NOTI_FLOAT_BUTTON, mNotiFloatButton).apply();
+    }
+
+    public boolean isNotiFloatButtonFromPref() {
+        mNotiFloatButton = mSharedPref.getBoolean(PERF_NOTI_FLOAT_BUTTON, true);
+        return mNotiFloatButton;
+    }
+
+    public int getNotiRepeatMinutes() {
+        return mNotiRepeatMinutes;
+    }
+
+    public void setNotiRepeatMinutes(int notiTaskEnable) {
+        mNotiRepeatMinutes = notiTaskEnable;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_NOTI_REPEAT_MINUETS, mNotiRepeatMinutes + "").apply();
+    }
+
+    public int getNotiRepeatMinutesFromPref() {
+        try {
+            mNotiRepeatMinutes = Integer.parseInt(mSharedPref.getString(PERF_NOTI_REPEAT_MINUETS, NotificationMgr.MIN_REPEAT_MINUTTES + ""));
+        } catch (Exception e) {
+            mNotiRepeatMinutes = NotificationMgr.MIN_REPEAT_MINUTTES;
+        }
+        return mNotiRepeatMinutes;
+    }
+
     public List<String> getBlanklistUsernames() {
         return mBlanklistUsernames;
     }
@@ -597,7 +698,7 @@ public class HiSettingsHelper {
 
     public Date getLastUpdateCheckTime() {
         String millis = mSharedPref.getString(PERF_LAST_UPDATE_CHECK, "");
-        if (millis.length() > 0) {
+        if (!TextUtils.isEmpty(millis) && TextUtils.isDigitsOnly(millis)) {
             try {
                 return new Date(Long.parseLong(millis));
             } catch (Exception ignored) {
@@ -678,12 +779,29 @@ public class HiSettingsHelper {
         return version;
     }
 
-    public static int getPostTextSize() {
+    public int getPostTextSize() {
         return 18 + getInstance().getPostTextsizeAdj();
     }
 
-    public static int getTitleTextSize() {
+    public int getTitleTextSize() {
         return 18 + getInstance().getTitleTextsizeAdj();
+    }
+
+    public String getStringValue(String key, String defaultValue) {
+        return mSharedPref.getString(key, defaultValue);
+    }
+
+    public void setStringValue(String key, String value) {
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(key, value).apply();
+    }
+
+    public boolean isInSilentMode() {
+        if (!mSharedPref.getBoolean(PERF_NOTI_SILENT_MODE, false))
+            return false;
+        return Utils.isInTimeRange(
+                getStringValue(PERF_NOTI_SILENT_BEGIN, "22:00"),
+                getStringValue(PERF_NOTI_SILENT_END, "08:00"));
     }
 
 }

@@ -46,7 +46,7 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
         holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
 
-        holder.tv_title.setTextSize(HiSettingsHelper.getPostTextSize());
+        holder.tv_title.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         holder.tv_title.setText(Utils.trim(item.getTitle()));
         if (item.isNew()) {
             holder.tv_title.setTextColor(mCtx.getResources().getColor(R.color.red));
@@ -56,11 +56,11 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
             holder.tv_info.setVisibility(View.GONE);
         } else {
             holder.tv_info.setVisibility(View.VISIBLE);
-            if (mType == SimpleListLoader.TYPE_THREADNOTIFY)
+            if (mType == SimpleListLoader.TYPE_THREAD_NOTIFY)
                 holder.tv_info.setText(Html.fromHtml(item.getInfo()));
             else
                 holder.tv_info.setText(item.getInfo());
-            holder.tv_info.setTextSize(HiSettingsHelper.getPostTextSize());
+            holder.tv_info.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         }
 
         if (TextUtils.isEmpty(item.getTime()) && TextUtils.isEmpty(item.getForum())) {

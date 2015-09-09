@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -127,6 +128,56 @@ public class Utils {
             suffix = "bmp";
         }
         return suffix;
+    }
+
+    public static String formatDate(Date date) {
+        return formatDate(date, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    public static String formatDate(Date date, String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.US);
+        return formatter.format(date);
+    }
+
+    public static boolean isInTimeRange(String begin, String end) {
+        try {
+            //format hh:mm
+            String[] bPieces = begin.split(":");
+            int bHour = Integer.parseInt(bPieces[0]);
+            int bMinute = Integer.parseInt(bPieces[1]);
+
+            String[] ePieces = end.split(":");
+            int eHour = Integer.parseInt(ePieces[0]);
+            int eMinute = Integer.parseInt(ePieces[1]);
+
+
+            Calendar now = Calendar.getInstance();
+            Calendar beginCal = Calendar.getInstance();
+            Calendar endCal = Calendar.getInstance();
+
+            beginCal.set(Calendar.HOUR_OF_DAY, bHour);
+            beginCal.set(Calendar.MINUTE, bMinute);
+            beginCal.set(Calendar.SECOND, 0);
+            beginCal.set(Calendar.MILLISECOND, 0);
+
+            endCal.set(Calendar.HOUR_OF_DAY, eHour);
+            endCal.set(Calendar.MINUTE, eMinute);
+            endCal.set(Calendar.SECOND, 59);
+            endCal.set(Calendar.MILLISECOND, 999);
+
+            if (endCal.before(beginCal)) {
+                endCal.add(Calendar.DATE, 1);
+            }
+            if (beginCal.after(now)) {
+                beginCal.add(Calendar.DATE, -1);
+                endCal.add(Calendar.DATE, -1);
+            }
+
+            return now.getTimeInMillis() >= beginCal.getTimeInMillis() && now.getTimeInMillis() <= endCal.getTimeInMillis();
+        } catch (Exception e) {
+            Logger.e(e);
+            return false;
+        }
     }
 
 }

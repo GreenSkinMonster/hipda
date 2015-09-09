@@ -34,6 +34,7 @@ import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.NotificationMgr;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -114,7 +115,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             case SimpleListLoader.TYPE_MYREPLY:
             case SimpleListLoader.TYPE_MYPOST:
             case SimpleListLoader.TYPE_SMS:
-            case SimpleListLoader.TYPE_THREADNOTIFY:
+            case SimpleListLoader.TYPE_THREAD_NOTIFY:
             case SimpleListLoader.TYPE_FAVORITES:
             case SimpleListLoader.TYPE_ATTENTION:
                 getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
@@ -144,7 +145,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                 setActionBarTitle(R.string.title_drawer_sms);
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
-            case SimpleListLoader.TYPE_THREADNOTIFY:
+            case SimpleListLoader.TYPE_THREAD_NOTIFY:
                 setActionBarTitle(R.string.title_drawer_notify);
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
@@ -386,8 +387,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
         }
 
         @Override
-        public void onLoadFinished(Loader<SimpleListBean> loader,
-                                   SimpleListBean list) {
+        public void onLoadFinished(Loader<SimpleListBean> loader, SimpleListBean list) {
             mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
@@ -410,6 +410,11 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                 }
                 FavoriteHelper.getInstance().addToCahce(item, tids);
             }
+
+            if (mType == SimpleListLoader.TYPE_SMS)
+                NotificationMgr.setSmsCount(0);
+            if (mType == SimpleListLoader.TYPE_THREAD_NOTIFY)
+                NotificationMgr.setThreanCount(0);
 
             if (mPage == 1) {
                 mSimpleListItemBeans.clear();

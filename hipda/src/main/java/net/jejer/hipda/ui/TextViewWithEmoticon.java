@@ -119,7 +119,7 @@ public class TextViewWithEmoticon extends TextView {
                 b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                 b.removeSpan(s);
             } else {
-                FragmentArgs args = FragmentUtils.parse(s_url);
+                FragmentArgs args = FragmentUtils.parseUrl(s_url);
                 if (args != null) {
                     URLSpan newSpan = getFragmentArgsUrlSpan(s_url);
                     b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
@@ -133,7 +133,7 @@ public class TextViewWithEmoticon extends TextView {
     private URLSpan getFragmentArgsUrlSpan(final String s_url) {
         return new URLSpan(s_url) {
             public void onClick(View view) {
-                FragmentArgs args = FragmentUtils.parse(s_url);
+                FragmentArgs args = FragmentUtils.parseUrl(s_url);
                 if (args != null) {
                     mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
                     FragmentUtils.show(mFragmentManager, args);

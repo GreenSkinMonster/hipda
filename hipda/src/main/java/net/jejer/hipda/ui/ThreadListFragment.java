@@ -36,7 +36,6 @@ import com.mikepenz.iconics.IconicsDrawable;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.PostAsyncTask;
-import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.ThreadListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
@@ -45,10 +44,10 @@ import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.NotificationMgr;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class ThreadListFragment extends BaseFragment
         implements PostAsyncTask.PostListener, SwipeRefreshLayout.OnRefreshListener {
@@ -81,7 +80,6 @@ public class ThreadListFragment extends BaseFragment
     private FloatingActionMenu mFam;
     private FloatingActionButton mFabNotify;
     private ContentLoadingProgressBar loadingProgressBar;
-    private boolean mShowNotifyToast = true;
     private int mFirstVisibleItem = 0;
 
     @Override
@@ -155,24 +153,10 @@ public class ThreadListFragment extends BaseFragment
         mFabNotify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (NotifyHelper.getInstance().getCntSMS() > 0) {
-                    Bundle smsBundle = new Bundle();
-                    smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
-                    SimpleListFragment smsFragment = new SimpleListFragment();
-                    smsFragment.setArguments(smsBundle);
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, smsFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
-                } else if (NotifyHelper.getInstance().getCntThread() > 0) {
-                    Bundle notifyBundle = new Bundle();
-                    notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREADNOTIFY);
-                    SimpleListFragment notifyFragment = new SimpleListFragment();
-                    notifyFragment.setArguments(notifyBundle);
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, notifyFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
+                if (NotificationMgr.getSmsCount() > 0) {
+                    FragmentUtils.showSms(getFragmentManager());
+                } else if (NotificationMgr.getThreanCount() > 0) {
+                    FragmentUtils.showThreadNotify(getFragmentManager());
                 } else {
                     Toast.makeText(mCtx, "没有未处理的通知", Toast.LENGTH_SHORT).show();
                     mFabNotify.setVisibility(View.GONE);
@@ -578,35 +562,23 @@ public class ThreadListFragment extends BaseFragment
     public void showNotification() {
         if (mFabNotify == null)
             return;
-        int smsCount = NotifyHelper.getInstance().getCntSMS();
-        int threadCount = NotifyHelper.getInstance().getCntThread();
+        int smsCount = NotificationMgr.getSmsCount();
+        int threadCount = NotificationMgr.getThreanCount();
         if (smsCount + threadCount > 0) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("您有 ");
-            if (smsCount > 0) {
-                sb.append(smsCount).append(" 条新的短消息");
-            }
-            if (threadCount > 0) {
-                if (sb.length() > 3)
-                    sb.append(", ");
-                sb.append(threadCount).append(" 条新的帖子通知");
-            }
-            if (mShowNotifyToast) {
-                Toast.makeText(mCtx, sb.toString(), Toast.LENGTH_SHORT).show();
-                mShowNotifyToast = false;
-            }
-
             if (smsCount > 0)
                 mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail).color(Color.WHITE));
             else
                 mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_notifications).color(Color.WHITE));
-
             mFabNotify.setVisibility(View.VISIBLE);
         } else {
-            mShowNotifyToast = true;
             if (mFabNotify.getVisibility() == View.VISIBLE)
                 mFabNotify.setVisibility(View.GONE);
         }
+
+        if (getActivity() != null) {
+            ((MainFrameActivity) getActivity()).updateDrawerBadge();
+        }
+
     }
 
     public void scrollToTop() {
@@ -680,4 +652,5 @@ public class ThreadListFragment extends BaseFragment
             dialog.show();
         }
     }
+
 }
