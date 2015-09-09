@@ -46,11 +46,11 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
         holder.tv_isnew = (TextView) convertView.findViewById(R.id.tv_isnew);
         holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
+        holder.iv_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
+        holder.iv_avatar.setTag(R.id.avatar_tag_username, item.getAuthor());
 
         if (HiSettingsHelper.getInstance().isLoadAvatar()) {
             holder.iv_avatar.setVisibility(View.VISIBLE);
-            holder.iv_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
-            holder.iv_avatar.setTag(R.id.avatar_tag_username, item.getAuthor());
             if (!TextUtils.isEmpty(item.getUid())) {
                 holder.iv_avatar.setOnClickListener(mAvatarListener);
             }

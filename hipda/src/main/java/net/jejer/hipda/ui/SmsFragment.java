@@ -46,6 +46,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
     private EditText mEtSms;
 
     private HiProgressDialog postProgressDialog;
+    private ContentLoadingProgressBar loadingProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
         View view = inflater.inflate(R.layout.fragment_sms, container, false);
         mListView = (ListView) view.findViewById(R.id.lv_sms);
         mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.sms_loading);
+        loadingProgressBar.show();
 
         //to avoid click through this view
         view.setOnTouchListener(new View.OnTouchListener() {
@@ -185,6 +188,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
             mSmsBeans.addAll(list.getAll());
             mSmsAdapter.setBeans(mSmsBeans);
             mListView.setSelection(mSmsAdapter.getCount());
+            loadingProgressBar.hide();
         }
 
         @Override
