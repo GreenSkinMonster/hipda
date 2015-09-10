@@ -15,10 +15,10 @@ public class FragmentArgs {
 
     private int type;
     private int fid;
-    private int tid;
+    private String tid;
+    private String postId;
     private int page;
     private int floor;
-    private int postId;
     private String uid;
     private String author;
 
@@ -30,11 +30,11 @@ public class FragmentArgs {
         this.fid = fid;
     }
 
-    public int getTid() {
+    public String getTid() {
         return tid;
     }
 
-    public void setTid(int tid) {
+    public void setTid(String tid) {
         this.tid = tid;
     }
 
@@ -62,11 +62,11 @@ public class FragmentArgs {
         this.type = type;
     }
 
-    public int getPostId() {
+    public String getPostId() {
         return postId;
     }
 
-    public void setPostId(int postId) {
+    public void setPostId(String postId) {
         this.postId = postId;
     }
 

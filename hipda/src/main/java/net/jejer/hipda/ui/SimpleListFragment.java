@@ -33,6 +33,7 @@ import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 
@@ -242,6 +243,8 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                     mType = SimpleListLoader.TYPE_FAVORITES;
                     setActionBarTitle(R.string.title_my_favorites);
                 }
+                mSimpleListItemBeans.clear();
+                mSimpleListAdapter.setBeans(mSimpleListItemBeans);
                 refresh();
                 return true;
             default:
@@ -305,33 +308,19 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
     public class OnItemClickCallback implements AdapterView.OnItemClickListener {
 
         @Override
-        public void onItemClick(AdapterView<?> listView, View itemView, int position,
-                                long row) {
-
+        public void onItemClick(AdapterView<?> listView, View itemView, int position, long row) {
             setHasOptionsMenu(false);
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
 
-            Bundle bun = new Bundle();
-            Fragment fragment;
-            if (mType == SimpleListLoader.TYPE_SMS) {
-                bun.putString(SmsFragment.ARG_AUTHOR, item.getAuthor());
-                bun.putString(SmsFragment.ARG_UID, item.getUid());
-                fragment = new SmsFragment();
-            } else {
-                bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getTid());
-                bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
-                if (!TextUtils.isEmpty(item.getPid())) {
-                    bun.putString(ThreadDetailFragment.ARG_PID_KEY, item.getPid());
-                }
-                fragment = new ThreadDetailFragment();
-            }
-            fragment.setArguments(bun);
+            Fragment listFragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+            if (listFragment != null)
+                listFragment.setHasOptionsMenu(false);
 
-            getFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                    .add(R.id.main_frame_container, fragment, fragment.getClass().getName())
-                    .addToBackStack(ThreadDetailFragment.class.getName())
-                    .commit();
+            if (mType == SimpleListLoader.TYPE_SMS) {
+                FragmentUtils.showSmsDetail(getFragmentManager(), item.getUid(), item.getAuthor());
+            } else {
+                FragmentUtils.showThread(getFragmentManager(), item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
+            }
         }
     }
 
@@ -340,32 +329,25 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
         @Override
         public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long row) {
             setHasOptionsMenu(false);
-            SimpleListItemBean item = mSimpleListAdapter.getItem(position);
+            Fragment listFragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+            if (listFragment != null)
+                listFragment.setHasOptionsMenu(false);
 
-            Bundle bun = new Bundle();
-            Fragment fragment;
+            SimpleListItemBean item = mSimpleListAdapter.getItem(position);
             if (mType == SimpleListLoader.TYPE_SMS) {
                 return true;
             } else {
-                bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getTid());
-                bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
-                if (!TextUtils.isEmpty(item.getPid())) {
-                    //full text search
-                    bun.putString(ThreadDetailFragment.ARG_PID_KEY, item.getPid());
+                String postId = "";
+                int page = -1;
+                int floor = -1;
+                if (HiUtils.isValidId(item.getPid())) {
+                    postId = item.getPid();
                 } else {
-                    bun.putInt(ThreadDetailFragment.ARG_PAGE_KEY, ThreadDetailFragment.LAST_PAGE);
-                    bun.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, ThreadDetailFragment.LAST_FLOOR);
+                    page = ThreadDetailFragment.LAST_PAGE;
+                    floor = ThreadDetailFragment.LAST_FLOOR;
                 }
-                fragment = new ThreadDetailFragment();
+                FragmentUtils.showThread(getFragmentManager(), item.getTid(), item.getTitle(), page, floor, postId, -1);
             }
-            fragment.setArguments(bun);
-
-            getFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                    .addToBackStack(ThreadDetailFragment.class.getName())
-                    .commit();
-
             return true;
         }
     }

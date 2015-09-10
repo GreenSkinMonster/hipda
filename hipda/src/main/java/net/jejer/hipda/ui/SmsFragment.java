@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +28,7 @@ import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,10 +87,14 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                String content = ((SimpleListItemBean) adapterView.getItemAtPosition(i)).getInfo();
-                ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", Html.fromHtml(content));
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(getActivity(), "短消息内容已经复制至粘贴板", Toast.LENGTH_SHORT).show();
+                CharSequence content = Utils.fromHtmlAndStrip(((SimpleListItemBean) adapterView.getItemAtPosition(i)).getInfo());
+                if (content.length() > 0) {
+                    ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(getActivity(), "短消息内容已经复制至粘贴板", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "短消息内容内容为空", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             }
         });

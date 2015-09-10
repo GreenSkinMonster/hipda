@@ -161,7 +161,7 @@ public class ThreadListFragment extends BaseFragment
                         && !TextUtils.isEmpty(bean.getAuthor())) {
                     FragmentUtils.showSmsDetail(getFragmentManager(), bean.getUid(), bean.getAuthor());
                 } else if (bean.getSmsCount() > 0) {
-                    FragmentUtils.showSms(getFragmentManager());
+                    FragmentUtils.showSmsList(getFragmentManager());
                 } else if (bean.getThreadCount() > 0) {
                     FragmentUtils.showThreadNotify(getFragmentManager());
                 } else {
@@ -332,7 +332,7 @@ public class ThreadListFragment extends BaseFragment
             }
 
             setHasOptionsMenu(false);
-            FragmentUtils.showThread(getFragmentManager(), postBean.getTid(), postBean.getSubject(), -1, -1, -1, -1);
+            FragmentUtils.showThread(getFragmentManager(), postBean.getTid(), postBean.getSubject(), -1, -1, null, -1);
 
             //refresh thread list
             refresh();
@@ -386,7 +386,7 @@ public class ThreadListFragment extends BaseFragment
             String tid = thread.getTid();
             String title = thread.getTitle();
             setHasOptionsMenu(false);
-            FragmentUtils.showThread(getFragmentManager(), tid, title, -1, -1, -1, thread.getMaxPage());
+            FragmentUtils.showThread(getFragmentManager(), tid, title, -1, -1, null, thread.getMaxPage());
         }
 
     }
@@ -403,7 +403,7 @@ public class ThreadListFragment extends BaseFragment
                 page = (int) Math.ceil((Integer.parseInt(thread.getCountCmts()) + 1) * 1.0f / maxPostsInPage);
             }
             setHasOptionsMenu(false);
-            FragmentUtils.showThread(getFragmentManager(), tid, title, page, ThreadDetailFragment.LAST_FLOOR, -1, thread.getMaxPage());
+            FragmentUtils.showThread(getFragmentManager(), tid, title, page, ThreadDetailFragment.LAST_FLOOR, null, thread.getMaxPage());
             return true;
         }
     }

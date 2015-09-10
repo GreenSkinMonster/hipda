@@ -74,8 +74,8 @@ public class FragmentUtils {
                 if (HiUtils.isValidId(tid)) {
                     FragmentArgs args = new FragmentArgs();
                     args.setType(FragmentArgs.TYPE_THREAD);
+                    args.setTid(tid);
 
-                    args.setTid(Integer.parseInt(tid));
                     String page = HttpUtils.getMiddleString(url, "page=", "&");
                     if (!TextUtils.isEmpty(page) && TextUtils.isDigitsOnly(page))
                         args.setPage(Integer.parseInt(page));
@@ -93,7 +93,7 @@ public class FragmentUtils {
                         FragmentArgs args = new FragmentArgs();
                         args.setType(FragmentArgs.TYPE_THREAD);
 
-                        args.setTid(Integer.parseInt(tid));
+                        args.setTid(tid);
                         args.setPage(ThreadDetailFragment.LAST_PAGE);
                         args.setFloor(ThreadDetailFragment.LAST_FLOOR);
 
@@ -108,8 +108,8 @@ public class FragmentUtils {
                         FragmentArgs args = new FragmentArgs();
                         args.setType(FragmentArgs.TYPE_THREAD);
 
-                        args.setTid(Integer.parseInt(tid));
-                        args.setPostId(Integer.parseInt(postId));
+                        args.setTid(tid);
+                        args.setPostId(postId);
 
                         return args;
                     }
@@ -123,7 +123,7 @@ public class FragmentUtils {
                 FragmentArgs args = new FragmentArgs();
                 args.setType(FragmentArgs.TYPE_THREAD);
 
-                args.setPostId(Integer.parseInt(postId));
+                args.setPostId(postId);
 
                 return args;
             }
@@ -152,7 +152,7 @@ public class FragmentUtils {
                 .commit();
     }
 
-    public static void showThread(FragmentManager fragmentManager, String tid, String title, int page, int floor, int pid, int maxPage) {
+    public static void showThread(FragmentManager fragmentManager, String tid, String title, int page, int floor, String pid, int maxPage) {
         Bundle arguments = new Bundle();
         arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
         arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
@@ -161,8 +161,8 @@ public class FragmentUtils {
             arguments.putInt(ThreadDetailFragment.ARG_PAGE_KEY, page);
         if (floor != -1)
             arguments.putInt(ThreadDetailFragment.ARG_FLOOR_KEY, floor);
-        if (pid > -0)
-            arguments.putString(ThreadDetailFragment.ARG_PID_KEY, pid + "");
+        if (HiUtils.isValidId(pid))
+            arguments.putString(ThreadDetailFragment.ARG_PID_KEY, pid);
         ThreadDetailFragment fragment = new ThreadDetailFragment();
         fragment.setArguments(arguments);
         fragmentManager.beginTransaction()
@@ -193,19 +193,19 @@ public class FragmentUtils {
         fragment.setArguments(notifyBundle);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
-        transaction.replace(R.id.main_frame_container, fragment, fragment.getClass().getName())
+        transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
                 .addToBackStack(SimpleListFragment.class.getName())
                 .commit();
     }
 
-    public static void showSms(FragmentManager fragmentManager) {
+    public static void showSmsList(FragmentManager fragmentManager) {
         Bundle smsBundle = new Bundle();
         smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
         SimpleListFragment fragment = new SimpleListFragment();
         fragment.setArguments(smsBundle);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
-        transaction.replace(R.id.main_frame_container, fragment, fragment.getClass().getName())
+        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right);
+        transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
                 .addToBackStack(SimpleListFragment.class.getName())
                 .commit();
     }
@@ -217,7 +217,7 @@ public class FragmentUtils {
         SmsFragment fragment = new SmsFragment();
         fragment.setArguments(smsBundle);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
+        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right);
         transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
                 .addToBackStack(ThreadDetailFragment.class.getName())
                 .commit();
@@ -229,7 +229,7 @@ public class FragmentUtils {
         else if (args.getType() == FragmentArgs.TYPE_SPACE)
             showSpace(fragmentManager, args.getUid());
         else if (args.getType() == FragmentArgs.TYPE_SMS)
-            showSms(fragmentManager);
+            showSmsList(fragmentManager);
         else if (args.getType() == FragmentArgs.TYPE_SMS_DETAIL)
             showSmsDetail(fragmentManager, args.getUid(), args.getAuthor());
         else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY)

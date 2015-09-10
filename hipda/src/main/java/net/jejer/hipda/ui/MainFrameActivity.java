@@ -449,7 +449,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     searchFragment.setArguments(searchBundle);
                     getFragmentManager().beginTransaction()
                             .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .replace(R.id.main_frame_container, searchFragment, SimpleListFragment.class.getName())
+                            .add(R.id.main_frame_container, searchFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
@@ -460,7 +460,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     postsFragment.setArguments(postsBundle);
                     getFragmentManager().beginTransaction()
                             .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .replace(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
+                            .add(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
@@ -471,7 +471,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     replyFragment.setArguments(replyBundle);
                     getFragmentManager().beginTransaction()
                             .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .replace(R.id.main_frame_container, replyFragment, SimpleListFragment.class.getName())
+                            .add(R.id.main_frame_container, replyFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
@@ -482,12 +482,12 @@ public class MainFrameActivity extends AppCompatActivity {
                     favFragment.setArguments(favBundle);
                     getFragmentManager().beginTransaction()
                             .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .replace(R.id.main_frame_container, favFragment, SimpleListFragment.class.getName())
+                            .add(R.id.main_frame_container, favFragment, SimpleListFragment.class.getName())
                             .addToBackStack(SimpleListFragment.class.getName())
                             .commit();
                     break;
                 case Constants.DRAWER_SMS:    // sms
-                    FragmentUtils.showSms(getFragmentManager());
+                    FragmentUtils.showSmsList(getFragmentManager());
                     break;
                 case Constants.DRAWER_THREADNOTIFY:    // thread notify
                     FragmentUtils.showThreadNotify(getFragmentManager());
