@@ -3,10 +3,12 @@ package net.jejer.hipda.ui;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
@@ -41,25 +43,54 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.tv_author = (TextView) convertView.findViewById(R.id.tv_author);
         holder.tv_content = (TextViewWithEmoticon) convertView.findViewById(R.id.tv_content);
         holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
         holder.tv_isnew = (TextView) convertView.findViewById(R.id.tv_isnew);
-        holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
-        holder.iv_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
-        holder.iv_avatar.setTag(R.id.avatar_tag_username, item.getAuthor());
+        holder.iv_my_avatar = (ImageView) convertView.findViewById(R.id.iv_my_avatar);
+        holder.iv_friend_avatar = (ImageView) convertView.findViewById(R.id.iv_friend_avatar);
+        holder.info_layout = (LinearLayout) convertView.findViewById(R.id.sms_info_layout);
 
-        if (HiSettingsHelper.getInstance().isLoadAvatar()) {
-            holder.iv_avatar.setVisibility(View.VISIBLE);
-            if (!TextUtils.isEmpty(item.getUid())) {
-                holder.iv_avatar.setOnClickListener(mAvatarListener);
-            }
-            GlideHelper.loadAvatar(mCtx, holder.iv_avatar, item.getAvatarUrl());
+        if (item.getUid().equals(HiSettingsHelper.getInstance().getUid())) {
+            holder.iv_my_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
+            holder.iv_my_avatar.setTag(R.id.avatar_tag_username, item.getAuthor());
         } else {
-            holder.iv_avatar.setVisibility(View.GONE);
+            holder.iv_friend_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
+            holder.iv_friend_avatar.setTag(R.id.avatar_tag_username, item.getAuthor());
         }
 
-        holder.tv_author.setText(item.getAuthor());
+        if (item.getUid().equals(HiSettingsHelper.getInstance().getUid())) {
+            holder.tv_content.setGravity(Gravity.RIGHT);
+            holder.info_layout.setGravity(Gravity.RIGHT);
+            if (HiSettingsHelper.getInstance().isLoadAvatar()) {
+                holder.iv_my_avatar.setVisibility(View.VISIBLE);
+                holder.iv_friend_avatar.setVisibility(View.INVISIBLE);
+                if (!TextUtils.isEmpty(item.getUid())) {
+                    holder.iv_my_avatar.setOnClickListener(mAvatarListener);
+                }
+                GlideHelper.loadAvatar(mCtx, holder.iv_my_avatar, item.getAvatarUrl());
+            }
+        } else {
+            holder.tv_content.setGravity(Gravity.LEFT);
+            holder.info_layout.setGravity(Gravity.LEFT);
+            if (HiSettingsHelper.getInstance().isLoadAvatar()) {
+                holder.iv_friend_avatar.setVisibility(View.VISIBLE);
+                holder.iv_my_avatar.setVisibility(View.INVISIBLE);
+                if (!TextUtils.isEmpty(item.getUid())) {
+                    holder.iv_friend_avatar.setOnClickListener(mAvatarListener);
+                }
+                GlideHelper.loadAvatar(mCtx, holder.iv_friend_avatar, item.getAvatarUrl());
+            }
+        }
+        if (!HiSettingsHelper.getInstance().isLoadAvatar()) {
+            if (item.getUid().equals(HiSettingsHelper.getInstance().getUid())) {
+                holder.iv_my_avatar.setVisibility(View.GONE);
+                holder.iv_friend_avatar.setVisibility(View.INVISIBLE);
+            } else {
+                holder.iv_my_avatar.setVisibility(View.INVISIBLE);
+                holder.iv_friend_avatar.setVisibility(View.GONE);
+            }
+        }
+
         holder.tv_time.setText(Utils.shortyTime(item.getTime()));
         holder.tv_content.setFragmentManager(mFragmentManager);
         holder.tv_content.setText(item.getInfo());
@@ -76,10 +107,11 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
     }
 
     private static class ViewHolder {
-        TextView tv_author;
         TextViewWithEmoticon tv_content;
         TextView tv_time;
         TextView tv_isnew;
-        ImageView iv_avatar;
+        ImageView iv_my_avatar;
+        ImageView iv_friend_avatar;
+        LinearLayout info_layout;
     }
 }

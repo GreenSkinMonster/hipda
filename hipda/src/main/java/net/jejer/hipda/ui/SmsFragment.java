@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -86,7 +87,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", ((SimpleListItemBean) adapterView.getItemAtPosition(i)).getInfo());
+                String content = ((SimpleListItemBean) adapterView.getItemAtPosition(i)).getInfo();
+                ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", Html.fromHtml(content));
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(getActivity(), "短消息内容已经复制至粘贴板", Toast.LENGTH_SHORT).show();
                 return true;
@@ -126,11 +128,10 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Logger.v("onCreateOptionsMenu");
-
         menu.clear();
 
         setActionBarDisplayHomeAsUpEnabled(true);
-        setActionBarTitle("与" + mAuthor + "的短消息");
+        setActionBarTitle("短消息 > " + mAuthor);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -142,7 +143,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
     }
 
     @Override
-    public void onPostDone(int status, String message) {
+    public void onPostDone(int status, final String message) {
         if (status == Constants.STATUS_SUCCESS) {
             mEtSms.setText("");
             //new sms has some delay, so this is a dirty hack
@@ -156,13 +157,13 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
                     } catch (Exception ignored) {
 
                     }
+                    postProgressDialog.dismiss(message);
                 }
             }.start();
-            postProgressDialog.dismiss(message);
+
         } else {
             postProgressDialog.dismissError(message);
         }
-
     }
 
     public class SmsListLoaderCallbacks implements LoaderManager.LoaderCallbacks<SimpleListBean> {

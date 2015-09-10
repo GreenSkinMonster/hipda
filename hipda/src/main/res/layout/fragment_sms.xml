@@ -5,12 +5,12 @@
     android:background="?list_item_background"
     android:orientation="vertical">
 
-
     <ListView
         android:id="@+id/lv_sms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/border_line"
+        android:divider="@android:color/transparent"
         android:stackFromBottom="true"
         android:transcriptMode="normal" />
 
