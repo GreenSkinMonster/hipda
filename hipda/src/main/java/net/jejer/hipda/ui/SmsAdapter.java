@@ -93,7 +93,11 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
 
         holder.tv_time.setText(Utils.shortyTime(item.getTime()));
         holder.tv_content.setFragmentManager(mFragmentManager);
-        holder.tv_content.setText(item.getInfo());
+        //hack, replace url to link, only parse plain text
+        String text = Utils.nullToText(item.getInfo());
+        if (!text.contains("<") && !text.contains(">"))
+            text = Utils.textToHtmlConvertingURLsToLinks(text);
+        holder.tv_content.setText(text);
         holder.tv_content.setFocusable(false);
 
         holder.tv_content.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());

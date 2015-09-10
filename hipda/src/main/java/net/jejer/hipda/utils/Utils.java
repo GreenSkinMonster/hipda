@@ -180,4 +180,9 @@ public class Utils {
         }
     }
 
+    public static String textToHtmlConvertingURLsToLinks(String text) {
+        return nullToText(text).replaceAll("(\\A|\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)",
+                "$1<a href=\"$2\">$2</a>$4");
+    }
+
 }
