@@ -377,6 +377,10 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             mInloading = false;
 
             if (list == null || list.getCount() == 0) {
+                if (mPage == 1) {
+                    mSimpleListItemBeans.clear();
+                    mSimpleListAdapter.setBeans(mSimpleListItemBeans);
+                }
                 Toast.makeText(SimpleListFragment.this.getActivity(),
                         "没有数据", Toast.LENGTH_LONG).show();
                 return;

@@ -22,6 +22,7 @@
     <string name="action_add_attention">添加关注</string>
     <string name="action_remove_attention">取消关注</string>
     <string name="action_send_sms">发短消息</string>
+    <string name="action_clear_sms">清空短消息</string>
     <string name="action_blacklist">加入黑名单</string>
     <string name="action_favorites">查看收藏</string>
     <string name="action_attention">查看关注</string>
