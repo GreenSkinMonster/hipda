@@ -24,7 +24,7 @@ public class HiParserThreadList {
 
         // Async check notify
         new parseNotifyRunnable(context, doc).run();
-        HiSettingsHelper.getInstance().updateMobileNetworkStatus();
+        HiSettingsHelper.updateMobileNetworkStatus(context);
 
         ThreadListBean threads = new ThreadListBean();
 

@@ -117,13 +117,13 @@ public class HiSettingsHelper {
         return mIsLandscape;
     }
 
-    private boolean mMobileNetwork;
+    private static boolean mMobileNetwork;
 
-    public void setMobileNetwork(boolean mobileNetwork) {
+    public static void setMobileNetwork(boolean mobileNetwork) {
         mMobileNetwork = mobileNetwork;
     }
 
-    public boolean isMobileNetwork() {
+    public static boolean isMobileNetwork() {
         return mMobileNetwork;
     }
 
@@ -135,9 +135,9 @@ public class HiSettingsHelper {
         return !isMobileNetwork() || isShowThreadListAvatar();
     }
 
-    public void updateMobileNetworkStatus() {
-        if (mCtx != null && Connectivity.isConnected(mCtx))
-            setMobileNetwork(!Connectivity.isConnectedWifi(mCtx));
+    public static void updateMobileNetworkStatus(Context context) {
+        if (context != null && Connectivity.isConnected(context))
+            setMobileNetwork(!Connectivity.isConnectedWifi(context));
     }
 
     private long mLastCheckSmsTime;
@@ -210,7 +210,7 @@ public class HiSettingsHelper {
         isNotiTaskEnabledFromPref();
         getNotiRepeatMinutesFromPref();
 
-        updateMobileNetworkStatus();
+        updateMobileNetworkStatus(mCtx);
     }
 
     public boolean isLoginInfoValid() {
