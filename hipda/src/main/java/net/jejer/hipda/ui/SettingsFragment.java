@@ -68,6 +68,7 @@ public class SettingsFragment extends PreferenceFragment {
             userPreference.setSummary(Html.fromHtml(HiSettingsHelper.getInstance().getUsername() + "    <font color=grey>(已登录)</font>"));
         else
             userPreference.setSummary(Html.fromHtml("<font color=grey>(未登录)</font>"));
+
         userPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 if (LoginHelper.isLoggedIn()) {

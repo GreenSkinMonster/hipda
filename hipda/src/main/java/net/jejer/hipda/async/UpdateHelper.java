@@ -14,6 +14,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 import net.jejer.hipda.volley.HiStringRequest;
 import net.jejer.hipda.volley.VolleyHelper;
@@ -149,7 +150,7 @@ public class UpdateHelper {
         }
     }
 
-    private boolean newer(String version, String newVersion) {
+    private static boolean newer(String version, String newVersion) {
         //version format #.#.##
         if (TextUtils.isEmpty(newVersion))
             return false;
@@ -177,6 +178,16 @@ public class UpdateHelper {
             HiSettingsHelper.getInstance().setForums(forums);
 
             clearCache(context);
+        }
+        if (newer("2.0.10", currentVersion)) {
+            if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, ""))) {
+                HiSettingsHelper.getInstance()
+                        .setStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, NotificationMgr.DEFAUL_SLIENT_BEGIN);
+            }
+            if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SILENT_END, ""))) {
+                HiSettingsHelper.getInstance()
+                        .setStringValue(HiSettingsHelper.PERF_NOTI_SILENT_END, NotificationMgr.DEFAUL_SLIENT_END);
+            }
         }
 
         if (!currentVersion.equals(installedVersion)) {

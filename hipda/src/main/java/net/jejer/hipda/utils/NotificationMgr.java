@@ -38,6 +38,8 @@ public class NotificationMgr {
 
     private final static int REQUEST_CODE = 0;
     public final static int MIN_REPEAT_MINUTTES = 5;
+    public final static String DEFAUL_SLIENT_BEGIN = "22:00";
+    public final static String DEFAUL_SLIENT_END = "08:00";
 
     private final static NotificationBean mCurrentBean = new NotificationBean();
 

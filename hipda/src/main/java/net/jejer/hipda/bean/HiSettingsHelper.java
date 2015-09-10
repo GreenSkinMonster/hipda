@@ -797,11 +797,10 @@ public class HiSettingsHelper {
     }
 
     public boolean isInSilentMode() {
-        if (!mSharedPref.getBoolean(PERF_NOTI_SILENT_MODE, false))
-            return false;
-        return Utils.isInTimeRange(
-                getStringValue(PERF_NOTI_SILENT_BEGIN, "22:00"),
-                getStringValue(PERF_NOTI_SILENT_END, "08:00"));
+        return mSharedPref.getBoolean(PERF_NOTI_SILENT_MODE, false)
+                && Utils.isInTimeRange(
+                getStringValue(PERF_NOTI_SILENT_BEGIN, NotificationMgr.DEFAUL_SLIENT_BEGIN),
+                getStringValue(PERF_NOTI_SILENT_END, NotificationMgr.DEFAUL_SLIENT_END));
     }
 
 }
