@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:inputType="text"
+        android:key="PERF_USERNAME"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_username" />
+
+    <Preference
+        android:key="PERF_ABOUT"
+        android:title="@string/pref_title_about" />
+
+    <Preference
+        android:enabled="true"
+        android:key="PERF_LAST_UPDATE_CHECK"
+        android:persistent="false"
+        android:selectable="true"
+        android:summary=""
+        android:title="@string/pref_title_check_update" />
+
+    <PreferenceCategory android:title="@string/pref_category_more">
+        <Preference
+            android:key="nested_1"
+            android:persistent="false"
+            android:title="@string/pref_category_forum" />
+
+        <Preference
+            android:key="nested_2"
+            android:persistent="false"
+            android:title="@string/pref_category_ui" />
+
+        <Preference
+            android:key="nested_3"
+            android:persistent="false"
+            android:title="@string/pref_category_notification" />
+
+        <Preference
+            android:key="nested_4"
+            android:persistent="false"
+            android:title="@string/pref_category_network" />
+
+        <Preference
+            android:key="nested_5"
+            android:persistent="false"
+            android:title="@string/pref_category_other" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

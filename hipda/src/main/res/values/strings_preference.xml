@@ -170,12 +170,13 @@
 
     <string-array name="empty_array" />
 
-    <string name="pref_category_tail">小尾巴</string>
-    <string name="pref_category_ui">界面选项</string>
+    <string name="pref_category_forum">论坛选项</string>
+    <string name="pref_category_ui">用户界面</string>
+    <string name="pref_category_other">其它</string>
+    <string name="pref_category_notification">消息通知</string>
+    <string name="pref_category_network">网络相关</string>
+    <string name="pref_category_more">更多设置</string>
 
-    <!-- General settings -->
-    <string name="pref_category_general">其他</string>
-    <string name="pref_category_notification">消息提醒</string>
     <string name="pref_title_load_img_without_wifi">移动网络加载图片</string>
     <string name="pref_threadlist_avatar">移动网络显示头像</string>
     <string name="pref_title_prefetch">预加载</string>

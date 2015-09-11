@@ -46,6 +46,7 @@ import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageManager;
+import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
@@ -478,10 +479,11 @@ public class MainFrameActivity extends AppCompatActivity {
                     FragmentUtils.showThreadNotify(getFragmentManager(), true);
                     break;
                 case Constants.DRAWER_SETTINGS:    // settings
+                    Fragment fragment = new SettingMainFragment();
                     getFragmentManager().beginTransaction()
                             .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .replace(R.id.main_frame_container, new SettingsFragment(), SettingsFragment.class.getName())
-                            .addToBackStack(SettingsFragment.class.getName())
+                            .replace(R.id.main_frame_container, fragment, fragment.getClass().getName())
+                            .addToBackStack(fragment.getClass().getName())
                             .commit();
                     break;
                 default:

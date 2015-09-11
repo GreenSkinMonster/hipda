@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_category_forum">
+
+        <MultiSelectListPreference
+            android:defaultValue="@array/default_forum_values"
+            android:entries="@array/pref_title_forum_names"
+            android:entryValues="@array/pref_title_forum_values"
+            android:key="PERF_FORUMS"
+            android:title="@string/pref_title_forum" />
+
+        <net.jejer.hipda.ui.CustomSwitchPreference
+            android:defaultValue="true"
+            android:key="PERF_ADDTAIL"
+            android:title="@string/pref_title_add_tail" />
+
+        <EditTextPreference
+            android:defaultValue="@string/default_tail_text"
+            android:inputType="text"
+            android:key="PERF_TAILTEXT"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_tail_text" />
+        <EditTextPreference
+            android:defaultValue="@string/default_tail_url"
+            android:inputType="text"
+            android:key="PERF_TAILURL"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_tail_url" />
+    </PreferenceCategory>
+</PreferenceScreen>
