@@ -184,7 +184,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final HiProgressDialog progress = HiProgressDialog.show(getActivity(), "正在处理...");
-                        progress.setCancelable(false);
 
                         String url = HiUtils.ClearSMS.replace("{uid}", mUid);
                         StringRequest sReq = new HiStringRequest(url,
@@ -222,7 +221,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
     @Override
     public void onPrePost() {
         postProgressDialog = HiProgressDialog.show(getActivity(), "正在发送...");
-        postProgressDialog.setCancelable(false);
     }
 
     @Override

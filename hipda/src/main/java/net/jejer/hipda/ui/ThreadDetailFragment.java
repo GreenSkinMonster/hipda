@@ -452,7 +452,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     @Override
     public void onPrePost() {
         postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
-        postProgressDialog.setCancelable(false);
     }
 
     @Override

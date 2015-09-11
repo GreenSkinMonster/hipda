@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.WindowManager;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -30,14 +31,17 @@ public class HiProgressDialog extends ProgressDialog {
     }
 
     public void dismiss(String message) {
+        setCancelable(true);
         dismiss(message, 1000, INFO);
     }
 
     public void dismissError(String message) {
+        setCancelable(true);
         dismiss(message, 3000, ERROR);
     }
 
     private void dismiss(String message, int millisToWait, int status) {
+        setCancelable(true);
         if (message != null)
             setMessage(message);
         if (status == ERROR) {
@@ -58,6 +62,14 @@ public class HiProgressDialog extends ProgressDialog {
                 dismiss();
             }
         }.start();
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        setCancelable(false);
+        if (getWindow() != null)
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
     }
 
     public static HiProgressDialog show(Context context, String message) {

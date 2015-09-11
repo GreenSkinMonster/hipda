@@ -415,7 +415,6 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
 
             mProgressDialog = new HiProgressDialog(getActivity());
             mProgressDialog.show();
-            mProgressDialog.setCancelable(false);
 
             //generate upload image buttons
             for (Uri uri : uris) {

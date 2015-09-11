@@ -88,7 +88,6 @@ public class LoginDialog extends Dialog {
                 HiSettingsHelper.getInstance().setUid("");
 
                 progressDialog = HiProgressDialog.show(mCtx, "正在登录...");
-                progressDialog.setCancelable(false);
 
                 final LoginHelper loginHelper = new LoginHelper(mCtx, null);
 

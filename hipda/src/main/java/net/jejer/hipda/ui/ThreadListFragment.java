@@ -313,7 +313,6 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onPrePost() {
         postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
-        postProgressDialog.setCancelable(false);
     }
 
     @Override
