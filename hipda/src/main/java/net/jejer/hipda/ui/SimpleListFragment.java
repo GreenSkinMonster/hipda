@@ -1,11 +1,13 @@
 package net.jejer.hipda.ui;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
 import android.database.AbstractCursor;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.view.MenuItemCompat;
@@ -28,11 +30,16 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
+import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
@@ -42,7 +49,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class SimpleListFragment extends BaseFragment
+        implements SwipeRefreshLayout.OnRefreshListener, PostSmsAsyncTask.SmsPostListener {
     public static final String ARG_TYPE = "type";
 
     private int mType;
@@ -56,6 +64,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
     private SearchView searchView = null;
     private SwipeRefreshLayout swipeLayout;
     private ContentLoadingProgressBar loadingProgressBar;
+    private HiProgressDialog smsPostProgressDialog;
 
     private int mPage = 1;
     private boolean mInloading = false;
@@ -144,7 +153,8 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                 break;
             case SimpleListLoader.TYPE_SMS:
                 setActionBarTitle(R.string.title_drawer_sms);
-//                inflater.inflate(R.menu.menu_simple_thread_list, menu);
+                inflater.inflate(R.menu.menu_sms_list, menu);
+                menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_message).actionBarSize().color(Color.WHITE));
                 break;
             case SimpleListLoader.TYPE_THREAD_NOTIFY:
                 setActionBarTitle(R.string.title_drawer_notify);
@@ -246,6 +256,9 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                 mSimpleListItemBeans.clear();
                 mSimpleListAdapter.setBeans(mSimpleListItemBeans);
                 refresh();
+                return true;
+            case R.id.action_send_sms:
+                showSendSmsDialog("", "", this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -498,6 +511,23 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
             public boolean isNull(int column) {
                 return false;
             }
+        }
+    }
+
+    @Override
+    public void onSmsPrePost() {
+        smsPostProgressDialog = HiProgressDialog.show(getActivity(), "正在发送...");
+    }
+
+    @Override
+    public void onSmsPostDone(int status, final String message, AlertDialog dialog) {
+        if (status == Constants.STATUS_SUCCESS) {
+            smsPostProgressDialog.dismiss(message);
+            if (dialog != null)
+                dialog.dismiss();
+            onRefresh();
+        } else {
+            smsPostProgressDialog.dismissError(message);
         }
     }
 

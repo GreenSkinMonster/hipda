@@ -6,11 +6,18 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/et_userinfo_sms"
+        android:id="@+id/et_sms_receipient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/recipient" />
+
+    <EditText
+        android:id="@+id/et_sms_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:gravity="bottom"
+        android:hint="@string/content"
         android:inputType="textMultiLine"
         android:minLines="3" />
 

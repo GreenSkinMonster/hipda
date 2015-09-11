@@ -7,7 +7,7 @@ package net.jejer.hipda.bean;
 public class NotificationBean {
     private int mSmsCount;
     private int mThreadCount;
-    private String mAuthor;
+    private String mUsername;
     private String mUid;
     private String mContent;
 
@@ -51,11 +51,11 @@ public class NotificationBean {
         this.mUid = uid;
     }
 
-    public String getAuthor() {
-        return mAuthor;
+    public String getUsername() {
+        return mUsername;
     }
 
-    public void setAuthor(String author) {
-        this.mAuthor = author;
+    public void setUsername(String username) {
+        this.mUsername = username;
     }
 }

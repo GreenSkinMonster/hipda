@@ -24,7 +24,8 @@ public class HiUtils {
     public static final String SMSUrl = BaseUrl + "pm.php?filter=privatepm";
     public static final String SMSDetailUrl = BaseUrl + "pm.php?daterange=5&uid=";
     public static final String SMSPreparePostUrl = BaseUrl + "pm.php?daterange=1&uid=";
-    public static final String SMSPostUrl = BaseUrl + "pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1&uid=";
+    public static final String SMSPostByUid = BaseUrl + "pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1&uid={uid}";
+    public static final String SMSPostByUsername = BaseUrl + "pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1";
     public static final String ThreadNotifyUrl = BaseUrl + "notice.php?filter=threads";
     public static final String CheckSMS = BaseUrl + "pm.php?checknewpm";
     public static final String NewSMS = BaseUrl + "pm.php?filter=newpm";

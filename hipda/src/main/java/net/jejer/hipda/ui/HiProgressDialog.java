@@ -76,6 +76,7 @@ public class HiProgressDialog extends ProgressDialog {
         HiProgressDialog progressDialog = new HiProgressDialog(context);
         progressDialog.setMessage(message);
         progressDialog.show();
+        progressDialog.setCancelable(false);
         return progressDialog;
     }
 

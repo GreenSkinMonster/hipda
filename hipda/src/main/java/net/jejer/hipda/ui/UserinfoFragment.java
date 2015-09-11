@@ -1,10 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.app.LoaderManager;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,6 +35,7 @@ import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.bean.UserInfoBean;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -48,7 +45,7 @@ import net.jejer.hipda.volley.VolleyHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserinfoFragment extends BaseFragment {
+public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.SmsPostListener {
 
     public static final String ARG_USERNAME = "USERNAME";
     public static final String ARG_UID = "UID";
@@ -76,6 +73,8 @@ public class UserinfoFragment extends BaseFragment {
     private boolean mInloading = false;
     private String mSearchIdUrl;
     private int mMaxPage;
+
+    private HiProgressDialog smsPostProgressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -195,7 +194,7 @@ public class UserinfoFragment extends BaseFragment {
                 // Implemented in activity
                 return false;
             case R.id.action_send_sms:
-                showSendSmsDialog();
+                showSendSmsDialog(mUid, mUsername, this);
                 return true;
             case R.id.action_blacklist:
                 blacklistUser();
@@ -245,26 +244,6 @@ public class UserinfoFragment extends BaseFragment {
         }
     }
 
-    private void showSendSmsDialog() {
-        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View viewlayout = inflater.inflate(R.layout.dialog_userinfo_sms, null);
-
-        final EditText smsTextView = (EditText) viewlayout.findViewById(R.id.et_userinfo_sms);
-
-        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
-        popDialog.setTitle("发送短消息给 " + mUsername);
-        popDialog.setView(viewlayout);
-        // Add the buttons
-        popDialog.setPositiveButton("发送",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        new PostSmsAsyncTask(getActivity(), mUid, null).execute(smsTextView.getText().toString());
-                    }
-                });
-        popDialog.setNegativeButton("取消", null);
-        popDialog.create().show();
-    }
 
     public class OnScrollCallback implements AbsListView.OnScrollListener {
 
@@ -350,17 +329,23 @@ public class UserinfoFragment extends BaseFragment {
 
             setHasOptionsMenu(false);
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
+            FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), -1, -1, null, -1);
+        }
+    }
 
-            Bundle bun = new Bundle();
-            bun.putString(ThreadDetailFragment.ARG_TID_KEY, item.getTid());
-            bun.putString(ThreadDetailFragment.ARG_TITLE_KEY, item.getTitle());
-            Fragment fragment = new ThreadDetailFragment();
-            fragment.setArguments(bun);
-            getFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                    .addToBackStack(ThreadDetailFragment.class.getName())
-                    .commit();
+    @Override
+    public void onSmsPrePost() {
+        smsPostProgressDialog = HiProgressDialog.show(getActivity(), "正在发送...");
+    }
+
+    @Override
+    public void onSmsPostDone(int status, final String message, AlertDialog dialog) {
+        if (status == Constants.STATUS_SUCCESS) {
+            smsPostProgressDialog.dismiss(message);
+            if (dialog != null)
+                dialog.dismiss();
+        } else {
+            smsPostProgressDialog.dismissError(message);
         }
     }
 

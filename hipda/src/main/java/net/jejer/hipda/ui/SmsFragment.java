@@ -49,7 +49,7 @@ import net.jejer.hipda.volley.VolleyHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostListener {
+public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPostListener {
 
     public static final String ARG_AUTHOR = "AUTHOR";
     public static final String ARG_UID = "UID";
@@ -123,7 +123,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
             public void onClick(View v) {
                 String replyText = mEtSms.getText().toString();
                 if (replyText.length() > 0) {
-                    new PostSmsAsyncTask(getActivity(), mUid, SmsFragment.this).execute(replyText);
+                    new PostSmsAsyncTask(getActivity(), mUid, null, SmsFragment.this, null).execute(replyText);
                     // Close SoftKeyboard
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mEtSms.getWindowToken(), 0);
@@ -152,7 +152,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
 
         inflater.inflate(R.menu.menu_sms_detail, menu);
         menu.findItem(R.id.action_clear_sms)
-                .setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_trash_o).actionBarSize().color(Color.WHITE));
+                .setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_trash).actionBarSize().color(Color.WHITE));
 
         setActionBarDisplayHomeAsUpEnabled(true);
         setActionBarTitle("短消息 > " + mAuthor);
@@ -213,18 +213,18 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
                         VolleyHelper.getInstance().add(sReq);
                     }
                 });
-        popDialog.setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_warning).sizeDp(48).color(Color.RED));
+        popDialog.setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_warning).sizeDp(24).color(Color.RED));
         popDialog.setNegativeButton("取消", null);
         popDialog.create().show();
     }
 
     @Override
-    public void onPrePost() {
+    public void onSmsPrePost() {
         postProgressDialog = HiProgressDialog.show(getActivity(), "正在发送...");
     }
 
     @Override
-    public void onPostDone(int status, final String message) {
+    public void onSmsPostDone(int status, final String message, AlertDialog dialog) {
         if (status == Constants.STATUS_SUCCESS) {
             mEtSms.setText("");
             //new sms has some delay, so this is a dirty hack

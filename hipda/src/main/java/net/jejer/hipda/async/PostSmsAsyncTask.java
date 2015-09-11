@@ -1,7 +1,6 @@
 package net.jejer.hipda.async;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -14,6 +13,8 @@ import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import java.util.HashMap;
@@ -23,17 +24,20 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 
     private Context mCtx;
     private String mUid;
+    private String mUsername;
 
     private String mFormhash;
     private int mStatus = Constants.STATUS_FAIL;
     private String mResult = "";
-    private String mText = "";
-    private PostListener mPostListenerCallback;
+    private SmsPostListener mPostListenerCallback;
+    private AlertDialog mDialog;
 
-    public PostSmsAsyncTask(Context ctx, String uid, PostListener postListener) {
+    public PostSmsAsyncTask(Context ctx, String uid, String username, SmsPostListener postListener, AlertDialog dialog) {
         mCtx = ctx;
         mUid = uid;
+        mUsername = username;
         mPostListenerCallback = postListener;
+        mDialog = dialog;
     }
 
     @Override
@@ -80,36 +84,51 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
     }
 
     private String doPost(String content) {
-        String url = HiUtils.SMSPostUrl + mUid;
 
-        Map<String, String> post_param = new HashMap<String, String>();
+        String url;
+        if (!TextUtils.isEmpty(mUid))
+            url = HiUtils.SMSPostByUid.replace("{uid}", mUid);
+        else
+            url = HiUtils.SMSPostByUsername.replace("{username}", mUsername);
+
+        Map<String, String> post_param = new HashMap<>();
         post_param.put("formhash", mFormhash);
         post_param.put("lastdaterange", String.valueOf(System.currentTimeMillis()));
         post_param.put("handlekey", "pmreply");
         post_param.put("message", content);
-
-        mText = content;
+        if (TextUtils.isEmpty(mUid))
+            post_param.put("msgto", mUsername);
 
         SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
-        String rsp_str = VolleyHelper.getInstance().synchronousPost(url, post_param,
-                errorListener);
+        String response = VolleyHelper.getInstance().synchronousPost(url, post_param, errorListener);
 
-        if (TextUtils.isEmpty(rsp_str)) {
-            mResult = "短消息发送失败! " + errorListener.getErrorText();
-        } else if (!rsp_str.contains("class=\"summary\"")) {
-            mResult = "短消息发送失败.";
+        //response is in xml format
+        if (TextUtils.isEmpty(response)) {
+            mResult = "短消息发送失败 :  " + errorListener.getErrorText();
+        } else if (!response.contains("class=\"summary\"")) {
+            String result = "";
+            Document doc = Jsoup.parse(response, "", Parser.xmlParser());
+            for (Element e : doc.select("root")) {
+                result = e.text();
+                if (result.contains("<"))
+                    result = result.substring(0, result.indexOf("<"));
+            }
+            if (!TextUtils.isEmpty(result))
+                mResult = result;
+            else
+                mResult = "短消息发送失败.";
         } else {
             mResult = "短消息发送成功.";
             mStatus = Constants.STATUS_SUCCESS;
         }
-        return rsp_str;
+        return response;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
         if (mPostListenerCallback != null)
-            mPostListenerCallback.onPrePost();
+            mPostListenerCallback.onSmsPrePost();
         else
             Toast.makeText(mCtx, "正在发送...", Toast.LENGTH_LONG).show();
     }
@@ -117,23 +136,17 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void avoid) {
         super.onPostExecute(avoid);
-        if (mStatus != Constants.STATUS_SUCCESS && !TextUtils.isEmpty(mText)) {
-            ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", mText);
-            clipboard.setPrimaryClip(clip);
-            mResult += "\n请注意：发表失败的短消息已经复制到粘贴板";
-        }
         if (mPostListenerCallback != null) {
-            mPostListenerCallback.onPostDone(mStatus, mResult);
+            mPostListenerCallback.onSmsPostDone(mStatus, mResult, mDialog);
         } else {
             Toast.makeText(mCtx, mResult, Toast.LENGTH_LONG).show();
         }
     }
 
-    public interface PostListener {
-        public void onPrePost();
+    public interface SmsPostListener {
+        void onSmsPrePost();
 
-        public void onPostDone(int status, String message);
+        void onSmsPostDone(int status, String message, AlertDialog dialog);
     }
 
 }

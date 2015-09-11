@@ -21,7 +21,7 @@
     <string name="action_remove_favorite">取消收藏</string>
     <string name="action_add_attention">添加关注</string>
     <string name="action_remove_attention">取消关注</string>
-    <string name="action_send_sms">发短消息</string>
+    <string name="action_send_sms">发送短消息</string>
     <string name="action_clear_sms">清空短消息</string>
     <string name="action_blacklist">加入黑名单</string>
     <string name="action_favorites">查看收藏</string>
@@ -31,6 +31,8 @@
     <string name="action_new_thread">发表新帖</string>
     <string name="action_quick_reply">快速回复</string>
 
+    <string name="recipient">收件人</string>
+    <string name="content">内容</string>
     <string name="txt_quick_hint">回复</string>
     <string name="ib_quick_send">发送</string>
 

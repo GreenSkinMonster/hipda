@@ -27,7 +27,7 @@ public class FragmentUtils {
                         intent.getIntExtra(Constants.EXTRA_SMS_COUNT, -1),
                         intent.getIntExtra(Constants.EXTRA_THREAD_COUNT, -1),
                         intent.getStringExtra(Constants.EXTRA_UID),
-                        intent.getStringExtra(Constants.EXTRA_AUTHOR)
+                        intent.getStringExtra(Constants.EXTRA_USERNAME)
                 );
             } else {
                 Uri data = intent.getData();
@@ -39,15 +39,16 @@ public class FragmentUtils {
         return null;
     }
 
-    private static FragmentArgs parseNotification(int smsCount, int threadCount, String uid, String author) {
+    private static FragmentArgs parseNotification(int smsCount, int threadCount, String uid, String username) {
         FragmentArgs args = null;
         if (smsCount == 1
                 && threadCount == 0
                 && HiUtils.isValidId(uid)
-                && !TextUtils.isEmpty(author)) {
+                && !TextUtils.isEmpty(username)) {
             args = new FragmentArgs();
             args.setType(FragmentArgs.TYPE_SMS_DETAIL);
             args.setUid(uid);
+            args.setUsername(username);
         } else if (smsCount > 0) {
             args = new FragmentArgs();
             args.setType(FragmentArgs.TYPE_SMS);

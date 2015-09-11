@@ -97,7 +97,7 @@ public class NotificationMgr {
                     smsCount = listBean.getCount();
                     if (smsCount == 1) {
                         SimpleListItemBean itemBean = listBean.getAll().get(0);
-                        mCurrentBean.setAuthor(itemBean.getAuthor());
+                        mCurrentBean.setUsername(itemBean.getAuthor());
                         mCurrentBean.setUid(itemBean.getUid());
                         mCurrentBean.setContent(itemBean.getTitle());
                     }
@@ -132,8 +132,8 @@ public class NotificationMgr {
                 intent.setAction(Constants.INTENT_NOTIFICATION);
                 intent.putExtra(Constants.EXTRA_SMS_COUNT, mCurrentBean.getSmsCount());
                 intent.putExtra(Constants.EXTRA_THREAD_COUNT, mCurrentBean.getThreadCount());
-                if (!TextUtils.isEmpty(mCurrentBean.getAuthor()))
-                    intent.putExtra(Constants.EXTRA_AUTHOR, mCurrentBean.getAuthor());
+                if (!TextUtils.isEmpty(mCurrentBean.getUsername()))
+                    intent.putExtra(Constants.EXTRA_USERNAME, mCurrentBean.getUsername());
                 if (HiUtils.isValidId(mCurrentBean.getUid()))
                     intent.putExtra(Constants.EXTRA_UID, mCurrentBean.getUid());
                 PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -145,7 +145,7 @@ public class NotificationMgr {
                 int color = context.getResources().getColor(R.color.icon_blue);
 
                 if (mCurrentBean.getSmsCount() == 1 && mCurrentBean.getThreadCount() == 0) {
-                    title = mCurrentBean.getAuthor() + " 的短消息";
+                    title = mCurrentBean.getUsername() + " 的短消息";
                     content = mCurrentBean.getContent();
                     if (GlideHelper.ready())
                         GlideHelper.init(context);
