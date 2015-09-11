@@ -31,11 +31,11 @@ public class Utils {
     private static String YESTERDAY;
     private static long UPDATE_TIME = 0;
 
-    public static String nullToText(String text) {
+    public static String nullToText(CharSequence text) {
         if (TextUtils.isEmpty(text)) {
             return "";
         }
-        return text;
+        return text.toString();
     }
 
     public static String trim(String text) {

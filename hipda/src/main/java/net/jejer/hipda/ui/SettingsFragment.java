@@ -217,8 +217,7 @@ public class SettingsFragment extends PreferenceFragment {
             NotificationMgr.cancelAlarm(getActivity());
         }
 
-        if (!HiSettingsHelper.getInstance().isGestureBack()
-                && getActivity() != null)
+        if (!HiSettingsHelper.getInstance().isGestureBack() && getActivity() != null)
             ((MainFrameActivity) getActivity()).drawerResult.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
         if (mCacheCleared ||

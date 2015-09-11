@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
 import net.jejer.hipda.utils.ColorUtils;
@@ -135,7 +134,7 @@ public class TextViewWithEmoticon extends TextView {
             public void onClick(View view) {
                 FragmentArgs args = FragmentUtils.parseUrl(s_url);
                 if (args != null) {
-                    mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
+//                    mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
                     FragmentUtils.show(mFragmentManager, args);
                 }
             }

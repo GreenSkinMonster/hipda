@@ -60,7 +60,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
             holder = new ViewHolder();
             holder.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
-            holder.author = (TextView) convertView.findViewById(R.id.author);
+            holder.author = (TextView) convertView.findViewById(R.id.tv_username);
             holder.time = (TextView) convertView.findViewById(R.id.time);
             holder.floor = (TextView) convertView.findViewById(R.id.floor);
             holder.postStatus = (TextView) convertView.findViewById(R.id.post_status);

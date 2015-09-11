@@ -20,7 +20,8 @@ public class FragmentArgs {
     private int page;
     private int floor;
     private String uid;
-    private String author;
+    private String username;
+    private boolean directOpen;
 
     public int getFid() {
         return fid;
@@ -78,11 +79,19 @@ public class FragmentArgs {
         this.uid = uid;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getUsername() {
+        return username;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public boolean isDirectOpen() {
+        return directOpen;
+    }
+
+    public void setDirectOpen(boolean directOpen) {
+        this.directOpen = directOpen;
     }
 }

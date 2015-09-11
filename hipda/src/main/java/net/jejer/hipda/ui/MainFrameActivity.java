@@ -146,6 +146,7 @@ public class MainFrameActivity extends AppCompatActivity {
         FragmentArgs args = FragmentUtils.parse(intent);
         if (args != null) {
             clearBackStacks(false);
+            args.setDirectOpen(true);
             FragmentUtils.show(getFragmentManager(), args);
         }
     }
@@ -447,50 +448,34 @@ public class MainFrameActivity extends AppCompatActivity {
                     searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SEARCH);
                     SimpleListFragment searchFragment = new SimpleListFragment();
                     searchFragment.setArguments(searchBundle);
-                    getFragmentManager().beginTransaction()
-                            .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .add(R.id.main_frame_container, searchFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
+                    FragmentUtils.showFragment(getFragmentManager(), searchFragment, true);
                     break;
                 case Constants.DRAWER_MYPOST:    // my posts
                     Bundle postsBundle = new Bundle();
                     postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYPOST);
                     SimpleListFragment postsFragment = new SimpleListFragment();
                     postsFragment.setArguments(postsBundle);
-                    getFragmentManager().beginTransaction()
-                            .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .add(R.id.main_frame_container, postsFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
+                    FragmentUtils.showFragment(getFragmentManager(), postsFragment, true);
                     break;
                 case Constants.DRAWER_MYREPLY:    // my reply
                     Bundle replyBundle = new Bundle();
                     replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYREPLY);
                     SimpleListFragment replyFragment = new SimpleListFragment();
                     replyFragment.setArguments(replyBundle);
-                    getFragmentManager().beginTransaction()
-                            .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .add(R.id.main_frame_container, replyFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
+                    FragmentUtils.showFragment(getFragmentManager(), replyFragment, true);
                     break;
                 case Constants.DRAWER_FAVORITES:    // my favorites
                     Bundle favBundle = new Bundle();
                     favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_FAVORITES);
                     SimpleListFragment favFragment = new SimpleListFragment();
                     favFragment.setArguments(favBundle);
-                    getFragmentManager().beginTransaction()
-                            .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
-                            .add(R.id.main_frame_container, favFragment, SimpleListFragment.class.getName())
-                            .addToBackStack(SimpleListFragment.class.getName())
-                            .commit();
+                    FragmentUtils.showFragment(getFragmentManager(), favFragment, true);
                     break;
                 case Constants.DRAWER_SMS:    // sms
-                    FragmentUtils.showSmsList(getFragmentManager());
+                    FragmentUtils.showSmsList(getFragmentManager(), true);
                     break;
                 case Constants.DRAWER_THREADNOTIFY:    // thread notify
-                    FragmentUtils.showThreadNotify(getFragmentManager());
+                    FragmentUtils.showThreadNotify(getFragmentManager(), true);
                     break;
                 case Constants.DRAWER_SETTINGS:    // settings
                     getFragmentManager().beginTransaction()
@@ -502,14 +487,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 default:
                     //for forums
                     int forumId = iDrawerItem.getIdentifier();
-                    ThreadListFragment threadListFragment = new ThreadListFragment();
-                    Bundle argments = new Bundle();
-                    argments.putInt(ThreadListFragment.ARG_FID_KEY, forumId);
-                    threadListFragment.setArguments(argments);
-
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, threadListFragment, ThreadListFragment.class.getName())
-                            .commit();
+                    FragmentUtils.showForum(getFragmentManager(), forumId);
                     break;
             }
 

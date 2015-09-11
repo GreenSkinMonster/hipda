@@ -317,9 +317,9 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                 listFragment.setHasOptionsMenu(false);
 
             if (mType == SimpleListLoader.TYPE_SMS) {
-                FragmentUtils.showSmsDetail(getFragmentManager(), item.getUid(), item.getAuthor());
+                FragmentUtils.showSmsDetail(getFragmentManager(), false, item.getUid(), item.getAuthor());
             } else {
-                FragmentUtils.showThread(getFragmentManager(), item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
+                FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
             }
         }
     }
@@ -346,7 +346,7 @@ public class SimpleListFragment extends BaseFragment implements SwipeRefreshLayo
                     page = ThreadDetailFragment.LAST_PAGE;
                     floor = ThreadDetailFragment.LAST_FLOOR;
                 }
-                FragmentUtils.showThread(getFragmentManager(), item.getTid(), item.getTitle(), page, floor, postId, -1);
+                FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), page, floor, postId, -1);
             }
             return true;
         }

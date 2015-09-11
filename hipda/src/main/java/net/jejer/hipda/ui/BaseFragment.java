@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.mikepenz.materialdrawer.Drawer;
 
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 /**
  * a base fragment
@@ -23,8 +24,10 @@ public abstract class BaseFragment extends Fragment {
     void setActionBarTitle(CharSequence title) {
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-            if (actionBar != null)
-                actionBar.setTitle(title);
+            String t = Utils.nullToText(title);
+            if (actionBar != null && !t.equals(actionBar.getTitle())) {
+                actionBar.setTitle(t);
+            }
         }
     }
 

@@ -287,19 +287,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.PostLi
             String uid = (String) arg0.getTag(R.id.avatar_tag_uid);
             String username = (String) arg0.getTag(R.id.avatar_tag_username);
 
-            Bundle arguments = new Bundle();
-            arguments.putString(UserinfoFragment.ARG_UID, uid);
-            arguments.putString(UserinfoFragment.ARG_USERNAME, username);
-            UserinfoFragment fragment = new UserinfoFragment();
-            fragment.setArguments(arguments);
+            FragmentUtils.showSpace(getFragmentManager(), false, uid, username);
 
-            setHasOptionsMenu(false);
-
-            getFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                    .addToBackStack(ThreadDetailFragment.class.getName())
-                    .commit();
         }
     }
 

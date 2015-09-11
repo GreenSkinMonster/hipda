@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -142,6 +143,7 @@ public class FragmentUtils {
     }
 
     public static void showForum(FragmentManager fragmentManager, int fid) {
+        //show forum always use Transaction.replace
         Bundle argments = new Bundle();
         if (HiUtils.isForumEnabled(fid))
             argments.putInt(ThreadListFragment.ARG_FID_KEY, fid);
@@ -152,7 +154,7 @@ public class FragmentUtils {
                 .commit();
     }
 
-    public static void showThread(FragmentManager fragmentManager, String tid, String title, int page, int floor, String pid, int maxPage) {
+    public static void showThread(FragmentManager fragmentManager, boolean directOpen, String tid, String title, int page, int floor, String pid, int maxPage) {
         Bundle arguments = new Bundle();
         arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
         arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
@@ -165,76 +167,68 @@ public class FragmentUtils {
             arguments.putString(ThreadDetailFragment.ARG_PID_KEY, pid);
         ThreadDetailFragment fragment = new ThreadDetailFragment();
         fragment.setArguments(arguments);
-        fragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                .add(R.id.main_frame_container, fragment, fragment.getClass().getName())
-                .addToBackStack(ThreadDetailFragment.class.getName())
-                .commit();
+
+        showFragment(fragmentManager, fragment, directOpen);
     }
 
-    public static void showSpace(FragmentManager fragmentManager, String uid) {
+    public static void showSpace(FragmentManager fragmentManager, boolean directOpen, String uid, String username) {
         Bundle arguments = new Bundle();
         arguments.putString(UserinfoFragment.ARG_UID, uid);
-        arguments.putString(UserinfoFragment.ARG_USERNAME, "");
+        arguments.putString(UserinfoFragment.ARG_USERNAME, username);
         UserinfoFragment fragment = new UserinfoFragment();
         fragment.setArguments(arguments);
 
-        fragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                .add(R.id.main_frame_container, fragment, fragment.getClass().getName())
-                .addToBackStack(ThreadDetailFragment.class.getName())
-                .commit();
+        showFragment(fragmentManager, fragment, directOpen);
     }
 
-    public static void showThreadNotify(FragmentManager fragmentManager) {
+    public static void showThreadNotify(FragmentManager fragmentManager, boolean directOpen) {
         Bundle notifyBundle = new Bundle();
         notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREAD_NOTIFY);
         SimpleListFragment fragment = new SimpleListFragment();
         fragment.setArguments(notifyBundle);
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
-        transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
-                .addToBackStack(SimpleListFragment.class.getName())
-                .commit();
+        showFragment(fragmentManager, fragment, directOpen);
     }
 
-    public static void showSmsList(FragmentManager fragmentManager) {
+    public static void showSmsList(FragmentManager fragmentManager, boolean directOpen) {
         Bundle smsBundle = new Bundle();
         smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
         SimpleListFragment fragment = new SimpleListFragment();
         fragment.setArguments(smsBundle);
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right);
-        transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
-                .addToBackStack(SimpleListFragment.class.getName())
-                .commit();
+        showFragment(fragmentManager, fragment, directOpen);
     }
 
-    public static void showSmsDetail(FragmentManager fragmentManager, String uid, String author) {
+    public static void showSmsDetail(FragmentManager fragmentManager, boolean directOpen, String uid, String author) {
         Bundle smsBundle = new Bundle();
         smsBundle.putString(SmsFragment.ARG_AUTHOR, author);
         smsBundle.putString(SmsFragment.ARG_UID, uid);
         SmsFragment fragment = new SmsFragment();
         fragment.setArguments(smsBundle);
+        showFragment(fragmentManager, fragment, directOpen);
+    }
+
+    public static void showFragment(FragmentManager fragmentManager, Fragment fragment, boolean directOpen) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right);
+        if (directOpen)
+            transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
+        else
+            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right);
+
         transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
-                .addToBackStack(ThreadDetailFragment.class.getName())
+                .addToBackStack(fragment.getClass().getName())
                 .commit();
     }
 
     public static void show(FragmentManager fragmentManager, FragmentArgs args) {
         if (args.getType() == FragmentArgs.TYPE_THREAD)
-            showThread(fragmentManager, args.getTid() + "", "", args.getPage(), args.getFloor(), args.getPostId(), -1);
+            showThread(fragmentManager, args.isDirectOpen(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
         else if (args.getType() == FragmentArgs.TYPE_SPACE)
-            showSpace(fragmentManager, args.getUid());
+            showSpace(fragmentManager, args.isDirectOpen(), args.getUid(), args.getUsername());
         else if (args.getType() == FragmentArgs.TYPE_SMS)
-            showSmsList(fragmentManager);
+            showSmsList(fragmentManager, args.isDirectOpen());
         else if (args.getType() == FragmentArgs.TYPE_SMS_DETAIL)
-            showSmsDetail(fragmentManager, args.getUid(), args.getAuthor());
+            showSmsDetail(fragmentManager, args.isDirectOpen(), args.getUid(), args.getUsername());
         else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY)
-            showThreadNotify(fragmentManager);
+            showThreadNotify(fragmentManager, args.isDirectOpen());
     }
-
 
 }

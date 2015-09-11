@@ -327,8 +327,12 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+        Logger.v("onPrepareOptionsMenu");
+
         super.onPrepareOptionsMenu(menu);
         MenuItem favoritesMenuItem = menu.findItem(R.id.action_add_favorite);
+        if (favoritesMenuItem == null)
+            return;
         if (FavoriteHelper.getInstance().isInFavortie(mTid)) {
             favoritesMenuItem.setTitle(R.string.action_remove_favorite);
         } else {
