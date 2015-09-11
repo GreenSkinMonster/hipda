@@ -513,27 +513,10 @@ public class ThreadListFragment extends BaseFragment
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View viewlayout = inflater.inflate(R.layout.dialog_thread_list_settings, null);
 
-        final Switch sShowPicOnMobileNetwork = (Switch) viewlayout.findViewById(R.id.sw_load_pic_on_mobile_network);
         final Switch sShowStickThreads = (Switch) viewlayout.findViewById(R.id.sw_show_stick_threads);
         final Switch sSortByPostTime = (Switch) viewlayout.findViewById(R.id.sw_sort_by_post_time);
-        final Switch sShowThreadListAvatar = (Switch) viewlayout.findViewById(R.id.sw_threadlist_avatar);
         final Switch sShowPostType = (Switch) viewlayout.findViewById(R.id.sw_show_post_type);
 
-        sShowPicOnMobileNetwork.setChecked(HiSettingsHelper.getInstance().isLoadImgOnMobileNwk());
-        sShowPicOnMobileNetwork.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                HiSettingsHelper.getInstance().setLoadImgOnMobileNwk(arg1);
-            }
-        });
-        sShowThreadListAvatar.setChecked(HiSettingsHelper.getInstance().isShowThreadListAvatar());
-        sShowThreadListAvatar.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                HiSettingsHelper.getInstance().setShowThreadListAvatar(arg1);
-                mThreadListAdapter.notifyDataSetChanged();
-            }
-        });
         sShowStickThreads.setChecked(HiSettingsHelper.getInstance().isShowStickThreads());
         sShowStickThreads.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override

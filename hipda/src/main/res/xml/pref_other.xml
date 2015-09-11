@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference
-        android:inputType="text"
-        android:key="PERF_BLANKLIST_USERNAMES"
-        android:maxLines="1"
-        android:selectAllOnFocus="false"
-        android:singleLine="true"
-        android:title="@string/pref_title_blanklist" />
-
     <!--
     <net.jejer.hipda.ui.CustomSwitchPreference
         android:defaultValue="false"
@@ -16,9 +8,15 @@
         android:title="@string/pref_error_report_mode" />
     -->
 
+    <net.jejer.hipda.ui.CustomSwitchPreference
+        android:defaultValue="false"
+        android:key="PERF_ENCODEUTF8"
+        android:title="@string/pref_title_encode_utf8" />
+
     <Preference
         android:enabled="true"
         android:key="PERF_CLEAR_CACHE"
+        android:persistent="false"
         android:selectable="true"
         android:summary=""
         android:title="@string/pref_title_clear_cache" />

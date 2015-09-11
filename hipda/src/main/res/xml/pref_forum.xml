@@ -31,4 +31,13 @@
             android:singleLine="true"
             android:title="@string/pref_title_tail_url" />
     </PreferenceCategory>
+
+    <EditTextPreference
+        android:inputType="text"
+        android:key="PERF_BLANKLIST_USERNAMES"
+        android:maxLines="1"
+        android:selectAllOnFocus="false"
+        android:singleLine="true"
+        android:title="@string/pref_title_blanklist" />
+
 </PreferenceScreen>

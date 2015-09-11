@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import net.jejer.hipda.utils.Connectivity;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
@@ -32,6 +33,8 @@ public class HiSettingsHelper {
     public static final String PERF_SHOW_POST_TYPE = "PERF_SHOW_POST_TYPE";
     public static final String PERF_LOADIMGONMOBILENWK = "PERF_LOADIMGONMOBILENWK";
     public static final String PERF_THREADLISTAVATAR = "PERF_THREADLISTAVATAR";
+    public static final String PERF_IMAGE_LOAD_TYPE = "PERF_IMAGE_LOAD_TYPE";
+    public static final String PERF_AVATAR_LOAD_TYPE = "PERF_AVATAR_LOAD_TYPE";
     public static final String PERF_SORTBYPOSTTIME_BY_FORUM = "PERF_SORTBYPOSTTIME_BY_FORUM";
     public static final String PERF_ADDTAIL = "PERF_ADDTAIL";
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
@@ -59,7 +62,6 @@ public class HiSettingsHelper {
     public static final String PERF_NOTI_REPEAT_MINUETS = "PERF_NOTI_REPEAT_MINUETS";
     public static final String PERF_NOTI_LED_LIGHT = "PERF_NOTI_LED_LIGHT";
     public static final String PERF_NOTI_SOUND = "PERF_NOTI_SOUND";
-    public static final String PERF_NOTI_FLOAT_BUTTON = "PERF_NOTI_FLOAT_BUTTON";
     public static final String PERF_NOTI_SILENT_MODE = "PERF_NOTI_SILENT_MODE";
     public static final String PERF_NOTI_SILENT_BEGIN = "PERF_NOTI_SILENT_BEGIN";
     public static final String PERF_NOTI_SILENT_END = "PERF_NOTI_SILENT_END";
@@ -77,6 +79,8 @@ public class HiSettingsHelper {
     private boolean mShowPostType = false;
     private boolean mLoadImgOnMobileNwk = true;
     private boolean mShowThreadListAvatar = true;
+    private String mImageLoadType = "0";
+    private String mAvatarLoadType = "0";
     private Set<String> mSortByPostTimeByForum;
 
     private boolean mAddTail = true;
@@ -128,11 +132,13 @@ public class HiSettingsHelper {
     }
 
     public boolean isLoadImage() {
-        return !isMobileNetwork() || isLoadImgOnMobileNwk();
+        return Constants.LOAD_TYPE_ALWAYS.equals(mImageLoadType)
+                || (!isMobileNetwork() && Constants.LOAD_TYPE_ONLY_WIFI.equals(mImageLoadType));
     }
 
     public boolean isLoadAvatar() {
-        return !isMobileNetwork() || isShowThreadListAvatar();
+        return Constants.LOAD_TYPE_ALWAYS.equals(mAvatarLoadType)
+                || (!isMobileNetwork() && Constants.LOAD_TYPE_ONLY_WIFI.equals(mAvatarLoadType));
     }
 
     public static void updateMobileNetworkStatus(Context context) {
@@ -185,8 +191,8 @@ public class HiSettingsHelper {
         getSecQuestionFromPref();
         getSecAnswerFromPref();
         isShowStickThreadsFromPref();
-        isLoadImgOnMobileNwkFromPref();
-        isShowThreadListAvatarFromPref();
+        getAvatarLoadTypeFromPref();
+        getImageLoadTypeFromPref();
         isSortByPostTimeByForumFromPref();
         isAddTailFromPref();
         getTailTextFromPref();
@@ -205,7 +211,6 @@ public class HiSettingsHelper {
         isShowPostTypeFromPref();
         isErrorReportModeFromPref();
         getForumsFromPref();
-        isNotiFloatButtonFromPref();
         isNotiLedLightFromPref();
         isNotiTaskEnabledFromPref();
         getNotiRepeatMinutesFromPref();
@@ -322,34 +327,34 @@ public class HiSettingsHelper {
         editor.putBoolean(PERF_SHOWSTICKTHREADS, showStickThreads).commit();
     }
 
-    public boolean isShowThreadListAvatar() {
-        return mShowThreadListAvatar;
+    public String getAvatarLoadTypeFromPref() {
+        mAvatarLoadType = mSharedPref.getString(PERF_AVATAR_LOAD_TYPE, Constants.LOAD_TYPE_ALWAYS);
+        return mAvatarLoadType;
     }
 
-    public boolean isShowThreadListAvatarFromPref() {
-        mShowThreadListAvatar = mSharedPref.getBoolean(PERF_THREADLISTAVATAR, true);
-        return mShowThreadListAvatar;
+    public String getAvatarLoadType() {
+        return mAvatarLoadType;
     }
 
-    public void setShowThreadListAvatar(boolean showThreadListAvatar) {
-        mShowThreadListAvatar = showThreadListAvatar;
+    public void setAvatarLoadType(String avatarLoadType) {
+        this.mAvatarLoadType = avatarLoadType;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_THREADLISTAVATAR, showThreadListAvatar).commit();
+        editor.putString(PERF_AVATAR_LOAD_TYPE, avatarLoadType).apply();
     }
 
-    public boolean isLoadImgOnMobileNwk() {
-        return mLoadImgOnMobileNwk;
+    public String getImageLoadTypeFromPref() {
+        mImageLoadType = mSharedPref.getString(PERF_IMAGE_LOAD_TYPE, Constants.LOAD_TYPE_ONLY_WIFI);
+        return mImageLoadType;
     }
 
-    public boolean isLoadImgOnMobileNwkFromPref() {
-        mLoadImgOnMobileNwk = mSharedPref.getBoolean(PERF_LOADIMGONMOBILENWK, true);
-        return mLoadImgOnMobileNwk;
+    public String getImageLoadType() {
+        return mImageLoadType;
     }
 
-    public void setLoadImgOnMobileNwk(boolean loadImgOnMobileNwk) {
-        mLoadImgOnMobileNwk = loadImgOnMobileNwk;
+    public void setImageLoadType(String imageLoadType) {
+        this.mImageLoadType = imageLoadType;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_LOADIMGONMOBILENWK, loadImgOnMobileNwk).commit();
+        editor.putString(PERF_IMAGE_LOAD_TYPE, imageLoadType).apply();
     }
 
     public boolean isSortByPostTime(int fid) {
@@ -547,27 +552,13 @@ public class HiSettingsHelper {
         return mNotiLedLight;
     }
 
-    public boolean isNotiFloatButton() {
-        return mNotiFloatButton;
-    }
-
-    public void setNotiFloatButton(boolean notiFloatButton) {
-        mNotiFloatButton = notiFloatButton;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_NOTI_FLOAT_BUTTON, mNotiFloatButton).apply();
-    }
-
-    public boolean isNotiFloatButtonFromPref() {
-        mNotiFloatButton = mSharedPref.getBoolean(PERF_NOTI_FLOAT_BUTTON, true);
-        return mNotiFloatButton;
-    }
-
     public int getNotiRepeatMinutes() {
         return mNotiRepeatMinutes;
     }
 
     public void setNotiRepeatMinutes(int notiTaskEnable) {
         mNotiRepeatMinutes = notiTaskEnable;
+
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_NOTI_REPEAT_MINUETS, mNotiRepeatMinutes + "").apply();
     }
@@ -575,8 +566,11 @@ public class HiSettingsHelper {
     public int getNotiRepeatMinutesFromPref() {
         try {
             mNotiRepeatMinutes = Integer.parseInt(mSharedPref.getString(PERF_NOTI_REPEAT_MINUETS, NotificationMgr.MIN_REPEAT_MINUTTES + ""));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
+        }
+        if (mNotiRepeatMinutes < NotificationMgr.MIN_REPEAT_MINUTTES) {
             mNotiRepeatMinutes = NotificationMgr.MIN_REPEAT_MINUTTES;
+            setNotiRepeatMinutes(mNotiRepeatMinutes);
         }
         return mNotiRepeatMinutes;
     }

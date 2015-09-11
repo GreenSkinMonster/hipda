@@ -93,6 +93,8 @@ public class SettingNestedFragment extends BaseSettingFragment {
             case SCREEN_NETWORK:
                 setActionBarTitle(R.string.pref_category_network);
                 addPreferencesFromResource(R.xml.pref_network);
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_IMAGE_LOAD_TYPE));
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_AVATAR_LOAD_TYPE));
                 break;
 
             case SCREEN_OTHER:
@@ -127,7 +129,6 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 break;
         }
     }
-
 
     private void enableNotiItems(boolean isNotiTaskEnabled) {
         findPreference(HiSettingsHelper.PERF_NOTI_REPEAT_MINUETS).setEnabled(isNotiTaskEnabled);
