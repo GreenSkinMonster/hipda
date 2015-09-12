@@ -18,6 +18,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.AboutFragment;
 import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.utils.ColorUtils;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 
@@ -46,8 +47,18 @@ public class SettingMainFragment extends BaseSettingFragment {
         for (int i = 1; i <= 5; i++) {
             final int screenKey = i;
             findPreference("nested_" + i).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                private long mLastClickTime;
+
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
+
+                    //avoid double click
+                    long currentClickTime = System.currentTimeMillis();
+                    long elapsedTime = currentClickTime - mLastClickTime;
+                    mLastClickTime = currentClickTime;
+                    if (elapsedTime <= Constants.MIN_CLICK_INTERVAL)
+                        return true;
+
                     Fragment fragment = new SettingNestedFragment();
                     Bundle bundle = new Bundle();
                     bundle.putInt(SettingNestedFragment.TAG_KEY, screenKey);

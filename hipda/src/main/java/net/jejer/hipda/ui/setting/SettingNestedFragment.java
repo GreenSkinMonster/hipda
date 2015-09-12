@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceGroup;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
@@ -61,10 +60,9 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_POST_LINE_SPACING));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_THEME));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FONT));
-                if (Build.VERSION.SDK_INT < 21) {
-                    Preference navBarColoredPreference = findPreference(HiSettingsHelper.PERF_NAVBAR_COLORED);
-                    ((PreferenceGroup) findPreference(getResources().getString(R.string.pref_category_ui))).removePreference(navBarColoredPreference);
-                }
+                Preference navBarColoredPreference = findPreference(HiSettingsHelper.PERF_NAVBAR_COLORED);
+                if (Build.VERSION.SDK_INT < 21 && navBarColoredPreference != null)
+                    navBarColoredPreference.setEnabled(false);
                 break;
 
             case SCREEN_NOTIFICATION:
