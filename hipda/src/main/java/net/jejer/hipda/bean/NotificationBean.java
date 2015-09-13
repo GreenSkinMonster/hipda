@@ -19,6 +19,13 @@ public class NotificationBean {
         this.mSmsCount = smsCount;
     }
 
+    public void clearSmsCount() {
+        this.mSmsCount = 0;
+        this.mUid = "";
+        this.mUsername = "";
+        this.mContent = "";
+    }
+
     public int getThreadCount() {
         return mThreadCount;
     }

@@ -16,8 +16,6 @@ public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         Logger.i("NotificationReceiver");
-        NotificationMgr.isAlarmRnning(context);
-
         if (!Connectivity.isConnected(context))
             return;
 
@@ -37,6 +35,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     public void run() {
                         NotificationMgr.fetchNotification(null);
                         NotificationMgr.showNotification(context);
+                        Logger.i(NotificationMgr.getCurrentNotification().toString());
                     }
                 }).start();
             } catch (Exception e) {

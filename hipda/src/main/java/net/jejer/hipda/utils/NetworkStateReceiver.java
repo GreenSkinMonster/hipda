@@ -14,7 +14,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Logger.v("isConnected=" + Connectivity.isConnected(context));
         HiSettingsHelper.updateMobileNetworkStatus(context);
 
         if (Connectivity.isConnected(context)) {

@@ -411,7 +411,7 @@ public class SimpleListFragment extends BaseFragment
             }
 
             if (mType == SimpleListLoader.TYPE_SMS)
-                NotificationMgr.getCurrentNotification().setSmsCount(0);
+                NotificationMgr.getCurrentNotification().clearSmsCount();
             if (mType == SimpleListLoader.TYPE_THREAD_NOTIFY)
                 NotificationMgr.getCurrentNotification().setThreadCount(0);
 

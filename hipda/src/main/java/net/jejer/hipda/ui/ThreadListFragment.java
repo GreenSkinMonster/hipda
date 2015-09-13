@@ -160,10 +160,14 @@ public class ThreadListFragment extends BaseFragment
                         && HiUtils.isValidId(bean.getUid())
                         && !TextUtils.isEmpty(bean.getUsername())) {
                     FragmentUtils.showSmsDetail(getFragmentManager(), true, bean.getUid(), bean.getUsername());
+                    NotificationMgr.getCurrentNotification().clearSmsCount();
+                    showNotification();
                 } else if (bean.getSmsCount() > 0) {
                     FragmentUtils.showSmsList(getFragmentManager(), true);
                 } else if (bean.getThreadCount() > 0) {
                     FragmentUtils.showThreadNotify(getFragmentManager(), true);
+                    NotificationMgr.getCurrentNotification().setThreadCount(0);
+                    showNotification();
                 } else {
                     Toast.makeText(mCtx, "没有未处理的通知", Toast.LENGTH_SHORT).show();
                     mFabNotify.setVisibility(View.GONE);
@@ -553,11 +557,11 @@ public class ThreadListFragment extends BaseFragment
             return;
         int smsCount = NotificationMgr.getCurrentNotification().getSmsCount();
         int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
-        if (smsCount + threadCount > 0) {
-            if (smsCount > 0)
-                mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail).color(Color.WHITE));
-            else
-                mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_notifications).color(Color.WHITE));
+        if (smsCount > 0) {
+            mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail).color(Color.WHITE));
+            mFabNotify.setVisibility(View.VISIBLE);
+        } else if (threadCount > 0) {
+            mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_notifications).color(Color.WHITE));
             mFabNotify.setVisibility(View.VISIBLE);
         } else {
             if (mFabNotify.getVisibility() == View.VISIBLE)

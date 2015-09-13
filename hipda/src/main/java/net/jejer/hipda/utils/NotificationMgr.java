@@ -84,9 +84,11 @@ public class NotificationMgr {
     }
 
     public static void fetchNotification(Document doc) {
-        int smsCount = 0;
-        int threadCount = 0;
+        int smsCount = -1;
+        int threadCount = -1;
+        SimpleListItemBean smsBean = null;
 
+        //check new sms
         if (doc == null || HiSettingsHelper.getInstance().isCheckSms()) {
             HiSettingsHelper.getInstance().setLastCheckSmsTime(System.currentTimeMillis());
             String response = VolleyHelper.getInstance().synchronousGet(HiUtils.NewSMS, null);
@@ -96,33 +98,38 @@ public class NotificationMgr {
                 if (listBean != null) {
                     smsCount = listBean.getCount();
                     if (smsCount == 1) {
-                        SimpleListItemBean itemBean = listBean.getAll().get(0);
-                        mCurrentBean.setUsername(itemBean.getAuthor());
-                        mCurrentBean.setUid(itemBean.getUid());
-                        mCurrentBean.setContent(itemBean.getTitle());
+                        smsBean = listBean.getAll().get(0);
                     }
                 }
             }
         }
+        //check new thread notify
         if (doc != null) {
-            Elements promptcontentES = doc.select("div.promptcontent");
-            if (promptcontentES.size() > 0) {
-                String notifyStr = promptcontentES.first().text();
-                //私人消息 (1) 公共消息 (0) 系统消息 (0) 好友消息 (0) 帖子消息 (0)
-                for (String s : notifyStr.split("\\) ")) {
-                    if (smsCount == 0 && s.contains("私人消息")) {
-                        smsCount = HttpUtils.getIntFromString(s);
-                    } else if (s.contains("帖子消息")) {
-                        threadCount = HttpUtils.getIntFromString(s);
-                    }
+            Elements promptThreadES = doc.select("div.promptcontent a#prompt_threads");
+            if (promptThreadES.size() > 0) {
+                String notifyStr = promptThreadES.first().text();
+                String tcount = HttpUtils.getMiddleString(notifyStr, "(", ")");
+                if (!TextUtils.isEmpty(tcount) && TextUtils.isDigitsOnly(tcount)) {
+                    threadCount = Integer.parseInt(tcount);
                 }
             }
         }
 
-        mCurrentBean.setSmsCount(smsCount);
-        mCurrentBean.setThreadCount(threadCount);
+        if (threadCount >= 0)
+            mCurrentBean.setThreadCount(threadCount);
 
-        Logger.i(mCurrentBean.toString());
+        if (smsCount >= 0) {
+            mCurrentBean.setSmsCount(smsCount);
+            if (smsCount == 1 && smsBean != null) {
+                mCurrentBean.setUsername(smsBean.getAuthor());
+                mCurrentBean.setUid(smsBean.getUid());
+                mCurrentBean.setContent(smsBean.getTitle());
+            } else {
+                mCurrentBean.setUsername("");
+                mCurrentBean.setUid("");
+                mCurrentBean.setContent("");
+            }
+        }
     }
 
     public static void showNotification(Context context) {

@@ -38,7 +38,7 @@
         fab:menu_colorPressed="@color/background_grey"
         fab:menu_fab_size="mini"
         fab:menu_icon="@drawable/fab_add"
-        fab:menu_shadowColor="#00000000">
+        fab:menu_shadowColor="@android:color/transparent">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_new_thread"
@@ -63,6 +63,7 @@
         android:visibility="gone"
         fab:fab_colorNormal="@color/pink"
         fab:fab_colorPressed="@color/pink_pressed"
+        fab:fab_shadowColor="@android:color/transparent"
         fab:fab_size="mini" />
 
     <TextView
