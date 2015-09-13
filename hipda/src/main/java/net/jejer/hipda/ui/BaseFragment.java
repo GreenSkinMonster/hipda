@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.mikepenz.materialdrawer.Drawer;
 
 import net.jejer.hipda.R;
@@ -116,21 +115,16 @@ public abstract class BaseFragment extends Fragment {
                 animator.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        Glide.with(getActivity()).pauseRequests();
                     }
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        if (Glide.with(getActivity()).isPaused())
-                            Glide.with(getActivity()).resumeRequests();
                         if (getView() != null)
                             getView().setLayerType(View.LAYER_TYPE_NONE, null);
                     }
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
-                        if (Glide.with(getActivity()).isPaused())
-                            Glide.with(getActivity()).resumeRequests();
                     }
 
                     @Override
