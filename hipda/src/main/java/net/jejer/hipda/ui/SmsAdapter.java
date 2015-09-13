@@ -95,7 +95,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_content.setFragmentManager(mFragmentManager);
         //hack, replace url to link, only parse plain text
         String text = Utils.nullToText(item.getInfo());
-        if (!text.contains("<") && !text.contains(">"))
+        if (!text.contains("<a") && text.contains("http"))
             text = Utils.textToHtmlConvertingURLsToLinks(text);
         holder.tv_content.setText(text);
         holder.tv_content.setFocusable(false);
