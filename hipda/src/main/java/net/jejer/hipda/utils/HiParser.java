@@ -309,20 +309,13 @@ public class HiParser {
         SimpleListItemBean item = new SimpleListItemBean();
         String info = "";
 
-        for (Node n : root.childNodes()) {
-            if (n.nodeName().equals("a")) {
-                String href = n.attr("href");
-                if (href.startsWith("space.php")) {
-                    // user
-                    info += (((Element) n).text() + " ");
-                    continue;
-                }
-            }
-        }
-
         Elements aES = root.select("a");
         for (Element a : aES) {
-            if (a.attr("href").startsWith(HiUtils.BaseUrl + "redirect.php?from=notice&goto=findpost")) {
+            String href = a.attr("href");
+            if (href.contains("space.php")) {
+                // get replied usernames
+                info += a.text() + " ";
+            } else if (href.startsWith(HiUtils.BaseUrl + "redirect.php?from=notice&goto=findpost")) {
                 // Thread Name and TID and PID
                 item.setTitle(a.text());
                 item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", "&"));
@@ -338,7 +331,10 @@ public class HiParser {
         }
         item.setTime(emES.first().text());
 
-        info += ("回复了您的帖子 ");
+        if (root.text().contains("回复了您关注的主题"))
+            info += "回复了您关注的主题";
+        else
+            info += "回复了您的帖子 ";
 
         // new
         Elements imgES = root.select("img");
