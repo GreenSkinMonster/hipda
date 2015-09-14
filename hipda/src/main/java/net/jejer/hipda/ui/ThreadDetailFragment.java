@@ -245,13 +245,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             @Override
             public boolean onDoubleTap(MotionEvent e) {
                 showGotoPageDialog();
-//                if (mDetailListView.isFastScrollEnabled()) {
-//                    mDetailListView.setFastScrollEnabled(false);
-//                    mDetailListView.setFastScrollAlwaysVisible(false);
-//                } else {
-//                    mDetailListView.setFastScrollEnabled(true);
-//                    mDetailListView.setFastScrollAlwaysVisible(true);
-//                }
                 return true;
             }
         };
