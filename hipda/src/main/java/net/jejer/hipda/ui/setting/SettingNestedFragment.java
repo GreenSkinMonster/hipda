@@ -109,6 +109,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 UpdateHelper.clearCache(getActivity());
+                                                SettingMainFragment.mCacheCleared = true;
                                                 Toast.makeText(getActivity(), "缓存已经清除", Toast.LENGTH_SHORT).show();
                                             }
                                         })

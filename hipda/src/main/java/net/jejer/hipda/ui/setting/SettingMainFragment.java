@@ -35,6 +35,7 @@ public class SettingMainFragment extends BaseSettingFragment {
     private Set<String> mForums;
     private boolean mNavBarColored;
     private String mFont;
+    static boolean mCacheCleared;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,13 +107,15 @@ public class SettingMainFragment extends BaseSettingFragment {
         if (!HiSettingsHelper.getInstance().isGestureBack() && getActivity() != null)
             ((MainFrameActivity) getActivity()).drawerResult.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-        if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
+        if (mCacheCleared
+                || HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
             ColorUtils.clear();
             getActivity().finish();
+            mCacheCleared = false;
 
             startActivity(new Intent(getActivity().getApplicationContext(), getActivity().getClass()));
             System.exit(0);
