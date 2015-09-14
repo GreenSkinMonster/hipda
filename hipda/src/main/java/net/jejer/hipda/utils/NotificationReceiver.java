@@ -16,31 +16,40 @@ public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         Logger.i("NotificationReceiver");
-        if (!Connectivity.isConnected(context))
+        if (!Connectivity.isConnected(context)) {
+            Logger.i("Netork is offline, do nothing.");
             return;
+        }
 
         if (!HiSettingsHelper.getInstance().ready())
             HiSettingsHelper.getInstance().init(context);
         if (!VolleyHelper.getInstance().ready())
             VolleyHelper.getInstance().init(context);
 
-        if (HiSettingsHelper.getInstance().isInSilentMode())
+        if (HiSettingsHelper.getInstance().isInSilentMode()) {
+            Logger.i("Notification is in silent mode, do nothing.");
             return;
+        }
 
         String uid = HiSettingsHelper.getInstance().getUid();
         if (HiUtils.isValidId(uid) && VolleyHelper.getInstance().isLoggedIn()) {
-            try {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+            Logger.i("Notification start checking....");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
                         NotificationMgr.fetchNotification(null);
                         NotificationMgr.showNotification(context);
+                    } catch (Exception e) {
+                        Logger.e(e);
+                    } finally {
                         Logger.i(NotificationMgr.getCurrentNotification().toString());
                     }
-                }).start();
-            } catch (Exception e) {
-                Logger.e(e);
-            }
+                }
+            }).start();
+        } else {
+            Logger.i("User is not logged in, cancel alarm");
+            NotificationMgr.cancelAlarm(context);
         }
     }
 }
