@@ -121,12 +121,6 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 
     @Override
     protected void onPostExecute(Void avoid) {
-//        if (mStatus != Constants.STATUS_SUCCESS && !TextUtils.isEmpty(mContent)) {
-//            ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
-//            ClipData clip = ClipData.newPlainText("AUTO SAVE FROM HiPDA", mContent);
-//            clipboard.setPrimaryClip(clip);
-//            mResult += "\n请注意：发表失败的内容已经复制到粘贴板";
-//        }
         PostBean postBean = new PostBean();
         postBean.setSubject(mTitle);
         postBean.setFloor(mFloor);
@@ -174,6 +168,18 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             }
         }
 
+        if (mMode == MODE_QUOTE_POST
+                || mMode == MODE_REPLY_POST) {
+            String noticeauthor = mInfo.getNoticeauthor();
+            String noticeauthormsg = mInfo.getNoticeauthormsg();
+            String noticetrimstr = mInfo.getNoticetrimstr();
+            if (!TextUtils.isEmpty(noticeauthor) && !TextUtils.isEmpty(noticeauthormsg) && !TextUtils.isEmpty(noticetrimstr)) {
+                post_param.put("noticeauthor", noticeauthor);
+                post_param.put("noticeauthormsg", noticeauthormsg);
+                post_param.put("noticetrimstr", noticetrimstr);
+            }
+        }
+
         SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
         String rsp_str = VolleyHelper.getInstance().synchronousPost(url, post_param, errorListener);
 
@@ -198,7 +204,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
                 Document doc = Jsoup.parse(rsp_str);
                 Elements error = doc.select("div.alert_info");
                 if (error != null && error.size() > 0) {
-                    mResult += error.text();
+                    mResult += "\n" + error.text();
                 } else {
                     if (HiSettingsHelper.getInstance().isErrorReportMode())
                         ACRAUtils.acraReport("Error when posting but with response", rsp_str);
@@ -207,7 +213,7 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
         } else {
             Logger.e(errorListener.getError());
 
-            mResult = "发表失败，无返回结果! " + errorListener.getErrorText();
+            mResult = "发表失败，无返回结果! \n" + errorListener.getErrorText();
             mStatus = Constants.STATUS_FAIL;
 
             if (HiSettingsHelper.getInstance().isErrorReportMode())

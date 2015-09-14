@@ -351,7 +351,6 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                     }
                 }
 
-                //when edit post, pass floor number
                 PostBean postBean = new PostBean();
                 postBean.setContent(replyText);
                 postBean.setTid(mTid);
@@ -359,16 +358,13 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                 postBean.setFid(mFid);
                 postBean.setTypeid(mTypeid);
                 postBean.setSubject(subjectText);
-                postBean.setFloor(mMode == PostAsyncTask.MODE_EDIT_POST ? mFloor : "");
+                postBean.setFloor(mFloor);
+
                 new PostAsyncTask(getActivity(), mMode, mPrePostInfo, postListener).execute(postBean);
 
                 // Close SoftKeyboard
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-                        Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
-
-                // Close reply fragment
-                //((MainFrameActivity) getActivity()).popFragment(false);
                 return true;
             default:
                 return false;
