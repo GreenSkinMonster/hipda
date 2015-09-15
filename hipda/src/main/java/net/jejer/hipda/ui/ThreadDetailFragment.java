@@ -466,15 +466,16 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             }
 
             if (!mAuthorOnly) {
-                if (mode != PostAsyncTask.MODE_EDIT_POST)
+                if (mode != PostAsyncTask.MODE_EDIT_POST) {
                     mCurrentPage = mMaxPage;
-
-                int floor = LAST_FLOOR;
-                if (!TextUtils.isEmpty(postBean.getFloor()) && TextUtils.isDigitsOnly(postBean.getFloor()))
-                    floor = Integer.parseInt(postBean.getFloor());
-                if (floor == LAST_FLOOR || floor > 0)
-                    mFloorOfPage = floor;
-
+                    mFloorOfPage = LAST_FLOOR;
+                } else {
+                    int floor = LAST_FLOOR;
+                    if (!TextUtils.isEmpty(postBean.getFloor()) && TextUtils.isDigitsOnly(postBean.getFloor()))
+                        floor = Integer.parseInt(postBean.getFloor());
+                    if (floor == LAST_FLOOR || floor > 0)
+                        mFloorOfPage = floor;
+                }
                 mCache.remove(mCurrentPage);
                 showOrLoadPage();
             }
