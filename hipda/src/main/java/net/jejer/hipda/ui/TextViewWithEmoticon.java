@@ -133,6 +133,10 @@ public class TextViewWithEmoticon extends TextView {
     private URLSpan getFragmentArgsUrlSpan(final String s_url) {
         return new URLSpan(s_url) {
             public void onClick(View view) {
+                if (mFragmentManager == null) {
+                    Toast.makeText(mCtx, "need FragmentManager here", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 FragmentArgs args = FragmentUtils.parseUrl(s_url);
                 if (args != null) {
                     //this line is needed, or onCreateOptionsMenu and onPrepareOptionsMenu will be called multiple times

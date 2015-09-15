@@ -175,6 +175,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
                 LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text_simple, parent, false);
                 TextViewWithEmoticon tv = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
+                tv.setFragmentManager(mFragmentManager);
 
                 tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
                 tv.setAutoLinkMask(Linkify.WEB_URLS);
@@ -230,6 +231,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 TextViewWithEmoticon tvContent = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
                 TextView tvTime = (TextView) quoteLayout.findViewById(R.id.quote_post_time);
 
+                tvContent.setFragmentManager(mFragmentManager);
                 tvContent.setTrim(true);
 
                 tvAuthor.setText(Utils.nullToText(author));
