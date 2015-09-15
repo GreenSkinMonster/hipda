@@ -10,12 +10,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -45,6 +47,7 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
+import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.DetailListLoader;
 import net.jejer.hipda.async.FavoriteHelper;
@@ -354,8 +357,37 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 try {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.parse(url), "text/html");
-                    startActivity(intent);
-                } catch (Exception ignored) {
+                    List<ResolveInfo> list = mCtx.getPackageManager().queryIntentActivities(intent, 0);
+
+                    if (list.size() == 0) {
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        list = mCtx.getPackageManager().queryIntentActivities(intent, 0);
+
+                        ArrayList<Intent> targetIntents = new ArrayList<>();
+                        String myPkgName = BuildConfig.APPLICATION_ID;
+                        for (ResolveInfo currentInfo : list) {
+                            String packageName = currentInfo.activityInfo.packageName;
+                            if (!myPkgName.equals(packageName)) {
+                                Intent targetIntent = new Intent(android.content.Intent.ACTION_VIEW);
+                                targetIntent.setData(Uri.parse(url));
+                                targetIntent.setPackage(packageName);
+                                targetIntents.add(targetIntent);
+                            }
+                        }
+
+                        if (targetIntents.size() > 0) {
+                            Intent chooserIntent = Intent.createChooser(targetIntents.remove(0), getString(R.string.action_open_url));
+                            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[targetIntents.size()]));
+                            startActivity(chooserIntent);
+                        } else {
+                            Toast.makeText(mCtx, "没有找到浏览器应用", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } else {
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(mCtx, "没有找到浏览器应用 : " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 return true;
             case R.id.action_copy_url:
