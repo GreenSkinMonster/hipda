@@ -77,15 +77,25 @@
             android:layout_alignParentTop="true"
             android:background="@color/silver" />
 
+        <ImageButton
+            android:id="@+id/ib_goto_post"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignBottom="@+id/tv_reply_text"
+            android:layout_alignParentLeft="true"
+            android:contentDescription="@string/action_reply" />
+
         <EditText
             android:id="@+id/tv_reply_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
             android:layout_toLeftOf="@+id/ib_reply_post"
+            android:layout_toRightOf="@+id/ib_goto_post"
+            android:gravity="bottom"
             android:hint="@string/action_quick_reply"
             android:inputType="textMultiLine"
             android:maxLines="6"
+            android:minHeight="48dp"
             android:minLines="1"
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
@@ -98,8 +108,7 @@
             android:layout_height="48dp"
             android:layout_alignBottom="@+id/tv_reply_text"
             android:layout_alignParentRight="true"
-            android:contentDescription="@string/ib_quick_send"
-            android:src="?icon_send" />
+            android:contentDescription="@string/ib_quick_send" />
 
     </RelativeLayout>
 

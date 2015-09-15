@@ -63,6 +63,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
     public static final String ARG_PID_KEY = "pid";
     public static final String ARG_FLOOR_KEY = "floor";
     public static final String ARG_FLOOR_AUTHOR_KEY = "floor_author";
+    public static final String ARG_TEXT_KEY = "text";
     public static final String ARG_MODE_KEY = "mode";
 
     private String mFid;
@@ -70,6 +71,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
     private String mPid;
     private String mFloor;
     private String mFloorAuthor;
+    private String mText;
     private String mTypeid = "0";
     private int mMode;
     private TextView mTvAdditional;
@@ -118,6 +120,9 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         if (getArguments().containsKey(ARG_MODE_KEY)) {
             mMode = getArguments().getInt(ARG_MODE_KEY);
         }
+        if (getArguments().containsKey(ARG_TEXT_KEY)) {
+            mText = getArguments().getString(ARG_TEXT_KEY);
+        }
 
         // Start fetch info
         mPrePostAsyncTask = new PrePostAsyncTask(getActivity(), mPrePostListener, mMode);
@@ -154,6 +159,10 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
 
         mEtReplyMsg.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         mTvAdditional.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+
+        if (mMode == PostAsyncTask.MODE_REPLY_THREAD && !TextUtils.isEmpty(mText)) {
+            mEtReplyMsg.setText(mText);
+        }
 
         final ExpandableHeightGridView gvTab1 = (ExpandableHeightGridView) view.findViewById(R.id.tab1_emoji);
         gvTab1.setExpanded(true);
@@ -617,6 +626,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                             long t = SystemClock.uptimeMillis();
                             mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
                             mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
+                            mEtReplyMsg.setSelection(mEtReplyMsg.getText().length());
                         }
                     }, 100);
                 }

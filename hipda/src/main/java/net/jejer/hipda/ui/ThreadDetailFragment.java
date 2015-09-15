@@ -106,7 +106,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     private boolean mInloading = false;
     private boolean mPrefetching = false;
     private TextView mReplyTextTv;
-    private ImageButton mPostReplyIb;
     private View quickReply;
     private Handler mMsgHandler;
     private boolean mAuthorOnly = false;
@@ -266,7 +265,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         quickReply = view.findViewById(R.id.quick_reply);
         mReplyTextTv = (TextView) quickReply.findViewById(R.id.tv_reply_text);
         mReplyTextTv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
-        mPostReplyIb = (ImageButton) quickReply.findViewById(R.id.ib_reply_post);
+        int btnColor = HiSettingsHelper.getInstance().getTheme().contains("light") ? Color.GRAY : Color.WHITE;
+        ImageButton mPostReplyIb = (ImageButton) quickReply.findViewById(R.id.ib_reply_post);
+        mPostReplyIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).color(btnColor));
         mPostReplyIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -284,6 +285,18 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                     imm.hideSoftInputFromWindow(mReplyTextTv.getWindowToken(), 0);
                     mFam.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+
+        ImageButton mGotoPostIb = (ImageButton) quickReply.findViewById(R.id.ib_goto_post);
+        mGotoPostIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_reply).color(btnColor));
+        mGotoPostIb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHasOptionsMenu(false);
+                String replyText = mReplyTextTv.getText().toString();
+                showPost(replyText);
+                hideQuickReply();
             }
         });
 
@@ -376,24 +389,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 return true;
             case R.id.action_reply:
                 setHasOptionsMenu(false);
-                Bundle arguments = new Bundle();
-                arguments.putString(PostFragment.ARG_TID_KEY, mTid);
-                arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_REPLY_THREAD);
-                PostFragment fragment = new PostFragment();
-                fragment.setArguments(arguments);
-                fragment.setPostListener(this);
-                if (HiSettingsHelper.getInstance().getIsLandscape()) {
-                    getFragmentManager().beginTransaction()
-                            .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-                            .addToBackStack(PostFragment.class.getName())
-                            .commit();
-                } else {
-                    getFragmentManager().beginTransaction()
-                            .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-                            .addToBackStack(PostFragment.class.getName())
-                            .commit();
-                }
-
+                showPost("");
                 return true;
             case R.id.action_refresh_detail:
                 refresh();
@@ -430,6 +426,20 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showPost(String text) {
+        Bundle arguments = new Bundle();
+        arguments.putString(PostFragment.ARG_TID_KEY, mTid);
+        arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_REPLY_THREAD);
+        arguments.putString(PostFragment.ARG_TEXT_KEY, text);
+        PostFragment fragment = new PostFragment();
+        fragment.setArguments(arguments);
+        fragment.setPostListener(this);
+        getFragmentManager().beginTransaction()
+                .add(R.id.main_frame_container, fragment, fragment.getClass().getName())
+                .addToBackStack(fragment.getClass().getName())
+                .commit();
     }
 
     private void refresh() {
