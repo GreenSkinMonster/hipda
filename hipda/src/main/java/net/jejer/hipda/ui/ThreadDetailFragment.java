@@ -268,9 +268,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         quickReply = view.findViewById(R.id.quick_reply);
         mReplyTextTv = (TextView) quickReply.findViewById(R.id.tv_reply_text);
         mReplyTextTv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
-        int btnColor = HiSettingsHelper.getInstance().getTheme().contains("light") ? Color.GRAY : Color.WHITE;
         ImageButton mPostReplyIb = (ImageButton) quickReply.findViewById(R.id.ib_reply_post);
-        mPostReplyIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).color(btnColor));
+        mPostReplyIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
         mPostReplyIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -292,7 +291,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         });
 
         ImageButton mGotoPostIb = (ImageButton) quickReply.findViewById(R.id.ib_goto_post);
-        mGotoPostIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_reply).color(btnColor));
+        mGotoPostIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_reply).sizeDp(28).color(Color.GRAY));
         mGotoPostIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

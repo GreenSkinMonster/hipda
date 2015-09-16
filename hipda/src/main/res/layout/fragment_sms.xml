@@ -33,12 +33,12 @@
             android:id="@+id/et_sms"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
             android:layout_toLeftOf="@+id/ib_send_sms"
             android:gravity="bottom"
             android:hint="@string/txt_quick_hint"
             android:inputType="textMultiLine"
             android:maxLines="6"
+            android:minHeight="48dp"
             android:minLines="1"
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
@@ -51,8 +51,8 @@
             android:layout_height="48dp"
             android:layout_alignBottom="@+id/et_sms"
             android:layout_alignParentRight="true"
-            android:contentDescription="@string/ib_quick_send"
-            android:src="?icon_send" />
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/ib_quick_send" />
     </RelativeLayout>
 
     <net.jejer.hipda.ui.ContentLoadingProgressBar

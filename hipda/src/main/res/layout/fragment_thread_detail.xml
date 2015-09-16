@@ -83,6 +83,7 @@
             android:layout_height="48dp"
             android:layout_alignBottom="@+id/tv_reply_text"
             android:layout_alignParentLeft="true"
+            android:background="?attr/selectableItemBackground"
             android:contentDescription="@string/action_reply" />
 
         <EditText
@@ -108,6 +109,7 @@
             android:layout_height="48dp"
             android:layout_alignBottom="@+id/tv_reply_text"
             android:layout_alignParentRight="true"
+            android:background="?attr/selectableItemBackground"
             android:contentDescription="@string/ib_quick_send" />
 
     </RelativeLayout>

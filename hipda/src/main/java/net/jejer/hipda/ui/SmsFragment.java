@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.FontAwesome;
 
@@ -116,6 +117,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         });
 
         ImageButton postIb = (ImageButton) view.findViewById(R.id.ib_send_sms);
+        postIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
+
         mEtSms = (EditText) view.findViewById(R.id.et_sms);
         mEtSms.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         postIb.setOnClickListener(new View.OnClickListener() {
