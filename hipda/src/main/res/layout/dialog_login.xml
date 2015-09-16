@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/flat_button_selector"
+            android:background="?attr/selectableItemBackground"
             android:text="登录"
             android:textSize="18sp" />
 
