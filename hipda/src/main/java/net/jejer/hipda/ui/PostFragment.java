@@ -62,12 +62,16 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
     public static final String ARG_TID_KEY = "tid";
     public static final String ARG_PID_KEY = "pid";
     public static final String ARG_FLOOR_KEY = "floor";
+    public static final String ARG_FLOOR_AUTHOR_KEY = "floor_author";
+    public static final String ARG_TEXT_KEY = "text";
     public static final String ARG_MODE_KEY = "mode";
 
     private String mFid;
     private String mTid;
     private String mPid;
     private String mFloor;
+    private String mFloorAuthor;
+    private String mText;
     private String mTypeid = "0";
     private int mMode;
     private TextView mTvAdditional;
@@ -110,8 +114,14 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         if (getArguments().containsKey(ARG_FLOOR_KEY)) {
             mFloor = getArguments().getString(ARG_FLOOR_KEY);
         }
+        if (getArguments().containsKey(ARG_FLOOR_AUTHOR_KEY)) {
+            mFloorAuthor = getArguments().getString(ARG_FLOOR_AUTHOR_KEY);
+        }
         if (getArguments().containsKey(ARG_MODE_KEY)) {
             mMode = getArguments().getInt(ARG_MODE_KEY);
+        }
+        if (getArguments().containsKey(ARG_TEXT_KEY)) {
+            mText = getArguments().getString(ARG_TEXT_KEY);
         }
 
         // Start fetch info
@@ -149,6 +159,10 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
 
         mEtReplyMsg.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         mTvAdditional.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+
+        if (mMode == PostAsyncTask.MODE_REPLY_THREAD && !TextUtils.isEmpty(mText)) {
+            mEtReplyMsg.setText(mText);
+        }
 
         final ExpandableHeightGridView gvTab1 = (ExpandableHeightGridView) view.findViewById(R.id.tab1_emoji);
         gvTab1.setExpanded(true);
@@ -277,10 +291,10 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                 setActionBarTitle("回复帖子");
                 break;
             case PostAsyncTask.MODE_REPLY_POST:
-                setActionBarTitle("回复 " + mFloor + "#");
+                setActionBarTitle("回复 " + mFloor + "# " + mFloorAuthor);
                 break;
             case PostAsyncTask.MODE_QUOTE_POST:
-                setActionBarTitle("引用 " + mFloor + "#");
+                setActionBarTitle("引用 " + mFloor + "# " + mFloorAuthor);
                 break;
             case PostAsyncTask.MODE_NEW_THREAD:
                 setActionBarTitle(getActivity().getResources().getString(R.string.action_new_thread));
@@ -612,6 +626,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                             long t = SystemClock.uptimeMillis();
                             mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
                             mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
+                            mEtReplyMsg.setSelection(mEtReplyMsg.getText().length());
                         }
                     }, 100);
                 }
