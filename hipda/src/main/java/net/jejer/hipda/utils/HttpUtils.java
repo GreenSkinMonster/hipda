@@ -55,6 +55,8 @@ public class HttpUtils {
         }
         req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+        if (filename.toLowerCase().endsWith(".apk"))
+            req.setMimeType("application/vnd.android.package-archive");
         dm.enqueue(req);
     }
 
