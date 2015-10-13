@@ -51,9 +51,9 @@ public class HiUtils {
     public final static int FID_BS = 6;
     public final static int FID_DISCOVERY = 2;
 
-    public static String[] FORUMS = {"Discovery", "Buy & Sell", "Geek Talks", "E-INK", "PalmOS", "疑似机器人"};
-    public static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, 7, 59, 12, 57};
-    public static IIcon[] FORUM_ICONS = {
+    public final static String[] FORUMS = {"Discovery", "Buy & Sell", "Geek Talks", "E-INK", "PalmOS", "疑似机器人"};
+    public final static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, 7, 59, 12, 57};
+    public final static IIcon[] FORUM_ICONS = {
             FontAwesome.Icon.faw_cc_discover,
             FontAwesome.Icon.faw_shopping_cart,
             FontAwesome.Icon.faw_forumbee,
@@ -84,6 +84,29 @@ public class HiUtils {
                 return true;
         }
         return false;
+    }
+
+    public final static String[] BS_TYPES = {"全部", "手机", "掌上电脑", "笔记本电脑", "无线产品", "数码相机、摄像机", "MP3随身听", "各类配件", "其他好玩的"};
+    public final static String[] BS_TYPE_IDS = {"", "1", "2", "3", "4", "5", "6", "7", "8"};
+    public final static IIcon[] BS_TYPE_ICONS = {
+            FontAwesome.Icon.faw_tags,
+            FontAwesome.Icon.faw_mobile_phone,
+            FontAwesome.Icon.faw_tablet,
+            FontAwesome.Icon.faw_laptop,
+            FontAwesome.Icon.faw_wifi,
+            FontAwesome.Icon.faw_camera_retro,
+            FontAwesome.Icon.faw_music,
+            FontAwesome.Icon.faw_desktop,
+            FontAwesome.Icon.faw_gamepad
+    };
+
+    public static int getBSTypeIndexByFid(String typeId) {
+        for (int i = 0; i < BS_TYPE_IDS.length; i++) {
+            if (BS_TYPE_IDS[i].equals(typeId)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public static String getFullUrl(String particalUrl) {

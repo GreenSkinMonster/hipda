@@ -65,6 +65,7 @@ public class HiSettingsHelper {
     public static final String PERF_NOTI_SILENT_MODE = "PERF_NOTI_SILENT_MODE";
     public static final String PERF_NOTI_SILENT_BEGIN = "PERF_NOTI_SILENT_BEGIN";
     public static final String PERF_NOTI_SILENT_END = "PERF_NOTI_SILENT_END";
+    public static final String PERF_BS_TYPE_ID = "PERF_BS_TYPE_ID";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -77,8 +78,6 @@ public class HiSettingsHelper {
 
     private boolean mShowStickThreads = false;
     private boolean mShowPostType = false;
-    private boolean mLoadImgOnMobileNwk = true;
-    private boolean mShowThreadListAvatar = true;
     private String mImageLoadType = "0";
     private String mAvatarLoadType = "0";
     private Set<String> mSortByPostTimeByForum;
@@ -108,7 +107,7 @@ public class HiSettingsHelper {
     private boolean mNotiTaskEnabled;
     private int mNotiRepeatMinutes;
     private boolean mNotiLedLight;
-    private boolean mNotiFloatButton;
+    private String mBSTypeId;
 
     // --------------- THIS IS NOT IN PERF -----------
     private boolean mIsLandscape = false;
@@ -214,6 +213,7 @@ public class HiSettingsHelper {
         isNotiLedLightFromPref();
         isNotiTaskEnabledFromPref();
         getNotiRepeatMinutesFromPref();
+        getBSTypeIdFromPref();
 
         updateMobileNetworkStatus(mCtx);
     }
@@ -744,6 +744,21 @@ public class HiSettingsHelper {
     public int getLastForumIdFromPerf() {
         mLastForumId = mSharedPref.getInt(PERF_LAST_FORUM_ID, 0);
         return mLastForumId;
+    }
+
+    public String getBSTypeId() {
+        return mBSTypeId;
+    }
+
+    public String getBSTypeIdFromPref() {
+        mBSTypeId = mSharedPref.getString(PERF_BS_TYPE_ID, "");
+        return mBSTypeId;
+    }
+
+    public void setBSTypeId(String typeId) {
+        mBSTypeId = typeId;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_BS_TYPE_ID, typeId).apply();
     }
 
     public boolean isAutoUpdateCheckable() {

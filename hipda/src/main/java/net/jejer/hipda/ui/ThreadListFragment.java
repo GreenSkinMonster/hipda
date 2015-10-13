@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -32,6 +33,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.view.IconicsImageView;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
@@ -42,6 +44,7 @@ import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
+import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -82,6 +85,8 @@ public class ThreadListFragment extends BaseFragment
     private FloatingActionButton mFabNotify;
     private ContentLoadingProgressBar loadingProgressBar;
     private int mFirstVisibleItem = 0;
+
+    private MenuItem mForumTypeMenuItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -211,6 +216,14 @@ public class ThreadListFragment extends BaseFragment
 
         menu.clear();
         inflater.inflate(R.menu.menu_thread_list, menu);
+        if (mForumId == HiUtils.FID_BS) {
+            mForumTypeMenuItem = menu.findItem(R.id.action_filter_by_type);
+            mForumTypeMenuItem.setVisible(true);
+            String typeId = HiSettingsHelper.getInstance().getBSTypeId();
+            int typeIdIndex = HiUtils.getBSTypeIndexByFid(typeId);
+            if (typeIdIndex == -1) typeIdIndex = 0;
+            mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[typeIdIndex]).color(Color.WHITE).actionBarSize());
+        }
 
         int forumIdx = HiUtils.getForumIndexByFid(mForumId);
 
@@ -248,6 +261,9 @@ public class ThreadListFragment extends BaseFragment
                 return true;
             case R.id.action_new_thread:
                 newThread();
+                return true;
+            case R.id.action_filter_by_type:
+                showForumTypesDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -552,6 +568,36 @@ public class ThreadListFragment extends BaseFragment
         popDialog.create().show();
     }
 
+    private void showForumTypesDialog() {
+        final String currentTypeId = HiSettingsHelper.getInstance().getBSTypeId();
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View viewlayout = inflater.inflate(R.layout.dialog_forum_types, null);
+
+        final ListView listView = (ListView) viewlayout.findViewById(R.id.lv_forum_types);
+
+        listView.setAdapter(new ForumTypesAdapter(getActivity()));
+
+        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
+        popDialog.setView(viewlayout);
+        final AlertDialog dialog = popDialog.create();
+        dialog.show();
+
+        listView.setOnItemClickListener(new OnViewItemSingleClickListener() {
+            @Override
+            public void onItemSingleClick(AdapterView<?> adapterView, View view, int position, long row) {
+                dialog.dismiss();
+                if (!HiUtils.BS_TYPE_IDS[position].equals(currentTypeId)) {
+                    HiSettingsHelper.getInstance().setBSTypeId(HiUtils.BS_TYPE_IDS[position]);
+                    if (mForumTypeMenuItem != null) {
+                        mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(Color.WHITE).actionBarSize());
+                    }
+                    refresh();
+                }
+            }
+        });
+
+    }
+
     public void showNotification() {
         if (mFabNotify == null)
             return;
@@ -643,6 +689,31 @@ public class ThreadListFragment extends BaseFragment
             dialog.setHandler(mMsgHandler);
             dialog.setTitle("用户登录");
             dialog.show();
+        }
+    }
+
+    private class ForumTypesAdapter extends ArrayAdapter {
+
+        public ForumTypesAdapter(Context context) {
+            super(context, 0, HiUtils.BS_TYPES);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View row = inflater.inflate(R.layout.item_forum_type, parent, false);
+            IconicsImageView icon = (IconicsImageView) row.findViewById(R.id.forum_type_icon);
+            TextView text = (TextView) row.findViewById(R.id.forum_type_text);
+
+            text.setText(HiUtils.BS_TYPES[position]);
+            if (position == HiUtils.getBSTypeIndexByFid(HiSettingsHelper.getInstance().getBSTypeId())) {
+                icon.setImageDrawable(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(ColorUtils.getColorAccent(getActivity())).sizeDp(20));
+                text.setTextColor(ColorUtils.getColorAccent(getActivity()));
+            } else {
+                icon.setImageDrawable(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(ColorUtils.getDefaultTextColor(getActivity())).sizeDp(20));
+            }
+
+            return row;
         }
     }
 

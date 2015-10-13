@@ -30,6 +30,7 @@
     <string name="action_send">发送</string>
     <string name="action_new_thread">发表新帖</string>
     <string name="action_quick_reply">快速回复</string>
+    <string name="action_filter_by_type">分类</string>
 
     <string name="recipient">收件人</string>
     <string name="content">内容</string>

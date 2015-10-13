@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -90,6 +91,9 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
         mHandler.sendMessage(msg);
 
         mUrl = HiUtils.ThreadListUrl + mForumId + "&page=" + mPage;
+        if (mForumId == HiUtils.FID_BS && TextUtils.isDigitsOnly(HiSettingsHelper.getInstance().getBSTypeId())) {
+            mUrl += "&filter=type&typeid=" + HiSettingsHelper.getInstance().getBSTypeId();
+        }
         if (HiSettingsHelper.getInstance().isSortByPostTime(mForumId)) {
             mUrl += "&orderby=dateline";
         }
