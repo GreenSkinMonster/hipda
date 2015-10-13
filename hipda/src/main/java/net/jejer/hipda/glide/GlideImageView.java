@@ -91,7 +91,7 @@ public class GlideImageView extends ImageView {
                 .priority(Priority.IMMEDIATE)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .skipMemoryCache(true)
-                .error(R.drawable.tapatalk_image_broken)
+                .error(R.drawable.image_broken)
                 .override(mImageReadyInfo.getWidth(), mImageReadyInfo.getHeight())
                 .into(this);
     }
@@ -104,7 +104,7 @@ public class GlideImageView extends ImageView {
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .transform(new GifTransformation(mCtx))
-                        .error(R.drawable.tapatalk_image_broken)
+                        .error(R.drawable.image_broken)
                         .override(mImageReadyInfo.getWidth(), mImageReadyInfo.getHeight())
                         .into(currentImageView);
             }

@@ -1056,7 +1056,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                         .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
             }
         } else {
-            giv.setImageResource(R.drawable.tapatalk_image_broken);
+            giv.setImageResource(R.drawable.image_broken);
         }
     }
 

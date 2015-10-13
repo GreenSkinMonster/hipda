@@ -90,7 +90,7 @@ public class PopupImageAdapter extends PagerAdapter {
             gifImageView.setVisibility(View.VISIBLE);
             wvImage.setVisibility(View.GONE);
             progressBar.hide();
-            gifImageView.setImageDrawable(mCtx.getResources().getDrawable(R.drawable.tapatalk_image_broken));
+            gifImageView.setImageDrawable(mCtx.getResources().getDrawable(R.drawable.image_broken));
         } else {
             if (imageReadyInfo.isGif()) {
                 gifImageView.setVisibility(View.VISIBLE);
@@ -102,7 +102,7 @@ public class PopupImageAdapter extends PagerAdapter {
                         .priority(Priority.IMMEDIATE)
                         .skipMemoryCache(true)
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .error(R.drawable.tapatalk_image_broken)
+                        .error(R.drawable.image_broken)
                         .into(gifImageView);
             } else {
                 gifImageView.setVisibility(View.GONE);
@@ -122,7 +122,7 @@ public class PopupImageAdapter extends PagerAdapter {
                     @Override
                     public void onImageLoadError(Exception e) {
                         progressBar.hide();
-                        wvImage.setImage(ImageSource.resource(R.drawable.tapatalk_image_broken));
+                        wvImage.setImage(ImageSource.resource(R.drawable.image_broken));
 //                        Toast.makeText(mCtx, "图片加载失败", Toast.LENGTH_LONG).show();
                         Logger.e("loading error", e);
                     }
