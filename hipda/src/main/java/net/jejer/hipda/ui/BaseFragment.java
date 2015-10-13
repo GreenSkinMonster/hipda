@@ -33,6 +33,8 @@ import net.jejer.hipda.utils.Utils;
  */
 public abstract class BaseFragment extends Fragment {
 
+    protected static final int FAB_ICON_SIZE_DP = 20;
+
     protected void setActionBarTitle(CharSequence title) {
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
