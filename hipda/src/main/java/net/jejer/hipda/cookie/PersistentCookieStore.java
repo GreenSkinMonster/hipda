@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PersistentCookieStore implements CookieStore {
     private static final String COOKIE_PREFS = "CookiePrefsFile";
     private static final String COOKIE_NAME_PREFIX = "cookie_";
+    private static final String COOKIE_DOMAIN = ".hi-pda.com";
 
     private final HashMap<String, ConcurrentHashMap<String, HttpCookie>> cookies;
     private final SharedPreferences cookiePrefs;
@@ -72,7 +73,7 @@ public class PersistentCookieStore implements CookieStore {
         }
 
         // Save cookie into persistent store
-        if (cookies.get(host) != null) {
+        if (host.endsWith(COOKIE_DOMAIN) && cookies.get(host) != null) {
             SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
             prefsWriter.putString(host, TextUtils.join(",", cookies.get(host).keySet()));
             prefsWriter.putString(COOKIE_NAME_PREFIX + name, encodeCookie(new HttpCookieParcelable(cookie)));
