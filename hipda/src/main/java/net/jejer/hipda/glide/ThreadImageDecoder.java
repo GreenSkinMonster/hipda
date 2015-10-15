@@ -47,6 +47,11 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
                 degree = 270;
             }
 
+            if (original == null) {
+                Logger.e("decode bitmap failed, image format may not be supported");
+                return null;
+            }
+
             int originalWidth = original.getWidth();
             int originalHeight = original.getHeight();
 
