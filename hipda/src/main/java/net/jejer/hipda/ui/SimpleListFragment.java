@@ -154,7 +154,7 @@ public class SimpleListFragment extends BaseFragment
             case SimpleListLoader.TYPE_SMS:
                 setActionBarTitle(R.string.title_drawer_sms);
                 inflater.inflate(R.menu.menu_sms_list, menu);
-                menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_message).actionBarSize().color(Color.WHITE));
+                menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_message).actionBar().color(Color.WHITE));
                 break;
             case SimpleListLoader.TYPE_THREAD_NOTIFY:
                 setActionBarTitle(R.string.title_drawer_notify);

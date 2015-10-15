@@ -222,7 +222,7 @@ public class ThreadListFragment extends BaseFragment
             String typeId = HiSettingsHelper.getInstance().getBSTypeId();
             int typeIdIndex = HiUtils.getBSTypeIndexByFid(typeId);
             if (typeIdIndex == -1) typeIdIndex = 0;
-            mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[typeIdIndex]).color(Color.WHITE).actionBarSize());
+            mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[typeIdIndex]).color(Color.WHITE).actionBar());
         }
 
         int forumIdx = HiUtils.getForumIndexByFid(mForumId);
@@ -589,7 +589,7 @@ public class ThreadListFragment extends BaseFragment
                 if (!HiUtils.BS_TYPE_IDS[position].equals(currentTypeId)) {
                     HiSettingsHelper.getInstance().setBSTypeId(HiUtils.BS_TYPE_IDS[position]);
                     if (mForumTypeMenuItem != null) {
-                        mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(Color.WHITE).actionBarSize());
+                        mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(Color.WHITE).actionBar());
                     }
                     refresh();
                 }
