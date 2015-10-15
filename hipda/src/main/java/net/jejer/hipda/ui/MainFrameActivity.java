@@ -129,7 +129,8 @@ public class MainFrameActivity extends AppCompatActivity {
         if (args != null)
             FragmentUtils.show(getFragmentManager(), args);
 
-        if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
+        if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()
+                && !UpdateHelper.isStoreVersion(this)) {
             new UpdateHelper(this, true).check();
         }
 

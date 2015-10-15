@@ -103,34 +103,39 @@ public class UpdateHelper {
                     pd.dismiss();
                 }
 
-                final String url = downloadUrl.replace("{version}", newVersion);
-                final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
+                if (!isStoreVersion(mCtx)) {
+                    final String url = downloadUrl.replace("{version}", newVersion);
+                    final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
 
-                Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
-                        .setMessage(updateNotes).
-                                setPositiveButton("下载",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                try {
-                                                    HttpUtils.download(mCtx, url, filename);
-                                                } catch (SecurityException e) {
-                                                    Logger.e(e);
-                                                    Toast.makeText(mCtx, "抱歉，下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
+                            .setMessage(updateNotes).
+                                    setPositiveButton("下载",
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    try {
+                                                        HttpUtils.download(mCtx, url, filename);
+                                                    } catch (SecurityException e) {
+                                                        Logger.e(e);
+                                                        Toast.makeText(mCtx, "抱歉，下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
                                                 }
-                                            }
-                                        }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        }).setNeutralButton("不再提醒", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                HiSettingsHelper.getInstance().setAutoUpdateCheck(false);
-                            }
-                        }).create();
+                                            }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            }).setNeutralButton("不再提醒", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    HiSettingsHelper.getInstance().setAutoUpdateCheck(false);
+                                }
+                            }).create();
 
-                dialog.show();
+                    dialog.show();
+                } else {
+                    Toast.makeText(mCtx, "发现新版本 : " + newVersion + "，请在应用商店中更新", Toast.LENGTH_SHORT).show();
+                }
+
             } else {
                 if (!mSilent) {
                     pd.dismiss("没有发现新版本");
@@ -217,6 +222,17 @@ public class UpdateHelper {
             }
         } catch (Exception ignored) {
         }
+    }
+
+    public static boolean isStoreVersion(Context context) {
+        boolean result = false;
+        try {
+            String installer = context.getPackageManager()
+                    .getInstallerPackageName(context.getPackageName());
+            result = !TextUtils.isEmpty(installer);
+        } catch (Throwable ignored) {
+        }
+        return result;
     }
 
 }
