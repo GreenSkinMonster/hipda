@@ -27,49 +27,37 @@
         android:layout_margin="4dp"
         android:padding="4dp">
 
-        <com.mikepenz.iconics.view.IconicsButton
+        <ImageButton
             android:id="@+id/btn_fisrt_page"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentLeft="true"
             android:layout_margin="4dp"
-            android:background="?android:selectableItemBackground"
-            android:text="{faw-fast-backward}"
-            android:textColor="?colorAccent"
-            android:textSize="24dp" />
+            android:background="?android:selectableItemBackground" />
 
-        <com.mikepenz.iconics.view.IconicsButton
+        <ImageButton
             android:id="@+id/btn_previous_page"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="4dp"
             android:layout_toRightOf="@+id/btn_fisrt_page"
-            android:background="?android:selectableItemBackground"
-            android:text="{faw-step-backward}"
-            android:textColor="?colorAccent"
-            android:textSize="24dp" />
+            android:background="?android:selectableItemBackground" />
 
-        <com.mikepenz.iconics.view.IconicsButton
+        <ImageButton
             android:id="@+id/btn_next_page"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="4dp"
             android:layout_toLeftOf="@+id/btn_last_page"
-            android:background="?android:selectableItemBackground"
-            android:text="{faw-step-forward}"
-            android:textColor="?colorAccent"
-            android:textSize="24dp" />
+            android:background="?android:selectableItemBackground" />
 
-        <com.mikepenz.iconics.view.IconicsButton
+        <ImageButton
             android:id="@+id/btn_last_page"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentRight="true"
             android:layout_margin="4dp"
-            android:background="?android:selectableItemBackground"
-            android:text="{faw-fast-forward}"
-            android:textColor="?colorAccent"
-            android:textSize="24dp" />
+            android:background="?android:selectableItemBackground" />
 
     </RelativeLayout>
 

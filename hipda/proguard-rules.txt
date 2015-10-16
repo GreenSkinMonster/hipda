@@ -24,3 +24,9 @@
 -keepattributes SourceFile,LineNumberTable
 -keepattributes *Annotation*
 -keep class org.acra.** { *; }
+
+#Android-Iconics
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}

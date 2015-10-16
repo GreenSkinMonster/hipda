@@ -46,6 +46,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.typeface.FontAwesome;
 
 import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
@@ -64,6 +65,7 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.glide.ThreadImageDecoder;
+import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.ImageSizeUtils;
@@ -777,21 +779,18 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         mGoToPage = mCurrentPage;
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View viewlayout = inflater.inflate(R.layout.dialog_goto_page, null);
-        final Button btnFirstPage = (Button) viewlayout.findViewById(R.id.btn_fisrt_page);
-        final Button btnLastPage = (Button) viewlayout.findViewById(R.id.btn_last_page);
-        final Button btnNextPage = (Button) viewlayout.findViewById(R.id.btn_next_page);
-        final Button btnPreviousPage = (Button) viewlayout.findViewById(R.id.btn_previous_page);
+        final ImageButton btnFirstPage = (ImageButton) viewlayout.findViewById(R.id.btn_fisrt_page);
+        final ImageButton btnLastPage = (ImageButton) viewlayout.findViewById(R.id.btn_last_page);
+        final ImageButton btnNextPage = (ImageButton) viewlayout.findViewById(R.id.btn_next_page);
+        final ImageButton btnPreviousPage = (ImageButton) viewlayout.findViewById(R.id.btn_previous_page);
         final SeekBar sbGotoPage = (SeekBar) viewlayout.findViewById(R.id.sb_page);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final AlertDialog dialog;
 
-        //hack for IconicsButton conflict with custom font
-        if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getFont())) {
-            btnFirstPage.setText("首");
-            btnLastPage.setText("尾");
-            btnNextPage.setText("后");
-            btnPreviousPage.setText("前");
-        }
+        btnFirstPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_fast_backward).sizeDp(24).color(ColorUtils.getColorAccent(getActivity())));
+        btnLastPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_fast_forward).sizeDp(24).color(ColorUtils.getColorAccent(getActivity())));
+        btnNextPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_forward).sizeDp(24).color(ColorUtils.getColorAccent(getActivity())));
+        btnPreviousPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_backward).sizeDp(24).color(ColorUtils.getColorAccent(getActivity())));
 
         builder.setTitle("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
         builder.setView(viewlayout);

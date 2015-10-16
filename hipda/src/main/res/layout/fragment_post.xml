@@ -15,14 +15,17 @@
             android:id="@+id/et_additional"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="left"
             android:layout_margin="4dp"
-            android:background="?attr/colorAccent"
+            android:background="@drawable/rounded_corner"
             android:clickable="false"
             android:cursorVisible="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:gravity="center"
+            android:gravity="left"
             android:inputType="none"
+            android:maxLines="4"
+            android:padding="6dp"
             android:text=""
             android:textSize="16sp" />
 
@@ -57,15 +60,41 @@
             android:textSize="20sp"
             android:visibility="gone" />
 
-        <EditText
-            android:id="@+id/et_reply"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:inputType="textMultiLine"
-            android:minLines="6"
-            android:singleLine="false"
-            android:textSize="16sp" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/et_reply"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="bottom"
+                android:inputType="textMultiLine"
+                android:minLines="6"
+                android:singleLine="false"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/ib_reply"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="?android:selectableItemBackground"
+                    android:textColor="?colorAccent"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
 
         <HorizontalScrollView
             android:id="@+id/hsv_images"
@@ -88,10 +117,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_margin="0dp"
             android:gravity="center"
-            android:padding="0dp"
-            android:layout_margin="0dp">
+            android:orientation="horizontal"
+            android:padding="0dp">
 
             <Button
                 android:id="@+id/btn1_emoji"

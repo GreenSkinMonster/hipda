@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -45,6 +46,7 @@ import net.jejer.hipda.async.UploadImgAsyncTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
+import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
@@ -247,6 +249,15 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
             }
         });
 
+        final ImageButton ibReply = (ImageButton) view.findViewById(R.id.ib_reply);
+        ibReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(ColorUtils.getColorAccent(getActivity())));
+        ibReply.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                postReply();
+            }
+        });
+
         return view;
     }
 
@@ -271,16 +282,6 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         inflater.inflate(R.menu.menu_reply, menu);
 
         menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_wallpaper).actionBar().color(Color.WHITE));
-        menu.findItem(R.id.action_post).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).actionBar().color(Color.WHITE));
-
-        if (menu.getItem(1).getTitle().equals("发送")) {
-            // Disable and Enable send button
-            if (mPrePostInfo == null) {
-                menu.getItem(1).setEnabled(false);
-            } else {
-                menu.getItem(1).setEnabled(true);
-            }
-        }
 
         setActionBarTitle(R.string.action_reply);
         setActionBarDisplayHomeAsUpEnabled(true);
@@ -328,60 +329,63 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                             "Select Picture"), SELECT_PICTURE);
                 }
                 return true;
-            case R.id.action_post:
-                //new thread or edit fist post
-                if (mSpTypeIds.getVisibility() == View.VISIBLE && (HiUtils.FID_BS + "").equals(mFid) && "0".equals(mTypeid)) {
-                    Toast.makeText(getActivity(), "B&S版发帖必须指定分类", Toast.LENGTH_LONG).show();
-                    return true;
-                }
-
-                String subjectText = mEtSubjectMsg.getText().toString();
-                if (mMode == PostAsyncTask.MODE_NEW_THREAD && Utils.getWordCount(subjectText) < 5) {
-                    Toast.makeText(getActivity(), "主题字数必须大于5", Toast.LENGTH_LONG).show();
-                    return true;
-                }
-
-                String replyText = mEtReplyMsg.getText().toString();
-                if (Utils.getWordCount(replyText) < 5) {
-                    Toast.makeText(getActivity(), "帖子内容字数必须大于5", Toast.LENGTH_LONG).show();
-                    return true;
-                }
-
-                if (mUploadImgButtons.size() > 0) {
-                    boolean needWarn = false;
-                    for (UploadImgButton uploadBtn : mUploadImgButtons.values()) {
-                        if (isValidImgId(uploadBtn.getImgId())) {
-                            String attachStr = "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]";
-                            if (!replyText.contains(attachStr)) {
-                                needWarn = true;
-                                uploadBtn.setBackgroundColor(getResources().getColor(R.color.orange));
-                            }
-                        }
-                    }
-                    if (needWarn) {
-                        Toast.makeText(getActivity(), "橙色边框图片未添加到帖子中", Toast.LENGTH_LONG).show();
-                        return true;
-                    }
-                }
-
-                PostBean postBean = new PostBean();
-                postBean.setContent(replyText);
-                postBean.setTid(mTid);
-                postBean.setPid(mPid);
-                postBean.setFid(mFid);
-                postBean.setTypeid(mTypeid);
-                postBean.setSubject(subjectText);
-                postBean.setFloor(mFloor);
-
-                new PostAsyncTask(getActivity(), mMode, mPrePostInfo, postListener).execute(postBean);
-
-                // Close SoftKeyboard
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
-                return true;
             default:
                 return false;
         }
+    }
+
+    private void postReply() {
+        if (mPrePostInfo == null)
+            Toast.makeText(getActivity(), "请等待信息收集结束再发送", Toast.LENGTH_LONG).show();
+
+        if (mSpTypeIds.getVisibility() == View.VISIBLE && (HiUtils.FID_BS + "").equals(mFid) && "0".equals(mTypeid)) {
+            Toast.makeText(getActivity(), "B&S版发帖必须指定分类", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String subjectText = mEtSubjectMsg.getText().toString();
+        if (mMode == PostAsyncTask.MODE_NEW_THREAD && Utils.getWordCount(subjectText) < 5) {
+            Toast.makeText(getActivity(), "主题字数必须大于5", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String replyText = mEtReplyMsg.getText().toString();
+        if (Utils.getWordCount(replyText) < 5) {
+            Toast.makeText(getActivity(), "帖子内容字数必须大于5", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (mUploadImgButtons.size() > 0) {
+            boolean needWarn = false;
+            for (UploadImgButton uploadBtn : mUploadImgButtons.values()) {
+                if (isValidImgId(uploadBtn.getImgId())) {
+                    String attachStr = "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]";
+                    if (!replyText.contains(attachStr)) {
+                        needWarn = true;
+                        uploadBtn.setBackgroundColor(getResources().getColor(R.color.orange));
+                    }
+                }
+            }
+            if (needWarn) {
+                Toast.makeText(getActivity(), "橙色边框图片未添加到帖子中", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
+        PostBean postBean = new PostBean();
+        postBean.setContent(replyText);
+        postBean.setTid(mTid);
+        postBean.setPid(mPid);
+        postBean.setFid(mFid);
+        postBean.setTypeid(mTypeid);
+        postBean.setSubject(subjectText);
+        postBean.setFloor(mFloor);
+
+        new PostAsyncTask(getActivity(), mMode, mPrePostInfo, postListener).execute(postBean);
+
+        // Close SoftKeyboard
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
     }
 
     @Override
@@ -490,7 +494,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
 
     public void appendImage(String imgId) {
         if (isValidImgId(imgId)) {
-            mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), "[attachimg]" + imgId + "[/attachimg]");
+            mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), "\n[attachimg]" + imgId + "[/attachimg]");
             mPrePostInfo.addAttach(imgId);
         }
     }
