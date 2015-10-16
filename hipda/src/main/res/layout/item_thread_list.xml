@@ -34,14 +34,21 @@
             android:textSize="15sp" />
 
         <TextView
-            android:id="@+id/tv_update_time"
+            android:id="@+id/tv_thread_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="2dp"
+            android:layout_toLeftOf="@+id/iv_image_indicator"
+            android:background="@drawable/rounded_corner"
+            android:paddingBottom="1dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="1dp"
+            android:singleLine="true"
             android:text=""
-            android:textSize="15sp"
-            android:visibility="gone" />
+            android:textColor="?android:textColorSecondary"
+            android:textSize="12sp" />
 
         <com.mikepenz.iconics.view.IconicsTextView
             android:id="@+id/iv_image_indicator"
@@ -55,20 +62,8 @@
             android:textSize="15sp"
             android:visibility="gone" />
 
-        <com.mikepenz.iconics.view.IconicsTextView
+        <TextView
             android:id="@+id/tv_replycounter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/tv_viewcounter"
-            android:padding="2dp"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="?android:textColorSecondary"
-            android:textSize="15sp" />
-
-        <com.mikepenz.iconics.view.IconicsTextView
-            android:id="@+id/tv_viewcounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
