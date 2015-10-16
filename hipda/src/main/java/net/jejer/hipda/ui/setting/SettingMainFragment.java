@@ -168,7 +168,15 @@ public class SettingMainFragment extends BaseSettingFragment {
 
 
         Preference dialogPref = findPreference(HiSettingsHelper.PERF_ABOUT);
-        dialogPref.setSummary(HiSettingsHelper.getInstance().getAppVersion());
+
+        String pkgName = "";
+        try {
+            pkgName = getActivity().getPackageManager()
+                    .getInstallerPackageName(getActivity().getPackageName());
+        } catch (Exception ignored) {
+        }
+        dialogPref.setSummary(HiSettingsHelper.getInstance().getAppVersion()
+                + ("com.android.vending".equals(pkgName) ? " (Google Play)" : ""));
         dialogPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 getFragmentManager().beginTransaction()
