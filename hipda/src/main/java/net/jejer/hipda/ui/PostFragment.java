@@ -345,14 +345,20 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         }
 
         String subjectText = mEtSubjectMsg.getText().toString();
-        if (mMode == PostAsyncTask.MODE_NEW_THREAD && Utils.getWordCount(subjectText) < 5) {
-            Toast.makeText(getActivity(), "主题字数必须大于5", Toast.LENGTH_LONG).show();
-            return;
+        if (mEtSubjectMsg.getVisibility() == View.VISIBLE) {
+            if (Utils.getWordCount(subjectText) < 5) {
+                Toast.makeText(getActivity(), "主题字数必须大于 5", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (Utils.getWordCount(subjectText) > 80) {
+                Toast.makeText(getActivity(), "主题字数必须少于 80", Toast.LENGTH_LONG).show();
+                return;
+            }
         }
 
         String replyText = mEtReplyMsg.getText().toString();
         if (Utils.getWordCount(replyText) < 5) {
-            Toast.makeText(getActivity(), "帖子内容字数必须大于5", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "帖子内容字数必须大于 5", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -591,8 +597,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                             mEtSubjectMsg.setVisibility(View.VISIBLE);
                         }
                         List<String> typeids = info.getTypeidValues();
-                        if (typeids != null && typeids.size() > 0
-                                && !TextUtils.isEmpty(info.getTypeid())) {
+                        if (typeids != null && typeids.size() > 0) {
                             String typeid = info.getTypeid();
                             KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
                             adapter.setEntryValues(info.getTypeidValues().toArray(new String[typeids.size()]));

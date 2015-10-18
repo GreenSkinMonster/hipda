@@ -54,10 +54,11 @@
             android:id="@+id/et_subject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:gravity="bottom"
             android:hint="@string/hint_subject"
             android:inputType="none"
-            android:singleLine="true"
+            android:singleLine="false"
             android:textSize="20sp"
             android:visibility="gone" />
 
