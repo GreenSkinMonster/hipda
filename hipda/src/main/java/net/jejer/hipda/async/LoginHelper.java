@@ -23,6 +23,8 @@ import org.jsoup.select.Elements;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.greenrobot.event.EventBus;
+
 public class LoginHelper {
 
     private Context mCtx;
@@ -66,6 +68,9 @@ public class LoginHelper {
             msg.setData(b);
             mHandler.sendMessage(msg);
         }
+
+        if (status == Constants.STATUS_SUCCESS)
+            EventBus.getDefault().post(new LoginEvent());
 
         return status;
     }

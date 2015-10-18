@@ -41,6 +41,7 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
+import net.jejer.hipda.async.LoginEvent;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -57,6 +58,7 @@ import net.jejer.hipda.volley.VolleyHelper;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainFrameActivity extends AppCompatActivity {
@@ -85,6 +87,8 @@ public class MainFrameActivity extends AppCompatActivity {
         FavoriteHelper.getInstance().init(this);
 
         super.onCreate(savedInstanceState);
+
+        EventBus.getDefault().register(this);
 
         if (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT == HiSettingsHelper.getInstance().getScreenOrietation()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -267,12 +271,14 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     public void updateAccountHeader() {
-        String username = VolleyHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
-        String avatarUrl = VolleyHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
-        headerResult.removeProfile(0);
-        headerResult.addProfile(new ProfileDrawerItem()
-                .withEmail(username)
-                .withIcon(avatarUrl), 0);
+        if (headerResult != null) {
+            String username = VolleyHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
+            String avatarUrl = VolleyHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
+            headerResult.removeProfile(0);
+            headerResult.addProfile(new ProfileDrawerItem()
+                    .withEmail(username)
+                    .withIcon(avatarUrl), 0);
+        }
     }
 
     @Override
@@ -581,6 +587,11 @@ public class MainFrameActivity extends AppCompatActivity {
                 drawerResult.updateBadge("", smsNotifyIndex);
             }
         }
+    }
+
+    @SuppressWarnings("unused")
+    public void onEventMainThread(LoginEvent event) {
+        updateAccountHeader();
     }
 
 }
