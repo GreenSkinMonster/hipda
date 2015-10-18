@@ -13,8 +13,8 @@ import java.util.HashMap;
  */
 public class ThreadDetailCache {
 
-    private SparseArray<DetailListBean> mCache = new SparseArray<DetailListBean>();
-    private HashMap<String, Integer> mPostIdToPageMap = new HashMap<String, Integer>();
+    private SparseArray<DetailListBean> mCache = new SparseArray<>();
+    private HashMap<String, Integer> mPostIdToPageMap = new HashMap<>();
 
     public void put(int page, DetailListBean detailListBean) {
         mCache.put(page, detailListBean);

@@ -138,7 +138,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     giv.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
                 } else {
                     params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400);
-                    giv.setImageResource(R.drawable.ic_action_picture);
                 }
                 giv.setLayoutParams(params);
                 contentView.addView(giv);
@@ -148,15 +147,18 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 giv.bringToFront();
 
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
+                    giv.setImageDrawable(GlideHelper.getImageDownloadHolder(mCtx));
                     mDetailFragment.loadImage(imageUrl, giv);
                 } else {
                     if (HiSettingsHelper.getInstance().isLoadImage()) {
+                        giv.setImageDrawable(GlideHelper.getImageDownloadHolder(mCtx));
                         GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1, giv));
                     } else {
+                        giv.setImageDrawable(GlideHelper.getImageManualHolder(mCtx));
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                giv.setImageResource(R.drawable.loading);
+                                giv.setImageDrawable(GlideHelper.getImageDownloadHolder(mCtx));
                                 GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1, giv));
                                 giv.setOnClickListener(null);
                             }
