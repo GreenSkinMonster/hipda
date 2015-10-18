@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.NotificationMgr;
@@ -31,8 +32,6 @@ public class HiSettingsHelper {
     public static final String PERF_SECANSWER = "PERF_SECANSWER";
     public static final String PERF_SHOWSTICKTHREADS = "PERF_SHOWSTICKTHREADS";
     public static final String PERF_SHOW_POST_TYPE = "PERF_SHOW_POST_TYPE";
-    public static final String PERF_LOADIMGONMOBILENWK = "PERF_LOADIMGONMOBILENWK";
-    public static final String PERF_THREADLISTAVATAR = "PERF_THREADLISTAVATAR";
     public static final String PERF_IMAGE_LOAD_TYPE = "PERF_IMAGE_LOAD_TYPE";
     public static final String PERF_AVATAR_LOAD_TYPE = "PERF_AVATAR_LOAD_TYPE";
     public static final String PERF_SORTBYPOSTTIME_BY_FORUM = "PERF_SORTBYPOSTTIME_BY_FORUM";
@@ -762,7 +761,7 @@ public class HiSettingsHelper {
     }
 
     public boolean isAutoUpdateCheckable() {
-        if (!isAutoUpdateCheck())
+        if (!isAutoUpdateCheck() || UpdateHelper.isFromGooglePlay(mCtx))
             return false;
         Date lastCheck = HiSettingsHelper.getInstance().getLastUpdateCheckTime();
         //check update if last check is older than 12 hours

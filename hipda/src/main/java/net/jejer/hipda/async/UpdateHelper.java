@@ -103,7 +103,7 @@ public class UpdateHelper {
                     pd.dismiss();
                 }
 
-                if (!isStoreVersion(mCtx)) {
+                if (!isFromGooglePlay(mCtx)) {
                     final String url = downloadUrl.replace("{version}", newVersion);
                     final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
 
@@ -201,17 +201,20 @@ public class UpdateHelper {
         }
     }
 
-    private static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (String aChildren : children) {
-                boolean success = deleteDir(new File(dir, aChildren));
-                if (!success) {
-                    return false;
+    private static boolean deleteDir(File file) {
+        if (file != null) {
+            if (file.isDirectory()) {
+                String[] children = file.list();
+                for (String aChildren : children) {
+                    boolean success = deleteDir(new File(file, aChildren));
+                    if (!success) {
+                        return false;
+                    }
                 }
             }
+            return file.delete();
         }
-        return dir.delete();
+        return false;
     }
 
     public static void clearCache(Context context) {
@@ -224,15 +227,14 @@ public class UpdateHelper {
         }
     }
 
-    public static boolean isStoreVersion(Context context) {
-        boolean result = false;
+    public static boolean isFromGooglePlay(Context context) {
         try {
             String installer = context.getPackageManager()
                     .getInstallerPackageName(context.getPackageName());
-            result = !TextUtils.isEmpty(installer);
+            return "com.android.vending".equals(installer);
         } catch (Throwable ignored) {
         }
-        return result;
+        return false;
     }
 
 }

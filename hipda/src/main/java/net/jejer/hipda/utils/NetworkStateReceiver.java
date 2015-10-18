@@ -21,9 +21,9 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 HiSettingsHelper.getInstance().init(context);
 
             if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-                if (!NotificationMgr.isAlarmRnning(context))
+                if (!NotificationMgr.isAlarmRuning(context))
                     NotificationMgr.startAlarm(context);
-            } else if (NotificationMgr.isAlarmRnning(context)) {
+            } else if (NotificationMgr.isAlarmRuning(context)) {
                 NotificationMgr.cancelAlarm(context);
             }
         }

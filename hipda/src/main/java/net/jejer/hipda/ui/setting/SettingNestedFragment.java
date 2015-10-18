@@ -74,7 +74,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_NOTI_SILENT_END));
 
                 final Preference notiEnablePreference = findPreference(HiSettingsHelper.PERF_NOTI_TASK_ENABLED);
-                if (NotificationMgr.isAlarmRnning(getActivity()))
+                if (NotificationMgr.isAlarmRuning(getActivity()))
                     notiEnablePreference.setTitle(notiEnablePreference.getTitle() + "*");
                 notiEnablePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     @Override

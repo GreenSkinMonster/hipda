@@ -97,7 +97,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         HiSettingsHelper.getInstance().reload();
 
         if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-            if (NotificationMgr.isAlarmRnning(getActivity()))
+            if (NotificationMgr.isAlarmRuning(getActivity()))
                 NotificationMgr.cancelAlarm(getActivity());
             NotificationMgr.startAlarm(getActivity());
         } else {
@@ -169,14 +169,8 @@ public class SettingMainFragment extends BaseSettingFragment {
 
         Preference dialogPref = findPreference(HiSettingsHelper.PERF_ABOUT);
 
-        String pkgName = "";
-        try {
-            pkgName = getActivity().getPackageManager()
-                    .getInstallerPackageName(getActivity().getPackageName());
-        } catch (Exception ignored) {
-        }
         dialogPref.setSummary(HiSettingsHelper.getInstance().getAppVersion()
-                + ("com.android.vending".equals(pkgName) ? " (Google Play)" : ""));
+                + (UpdateHelper.isFromGooglePlay(getActivity()) ? " (Google Play)" : ""));
         dialogPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 getFragmentManager().beginTransaction()

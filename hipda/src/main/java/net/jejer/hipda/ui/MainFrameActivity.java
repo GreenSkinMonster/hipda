@@ -129,15 +129,14 @@ public class MainFrameActivity extends AppCompatActivity {
         if (args != null)
             FragmentUtils.show(getFragmentManager(), args);
 
-        if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()
-                && !UpdateHelper.isStoreVersion(this)) {
+        if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
             new UpdateHelper(this, true).check();
         }
 
         FavoriteHelper.getInstance().updateCache();
 
         if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-            if (!NotificationMgr.isAlarmRnning(this))
+            if (!NotificationMgr.isAlarmRuning(this))
                 NotificationMgr.startAlarm(this);
         }
     }

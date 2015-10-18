@@ -64,7 +64,7 @@ public class NotificationMgr {
         am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 30000,
                 repeat * 60 * 1000, sender);
         Logger.v("NotificationAlarm started.");
-        isAlarmRnning(context);
+        isAlarmRuning(context);
     }
 
     public static void cancelAlarm(Context context) {
@@ -80,7 +80,7 @@ public class NotificationMgr {
             Logger.e(e);
         }
         Logger.v("NotificationAlarm cancelled.");
-        isAlarmRnning(context);
+        isAlarmRuning(context);
     }
 
     public static void fetchNotification(Document doc) {
@@ -208,7 +208,7 @@ public class NotificationMgr {
         return sb.toString();
     }
 
-    public static boolean isAlarmRnning(Context context) {
+    public static boolean isAlarmRuning(Context context) {
         return (PendingIntent.getBroadcast(context, REQUEST_CODE,
                 new Intent(context, NotificationReceiver.class),
                 PendingIntent.FLAG_NO_CREATE) != null);
