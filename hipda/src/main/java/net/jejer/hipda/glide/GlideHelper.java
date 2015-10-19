@@ -23,14 +23,12 @@ import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.mikepenz.iconics.typeface.FontAwesome;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 
-import net.jejer.hipda.R;
 import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
@@ -58,8 +56,6 @@ public class GlideHelper {
     private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(512);
 
     private static Drawable DEFAULT_USER_ICON;
-    private static Drawable IMAGE_MANUAL_HOLDER;
-    private static Drawable IMAGE_DOWNLOAD_HOLDER;
 
     public static void init(Context context) {
         if (!Glide.isSetup()) {
@@ -187,23 +183,6 @@ public class GlideHelper {
         }
         return f;
     }
-
-    public static Drawable getImageManualHolder(Context context) {
-        if (IMAGE_MANUAL_HOLDER == null)
-            IMAGE_MANUAL_HOLDER = new IconicsDrawable(context, FontAwesome.Icon.faw_image)
-                    .color(context.getResources().getColor(R.color.silver))
-                    .sizeDp(96);
-        return IMAGE_MANUAL_HOLDER;
-    }
-
-    public static Drawable getImageDownloadHolder(Context context) {
-        if (IMAGE_DOWNLOAD_HOLDER == null)
-            IMAGE_DOWNLOAD_HOLDER = new IconicsDrawable(context, FontAwesome.Icon.faw_image)
-                    .color(context.getResources().getColor(R.color.grey))
-                    .sizeDp(96);
-        return IMAGE_DOWNLOAD_HOLDER;
-    }
-
 
     private static class ProgressResponseBody extends ResponseBody {
 

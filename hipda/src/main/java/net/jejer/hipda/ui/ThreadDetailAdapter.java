@@ -133,6 +133,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 }
             } else if (content instanceof ContentImg) {
                 final String imageUrl = content.getContent();
+                int imageIndex = ((ContentImg) content).getIndexInPage();
 
                 RelativeLayout threadImageLayout = (RelativeLayout) mInflater.inflate(R.layout.item_thread_image, parent, false);
                 final GlideImageView giv = (GlideImageView) threadImageLayout.findViewById(R.id.thread_image);
@@ -147,7 +148,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 } else {
                     subImageMap = new HashMap<>();
                 }
-                subImageMap.put(i, threadImageLayout);
+                subImageMap.put(imageIndex, threadImageLayout);
                 imageLayoutMap.put(imageUrl, subImageMap);
 
                 ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
@@ -163,21 +164,17 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 contentView.addView(threadImageLayout);
 
                 giv.setUrl(imageUrl);
-                giv.setImageIndex(((ContentImg) content).getIndexInPage());
+                giv.setImageIndex(imageIndex);
 
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-                    giv.setImageDrawable(GlideHelper.getImageDownloadHolder(mCtx));
                     mDetailFragment.loadImage(imageUrl, giv);
                 } else {
                     if (HiSettingsHelper.getInstance().isLoadImage()) {
-                        giv.setImageDrawable(GlideHelper.getImageDownloadHolder(mCtx));
                         GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1));
                     } else {
-                        giv.setImageDrawable(GlideHelper.getImageManualHolder(mCtx));
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                giv.setImageDrawable(GlideHelper.getImageDownloadHolder(mCtx));
                                 GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1));
                                 giv.setOnClickListener(null);
                             }
@@ -289,7 +286,8 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
             for (RelativeLayout layout : subImageMap.values()) {
                 GlideImageView giv = (GlideImageView) layout.findViewById(R.id.thread_image);
                 ProgressBar bar = (ProgressBar) layout.findViewById(R.id.thread_image_progress);
-                if (Build.VERSION.SDK_INT < 19 || giv.isAttachedToWindow()) {
+                if (Build.VERSION.SDK_INT < 19
+                        || (Build.VERSION.SDK_INT >= 19 && giv.isAttachedToWindow())) {
                     if (event.isInProgress()) {
                         if (bar.getVisibility() != View.VISIBLE)
                             bar.setVisibility(View.VISIBLE);

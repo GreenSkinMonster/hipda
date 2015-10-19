@@ -46,7 +46,6 @@ import net.jejer.hipda.async.UploadImgAsyncTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
-import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -482,7 +481,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                 LinearLayout imagesLayout = (LinearLayout) getActivity().findViewById(R.id.ll_images);
                 uploadBtn.setPadding(4, 4, 4, 4);
                 uploadBtn.setBackgroundColor(getResources().getColor(R.color.background_grey));
-                uploadBtn.setImageDrawable(GlideHelper.getImageManualHolder(getActivity()));
+                uploadBtn.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_image));
                 uploadBtn.setAdjustViewBounds(true);
                 uploadBtn.setScaleType(ImageView.ScaleType.FIT_XY);
                 LinearLayout.LayoutParams params =

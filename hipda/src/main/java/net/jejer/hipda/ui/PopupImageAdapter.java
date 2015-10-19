@@ -148,7 +148,9 @@ public class PopupImageAdapter extends PagerAdapter {
             return;
         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(event.getImageUrl());
         View rootView = imageViewMap.get(event.getImageUrl());
-        if (rootView != null && (Build.VERSION.SDK_INT < 19 || rootView.isAttachedToWindow()))
+        if (rootView != null
+                && (Build.VERSION.SDK_INT < 19 ||
+                (Build.VERSION.SDK_INT >= 19 && rootView.isAttachedToWindow())))
             displayImage(rootView, imageReadyInfo);
     }
 
