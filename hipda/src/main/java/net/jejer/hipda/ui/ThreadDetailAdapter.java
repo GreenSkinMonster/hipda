@@ -2,6 +2,7 @@ package net.jejer.hipda.ui;
 
 import android.app.FragmentManager;
 import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
@@ -30,6 +33,9 @@ import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.utils.Utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
     private Context mCtx;
@@ -38,6 +44,8 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
     private View.OnClickListener mAvatarListener;
     private FragmentManager mFragmentManager;
     private ThreadDetailFragment mDetailFragment;
+
+    private Map<String, Map<Integer, RelativeLayout>> imageLayoutMap = new HashMap<>();
 
     public ThreadDetailAdapter(Context context, FragmentManager fm, ThreadDetailFragment detailFragment,
                                Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
@@ -126,25 +134,36 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
             } else if (content instanceof ContentImg) {
                 final String imageUrl = content.getContent();
 
-                final GlideImageView giv = new GlideImageView(mCtx, mDetailFragment);
+                RelativeLayout threadImageLayout = (RelativeLayout) mInflater.inflate(R.layout.item_thread_image, parent, false);
+                final GlideImageView giv = (GlideImageView) threadImageLayout.findViewById(R.id.thread_image);
+
+                giv.setFragment(mDetailFragment);
                 giv.setFocusable(false);
                 giv.setClickable(true);
 
+                Map<Integer, RelativeLayout> subImageMap;
+                if (imageLayoutMap.containsKey(imageUrl)) {
+                    subImageMap = imageLayoutMap.get(imageUrl);
+                } else {
+                    subImageMap = new HashMap<>();
+                }
+                subImageMap.put(i, threadImageLayout);
+                imageLayoutMap.put(imageUrl, subImageMap);
+
                 ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
 
-                LinearLayout.LayoutParams params;
+                RelativeLayout.LayoutParams params;
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-                    params = new LinearLayout.LayoutParams(imageReadyInfo.getWidth(), imageReadyInfo.getHeight());
+                    params = new RelativeLayout.LayoutParams(imageReadyInfo.getWidth(), imageReadyInfo.getHeight());
                     giv.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
                 } else {
-                    params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400);
+                    params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400);
                 }
                 giv.setLayoutParams(params);
-                contentView.addView(giv);
+                contentView.addView(threadImageLayout);
 
                 giv.setUrl(imageUrl);
                 giv.setImageIndex(((ContentImg) content).getIndexInPage());
-                giv.bringToFront();
 
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
                     giv.setImageDrawable(GlideHelper.getImageDownloadHolder(mCtx));
@@ -152,14 +171,14 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 } else {
                     if (HiSettingsHelper.getInstance().isLoadImage()) {
                         giv.setImageDrawable(GlideHelper.getImageDownloadHolder(mCtx));
-                        GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1, giv));
+                        GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1));
                     } else {
                         giv.setImageDrawable(GlideHelper.getImageManualHolder(mCtx));
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 giv.setImageDrawable(GlideHelper.getImageDownloadHolder(mCtx));
-                                GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1, giv));
+                                GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 1));
                                 giv.setOnClickListener(null);
                             }
                         });
@@ -263,11 +282,25 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
     @SuppressWarnings("unused")
     public void onEventMainThread(GlideImageEvent event) {
-        if (event.getImageUrl() != null
-                && !TextUtils.isEmpty(event.getImageUrl())
-                && event.getView() instanceof GlideImageView) {
-            GlideImageView giv = (GlideImageView) event.getView();
-            mDetailFragment.loadImage(event.getImageUrl(), giv);
+        String imageUrl = event.getImageUrl();
+        if (!TextUtils.isEmpty(imageUrl)
+                && imageLayoutMap.containsKey(imageUrl)) {
+            Map<Integer, RelativeLayout> subImageMap = imageLayoutMap.get(imageUrl);
+            for (RelativeLayout layout : subImageMap.values()) {
+                GlideImageView giv = (GlideImageView) layout.findViewById(R.id.thread_image);
+                ProgressBar bar = (ProgressBar) layout.findViewById(R.id.thread_image_progress);
+                if (Build.VERSION.SDK_INT < 19 || giv.isAttachedToWindow()) {
+                    if (event.isInProgress()) {
+                        if (bar.getVisibility() != View.VISIBLE)
+                            bar.setVisibility(View.VISIBLE);
+                        bar.setProgress(event.getProgress());
+                    } else {
+                        if (bar.getVisibility() == View.VISIBLE)
+                            bar.setVisibility(View.GONE);
+                        mDetailFragment.loadImage(imageUrl, giv);
+                    }
+                }
+            }
         }
     }
 

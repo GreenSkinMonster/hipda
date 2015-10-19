@@ -3,7 +3,6 @@ package net.jejer.hipda.glide;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
-import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
@@ -29,13 +28,11 @@ public class GlideImageJob extends Job {
 
     private Context mCtx;
     private String mUrl;
-    private View mImageView;
 
-    public GlideImageJob(Context context, String url, int priority, View imageView) {
+    public GlideImageJob(Context context, String url, int priority) {
         super(new Params(priority).setPersistent(false).setRequiresNetwork(false));
         mCtx = context;
         mUrl = url;
-        mImageView = imageView;
     }
 
     @Override
@@ -109,11 +106,10 @@ public class GlideImageJob extends Job {
                 imageReadyInfo.setOrientation(orientation);
             ImageContainer.markImageReady(mUrl, imageReadyInfo);
 
-            EventBus.getDefault().post(new GlideImageEvent(mUrl, mImageView, Constants.STATUS_SUCCESS));
-
+            EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, Constants.STATUS_SUCCESS));
         } catch (Exception e) {
             Logger.e(e);
-            EventBus.getDefault().post(new GlideImageEvent(mUrl, mImageView, Constants.STATUS_FAIL));
+            EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, Constants.STATUS_FAIL));
         }
     }
 

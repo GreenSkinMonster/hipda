@@ -24,10 +24,15 @@ import com.bumptech.glide.signature.StringSignature;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.FontAwesome;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.cache.LRUCache;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
@@ -39,6 +44,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
+
+import de.greenrobot.event.EventBus;
+import okio.Buffer;
+import okio.BufferedSource;
+import okio.ForwardingSource;
+import okio.Okio;
+import okio.Source;
 
 public class GlideHelper {
 
@@ -66,6 +78,30 @@ public class GlideHelper {
 
             if (Logger.isDebug())
                 client.interceptors().add(new LoggingInterceptor());
+
+            final ProgressListener progressListener = new ProgressListener() {
+                @Override
+                public void update(String url, long bytesRead, long contentLength, boolean done) {
+                    int progress = (int) Math.round((100.0 * bytesRead) / contentLength);
+                    EventBus.getDefault().post(new GlideImageEvent(url, progress, Constants.STATUS_IN_PROGRESS));
+                }
+            };
+
+            client.networkInterceptors().add(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
+                    String url = chain.request().httpUrl().toString();
+                    //avatar don't need a progress listener
+                    if (url.startsWith(HiUtils.AvatarBaseUrl)) {
+                        return originalResponse;
+                    }
+                    return originalResponse.newBuilder()
+                            .body(new ProgressResponseBody(url, originalResponse.body(), progressListener))
+                            .build();
+                }
+            });
+
             Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
 
         }
@@ -167,5 +203,58 @@ public class GlideHelper {
                     .sizeDp(96);
         return IMAGE_DOWNLOAD_HOLDER;
     }
+
+
+    private static class ProgressResponseBody extends ResponseBody {
+
+        private final ResponseBody responseBody;
+        private final ProgressListener progressListener;
+        private BufferedSource bufferedSource;
+        private String url;
+
+        public ProgressResponseBody(String url, ResponseBody responseBody, ProgressListener progressListener) {
+            this.responseBody = responseBody;
+            this.progressListener = progressListener;
+            this.url = url;
+        }
+
+        @Override
+        public MediaType contentType() {
+            return responseBody.contentType();
+        }
+
+        @Override
+        public long contentLength() throws IOException {
+            return responseBody.contentLength();
+        }
+
+        @Override
+        public BufferedSource source() throws IOException {
+            if (bufferedSource == null) {
+                bufferedSource = Okio.buffer(source(responseBody.source()));
+            }
+            return bufferedSource;
+        }
+
+        private Source source(final Source source) {
+            return new ForwardingSource(source) {
+                long totalBytesRead = 0L;
+
+                @Override
+                public long read(Buffer sink, long byteCount) throws IOException {
+                    long bytesRead = super.read(sink, byteCount);
+                    // read() returns the number of bytes read, or -1 if this source is exhausted.
+                    totalBytesRead += bytesRead != -1 ? bytesRead : 0;
+                    progressListener.update(url, totalBytesRead, responseBody.contentLength(), bytesRead == -1);
+                    return bytesRead;
+                }
+            };
+        }
+    }
+
+    interface ProgressListener {
+        void update(String url, long bytesRead, long contentLength, boolean done);
+    }
+
 
 }

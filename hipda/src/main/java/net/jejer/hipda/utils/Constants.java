@@ -9,6 +9,7 @@ import net.jejer.hipda.async.SimpleListLoader;
 public class Constants {
     public static final int STATUS_SUCCESS = 0;
     public static final int STATUS_FAIL = 1;
+    public static final int STATUS_IN_PROGRESS = 5;
     public static final int STATUS_FAIL_ABORT = 9;
 
     public static final int DRAWER_SEARCH = 1000 + SimpleListLoader.TYPE_SEARCH;

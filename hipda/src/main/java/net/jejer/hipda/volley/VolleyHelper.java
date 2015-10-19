@@ -41,7 +41,6 @@ public class VolleyHelper {
     public void init(Context ctx) {
         mCtx = ctx;
         if (mRequestQueue == null) {
-
             cookieStore = new PersistentCookieStore(mCtx);
             CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
             CookieHandler.setDefault(cookieManager);
@@ -123,9 +122,9 @@ public class VolleyHelper {
             reason = "网络错误";
         } else if (error instanceof ParseError) {
             reason = "解析失败";
-        } else {
-            reason = error.getMessage();
         }
+        if (error.getCause() != null)
+            reason += " (" + error.getCause().getMessage() + ")";
         return reason;
     }
 

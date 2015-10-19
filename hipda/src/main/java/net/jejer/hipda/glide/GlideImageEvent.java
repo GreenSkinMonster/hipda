@@ -1,7 +1,5 @@
 package net.jejer.hipda.glide;
 
-import android.view.View;
-
 import net.jejer.hipda.utils.Constants;
 
 /**
@@ -12,24 +10,28 @@ public class GlideImageEvent {
 
     private int mStatus = -1;
     private String mUrl;
-    private View mView;
+    private int mProgress;
 
-    public GlideImageEvent(String url, View view, int status) {
+    public GlideImageEvent(String url, int progress, int status) {
         mUrl = url;
-        mView = view;
         mStatus = status;
+        mProgress = progress;
     }
 
     public String getImageUrl() {
         return mUrl;
     }
 
-    public View getView() {
-        return mView;
+    public int getProgress() {
+        return mProgress;
     }
 
-    public boolean isSuccess() {
-        return mStatus == Constants.STATUS_SUCCESS;
+    public int getStatus() {
+        return mStatus;
+    }
+
+    public boolean isInProgress() {
+        return mStatus == Constants.STATUS_IN_PROGRESS;
     }
 
 }

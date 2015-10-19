@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,9 @@ import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.utils.Logger;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * adapter for image gallery
@@ -34,6 +37,8 @@ public class PopupImageAdapter extends PagerAdapter {
     private Context mCtx;
     private List<ContentImg> mImages;
     private LayoutInflater mInflater;
+
+    private Map<String, View> imageViewMap = new HashMap<>();
 
     public PopupImageAdapter(Context context, List<ContentImg> images) {
         mCtx = context;
@@ -64,11 +69,12 @@ public class PopupImageAdapter extends PagerAdapter {
         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
 
         if (imageReadyInfo == null || !(new File(imageReadyInfo.getPath())).exists()) {
-            GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 9, rootView));
+            GlideImageManager.getInstance().addJob(new GlideImageJob(mCtx, imageUrl, 9));
         } else {
             displayImage(rootView, imageReadyInfo);
         }
         container.addView(rootView);
+        imageViewMap.put(imageUrl, rootView);
         return rootView;
     }
 
@@ -138,9 +144,12 @@ public class PopupImageAdapter extends PagerAdapter {
 
     @SuppressWarnings("unused")
     public void onEventMainThread(GlideImageEvent event) {
+        if (event.isInProgress())
+            return;
         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(event.getImageUrl());
-        if (event.getView() != null)
-            displayImage(event.getView(), imageReadyInfo);
+        View rootView = imageViewMap.get(event.getImageUrl());
+        if (rootView != null && (Build.VERSION.SDK_INT < 19 || rootView.isAttachedToWindow()))
+            displayImage(rootView, imageReadyInfo);
     }
 
 }

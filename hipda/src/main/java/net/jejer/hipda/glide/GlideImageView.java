@@ -1,6 +1,7 @@
 package net.jejer.hipda.glide;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -25,11 +26,21 @@ public class GlideImageView extends ImageView {
     private static ImageView currentImageView;
     private static String currentUrl;
 
-    public GlideImageView(Context context, ThreadDetailFragment detailFragment) {
+    public GlideImageView(Context context) {
         super(context);
         mCtx = context;
-        mDetailFragment = detailFragment;
 
+        setupListeners();
+    }
+
+    public GlideImageView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        mCtx = context;
+
+        setupListeners();
+    }
+
+    private void setupListeners() {
         addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View view) {
@@ -42,7 +53,6 @@ public class GlideImageView extends ImageView {
                 view.setTag(null);
             }
         });
-
     }
 
     public void setUrl(String url) {
@@ -55,6 +65,10 @@ public class GlideImageView extends ImageView {
 
     public void setImageIndex(int index) {
         mImageIndex = index;
+    }
+
+    public void setFragment(ThreadDetailFragment fragment) {
+        mDetailFragment = fragment;
     }
 
     public void setClickToViewBigImage() {
