@@ -12,10 +12,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import net.jejer.hipda.bean.DetailListBean;
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadListFragment;
-import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadDetail;
 import net.jejer.hipda.utils.HiUtils;
@@ -135,9 +133,6 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
             b.putString(ThreadListFragment.STAGE_ERROR_KEY, text);
             msg.setData(b);
             mHandler.sendMessage(msg);
-
-            if (HiSettingsHelper.getInstance().isErrorReportMode())
-                ACRAUtils.acraReport(error, "url=" + mUrl);
 
             synchronized (mLocker) {
                 mRsp = null;

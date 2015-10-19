@@ -16,6 +16,7 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.squareup.okhttp.OkHttpClient;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cookie.PersistentCookieStore;
 import net.jejer.hipda.utils.Logger;
 
@@ -26,8 +27,6 @@ import java.net.HttpCookie;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 
 public class VolleyHelper {
 
@@ -122,9 +121,12 @@ public class VolleyHelper {
             reason = "网络错误";
         } else if (error instanceof ParseError) {
             reason = "解析失败";
+        } else {
+            reason = error.getClass().getCanonicalName();
         }
-        if (error.getCause() != null)
-            reason += " (" + error.getCause().getMessage() + ")";
+        if (HiSettingsHelper.getInstance().isErrorReportMode() && error.getCause() != null) {
+            reason += "\n" + error.getCause().getMessage();
+        }
         return reason;
     }
 
@@ -134,10 +136,6 @@ public class VolleyHelper {
         mRequestQueue.add(request);
         try {
             return future.get(REQUEST_TIMEOUT_SECS, TimeUnit.SECONDS);
-        } catch (TimeoutException e) {
-            Logger.e("Error when synchronousGet : " + url, e);
-            if (errorListener != null)
-                errorListener.onErrorResponse(new VolleyError(e));
         } catch (Exception e) {
             Logger.e("Error when synchronousGet : " + url, e);
             if (errorListener != null)
@@ -152,10 +150,6 @@ public class VolleyHelper {
         mRequestQueue.add(request);
         try {
             return future.get(REQUEST_TIMEOUT_SECS, TimeUnit.SECONDS);
-        } catch (TimeoutException e) {
-            Logger.e("Error when synchronousPost : " + url, e);
-            if (errorListener != null)
-                errorListener.onErrorResponse(new VolleyError(e));
         } catch (Exception e) {
             Logger.e("Error when synchronousPost : " + url, e);
             if (errorListener != null)

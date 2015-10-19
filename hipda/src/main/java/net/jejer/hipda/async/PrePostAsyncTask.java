@@ -4,10 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
-import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
@@ -83,12 +81,6 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
         } while (!rspOk && retry < 3);
 
         if (!rspOk) {
-            if (HiSettingsHelper.getInstance().isErrorReportMode()) {
-                if (errorListener != null && errorListener.getError() != null)
-                    ACRAUtils.acraReport(errorListener.getError(), "url=" + mUrl + "\nresponse=" + rsp_str);
-                else
-                    ACRAUtils.acraReport("Error when pre posting", "url=" + mUrl + "\nresponse=" + rsp_str);
-            }
             return null;
         }
 

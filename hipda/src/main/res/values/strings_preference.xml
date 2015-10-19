@@ -170,9 +170,9 @@
     </string-array>
 
     <string-array name="pref_image_load_type">
-        <item>启用下载</item>
-        <item>手动下载</item>
-        <item>仅WiFi环境时下载</item>
+        <item>自动下载图片</item>
+        <item>从不自动下载图片</item>
+        <item>仅WiFi环境时自动下载</item>
     </string-array>
     <string-array name="pref_image_load_type_values">
         <item>0</item>
@@ -219,7 +219,7 @@
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
     <string name="pref_post_line_spacing_title">帖子行距调整</string>
     <string name="pref_screen_orientation">屏幕方向</string>
-    <string name="pref_error_report_mode">汇报错误模式</string>
+    <string name="pref_error_report_mode">显示详细错误信息</string>
     <string name="pref_title_about">关于HiPDA·NG</string>
     <string name="pref_title_check_update">检查更新</string>
     <string name="pref_title_clear_cache">清除缓存</string>
