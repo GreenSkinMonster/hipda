@@ -18,6 +18,16 @@
             android:layout_centerInParent="true"
             android:text="@string/header_hint_refresh_normal" />
 
+        <TextView
+            android:id="@+id/header_title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text=""
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="20sp" />
+
     </RelativeLayout>
 
 </LinearLayout>

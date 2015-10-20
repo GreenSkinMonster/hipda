@@ -219,7 +219,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         });
 
         mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
-        mDetailListView.setPullRefreshEnable(false);
+        mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
         mDetailListView.setXListViewListener(new XListView.IXListViewListener() {
             @Override
             public void onRefresh() {
@@ -438,7 +438,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 mCurrentPage = 1;
                 if (mAuthorOnly) {
                     mDetailListView.setPullLoadEnable(false, true);
-                    mDetailListView.setPullRefreshEnable(false);
+                    mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
                     mDetailListView.hideFooter();
                     setActionBarTitle("(只看楼主) " + mTitle);
                     showAndLoadAuthorOnly();
@@ -624,7 +624,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
             // Re-enable after load complete if needed.
             mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
-            mDetailListView.setPullRefreshEnable(false);
+            mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
 
             //VolleyHelper.getInstance().cancelAll();
             return new DetailListLoader(mCtx, mMsgHandler, mTid, mGotoPostId, args.getInt(LOADER_PAGE_KEY, 1));
@@ -744,13 +744,13 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     private void setPullLoadStatus() {
         if (mAuthorOnly) {
             mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
-            mDetailListView.setPullRefreshEnable(false);
+            mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
             mDetailListView.hideFooter();
         } else {
             if (mCurrentPage == 1) {
-                mDetailListView.setPullRefreshEnable(false);
+                mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
             } else {
-                mDetailListView.setPullRefreshEnable(true);
+                mDetailListView.setPullRefreshEnable(true, mCurrentPage == 1 ? mTitle : null);
             }
             if (mCurrentPage == mMaxPage) {
                 mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
