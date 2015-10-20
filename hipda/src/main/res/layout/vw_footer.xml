@@ -22,15 +22,6 @@
             android:layout_centerInParent="true"
             android:text="@string/footer_hint_load_normal"
             android:textColor="?attr/colorAccent" />
-
-        <ImageView
-            android:id="@+id/footer_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
-            android:layout_toLeftOf="@id/footer_hint_text"
-            android:contentDescription="@null"
-            android:visibility="gone" />
     </RelativeLayout>
 
 </LinearLayout>

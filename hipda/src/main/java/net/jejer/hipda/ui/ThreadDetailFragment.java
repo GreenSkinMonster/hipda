@@ -119,7 +119,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     private HiProgressDialog postProgressDialog;
     private FloatingActionMenu mFam;
-    private ContentLoadingProgressBar loadingProgressBar;
+    private ContentLoadingProgressBar mLoadingProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -174,8 +174,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         mFam = (FloatingActionMenu) view.findViewById(R.id.multiple_actions);
         mFam.setVisibility(View.INVISIBLE);
 
-        loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.detail_loading);
-        loadingProgressBar.show();
+        mLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.detail_loading);
+        mLoadingProgressBar.show();
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
         fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
@@ -183,7 +183,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             @Override
             public void onClick(View view) {
                 mFam.close(true);
-                loadingProgressBar.showNow();
+                mLoadingProgressBar.showNow();
                 mFloorOfPage = LAST_FLOOR;
                 refresh();
             }
@@ -218,7 +218,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             }
         });
 
-        mDetailListView.setPullLoadEnable(false);
+        mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
         mDetailListView.setPullRefreshEnable(false);
         mDetailListView.setXListViewListener(new XListView.IXListViewListener() {
             @Override
@@ -239,11 +239,11 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 if (mCurrentPage < mMaxPage) {
                     mCurrentPage++;
                 }
-                mDetailListView.stopLoadMore();
+                mDetailListView.stopLoadMore(mCurrentPage == mMaxPage);
                 showOrLoadPage();
             }
         });
-
+        mDetailListView.hideFooter();
 
         final GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -426,6 +426,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 return true;
             case R.id.action_refresh_detail:
                 refresh();
+                mLoadingProgressBar.showNow();
                 return true;
             case R.id.action_image_gallery:
                 startImageGallery(0);
@@ -436,11 +437,13 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 mDetailAdapter.setBeans(mDetailBeans);
                 mCurrentPage = 1;
                 if (mAuthorOnly) {
-                    mDetailListView.setPullLoadEnable(false);
+                    mDetailListView.setPullLoadEnable(false, true);
                     mDetailListView.setPullRefreshEnable(false);
+                    mDetailListView.hideFooter();
                     setActionBarTitle("(只看楼主) " + mTitle);
                     showAndLoadAuthorOnly();
                 } else {
+                    mDetailListView.showFooter();
                     showOrLoadPage();
                 }
                 return true;
@@ -620,7 +623,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             }
 
             // Re-enable after load complete if needed.
-            mDetailListView.setPullLoadEnable(false);
+            mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
             mDetailListView.setPullRefreshEnable(false);
 
             //VolleyHelper.getInstance().cancelAll();
@@ -637,7 +640,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
             mInloading = false;
             mPrefetching = false;
-            loadingProgressBar.hide();
+            mLoadingProgressBar.hide();
 
             mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
             mFam.setVisibility(View.VISIBLE);
@@ -715,7 +718,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             mInloading = false;
             mPrefetching = false;
 
-            loadingProgressBar.hide();
+            mLoadingProgressBar.hide();
         }
 
     }
@@ -727,6 +730,10 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             if (page < 1 || page > mMaxPage)
                 return;
             mPrefetching = true;
+            if (pageOffset > 0)
+                mDetailListView.setFooterLoading();
+            else
+                mLoadingProgressBar.show();
             Logger.v("prefetch page " + page);
             Bundle b = new Bundle();
             b.putInt(LOADER_PAGE_KEY, page);
@@ -736,8 +743,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     private void setPullLoadStatus() {
         if (mAuthorOnly) {
-            mDetailListView.setPullLoadEnable(false);
+            mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
             mDetailListView.setPullRefreshEnable(false);
+            mDetailListView.hideFooter();
         } else {
             if (mCurrentPage == 1) {
                 mDetailListView.setPullRefreshEnable(false);
@@ -745,10 +753,11 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 mDetailListView.setPullRefreshEnable(true);
             }
             if (mCurrentPage == mMaxPage) {
-                mDetailListView.setPullLoadEnable(false);
+                mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
             } else {
-                mDetailListView.setPullLoadEnable(true);
+                mDetailListView.setPullLoadEnable(true, mCurrentPage == mMaxPage);
             }
+            mDetailListView.showFooter();
         }
     }
 
@@ -899,7 +908,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
             if (mGoToPage != mCurrentPage) {
                 mCurrentPage = mGoToPage;
-                //getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
                 showOrLoadPage();
             } else {
                 mDetailListView.setSelection(mFloorOfPage + mDetailListView.getHeaderViewsCount() - 1);
@@ -911,12 +919,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     private class ThreadDetailMsgHandler implements Handler.Callback {
         @Override
         public boolean handleMessage(Message msg) {
-            int page = 0;
-            Bundle bundle = msg.getData();
-            if (bundle != null) {
-                page = bundle.getInt(LOADER_PAGE_KEY, 0);
-            }
-            String pageStr = page > 0 ? "(第" + page + "页)" : "";
 
             switch (msg.what) {
                 case ThreadListFragment.STAGE_ERROR:
@@ -940,7 +942,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                     mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case ThreadListFragment.STAGE_GET_WEBPAGE:
-                    loadingProgressBar.show();
 //                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
 //                    mTipBar.setText(pageStr + "正在获取页面");
 //                    mTipBar.setVisibility(View.VISIBLE);
@@ -987,6 +988,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             setPullLoadStatus();
 
         } else {
+            mLoadingProgressBar.show();
             Bundle b = new Bundle();
             b.putInt(LOADER_PAGE_KEY, mCurrentPage);
             getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
@@ -1061,9 +1063,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     class AvatarOnClickListener extends OnSingleClickListener {
         @Override
-        public void onSingleClick(View arg0) {
-            String uid = (String) arg0.getTag(R.id.avatar_tag_uid);
-            String username = (String) arg0.getTag(R.id.avatar_tag_username);
+        public void onSingleClick(View view) {
+            String uid = (String) view.getTag(R.id.avatar_tag_uid);
+            String username = (String) view.getTag(R.id.avatar_tag_username);
 
             Bundle arguments = new Bundle();
             arguments.putString(UserinfoFragment.ARG_UID, uid);

@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +78,7 @@ public class ThreadListFragment extends BaseFragment
     private ThreadListAdapter mThreadListAdapter;
     private List<ThreadBean> mThreadBeans = new ArrayList<>();
     private ListView mThreadListView;
+    private View mFooterView;
     private TextView mTipBar;
     private boolean mInloading = false;
     private Handler mMsgHandler;
@@ -117,6 +120,13 @@ public class ThreadListFragment extends BaseFragment
         Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
         mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
+
+        mFooterView = inflater.inflate(R.layout.vw_thread_list_footer, mThreadListView, false);
+        mThreadListView.addFooterView(mFooterView);
+        ProgressBar progressBar = (ProgressBar) mFooterView.findViewById(R.id.footer_progressbar);
+        progressBar.getIndeterminateDrawable()
+                .setColorFilter(Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
+
         mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
         mTipBar.setVisibility(View.INVISIBLE);
         mTipBar.bringToFront();
@@ -386,6 +396,8 @@ public class ThreadListFragment extends BaseFragment
                 if (!mInloading) {
                     mInloading = true;
                     mPage++;
+                    mFooterView.getLayoutParams().height = Utils.dpToPx(mCtx, 48);
+                    mFooterView.setVisibility(View.VISIBLE);
                     getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
                 }
             }
@@ -400,8 +412,7 @@ public class ThreadListFragment extends BaseFragment
     private class OnItemClickCallback extends OnViewItemSingleClickListener {
 
         @Override
-        public void onItemSingleClick(AdapterView<?> listView, View itemView, int position,
-                                      long row) {
+        public void onItemSingleClick(AdapterView<?> listView, View itemView, int position, long row) {
             ThreadBean thread = mThreadListAdapter.getItem(position);
             String tid = thread.getTid();
             String title = thread.getTitle();
@@ -432,19 +443,20 @@ public class ThreadListFragment extends BaseFragment
 
         @Override
         public Loader<ThreadListBean> onCreateLoader(int arg0, Bundle arg1) {
-            if (!swipeLayout.isRefreshing())
+            if (mPage == 1 && !swipeLayout.isRefreshing())
                 loadingProgressBar.show();
             return new ThreadListLoader(mCtx, mMsgHandler, mForumId, mPage);
         }
 
         @Override
-        public void onLoadFinished(Loader<ThreadListBean> loader,
-                                   ThreadListBean threads) {
+        public void onLoadFinished(Loader<ThreadListBean> loader, ThreadListBean threads) {
             Logger.v("onLoadFinished enter");
 
             mInloading = false;
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
+            mFooterView.setVisibility(View.GONE);
+            mFooterView.getLayoutParams().height = 1;
 
             if (threads == null) {
                 if (mPage > 1) {
@@ -515,7 +527,6 @@ public class ThreadListFragment extends BaseFragment
             mMsgHandler.sendMessageDelayed(msgClean, 1000);
 
             mFam.setVisibility(View.VISIBLE);
-
         }
 
         @Override
@@ -526,6 +537,8 @@ public class ThreadListFragment extends BaseFragment
             mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
+            mFooterView.setVisibility(View.GONE);
+            mFooterView.getLayoutParams().height = 1;
         }
 
     }

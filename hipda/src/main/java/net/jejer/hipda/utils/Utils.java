@@ -1,5 +1,6 @@
 package net.jejer.hipda.utils;
 
+import android.content.Context;
 import android.text.Html;
 import android.text.TextUtils;
 
@@ -183,6 +184,11 @@ public class Utils {
     public static String textToHtmlConvertingURLsToLinks(String text) {
         return nullToText(text).replaceAll("(\\A|\\s)((http|https):\\S+)(\\s|\\z)",
                 "$1<a href=\"$2\">$2</a>$4");
+    }
+
+    public static int dpToPx(Context context, int dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round((float) dp * density);
     }
 
 }

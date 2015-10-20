@@ -25,6 +25,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -56,6 +58,7 @@ public class SimpleListFragment extends BaseFragment
     private int mType;
 
     private ListView mThreadListView;
+    private View mFooterView;
     private TextView mTipBar;
     private SimpleListAdapter mSimpleListAdapter;
     private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
@@ -94,6 +97,13 @@ public class SimpleListFragment extends BaseFragment
         Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
         mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
+
+        mFooterView = inflater.inflate(R.layout.vw_thread_list_footer, mThreadListView, false);
+        mThreadListView.addFooterView(mFooterView);
+        ProgressBar progressBar = (ProgressBar) mFooterView.findViewById(R.id.footer_progressbar);
+        progressBar.getIndeterminateDrawable()
+                .setColorFilter(Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
+
         mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
         mTipBar.setVisibility(View.GONE);
 
@@ -303,6 +313,8 @@ public class SimpleListFragment extends BaseFragment
                     mInloading = true;
                     if (mPage < mMaxPage) {
                         mPage++;
+                        mFooterView.getLayoutParams().height = Utils.dpToPx(getActivity(), 48);
+                        mFooterView.setVisibility(View.VISIBLE);
                         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
                     } else {
                         if (mMaxPage > 0)
@@ -387,6 +399,8 @@ public class SimpleListFragment extends BaseFragment
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
+            mFooterView.setVisibility(View.GONE);
+            mFooterView.getLayoutParams().height = 1;
             mInloading = false;
 
             if (list == null || list.getCount() == 0) {
@@ -432,6 +446,8 @@ public class SimpleListFragment extends BaseFragment
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
+            mFooterView.setVisibility(View.GONE);
+            mFooterView.getLayoutParams().height = 1;
             mInloading = false;
         }
 

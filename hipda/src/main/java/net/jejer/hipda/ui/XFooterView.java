@@ -1,19 +1,19 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.utils.ColorUtils;
 
 /**
- * The footer view for {@link com.markmao.pulltorefresh.widget.XListView} and
- * {@link com.markmao.pulltorefresh.widget.XScrollView}
+ * https://github.com/MarkMjw/PullToRefresh
  *
  * @author markmjw
  * @date 2013-10-08
@@ -22,19 +22,11 @@ public class XFooterView extends LinearLayout {
     public final static int STATE_NORMAL = 0;
     public final static int STATE_READY = 1;
     public final static int STATE_LOADING = 2;
-
-    private final int ROTATE_ANIM_DURATION = 180;
+    public final static int STATE_END = 3;
 
     private View mLayout;
-
-    private View mProgressBar;
-
+    private ProgressBar mProgressBar;
     private TextView mHintView;
-
-    //    private ImageView mHintImage;
-
-    private Animation mRotateUpAnim;
-    private Animation mRotateDownAnim;
 
     private int mState = STATE_NORMAL;
 
@@ -54,60 +46,42 @@ public class XFooterView extends LinearLayout {
                 LayoutParams.WRAP_CONTENT));
         addView(mLayout);
 
-        mProgressBar = mLayout.findViewById(R.id.footer_progressbar);
+        mProgressBar = (ProgressBar) mLayout.findViewById(R.id.footer_progressbar);
+        mProgressBar.getIndeterminateDrawable()
+                .setColorFilter(Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
         mHintView = (TextView) mLayout.findViewById(R.id.footer_hint_text);
-        //        mHintImage = (ImageView) mLayout.findViewById(R.id.footer_arrow);
-
-        mRotateUpAnim = new RotateAnimation(0.0f, 180.0f, Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f);
-        mRotateUpAnim.setDuration(ROTATE_ANIM_DURATION);
-        mRotateUpAnim.setFillAfter(true);
-
-        mRotateDownAnim = new RotateAnimation(180.0f, 0.0f, Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f);
-        mRotateDownAnim.setDuration(ROTATE_ANIM_DURATION);
-        mRotateDownAnim.setFillAfter(true);
     }
 
     /**
      * Set footer view state
-     *
-     * @param state
-     * @see #STATE_LOADING
-     * @see #STATE_NORMAL
-     * @see #STATE_READY
      */
     public void setState(int state) {
         if (state == mState) return;
 
         if (state == STATE_LOADING) {
-            //            mHintImage.clearAnimation();
-            //            mHintImage.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
             mHintView.setVisibility(View.INVISIBLE);
         } else {
             mHintView.setVisibility(View.VISIBLE);
-            //            mHintImage.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(View.INVISIBLE);
         }
 
         switch (state) {
             case STATE_NORMAL:
-                //                if (mState == STATE_READY) {
-                //                    mHintImage.startAnimation(mRotateDownAnim);
-                //                }
-                //                if (mState == STATE_LOADING) {
-                //                    mHintImage.clearAnimation();
-                //                }
+                mHintView.setTextColor(ColorUtils.getColorAccent(getContext()));
                 mHintView.setText(R.string.footer_hint_load_normal);
                 break;
 
             case STATE_READY:
                 if (mState != STATE_READY) {
-                    //                    mHintImage.clearAnimation();
-                    //                    mHintImage.startAnimation(mRotateUpAnim);
+                    mHintView.setTextColor(ColorUtils.getColorAccent(getContext()));
                     mHintView.setText(R.string.footer_hint_load_ready);
                 }
+                break;
+
+            case STATE_END:
+                mHintView.setTextColor(Color.GRAY);
+                mHintView.setText(R.string.footer_hint_end);
                 break;
 
             case STATE_LOADING:
@@ -137,22 +111,6 @@ public class XFooterView extends LinearLayout {
     public int getBottomMargin() {
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mLayout.getLayoutParams();
         return lp.bottomMargin;
-    }
-
-    /**
-     * normal status
-     */
-    public void normal() {
-        mHintView.setVisibility(View.VISIBLE);
-        mProgressBar.setVisibility(View.GONE);
-    }
-
-    /**
-     * loading status
-     */
-    public void loading() {
-        mHintView.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     /**

@@ -17,12 +17,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
-import android.widget.TextView;
 
 import net.jejer.hipda.R;
 
 /**
- * XListView, it's based on <a href="https://github.com/Maxwin-z/XListView-Android">XListView(Maxwin)</a>
+ * https://github.com/MarkMjw/PullToRefresh
  *
  * @author markmjw
  * @date 2013-10-08
@@ -56,7 +55,6 @@ public class XListView extends ListView implements OnScrollListener {
     private XHeaderView mHeader;
     // header view content, use it to calculate the Header's height. And hide it when disable pull refresh.
     private RelativeLayout mHeaderContent;
-    private TextView mHeaderTime;
     private int mHeaderHeight;
 
     private LinearLayout mFooterLayout;
@@ -95,7 +93,6 @@ public class XListView extends ListView implements OnScrollListener {
         // init header view
         mHeader = new XHeaderView(context);
         mHeaderContent = (RelativeLayout) mHeader.findViewById(R.id.header_content);
-        mHeaderTime = (TextView) mHeader.findViewById(R.id.header_hint_time);
         addHeaderView(mHeader);
 
         // init footer view
@@ -157,19 +154,16 @@ public class XListView extends ListView implements OnScrollListener {
      *
      * @param enable
      */
-    public void setPullLoadEnable(boolean enable) {
+    public void setPullLoadEnable(boolean enable, boolean isLastPage) {
         mEnablePullLoad = enable;
 
         if (!mEnablePullLoad) {
             mFooterView.setBottomMargin(0);
-            mFooterView.hide();
-            mFooterView.setPadding(0, 0, 0, mFooterView.getHeight() * (-1));
             mFooterView.setOnClickListener(null);
-
+            if (isLastPage)
+                mFooterView.setState(XFooterView.STATE_END);
         } else {
             mPullLoading = false;
-            mFooterView.setPadding(0, 0, 0, 0);
-            mFooterView.show();
             mFooterView.setState(XFooterView.STATE_NORMAL);
             // both "pull up" and "click" will invoke load more.
             mFooterView.setOnClickListener(new OnClickListener() {
@@ -181,13 +175,17 @@ public class XListView extends ListView implements OnScrollListener {
         }
     }
 
-    /**
-     * Enable or disable auto load more feature when scroll to bottom.
-     *
-     * @param enable
-     */
-    public void setAutoLoadEnable(boolean enable) {
-        mEnableAutoLoad = enable;
+    public void setFooterLoading() {
+        mFooterView.setState(XFooterView.STATE_LOADING);
+        mFooterView.setOnClickListener(null);
+    }
+
+    public void hideFooter() {
+        mFooterView.hide();
+    }
+
+    public void showFooter() {
+        mFooterView.show();
     }
 
     /**
@@ -203,20 +201,14 @@ public class XListView extends ListView implements OnScrollListener {
     /**
      * Stop load more, reset footer view.
      */
-    public void stopLoadMore() {
+    public void stopLoadMore(boolean isLastPage) {
         if (mPullLoading) {
             mPullLoading = false;
-            mFooterView.setState(XFooterView.STATE_NORMAL);
+            if (isLastPage)
+                mFooterView.setState(XFooterView.STATE_END);
+            else
+                mFooterView.setState(XFooterView.STATE_NORMAL);
         }
-    }
-
-    /**
-     * Set last refresh time
-     *
-     * @param time
-     */
-    public void setRefreshTime(String time) {
-        mHeaderTime.setText(time);
     }
 
     /**
@@ -226,26 +218,6 @@ public class XListView extends ListView implements OnScrollListener {
      */
     public void setXListViewListener(IXListViewListener listener) {
         mListener = listener;
-    }
-
-    /**
-     * Auto call back refresh.
-     */
-    public void autoRefresh() {
-        mHeader.setVisibleHeight(mHeaderHeight);
-
-        if (mEnablePullRefresh && !mPullRefreshing) {
-            // update the arrow image not refreshing
-            if (mHeader.getVisibleHeight() > mHeaderHeight) {
-                mHeader.setState(XHeaderView.STATE_READY);
-            } else {
-                mHeader.setState(XHeaderView.STATE_NORMAL);
-            }
-        }
-
-        mPullRefreshing = true;
-        mHeader.setState(XHeaderView.STATE_REFRESHING);
-        refresh();
     }
 
     private void invokeOnScrolling() {

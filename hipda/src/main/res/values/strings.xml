@@ -41,9 +41,9 @@
     <string name="header_hint_refresh_normal">下拉加载前一页</string>
     <string name="header_hint_refresh_ready">松手加载前一页</string>
     <string name="header_hint_refresh_loading">加载中</string>
-    <string name="header_hint_refresh_time"></string>
     <string name="footer_hint_load_normal">点击加载下一页</string>
     <string name="footer_hint_load_ready">松手加载下一页</string>
+    <string name="footer_hint_end">～ END ～</string>
     <string name="hint_subject">主题</string>
 
     <string name="screen_portrait">竖向</string>

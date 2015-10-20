@@ -81,7 +81,7 @@ public class GlideImageJob extends Job {
             //calculate display size for image
 
             //leave 12dp on both left and right side, this should match layout setup
-            int maxViewWidth = ThreadDetailFragment.MAX_VIEW_WIDTH - dpToPx(12 * 2);
+            int maxViewWidth = ThreadDetailFragment.MAX_VIEW_WIDTH - Utils.dpToPx(mCtx, 12 * 2);
 
             //if image width < half maxViewWidth, scale it up for better view
             int maxScaleWidth = Math.round(maxViewWidth * 0.5f);
@@ -121,11 +121,6 @@ public class GlideImageJob extends Job {
     @Override
     protected boolean shouldReRunOnThrowable(Throwable throwable) {
         return false;
-    }
-
-    private int dpToPx(int dp) {
-        float density = mCtx.getResources().getDisplayMetrics().density;
-        return Math.round((float) dp * density);
     }
 
     //Math! http://www.mathsisfun.com/data/function-grapher.php
