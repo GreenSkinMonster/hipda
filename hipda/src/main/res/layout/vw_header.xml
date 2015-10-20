@@ -9,7 +9,7 @@
     <RelativeLayout
         android:id="@+id/header_content"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="60dp">
 
         <TextView
             android:id="@+id/header_hint_text"
@@ -28,7 +28,7 @@
             android:layout_centerHorizontal="true"
             android:text=""
             android:textColor="?android:attr/textColorSecondary"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
     </RelativeLayout>
 
