@@ -25,6 +25,7 @@
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fam_actions"
+        style="@style/FloatingMenuStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -33,10 +34,8 @@
         android:layout_margin="16dp"
         android:visibility="invisible"
         fab:menu_animationDelayPerItem="25"
-        fab:menu_buttonSpacing="2dp"
         fab:menu_colorNormal="@color/background_silver"
         fab:menu_colorPressed="@color/background_grey"
-        fab:menu_fab_size="mini"
         fab:menu_icon="@drawable/fab_add"
         fab:menu_shadowColor="@android:color/transparent">
 
@@ -55,6 +54,7 @@
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/action_fab_notify"
+        style="@style/FloatingMenuStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -63,8 +63,7 @@
         android:visibility="gone"
         fab:fab_colorNormal="@color/pink"
         fab:fab_colorPressed="@color/pink_pressed"
-        fab:fab_shadowColor="@android:color/transparent"
-        fab:fab_size="mini" />
+        fab:fab_shadowColor="@android:color/transparent" />
 
     <TextView
         android:id="@+id/thread_list_tipbar"

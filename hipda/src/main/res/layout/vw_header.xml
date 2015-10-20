@@ -9,13 +9,15 @@
     <RelativeLayout
         android:id="@+id/header_content"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/header_height">
+        android:layout_height="50dp">
 
         <TextView
             android:id="@+id/header_hint_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
             android:text="@string/header_hint_refresh_normal" />
 
         <TextView

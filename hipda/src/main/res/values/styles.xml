@@ -12,7 +12,7 @@
 
     <style name="ThemeLight" parent="ThemeLightBase">
 
-    <!-- make ActionMode overlap Toolbar -->
+        <!-- make ActionMode overlap Toolbar -->
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/MyActionMode</item>
         <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
@@ -140,6 +140,11 @@
         <item name="fab_size">mini</item>
         <item name="fab_colorNormal">?fabColorNormal</item>
         <item name="fab_colorPressed">?fabColorPressed</item>
+    </style>
+
+    <style name="FloatingMenuStyle">
+        <item name="fab_size">mini</item>
+        <item name="menu_fab_size">mini</item>
     </style>
 
     <!-- hardware menu key popup menu style -->
