@@ -7,18 +7,25 @@
     android:padding="8dp">
 
     <RelativeLayout
-        android:id="@+id/header_content"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="120dp">
 
-        <TextView
-            android:id="@+id/header_hint_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"
-            android:text="@string/header_hint_refresh_normal" />
+        <RelativeLayout
+            android:id="@+id/header_content"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:id="@+id/header_hint_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:text="@string/header_hint_refresh_normal" />
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/header_title_text"
@@ -29,7 +36,6 @@
             android:text=""
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="18sp" />
-
     </RelativeLayout>
 
 </LinearLayout>

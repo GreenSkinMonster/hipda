@@ -439,11 +439,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 if (mAuthorOnly) {
                     mDetailListView.setPullLoadEnable(false, true);
                     mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
-                    mDetailListView.hideFooter();
                     setActionBarTitle("(只看楼主) " + mTitle);
                     showAndLoadAuthorOnly();
                 } else {
-                    mDetailListView.showFooter();
                     showOrLoadPage();
                 }
                 return true;
@@ -745,7 +743,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         if (mAuthorOnly) {
             mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
             mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
-            mDetailListView.hideFooter();
         } else {
             if (mCurrentPage == 1) {
                 mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
@@ -757,8 +754,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             } else {
                 mDetailListView.setPullLoadEnable(true, mCurrentPage == mMaxPage);
             }
-            mDetailListView.showFooter();
         }
+        mDetailListView.showFooter();
     }
 
     private class OnItemLongClickCallback implements AdapterView.OnItemLongClickListener {

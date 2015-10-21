@@ -118,8 +118,10 @@ public class XFooterView extends LinearLayout {
      */
     public void hide() {
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mLayout.getLayoutParams();
-        lp.height = 0;
-        mLayout.setLayoutParams(lp);
+        if (lp.height != 0) {
+            lp.height = 0;
+            mLayout.setLayoutParams(lp);
+        }
     }
 
     /**
@@ -127,8 +129,10 @@ public class XFooterView extends LinearLayout {
      */
     public void show() {
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mLayout.getLayoutParams();
-        lp.height = LayoutParams.WRAP_CONTENT;
-        mLayout.setLayoutParams(lp);
+        if (lp.height != LayoutParams.WRAP_CONTENT) {
+            lp.height = LayoutParams.WRAP_CONTENT;
+            mLayout.setLayoutParams(lp);
+        }
     }
 
 }

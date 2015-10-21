@@ -21,6 +21,7 @@ import android.widget.Scroller;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.bean.HiSettingsHelper;
 
 /**
  * https://github.com/MarkMjw/PullToRefresh
@@ -156,6 +157,7 @@ public class XListView extends ListView implements OnScrollListener {
             mTvHeaderHint.setVisibility(INVISIBLE);
             //show thread title here
             if (!TextUtils.isEmpty(title)) {
+                mTvHeaderTitle.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                 mTvHeaderTitle.setText(title);
                 mTvHeaderTitle.setVisibility(VISIBLE);
             }
