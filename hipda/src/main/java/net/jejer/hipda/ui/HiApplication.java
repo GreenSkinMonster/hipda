@@ -31,8 +31,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
                 ReportField.LOGCAT
         },
         mode = ReportingInteractionMode.TOAST,
-        resToastText = R.string.crash_toast_text,
-        formKey = "")
+        resToastText = R.string.crash_toast_text)
 public class HiApplication extends Application {
 
     @Override

@@ -63,20 +63,20 @@ public abstract class BaseFragment extends Fragment {
 
     void syncActionBarState() {
         if (getActivity() != null) {
-            Drawer drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
+            Drawer drawerResult = ((MainFrameActivity) getActivity()).drawer;
             if (drawerResult != null)
                 drawerResult.getActionBarDrawerToggle().syncState();
         }
     }
 
-    void setDrawerSelection(int identifier) {
+    void setDrawerSelection(int forumId) {
         //re-select forum on back
         if (getActivity() != null) {
-            Drawer drawerResult = ((MainFrameActivity) getActivity()).drawerResult;
-            if (drawerResult != null && !drawerResult.isDrawerOpen()) {
-                int position = drawerResult.getFooterPositionFromIdentifier(identifier);
-                if (position != -1 && position != drawerResult.getCurrentFooterSelection())
-                    drawerResult.setFooterSelection(position, false);
+            Drawer drawer = ((MainFrameActivity) getActivity()).drawer;
+            if (drawer != null && !drawer.isDrawerOpen()) {
+                int position = drawer.getStickyFooterPosition(forumId);
+                if (drawer.getCurrentStickyFooterSelectedPosition() != position)
+                    drawer.setStickyFooterSelectionAtPosition(position, false);
             }
         }
     }
@@ -222,10 +222,6 @@ public abstract class BaseFragment extends Fragment {
         });
 
         theButton.setEnabled(false);
-    }
-
-    void hideSendSmsDialog() {
-
     }
 
 }

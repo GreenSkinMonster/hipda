@@ -22,21 +22,23 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.mikepenz.iconics.typeface.FontAwesome;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
-import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 
 import net.jejer.hipda.R;
@@ -67,8 +69,8 @@ public class MainFrameActivity extends AppCompatActivity {
     private Fragment mOnSwipeCallback = null;
     private int mQuit = 0;
 
-    public Drawer drawerResult;
-    private AccountHeader headerResult;
+    public Drawer drawer;
+    private AccountHeader accountHeader;
     private ActionMode mActionMode;
 
     @Override
@@ -165,7 +167,7 @@ public class MainFrameActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
+        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
                 //clear tag or glide will throw execption
@@ -190,7 +192,7 @@ public class MainFrameActivity extends AppCompatActivity {
         // Create the AccountHeader
         String username = VolleyHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
         String avatarUrl = VolleyHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
-        headerResult = new AccountHeaderBuilder()
+        accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
                 .withCompactStyle(true)
@@ -207,8 +209,10 @@ public class MainFrameActivity extends AppCompatActivity {
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_assignment_ind));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_forum));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_mail).withBadgeTextColor(Color.RED));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications).withBadgeTextColor(Color.RED));
+        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_mail)
+                .withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.grey)));
+        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications)
+                .withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.grey)));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_setting)
                 .withIdentifier(DrawerItem.SETTINGS.id)
                 .withIcon(GoogleMaterial.Icon.gmd_settings));
@@ -221,19 +225,21 @@ public class MainFrameActivity extends AppCompatActivity {
                         .withIcon(HiUtils.FORUM_ICONS[i]));
         }
 
-        drawerResult = new DrawerBuilder()
+        drawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
-                .withAccountHeader(headerResult)
+                .withAccountHeader(accountHeader)
                 .withTranslucentStatusBar(true)
                 .withDrawerItems(drawerItems)
                 .withStickyDrawerItems(stickyDrawerItems)
+                .withStickyFooterDivider(true)
+                .withStickyFooterShadow(false)
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .build();
 
         //fix input layout problem when withTranslucentStatusBar enabled
-        drawerResult.keyboardSupportEnabled(this, true);
-        drawerResult.getListView().setVerticalScrollBarEnabled(false);
+        drawer.keyboardSupportEnabled(this, true);
+        drawer.getRecyclerView().setVerticalScrollBarEnabled(false);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -271,11 +277,11 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     public void updateAccountHeader() {
-        if (headerResult != null) {
+        if (accountHeader != null) {
             String username = VolleyHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
             String avatarUrl = VolleyHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
-            headerResult.removeProfile(0);
-            headerResult.addProfile(new ProfileDrawerItem()
+            accountHeader.removeProfile(0);
+            accountHeader.addProfile(new ProfileDrawerItem()
                     .withEmail(username)
                     .withIcon(avatarUrl), 0);
         }
@@ -339,8 +345,8 @@ public class MainFrameActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (drawerResult.isDrawerOpen()) {
-            drawerResult.closeDrawer();
+        if (drawer.isDrawerOpen()) {
+            drawer.closeDrawer();
             return;
         }
 
@@ -417,10 +423,10 @@ public class MainFrameActivity extends AppCompatActivity {
             return true;
         } else {
             if (!backPressed) {
-                if (drawerResult.isDrawerOpen())
-                    drawerResult.closeDrawer();
+                if (drawer.isDrawerOpen())
+                    drawer.closeDrawer();
                 else
-                    drawerResult.openDrawer();
+                    drawer.openDrawer();
             }
             return false;
         }
@@ -445,7 +451,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {
         @Override
-        public boolean onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+        public boolean onItemClick(View view, int position, IDrawerItem iDrawerItem) {
             //clear all backStacks from menu click
             clearBackStacks(false);
 
@@ -501,6 +507,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
             return false;
         }
+
     }
 
     private void clearBackStacks(boolean resetActionBarTitle) {
@@ -535,20 +542,20 @@ public class MainFrameActivity extends AppCompatActivity {
             FragmentManager fm = getFragmentManager();
 
             if (fm.getBackStackEntryCount() > 0) {
-                drawerResult.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+                drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
                 if (getSupportActionBar() != null)
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             } else {
                 if (getSupportActionBar() != null)
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                drawerResult.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+                drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
             }
 
             if (HiSettingsHelper.getInstance().isGestureBack()) {
                 if (fm.getBackStackEntryCount() > 0) {
-                    drawerResult.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                    drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 } else {
-                    drawerResult.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                    drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                 }
             }
             Logger.v("getBackStackEntryCount = " + String.valueOf(fm.getBackStackEntryCount()));
@@ -571,20 +578,26 @@ public class MainFrameActivity extends AppCompatActivity {
     public void updateDrawerBadge() {
         int smsCount = NotificationMgr.getCurrentNotification().getSmsCount();
         int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
-        int threadNotifyIndex = drawerResult.getPositionFromIdentifier(Constants.DRAWER_THREADNOTIFY);
+        int threadNotifyIndex = drawer.getPosition(Constants.DRAWER_THREADNOTIFY);
         if (threadNotifyIndex != -1) {
+            PrimaryDrawerItem drawerItem = (PrimaryDrawerItem) drawer.getDrawerItem(Constants.DRAWER_THREADNOTIFY);
             if (threadCount > 0) {
-                drawerResult.updateBadge(threadCount + "", threadNotifyIndex);
+                drawerItem.withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700));
+                drawer.updateBadge(Constants.DRAWER_THREADNOTIFY, new StringHolder(threadCount + ""));
             } else {
-                drawerResult.updateBadge("", threadNotifyIndex);
+                drawerItem.withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.background_grey));
+                drawer.updateBadge(Constants.DRAWER_THREADNOTIFY, new StringHolder("0"));
             }
         }
-        int smsNotifyIndex = drawerResult.getPositionFromIdentifier(Constants.DRAWER_SMS);
+        int smsNotifyIndex = drawer.getPosition(Constants.DRAWER_SMS);
         if (smsNotifyIndex != -1) {
+            PrimaryDrawerItem drawerItem = (PrimaryDrawerItem) drawer.getDrawerItem(Constants.DRAWER_SMS);
             if (smsCount > 0) {
-                drawerResult.updateBadge(smsCount + "", smsNotifyIndex);
+                drawerItem.withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700));
+                drawer.updateBadge(Constants.DRAWER_SMS, new StringHolder(smsCount + ""));
             } else {
-                drawerResult.updateBadge("", smsNotifyIndex);
+                drawerItem.withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.background_grey));
+                drawer.updateBadge(Constants.DRAWER_SMS, new StringHolder("0"));
             }
         }
     }

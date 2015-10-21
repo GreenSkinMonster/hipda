@@ -105,7 +105,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         }
 
         if (!HiSettingsHelper.getInstance().isGestureBack() && getActivity() != null)
-            ((MainFrameActivity) getActivity()).drawerResult.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            ((MainFrameActivity) getActivity()).drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
         if (mCacheCleared
                 || HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation

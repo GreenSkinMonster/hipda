@@ -2,7 +2,7 @@ package net.jejer.hipda.utils;
 
 import android.text.TextUtils;
 
-import com.mikepenz.iconics.typeface.FontAwesome;
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.iconics.typeface.IIcon;
 
 import net.jejer.hipda.R;
