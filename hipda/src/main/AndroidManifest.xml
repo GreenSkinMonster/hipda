@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.jejer.hipda"
-    android:versionCode="32"
-    android:versionName="2.1.04">
+    android:versionCode="33"
+    android:versionName="2.1.05">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
