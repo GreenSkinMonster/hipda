@@ -7,12 +7,11 @@ import android.text.TextUtils;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
-import net.jejer.hipda.volley.SimpleErrorListener;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,7 +36,6 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
     private PrePostInfoBean mInfo;
 
     private PostListener mPostListenerCallback;
-    private String mContent;
     private String mTid;
     private String mTitle;
     private String mFloor;
@@ -76,8 +74,6 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 
         if (!TextUtils.isEmpty(floor) && TextUtils.isDigitsOnly(floor))
             mFloor = floor;
-
-        mContent = replyText;
 
         if (mMode != MODE_EDIT_POST) {
             String tail_text = HiSettingsHelper.getInstance().getTailText();
@@ -179,37 +175,42 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             }
         }
 
-        SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
-        String rsp_str = VolleyHelper.getInstance().synchronousPost(url, post_param, errorListener);
+        String rsp_str;
+        try {
+            rsp_str = OkHttpHelper.getInstance().post(url, post_param);
 
-        //when success, volley will follow 302 redirect get the page content
-        if (!TextUtils.isEmpty(rsp_str)) {
-            String tid = "";
-            if (rsp_str.contains("tid = parseInt('")) {
-                tid = HttpUtils.getMiddleString(rsp_str, "tid = parseInt('", "'");
-            }
-            if (!TextUtils.isEmpty(tid)
-                    && TextUtils.isDigitsOnly(tid)
-                    && Integer.parseInt(tid) > 0
-                    && !rsp_str.contains("alert_info")) {
-                mTid = tid;
-                mResult = "发表成功!";
-                mStatus = Constants.STATUS_SUCCESS;
-            } else {
-                Logger.e(rsp_str);
-                mResult = "发表失败! ";
-                mStatus = Constants.STATUS_FAIL;
-
-                Document doc = Jsoup.parse(rsp_str);
-                Elements error = doc.select("div.alert_info");
-                if (error != null && error.size() > 0) {
-                    mResult += "\n" + error.text();
+            //when success, okhttp will follow 302 redirect get the page content
+            if (!TextUtils.isEmpty(rsp_str)) {
+                String tid = "";
+                if (rsp_str.contains("tid = parseInt('")) {
+                    tid = HttpUtils.getMiddleString(rsp_str, "tid = parseInt('", "'");
                 }
-            }
-        } else {
-            Logger.e(errorListener.getError());
+                if (!TextUtils.isEmpty(tid)
+                        && TextUtils.isDigitsOnly(tid)
+                        && Integer.parseInt(tid) > 0
+                        && !rsp_str.contains("alert_info")) {
+                    mTid = tid;
+                    mResult = "发表成功!";
+                    mStatus = Constants.STATUS_SUCCESS;
+                } else {
+                    Logger.e(rsp_str);
+                    mResult = "发表失败! ";
+                    mStatus = Constants.STATUS_FAIL;
 
-            mResult = "发表失败，无返回结果! \n" + errorListener.getErrorText();
+                    Document doc = Jsoup.parse(rsp_str);
+                    Elements error = doc.select("div.alert_info");
+                    if (error != null && error.size() > 0) {
+                        mResult += "\n" + error.text();
+                    }
+                }
+            } else {
+                mResult = "发表失败，无返回结果! ";
+                mStatus = Constants.STATUS_FAIL;
+            }
+
+        } catch (Exception e) {
+            Logger.e(e);
+            mResult = "发表失败 : " + OkHttpHelper.getErrorMessage(e);
             mStatus = Constants.STATUS_FAIL;
         }
 

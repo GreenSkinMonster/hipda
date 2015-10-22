@@ -4,16 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.squareup.okhttp.Request;
 
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
-import net.jejer.hipda.volley.HiStringRequest;
-import net.jejer.hipda.volley.SimpleErrorListener;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -128,8 +124,8 @@ public class FavoriteHelper {
         if (page > 1)
             url += "&page=" + page;
 
-        String response = VolleyHelper.getInstance().synchronousGet(url, new SimpleErrorListener());
         try {
+            String response = OkHttpHelper.getInstance().get(url);
             Document doc = Jsoup.parse(response);
             int last_page = 1;
             //if this is the last page, page number is in <strong>
@@ -231,56 +227,52 @@ public class FavoriteHelper {
 
     public void addFavorite(final Context ctx, final String item, final String tid) {
         String url = HiUtils.FavoriteAddUrl.replace("{item}", item).replace("{tid}", tid);
-        StringRequest sReq = new HiStringRequest(url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        String result = "";
-                        Document doc = Jsoup.parse(response, "", Parser.xmlParser());
-                        for (Element e : doc.select("root")) {
-                            result = e.text();
-                            if (result.contains("<"))
-                                result = result.substring(0, result.indexOf("<"));
-                        }
-                        addToCahce(item, tid);
-                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Logger.e(error);
-                        Toast.makeText(ctx, "添加失败 : " + VolleyHelper.getErrorReason(error), Toast.LENGTH_LONG).show();
-                    }
-                });
-        VolleyHelper.getInstance().add(sReq);
+
+        OkHttpHelper.getInstance().asyncGet(url, new OkHttpHelper.ResultCallback() {
+            @Override
+            public void onError(Request request, Exception e) {
+                Logger.e(e);
+                Toast.makeText(ctx, "添加失败 : " + OkHttpHelper.getErrorMessage(e), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(String response) {
+                String result = "";
+                Document doc = Jsoup.parse(response, "", Parser.xmlParser());
+                for (Element e : doc.select("root")) {
+                    result = e.text();
+                    if (result.contains("<"))
+                        result = result.substring(0, result.indexOf("<"));
+                }
+                addToCahce(item, tid);
+                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void removeFavorite(final Context ctx, final String item, final String tid) {
         String url = HiUtils.FavoriteRemoveUrl.replace("{item}", item).replace("{tid}", tid);
-        StringRequest sReq = new HiStringRequest(url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        String result = "";
-                        Document doc = Jsoup.parse(response, "", Parser.xmlParser());
-                        for (Element e : doc.select("root")) {
-                            result = e.text();
-                            if (result.contains("<"))
-                                result = result.substring(0, result.indexOf("<"));
-                        }
-                        removeFromCahce(item, tid);
-                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Logger.e(error);
-                        Toast.makeText(ctx, "移除失败 : " + VolleyHelper.getErrorReason(error), Toast.LENGTH_LONG).show();
-                    }
-                });
-        VolleyHelper.getInstance().add(sReq);
+
+        OkHttpHelper.getInstance().asyncGet(url, new OkHttpHelper.ResultCallback() {
+            @Override
+            public void onError(Request request, Exception e) {
+                Logger.e(e);
+                Toast.makeText(ctx, "移除失败 : " + OkHttpHelper.getErrorMessage(e), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(String response) {
+                String result = "";
+                Document doc = Jsoup.parse(response, "", Parser.xmlParser());
+                for (Element e : doc.select("root")) {
+                    result = e.text();
+                    if (result.contains("<"))
+                        result = result.substring(0, result.indexOf("<"));
+                }
+                removeFromCahce(item, tid);
+                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private class ParseResult {

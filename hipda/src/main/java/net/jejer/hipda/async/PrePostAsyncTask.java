@@ -6,12 +6,12 @@ import android.text.TextUtils;
 
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
-import net.jejer.hipda.volley.SimpleErrorListener;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -60,22 +60,24 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
                 break;
         }
 
-        String rsp_str;
+        String rsp_str = "";
         Boolean rspOk = false;
         int retry = 0;
-        SimpleErrorListener errorListener;
         do {
-            errorListener = VolleyHelper.getInstance().getErrorListener();
-            rsp_str = VolleyHelper.getInstance().synchronousGet(mUrl, errorListener);
-            if (rsp_str != null) {
-                if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
-                    int status = new LoginHelper(mCtx, null).login();
-                    if (status > Constants.STATUS_FAIL) {
-                        break;
+            try {
+                rsp_str = OkHttpHelper.getInstance().get(mUrl);
+                if (!TextUtils.isEmpty(rsp_str)) {
+                    if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
+                        int status = new LoginHelper(mCtx, null).login();
+                        if (status > Constants.STATUS_FAIL) {
+                            break;
+                        }
+                    } else {
+                        rspOk = true;
                     }
-                } else {
-                    rspOk = true;
                 }
+            } catch (Exception e) {
+                Logger.e(e);
             }
             retry++;
         } while (!rspOk && retry < 3);

@@ -27,12 +27,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.squareup.okhttp.Request;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
@@ -40,12 +38,11 @@ import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
-import net.jejer.hipda.volley.HiStringRequest;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -155,7 +152,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
         inflater.inflate(R.menu.menu_sms_detail, menu);
         menu.findItem(R.id.action_clear_sms)
-                .setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_trash).actionBarSize().color(Color.WHITE));
+                .setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_trash).actionBar().color(Color.WHITE));
 
         setActionBarDisplayHomeAsUpEnabled(true);
         setActionBarTitle("短消息 > " + mAuthor);
@@ -189,22 +186,22 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                         final HiProgressDialog progress = HiProgressDialog.show(getActivity(), "正在处理...");
 
                         String url = HiUtils.ClearSMS.replace("{uid}", mUid);
-                        StringRequest sReq = new HiStringRequest(url,
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
-                                        progress.dismiss("操作完成");
-                                        FragmentManager fm = getActivity().getFragmentManager();
-                                        ((MainFrameActivity) getActivity()).popFragment(false);
-                                        Fragment fragment = fm.findFragmentByTag(SimpleListFragment.class.getName());
-                                        if (fragment != null && fragment instanceof SimpleListFragment) {
-                                            ((SimpleListFragment) fragment).onRefresh();
-                                        }
-                                    }
-                                }, new Response.ErrorListener() {
+
+                        OkHttpHelper.getInstance().asyncGet(url, new OkHttpHelper.ResultCallback() {
                             @Override
-                            public void onErrorResponse(VolleyError error) {
-                                progress.dismissError("操作时发生错误 : " + VolleyHelper.getErrorReason(error));
+                            public void onError(Request request, Exception e) {
+                                progress.dismissError("操作时发生错误 : " + OkHttpHelper.getErrorMessage(e));
+                                FragmentManager fm = getActivity().getFragmentManager();
+                                ((MainFrameActivity) getActivity()).popFragment(false);
+                                Fragment fragment = fm.findFragmentByTag(SimpleListFragment.class.getName());
+                                if (fragment != null && fragment instanceof SimpleListFragment) {
+                                    ((SimpleListFragment) fragment).onRefresh();
+                                }
+                            }
+
+                            @Override
+                            public void onResponse(String response) {
+                                progress.dismiss("操作完成");
                                 FragmentManager fm = getActivity().getFragmentManager();
                                 ((MainFrameActivity) getActivity()).popFragment(false);
                                 Fragment fragment = fm.findFragmentByTag(SimpleListFragment.class.getName());
@@ -213,7 +210,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                                 }
                             }
                         });
-                        VolleyHelper.getInstance().add(sReq);
+
                     }
                 });
         popDialog.setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_warning).sizeDp(24).color(Color.RED));

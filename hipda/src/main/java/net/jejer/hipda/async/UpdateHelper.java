@@ -4,20 +4,20 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.squareup.okhttp.Request;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
-import net.jejer.hipda.volley.HiStringRequest;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import java.io.File;
 import java.util.Date;
@@ -62,7 +62,6 @@ public class UpdateHelper {
         if (mSilent) {
             doCheck();
         } else {
-            pd = HiProgressDialog.show(mCtx, "正在检查新版本，请稍候...");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -73,84 +72,92 @@ public class UpdateHelper {
     }
 
     private void doCheck() {
-        HiStringRequest sReq = new HiStringRequest(checkUrl, new SuccessListener(), new ErrorListener());
-        sReq.setForceResponseEncoding("UTF-8");
-        VolleyHelper.getInstance().add(sReq);
+        if (!mSilent) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    pd = HiProgressDialog.show(mCtx, "正在检查新版本，请稍候...");
+                }
+            });
+        }
+        OkHttpHelper.getInstance().asyncGet(checkUrl, new UpdateCheckCallback());
     }
 
-    private class SuccessListener implements Response.Listener<String> {
+    private class UpdateCheckCallback implements OkHttpHelper.ResultCallback {
+
         @Override
-        public void onResponse(String response) {
-            response = Utils.nullToText(response).replace("\r\n", "\n").trim();
-
-            String version = HiSettingsHelper.getInstance().getAppVersion();
-
-            String newVersion = "";
-            String updateNotes = "";
-
-            int firstLineIndex = response.indexOf("\n");
-            if (response.startsWith("v") && firstLineIndex > 0) {
-                newVersion = response.substring(1, firstLineIndex).trim();
-                updateNotes = response.substring(firstLineIndex + 1).trim();
+        public void onError(Request request, Exception e) {
+            Logger.e(e);
+            if (!mSilent) {
+                pd.dismissError("检查新版本时发生错误 (" + checkSite + ") : " + OkHttpHelper.getErrorMessage(e));
             }
+        }
 
-            boolean found = !TextUtils.isEmpty(newVersion)
-                    && !TextUtils.isEmpty(updateNotes)
-                    && newer(version, newVersion);
-
-            if (found) {
-                if (!mSilent) {
-                    pd.dismiss();
-                }
-
-                if (!isFromGooglePlay(mCtx)) {
-                    final String url = downloadUrl.replace("{version}", newVersion);
-                    final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
-
-                    Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
-                            .setMessage(updateNotes).
-                                    setPositiveButton("下载",
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    try {
-                                                        HttpUtils.download(mCtx, url, filename);
-                                                    } catch (SecurityException e) {
-                                                        Logger.e(e);
-                                                        Toast.makeText(mCtx, "抱歉，下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            }).setNeutralButton("不再提醒", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    HiSettingsHelper.getInstance().setAutoUpdateCheck(false);
-                                }
-                            }).create();
-
-                    dialog.show();
-                } else {
-                    Toast.makeText(mCtx, "发现新版本 : " + newVersion + "，请在应用商店中更新", Toast.LENGTH_SHORT).show();
-                }
-
-            } else {
-                if (!mSilent) {
-                    pd.dismiss("没有发现新版本");
-                }
-            }
-
+        @Override
+        public void onResponse(final String response) {
+            processUpdate(response);
         }
     }
 
-    private class ErrorListener implements Response.ErrorListener {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            Logger.e(error);
+    private void processUpdate(String response) {
+        response = Utils.nullToText(response).replace("\r\n", "\n").trim();
+
+        String version = HiSettingsHelper.getInstance().getAppVersion();
+
+        String newVersion = "";
+        String updateNotes = "";
+
+        int firstLineIndex = response.indexOf("\n");
+        if (response.startsWith("v") && firstLineIndex > 0) {
+            newVersion = response.substring(1, firstLineIndex).trim();
+            updateNotes = response.substring(firstLineIndex + 1).trim();
+        }
+
+        boolean found = !TextUtils.isEmpty(newVersion)
+                && !TextUtils.isEmpty(updateNotes)
+                && newer(version, newVersion);
+
+        if (found) {
             if (!mSilent) {
-                pd.dismissError("检查新版本时发生错误 (" + checkSite + ") : " + VolleyHelper.getErrorReason(error));
+                pd.dismiss();
+            }
+
+            if (!isFromGooglePlay(mCtx)) {
+                final String url = downloadUrl.replace("{version}", newVersion);
+                final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
+
+                Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
+                        .setMessage(updateNotes).
+                                setPositiveButton("下载",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                try {
+                                                    HttpUtils.download(mCtx, url, filename);
+                                                } catch (SecurityException e) {
+                                                    Logger.e(e);
+                                                    Toast.makeText(mCtx, "抱歉，下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }).setNeutralButton("不再提醒", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                HiSettingsHelper.getInstance().setAutoUpdateCheck(false);
+                            }
+                        }).create();
+
+                dialog.show();
+            } else {
+                Toast.makeText(mCtx, "发现新版本 : " + newVersion + "，请在应用商店中更新", Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            if (!mSilent) {
+                pd.dismiss("没有发现新版本");
             }
         }
     }

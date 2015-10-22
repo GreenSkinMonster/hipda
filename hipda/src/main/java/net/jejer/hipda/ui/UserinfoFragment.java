@@ -21,11 +21,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.squareup.okhttp.Request;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
@@ -35,12 +33,11 @@ import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.bean.UserInfoBean;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
-import net.jejer.hipda.volley.HiStringRequest;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,16 +154,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        StringRequest sReq = new HiStringRequest(HiUtils.UserInfoUrl + mUid,
-                new OnDetailLoadComplete(),
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Logger.e(error);
-                        mDetailView.setText("获取信息失败, 请重试." + VolleyHelper.getErrorReason(error));
-                    }
-                });
-        VolleyHelper.getInstance().add(sReq);
+        OkHttpHelper.getInstance().asyncGet(HiUtils.UserInfoUrl + mUid, new UserInfoCallback());
 
         mThreadListView.setAdapter(mSimpleListAdapter);
         mThreadListView.setOnItemClickListener(new OnItemClickCallback());
@@ -216,7 +204,13 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         }
     }
 
-    class OnDetailLoadComplete implements Response.Listener<String> {
+    class UserInfoCallback implements OkHttpHelper.ResultCallback {
+        @Override
+        public void onError(Request request, Exception e) {
+            Logger.e(e);
+            mDetailView.setText("获取信息失败 : " + OkHttpHelper.getErrorMessage(e));
+        }
+
         @Override
         public void onResponse(String response) {
             UserInfoBean info = HiParser.parseUserInfo(response);

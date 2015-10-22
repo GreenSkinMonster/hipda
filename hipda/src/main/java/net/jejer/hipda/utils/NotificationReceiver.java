@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.volley.VolleyHelper;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 
 /**
  * fetch user's message or thread notifications
@@ -23,8 +23,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         if (!HiSettingsHelper.getInstance().ready())
             HiSettingsHelper.getInstance().init(context);
-        if (!VolleyHelper.getInstance().ready())
-            VolleyHelper.getInstance().init(context);
+        if (!OkHttpHelper.getInstance().ready())
+            OkHttpHelper.getInstance().init(context);
 
         if (HiSettingsHelper.getInstance().isInSilentMode()) {
             Logger.i("Notification is in silent mode, do nothing.");
@@ -32,7 +32,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
 
         String uid = HiSettingsHelper.getInstance().getUid();
-        if (HiUtils.isValidId(uid) && VolleyHelper.getInstance().isLoggedIn()) {
+        if (HiUtils.isValidId(uid) && OkHttpHelper.getInstance().isLoggedIn()) {
             Logger.i("Notification start checking....");
             new Thread(new Runnable() {
                 @Override

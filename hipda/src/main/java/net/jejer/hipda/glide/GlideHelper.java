@@ -30,12 +30,12 @@ import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 
 import net.jejer.hipda.cache.LRUCache;
+import net.jejer.hipda.okhttp.LoggingInterceptor;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
-import net.jejer.hipda.volley.LoggingInterceptor;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,9 +68,9 @@ public class GlideHelper {
             Glide.setup(gb);
 
             OkHttpClient client = new OkHttpClient();
-            client.setConnectTimeout(VolleyHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-            client.setReadTimeout(VolleyHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-            client.setWriteTimeout(VolleyHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+            client.setConnectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+            client.setReadTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+            client.setWriteTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
 
             if (Logger.isDebug())
                 client.interceptors().add(new LoggingInterceptor());
@@ -163,7 +163,7 @@ public class GlideHelper {
         if (Utils.nullToText(url).startsWith(HiUtils.BaseUrl)) {
             glideUrl = new GlideUrl(url, new LazyHeaders.Builder()
                     .setHeader("User-Agent", HiUtils.UserAgent)
-                    .addHeader("Cookie", "cdb_auth=" + VolleyHelper.getInstance().getAuthCookie())
+                    .addHeader("Cookie", "cdb_auth=" + OkHttpHelper.getInstance().getAuthCookie())
                     .build());
         } else {
             glideUrl = new GlideUrl(url);

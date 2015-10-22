@@ -8,12 +8,11 @@ import android.text.TextUtils;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
-import net.jejer.hipda.volley.SimpleErrorListener;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,7 +37,6 @@ public class LoginHelper {
     }
 
     public int login() {
-
         if (mHandler != null) {
             Message msg = Message.obtain();
             msg.what = ThreadListFragment.STAGE_RELOGIN;
@@ -76,28 +74,31 @@ public class LoginHelper {
     }
 
     private String getFormhash() {
+        String rstStr = null;
+        try {
+            rstStr = OkHttpHelper.getInstance().get(HiUtils.LoginGetFormHash);
 
-        SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
-        String rstStr = VolleyHelper.getInstance().synchronousGet(HiUtils.LoginStep2, errorListener);
+            if (!TextUtils.isEmpty(rstStr)) {
+                Document doc = Jsoup.parse(rstStr);
 
-        if (!TextUtils.isEmpty(rstStr)) {
-            Document doc = Jsoup.parse(rstStr);
+                Elements elements = doc.select("input[name=formhash]");
+                Element element = elements.first();
 
-            Elements elements = doc.select("input[name=formhash]");
-            Element element = elements.first();
-
-            if (element == null) {
-                Elements alartES = doc.select("div.alert_info");
-                if (alartES.size() > 0) {
-                    mErrorMsg = alartES.first().text();
-                } else {
-                    mErrorMsg = "Can NOT get formhash";
+                if (element == null) {
+                    Elements alartES = doc.select("div.alert_info");
+                    if (alartES.size() > 0) {
+                        mErrorMsg = alartES.first().text();
+                    } else {
+                        mErrorMsg = "Can NOT get formhash";
+                    }
+                    return "";
                 }
-                return "";
+                return element.attr("value");
             }
-            return element.attr("value");
+        } catch (Exception e) {
+            mErrorMsg = OkHttpHelper.getErrorMessage(e);
         }
-        return errorListener.getErrorText();
+        return rstStr;
     }
 
     private int doLogin(String formhash) {
@@ -112,13 +113,10 @@ public class LoginHelper {
         post_param.put("cookietime", "2592000");
 
         String rspStr;
-
-        SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
-        rspStr = VolleyHelper.getInstance().synchronousPost(HiUtils.LoginStep3, post_param,
-                errorListener);
-
-        if (rspStr != null) {
+        try {
+            rspStr = OkHttpHelper.getInstance().post(HiUtils.LoginSubmit, post_param);
             Logger.v(rspStr);
+
             // response is in XML format
             if (rspStr.contains(mCtx.getString(R.string.login_success))) {
                 Logger.v("Login success!");
@@ -137,8 +135,8 @@ public class LoginHelper {
                 mErrorMsg = "登录失败,未知错误";
                 return Constants.STATUS_FAIL_ABORT;
             }
-        } else {
-            mErrorMsg = "登录失败," + errorListener.getErrorText();
+        } catch (Exception e) {
+            mErrorMsg = "登录失败 : " + OkHttpHelper.getErrorMessage(e);
             return Constants.STATUS_FAIL;
         }
     }
@@ -150,13 +148,12 @@ public class LoginHelper {
         return loggedIn;
     }
 
-
     public static boolean isLoggedIn() {
-        return VolleyHelper.getInstance().isLoggedIn();
+        return OkHttpHelper.getInstance().isLoggedIn();
     }
 
     public static void logout() {
-        VolleyHelper.getInstance().clearCookies();
+        OkHttpHelper.getInstance().clearCookies();
         FavoriteHelper.getInstance().clearAll();
     }
 

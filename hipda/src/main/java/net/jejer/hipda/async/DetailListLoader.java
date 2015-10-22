@@ -7,19 +7,16 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.squareup.okhttp.Request;
 
 import net.jejer.hipda.bean.DetailListBean;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadDetail;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
-import net.jejer.hipda.volley.HiStringRequest;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -97,7 +94,6 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         mHandler.sendMessage(msg);
 
         if (!TextUtils.isEmpty(mGotoPostId)) {
-            //volley will fetch content automaticly if response is a 302 redirect
             if (TextUtils.isEmpty(mTid))
                 mUrl = HiUtils.GotoPostUrl.replace("{pid}", mGotoPostId);
             else
@@ -107,29 +103,20 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         } else {
             mUrl = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
         }
-        StringRequest sReq = new HiStringRequest(mUrl, new DetailListListener(), new ThreadDetailErrorListener());
-        VolleyHelper.getInstance().add(sReq);
+
+        OkHttpHelper.getInstance().asyncGet(mUrl, new DetailListCallback(), TextUtils.isEmpty(mTid) ? null : "tid=" + mTid);
     }
 
-    private class DetailListListener implements Response.Listener<String> {
-        @Override
-        public void onResponse(String response) {
-            mRsp = response;
-            synchronized (mLocker) {
-                mLocker.notify();
-            }
-        }
-    }
+    private class DetailListCallback implements OkHttpHelper.ResultCallback {
 
-    private class ThreadDetailErrorListener implements Response.ErrorListener {
         @Override
-        public void onErrorResponse(VolleyError error) {
-            Logger.e(error);
+        public void onError(Request request, Exception e) {
+            Logger.e(e);
 
             Message msg = Message.obtain();
             msg.what = ThreadListFragment.STAGE_ERROR;
             Bundle b = new Bundle();
-            String text = "无法访问HiPDA, " + VolleyHelper.getErrorReason(error);
+            String text = "无法访问HiPDA : " + OkHttpHelper.getErrorMessage(e);
             b.putString(ThreadListFragment.STAGE_ERROR_KEY, text);
             msg.setData(b);
             mHandler.sendMessage(msg);
@@ -139,5 +126,14 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
                 mLocker.notify();
             }
         }
+
+        @Override
+        public void onResponse(String response) {
+            mRsp = response;
+            synchronized (mLocker) {
+                mLocker.notify();
+            }
+        }
     }
+
 }

@@ -7,7 +7,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import net.jejer.hipda.volley.VolleyHelper;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 
 public class HttpUtils {
 
@@ -39,7 +39,7 @@ public class HttpUtils {
     }
 
     public static void download(Context ctx, String url, String filename) throws SecurityException {
-        String authCookie = VolleyHelper.getInstance().getAuthCookie();
+        String authCookie = OkHttpHelper.getInstance().getAuthCookie();
 
         if (TextUtils.isEmpty(url) || TextUtils.isEmpty(filename)
                 || (url.startsWith(HiUtils.BaseUrl) && TextUtils.isEmpty(authCookie))) {

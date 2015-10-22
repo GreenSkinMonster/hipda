@@ -11,8 +11,8 @@ import android.widget.Toast;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.NotificationMgr;
-import net.jejer.hipda.volley.VolleyHelper;
 
 /**
  * nested setting fragment
@@ -110,7 +110,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 UpdateHelper.clearCache(getActivity());
-                                                VolleyHelper.getInstance().clearCookies();
+                                                OkHttpHelper.getInstance().clearCookies();
                                                 SettingMainFragment.mCacheCleared = true;
                                                 Toast.makeText(getActivity(), "缓存已经清除", Toast.LENGTH_SHORT).show();
                                             }

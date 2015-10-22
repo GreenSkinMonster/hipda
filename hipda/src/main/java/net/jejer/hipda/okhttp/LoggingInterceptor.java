@@ -1,4 +1,4 @@
-package net.jejer.hipda.volley;
+package net.jejer.hipda.okhttp;
 
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.Request;

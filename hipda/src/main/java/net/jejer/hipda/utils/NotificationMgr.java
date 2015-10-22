@@ -20,9 +20,9 @@ import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -91,16 +91,20 @@ public class NotificationMgr {
         //check new sms
         if (doc == null || HiSettingsHelper.getInstance().isCheckSms()) {
             HiSettingsHelper.getInstance().setLastCheckSmsTime(System.currentTimeMillis());
-            String response = VolleyHelper.getInstance().synchronousGet(HiUtils.NewSMS, null);
-            if (!TextUtils.isEmpty(response)) {
-                doc = Jsoup.parse(response);
-                SimpleListBean listBean = HiParser.parseSMS(doc);
-                if (listBean != null) {
-                    smsCount = listBean.getCount();
-                    if (smsCount == 1) {
-                        smsBean = listBean.getAll().get(0);
+            try {
+                String response = OkHttpHelper.getInstance().get(HiUtils.NewSMS);
+                if (!TextUtils.isEmpty(response)) {
+                    doc = Jsoup.parse(response);
+                    SimpleListBean listBean = HiParser.parseSMS(doc);
+                    if (listBean != null) {
+                        smsCount = listBean.getCount();
+                        if (smsCount == 1) {
+                            smsBean = listBean.getAll().get(0);
+                        }
                     }
                 }
+            } catch (Exception e) {
+                Logger.e(e);
             }
         }
         //check new thread notify

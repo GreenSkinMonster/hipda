@@ -5,18 +5,15 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.squareup.okhttp.Request;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.SimpleListBean;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
-import net.jejer.hipda.volley.HiStringRequest;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -154,29 +151,27 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
                 break;
         }
 
-        StringRequest sReq = new HiStringRequest(url, new ThreadListListener(), new ThreadListErrorListener());
-        VolleyHelper.getInstance().add(sReq);
+        OkHttpHelper.getInstance().asyncGet(url, new SimpleListCallback());
     }
 
-    private class ThreadListListener implements Response.Listener<String> {
+    private class SimpleListCallback implements OkHttpHelper.ResultCallback {
+
+        @Override
+        public void onError(Request request, Exception e) {
+            Logger.e(e);
+            Toast.makeText(mCtx,
+                    e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+            synchronized (mLocker) {
+                mRsp = null;
+                mLocker.notify();
+            }
+        }
+
         @Override
         public void onResponse(String response) {
             mRsp = response;
             synchronized (mLocker) {
-                mLocker.notify();
-            }
-        }
-    }
-
-    private class ThreadListErrorListener implements Response.ErrorListener {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            Logger.e(error);
-            Toast.makeText(mCtx,
-                    VolleyHelper.getErrorReason(error),
-                    Toast.LENGTH_LONG).show();
-            synchronized (mLocker) {
-                mRsp = null;
                 mLocker.notify();
             }
         }

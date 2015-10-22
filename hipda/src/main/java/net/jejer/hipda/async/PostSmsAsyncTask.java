@@ -6,10 +6,10 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.volley.SimpleErrorListener;
-import net.jejer.hipda.volley.VolleyHelper;
+import net.jejer.hipda.utils.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -45,24 +45,24 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
         String content = arg0[0];
 
         // fetch a new page and parse formhash
-        String rsp_str;
+        String rsp_str = "";
         Boolean done = false;
         int retry = 0;
         do {
-            SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
-            rsp_str = VolleyHelper.getInstance().synchronousGet(HiUtils.SMSPreparePostUrl + mUid,
-                    errorListener);
-            if (!TextUtils.isEmpty(rsp_str)) {
-                if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
-                    int status = new LoginHelper(mCtx, null).login();
-                    if (status > Constants.STATUS_FAIL) {
-                        break;
+            try {
+                rsp_str = OkHttpHelper.getInstance().get((HiUtils.SMSPreparePostUrl + mUid));
+                if (!TextUtils.isEmpty(rsp_str)) {
+                    if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
+                        int status = new LoginHelper(mCtx, null).login();
+                        if (status > Constants.STATUS_FAIL) {
+                            break;
+                        }
+                    } else {
+                        done = true;
                     }
-                } else {
-                    done = true;
                 }
-            } else {
-                mResult = errorListener.getErrorText();
+            } catch (Exception e) {
+                mResult = OkHttpHelper.getErrorMessage(e);
             }
             retry++;
         } while (!done && retry < 3);
@@ -99,27 +99,32 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
         if (TextUtils.isEmpty(mUid))
             post_param.put("msgto", mUsername);
 
-        SimpleErrorListener errorListener = VolleyHelper.getInstance().getErrorListener();
-        String response = VolleyHelper.getInstance().synchronousPost(url, post_param, errorListener);
+        String response = null;
+        try {
+            response = OkHttpHelper.getInstance().post(url, post_param);
 
-        //response is in xml format
-        if (TextUtils.isEmpty(response)) {
-            mResult = "短消息发送失败 :  " + errorListener.getErrorText();
-        } else if (!response.contains("class=\"summary\"")) {
-            String result = "";
-            Document doc = Jsoup.parse(response, "", Parser.xmlParser());
-            for (Element e : doc.select("root")) {
-                result = e.text();
-                if (result.contains("<"))
-                    result = result.substring(0, result.indexOf("<"));
+            //response is in xml format
+            if (TextUtils.isEmpty(response)) {
+                mResult = "短消息发送失败 :  无返回结果";
+            } else if (!response.contains("class=\"summary\"")) {
+                String result = "";
+                Document doc = Jsoup.parse(response, "", Parser.xmlParser());
+                for (Element e : doc.select("root")) {
+                    result = e.text();
+                    if (result.contains("<"))
+                        result = result.substring(0, result.indexOf("<"));
+                }
+                if (!TextUtils.isEmpty(result))
+                    mResult = result;
+                else
+                    mResult = "短消息发送失败.";
+            } else {
+                mResult = "短消息发送成功.";
+                mStatus = Constants.STATUS_SUCCESS;
             }
-            if (!TextUtils.isEmpty(result))
-                mResult = result;
-            else
-                mResult = "短消息发送失败.";
-        } else {
-            mResult = "短消息发送成功.";
-            mStatus = Constants.STATUS_SUCCESS;
+        } catch (Exception e) {
+            Logger.e(e);
+            mResult = "短消息发送失败 :  " + OkHttpHelper.getErrorMessage(e);
         }
         return response;
     }

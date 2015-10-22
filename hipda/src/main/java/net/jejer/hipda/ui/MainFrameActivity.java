@@ -49,6 +49,7 @@ import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageManager;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.ColorUtils;
@@ -56,7 +57,6 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
-import net.jejer.hipda.volley.VolleyHelper;
 
 import java.util.ArrayList;
 
@@ -82,15 +82,10 @@ public class MainFrameActivity extends AppCompatActivity {
         GlideImageManager.init(this);
 
         ACRAUtils.init(this);
-        GlideHelper.init(this);
 
-        // Init Volley
-        VolleyHelper.getInstance().init(this);
+        OkHttpHelper.getInstance().init(this);
         FavoriteHelper.getInstance().init(this);
-
-        super.onCreate(savedInstanceState);
-
-        EventBus.getDefault().register(this);
+        GlideHelper.init(this);
 
         if (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT == HiSettingsHelper.getInstance().getScreenOrietation()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -100,11 +95,14 @@ public class MainFrameActivity extends AppCompatActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
         }
 
+        EventBus.getDefault().register(this);
+
         setTheme(HiUtils.getThemeValue(HiSettingsHelper.getInstance().getTheme()));
         if (Build.VERSION.SDK_INT >= 21 && HiSettingsHelper.getInstance().isNavBarColored()) {
             getWindow().setNavigationBarColor(ColorUtils.getColorPrimary(this));
         }
 
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_frame);
 
         setupDrawer();
@@ -190,8 +188,8 @@ public class MainFrameActivity extends AppCompatActivity {
         });
 
         // Create the AccountHeader
-        String username = VolleyHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
-        String avatarUrl = VolleyHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
+        String username = OkHttpHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
+        String avatarUrl = OkHttpHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
@@ -278,8 +276,8 @@ public class MainFrameActivity extends AppCompatActivity {
 
     public void updateAccountHeader() {
         if (accountHeader != null) {
-            String username = VolleyHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
-            String avatarUrl = VolleyHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
+            String username = OkHttpHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
+            String avatarUrl = OkHttpHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
             accountHeader.removeProfile(0);
             accountHeader.addProfile(new ProfileDrawerItem()
                     .withEmail(username)
@@ -299,6 +297,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
