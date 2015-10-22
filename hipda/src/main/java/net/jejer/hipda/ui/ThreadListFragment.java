@@ -50,7 +50,6 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
-import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +77,7 @@ public class ThreadListFragment extends BaseFragment
     private ThreadListAdapter mThreadListAdapter;
     private List<ThreadBean> mThreadBeans = new ArrayList<>();
     private ListView mThreadListView;
-    private View mFooterView;
+    private ProgressBar mFooterProgressBar;
     private TextView mTipBar;
     private boolean mInloading = false;
     private Handler mMsgHandler;
@@ -121,11 +120,11 @@ public class ThreadListFragment extends BaseFragment
         View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
         mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
 
-        mFooterView = inflater.inflate(R.layout.vw_thread_list_footer, mThreadListView, false);
-        mThreadListView.addFooterView(mFooterView);
-        ProgressBar progressBar = (ProgressBar) mFooterView.findViewById(R.id.footer_progressbar);
-        progressBar.getIndeterminateDrawable()
+        View mFooterView = inflater.inflate(R.layout.vw_thread_list_footer, mThreadListView, false);
+        mFooterProgressBar = (ProgressBar) mFooterView.findViewById(R.id.footer_progressbar);
+        mFooterProgressBar.getIndeterminateDrawable()
                 .setColorFilter(Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
+        mThreadListView.addFooterView(mFooterView);
 
         mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
         mTipBar.setVisibility(View.INVISIBLE);
@@ -396,8 +395,7 @@ public class ThreadListFragment extends BaseFragment
                 if (!mInloading) {
                     mInloading = true;
                     mPage++;
-                    mFooterView.getLayoutParams().height = Utils.dpToPx(mCtx, 48);
-                    mFooterView.setVisibility(View.VISIBLE);
+                    showListViewFooter();
                     getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
                 }
             }
@@ -455,8 +453,7 @@ public class ThreadListFragment extends BaseFragment
             mInloading = false;
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
-            mFooterView.setVisibility(View.GONE);
-            mFooterView.getLayoutParams().height = 1;
+            hideListViewFooter();
 
             if (threads == null) {
                 if (mPage > 1) {
@@ -537,10 +534,17 @@ public class ThreadListFragment extends BaseFragment
             mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
-            mFooterView.setVisibility(View.GONE);
-            mFooterView.getLayoutParams().height = 1;
+            hideListViewFooter();
         }
 
+    }
+
+    private void hideListViewFooter() {
+        mFooterProgressBar.setVisibility(View.GONE);
+    }
+
+    private void showListViewFooter() {
+        mFooterProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void showThreadListSettingsDialog() {
