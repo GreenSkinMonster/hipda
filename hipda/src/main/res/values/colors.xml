@@ -49,4 +49,6 @@
     <color name="blue_normal">#5677fc</color>
     <color name="blue_pressed">#738ffe</color>
 
+    <color name="nearly_black">#1E1E1E</color>
+
 </resources>
