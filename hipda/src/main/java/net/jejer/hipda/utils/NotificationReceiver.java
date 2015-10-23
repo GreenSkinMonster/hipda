@@ -21,11 +21,6 @@ public class NotificationReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (!HiSettingsHelper.getInstance().ready())
-            HiSettingsHelper.getInstance().init(context);
-        if (!OkHttpHelper.getInstance().ready())
-            OkHttpHelper.getInstance().init(context);
-
         if (HiSettingsHelper.getInstance().isInSilentMode()) {
             Logger.i("Notification is in silent mode, do nothing.");
             return;

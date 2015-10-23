@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.squareup.okhttp.Request;
 
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
@@ -41,16 +42,13 @@ public class FavoriteHelper {
     private Set<String> mAttentionCache;
 
     private FavoriteHelper() {
+        mCachePref = HiApplication.getAppContext().getSharedPreferences(FAV_CACHE_PREFS, 0);
+        mFavoritesCache = mCachePref.getStringSet(FAVORITES_CACHE_KEY, new HashSet<String>());
+        mAttentionCache = mCachePref.getStringSet(ATTENTION_CACHE_KEY, new HashSet<String>());
     }
 
     private static class SingletonHolder {
         public static final FavoriteHelper INSTANCE = new FavoriteHelper();
-    }
-
-    public void init(Context context) {
-        mCachePref = context.getSharedPreferences(FAV_CACHE_PREFS, 0);
-        mFavoritesCache = mCachePref.getStringSet(FAVORITES_CACHE_KEY, new HashSet<String>());
-        mAttentionCache = mCachePref.getStringSet(ATTENTION_CACHE_KEY, new HashSet<String>());
     }
 
     public static FavoriteHelper getInstance() {

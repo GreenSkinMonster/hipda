@@ -49,7 +49,7 @@ public class HttpUtils {
 
         DownloadManager dm = (DownloadManager) ctx.getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
-        req.addRequestHeader("User-agent", HiUtils.UserAgent);
+        req.addRequestHeader("User-agent", HiUtils.getUserAgent());
         if (url.startsWith(HiUtils.BaseUrl)) {
             req.addRequestHeader("Cookie", "cdb_auth=" + authCookie);
         }

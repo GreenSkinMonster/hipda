@@ -47,11 +47,8 @@ import net.jejer.hipda.async.LoginEvent;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.glide.GlideImageManager;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
-import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
@@ -76,16 +73,6 @@ public class MainFrameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.v("onCreate");
-
-        HiSettingsHelper.getInstance().init(this);
-        UpdateHelper.updateApp(this);
-        GlideImageManager.init(this);
-
-        ACRAUtils.init(this);
-
-        OkHttpHelper.getInstance().init(this);
-        FavoriteHelper.getInstance().init(this);
-        GlideHelper.init(this);
 
         if (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT == HiSettingsHelper.getInstance().getScreenOrietation()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

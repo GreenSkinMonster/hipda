@@ -17,9 +17,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         HiSettingsHelper.updateMobileNetworkStatus(context);
 
         if (Connectivity.isConnected(context)) {
-            if (!HiSettingsHelper.getInstance().ready())
-                HiSettingsHelper.getInstance().init(context);
-
             if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
                 if (!NotificationMgr.isAlarmRuning(context))
                     NotificationMgr.startAlarm(context);

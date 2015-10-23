@@ -1,11 +1,13 @@
 package net.jejer.hipda.ui;
 
 import android.app.Application;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.content.Context;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.Constants;
 
 import org.acra.ACRA;
@@ -34,19 +36,30 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
         resToastText = R.string.crash_toast_text)
 public class HiApplication extends Application {
 
+    private static Context context;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        ACRA.init(this);
+        HiApplication.context = getApplicationContext();
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (Constants.FONT_ROBOTO_SLAB.equals(prefs.getString(HiSettingsHelper.PERF_FONT, ""))) {
+        ACRA.init(this);
+        ACRAUtils.init(context);
+
+        UpdateHelper.updateApp(context);
+        GlideHelper.init(context);
+
+        if (Constants.FONT_ROBOTO_SLAB.equals(HiSettingsHelper.getInstance().getFont())) {
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                             .setDefaultFontPath("fonts/RobotoSlab-Regular.ttf")
                             .setFontAttrId(R.attr.fontPath)
                             .build()
             );
         }
+    }
+
+    public static Context getAppContext() {
+        return HiApplication.context;
     }
 
     private static boolean activityVisible;
@@ -63,5 +76,13 @@ public class HiApplication extends Application {
         activityVisible = false;
     }
 
+    public static String getAppVersion() {
+        String version = "0.0.00";
+        try {
+            version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+        } catch (Exception ignored) {
+        }
+        return version;
+    }
 
 }

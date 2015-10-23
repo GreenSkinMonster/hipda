@@ -99,7 +99,6 @@ public class GlideHelper {
             });
 
             Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
-
         }
     }
 
@@ -162,7 +161,7 @@ public class GlideHelper {
         GlideUrl glideUrl;
         if (Utils.nullToText(url).startsWith(HiUtils.BaseUrl)) {
             glideUrl = new GlideUrl(url, new LazyHeaders.Builder()
-                    .setHeader("User-Agent", HiUtils.UserAgent)
+                    .setHeader("User-Agent", HiUtils.getUserAgent())
                     .addHeader("Cookie", "cdb_auth=" + OkHttpHelper.getInstance().getAuthCookie())
                     .build());
         } else {

@@ -7,9 +7,10 @@ import com.mikepenz.iconics.typeface.IIcon;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.ui.HiApplication;
 
 public class HiUtils {
-    public static final String UserAgent = "net.jejer.hipda " + HiSettingsHelper.getInstance().getAppVersion();
+    public static final String UserAgentPrefix = "net.jejer.hipda " + HiApplication.getAppVersion();
     public static final String BaseUrl = "http://www.hi-pda.com/forum/";
     public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
     public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
@@ -42,6 +43,8 @@ public class HiUtils {
 
     public static final String LoginSubmit = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
     public static final String LoginGetFormHash = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
+
+    private static String userAgent;
 
     public final static String SMILE_PATH = "images/smilies/";
 
@@ -150,6 +153,12 @@ public class HiUtils {
 
     public static boolean isValidId(String id) {
         return !TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id) && Integer.parseInt(id) > 0;
+    }
+
+    public static String getUserAgent() {
+        if (userAgent == null)
+            userAgent = UserAgentPrefix + " " + HiApplication.getAppVersion();
+        return userAgent;
     }
 
 }

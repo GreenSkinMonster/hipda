@@ -1,6 +1,5 @@
 package net.jejer.hipda.okhttp;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -15,6 +14,8 @@ import com.squareup.okhttp.Response;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cookie.PersistentCookieStore;
+import net.jejer.hipda.ui.HiApplication;
+import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
@@ -43,6 +44,19 @@ public class OkHttpHelper {
     private Handler handler;
 
     private OkHttpHelper() {
+        client = new OkHttpClient();
+        client.setConnectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+        client.setReadTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+        client.setWriteTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+
+        cookieStore = new PersistentCookieStore(HiApplication.getAppContext());
+        CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+        client.setCookieHandler(cookieManager);
+
+        if (Logger.isDebug())
+            client.interceptors().add(new LoggingInterceptor());
+
+        handler = new Handler(Looper.getMainLooper());
     }
 
     private static class SingletonHolder {
@@ -53,30 +67,10 @@ public class OkHttpHelper {
         return SingletonHolder.INSTANCE;
     }
 
-    public void init(Context ctx) {
-        client = new OkHttpClient();
-        client.setConnectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-        client.setReadTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-        client.setWriteTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-
-        cookieStore = new PersistentCookieStore(ctx);
-        CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-        client.setCookieHandler(cookieManager);
-
-        if (Logger.isDebug())
-            client.interceptors().add(new LoggingInterceptor());
-
-        handler = new Handler(Looper.getMainLooper());
-    }
-
-    public boolean ready() {
-        return client != null && cookieStore != null;
-    }
-
     private Request buildGetRequest(String url, Object tag) {
         Request.Builder builder = new Request.Builder()
                 .url(url)
-                .header("User-Agent", HiUtils.UserAgent);
+                .header("User-Agent", HiUtils.getUserAgent());
 
         if (tag != null)
             builder.tag(tag);
@@ -98,7 +92,7 @@ public class OkHttpHelper {
         RequestBody requestBody = builder.build();
         Request.Builder reqBuilder = new Request.Builder();
         reqBuilder.url(url)
-                .header("User-Agent", HiUtils.UserAgent)
+                .header("User-Agent", HiUtils.getUserAgent())
                 .post(requestBody);
 
         if (tag != null)
@@ -204,8 +198,11 @@ public class OkHttpHelper {
 
     public static String getErrorMessage(Exception e) {
         String msg = e.getClass().getSimpleName();
-        if (e instanceof UnknownHostException) {
+        if (HiApplication.getAppContext() != null
+                && !Connectivity.isConnected(HiApplication.getAppContext())) {
             msg = "请检查网络连接";
+        } else if (e instanceof UnknownHostException) {
+            msg = "请检查网络连接.";
         } else if (e instanceof SocketTimeoutException) {
             msg = "请求超时";
         } else if (e instanceof IOException) {

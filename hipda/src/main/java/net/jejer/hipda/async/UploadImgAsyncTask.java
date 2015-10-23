@@ -190,7 +190,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
 
             urlConnection = (HttpURLConnection) url.openConnection();
 
-            urlConnection.setRequestProperty("User-Agent", HiUtils.UserAgent);
+            urlConnection.setRequestProperty("User-Agent", HiUtils.getUserAgent());
 
             urlConnection.setConnectTimeout(UPLOAD_CONNECT_TIMEOUT);
             urlConnection.setReadTimeout(UPLOAD_READ_TIMEOUT);

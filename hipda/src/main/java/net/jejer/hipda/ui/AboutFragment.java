@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.bean.HiSettingsHelper;
 
 /**
  * show version and info
@@ -32,7 +31,7 @@ public class AboutFragment extends BaseFragment {
         ViewGroup aboutLayout = (ViewGroup) view.findViewById(R.id.about_layout);
 
         TextView tvAppVersion = (TextView) view.findViewById(R.id.app_version);
-        tvAppVersion.setText(getResources().getString(R.string.app_name) + " " + HiSettingsHelper.getInstance().getAppVersion());
+        tvAppVersion.setText(getResources().getString(R.string.app_name) + " " + HiApplication.getAppVersion());
 
         String[] credits = getResources().getStringArray(R.array.credits);
 

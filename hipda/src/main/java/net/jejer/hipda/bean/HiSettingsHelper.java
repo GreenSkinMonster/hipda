@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import net.jejer.hipda.async.UpdateHelper;
+import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.NotificationMgr;
@@ -160,8 +161,10 @@ public class HiSettingsHelper {
 
     // --------------- THIS IS NOT IN PERF -----------
 
-
     private HiSettingsHelper() {
+        mCtx = HiApplication.getAppContext();
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(mCtx);
+        reload();
     }
 
     private static class SingletonHolder {
@@ -170,16 +173,6 @@ public class HiSettingsHelper {
 
     public static HiSettingsHelper getInstance() {
         return SingletonHolder.INSTANCE;
-    }
-
-    public void init(Context ctx) {
-        mCtx = ctx;
-        mSharedPref = PreferenceManager.getDefaultSharedPreferences(mCtx);
-        reload();
-    }
-
-    public boolean ready() {
-        return mCtx != null && mSharedPref != null;
     }
 
     public void reload() {
@@ -776,15 +769,6 @@ public class HiSettingsHelper {
 
     public String getInstalledVersion() {
         return mSharedPref.getString(PERF_INSTALLED_VERSION, "");
-    }
-
-    public String getAppVersion() {
-        String version = "0.0.00";
-        try {
-            version = mCtx.getPackageManager().getPackageInfo(mCtx.getPackageName(), 0).versionName;
-        } catch (Exception ignored) {
-        }
-        return version;
     }
 
     public int getPostTextSize() {

@@ -13,6 +13,7 @@ import com.squareup.okhttp.Request;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
@@ -102,7 +103,7 @@ public class UpdateHelper {
     private void processUpdate(String response) {
         response = Utils.nullToText(response).replace("\r\n", "\n").trim();
 
-        String version = HiSettingsHelper.getInstance().getAppVersion();
+        String version = HiApplication.getAppVersion();
 
         String newVersion = "";
         String updateNotes = "";
@@ -175,7 +176,7 @@ public class UpdateHelper {
 
     public static void updateApp(Context context) {
         String installedVersion = HiSettingsHelper.getInstance().getInstalledVersion();
-        String currentVersion = HiSettingsHelper.getInstance().getAppVersion();
+        String currentVersion = HiApplication.getAppVersion();
         if (TextUtils.isEmpty(installedVersion)) {
             // <= v2.0.02
 

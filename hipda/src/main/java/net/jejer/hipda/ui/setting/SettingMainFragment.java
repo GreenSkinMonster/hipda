@@ -16,6 +16,7 @@ import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.AboutFragment;
+import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
@@ -169,7 +170,7 @@ public class SettingMainFragment extends BaseSettingFragment {
 
         Preference dialogPref = findPreference(HiSettingsHelper.PERF_ABOUT);
 
-        dialogPref.setSummary(HiSettingsHelper.getInstance().getAppVersion()
+        dialogPref.setSummary(HiApplication.getAppVersion()
                 + (UpdateHelper.isFromGooglePlay(getActivity()) ? " (Google Play)" : ""));
         dialogPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
