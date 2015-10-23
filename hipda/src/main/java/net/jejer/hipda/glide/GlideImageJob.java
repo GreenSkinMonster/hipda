@@ -9,6 +9,7 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
+import com.path.android.jobqueue.RetryConstraint;
 
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.ui.ThreadDetailFragment;
@@ -29,8 +30,8 @@ public class GlideImageJob extends Job {
     private Context mCtx;
     private String mUrl;
 
-    public GlideImageJob(Context context, String url, int priority) {
-        super(new Params(priority).setPersistent(false).setRequiresNetwork(false));
+    public GlideImageJob(Context context, String url, int priority, String tag) {
+        super(new Params(priority).setPersistent(false).setRequiresNetwork(false).addTags(tag));
         mCtx = context;
         mUrl = url;
     }
@@ -119,8 +120,10 @@ public class GlideImageJob extends Job {
     }
 
     @Override
-    protected boolean shouldReRunOnThrowable(Throwable throwable) {
-        return false;
+    protected RetryConstraint shouldReRunOnThrowable(Throwable throwable,
+                                                     int runCount,
+                                                     int maxRunCount) {
+        return RetryConstraint.CANCEL;
     }
 
     //Math! http://www.mathsisfun.com/data/function-grapher.php

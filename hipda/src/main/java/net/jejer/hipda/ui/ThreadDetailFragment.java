@@ -62,6 +62,7 @@ import net.jejer.hipda.cache.ThreadDetailCache;
 import net.jejer.hipda.glide.GifTransformation;
 import net.jejer.hipda.glide.GlideBitmapTarget;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.glide.GlideImageManager;
 import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.glide.ThreadImageDecoder;
@@ -74,6 +75,7 @@ import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import de.greenrobot.event.EventBus;
 
@@ -120,6 +122,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     private HiProgressDialog postProgressDialog;
     private FloatingActionMenu mFam;
     private ContentLoadingProgressBar mLoadingProgressBar;
+    protected String sessionId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -576,20 +579,24 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     @Override
     public void onResume() {
-        //Logger.v( "onResume");
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        //Logger.v( "onPause");
         super.onPause();
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        sessionId = UUID.randomUUID().toString();
+    }
+
+    @Override
     public void onStop() {
-        //Logger.v( "onStop");
         super.onStop();
+        GlideImageManager.cancelJobs(sessionId);
     }
 
     @Override
@@ -1092,7 +1099,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         }
         if (detailListBean.getContentImages().size() > 0) {
             PopupImageDialog popupImageDialog = new PopupImageDialog();
-            popupImageDialog.init(detailListBean, imageIndex);
+            popupImageDialog.init(detailListBean, imageIndex, sessionId);
             popupImageDialog.show(getFragmentManager(), PopupImageDialog.class.getName());
         } else {
             Toast.makeText(mCtx, "本页没有图片", Toast.LENGTH_SHORT).show();

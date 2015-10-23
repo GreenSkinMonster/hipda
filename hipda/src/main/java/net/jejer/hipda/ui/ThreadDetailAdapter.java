@@ -135,7 +135,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 final String imageUrl = content.getContent();
                 int imageIndex = ((ContentImg) content).getIndexInPage();
 
-                RelativeLayout threadImageLayout = (RelativeLayout) mInflater.inflate(R.layout.item_thread_image, parent, false);
+                final RelativeLayout threadImageLayout = (RelativeLayout) mInflater.inflate(R.layout.item_thread_image, parent, false);
                 final GlideImageView giv = (GlideImageView) threadImageLayout.findViewById(R.id.thread_image);
 
                 giv.setFragment(mDetailFragment);
@@ -170,12 +170,12 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     mDetailFragment.loadImage(imageUrl, giv);
                 } else {
                     if (HiSettingsHelper.getInstance().isLoadImage()) {
-                        GlideImageManager.getJobManager().addJob(new GlideImageJob(mCtx, imageUrl, 1));
+                        GlideImageManager.addJob(new GlideImageJob(mCtx, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
                     } else {
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                GlideImageManager.getJobManager().addJob(new GlideImageJob(mCtx, imageUrl, 1));
+                                GlideImageManager.addJob(new GlideImageJob(mCtx, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
                                 giv.setOnClickListener(null);
                             }
                         });

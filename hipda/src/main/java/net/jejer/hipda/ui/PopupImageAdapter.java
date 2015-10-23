@@ -39,10 +39,12 @@ public class PopupImageAdapter extends PagerAdapter {
     private LayoutInflater mInflater;
 
     private Map<String, View> imageViewMap = new HashMap<>();
+    private String mSessionId;
 
-    public PopupImageAdapter(Context context, List<ContentImg> images) {
+    public PopupImageAdapter(Context context, List<ContentImg> images, String sessionId) {
         mCtx = context;
         mImages = images;
+        mSessionId = sessionId;
     }
 
     @Override
@@ -69,7 +71,7 @@ public class PopupImageAdapter extends PagerAdapter {
         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
 
         if (imageReadyInfo == null || !(new File(imageReadyInfo.getPath())).exists()) {
-            GlideImageManager.getJobManager().addJob(new GlideImageJob(mCtx, imageUrl, 9));
+            GlideImageManager.addJob(new GlideImageJob(mCtx, imageUrl, GlideImageManager.PRIORITY_HIGH, mSessionId));
         } else {
             displayImage(rootView, imageReadyInfo);
         }

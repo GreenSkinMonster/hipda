@@ -3,6 +3,7 @@ package net.jejer.hipda.glide;
 import android.util.Log;
 
 import com.path.android.jobqueue.JobManager;
+import com.path.android.jobqueue.TagConstraint;
 import com.path.android.jobqueue.config.Configuration;
 import com.path.android.jobqueue.log.CustomLogger;
 
@@ -15,12 +16,16 @@ import net.jejer.hipda.utils.Logger;
  */
 public class GlideImageManager {
 
+    public final static int PRIORITY_HIGH = 9;
+    public final static int PRIORITY_MIDIUM = 6;
+    public final static int PRIORITY_LOW = 3;
+
     private static JobManager jobManager;
 
     private GlideImageManager() {
     }
 
-    public static JobManager getJobManager() {
+    private static JobManager getJobManager() {
         if (jobManager == null) {
             synchronized (GlideImageManager.class) {
                 if (jobManager == null) {
@@ -49,15 +54,23 @@ public class GlideImageManager {
                                 }
                             })
                             .minConsumerCount(1)//always keep at least one consumer alive
-                            .maxConsumerCount(3)//up to 3 consumers at a time
-                            .loadFactor(3)//3 jobs per consumer
-                            .consumerKeepAlive(120)//wait 2 minute
+                            .maxConsumerCount(2)//up to 3 consumers at a time
+                            .loadFactor(2)//3 jobs per consumer
+                            .consumerKeepAlive(90)//wait 2 minute
                             .build();
                     jobManager = new JobManager(HiApplication.getAppContext(), configuration);
                 }
             }
         }
         return jobManager;
+    }
+
+    public static void addJob(GlideImageJob job) {
+        getJobManager().addJob(job);
+    }
+
+    public static void cancelJobs(String tag) {
+        getJobManager().cancelJobsInBackground(null, TagConstraint.ANY, tag);
     }
 
 }

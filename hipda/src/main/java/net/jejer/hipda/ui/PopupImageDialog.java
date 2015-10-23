@@ -53,12 +53,15 @@ public class PopupImageDialog extends DialogFragment {
     private boolean lastClicked = false;
     private boolean firstClicked = false;
 
+    private String mSessionId;
+
     public PopupImageDialog() {
     }
 
-    public void init(DetailListBean detailListBean, int imageIndex) {
+    public void init(DetailListBean detailListBean, int imageIndex, String sessionId) {
         mDetailListBean = detailListBean;
         mImageIndex = imageIndex;
+        mSessionId = sessionId;
     }
 
     @Override
@@ -87,7 +90,7 @@ public class PopupImageDialog extends DialogFragment {
         final TextView tvFloorInfo = (TextView) layout.findViewById(R.id.tv_floor_info);
 
         final List<ContentImg> images = mDetailListBean.getContentImages();
-        mPagerAdapter = new PopupImageAdapter(mCtx, images);
+        mPagerAdapter = new PopupImageAdapter(mCtx, images, mSessionId);
         viewPager.setAdapter(mPagerAdapter);
 
         EventBus.getDefault().register(mPagerAdapter);
