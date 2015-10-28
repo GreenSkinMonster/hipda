@@ -173,6 +173,21 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         mTipBar = (TextView) view.findViewById(R.id.thread_detail_tipbar);
         mTipBar.setVisibility(View.INVISIBLE);
         mTipBar.bringToFront();
+        mTipBar.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mTipBar.setVisibility(View.INVISIBLE);
+                if (HiSettingsHelper.getInstance().isErrorReportMode()) {
+                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("ERROR TIP FROM HiPDA", mTipBar.getText());
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(getActivity(), "错误信息已经复制至粘贴板", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "请在\"设置-其它\"中启用\"显示详细错误信息\"后再进行反馈", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        });
 
         mFam = (FloatingActionMenu) view.findViewById(R.id.multiple_actions);
         mFam.setVisibility(View.INVISIBLE);

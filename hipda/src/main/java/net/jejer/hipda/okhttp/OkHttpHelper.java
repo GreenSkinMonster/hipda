@@ -212,7 +212,7 @@ public class OkHttpHelper {
             }
         }
         if (HiSettingsHelper.getInstance().isErrorReportMode())
-            msg += "\n>>> " + e.getMessage();
+            msg += "\n>>> " + e.getClass().getName() + " --- " + e.getMessage() + " <<<";
         return msg;
     }
 
