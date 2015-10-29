@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -145,7 +146,10 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+        if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getFont()))
+            super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+        else
+            super.attachBaseContext(newBase);
     }
 
     private void setupDrawer() {
