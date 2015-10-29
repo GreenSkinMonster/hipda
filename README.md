@@ -2,7 +2,9 @@
 
 **HiPDA论坛非官方客户端**
 
-论坛帖子地址 http://www.hi-pda.com/forum/viewthread.php?tid=1579403   
+论坛帖子地址 http://www.hi-pda.com/forum/viewthread.php?tid=1579403 
+
+Google Play https://play.google.com/store/apps/details?id=net.jejer.hipda.ng
 
 这是HiPDA简洁论坛客户端的一个分支，曾用名怪兽版   
 因为我做的改动较大，所以另外发布了这个版本   
@@ -17,5 +19,7 @@
 - FloatingActionButton - https://github.com/Clans/FloatingActionButton
 - MaterialDrawer - https://github.com/mikepenz/MaterialDrawer
 - ACRA - https://github.com/ACRA/acra
-- Volley - https://github.com/mcxiaoke/android-volley
 - OkHttp - https://github.com/square/okhttp
+- EventBus - https://github.com/greenrobot/EventBus
+- Android Priority Job Queue - https://github.com/yigit/android-priority-jobqueue
+- Jsoup - http://jsoup.org/
