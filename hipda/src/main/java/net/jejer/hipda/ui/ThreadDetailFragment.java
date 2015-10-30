@@ -626,6 +626,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     public void scrollToTop() {
         stopScroll();
         mDetailListView.setSelection(0);
+        prefetchNextPage(-1);
     }
 
     public void stopScroll() {
@@ -651,8 +652,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         }
 
         @Override
-        public void onLoadFinished(Loader<DetailListBean> loader,
-                                   DetailListBean details) {
+        public void onLoadFinished(Loader<DetailListBean> loader, DetailListBean details) {
             Logger.v("onLoadFinished");
 
             if (getView() != null)
@@ -733,11 +733,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
         @Override
         public void onLoaderReset(Loader<DetailListBean> arg0) {
-            //Logger.v( "onLoaderReset");
-
             mInloading = false;
             mPrefetching = false;
-
             mLoadingProgressBar.hide();
         }
 
@@ -753,7 +750,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             if (pageOffset > 0)
                 mDetailListView.setFooterLoading();
             else
-                mLoadingProgressBar.show();
+                mDetailListView.setHeaderLoading(true);
+
             Logger.v("prefetch page " + page);
             Bundle b = new Bundle();
             b.putInt(LOADER_PAGE_KEY, page);
@@ -778,6 +776,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             }
         }
         mDetailListView.showFooter();
+        mDetailListView.setHeaderLoading(false);
     }
 
     private class OnItemLongClickCallback implements AdapterView.OnItemLongClickListener {

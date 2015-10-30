@@ -1,13 +1,16 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.utils.Utils;
 
 /**
  * @author markmjw
@@ -20,10 +23,9 @@ public class XHeaderView extends LinearLayout {
 
     private LinearLayout mContainer;
     private TextView mHintTextView;
+    private ProgressBar mProgressBar;
 
     private int mState = STATE_NORMAL;
-
-    private boolean mIsFirst;
 
     public XHeaderView(Context context) {
         super(context);
@@ -43,39 +45,35 @@ public class XHeaderView extends LinearLayout {
         setGravity(Gravity.BOTTOM);
 
         mHintTextView = (TextView) findViewById(R.id.header_hint_text);
+        mProgressBar = (ProgressBar) findViewById(R.id.header_progressbar);
+        mProgressBar.getIndeterminateDrawable()
+                .setColorFilter(Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
     }
 
     public void setState(int state) {
-        if (state == mState && mIsFirst) {
-            mIsFirst = true;
-            return;
-        }
-
-        if (state == STATE_REFRESHING) {
-            // show progress
-        } else {
-            // show arrow image
-        }
-
         switch (state) {
             case STATE_NORMAL:
+                if (mProgressBar.getVisibility() == VISIBLE)
+                    mProgressBar.setVisibility(GONE);
                 mHintTextView.setText(R.string.header_hint_refresh_normal);
                 break;
 
             case STATE_READY:
+                if (mProgressBar.getVisibility() == VISIBLE)
+                    mProgressBar.setVisibility(GONE);
                 if (mState != STATE_READY) {
                     mHintTextView.setText(R.string.header_hint_refresh_ready);
                 }
                 break;
 
             case STATE_REFRESHING:
-                mHintTextView.setText(R.string.header_hint_refresh_loading);
+                mProgressBar.setVisibility(VISIBLE);
+                setVisibleHeight(Utils.dpToPx(getContext(), 56));
                 break;
 
             default:
                 break;
         }
-
         mState = state;
     }
 
