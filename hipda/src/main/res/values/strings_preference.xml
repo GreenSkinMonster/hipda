@@ -111,6 +111,17 @@
         <item>light-indigo</item>
     </string-array>
 
+    <string-array name="pref_title_night_theme_names">
+        <item>不使用夜间模式</item>
+        <item>深色</item>
+        <item>纯黑</item>
+    </string-array>
+    <string-array name="pref_title_night_theme_values">
+        <item></item>
+        <item>dark</item>
+        <item>black</item>
+    </string-array>
+
     <string-array name="pref_font_titles">
         <item>默认</item>
         <item>Roboto Slab (英文)</item>
@@ -212,6 +223,7 @@
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
     <string name="pref_title_theme">界面主题</string>
+    <string name="pref_title_night_theme">夜间模式主题</string>
     <string name="pref_title_navbar_colored">虚拟按键背景色</string>
     <string name="pref_title_font">字体</string>
     <string name="pref_title_forum">版面选择</string>

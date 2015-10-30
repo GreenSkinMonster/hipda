@@ -40,6 +40,8 @@ public class HiSettingsHelper {
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
     public static final String PERF_TAILURL = "PERF_TAILURL";
     public static final String PERF_THEME = "PERF_THEME";
+    public static final String PERF_NIGHT_THEME = "PERF_NIGHT_THEME";
+    public static final String PERF_NIGHT_MODE = "PERF_NIGHT_MODE";
     public static final String PERF_NAVBAR_COLORED = "PERF_NAVBAR_COLORED";
     public static final String PERF_FONT = "PERF_FONT";
     public static final String PERF_FORUMS = "PERF_FORUMS";
@@ -87,6 +89,8 @@ public class HiSettingsHelper {
     private String mTailUrl = "";
 
     private String mTheme = "";
+    private String mNightTheme = "";
+    private boolean mNightMode = false;
     private boolean mNavBarColor = false;
     private String mFont = "";
     private Set<String> mForums = new HashSet<>();
@@ -189,6 +193,8 @@ public class HiSettingsHelper {
         getTailTextFromPref();
         getTailUrlFromPref();
         getThemeFromPref();
+        getNightThemeFromPref();
+        isNightModeFromPref();
         isNavBarColoredFromPref();
         getFontFromPref();
         isEncodeUtf8FromPref();
@@ -226,7 +232,7 @@ public class HiSettingsHelper {
     public void setUsername(String username) {
         mUsername = username;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_USERNAME, username).commit();
+        editor.putString(PERF_USERNAME, username).apply();
     }
 
     public String getPassword() {
@@ -241,7 +247,7 @@ public class HiSettingsHelper {
     public void setPassword(String password) {
         mPassword = password;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_PASSWORD, password).commit();
+        editor.putString(PERF_PASSWORD, password).apply();
     }
 
     public String getUid() {
@@ -256,7 +262,7 @@ public class HiSettingsHelper {
     public void setUid(String uid) {
         mUid = uid;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_UID, uid).commit();
+        editor.putString(PERF_UID, uid).apply();
     }
 
     public String getSecQuestion() {
@@ -271,7 +277,7 @@ public class HiSettingsHelper {
     public void setSecQuestion(String secQuestion) {
         mSecQuestion = secQuestion;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_SECQUESTION, secQuestion).commit();
+        editor.putString(PERF_SECQUESTION, secQuestion).apply();
     }
 
     public String getSecAnswer() {
@@ -286,7 +292,7 @@ public class HiSettingsHelper {
     public void setSecAnswer(String secAnswer) {
         mSecAnswer = secAnswer;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_SECANSWER, secAnswer).commit();
+        editor.putString(PERF_SECANSWER, secAnswer).apply();
     }
 
     public boolean isShowPostType() {
@@ -301,7 +307,7 @@ public class HiSettingsHelper {
     public void setShowPostType(boolean showPostType) {
         mShowPostType = showPostType;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_SHOW_POST_TYPE, showPostType).commit();
+        editor.putBoolean(PERF_SHOW_POST_TYPE, showPostType).apply();
     }
 
     public boolean isShowStickThreads() {
@@ -316,7 +322,7 @@ public class HiSettingsHelper {
     public void setShowStickThreads(boolean showStickThreads) {
         mShowStickThreads = showStickThreads;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_SHOWSTICKTHREADS, showStickThreads).commit();
+        editor.putBoolean(PERF_SHOWSTICKTHREADS, showStickThreads).apply();
     }
 
     public String getAvatarLoadTypeFromPref() {
@@ -382,7 +388,7 @@ public class HiSettingsHelper {
     public void setAddTail(boolean addTail) {
         mAddTail = addTail;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_ADDTAIL, addTail).commit();
+        editor.putBoolean(PERF_ADDTAIL, addTail).apply();
     }
 
     public String getTailText() {
@@ -397,7 +403,7 @@ public class HiSettingsHelper {
     public void setTailText(String tailText) {
         mTailText = tailText;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_TAILTEXT, tailText).commit();
+        editor.putString(PERF_TAILTEXT, tailText).apply();
     }
 
     public String getTailUrl() {
@@ -412,7 +418,7 @@ public class HiSettingsHelper {
     public void setTailUrl(String tailUrl) {
         mTailUrl = tailUrl;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_TAILURL, tailUrl).commit();
+        editor.putString(PERF_TAILURL, tailUrl).apply();
     }
 
     public String getTheme() {
@@ -427,7 +433,37 @@ public class HiSettingsHelper {
     public void setTheme(String theme) {
         mTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_THEME, theme).commit();
+        editor.putString(PERF_THEME, theme).apply();
+    }
+
+    public String getNightTheme() {
+        return mNightTheme;
+    }
+
+    public String getNightThemeFromPref() {
+        mNightTheme = mSharedPref.getString(PERF_NIGHT_THEME, "");
+        return mNightTheme;
+    }
+
+    public void setNightTheme(String theme) {
+        mNightTheme = theme;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_NIGHT_THEME, theme).apply();
+    }
+
+    public boolean isNightMode() {
+        return mNightMode;
+    }
+
+    public boolean isNightModeFromPref() {
+        mNightMode = mSharedPref.getBoolean(PERF_NIGHT_MODE, false);
+        return mNightMode;
+    }
+
+    public void setNightMode(boolean nightMode) {
+        mNightMode = nightMode;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(PERF_NIGHT_MODE, nightMode).apply();
     }
 
     public String getFont() {
@@ -442,7 +478,7 @@ public class HiSettingsHelper {
     public void setFont(String font) {
         mFont = font;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(mFont, font).commit();
+        editor.putString(mFont, font).apply();
     }
 
     public boolean isNavBarColored() {
@@ -457,7 +493,7 @@ public class HiSettingsHelper {
     public void setNavBarColored(boolean navBarColored) {
         mNavBarColor = navBarColored;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_NAVBAR_COLORED, navBarColored).commit();
+        editor.putBoolean(PERF_NAVBAR_COLORED, navBarColored).apply();
     }
 
     public Set<String> getForums() {
@@ -488,7 +524,7 @@ public class HiSettingsHelper {
     public void setEncodeUtf8(boolean encodeUtf8) {
         mEncodeUtf8 = encodeUtf8;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_ENCODEUTF8, encodeUtf8).commit();
+        editor.putBoolean(PERF_ENCODEUTF8, encodeUtf8).apply();
     }
 
     public String getEncode() {
@@ -506,7 +542,7 @@ public class HiSettingsHelper {
     public void setErrorReportMode(boolean errorReportMode) {
         mErrorReportMode = errorReportMode;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_ERROR_REPORT_MODE, errorReportMode).commit();
+        editor.putBoolean(PERF_ERROR_REPORT_MODE, errorReportMode).apply();
     }
 
     public boolean isErrorReportModeFromPref() {
@@ -611,14 +647,14 @@ public class HiSettingsHelper {
     public void setPostTextsizeAdj(String adj) {
         mPostTextSizeAdj = adj;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_TEXTSIZE_POST_ADJ, adj).commit();
+        editor.putString(PERF_TEXTSIZE_POST_ADJ, adj).apply();
     }
 
 
     public void setPostLineSpacing(int lineSpacing) {
         mPostLineSpacing = lineSpacing;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_POST_LINE_SPACING, lineSpacing + "").commit();
+        editor.putString(PERF_POST_LINE_SPACING, lineSpacing + "").apply();
     }
 
     public int getPostLineSpacing() {
@@ -645,7 +681,7 @@ public class HiSettingsHelper {
     public void setTitleTextsizeAdj(String adj) {
         mPostTextSizeAdj = adj;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_TEXTSIZE_TITLE_ADJ, adj).commit();
+        editor.putString(PERF_TEXTSIZE_TITLE_ADJ, adj).apply();
     }
 
     public int getScreenOrietation() {
@@ -664,7 +700,7 @@ public class HiSettingsHelper {
     public void setScreenOrietation(int screenOrientation) {
         mScreenOrientation = screenOrientation;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_SCREEN_ORIENTATION, mScreenOrientation + "").commit();
+        editor.putString(PERF_SCREEN_ORIENTATION, mScreenOrientation + "").apply();
     }
 
     public boolean isGestureBack() {
@@ -679,7 +715,7 @@ public class HiSettingsHelper {
     public void setGestureBack(boolean gestureBack) {
         mGestureBack = gestureBack;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_GESTURE_BACK, gestureBack).commit();
+        editor.putBoolean(PERF_GESTURE_BACK, gestureBack).apply();
     }
 
     public Date getLastUpdateCheckTime() {
@@ -793,6 +829,13 @@ public class HiSettingsHelper {
                 && Utils.isInTimeRange(
                 getStringValue(PERF_NOTI_SILENT_BEGIN, NotificationMgr.DEFAUL_SLIENT_BEGIN),
                 getStringValue(PERF_NOTI_SILENT_END, NotificationMgr.DEFAUL_SLIENT_END));
+    }
+
+    public String getActiveTheme() {
+        if (isNightMode() && !TextUtils.isEmpty(getNightTheme()))
+            return getNightTheme();
+        else
+            return getTheme();
     }
 
 }

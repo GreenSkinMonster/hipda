@@ -19,6 +19,7 @@ public class Constants {
     public static final int DRAWER_SMS = 1000 + SimpleListLoader.TYPE_SMS;
     public static final int DRAWER_THREADNOTIFY = 1000 + SimpleListLoader.TYPE_THREAD_NOTIFY;
     public static final int DRAWER_SETTINGS = 10000;
+    public static final int DRAWER_NIGHT_MODE = 10001;
 
     public static final String FONT_ROBOTO_SLAB = "RobotoSlab";
 

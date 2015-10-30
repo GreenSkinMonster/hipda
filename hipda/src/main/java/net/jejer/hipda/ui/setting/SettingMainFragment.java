@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.support.v4.widget.DrawerLayout;
 import android.text.Html;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
@@ -37,6 +38,7 @@ public class SettingMainFragment extends BaseSettingFragment {
     private boolean mNavBarColored;
     private String mFont;
     static boolean mCacheCleared;
+    private boolean mNightSwitchEnabled;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,9 +78,10 @@ public class SettingMainFragment extends BaseSettingFragment {
         }
 
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
-        mTheme = HiSettingsHelper.getInstance().getTheme();
+        mTheme = HiSettingsHelper.getInstance().getActiveTheme();
         mForums = HiSettingsHelper.getInstance().getForums();
         mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
+        mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
         mFont = HiSettingsHelper.getInstance().getFont();
 
     }
@@ -110,9 +113,10 @@ public class SettingMainFragment extends BaseSettingFragment {
 
         if (mCacheCleared
                 || HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
-                || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)
+                || !HiSettingsHelper.getInstance().getActiveTheme().equals(mTheme)
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
+                || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
                 || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
             ColorUtils.clear();
             getActivity().finish();

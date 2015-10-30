@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -36,8 +37,11 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.holder.StringHolder;
+import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
@@ -85,7 +89,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
         EventBus.getDefault().register(this);
 
-        setTheme(HiUtils.getThemeValue(HiSettingsHelper.getInstance().getTheme()));
+        setTheme(HiUtils.getThemeValue(HiSettingsHelper.getInstance().getActiveTheme()));
         if (Build.VERSION.SDK_INT >= 21 && HiSettingsHelper.getInstance().isNavBarColored()) {
             getWindow().setNavigationBarColor(ColorUtils.getColorPrimary(this));
         }
@@ -202,11 +206,30 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.grey)));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications)
                 .withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.grey)));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_setting)
-                .withIdentifier(DrawerItem.SETTINGS.id)
-                .withIcon(GoogleMaterial.Icon.gmd_settings));
 
         ArrayList<IDrawerItem> stickyDrawerItems = new ArrayList<>();
+        stickyDrawerItems.add(new DividerDrawerItem());
+        stickyDrawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_setting)
+                .withIdentifier(DrawerItem.SETTINGS.id)
+                .withIcon(GoogleMaterial.Icon.gmd_settings));
+        if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme())) {
+            stickyDrawerItems.add(new SwitchDrawerItem()
+                    .withName("夜间模式")
+                    .withIdentifier(Constants.DRAWER_NIGHT_MODE)
+                    .withIcon(GoogleMaterial.Icon.gmd_settings_brightness)
+                    .withChecked(HiSettingsHelper.getInstance().isNightMode())
+                    .withOnCheckedChangeListener(new OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+                            HiSettingsHelper.getInstance().setNightMode(isChecked);
+                            ColorUtils.clear();
+                            MainFrameActivity.this.finish();
+                            startActivity(new Intent(MainFrameActivity.this.getApplicationContext(), MainFrameActivity.this.getClass()));
+                            System.exit(0);
+                        }
+                    }));
+        }
+        stickyDrawerItems.add(new DividerDrawerItem());
         for (int i = 0; i < HiUtils.FORUM_IDS.length; i++) {
             if (HiUtils.isForumEnabled(HiUtils.FORUM_IDS[i]))
                 stickyDrawerItems.add(new PrimaryDrawerItem().withName(HiUtils.FORUMS[i])
@@ -221,14 +244,14 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withTranslucentStatusBar(true)
                 .withDrawerItems(drawerItems)
                 .withStickyDrawerItems(stickyDrawerItems)
-                .withStickyFooterDivider(true)
+                .withStickyFooterDivider(false)
                 .withStickyFooterShadow(false)
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .build();
 
         //fix input layout problem when withTranslucentStatusBar enabled
         drawer.keyboardSupportEnabled(this, true);
-        drawer.getRecyclerView().setVerticalScrollBarEnabled(false);
+        //drawer.getRecyclerView().setVerticalScrollBarEnabled(false);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -442,6 +465,10 @@ public class MainFrameActivity extends AppCompatActivity {
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {
         @Override
         public boolean onItemClick(View view, int position, IDrawerItem iDrawerItem) {
+
+            if (iDrawerItem.getIdentifier() == Constants.DRAWER_NIGHT_MODE)
+                return false;
+
             //clear all backStacks from menu click
             clearBackStacks(false);
 
