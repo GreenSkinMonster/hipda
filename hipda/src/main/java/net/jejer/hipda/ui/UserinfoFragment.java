@@ -154,6 +154,11 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (savedInstanceState != null) {
+            mSimpleListAdapter.setContext(getActivity());
+            mDetailView.setVisibility(View.VISIBLE);
+            mThreadListView.setVisibility(View.GONE);
+        }
         OkHttpHelper.getInstance().asyncGet(HiUtils.UserInfoUrl + mUid, new UserInfoCallback());
 
         mThreadListView.setAdapter(mSimpleListAdapter);
@@ -217,7 +222,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
             if (info != null) {
                 if (HiSettingsHelper.getInstance().isLoadAvatar()) {
                     mAvatarView.setVisibility(View.VISIBLE);
-                    GlideHelper.loadAvatar(getActivity(), mAvatarView, info.getAvatarUrl());
+                    GlideHelper.loadAvatar(mAvatarView, info.getAvatarUrl());
                 } else {
                     mAvatarView.setVisibility(View.GONE);
                 }

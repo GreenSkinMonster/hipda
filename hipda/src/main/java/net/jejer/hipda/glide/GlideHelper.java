@@ -1,10 +1,8 @@
 package net.jejer.hipda.glide;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
@@ -32,6 +30,7 @@ import com.squareup.okhttp.ResponseBody;
 import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.okhttp.LoggingInterceptor;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -106,12 +105,9 @@ public class GlideHelper {
         return Glide.isSetup();
     }
 
-    public static void loadAvatar(Context ctx, ImageView view, String avatarUrl) {
+    public static void loadAvatar(ImageView view, String avatarUrl) {
+        Context ctx = HiApplication.getAppContext();
         if (ctx == null)
-            return;
-        if (Build.VERSION.SDK_INT >= 17
-                && (ctx instanceof Activity)
-                && ((Activity) ctx).isDestroyed())
             return;
 
         if (DEFAULT_USER_ICON == null)

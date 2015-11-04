@@ -131,9 +131,6 @@ public class SimpleListFragment extends BaseFragment
         swipeLayout.setEnabled(false);
 
         loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);
-        if (mType != SimpleListLoader.TYPE_SEARCH)
-            loadingProgressBar.show();
-
         return view;
     }
 
@@ -144,6 +141,14 @@ public class SimpleListFragment extends BaseFragment
 
         // destroyLoader called here to avoid onLoadFinished called when onResume
         getLoaderManager().destroyLoader(0);
+
+        if (savedInstanceState != null) {
+            mSimpleListAdapter.setContext(getActivity());
+        } else {
+            if (mType != SimpleListLoader.TYPE_SEARCH)
+                loadingProgressBar.show();
+        }
+
         mThreadListView.setAdapter(mSimpleListAdapter);
         mThreadListView.setOnItemClickListener(new OnItemClickCallback());
         mThreadListView.setOnItemLongClickListener(new OnItemLongClickCallback());
@@ -156,7 +161,8 @@ public class SimpleListFragment extends BaseFragment
             case SimpleListLoader.TYPE_THREAD_NOTIFY:
             case SimpleListLoader.TYPE_FAVORITES:
             case SimpleListLoader.TYPE_ATTENTION:
-                getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                if (mSimpleListAdapter.getCount() == 0)
+                    getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
                 break;
             case SimpleListLoader.TYPE_SEARCH:
                 break;

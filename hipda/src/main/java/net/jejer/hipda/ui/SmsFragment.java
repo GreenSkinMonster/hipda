@@ -87,7 +87,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         mListView = (ListView) view.findViewById(R.id.lv_sms);
         mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.sms_loading);
-        loadingProgressBar.show();
 
         //to avoid click through this view
         view.setOnTouchListener(new View.OnTouchListener() {
@@ -139,10 +138,20 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         super.onActivityCreated(savedInstanceState);
         Logger.v("onActivityCreated");
 
+        if (savedInstanceState != null) {
+            mSmsAdapter.setContext(getActivity());
+        } else {
+            loadingProgressBar.show();
+        }
+
+        Logger.e("adapter count = " + mSmsAdapter.getCount() + "/ beans = " + mSmsBeans.size());
+        mListView.setAdapter(mSmsAdapter);
+
         // destroyLoader called here to avoid onLoadFinished called when onResume
         getLoaderManager().destroyLoader(0);
-        mListView.setAdapter(mSmsAdapter);
-        getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
+        if (mSmsAdapter.getCount() == 0) {
+            getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
+        }
     }
 
     @Override

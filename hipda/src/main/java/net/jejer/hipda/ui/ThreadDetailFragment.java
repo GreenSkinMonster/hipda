@@ -193,7 +193,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         mFam.setVisibility(View.INVISIBLE);
 
         mLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.detail_loading);
-        mLoadingProgressBar.show();
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
         fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
@@ -329,6 +328,13 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     public void onActivityCreated(Bundle savedInstanceState) {
         Logger.v("onActivityCreated");
         super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mDetailAdapter.setContext(getActivity());
+            mCtx = getActivity();
+        } else {
+            mLoadingProgressBar.show();
+        }
 
         mDetailListView.setAdapter(mDetailAdapter);
         mDetailListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);

@@ -113,27 +113,30 @@ public class MainFrameActivity extends AppCompatActivity {
 
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
-        int fid = HiSettingsHelper.getInstance().getLastForumId();
 
-        FragmentArgs args = FragmentUtils.parse(getIntent());
-        if (args != null && args.getType() == FragmentArgs.TYPE_FORUM)
-            fid = args.getFid();
+        if (savedInstanceState == null) {
+            int fid = HiSettingsHelper.getInstance().getLastForumId();
 
-        clearBackStacks(false);
-        FragmentUtils.showForum(getFragmentManager(), fid);
+            FragmentArgs args = FragmentUtils.parse(getIntent());
+            if (args != null && args.getType() == FragmentArgs.TYPE_FORUM)
+                fid = args.getFid();
 
-        if (args != null)
-            FragmentUtils.show(getFragmentManager(), args);
+            clearBackStacks(false);
+            FragmentUtils.showForum(getFragmentManager(), fid);
 
-        if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
-            new UpdateHelper(this, true).check();
-        }
+            if (args != null)
+                FragmentUtils.show(getFragmentManager(), args);
 
-        FavoriteHelper.getInstance().updateCache();
+            if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
+                new UpdateHelper(this, true).check();
+            }
 
-        if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-            if (!NotificationMgr.isAlarmRuning(this))
-                NotificationMgr.startAlarm(this);
+            FavoriteHelper.getInstance().updateCache();
+
+            if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
+                if (!NotificationMgr.isAlarmRuning(this))
+                    NotificationMgr.startAlarm(this);
+            }
         }
     }
 
@@ -165,7 +168,7 @@ public class MainFrameActivity extends AppCompatActivity {
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
                 //clear tag or glide will throw execption
                 //imageView.setTag(null);
-                Glide.with(imageView.getContext())
+                Glide.with(MainFrameActivity.this)
                         .load(uri)
                         .placeholder(placeholder)
                         .error(placeholder)
@@ -329,6 +332,16 @@ public class MainFrameActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         HiApplication.activityPaused();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -557,16 +570,7 @@ public class MainFrameActivity extends AppCompatActivity {
             }
 
             FragmentManager fm = getFragmentManager();
-
-            if (fm.getBackStackEntryCount() > 0) {
-                drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
-                if (getSupportActionBar() != null)
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            } else {
-                if (getSupportActionBar() != null)
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
-            }
+            setDrawerHomeIdicator(fm.getBackStackEntryCount() > 0);
 
             if (HiSettingsHelper.getInstance().isGestureBack()) {
                 if (fm.getBackStackEntryCount() > 0) {
@@ -616,6 +620,18 @@ public class MainFrameActivity extends AppCompatActivity {
                 drawerItem.withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.background_grey));
                 drawer.updateBadge(Constants.DRAWER_SMS, new StringHolder("0"));
             }
+        }
+    }
+
+    public void setDrawerHomeIdicator(boolean showHomeAsUp) {
+        if (showHomeAsUp) {
+            drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+            if (getSupportActionBar() != null)
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else {
+            if (getSupportActionBar() != null)
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         }
     }
 

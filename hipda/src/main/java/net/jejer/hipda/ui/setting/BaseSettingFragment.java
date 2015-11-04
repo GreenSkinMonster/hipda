@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -33,6 +34,14 @@ public class BaseSettingFragment extends PreferenceFragment {
         if (view != null)
             view.setBackgroundColor(ColorUtils.getListBackgroundColor(getActivity()));
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null && getActivity() instanceof MainFrameActivity) {
+            ((MainFrameActivity) getActivity()).setDrawerHomeIdicator(true);
+        }
     }
 
     protected void setActionBarTitle(CharSequence title) {

@@ -2,11 +2,11 @@ package net.jejer.hipda.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -54,11 +54,9 @@ public abstract class BaseFragment extends Fragment {
     }
 
     void setActionBarDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
-//        if (getActivity() != null) {
-//            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-//            if (actionBar != null)
-//                actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
-//        }
+        if (getActivity() != null && getActivity() instanceof MainFrameActivity) {
+            ((MainFrameActivity) getActivity()).setDrawerHomeIdicator(showHomeAsUp);
+        }
     }
 
     void syncActionBarState() {
@@ -82,8 +80,14 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         Logger.v("onAttach : " + getClass().getName());
     }
 

@@ -30,6 +30,10 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         mFragmentManager = fm;
     }
 
+    public void setContext(Context ctx) {
+        mCtx = ctx;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         SimpleListItemBean item = getItem(position);
@@ -67,7 +71,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
                 if (!TextUtils.isEmpty(item.getUid())) {
                     holder.iv_my_avatar.setOnClickListener(mAvatarListener);
                 }
-                GlideHelper.loadAvatar(mCtx, holder.iv_my_avatar, item.getAvatarUrl());
+                GlideHelper.loadAvatar(holder.iv_my_avatar, item.getAvatarUrl());
             }
         } else {
             holder.tv_content.setGravity(Gravity.LEFT);
@@ -78,7 +82,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
                 if (!TextUtils.isEmpty(item.getUid())) {
                     holder.iv_friend_avatar.setOnClickListener(mAvatarListener);
                 }
-                GlideHelper.loadAvatar(mCtx, holder.iv_friend_avatar, item.getAvatarUrl());
+                GlideHelper.loadAvatar(holder.iv_friend_avatar, item.getAvatarUrl());
             }
         }
         if (!HiSettingsHelper.getInstance().isLoadAvatar()) {

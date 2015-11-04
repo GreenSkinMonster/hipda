@@ -57,6 +57,10 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         mDetailFragment = detailFragment;
     }
 
+    public void setContext(Context ctx) {
+        mCtx = ctx;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         DetailBean detail = getItem(position);
@@ -93,7 +97,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
         if (HiSettingsHelper.getInstance().isLoadAvatar()) {
             holder.avatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(mCtx, holder.avatar, detail.getAvatarUrl());
+            GlideHelper.loadAvatar(holder.avatar, detail.getAvatarUrl());
         } else {
             holder.avatar.setVisibility(View.GONE);
         }

@@ -27,6 +27,10 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         mType = type;
     }
 
+    public void setContext(Context ctx) {
+        mCtx = ctx;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         SimpleListItemBean item = getItem(position);
@@ -80,7 +84,7 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
                 && mType != SimpleListLoader.TYPE_MYPOST
                 && mType != SimpleListLoader.TYPE_MYREPLY) {
             holder.iv_avatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(mCtx, holder.iv_avatar, item.getAvatarUrl());
+            GlideHelper.loadAvatar(holder.iv_avatar, item.getAvatarUrl());
         } else {
             holder.iv_avatar.setVisibility(View.GONE);
         }

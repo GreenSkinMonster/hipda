@@ -24,6 +24,10 @@ public class ThreadListAdapter extends HiAdapter<ThreadBean> {
         mCtx = context;
     }
 
+    public void setContext(Context ctx) {
+        mCtx = ctx;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ThreadBean thread = getItem(position);
@@ -70,7 +74,7 @@ public class ThreadListAdapter extends HiAdapter<ThreadBean> {
 
         if (HiSettingsHelper.getInstance().isLoadAvatar()) {
             holder.avatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(mCtx, holder.avatar, thread.getAvatarUrl());
+            GlideHelper.loadAvatar(holder.avatar, thread.getAvatarUrl());
         } else {
             holder.avatar.setVisibility(View.GONE);
         }

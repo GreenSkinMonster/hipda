@@ -152,7 +152,6 @@ public class ThreadListFragment extends BaseFragment
         swipeLayout.setColorSchemeResources(R.color.icon_blue);
 
         loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);
-        loadingProgressBar.show();
 
         mFam = (FloatingActionMenu) view.findViewById(R.id.fam_actions);
         mFam.setVisibility(View.INVISIBLE);
@@ -216,6 +215,11 @@ public class ThreadListFragment extends BaseFragment
         Logger.v("onActivityCreated");
         super.onActivityCreated(savedInstanceState);
 
+        if (savedInstanceState != null) {
+            mCtx = getActivity();
+            mThreadListAdapter.setContext(getActivity());
+        }
+
         mThreadListView.setAdapter(mThreadListAdapter);
         mThreadListView.setOnItemClickListener(new OnItemClickCallback());
         mThreadListView.setOnItemLongClickListener(new OnItemLongClickCallback());
@@ -232,6 +236,7 @@ public class ThreadListFragment extends BaseFragment
 
         if (mThreadListAdapter.getCount() == 0) {
             getLoaderManager().initLoader(0, null, mCallbacks);
+            loadingProgressBar.show();
             getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
         }
     }
@@ -349,6 +354,11 @@ public class ThreadListFragment extends BaseFragment
     public void onDestroyView() {
         Logger.v("onDestroyView");
         super.onDestroyView();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     private void refresh() {
