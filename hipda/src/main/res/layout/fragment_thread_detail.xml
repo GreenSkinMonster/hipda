@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<net.jejer.hipda.ui.SlidingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragment_detail"
     android:layout_width="match_parent"
@@ -122,4 +123,4 @@
         android:indeterminate="true"
         android:visibility="invisible" />
 
-</RelativeLayout>
+</net.jejer.hipda.ui.SlidingRelativeLayout>

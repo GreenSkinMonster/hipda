@@ -68,7 +68,7 @@ public class SettingMainFragment extends BaseSettingFragment {
                     bundle.putInt(SettingNestedFragment.TAG_KEY, screenKey);
                     fragment.setArguments(bundle);
                     getFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                            //.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                             .add(R.id.main_frame_container, fragment)
                             .addToBackStack(fragment.getClass().getName())
                             .commit();

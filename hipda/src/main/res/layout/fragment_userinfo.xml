@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<net.jejer.hipda.ui.SlidingLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?list_item_background"
@@ -76,4 +76,4 @@
     </ListView>
 
 
-</LinearLayout>
+</net.jejer.hipda.ui.SlidingLinearLayout>
