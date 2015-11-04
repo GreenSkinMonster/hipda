@@ -37,7 +37,7 @@ public class ImageFileInfo {
     }
 
     public String getMime() {
-        return mime;
+        return Utils.nullToText(mime);
     }
 
     public void setMime(String mime) {
