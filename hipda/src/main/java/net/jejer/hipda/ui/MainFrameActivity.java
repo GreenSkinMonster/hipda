@@ -523,7 +523,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 case Constants.DRAWER_SETTINGS:    // settings
                     Fragment fragment = new SettingMainFragment();
                     getFragmentManager().beginTransaction()
-                            .setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
+                            //.setCustomAnimations(0, 0, 0, R.anim.slide_out_right)
                             .replace(R.id.main_frame_container, fragment, fragment.getClass().getName())
                             .addToBackStack(fragment.getClass().getName())
                             .commit();

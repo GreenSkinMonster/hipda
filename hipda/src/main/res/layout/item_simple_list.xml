@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/iv_avatar"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="@dimen/avatar_size"
+            android:layout_height="@dimen/avatar_size"
             android:layout_alignParentLeft="true"
             android:layout_marginTop="6dp"
             android:padding="2dp" />

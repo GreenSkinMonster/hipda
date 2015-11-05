@@ -2,7 +2,10 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:paddingBottom="8dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -17,8 +20,8 @@
 
             <ImageView
                 android:id="@+id/iv_avatar"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="@dimen/avatar_size"
+                android:layout_height="@dimen/avatar_size"
                 android:padding="2dp" />
 
             <TextView
@@ -30,7 +33,7 @@
                 android:padding="4dp"
                 android:text=""
                 android:textColor="?attr/colorAccent"
-                android:textSize="15sp" />
+                android:textSize="@dimen/info_text_size" />
 
             <TextView
                 android:id="@+id/time"
@@ -41,7 +44,7 @@
                 android:padding="4dp"
                 android:text=""
                 android:textColor="?android:textColorSecondary"
-                android:textSize="15sp" />
+                android:textSize="@dimen/info_text_size" />
 
             <TextView
                 android:id="@+id/floor"

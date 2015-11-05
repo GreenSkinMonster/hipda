@@ -100,7 +100,7 @@ public class GlideImageView extends ImageView {
     private void loadGif() {
         currentUrl = mUrl;
         currentImageView = this;
-        Glide.with(mCtx)
+        Glide.with(mDetailFragment.getActivity())
                 .load(mUrl)
                 .priority(Priority.IMMEDIATE)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -113,11 +113,11 @@ public class GlideImageView extends ImageView {
     private void stopCurrentGif() {
         try {
             if (currentImageView != null) {
-                Glide.with(mCtx)
+                Glide.with(mDetailFragment.getActivity())
                         .load(currentUrl)
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .transform(new GifTransformation(mCtx))
+                        .transform(new GifTransformation(mDetailFragment.getActivity()))
                         .error(R.drawable.image_broken)
                         .override(mImageReadyInfo.getWidth(), mImageReadyInfo.getHeight())
                         .into(currentImageView);

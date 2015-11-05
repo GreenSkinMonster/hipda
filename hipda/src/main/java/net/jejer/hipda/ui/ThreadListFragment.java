@@ -218,6 +218,7 @@ public class ThreadListFragment extends BaseFragment
         if (savedInstanceState != null) {
             mCtx = getActivity();
             mThreadListAdapter.setContext(getActivity());
+            mFam.setVisibility(View.VISIBLE);
         }
 
         mThreadListView.setAdapter(mThreadListAdapter);

@@ -1,8 +1,15 @@
 <resources>
-
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="header_height">60dp</dimen>
     <dimen name="footer_height">90dp</dimen>
     <dimen name="footer_padding">10dp</dimen>
 
+    <dimen name="fragment_side_margin">0dp</dimen>
+
+    <integer name="post_text_size">18</integer>
+    <integer name="title_text_size">18</integer>
+    <dimen name="info_text_size">15sp</dimen>
+
+    <dimen name="avatar_size">38dp</dimen>
+    <dimen name="avatar_info_size">56dp</dimen>
 </resources>

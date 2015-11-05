@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/iv_friend_avatar"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="6dp"
@@ -70,8 +70,8 @@
 
     <ImageView
         android:id="@+id/iv_my_avatar"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="right"

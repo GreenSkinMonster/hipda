@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
@@ -114,6 +115,8 @@ public class HiSettingsHelper {
     private String mBSTypeId;
 
     // --------------- THIS IS NOT IN PERF -----------
+    private int mBasePostTextSize = -1;
+    private int mBaseTitleTextSize = -1;
     private boolean mIsLandscape = false;
 
     public void setIsLandscape(boolean landscape) {
@@ -808,11 +811,15 @@ public class HiSettingsHelper {
     }
 
     public int getPostTextSize() {
-        return 18 + getInstance().getPostTextsizeAdj();
+        if (mBasePostTextSize <= 0)
+            mBasePostTextSize = mCtx.getResources().getInteger(R.integer.post_text_size);
+        return mBasePostTextSize + getInstance().getPostTextsizeAdj();
     }
 
     public int getTitleTextSize() {
-        return 18 + getInstance().getTitleTextsizeAdj();
+        if (mBaseTitleTextSize <= 0)
+            mBaseTitleTextSize = mCtx.getResources().getInteger(R.integer.title_text_size);
+        return mBaseTitleTextSize + getInstance().getTitleTextsizeAdj();
     }
 
     public String getStringValue(String key, String defaultValue) {

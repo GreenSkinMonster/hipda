@@ -35,6 +35,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -332,9 +333,12 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         if (savedInstanceState != null) {
             mDetailAdapter.setContext(getActivity());
             mCtx = getActivity();
+            mFam.setVisibility(View.VISIBLE);
         } else {
             mLoadingProgressBar.show();
         }
+
+        updateImageViewWidth();
 
         mDetailListView.setAdapter(mDetailAdapter);
         mDetailListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -661,8 +665,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         public void onLoadFinished(Loader<DetailListBean> loader, DetailListBean details) {
             Logger.v("onLoadFinished");
 
-            if (getView() != null)
-                MAX_VIEW_WIDTH = getView().getWidth();
+            updateImageViewWidth();
 
             mInloading = false;
             mPrefetching = false;
@@ -1056,13 +1059,17 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
 
         if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-            giv.getLayoutParams().width = imageReadyInfo.getWidth();
-            giv.getLayoutParams().height = imageReadyInfo.getHeight();
+            RelativeLayout.LayoutParams layoutParams =
+                    (RelativeLayout.LayoutParams) giv.getLayoutParams();
+            layoutParams.width = imageReadyInfo.getWidth();
+            layoutParams.height = imageReadyInfo.getHeight();
             if (imageReadyInfo.getWidth() > GlideImageView.MIN_SCALE_WIDTH
                     || imageReadyInfo.isGif()) {
+                layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 giv.setImageReadyInfo(imageReadyInfo);
                 giv.setClickToViewBigImage();
             }
+            //giv.setLayoutParams(layoutParams);
 
             if (imageReadyInfo.isGif()) {
                 Glide.with(mCtx)
@@ -1124,6 +1131,11 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         } else {
             Toast.makeText(mCtx, "本页没有图片", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void updateImageViewWidth() {
+        if (getView() != null)
+            MAX_VIEW_WIDTH = Math.min(getView().getWidth(), getView().getHeight());
     }
 
 }

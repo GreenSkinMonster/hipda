@@ -13,18 +13,17 @@
 
         <ImageView
             android:id="@+id/userinfo_avatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp" />
+            android:layout_width="@dimen/avatar_info_size"
+            android:layout_height="@dimen/avatar_info_size"
+            android:layout_centerVertical="true" />
 
         <TextView
             android:id="@+id/userinfo_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
             android:layout_toRightOf="@+id/userinfo_avatar"
-            android:paddingBottom="2dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="2dp"
+            android:padding="2dp"
             android:text="" />
 
         <TextView
@@ -32,11 +31,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/userinfo_username"
+            android:layout_marginLeft="6dp"
             android:layout_toRightOf="@+id/userinfo_avatar"
-            android:paddingBottom="2dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="2dp"
+            android:background="@drawable/rounded_corner"
+            android:padding="2dp"
             android:text="@string/user_online" />
 
         <Button

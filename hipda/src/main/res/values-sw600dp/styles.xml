@@ -7,7 +7,7 @@
 
     <!-- FAB Style-->
     <style name="FloatingButtonsStyle">
-        <item name="fab_size">normal</item>
+        <item name="fab_size">mini</item>
         <item name="fab_colorNormal">?fabColorNormal</item>
         <item name="fab_colorPressed">?fabColorPressed</item>
     </style>
