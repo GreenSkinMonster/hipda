@@ -157,7 +157,7 @@ public class ThreadListFragment extends BaseFragment
         mFam.setVisibility(View.INVISIBLE);
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
-        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh_alt).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -170,7 +170,7 @@ public class ThreadListFragment extends BaseFragment
         });
 
         FloatingActionButton fabNewThread = (FloatingActionButton) view.findViewById(R.id.action_fab_new_thread);
-        fabNewThread.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_create).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+        fabNewThread.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_edit).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
         fabNewThread.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -180,7 +180,7 @@ public class ThreadListFragment extends BaseFragment
         });
 
         mFabNotify = (FloatingActionButton) view.findViewById(R.id.action_fab_notify);
-        mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+        mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_email).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
         mFabNotify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -651,7 +651,7 @@ public class ThreadListFragment extends BaseFragment
         int smsCount = NotificationMgr.getCurrentNotification().getSmsCount();
         int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
         if (smsCount > 0) {
-            mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+            mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_email).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
             mFabNotify.setVisibility(View.VISIBLE);
         } else if (threadCount > 0) {
             mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_notifications).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));

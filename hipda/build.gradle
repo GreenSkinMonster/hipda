@@ -37,7 +37,7 @@ dependencies {
     compile 'com.github.clans:fab:1.6.1'
     compile('com.mikepenz:materialdrawer:4.4.5@aar') { transitive = true }
     compile 'com.mikepenz:iconics-core:2.0.0@aar'
-    compile 'com.mikepenz:google-material-typeface:1.2.0.1@aar'
+    compile 'com.mikepenz:google-material-typeface:2.1.2.1@aar'
     compile 'com.mikepenz:fontawesome-typeface:4.4.0.1@aar'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.android.support:appcompat-v7:23.1.0'

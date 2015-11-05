@@ -147,7 +147,7 @@ public class PopupImageDialog extends DialogFragment {
         );
 
         ImageButton btnDownload = (ImageButton) layout.findViewById(R.id.btn_download_image);
-        btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_file_download)
+        btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_download)
                 .sizeDp(20).color(getResources().getColor(R.color.silver)));
         btnDownload.setOnClickListener(
                 new View.OnClickListener() {
@@ -221,7 +221,7 @@ public class PopupImageDialog extends DialogFragment {
         );
 
         ImageButton btnNext = (ImageButton) layout.findViewById(R.id.btn_next_image);
-        btnNext.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_navigate_next)
+        btnNext.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_chevron_right)
                 .sizeDp(20).color(getResources().getColor(R.color.silver)));
         btnNext.setOnClickListener(
                 new OnSingleClickListener() {
@@ -244,7 +244,7 @@ public class PopupImageDialog extends DialogFragment {
         );
 
         ImageButton btnPrev = (ImageButton) layout.findViewById(R.id.btn_previous_image);
-        btnPrev.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_navigate_before)
+        btnPrev.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_chevron_left)
                 .sizeDp(20).color(getResources().getColor(R.color.silver)));
         btnPrev.setOnClickListener(
                 new OnSingleClickListener() {

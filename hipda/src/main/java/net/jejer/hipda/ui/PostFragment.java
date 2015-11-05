@@ -250,7 +250,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         });
 
         final ImageButton ibReply = (ImageButton) view.findViewById(R.id.ib_reply);
-        ibReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(ColorUtils.getColorAccent(getActivity())));
+        ibReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail_send).sizeDp(28).color(ColorUtils.getColorAccent(getActivity())));
         ibReply.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
@@ -281,7 +281,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         menu.clear();
         inflater.inflate(R.menu.menu_reply, menu);
 
-        menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_wallpaper).actionBar().color(Color.WHITE));
+        menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_comment_image).actionBar().color(Color.WHITE));
 
         setActionBarTitle(R.string.action_reply);
         setActionBarDisplayHomeAsUpEnabled(true);

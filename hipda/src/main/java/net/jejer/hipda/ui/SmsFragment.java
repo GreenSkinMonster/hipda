@@ -113,7 +113,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         });
 
         ImageButton postIb = (ImageButton) view.findViewById(R.id.ib_send_sms);
-        postIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
+        postIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail_send).sizeDp(28).color(Color.GRAY));
 
         mEtSms = (EditText) view.findViewById(R.id.et_sms);
         mEtSms.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());

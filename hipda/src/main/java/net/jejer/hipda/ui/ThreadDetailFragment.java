@@ -196,7 +196,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         mLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.detail_loading);
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
-        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh_alt).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -208,7 +208,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         });
 
         FloatingActionButton fabQuickReply = (FloatingActionButton) view.findViewById(R.id.action_fab_quick_reply);
-        fabQuickReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_reply).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+        fabQuickReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail_reply).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
         fabQuickReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -227,7 +227,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         });
 
         FloatingActionButton fabGotoPage = (FloatingActionButton) view.findViewById(R.id.action_fab_goto_page);
-        fabGotoPage.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_swap_horiz).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+        fabGotoPage.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_swap).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
         fabGotoPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -289,7 +289,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         mReplyTextTv = (TextView) quickReply.findViewById(R.id.tv_reply_text);
         mReplyTextTv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         ImageButton mPostReplyIb = (ImageButton) quickReply.findViewById(R.id.ib_reply_post);
-        mPostReplyIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
+        mPostReplyIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail_send).sizeDp(28).color(Color.GRAY));
         mPostReplyIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -311,7 +311,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         });
 
         ImageButton mGotoPostIb = (ImageButton) quickReply.findViewById(R.id.ib_goto_post);
-        mGotoPostIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_reply).sizeDp(28).color(Color.GRAY));
+        mGotoPostIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail_reply).sizeDp(28).color(Color.GRAY));
         mGotoPostIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
