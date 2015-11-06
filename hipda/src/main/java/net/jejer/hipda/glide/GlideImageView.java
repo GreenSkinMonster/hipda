@@ -17,7 +17,6 @@ public class GlideImageView extends ImageView {
 
     public static int MIN_SCALE_WIDTH = 600;
 
-    private Context mCtx;
     private ThreadDetailFragment mDetailFragment;
     private String mUrl;
     private ImageReadyInfo mImageReadyInfo;
@@ -28,14 +27,12 @@ public class GlideImageView extends ImageView {
 
     public GlideImageView(Context context) {
         super(context);
-        mCtx = context;
 
         setupListeners();
     }
 
     public GlideImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mCtx = context;
 
         setupListeners();
     }
@@ -106,7 +103,7 @@ public class GlideImageView extends ImageView {
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .skipMemoryCache(true)
                 .error(R.drawable.image_broken)
-                .override(mImageReadyInfo.getWidth(), mImageReadyInfo.getHeight())
+                .override(mImageReadyInfo.getDisplayWidth(), mImageReadyInfo.getDisplayHeight())
                 .into(this);
     }
 
@@ -119,7 +116,7 @@ public class GlideImageView extends ImageView {
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .transform(new GifTransformation(mDetailFragment.getActivity()))
                         .error(R.drawable.image_broken)
-                        .override(mImageReadyInfo.getWidth(), mImageReadyInfo.getHeight())
+                        .override(mImageReadyInfo.getDisplayWidth(), mImageReadyInfo.getDisplayHeight())
                         .into(currentImageView);
             }
         } catch (Exception ignored) {

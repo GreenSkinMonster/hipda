@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -128,16 +127,10 @@ public class PopupImageDialog extends DialogFragment {
                             Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
                         } else {
                             File f = new File(imageReadyInfo.getPath());
-                            BitmapFactory.Options options = new BitmapFactory.Options();
-                            options.inJustDecodeBounds = true;
-
-                            BitmapFactory.decodeFile(imageReadyInfo.getPath(), options);
-                            int width = options.outWidth;
-                            int height = options.outHeight;
 
                             String sizeInK = Math.round(1.0 * f.length() / 1024) + "K";
                             String msg = "格式　: " + imageReadyInfo.getMime()
-                                    + "\n分辨率: " + width + "x" + height
+                                    + "\n分辨率: " + imageReadyInfo.getWidth() + "x" + imageReadyInfo.getHeight()
                                     + "\n大小　: " + sizeInK;
 
                             Toast.makeText(mCtx, msg, Toast.LENGTH_LONG).show();
@@ -160,17 +153,15 @@ public class PopupImageDialog extends DialogFragment {
                                 Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-                            String filename = Utils.getImageFileName("Hi_IMG", imageReadyInfo.getMime());
 
+                            String filename = Utils.getImageFileName("Hi_IMG", imageReadyInfo.getMime());
                             File destFile = new File(Environment.getExternalStoragePublicDirectory(
                                     Environment.DIRECTORY_DOWNLOADS), filename);
                             Utils.copy(new File(imageReadyInfo.getPath()), destFile);
                             Toast.makeText(mCtx, "图片已经保存至下载目录 <" + filename + ">", Toast.LENGTH_SHORT).show();
                             //HttpUtils.download(mCtx, url, filename);
 
-                            MediaScannerConnection.scanFile(mCtx,
-                                    new String[]{destFile.getPath()}, null, null);
-
+                            MediaScannerConnection.scanFile(mCtx, new String[]{destFile.getPath()}, null, null);
                         } catch (Exception e) {
                             Logger.e(e);
                             Toast.makeText(mCtx, "保存图片文件时发生错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();

@@ -1,6 +1,5 @@
 package net.jejer.hipda.glide;
 
-import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 
@@ -12,7 +11,6 @@ import com.path.android.jobqueue.Params;
 import com.path.android.jobqueue.RetryConstraint;
 
 import net.jejer.hipda.cache.ImageContainer;
-import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
@@ -27,12 +25,10 @@ import de.greenrobot.event.EventBus;
  */
 public class GlideImageJob extends Job {
 
-    private Context mCtx;
     private String mUrl;
 
-    public GlideImageJob(Context context, String url, int priority, String tag) {
+    public GlideImageJob(String url, int priority, String tag) {
         super(new Params(priority).setPersistent(false).setRequiresNetwork(false).addTags(tag));
-        mCtx = context;
         mUrl = url;
     }
 
@@ -45,7 +41,7 @@ public class GlideImageJob extends Job {
     public void onRun() throws Throwable {
 
         try {
-            FutureTarget<File> future = Glide.with(mCtx)
+            FutureTarget<File> future = Glide.with(getApplicationContext())
                     .load(GlideHelper.getGlideUrl(mUrl))
                     .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
 
@@ -79,30 +75,7 @@ public class GlideImageJob extends Job {
                 height = options.outWidth;
             }
 
-            //calculate display size for image
-
-            //leave 12dp on both left and right side, this should match layout setup
-            int maxViewWidth = ThreadDetailFragment.MAX_VIEW_WIDTH - Utils.dpToPx(mCtx, 12 * 2);
-
-            //if image width < half maxViewWidth, scale it up for better view
-            int maxScaleWidth = Math.round(maxViewWidth * 0.5f);
-
-            double scaleRate = getScaleRate(width);
-            int scaledWidth = Math.round((int) (width * scaleRate));
-            int scaledHeight = Math.round((int) (height * scaleRate));
-
-            int displayWidth;
-            int displayHeight;
-            if (scaledWidth >= maxScaleWidth ||
-                    (mime.toLowerCase().contains("gif") && scaledWidth >= maxScaleWidth / 2)) {
-                displayWidth = maxViewWidth;
-                displayHeight = Math.round(maxViewWidth * 1.0f * height / width);
-            } else {
-                displayWidth = scaledWidth;
-                displayHeight = scaledHeight;
-            }
-
-            ImageReadyInfo imageReadyInfo = new ImageReadyInfo(cacheFile.getPath(), displayWidth, displayHeight, mime);
+            ImageReadyInfo imageReadyInfo = new ImageReadyInfo(cacheFile.getPath(), width, height, mime);
             if (orientation > 0)
                 imageReadyInfo.setOrientation(orientation);
             ImageContainer.markImageReady(mUrl, imageReadyInfo);
@@ -126,8 +99,4 @@ public class GlideImageJob extends Job {
         return RetryConstraint.CANCEL;
     }
 
-    //Math! http://www.mathsisfun.com/data/function-grapher.php
-    private double getScaleRate(int x) {
-        return Math.pow(x, 1.2) / x;
-    }
 }

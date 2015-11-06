@@ -104,7 +104,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     private List<DetailBean> mDetailBeans = new ArrayList<>();
 
     private int mMaxImageDecodeWidth = ImageSizeUtils.NORMAL_IMAGE_DECODE_WIDTH;
-    public static int MAX_VIEW_WIDTH = 1080;
 
     private int mCurrentPage = 1;
     private int mMaxPage = 0;
@@ -337,8 +336,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         } else {
             mLoadingProgressBar.show();
         }
-
-        updateImageViewWidth();
 
         mDetailListView.setAdapter(mDetailAdapter);
         mDetailListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -587,7 +584,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         public void onScroll(AbsListView view, int firstVisibleItem,
                              int visibleItemCount, int totalItemCount) {
 
-
             if (!mInloading && !mPrefetching) {
                 if (mLastVisibleItem < firstVisibleItem) {
                     //scroll down, prefetch next page
@@ -668,8 +664,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         @Override
         public void onLoadFinished(Loader<DetailListBean> loader, DetailListBean details) {
             Logger.v("onLoadFinished");
-
-            updateImageViewWidth();
 
             mInloading = false;
             mPrefetching = false;
@@ -1064,9 +1058,9 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         if (imageReadyInfo != null && imageReadyInfo.isReady()) {
             RelativeLayout.LayoutParams layoutParams =
                     (RelativeLayout.LayoutParams) giv.getLayoutParams();
-            layoutParams.width = imageReadyInfo.getWidth();
-            layoutParams.height = imageReadyInfo.getHeight();
-            if (imageReadyInfo.getWidth() > GlideImageView.MIN_SCALE_WIDTH
+            layoutParams.width = imageReadyInfo.getDisplayWidth();
+            layoutParams.height = imageReadyInfo.getDisplayHeight();
+            if (imageReadyInfo.getDisplayWidth() > GlideImageView.MIN_SCALE_WIDTH
                     || imageReadyInfo.isGif()) {
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 giv.setImageReadyInfo(imageReadyInfo);
@@ -1080,7 +1074,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .transform(new GifTransformation(mCtx))
-                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
+                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
             } else {
                 Glide.with(mCtx)
                         .load(GlideHelper.getGlideUrl(imageUrl))
@@ -1088,7 +1082,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                         .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo.getOrientation())))
                         .imageDecoder(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo.getOrientation()))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getWidth(), imageReadyInfo.getHeight()));
+                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
             }
         } else {
             giv.setImageResource(R.drawable.image_broken);
@@ -1134,11 +1128,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         } else {
             Toast.makeText(mCtx, "本页没有图片", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void updateImageViewWidth() {
-        if (getView() != null)
-            MAX_VIEW_WIDTH = Math.min(getView().getWidth(), getView().getHeight());
     }
 
 }

@@ -71,7 +71,7 @@ public class PopupImageAdapter extends PagerAdapter {
         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
 
         if (imageReadyInfo == null || !(new File(imageReadyInfo.getPath())).exists()) {
-            GlideImageManager.addJob(new GlideImageJob(mCtx, imageUrl, GlideImageManager.PRIORITY_HIGH, mSessionId));
+            GlideImageManager.addJob(new GlideImageJob(imageUrl, GlideImageManager.PRIORITY_HIGH, mSessionId));
         } else {
             displayImage(rootView, imageReadyInfo);
         }

@@ -159,7 +159,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
                 RelativeLayout.LayoutParams params;
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-                    params = new RelativeLayout.LayoutParams(imageReadyInfo.getWidth(), imageReadyInfo.getHeight());
+                    params = new RelativeLayout.LayoutParams(imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight());
                     giv.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
                 } else {
                     params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400);
@@ -174,12 +174,12 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     mDetailFragment.loadImage(imageUrl, giv);
                 } else {
                     if (HiSettingsHelper.getInstance().isLoadImage()) {
-                        GlideImageManager.addJob(new GlideImageJob(mCtx, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
+                        GlideImageManager.addJob(new GlideImageJob(imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
                     } else {
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                GlideImageManager.addJob(new GlideImageJob(mCtx, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
+                                GlideImageManager.addJob(new GlideImageJob(imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
                                 giv.setOnClickListener(null);
                             }
                         });

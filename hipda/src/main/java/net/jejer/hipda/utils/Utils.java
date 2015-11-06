@@ -1,8 +1,13 @@
 package net.jejer.hipda.utils;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.Display;
+import android.view.WindowManager;
+
+import net.jejer.hipda.ui.HiApplication;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,6 +31,7 @@ import java.util.Locale;
 public class Utils {
 
     private static Whitelist mWhitelist = null;
+    private static int mScreenWidth = -1;
 
     private static String THIS_YEAR;
     private static String TODAY;
@@ -189,6 +195,17 @@ public class Utils {
     public static int dpToPx(Context context, int dp) {
         float density = context.getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);
+    }
+
+    public static int getScreenWidth() {
+        if (mScreenWidth <= 0) {
+            WindowManager wm = (WindowManager) HiApplication.getAppContext().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            mScreenWidth = Math.min(size.x, size.y);
+        }
+        return mScreenWidth;
     }
 
 }
