@@ -25,14 +25,13 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
     private Context mCtx;
     private int mForumId = 0;
     private int mPage = 1;
-    private Object mLocker;
+    private final Object mLocker = new Object();
     private String mRsp;
     private Handler mHandler;
 
     private final static int MAX_TIMES = 3;
     private int count = 0;
-
-    private String mUrl;
+    private ThreadListBean data;
 
     public ThreadListLoader(Context context, Handler handler, int forumId, int page) {
         super(context);
@@ -40,7 +39,17 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
         mHandler = handler;
         mForumId = forumId;
         mPage = page;
-        mLocker = this;
+    }
+
+    @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        if (data != null) {
+            deliverResult(data);
+        }
+        if (data == null || takeContentChanged()) {
+            forceLoad();
+        }
     }
 
     @Override
@@ -78,7 +87,8 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
         }
 
         Document doc = Jsoup.parse(mRsp);
-        return HiParserThreadList.parse(mCtx, mHandler, doc);
+        data = HiParserThreadList.parse(mCtx, mHandler, doc);
+        return data;
     }
 
     private void fetchForumList() {
@@ -86,7 +96,7 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
         msg.what = ThreadListFragment.STAGE_GET_WEBPAGE;
         mHandler.sendMessage(msg);
 
-        mUrl = HiUtils.ThreadListUrl + mForumId + "&page=" + mPage;
+        String mUrl = HiUtils.ThreadListUrl + mForumId + "&page=" + mPage;
         if (mForumId == HiUtils.FID_BS && TextUtils.isDigitsOnly(HiSettingsHelper.getInstance().getBSTypeId())) {
             mUrl += "&filter=type&typeid=" + HiSettingsHelper.getInstance().getBSTypeId();
         }

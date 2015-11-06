@@ -36,8 +36,9 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     private int mType;
     private int mPage = 1;
     private String mExtra = "";
-    private Object mLocker;
+    private final Object mLocker = new Object();
     private String mRsp;
+    private SimpleListBean data;
 
     public SimpleListLoader(Context context, int type, int page, String extra) {
         super(context);
@@ -45,7 +46,17 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
         mType = type;
         mPage = page;
         mExtra = extra;
-        mLocker = this;
+    }
+
+    @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        if (data != null) {
+            deliverResult(data);
+        }
+        if (data == null || takeContentChanged()) {
+            forceLoad();
+        }
     }
 
     @Override
@@ -59,7 +70,7 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
             synchronized (mLocker) {
                 try {
                     mLocker.wait();
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                 }
             }
 
@@ -81,7 +92,8 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
         }
 
         Document doc = Jsoup.parse(mRsp);
-        return HiParser.parseSimpleList(mCtx, mType, doc);
+        data = HiParser.parseSimpleList(mCtx, mType, doc);
+        return data;
     }
 
     private void fetchSimpleList(int type) {
@@ -160,7 +172,7 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
         public void onError(Request request, Exception e) {
             Logger.e(e);
             Toast.makeText(mCtx,
-                    e.getMessage(),
+                    OkHttpHelper.getErrorMessage(e),
                     Toast.LENGTH_LONG).show();
             synchronized (mLocker) {
                 mRsp = null;

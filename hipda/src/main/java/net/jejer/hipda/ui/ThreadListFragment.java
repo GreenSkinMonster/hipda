@@ -157,7 +157,7 @@ public class ThreadListFragment extends BaseFragment
         mFam.setVisibility(View.INVISIBLE);
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
-        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh_alt).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh_alt).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP + 4));
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -212,7 +212,6 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Logger.v("onActivityCreated");
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
@@ -236,9 +235,24 @@ public class ThreadListFragment extends BaseFragment
         });
 
         if (mThreadListAdapter.getCount() == 0) {
-            getLoaderManager().initLoader(0, null, mCallbacks);
             loadingProgressBar.show();
+            mInloading = true;
+            getLoaderManager().initLoader(0, null, mCallbacks);
             getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!mInloading) {
+            if (mThreadBeans.size() == 0) {
+                refresh();
+            } else {
+                swipeLayout.setRefreshing(false);
+                loadingProgressBar.hide();
+                hideListViewFooter();
+            }
         }
     }
 
@@ -333,18 +347,6 @@ public class ThreadListFragment extends BaseFragment
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        //Logger.v( "onPause");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //Logger.v( "onResume");
-    }
-
-    @Override
     public void onDestroy() {
         Logger.v("onDestory");
         getLoaderManager().destroyLoader(0);
@@ -365,6 +367,8 @@ public class ThreadListFragment extends BaseFragment
     private void refresh() {
         mPage = 1;
         mThreadListView.setSelection(0);
+        hideListViewFooter();
+        mInloading = true;
         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
     }
 
@@ -421,9 +425,9 @@ public class ThreadListFragment extends BaseFragment
 
             if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
                 if (!mInloading) {
-                    mInloading = true;
                     mPage++;
                     showListViewFooter();
+                    mInloading = true;
                     getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
                 }
             }

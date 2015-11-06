@@ -196,7 +196,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         mLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.detail_loading);
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
-        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh_alt).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh_alt).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP + 4));
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -347,6 +347,18 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
         getLoaderManager().initLoader(0, new Bundle(), mLoaderCallbacks);
         showOrLoadPage();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!mInloading) {
+            if (mDetailBeans.size() == 0) {
+                refresh();
+            } else {
+                mLoadingProgressBar.hide();
+            }
+        }
     }
 
     @Override
@@ -507,6 +519,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     private void refresh() {
         Bundle b = new Bundle();
         b.putInt(LOADER_PAGE_KEY, mCurrentPage);
+        mInloading = true;
         getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
     }
 
@@ -603,11 +616,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
     }
@@ -648,10 +656,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         @Override
         public Loader<DetailListBean> onCreateLoader(int id, Bundle args) {
             Logger.v("onCreateLoader");
-
-            if (mInloading) {
-                return null;
-            }
 
             // Re-enable after load complete if needed.
             mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
@@ -755,15 +759,14 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             int page = mCurrentPage + pageOffset;
             if (page < 1 || page > mMaxPage)
                 return;
-            mPrefetching = true;
             if (pageOffset > 0)
                 mDetailListView.setFooterLoading();
             else
                 mDetailListView.setHeaderLoading(true);
 
-            Logger.v("prefetch page " + page);
             Bundle b = new Bundle();
             b.putInt(LOADER_PAGE_KEY, page);
+            mPrefetching = true;
             getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
         }
     }
@@ -989,7 +992,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     }
 
     private void showOrLoadPage() {
-
         setActionBarTitle((mCurrentPage > 0 && mMaxPage > 0 ? "(" + mCurrentPage + "/" + mMaxPage + ") " : "")
                 + mTitle);
 
@@ -1013,11 +1015,11 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             mPrefetching = false;
 
             setPullLoadStatus();
-
         } else {
             mLoadingProgressBar.show();
             Bundle b = new Bundle();
             b.putInt(LOADER_PAGE_KEY, mCurrentPage);
+            mInloading = true;
             getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
         }
 
@@ -1041,6 +1043,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         if (mCurrentPage <= mMaxPage) {
             Bundle b = new Bundle();
             b.putInt(LOADER_PAGE_KEY, mCurrentPage);
+            mInloading = true;
             getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
         }
     }

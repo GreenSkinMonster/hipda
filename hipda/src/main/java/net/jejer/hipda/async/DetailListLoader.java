@@ -29,22 +29,31 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
     private final static int MAX_TIMES = 3;
     private int count = 0;
 
-    private Object mLocker;
+    private final Object mLocker = new Object();
     private String mTid;
     private String mGotoPostId;
     private int mPage;
     private String mRsp;
-
-    private String mUrl;
+    private DetailListBean data;
 
     public DetailListLoader(Context context, Handler handler, String tid, String gotoPostId, int page) {
         super(context);
         mCtx = context;
         mHandler = handler;
-        mLocker = this;
         mTid = tid;
         mGotoPostId = gotoPostId;
         mPage = page;
+    }
+
+    @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        if (data != null) {
+            deliverResult(data);
+        }
+        if (data == null || takeContentChanged()) {
+            forceLoad();
+        }
     }
 
     @Override
@@ -82,7 +91,8 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         }
 
         Document doc = Jsoup.parse(mRsp);
-        return HiParserThreadDetail.parse(mCtx, mHandler, doc, mTid == null);
+        data = HiParserThreadDetail.parse(mCtx, mHandler, doc, mTid == null);
+        return data;
     }
 
     private void fetchDetail() {
@@ -93,6 +103,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
         msg.setData(b);
         mHandler.sendMessage(msg);
 
+        String mUrl;
         if (!TextUtils.isEmpty(mGotoPostId)) {
             if (TextUtils.isEmpty(mTid))
                 mUrl = HiUtils.GotoPostUrl.replace("{pid}", mGotoPostId);
