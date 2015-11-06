@@ -1,13 +1,19 @@
 package net.jejer.hipda.utils;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.ui.MainFrameActivity;
 
 public class HttpUtils {
 
@@ -44,6 +50,17 @@ public class HttpUtils {
         if (TextUtils.isEmpty(url) || TextUtils.isEmpty(filename)
                 || (url.startsWith(HiUtils.BaseUrl) && TextUtils.isEmpty(authCookie))) {
             Toast.makeText(ctx, "下载信息不完整，无法进行下载", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (ContextCompat.checkSelfPermission(ctx,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(ctx, "需要在权限管理中授权存储空间权限", Toast.LENGTH_SHORT).show();
+            if (ctx instanceof Activity)
+                ActivityCompat.requestPermissions((Activity) ctx,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MainFrameActivity.PERMISSIONS_REQUEST_CODE);
             return;
         }
 
