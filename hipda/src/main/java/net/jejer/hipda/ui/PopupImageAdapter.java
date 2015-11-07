@@ -1,8 +1,9 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
-import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,15 +91,15 @@ public class PopupImageAdapter extends PagerAdapter {
         if (wvImage == null || gifImageView == null)
             return;
 
-        gifImageView.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
-        wvImage.setBackgroundColor(mCtx.getResources().getColor(R.color.night_background));
+        gifImageView.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.night_background));
+        wvImage.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.night_background));
         progressBar.show();
 
         if (imageReadyInfo == null) {
             gifImageView.setVisibility(View.VISIBLE);
             wvImage.setVisibility(View.GONE);
             progressBar.hide();
-            gifImageView.setImageDrawable(mCtx.getResources().getDrawable(R.drawable.image_broken));
+            gifImageView.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.image_broken));
         } else {
             if (imageReadyInfo.isGif()) {
                 gifImageView.setVisibility(View.VISIBLE);
@@ -151,8 +152,7 @@ public class PopupImageAdapter extends PagerAdapter {
         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(event.getImageUrl());
         View rootView = imageViewMap.get(event.getImageUrl());
         if (rootView != null
-                && (Build.VERSION.SDK_INT < 19 ||
-                (Build.VERSION.SDK_INT >= 19 && rootView.isAttachedToWindow())))
+                && ViewCompat.isAttachedToWindow(rootView))
             displayImage(rootView, imageReadyInfo);
     }
 

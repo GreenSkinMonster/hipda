@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.GestureDetector;
@@ -946,7 +947,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
             switch (msg.what) {
                 case ThreadListFragment.STAGE_ERROR:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.red));
+                    mTipBar.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.red));
                     Bundle b = msg.getData();
                     mTipBar.setText(b.getString(ThreadListFragment.STAGE_ERROR_KEY));
                     Logger.e(b.getString(ThreadListFragment.STAGE_ERROR_KEY));
@@ -961,7 +962,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 //                    mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case ThreadListFragment.STAGE_RELOGIN:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
+                    mTipBar.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.purple));
                     mTipBar.setText("正在登录");
                     mTipBar.setVisibility(View.VISIBLE);
                     break;

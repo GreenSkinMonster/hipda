@@ -2,6 +2,7 @@ package net.jejer.hipda.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 
 import net.jejer.hipda.R;
@@ -63,7 +64,7 @@ public class ColorUtils {
     private static int getColor3(Context ctx, int attrId) {
         TypedValue typedValue = new TypedValue();
         ctx.getTheme().resolveAttribute(attrId, typedValue, true);
-        return ctx.getResources().getColor(typedValue.resourceId);
+        return ContextCompat.getColor(ctx, typedValue.resourceId);
     }
 
 }

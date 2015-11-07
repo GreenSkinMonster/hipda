@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -212,9 +213,9 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         emojiBtn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(selectedBtnColorId));
-                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
-                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
+                emojiBtn1.setBackgroundColor(ContextCompat.getColor(getActivity(), selectedBtnColorId));
+                emojiBtn2.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
+                emojiBtn3.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
                 gvTab1.setVisibility(View.VISIBLE);
                 gvTab2.setVisibility(View.GONE);
                 gvTab3.setVisibility(View.GONE);
@@ -225,9 +226,9 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         emojiBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
-                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(selectedBtnColorId));
-                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
+                emojiBtn1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
+                emojiBtn2.setBackgroundColor(ContextCompat.getColor(getActivity(), selectedBtnColorId));
+                emojiBtn3.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
                 gvTab1.setVisibility(View.GONE);
                 gvTab2.setVisibility(View.VISIBLE);
                 gvTab3.setVisibility(View.GONE);
@@ -238,9 +239,9 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         emojiBtn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                emojiBtn1.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
-                emojiBtn2.setBackgroundColor(getActivity().getResources().getColor(R.color.background_grey));
-                emojiBtn3.setBackgroundColor(getActivity().getResources().getColor(selectedBtnColorId));
+                emojiBtn1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
+                emojiBtn2.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
+                emojiBtn3.setBackgroundColor(ContextCompat.getColor(getActivity(), selectedBtnColorId));
                 gvTab1.setVisibility(View.GONE);
                 gvTab2.setVisibility(View.GONE);
                 gvTab3.setVisibility(View.VISIBLE);
@@ -368,7 +369,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                     String attachStr = "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]";
                     if (!replyText.contains(attachStr)) {
                         needWarn = true;
-                        uploadBtn.setBackgroundColor(getResources().getColor(R.color.orange));
+                        uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.orange));
                     }
                 }
             }
@@ -443,7 +444,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                     public void onClick(View arg0) {
                         if (isValidImgId(uploadBtn.getImgId())) {
                             appendImage(uploadBtn.getImgId());
-                            uploadBtn.setBackgroundColor(getResources().getColor(R.color.hipda));
+                            uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.hipda));
                         }
                     }
                 });
@@ -480,8 +481,8 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                     mHsvView.setVisibility(View.VISIBLE);
                 LinearLayout imagesLayout = (LinearLayout) getActivity().findViewById(R.id.ll_images);
                 uploadBtn.setPadding(4, 4, 4, 4);
-                uploadBtn.setBackgroundColor(getResources().getColor(R.color.background_grey));
-                uploadBtn.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_action_image));
+                uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
+                uploadBtn.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_action_image));
                 uploadBtn.setAdjustViewBounds(true);
                 uploadBtn.setScaleType(ImageView.ScaleType.FIT_XY);
                 LinearLayout.LayoutParams params =
@@ -532,7 +533,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                         if (isValidImgId(imgId)) {
                             uploadBtn.setImgId(imgId);
                             uploadBtn.setImageBitmap(thumbtail);
-                            uploadBtn.setBackgroundColor(getResources().getColor(R.color.hipda));
+                            uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.hipda));
                             appendImage(imgId);
                         } else {
                             Toast.makeText(getActivity(), "图片上传失败："
@@ -641,7 +642,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
 
             } else {
                 mTvAdditional.setText("收集信息失败，请返回重试");
-                mTvAdditional.setTextColor(getActivity().getResources().getColor(R.color.red));
+                mTvAdditional.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
             }
         }
     }

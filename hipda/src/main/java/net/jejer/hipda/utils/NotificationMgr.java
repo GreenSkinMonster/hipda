@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
@@ -150,7 +151,7 @@ public class NotificationMgr {
                 String content = getContentText(mCurrentBean);
                 Bitmap icon = null;
 
-                int color = context.getResources().getColor(R.color.icon_blue);
+                int color = ContextCompat.getColor(context, R.color.icon_blue);
 
                 if (mCurrentBean.getSmsCount() == 1 && mCurrentBean.getThreadCount() == 0) {
                     title = mCurrentBean.getUsername() + " 的短消息";

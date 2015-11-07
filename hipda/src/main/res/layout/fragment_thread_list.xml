@@ -17,7 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="?list_item_divider"
-            android:dividerHeight="1dp" />
+            android:dividerHeight="1dp"
+            android:listSelector="@android:color/transparent" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

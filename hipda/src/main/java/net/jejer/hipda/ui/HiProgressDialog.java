@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v4.content.ContextCompat;
 import android.view.WindowManager;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -47,11 +48,11 @@ public class HiProgressDialog extends ProgressDialog {
         if (status == ERROR) {
             setIndeterminateDrawable(new IconicsDrawable(getContext(),
                     GoogleMaterial.Icon.gmd_alert_octagon).sizeDp(48)
-                    .color(getContext().getResources().getColor(R.color.red)));
+                    .color(ContextCompat.getColor(getContext(), R.color.red)));
         } else {
             setIndeterminateDrawable(new IconicsDrawable(getContext(),
                     GoogleMaterial.Icon.gmd_info).sizeDp(48)
-                    .color(getContext().getResources().getColor(R.color.md_green_500)));
+                    .color(ContextCompat.getColor(getContext(), R.color.md_green_500)));
         }
         setIndeterminate(true);
         new CountDownTimer(millisToWait, millisToWait) {

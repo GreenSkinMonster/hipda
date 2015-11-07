@@ -1,7 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/thread_image_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <net.jejer.hipda.glide.GlideImageView
         android:id="@+id/thread_image"
@@ -19,5 +16,5 @@
         android:indeterminate="false"
         android:max="100"
         android:visibility="gone" />
-
-</RelativeLayout>
+    
+</merge>

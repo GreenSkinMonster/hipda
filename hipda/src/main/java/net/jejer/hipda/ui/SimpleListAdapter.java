@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -53,7 +54,7 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_title.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         holder.tv_title.setText(Utils.trim(item.getTitle()));
         if (item.isNew()) {
-            holder.tv_title.setTextColor(mCtx.getResources().getColor(R.color.red));
+            holder.tv_title.setTextColor(ContextCompat.getColor(mCtx, R.color.red));
         }
 
         if (TextUtils.isEmpty(item.getInfo())) {

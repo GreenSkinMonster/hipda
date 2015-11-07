@@ -12,6 +12,8 @@
 
     <style name="ThemeLight" parent="ThemeLightBase">
 
+        <item name="android:windowBackground">?list_item_background</item>
+
         <!-- make ActionMode overlap Toolbar -->
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/MyActionMode</item>
@@ -66,6 +68,8 @@
     </style>
 
     <style name="ThemeDark" parent="ThemeDarkBase">
+
+        <item name="android:windowBackground">?list_item_background</item>
 
         <!-- make ActionMode overlap Toolbar -->
         <item name="windowActionModeOverlay">true</item>

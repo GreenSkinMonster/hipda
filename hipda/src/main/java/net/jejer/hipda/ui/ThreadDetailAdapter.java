@@ -2,7 +2,8 @@ package net.jejer.hipda.ui;
 
 import android.app.FragmentManager;
 import android.content.Context;
-import android.os.Build;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -45,7 +46,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
     private FragmentManager mFragmentManager;
     private ThreadDetailFragment mDetailFragment;
 
-    private Map<String, Map<Integer, RelativeLayout>> imageLayoutMap = new HashMap<>();
+    private Map<String, Map<Integer, ThreadImageLayout>> imageLayoutMap = new HashMap<>();
 
     public ThreadDetailAdapter(Context context, FragmentManager fm, ThreadDetailFragment detailFragment,
                                Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
@@ -139,14 +140,14 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 final String imageUrl = content.getContent();
                 int imageIndex = ((ContentImg) content).getIndexInPage();
 
-                final RelativeLayout threadImageLayout = (RelativeLayout) mInflater.inflate(R.layout.item_thread_image, parent, false);
-                final GlideImageView giv = (GlideImageView) threadImageLayout.findViewById(R.id.thread_image);
+                final ThreadImageLayout threadImageLayout = new ThreadImageLayout(mCtx);
+                final GlideImageView giv = threadImageLayout.getImageView();
 
                 giv.setFragment(mDetailFragment);
                 giv.setFocusable(false);
                 giv.setClickable(true);
 
-                Map<Integer, RelativeLayout> subImageMap;
+                Map<Integer, ThreadImageLayout> subImageMap;
                 if (imageLayoutMap.containsKey(imageUrl)) {
                     subImageMap = imageLayoutMap.get(imageUrl);
                 } else {
@@ -160,7 +161,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 RelativeLayout.LayoutParams params;
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
                     params = new RelativeLayout.LayoutParams(imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight());
-                    giv.setBackgroundColor(mCtx.getResources().getColor(R.color.background_silver));
+                    giv.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.background_silver));
                 } else {
                     params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400);
                 }
@@ -286,12 +287,10 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         String imageUrl = event.getImageUrl();
         if (!TextUtils.isEmpty(imageUrl)
                 && imageLayoutMap.containsKey(imageUrl)) {
-            Map<Integer, RelativeLayout> subImageMap = imageLayoutMap.get(imageUrl);
-            for (RelativeLayout layout : subImageMap.values()) {
-                GlideImageView giv = (GlideImageView) layout.findViewById(R.id.thread_image);
-                ProgressBar bar = (ProgressBar) layout.findViewById(R.id.thread_image_progress);
-                if (Build.VERSION.SDK_INT < 19
-                        || (Build.VERSION.SDK_INT >= 19 && giv.isAttachedToWindow())) {
+            Map<Integer, ThreadImageLayout> subImageMap = imageLayoutMap.get(imageUrl);
+            for (ThreadImageLayout layout : subImageMap.values()) {
+                ProgressBar bar = layout.getProgressBar();
+                if (ViewCompat.isAttachedToWindow(layout)) {
                     if (event.isInProgress()) {
                         if (bar.getVisibility() != View.VISIBLE)
                             bar.setVisibility(View.VISIBLE);
@@ -299,6 +298,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     } else {
                         if (bar.getVisibility() == View.VISIBLE)
                             bar.setVisibility(View.GONE);
+                        GlideImageView giv = layout.getImageView();
                         mDetailFragment.loadImage(imageUrl, giv);
                     }
                 }

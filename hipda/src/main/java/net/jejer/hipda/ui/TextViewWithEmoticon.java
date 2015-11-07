@@ -3,6 +3,7 @@ package net.jejer.hipda.ui;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
@@ -87,7 +88,7 @@ public class TextViewWithEmoticon extends TextView {
                 src = src.substring(src.indexOf(HiUtils.SMILE_PATH) + HiUtils.SMILE_PATH.length(), src.lastIndexOf(".")).replace("/", "_");
                 int id = mCtx.getResources().getIdentifier(src, "drawable", mCtx.getPackageName());
                 if (id != 0) {
-                    icon = mCtx.getResources().getDrawable(id);
+                    icon = ContextCompat.getDrawable(mCtx, id);
                     if (icon != null)
                         icon.setBounds(0, 0, getLineHeight(), getLineHeight());
                 }

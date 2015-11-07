@@ -34,12 +34,11 @@ public class GlideImageJob extends Job {
 
     @Override
     public void onAdded() {
-
+        EventBus.getDefault().post(new GlideImageEvent(mUrl, 0, Constants.STATUS_IN_PROGRESS));
     }
 
     @Override
     public void onRun() throws Throwable {
-
         try {
             FutureTarget<File> future = Glide.with(getApplicationContext())
                     .load(GlideHelper.getGlideUrl(mUrl))

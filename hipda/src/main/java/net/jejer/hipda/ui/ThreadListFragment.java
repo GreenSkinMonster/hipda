@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -687,7 +688,7 @@ public class ThreadListFragment extends BaseFragment
             Bundle b = msg.getData();
             switch (msg.what) {
                 case STAGE_ERROR:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.red));
+                    mTipBar.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.red));
                     mTipBar.setText(b.getString(STAGE_ERROR_KEY));
                     Logger.e(b.getString(STAGE_ERROR_KEY));
                     mTipBar.setVisibility(View.VISIBLE);
@@ -701,7 +702,7 @@ public class ThreadListFragment extends BaseFragment
 //                    mTipBar.setVisibility(View.VISIBLE);
                     break;
                 case STAGE_RELOGIN:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
+                    mTipBar.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.purple));
                     mTipBar.setText("正在登录");
                     mTipBar.setVisibility(View.VISIBLE);
                     break;
@@ -722,7 +723,7 @@ public class ThreadListFragment extends BaseFragment
                     refresh();
                     break;
                 case STAGE_NOT_LOGIN:
-                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.pink));
+                    mTipBar.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.pink));
                     mTipBar.setText(b.getString(STAGE_ERROR_KEY));
                     mTipBar.setVisibility(View.VISIBLE);
                     mThreadBeans.clear();
