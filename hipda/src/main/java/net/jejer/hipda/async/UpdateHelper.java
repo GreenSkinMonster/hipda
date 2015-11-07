@@ -21,6 +21,7 @@ import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 import java.util.Set;
@@ -177,33 +178,42 @@ public class UpdateHelper {
     public static void updateApp(Context context) {
         String installedVersion = HiSettingsHelper.getInstance().getInstalledVersion();
         String currentVersion = HiApplication.getAppVersion();
-        if (TextUtils.isEmpty(installedVersion)) {
-            // <= v2.0.02
-
-            //add default forums, BS/Eink/Geek
-            Set<String> forums = HiSettingsHelper.getInstance().getForums();
-            if (!forums.contains("6"))
-                forums.add("6");
-            if (!forums.contains("7"))
-                forums.add("7");
-            if (!forums.contains("59"))
-                forums.add("59");
-            HiSettingsHelper.getInstance().setForums(forums);
-
-            clearCache(context);
-        }
-        if (newer("2.0.10", currentVersion)) {
-            if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, ""))) {
-                HiSettingsHelper.getInstance()
-                        .setStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, NotificationMgr.DEFAUL_SLIENT_BEGIN);
-            }
-            if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SILENT_END, ""))) {
-                HiSettingsHelper.getInstance()
-                        .setStringValue(HiSettingsHelper.PERF_NOTI_SILENT_END, NotificationMgr.DEFAUL_SLIENT_END);
-            }
-        }
 
         if (!currentVersion.equals(installedVersion)) {
+            if (TextUtils.isEmpty(installedVersion)) {
+                // <= v2.0.02
+
+                //add default forums, BS/Eink/Geek
+                Set<String> forums = HiSettingsHelper.getInstance().getForums();
+                if (!forums.contains("6"))
+                    forums.add("6");
+                if (!forums.contains("7"))
+                    forums.add("7");
+                if (!forums.contains("59"))
+                    forums.add("59");
+                HiSettingsHelper.getInstance().setForums(forums);
+
+                clearCache(context);
+            }
+            if (newer("2.0.10", currentVersion)) {
+                if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, ""))) {
+                    HiSettingsHelper.getInstance()
+                            .setStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, NotificationMgr.DEFAUL_SLIENT_BEGIN);
+                }
+                if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SILENT_END, ""))) {
+                    HiSettingsHelper.getInstance()
+                            .setStringValue(HiSettingsHelper.PERF_NOTI_SILENT_END, NotificationMgr.DEFAUL_SLIENT_END);
+                }
+            }
+
+            if (newer(installedVersion, "2.2.01")) {
+                String blacklist = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_BLANKLIST_USERNAMES, "");
+                if (blacklist.length() > 0 && blacklist.contains(" ") && !blacklist.contains("\n")) {
+                    String[] usernames = blacklist.split(" ");
+                    HiSettingsHelper.getInstance().setBlanklistUsernames(Arrays.asList(usernames));
+                }
+            }
+
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
         }
     }

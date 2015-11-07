@@ -221,7 +221,7 @@
     <string name="pref_title_tail_url">尾巴链接</string>
     <string name="pref_title_encode_utf8">使用UTF8编码</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
-    <string name="pref_title_blanklist">黑名单, 使用空格分隔ID</string>
+    <string name="pref_title_blacklist">黑名单, 每行一个用户名</string>
     <string name="pref_title_theme">界面主题</string>
     <string name="pref_title_night_theme">夜间模式主题</string>
     <string name="pref_title_navbar_colored">虚拟按键背景色</string>

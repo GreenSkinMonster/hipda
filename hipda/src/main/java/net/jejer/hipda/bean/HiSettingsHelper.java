@@ -611,7 +611,7 @@ public class HiSettingsHelper {
     }
 
     public List<String> getBlanklistUsernamesFromPref() {
-        String[] usernames = mSharedPref.getString(PERF_BLANKLIST_USERNAMES, "").split(" ");
+        String[] usernames = mSharedPref.getString(PERF_BLANKLIST_USERNAMES, "").split("\n");
         mBlanklistUsernames.clear();
         mBlanklistUsernames.addAll(Arrays.asList(usernames));
         return mBlanklistUsernames;
@@ -621,9 +621,12 @@ public class HiSettingsHelper {
         mBlanklistUsernames = blanklistUsernames;
         StringBuilder sb = new StringBuilder();
         for (String username : blanklistUsernames) {
-            if (sb.length() > 0)
-                sb.append(" ");
-            sb.append(username);
+            username = Utils.nullToText(username);
+            if (username.length() > 0) {
+                if (sb.length() > 0)
+                    sb.append("\n");
+                sb.append(username);
+            }
         }
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_BLANKLIST_USERNAMES, sb.toString()).apply();

@@ -33,11 +33,12 @@
     </PreferenceCategory>
 
     <EditTextPreference
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:key="PERF_BLANKLIST_USERNAMES"
-        android:maxLines="1"
+        android:maxLines="8"
+        android:scrollbars="vertical"
         android:selectAllOnFocus="false"
-        android:singleLine="true"
-        android:title="@string/pref_title_blanklist" />
+        android:singleLine="false"
+        android:title="@string/pref_title_blacklist" />
 
 </PreferenceScreen>
