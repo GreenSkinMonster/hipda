@@ -63,6 +63,7 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -225,18 +226,17 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withIcon(GoogleMaterial.Icon.gmd_settings));
         if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme())) {
             stickyDrawerItems.add(new SwitchDrawerItem()
-                    .withName("夜间模式")
+                    .withName(R.string.title_drawer_night_mode)
                     .withIdentifier(Constants.DRAWER_NIGHT_MODE)
                     .withIcon(GoogleMaterial.Icon.gmd_brightness_medium)
                     .withChecked(HiSettingsHelper.getInstance().isNightMode())
                     .withOnCheckedChangeListener(new OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
-                            HiSettingsHelper.getInstance().setNightMode(isChecked);
-                            ColorUtils.clear();
-                            MainFrameActivity.this.finish();
-                            startActivity(new Intent(MainFrameActivity.this.getApplicationContext(), MainFrameActivity.this.getClass()));
-                            System.exit(0);
+                            if (HiSettingsHelper.getInstance().isNightMode() != isChecked) {
+                                HiSettingsHelper.getInstance().setNightMode(isChecked);
+                                Utils.restartActivity(MainFrameActivity.this);
+                            }
                         }
                     }));
         }

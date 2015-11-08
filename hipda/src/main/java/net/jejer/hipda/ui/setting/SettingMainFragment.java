@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.support.v4.widget.DrawerLayout;
@@ -19,10 +18,10 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.AboutFragment;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
-import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.Set;
 
@@ -118,16 +117,11 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
                 || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
-            ColorUtils.clear();
-            getActivity().finish();
             mCacheCleared = false;
-
-            startActivity(new Intent(getActivity().getApplicationContext(), getActivity().getClass()));
-            System.exit(0);
+            Utils.restartActivity(getActivity());
         }
 
     }
-
 
     private void bindPreferenceSummaryToValue() {
 

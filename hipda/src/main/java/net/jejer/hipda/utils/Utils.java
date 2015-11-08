@@ -1,6 +1,8 @@
 package net.jejer.hipda.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.text.Html;
 import android.text.TextUtils;
@@ -207,5 +209,14 @@ public class Utils {
         }
         return mScreenWidth;
     }
+
+    public static void restartActivity(Activity activity) {
+        ColorUtils.clear();
+        activity.finish();
+        activity.startActivity(new Intent(activity.getApplicationContext(), activity.getClass()));
+        activity.overridePendingTransition(0, 0);
+        System.exit(0);
+    }
+
 
 }
