@@ -13,7 +13,6 @@ public class ImageSizeUtils {
     public final static int SMALLEST_IMAGE_DECODE_WIDTH = 380;
 
     public final static int GIF_DECODE_WIDTH = 320;
-    public final static int LONG_IMAGE_DECODE_WIDTH = 320;
 
     public static int getDecodeSize(int imageCount) {
         int decodeSize = NORMAL_IMAGE_DECODE_WIDTH;
@@ -32,9 +31,4 @@ public class ImageSizeUtils {
         }
         return decodeSize;
     }
-
-    public static boolean isLongImage(int width, int height) {
-        return height >= 3 * width;
-    }
-
 }

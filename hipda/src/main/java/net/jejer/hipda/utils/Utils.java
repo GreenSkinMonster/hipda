@@ -34,6 +34,7 @@ public class Utils {
 
     private static Whitelist mWhitelist = null;
     private static int mScreenWidth = -1;
+    private static int mScreenHeight = -1;
 
     private static String THIS_YEAR;
     private static String TODAY;
@@ -206,8 +207,21 @@ public class Utils {
             Point size = new Point();
             display.getSize(size);
             mScreenWidth = Math.min(size.x, size.y);
+            mScreenHeight = Math.max(size.x, size.y);
         }
         return mScreenWidth;
+    }
+
+    public static int getScreenHeight() {
+        if (mScreenHeight <= 0) {
+            WindowManager wm = (WindowManager) HiApplication.getAppContext().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            mScreenWidth = Math.min(size.x, size.y);
+            mScreenHeight = Math.max(size.x, size.y);
+        }
+        return mScreenHeight;
     }
 
     public static void restartActivity(Activity activity) {

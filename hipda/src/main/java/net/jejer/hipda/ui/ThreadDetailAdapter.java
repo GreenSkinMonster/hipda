@@ -2,7 +2,6 @@ package net.jejer.hipda.ui;
 
 import android.app.FragmentManager;
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.text.util.Linkify;
@@ -161,7 +160,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 RelativeLayout.LayoutParams params;
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
                     params = new RelativeLayout.LayoutParams(imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight());
-                    giv.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.background_silver));
                 } else {
                     params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400);
                 }

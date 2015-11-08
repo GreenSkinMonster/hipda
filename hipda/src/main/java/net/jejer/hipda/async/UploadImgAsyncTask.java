@@ -340,7 +340,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());
         BitmapFactory.Options newOpts = new BitmapFactory.Options();
         newOpts.inJustDecodeBounds = true;
-        Bitmap newbitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
+        BitmapFactory.decodeStream(isBm, null, newOpts);
         newOpts.inJustDecodeBounds = false;
 
         int w = newOpts.outWidth;
@@ -360,7 +360,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         newOpts.inSampleSize = be;
 
         isBm = new ByteArrayInputStream(baos.toByteArray());
-        newbitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
+        Bitmap newbitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
 
         int quality = MAX_QUALITY;
         baos.reset();

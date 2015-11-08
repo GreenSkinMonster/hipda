@@ -68,7 +68,7 @@ public class ImageReadyInfo {
     }
 
     private int getDisplaySize(boolean isWidth) {
-        //calculate display (ImageView) size for image
+        //calculate ImageView size for image to display
 
         //leave 12dp on both left and right side, this should match layout setup
         int tmpMaxViewWidth = Utils.getScreenWidth() - Utils.dpToPx(HiApplication.getAppContext(), 12 * 2);
@@ -91,6 +91,9 @@ public class ImageReadyInfo {
                 displayWidth = scaledWidth;
                 displayHeight = scaledHeight;
             }
+            //at last, limit ImageView to 2xScreen.Long.Side size
+            if (displayHeight > 2 * Utils.getScreenHeight())
+                displayHeight = 2 * Utils.getScreenHeight();
         }
 
         if (isWidth)

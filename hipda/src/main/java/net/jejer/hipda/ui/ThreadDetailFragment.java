@@ -1067,7 +1067,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 giv.setImageReadyInfo(imageReadyInfo);
                 giv.setClickToViewBigImage();
             }
-            //giv.setLayoutParams(layoutParams);
 
             if (imageReadyInfo.isGif()) {
                 Glide.with(mCtx)
@@ -1080,8 +1079,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 Glide.with(mCtx)
                         .load(GlideHelper.getGlideUrl(imageUrl))
                         .asBitmap()
-                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo.getOrientation())))
-                        .imageDecoder(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo.getOrientation()))
+                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo)))
+                        .imageDecoder(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
             }
