@@ -113,7 +113,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
             ContentAbs content = detail.getContents().get(i);
             if (content instanceof ContentText) {
                 TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, parent, false);
-                tv.setFragmentManager(mFragmentManager);
+                tv.setFragment(mDetailFragment);
                 tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                 tv.setPadding(8, 8, 8, 8);
 
@@ -183,7 +183,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
             } else if (content instanceof ContentAttach) {
                 TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, parent, false);
-                tv.setFragmentManager(mFragmentManager);
+                tv.setFragment(mDetailFragment);
                 tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                 tv.setText(content.getContent());
                 tv.setFocusable(false);
@@ -192,7 +192,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
                 LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text_simple, parent, false);
                 TextViewWithEmoticon tv = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
-                tv.setFragmentManager(mFragmentManager);
+                tv.setFragment(mDetailFragment);
 
                 tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
                 tv.setAutoLinkMask(Linkify.WEB_URLS);
@@ -248,7 +248,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 TextViewWithEmoticon tvContent = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
                 TextView tvTime = (TextView) quoteLayout.findViewById(R.id.quote_post_time);
 
-                tvContent.setFragmentManager(mFragmentManager);
+                tvContent.setFragment(mDetailFragment);
                 tvContent.setTrim(true);
 
                 tvAuthor.setText(Utils.nullToText(author));

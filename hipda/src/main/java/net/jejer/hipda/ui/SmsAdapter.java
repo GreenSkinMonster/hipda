@@ -1,7 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.FragmentManager;
-import android.content.Context;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,12 +18,12 @@ import net.jejer.hipda.utils.Utils;
 public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
     private View.OnClickListener mAvatarListener;
     private LayoutInflater mInflater;
-    private FragmentManager mFragmentManager;
+    private SmsFragment mFragment;
 
-    public SmsAdapter(Context context, FragmentManager fm, View.OnClickListener avatarListener) {
+    public SmsAdapter(SmsFragment fragment, View.OnClickListener avatarListener) {
         mAvatarListener = avatarListener;
-        mInflater = LayoutInflater.from(context);
-        mFragmentManager = fm;
+        mInflater = LayoutInflater.from(fragment.getActivity());
+        mFragment = fragment;
     }
 
     @Override
@@ -90,7 +88,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         }
 
         holder.tv_time.setText(Utils.shortyTime(item.getTime()));
-        holder.tv_content.setFragmentManager(mFragmentManager);
+        holder.tv_content.setFragment(mFragment);
         //hack, replace url to link, only parse plain text
         String text = Utils.nullToText(item.getInfo());
         if (!text.contains("<a") && text.contains("http"))

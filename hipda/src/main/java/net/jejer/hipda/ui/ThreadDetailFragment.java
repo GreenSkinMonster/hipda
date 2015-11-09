@@ -922,21 +922,24 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             mAuthorOnly = false;
 
             int floor = (Integer) view.getTag();
+            gotoFloor(floor);
+        }
+    }
 
-            mGoToPage = (floor - 1) / mMaxPostInPage + 1; // page start from 1
+    public void gotoFloor(int floor) {
+        mGoToPage = (floor - 1) / mMaxPostInPage + 1; // page start from 1
 
-            mFloorOfPage = floor % mMaxPostInPage; // floor start from 1
-            if (mFloorOfPage == 0) {
-                mFloorOfPage = mMaxPostInPage;
-            }
+        mFloorOfPage = floor % mMaxPostInPage; // floor start from 1
+        if (mFloorOfPage == 0) {
+            mFloorOfPage = mMaxPostInPage;
+        }
 
-            if (mGoToPage != mCurrentPage) {
-                mCurrentPage = mGoToPage;
-                showOrLoadPage();
-            } else {
-                mDetailListView.setSelection(mFloorOfPage + mDetailListView.getHeaderViewsCount() - 1);
-                mFloorOfPage = -1;
-            }
+        if (mGoToPage != mCurrentPage) {
+            mCurrentPage = mGoToPage;
+            showOrLoadPage();
+        } else {
+            mDetailListView.setSelection(mFloorOfPage + mDetailListView.getHeaderViewsCount() - 1);
+            mFloorOfPage = -1;
         }
     }
 
@@ -1123,6 +1126,10 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         } else {
             Toast.makeText(mCtx, "本页没有图片", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public String getTid() {
+        return mTid;
     }
 
 }

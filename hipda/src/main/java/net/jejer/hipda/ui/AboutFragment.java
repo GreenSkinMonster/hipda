@@ -41,7 +41,7 @@ public class AboutFragment extends BaseFragment {
 
             TextViewWithEmoticon tvTitle = (TextViewWithEmoticon) itemAboutLayout.findViewById(R.id.about_title);
 
-            tvTitle.setFragmentManager(getFragmentManager());
+            tvTitle.setFragment(this);
             tvTitle.setText(credit);
 
             aboutLayout.addView(itemAboutLayout);

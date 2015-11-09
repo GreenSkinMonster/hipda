@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
@@ -17,7 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.jejer.hipda.R;
+import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
 import net.jejer.hipda.utils.ColorUtils;
@@ -28,7 +27,7 @@ import net.jejer.hipda.utils.Utils;
 
 public class TextViewWithEmoticon extends TextView {
     private Context mCtx;
-    private FragmentManager mFragmentManager;
+    private BaseFragment mFragment;
 
     private static int TRIM_LENGTH = 80;
 
@@ -65,8 +64,8 @@ public class TextViewWithEmoticon extends TextView {
         setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
     }
 
-    public void setFragmentManager(FragmentManager fm) {
-        mFragmentManager = fm;
+    public void setFragment(BaseFragment fragment) {
+        mFragment = fragment;
     }
 
     @Override
@@ -134,15 +133,40 @@ public class TextViewWithEmoticon extends TextView {
     private URLSpan getFragmentArgsUrlSpan(final String s_url) {
         return new URLSpan(s_url) {
             public void onClick(View view) {
-                if (mFragmentManager == null) {
+                if (mFragment == null) {
                     Toast.makeText(mCtx, "need FragmentManager here", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 FragmentArgs args = FragmentUtils.parseUrl(s_url);
                 if (args != null) {
-                    //this line is needed, or onCreateOptionsMenu and onPrepareOptionsMenu will be called multiple times
-                    mFragmentManager.findFragmentById(R.id.main_frame_container).setHasOptionsMenu(false);
-                    FragmentUtils.show(mFragmentManager, args);
+
+                    int floor = 0;
+                    if (args.getType() == FragmentArgs.TYPE_THREAD
+                            && mFragment instanceof ThreadDetailFragment) {
+                        //redirect by goto floor in same fragment
+                        ThreadDetailFragment detailFragment = (ThreadDetailFragment) mFragment;
+                        if (!TextUtils.isEmpty(args.getTid()) && args.getTid().equals(detailFragment.getTid())) {
+                            if (args.getFloor() != 0) {
+                                floor = args.getFloor();
+                            } else if (!TextUtils.isEmpty(args.getPostId())) {
+                                //get floor if postId is cached
+                                DetailBean detailBean = detailFragment.getCachedPost(args.getPostId());
+                                if (detailBean != null && TextUtils.isDigitsOnly(detailBean.getFloor()))
+                                    floor = Integer.parseInt(detailBean.getFloor());
+                            } else {
+                                floor = 1;
+                            }
+                        }
+                    }
+
+                    if (floor > 0 || floor == ThreadDetailFragment.LAST_FLOOR) {
+                        //redirect in same thread
+                        ((ThreadDetailFragment) mFragment).gotoFloor(floor);
+                    } else {
+                        //this line is needed, or onCreateOptionsMenu and onPrepareOptionsMenu will be called multiple times
+                        mFragment.setHasOptionsMenu(false);
+                        FragmentUtils.show(mFragment.getFragmentManager(), args);
+                    }
                 }
             }
         };
@@ -152,7 +176,6 @@ public class TextViewWithEmoticon extends TextView {
         return new URLSpan(s_url) {
             public void onClick(View view) {
                 try {
-
                     String fileName = "";
 
                     //clean way to get fileName
