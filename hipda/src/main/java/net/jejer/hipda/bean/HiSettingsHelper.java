@@ -69,6 +69,7 @@ public class HiSettingsHelper {
     public static final String PERF_NOTI_SILENT_END = "PERF_NOTI_SILENT_END";
     public static final String PERF_BS_TYPE_ID = "PERF_BS_TYPE_ID";
     public static final String PERF_ANIMATION_TYPE = "PERF_ANIMATION_TYPE";
+    public static final String PERF_REMOVE_GRAY_BAR = "PERF_REMOVE_GRAY_BAR";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -853,6 +854,10 @@ public class HiSettingsHelper {
         return "1".equals(getAnimationType());
     }
 
+    public boolean isRemoveGrayBar() {
+        return getBooleanValue(PERF_REMOVE_GRAY_BAR, false);
+    }
+
     public String getStringValue(String key, String defaultValue) {
         return mSharedPref.getString(key, defaultValue);
     }
@@ -860,6 +865,10 @@ public class HiSettingsHelper {
     public void setStringValue(String key, String value) {
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(key, value).apply();
+    }
+
+    public boolean getBooleanValue(String key, boolean defaultValue) {
+        return mSharedPref.getBoolean(key, defaultValue);
     }
 
     public boolean isInSilentMode() {

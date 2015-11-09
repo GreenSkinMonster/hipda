@@ -15,6 +15,7 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_noti_repeat_minuets" />
 
+    <PreferenceCategory android:title="@string/pref_category_notification_style">
     <net.jejer.hipda.ui.CustomSwitchPreference
         android:defaultValue="true"
         android:key="PERF_NOTI_LED_LIGHT"
@@ -25,7 +26,9 @@
         android:ringtoneType="notification"
         android:showDefault="true"
         android:title="@string/pref_noti_sound" />
+    </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_category_silent_mode">
     <net.jejer.hipda.ui.CustomSwitchPreference
         android:defaultValue="false"
         android:key="PERF_NOTI_SILENT_MODE"
@@ -40,5 +43,6 @@
         android:defaultValue="08:00"
         android:key="PERF_NOTI_SILENT_END"
         android:title="@string/pref_noti_silent_end" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

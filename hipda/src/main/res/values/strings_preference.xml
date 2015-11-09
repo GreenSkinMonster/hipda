@@ -214,11 +214,23 @@
     <string-array name="empty_array" />
 
     <string name="pref_category_forum">论坛选项</string>
+    <string name="pref_category_tail">小尾巴</string>
+    <string name="pref_category_blacklist">黑名单</string>
+
     <string name="pref_category_ui">用户界面</string>
-    <string name="pref_category_other">其它</string>
+    <string name="pref_category_theme">主题</string>
+    <string name="pref_category_font">字体</string>
+
     <string name="pref_category_notification">消息通知</string>
+    <string name="pref_category_notification_style">通知方式</string>
+    <string name="pref_category_silent_mode">免打扰</string>
+
     <string name="pref_category_network">流量控制</string>
     <string name="pref_category_more">分类设置</string>
+
+    <string name="pref_category_other">其它</string>
+    <string name="pref_category_debug">调试功能</string>
+    <string name="pref_category_cache">缓存管理</string>
 
     <string name="pref_title_image_load_type">图片下载</string>
     <string name="pref_title_avatar_load_type">头像显示</string>
@@ -252,4 +264,9 @@
     <string name="pref_noti_silent_begin">免打扰开始</string>
     <string name="pref_noti_silent_end">免打扰结束</string>
     <string name="pref_title_animation_type">动画方式</string>
+    <string name="pref_title_remove_gray_bar">去除状态栏白条</string>
+
+    <string name="pref_summary_remove_gray_bar">解决部分机型状态栏有留空白条问题</string>
+    <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
+
 </resources>

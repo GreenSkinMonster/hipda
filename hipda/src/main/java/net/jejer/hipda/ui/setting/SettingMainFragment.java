@@ -39,6 +39,7 @@ public class SettingMainFragment extends BaseSettingFragment {
     private String mFont;
     static boolean mCacheCleared;
     private boolean mNightSwitchEnabled;
+    private boolean mRemoveGrayBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,7 +83,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
         mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
         mFont = HiSettingsHelper.getInstance().getFont();
-
+        mRemoveGrayBar = HiSettingsHelper.getInstance().isRemoveGrayBar();
     }
 
     @Override
@@ -116,6 +117,7 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
+                || mRemoveGrayBar != HiSettingsHelper.getInstance().isRemoveGrayBar()
                 || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
             mCacheCleared = false;
             Utils.restartActivity(getActivity());

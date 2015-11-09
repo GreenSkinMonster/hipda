@@ -253,6 +253,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withToolbar(toolbar)
                 .withAccountHeader(accountHeader)
                 .withTranslucentStatusBar(true)
+                .withFullscreen(HiSettingsHelper.getInstance().isRemoveGrayBar())
                 .withDrawerItems(drawerItems)
                 .withStickyDrawerItems(stickyDrawerItems)
                 .withStickyFooterDivider(false)
