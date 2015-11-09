@@ -10,4 +10,6 @@
     <item name="avatar_tag_uid" type="id" />
     <item name="avatar_tag_username" type="id" />
 
+    <integer name="defaultAnimTime">250</integer>
+
 </resources>

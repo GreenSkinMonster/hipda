@@ -202,6 +202,15 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="pref_animation_type">
+        <item>默认</item>
+        <item>实验</item>
+    </string-array>
+    <string-array name="pref_animation_type_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
     <string-array name="empty_array" />
 
     <string name="pref_category_forum">论坛选项</string>
@@ -242,4 +251,5 @@
     <string name="pref_noti_silent_mode">免打扰时段</string>
     <string name="pref_noti_silent_begin">免打扰开始</string>
     <string name="pref_noti_silent_end">免打扰结束</string>
+    <string name="pref_title_animation_type">动画方式</string>
 </resources>

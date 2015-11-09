@@ -68,6 +68,7 @@ public class HiSettingsHelper {
     public static final String PERF_NOTI_SILENT_BEGIN = "PERF_NOTI_SILENT_BEGIN";
     public static final String PERF_NOTI_SILENT_END = "PERF_NOTI_SILENT_END";
     public static final String PERF_BS_TYPE_ID = "PERF_BS_TYPE_ID";
+    public static final String PERF_ANIMATION_TYPE = "PERF_ANIMATION_TYPE";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -112,6 +113,7 @@ public class HiSettingsHelper {
     private int mNotiRepeatMinutes;
     private boolean mNotiLedLight;
     private String mBSTypeId;
+    private String mAnimationType;
 
     // --------------- THIS IS NOT IN PERF -----------
     private int mBasePostTextSize = -1;
@@ -214,6 +216,7 @@ public class HiSettingsHelper {
         isNotiTaskEnabledFromPref();
         getNotiRepeatMinutesFromPref();
         getBSTypeIdFromPref();
+        getAnimationTypeFromPref();
 
         updateMobileNetworkStatus(mCtx);
     }
@@ -828,6 +831,26 @@ public class HiSettingsHelper {
         if (mBaseTitleTextSize <= 0)
             mBaseTitleTextSize = mCtx.getResources().getInteger(R.integer.title_text_size);
         return mBaseTitleTextSize + getInstance().getTitleTextsizeAdj();
+    }
+
+
+    public String getAnimationType() {
+        return mAnimationType;
+    }
+
+    public String getAnimationTypeFromPref() {
+        mAnimationType = mSharedPref.getString(PERF_ANIMATION_TYPE, "0");
+        return mAnimationType;
+    }
+
+    public void setAnimationType(String animationType) {
+        mAnimationType = animationType;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_ANIMATION_TYPE, animationType).apply();
+    }
+
+    public boolean isNewAnimationType() {
+        return "1".equals(getAnimationType());
     }
 
     public String getStringValue(String key, String defaultValue) {

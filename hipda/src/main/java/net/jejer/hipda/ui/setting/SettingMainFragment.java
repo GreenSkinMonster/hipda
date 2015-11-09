@@ -16,6 +16,7 @@ import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.AboutFragment;
+import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.utils.Constants;
@@ -67,7 +68,6 @@ public class SettingMainFragment extends BaseSettingFragment {
                     bundle.putInt(SettingNestedFragment.TAG_KEY, screenKey);
                     fragment.setArguments(bundle);
                     getFragmentManager().beginTransaction()
-                            //.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                             .add(R.id.main_frame_container, fragment)
                             .addToBackStack(fragment.getClass().getName())
                             .commit();
@@ -172,11 +172,7 @@ public class SettingMainFragment extends BaseSettingFragment {
                 + (UpdateHelper.isFromGooglePlay(getActivity()) ? " (Google Play)" : ""));
         dialogPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                getFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                        .add(R.id.main_frame_container, new AboutFragment(), AboutFragment.class.getName())
-                        .addToBackStack(AboutFragment.class.getName())
-                        .commit();
+                FragmentUtils.showFragment(getFragmentManager(), new AboutFragment());
                 return true;
             }
         });

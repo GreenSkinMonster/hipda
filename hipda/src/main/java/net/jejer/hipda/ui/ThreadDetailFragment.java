@@ -1103,11 +1103,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
             setHasOptionsMenu(false);
 
-            getFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
-                    .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
-                    .addToBackStack(ThreadDetailFragment.class.getName())
-                    .commit();
+            FragmentUtils.showFragment(getFragmentManager(), fragment);
         }
     }
 

@@ -10,9 +10,11 @@ import android.text.TextUtils;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
+import net.jejer.hipda.utils.Utils;
 
 /**
  * utils to deal with fragments
@@ -207,16 +209,38 @@ public class FragmentUtils {
         showFragment(fragmentManager, fragment, directOpen);
     }
 
-    public static void showFragment(FragmentManager fragmentManager, Fragment fragment, boolean directOpen) {
+    public static void showFragment(FragmentManager fragmentManager, Fragment fragment, boolean skipEnterAnimation) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if (directOpen)
-            transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
+
+        int slideInAnim, slideOutAnim;
+        if (HiSettingsHelper.getInstance().isNewAnimationType()) {
+            slideInAnim = R.anim.slide_in_left;
+            slideOutAnim = R.anim.slide_out_right;
+        } else {
+            if (Utils.getScreenWidth() <= 720) {
+                slideInAnim = R.anim.slide_720_in_left;
+                slideOutAnim = R.anim.slide_720_out_right;
+            } else if (Utils.getScreenWidth() >= 1440) {
+                slideInAnim = R.anim.slide_1440_in_left;
+                slideOutAnim = R.anim.slide_1440_out_right;
+            } else {
+                slideInAnim = R.anim.slide_1080_in_left;
+                slideOutAnim = R.anim.slide_1080_out_right;
+            }
+        }
+
+        if (skipEnterAnimation)
+            transaction.setCustomAnimations(0, 0, 0, slideOutAnim);
         else
-            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right);
+            transaction.setCustomAnimations(slideInAnim, slideOutAnim, slideInAnim, slideOutAnim);
 
         transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
                 .addToBackStack(fragment.getClass().getName())
                 .commit();
+    }
+
+    public static void showFragment(FragmentManager fragmentManager, Fragment fragment) {
+        showFragment(fragmentManager, fragment, false);
     }
 
     public static void show(FragmentManager fragmentManager, FragmentArgs args) {
