@@ -17,15 +17,9 @@ import net.jejer.hipda.utils.Utils;
 public class ThreadListAdapter extends HiAdapter<ThreadBean> {
 
     private LayoutInflater mInflater;
-    private Context mCtx;
 
     public ThreadListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
-        mCtx = context;
-    }
-
-    public void setContext(Context ctx) {
-        mCtx = ctx;
     }
 
     @Override

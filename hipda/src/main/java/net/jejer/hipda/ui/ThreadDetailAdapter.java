@@ -57,10 +57,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         mDetailFragment = detailFragment;
     }
 
-    public void setContext(Context ctx) {
-        mCtx = ctx;
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         DetailBean detail = getItem(position);

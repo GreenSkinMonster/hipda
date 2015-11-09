@@ -155,7 +155,6 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
-            mSimpleListAdapter.setContext(getActivity());
             mDetailView.setVisibility(View.VISIBLE);
             mThreadListView.setVisibility(View.GONE);
         }

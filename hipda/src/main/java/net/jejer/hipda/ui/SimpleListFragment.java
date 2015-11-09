@@ -142,13 +142,6 @@ public class SimpleListFragment extends BaseFragment
         // destroyLoader called here to avoid onLoadFinished called when onResume
         getLoaderManager().destroyLoader(0);
 
-        if (savedInstanceState != null) {
-            mSimpleListAdapter.setContext(getActivity());
-        } else {
-            if (mType != SimpleListLoader.TYPE_SEARCH)
-                loadingProgressBar.show();
-        }
-
         mThreadListView.setAdapter(mSimpleListAdapter);
         mThreadListView.setOnItemClickListener(new OnItemClickCallback());
         mThreadListView.setOnItemLongClickListener(new OnItemLongClickCallback());
@@ -161,8 +154,10 @@ public class SimpleListFragment extends BaseFragment
             case SimpleListLoader.TYPE_THREAD_NOTIFY:
             case SimpleListLoader.TYPE_FAVORITES:
             case SimpleListLoader.TYPE_ATTENTION:
-                if (mSimpleListAdapter.getCount() == 0)
+                if (mSimpleListAdapter.getCount() == 0) {
+                    loadingProgressBar.show();
                     getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                }
                 break;
             case SimpleListLoader.TYPE_SEARCH:
                 break;

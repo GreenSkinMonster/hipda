@@ -20,18 +20,12 @@ import net.jejer.hipda.utils.Utils;
 public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
     private View.OnClickListener mAvatarListener;
     private LayoutInflater mInflater;
-    private Context mCtx;
     private FragmentManager mFragmentManager;
 
     public SmsAdapter(Context context, FragmentManager fm, View.OnClickListener avatarListener) {
         mAvatarListener = avatarListener;
         mInflater = LayoutInflater.from(context);
-        mCtx = context;
         mFragmentManager = fm;
-    }
-
-    public void setContext(Context ctx) {
-        mCtx = ctx;
     }
 
     @Override

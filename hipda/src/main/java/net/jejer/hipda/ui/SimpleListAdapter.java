@@ -28,10 +28,6 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         mType = type;
     }
 
-    public void setContext(Context ctx) {
-        mCtx = ctx;
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         SimpleListItemBean item = getItem(position);

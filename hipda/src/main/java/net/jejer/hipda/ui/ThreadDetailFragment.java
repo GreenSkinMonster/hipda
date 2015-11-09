@@ -331,7 +331,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
-            mDetailAdapter.setContext(getActivity());
             mCtx = getActivity();
             mFam.setVisibility(View.VISIBLE);
         } else {

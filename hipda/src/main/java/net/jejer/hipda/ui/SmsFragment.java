@@ -138,18 +138,12 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         super.onActivityCreated(savedInstanceState);
         Logger.v("onActivityCreated");
 
-        if (savedInstanceState != null) {
-            mSmsAdapter.setContext(getActivity());
-        } else {
-            loadingProgressBar.show();
-        }
-
-        Logger.e("adapter count = " + mSmsAdapter.getCount() + "/ beans = " + mSmsBeans.size());
         mListView.setAdapter(mSmsAdapter);
 
         // destroyLoader called here to avoid onLoadFinished called when onResume
         getLoaderManager().destroyLoader(0);
         if (mSmsAdapter.getCount() == 0) {
+            loadingProgressBar.show();
             getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
         }
     }
