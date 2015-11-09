@@ -199,10 +199,8 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
     }
 
     private void blacklistUser() {
-        List<String> blackList = HiSettingsHelper.getInstance().getBlanklistUsernames();
-        if (!blackList.contains(mUsername)) {
-            blackList.add(mUsername);
-            HiSettingsHelper.getInstance().setBlanklistUsernames(blackList);
+        if (!HiSettingsHelper.getInstance().isUserBlack(mUsername)) {
+            HiSettingsHelper.getInstance().addToBlacklist(mUsername);
             Toast.makeText(getActivity(), "已经将用户 " + mUsername + " 添加到黑名单", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), "用户 " + mUsername + " 已经在黑名单中", Toast.LENGTH_SHORT).show();

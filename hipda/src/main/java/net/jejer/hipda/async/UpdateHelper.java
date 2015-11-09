@@ -21,7 +21,7 @@ import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 import java.util.Set;
@@ -210,7 +210,12 @@ public class UpdateHelper {
                 String blacklist = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_BLANKLIST_USERNAMES, "");
                 if (blacklist.length() > 0 && blacklist.contains(" ") && !blacklist.contains("\n")) {
                     String[] usernames = blacklist.split(" ");
-                    HiSettingsHelper.getInstance().setBlanklistUsernames(Arrays.asList(usernames));
+                    ArrayList<String> names = new ArrayList<>();
+                    for (String username : usernames) {
+                        if (!TextUtils.isEmpty(username) && !names.contains(username))
+                            names.add(username);
+                    }
+                    HiSettingsHelper.getInstance().setBlanklistUsernames(names);
                 }
             }
 

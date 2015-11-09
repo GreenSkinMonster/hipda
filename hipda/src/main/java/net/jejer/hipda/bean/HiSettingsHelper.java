@@ -15,7 +15,6 @@ import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -98,7 +97,7 @@ public class HiSettingsHelper {
 
     private boolean mEncodeUtf8 = false;
 
-    private List<String> mBlanklistUsernames = new ArrayList<>();
+    private ArrayList<String> mBlanklistUsernames;
 
     private String mPostTextSizeAdj = "";
     private int mPostLineSpacing = 0;
@@ -606,18 +605,23 @@ public class HiSettingsHelper {
         return mNotiRepeatMinutes;
     }
 
-    public List<String> getBlanklistUsernames() {
+    public ArrayList<String> getBlanklistUsernames() {
+        if (mBlanklistUsernames != null)
+            mBlanklistUsernames = new ArrayList<>();
         return mBlanklistUsernames;
     }
 
     public List<String> getBlanklistUsernamesFromPref() {
         String[] usernames = mSharedPref.getString(PERF_BLANKLIST_USERNAMES, "").split("\n");
-        mBlanklistUsernames.clear();
-        mBlanklistUsernames.addAll(Arrays.asList(usernames));
+        mBlanklistUsernames = new ArrayList<>();
+        for (String username : usernames) {
+            if (!TextUtils.isEmpty(username) && !mBlanklistUsernames.contains(username))
+                mBlanklistUsernames.add(username);
+        }
         return mBlanklistUsernames;
     }
 
-    public void setBlanklistUsernames(List<String> blanklistUsernames) {
+    public void setBlanklistUsernames(ArrayList<String> blanklistUsernames) {
         mBlanklistUsernames = blanklistUsernames;
         StringBuilder sb = new StringBuilder();
         for (String username : blanklistUsernames) {
@@ -633,12 +637,13 @@ public class HiSettingsHelper {
     }
 
     public boolean isUserBlack(String username) {
-        for (String s : mBlanklistUsernames) {
-            if (s.equals(username)) {
-                return true;
-            }
-        }
-        return false;
+        return mBlanklistUsernames.contains(username);
+    }
+
+    public void addToBlacklist(String username) {
+        if (!TextUtils.isEmpty(username) && !mBlanklistUsernames.contains(username))
+            mBlanklistUsernames.add(username);
+        setBlanklistUsernames(mBlanklistUsernames);
     }
 
     public int getPostTextsizeAdj() {
