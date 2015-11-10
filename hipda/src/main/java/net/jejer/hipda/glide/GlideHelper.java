@@ -128,7 +128,7 @@ public class GlideHelper {
                     .centerCrop()
                     .error(DEFAULT_USER_ICON)
                     .crossFade()
-                    .listener(new AvatarRequestListener())
+                            //.listener(new AvatarRequestListener())
                     .into(view);
         }
     }
@@ -168,13 +168,17 @@ public class GlideHelper {
         File f = null;
         try {
             FutureTarget<File> future = Glide.with(ctx)
-                    .load(getGlideUrl(avatarUrl))
+                    .load(avatarUrl)
                     .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             f = future.get();
             Glide.clear(future);
         } catch (Exception ignored) {
         }
         return f;
+    }
+
+    public static void markAvatarNotFound(String avatarUrl) {
+        NOT_FOUND_AVATARS.put(avatarUrl, "");
     }
 
     private static class ProgressResponseBody extends ResponseBody {

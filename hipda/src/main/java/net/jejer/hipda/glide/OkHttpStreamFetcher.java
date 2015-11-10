@@ -50,6 +50,11 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
         Response response = client.newCall(request).execute();
         responseBody = response.body();
         if (!response.isSuccessful()) {
+            if (response.code() == 404) {
+                String url = request.httpUrl().toString();
+                if (url.startsWith(HiUtils.AvatarBaseUrl))
+                    GlideHelper.markAvatarNotFound(url);
+            }
             throw new IOException("Request failed with code: " + response.code());
         }
 

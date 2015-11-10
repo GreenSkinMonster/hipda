@@ -63,7 +63,6 @@ import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ThreadDetailCache;
 import net.jejer.hipda.glide.GifTransformation;
 import net.jejer.hipda.glide.GlideBitmapTarget;
-import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageManager;
 import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
@@ -1072,14 +1071,14 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
             if (imageReadyInfo.isGif()) {
                 Glide.with(mCtx)
-                        .load(GlideHelper.getGlideUrl(imageUrl))
+                        .load(imageUrl)
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .transform(new GifTransformation(mCtx))
                         .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
             } else {
                 Glide.with(mCtx)
-                        .load(GlideHelper.getGlideUrl(imageUrl))
+                        .load(imageUrl)
                         .asBitmap()
                         .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo)))
                         .imageDecoder(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo))

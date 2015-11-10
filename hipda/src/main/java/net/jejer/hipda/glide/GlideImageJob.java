@@ -41,7 +41,7 @@ public class GlideImageJob extends Job {
     public void onRun() throws Throwable {
         try {
             FutureTarget<File> future = Glide.with(getApplicationContext())
-                    .load(GlideHelper.getGlideUrl(mUrl))
+                    .load(mUrl)
                     .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
 
             File cacheFile = future.get();
