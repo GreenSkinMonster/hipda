@@ -149,7 +149,6 @@ public class XListView extends ListView implements OnScrollListener {
         mEnablePullRefresh = enable;
 
         // disable, hide the content
-//        mHeaderContent.setVisibility(enable ? View.VISIBLE : View.INVISIBLE);
         if (enable) {
             mTvHeaderHint.setVisibility(VISIBLE);
             mTvHeaderTitle.setVisibility(GONE);

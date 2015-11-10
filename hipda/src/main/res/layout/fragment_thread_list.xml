@@ -4,8 +4,7 @@
     android:id="@+id/fragment_threadlist"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?list_item_background"
-    android:paddingTop="1dp">
+    android:background="?list_item_background">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
