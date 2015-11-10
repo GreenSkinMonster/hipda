@@ -10,7 +10,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiApplication;
 
 public class HiUtils {
-    public static final String UserAgentPrefix = "net.jejer.hipda " + HiApplication.getAppVersion();
+    public static final String UserAgentPrefix = "net.jejer.hipda ";
     public static final String BaseUrl = "http://www.hi-pda.com/forum/";
     public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
     public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";

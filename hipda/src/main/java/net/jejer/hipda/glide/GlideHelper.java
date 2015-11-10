@@ -8,7 +8,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
@@ -156,9 +155,8 @@ public class GlideHelper {
     public static GlideUrl getGlideUrl(String url) {
         GlideUrl glideUrl;
         if (Utils.nullToText(url).startsWith(HiUtils.BaseUrl)) {
+            //User-Agent is set in modified OkHttpStreamFetcher class
             glideUrl = new GlideUrl(url, new LazyHeaders.Builder()
-                    .setHeader("User-Agent", HiUtils.getUserAgent())
-                    .addHeader("Cookie", "cdb_auth=" + OkHttpHelper.getInstance().getAuthCookie())
                     .build());
         } else {
             glideUrl = new GlideUrl(url);
@@ -170,7 +168,7 @@ public class GlideHelper {
         File f = null;
         try {
             FutureTarget<File> future = Glide.with(ctx)
-                    .load(avatarUrl)
+                    .load(getGlideUrl(avatarUrl))
                     .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             f = future.get();
             Glide.clear(future);
