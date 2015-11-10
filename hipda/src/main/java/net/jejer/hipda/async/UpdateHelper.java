@@ -1,5 +1,6 @@
 package net.jejer.hipda.async;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -32,7 +33,7 @@ import java.util.Set;
  */
 public class UpdateHelper {
 
-    private Context mCtx;
+    private Activity mCtx;
     private boolean mSilent;
 
     private HiProgressDialog pd;
@@ -41,7 +42,7 @@ public class UpdateHelper {
     private String checkUrl = "";
     private String downloadUrl = "";
 
-    public UpdateHelper(Context ctx, boolean isSilent) {
+    public UpdateHelper(Activity ctx, boolean isSilent) {
         mCtx = ctx;
         mSilent = isSilent;
 
@@ -152,7 +153,8 @@ public class UpdateHelper {
                             }
                         }).create();
 
-                dialog.show();
+                if (!mCtx.isFinishing())
+                    dialog.show();
             } else {
                 Toast.makeText(mCtx, "发现新版本 : " + newVersion + "，请在应用商店中更新", Toast.LENGTH_SHORT).show();
             }
