@@ -157,7 +157,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
                     params = new RelativeLayout.LayoutParams(imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight());
                 } else {
-                    params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400);
+                    params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.dpToPx(mCtx, 150));
                 }
                 giv.setLayoutParams(params);
                 contentView.addView(threadImageLayout);

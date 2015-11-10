@@ -3,6 +3,7 @@ package net.jejer.hipda.cache;
 import net.jejer.hipda.glide.ImageReadyInfo;
 
 /**
+ * downloaded image cache
  * Created by GreenSkinMonster on 2015-05-21.
  */
 public class ImageContainer {

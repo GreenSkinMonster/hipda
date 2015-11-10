@@ -11,6 +11,7 @@ import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailBean.Contents;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.ui.textstyle.TextStyle;
@@ -390,7 +391,8 @@ public class HiParserThreadDetail {
             Element e = (Element) contentN;
             String src = e.attr("src");
 
-            if (src.startsWith(HiUtils.SMILE_PATH)) {
+            if (src.startsWith(HiUtils.SMILE_PATH)
+                    || SmallImages.contains(src)) {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
                 return false;
