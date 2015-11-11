@@ -1,7 +1,8 @@
 package net.jejer.hipda.ui;
 
-import android.app.FragmentManager;
 import android.content.Context;
+import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.text.util.Linkify;
@@ -42,19 +43,20 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
     private LayoutInflater mInflater;
     private Button.OnClickListener mGoToFloorListener;
     private View.OnClickListener mAvatarListener;
-    private FragmentManager mFragmentManager;
     private ThreadDetailFragment mDetailFragment;
+
+    private long delayAnimDeadline = 0;
 
     private Map<String, Map<Integer, ThreadImageLayout>> imageLayoutMap = new HashMap<>();
 
-    public ThreadDetailAdapter(Context context, FragmentManager fm, ThreadDetailFragment detailFragment,
+    public ThreadDetailAdapter(Context context, ThreadDetailFragment detailFragment,
                                Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
         mCtx = context;
-        mFragmentManager = fm;
         mInflater = LayoutInflater.from(context);
         mGoToFloorListener = gotoFloorListener;
         mAvatarListener = avatarListener;
         mDetailFragment = detailFragment;
+        delayAnimDeadline = System.currentTimeMillis() + context.getResources().getInteger(R.integer.defaultAnimTime) + 50;
     }
 
     @Override
@@ -93,7 +95,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
         if (HiSettingsHelper.getInstance().isLoadAvatar()) {
             holder.avatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(holder.avatar, detail.getAvatarUrl());
+            loadAvatar(detail.getAvatarUrl(), holder.avatar);
         } else {
             holder.avatar.setVisibility(View.GONE);
         }
@@ -158,6 +160,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     params = new RelativeLayout.LayoutParams(imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight());
                 } else {
                     params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.dpToPx(mCtx, 150));
+                    giv.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.ic_action_image));
                 }
                 giv.setLayoutParams(params);
                 contentView.addView(threadImageLayout);
@@ -165,11 +168,16 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 giv.setUrl(imageUrl);
                 giv.setImageIndex(imageIndex);
 
+                //delay images 50ms more than avatar
+                long delay = delayAnimDeadline + 50 - System.currentTimeMillis();
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-                    mDetailFragment.loadImage(imageUrl, giv);
+                    loadImage(imageUrl, giv, delay);
                 } else {
                     if (HiSettingsHelper.getInstance().isLoadImage()) {
-                        GlideImageManager.addJob(new GlideImageJob(imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
+                        if (delay > 0)
+                            GlideImageManager.addJob(new GlideImageJob(imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId, delay));
+                        else
+                            GlideImageManager.addJob(new GlideImageJob(imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
                     } else {
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -275,6 +283,34 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
         return convertView;
     }
+
+    private void loadImage(final String imageUrl, final GlideImageView giv, long delay) {
+        if (delay > 0) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDetailFragment.loadImage(imageUrl, giv);
+                }
+            }, delay);
+        } else {
+            mDetailFragment.loadImage(imageUrl, giv);
+        }
+    }
+
+    private void loadAvatar(final String avatarUrl, final ImageView imageView) {
+        long delay = delayAnimDeadline - System.currentTimeMillis();
+        if (delay > 0) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    GlideHelper.loadAvatar(imageView, avatarUrl);
+                }
+            }, delay);
+        } else {
+            GlideHelper.loadAvatar(imageView, avatarUrl);
+        }
+    }
+
 
     @SuppressWarnings("unused")
     public void onEventMainThread(GlideImageEvent event) {

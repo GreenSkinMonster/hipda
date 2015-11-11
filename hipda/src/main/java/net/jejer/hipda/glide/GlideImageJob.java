@@ -32,6 +32,11 @@ public class GlideImageJob extends Job {
         mUrl = url;
     }
 
+    public GlideImageJob(String url, int priority, String tag, long delay) {
+        super(new Params(priority).setPersistent(false).setRequiresNetwork(false).addTags(tag).delayInMs(delay));
+        mUrl = url;
+    }
+
     @Override
     public void onAdded() {
         EventBus.getDefault().post(new GlideImageEvent(mUrl, 0, Constants.STATUS_IN_PROGRESS));

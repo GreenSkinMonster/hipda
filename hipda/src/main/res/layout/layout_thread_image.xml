@@ -3,8 +3,7 @@
     <net.jejer.hipda.glide.GlideImageView
         android:id="@+id/thread_image"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_action_image" />
+        android:layout_height="wrap_content" />
 
     <ProgressBar
         android:id="@+id/thread_image_progress"
@@ -16,5 +15,5 @@
         android:indeterminate="false"
         android:max="100"
         android:visibility="gone" />
-    
+
 </merge>

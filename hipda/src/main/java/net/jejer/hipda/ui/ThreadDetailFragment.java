@@ -155,7 +155,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             mFloorOfPage = getArguments().getInt(ARG_FLOOR_KEY);
         }
         mLoaderCallbacks = new ThreadListLoaderCallbacks();
-        mDetailAdapter = new ThreadDetailAdapter(mCtx, getFragmentManager(), this,
+        mDetailAdapter = new ThreadDetailAdapter(mCtx, this,
                 new GoToFloorOnClickListener(), new AvatarOnClickListener());
 
         EventBus.getDefault().register(mDetailAdapter);
