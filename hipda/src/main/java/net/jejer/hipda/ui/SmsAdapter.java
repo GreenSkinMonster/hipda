@@ -63,7 +63,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
                 if (!TextUtils.isEmpty(item.getUid())) {
                     holder.iv_my_avatar.setOnClickListener(mAvatarListener);
                 }
-                GlideHelper.loadAvatar(holder.iv_my_avatar, item.getAvatarUrl());
+                GlideHelper.loadAvatar(mFragment, holder.iv_my_avatar, item.getAvatarUrl());
             }
         } else {
             holder.tv_content.setGravity(Gravity.LEFT);
@@ -74,7 +74,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
                 if (!TextUtils.isEmpty(item.getUid())) {
                     holder.iv_friend_avatar.setOnClickListener(mAvatarListener);
                 }
-                GlideHelper.loadAvatar(holder.iv_friend_avatar, item.getAvatarUrl());
+                GlideHelper.loadAvatar(mFragment, holder.iv_friend_avatar, item.getAvatarUrl());
             }
         }
         if (!HiSettingsHelper.getInstance().isLoadAvatar()) {

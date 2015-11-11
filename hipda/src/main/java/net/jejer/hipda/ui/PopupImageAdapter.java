@@ -1,13 +1,11 @@
 package net.jejer.hipda.ui;
 
-import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewCompat;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -18,9 +16,12 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.cache.ImageContainer;
+import net.jejer.hipda.glide.GifTransformation;
+import net.jejer.hipda.glide.GlideBitmapTarget;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.glide.GlideImageJob;
 import net.jejer.hipda.glide.GlideImageManager;
+import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.utils.Logger;
 
@@ -35,15 +36,14 @@ import java.util.Map;
  */
 public class PopupImageAdapter extends PagerAdapter {
 
-    private Context mCtx;
+    private PopupImageDialog mDialog;
     private List<ContentImg> mImages;
-    private LayoutInflater mInflater;
 
-    private Map<String, View> imageViewMap = new HashMap<>();
+    private Map<String, PopupImageLayout> imageViewMap = new HashMap<>();
     private String mSessionId;
 
-    public PopupImageAdapter(Context context, List<ContentImg> images, String sessionId) {
-        mCtx = context;
+    public PopupImageAdapter(PopupImageDialog dialog, List<ContentImg> images, String sessionId) {
+        mDialog = dialog;
         mImages = images;
         mSessionId = sessionId;
     }
@@ -61,78 +61,76 @@ public class PopupImageAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        if (mInflater == null)
-            mInflater = (LayoutInflater) mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        final View rootView = mInflater.inflate(R.layout.popup_image_page, container, false);
-        ContentLoadingProgressBar progressBar = (ContentLoadingProgressBar) rootView.findViewById(R.id.loadingPanel);
-        progressBar.show();
-
+        final PopupImageLayout imageLayout = new PopupImageLayout(mDialog.getActivity());
         final String imageUrl = mImages.get(position).getContent();
         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
 
         if (imageReadyInfo == null || !(new File(imageReadyInfo.getPath())).exists()) {
+            imageLayout.getProgressBar().setVisibility(View.VISIBLE);
+            imageLayout.getProgressBar().setIndeterminate(true);
             GlideImageManager.addJob(new GlideImageJob(imageUrl, GlideImageManager.PRIORITY_HIGH, mSessionId));
         } else {
-            displayImage(rootView, imageReadyInfo);
+            displayImage(imageLayout, imageUrl);
         }
-        container.addView(rootView);
-        imageViewMap.put(imageUrl, rootView);
-        return rootView;
+        imageLayout.setUrl(imageUrl);
+        container.addView(imageLayout);
+        imageViewMap.put(imageUrl, imageLayout);
+        return imageLayout;
     }
 
-    private void displayImage(View rootView, ImageReadyInfo imageReadyInfo) {
+    private void displayImage(PopupImageLayout imageLayout, String imageUrl) {
 
-        final SubsamplingScaleImageView wvImage = (SubsamplingScaleImageView) rootView.findViewById(R.id.wv_image);
-        final ContentLoadingProgressBar progressBar = (ContentLoadingProgressBar) rootView.findViewById(R.id.loadingPanel);
-        final ImageView gifImageView = (ImageView) rootView.findViewById(R.id.gif_image);
+        final SubsamplingScaleImageView scaleImageView = imageLayout.getScaleImageView();
+        final GlideImageView gifImageView = imageLayout.getGlideImageView();
 
         //imageView could be null if display image on GlideImageEvent
-        if (wvImage == null || gifImageView == null)
+        if (scaleImageView == null || gifImageView == null)
             return;
 
-        gifImageView.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.night_background));
-        wvImage.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.night_background));
-        progressBar.show();
+        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
+
+        gifImageView.setBackgroundColor(ContextCompat.getColor(mDialog.getActivity(), R.color.night_background));
+        scaleImageView.setBackgroundColor(ContextCompat.getColor(mDialog.getActivity(), R.color.night_background));
 
         if (imageReadyInfo == null) {
             gifImageView.setVisibility(View.VISIBLE);
-            wvImage.setVisibility(View.GONE);
-            progressBar.hide();
-            gifImageView.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.image_broken));
+            scaleImageView.setVisibility(View.GONE);
+            gifImageView.setImageDrawable(ContextCompat.getDrawable(mDialog.getActivity(), R.drawable.image_broken));
         } else {
             if (imageReadyInfo.isGif()) {
                 gifImageView.setVisibility(View.VISIBLE);
-                wvImage.setVisibility(View.GONE);
-                progressBar.hide();
-                Glide.with(mCtx)
-                        .load(imageReadyInfo.getPath())
-                        .asGif()
+                scaleImageView.setVisibility(View.GONE);
+
+                Glide.with(mDialog)
+                        .load(imageUrl)
+                        .asBitmap()
                         .priority(Priority.IMMEDIATE)
-                        .skipMemoryCache(true)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .transform(new GifTransformation(mDialog.getActivity()))
                         .error(R.drawable.image_broken)
-                        .into(gifImageView);
+                        .into(new GlideBitmapTarget(gifImageView, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
+
+                gifImageView.setUrl(imageUrl);
+                gifImageView.setImageReadyInfo(imageReadyInfo);
+                gifImageView.setClickToViewBigImage();
+
             } else {
                 gifImageView.setVisibility(View.GONE);
-                wvImage.setVisibility(View.VISIBLE);
+                scaleImageView.setVisibility(View.VISIBLE);
 
-                wvImage.setMinimumDpi(100);
-                wvImage.setMinimumTileDpi(160);
-                wvImage.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
-                wvImage.setImage(ImageSource.uri(imageReadyInfo.getPath()));
+                scaleImageView.setMinimumDpi(100);
+                scaleImageView.setMinimumTileDpi(160);
+                scaleImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
+                scaleImageView.setImage(ImageSource.uri(imageReadyInfo.getPath()));
 
-                wvImage.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener() {
+                scaleImageView.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener() {
                     @Override
                     public void onImageLoaded() {
-                        progressBar.hide();
                     }
 
                     @Override
                     public void onImageLoadError(Exception e) {
-                        progressBar.hide();
-                        wvImage.setImage(ImageSource.resource(R.drawable.image_broken));
-//                        Toast.makeText(mCtx, "图片加载失败", Toast.LENGTH_LONG).show();
+                        scaleImageView.setImage(ImageSource.resource(R.drawable.image_broken));
                         Logger.e("loading error", e);
                     }
                 });
@@ -142,18 +140,31 @@ public class PopupImageAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((View) object);
+        PopupImageLayout imageLayout = (PopupImageLayout) object;
+        container.removeView(imageLayout);
+        imageViewMap.remove(imageLayout.getUrl());
+        imageLayout.recycle();
+        imageLayout = null;
     }
 
     @SuppressWarnings("unused")
     public void onEventMainThread(GlideImageEvent event) {
-        if (event.isInProgress())
-            return;
-        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(event.getImageUrl());
-        View rootView = imageViewMap.get(event.getImageUrl());
-        if (rootView != null
-                && ViewCompat.isAttachedToWindow(rootView))
-            displayImage(rootView, imageReadyInfo);
+        PopupImageLayout imageLayout = imageViewMap.get(event.getImageUrl());
+        if (imageLayout != null
+                && ViewCompat.isAttachedToWindow(imageLayout)) {
+            ProgressBar bar = imageLayout.getProgressBar();
+            if (event.isInProgress()) {
+                if (bar.getVisibility() != View.VISIBLE)
+                    bar.setVisibility(View.VISIBLE);
+                if (bar.isIndeterminate())
+                    bar.setIndeterminate(false);
+                bar.setProgress(event.getProgress());
+            } else {
+                if (bar.getVisibility() == View.VISIBLE)
+                    bar.setVisibility(View.GONE);
+                displayImage(imageLayout, event.getImageUrl());
+            }
+        }
     }
 
 }

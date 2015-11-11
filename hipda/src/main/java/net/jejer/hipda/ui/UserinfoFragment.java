@@ -88,7 +88,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
             mUid = getArguments().getString(ARG_UID);
         }
 
-        mSimpleListAdapter = new SimpleListAdapter(getActivity(), SimpleListLoader.TYPE_SEARCH_USER_THREADS);
+        mSimpleListAdapter = new SimpleListAdapter(this, SimpleListLoader.TYPE_SEARCH_USER_THREADS);
         mCallbacks = new SearchThreadByUidLoaderCallbacks();
 
     }
@@ -219,7 +219,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
             if (info != null) {
                 if (HiSettingsHelper.getInstance().isLoadAvatar()) {
                     mAvatarView.setVisibility(View.VISIBLE);
-                    GlideHelper.loadAvatar(mAvatarView, info.getAvatarUrl());
+                    GlideHelper.loadAvatar(UserinfoFragment.this, mAvatarView, info.getAvatarUrl());
                 } else {
                     mAvatarView.setVisibility(View.GONE);
                 }

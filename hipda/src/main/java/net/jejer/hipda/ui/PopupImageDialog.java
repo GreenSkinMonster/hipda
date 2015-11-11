@@ -94,7 +94,7 @@ public class PopupImageDialog extends DialogFragment {
         final TextView tvFloorInfo = (TextView) layout.findViewById(R.id.tv_floor_info);
 
         final List<ContentImg> images = mDetailListBean.getContentImages();
-        mPagerAdapter = new PopupImageAdapter(mCtx, images, mSessionId);
+        mPagerAdapter = new PopupImageAdapter(this, images, mSessionId);
         viewPager.setAdapter(mPagerAdapter);
 
         EventBus.getDefault().register(mPagerAdapter);

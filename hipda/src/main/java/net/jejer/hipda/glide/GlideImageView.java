@@ -1,5 +1,6 @@
 package net.jejer.hipda.glide;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -17,7 +18,7 @@ public class GlideImageView extends ImageView {
 
     public static int MIN_SCALE_WIDTH = 600;
 
-    private ThreadDetailFragment mDetailFragment;
+    private Fragment mFragment;
     private String mUrl;
     private ImageReadyInfo mImageReadyInfo;
     private int mImageIndex;
@@ -64,8 +65,8 @@ public class GlideImageView extends ImageView {
         mImageIndex = index;
     }
 
-    public void setFragment(ThreadDetailFragment fragment) {
-        mDetailFragment = fragment;
+    public void setFragment(Fragment fragment) {
+        mFragment = fragment;
     }
 
     public void setClickToViewBigImage() {
@@ -78,7 +79,10 @@ public class GlideImageView extends ImageView {
         public void onSingleClick(View view) {
             if (mImageReadyInfo != null && mImageReadyInfo.isReady()) {
                 if (mUrl.equals(currentUrl)) {
+                    boolean sameView = view.equals(currentImageView);
                     stopCurrentGif();
+                    if (!sameView)
+                        loadGif();
                 } else if (mImageReadyInfo.isGif()) {
                     stopCurrentGif();
                     loadGif();
@@ -91,13 +95,15 @@ public class GlideImageView extends ImageView {
     }
 
     private void startImageGallery() {
-        mDetailFragment.startImageGallery(mImageIndex);
+        if (mFragment != null && mFragment instanceof ThreadDetailFragment)
+            ((ThreadDetailFragment) mFragment).startImageGallery(mImageIndex);
     }
 
     private void loadGif() {
         currentUrl = mUrl;
         currentImageView = this;
-        Glide.with(mDetailFragment.getActivity())
+        Glide.clear(this);
+        Glide.with(getContext())
                 .load(mUrl)
                 .priority(Priority.IMMEDIATE)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -110,11 +116,12 @@ public class GlideImageView extends ImageView {
     private void stopCurrentGif() {
         try {
             if (currentImageView != null) {
-                Glide.with(mDetailFragment.getActivity())
+                Glide.clear(currentImageView);
+                Glide.with(getContext())
                         .load(currentUrl)
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .transform(new GifTransformation(mDetailFragment.getActivity()))
+                        .transform(new GifTransformation(getContext()))
                         .error(R.drawable.image_broken)
                         .override(mImageReadyInfo.getDisplayWidth(), mImageReadyInfo.getDisplayHeight())
                         .into(currentImageView);

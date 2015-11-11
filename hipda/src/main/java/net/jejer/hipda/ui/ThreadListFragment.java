@@ -112,7 +112,7 @@ public class ThreadListFragment extends BaseFragment
 
         setHasOptionsMenu(true);
         mCallbacks = new ThreadListLoaderCallbacks();
-        mThreadListAdapter = new ThreadListAdapter(mCtx);
+        mThreadListAdapter = new ThreadListAdapter(this);
 
         mMsgHandler = new Handler(new ThreadListMsgHandler());
     }

@@ -303,11 +303,11 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    GlideHelper.loadAvatar(imageView, avatarUrl);
+                    GlideHelper.loadAvatar(mDetailFragment, imageView, avatarUrl);
                 }
             }, delay);
         } else {
-            GlideHelper.loadAvatar(imageView, avatarUrl);
+            GlideHelper.loadAvatar(mDetailFragment, imageView, avatarUrl);
         }
     }
 

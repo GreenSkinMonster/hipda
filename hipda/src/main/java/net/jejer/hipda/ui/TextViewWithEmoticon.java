@@ -85,7 +85,7 @@ public class TextViewWithEmoticon extends TextView {
             src = Utils.nullToText(src);
             if (SmallImages.contains(src)) {
                 icon = ContextCompat.getDrawable(mCtx, SmallImages.getDrawable(src));
-                icon.setBounds(0, 0, getLineHeight(), getLineHeight());
+                icon.setBounds(0, 0, getLineHeight() / 2, getLineHeight() / 2);
             } else {
                 int idx = src.indexOf(HiUtils.SMILE_PATH);
                 if (idx != -1 && src.indexOf(".", idx) != -1) {

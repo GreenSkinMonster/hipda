@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -29,6 +30,7 @@ import com.squareup.okhttp.ResponseBody;
 import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.okhttp.LoggingInterceptor;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
@@ -61,6 +63,7 @@ public class GlideHelper {
 
             long maxMemory = Runtime.getRuntime().maxMemory();
             gb.setMemoryCache(new LruResourceCache(Math.round(maxMemory * 0.3f)));
+            gb.setBitmapPool(new LruBitmapPool(Math.round(maxMemory * 0.1f)));
             gb.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 100 * 1024 * 1024));
 
             Glide.setup(gb);
@@ -104,13 +107,12 @@ public class GlideHelper {
         return Glide.isSetup();
     }
 
-    public static void loadAvatar(ImageView view, String avatarUrl) {
-        Context ctx = HiApplication.getAppContext();
-        if (ctx == null)
+    public static void loadAvatar(BaseFragment fragment, ImageView view, String avatarUrl) {
+        if (fragment == null)
             return;
 
         if (DEFAULT_USER_ICON == null)
-            DEFAULT_USER_ICON = new IconicsDrawable(ctx, GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY);
+            DEFAULT_USER_ICON = new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY);
 
         //use year and week number as cache key
         //avatars will be cache for one week at most
@@ -121,7 +123,7 @@ public class GlideHelper {
         if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
             view.setImageDrawable(DEFAULT_USER_ICON);
         } else {
-            Glide.with(ctx)
+            Glide.with(fragment)
                     .load(avatarUrl)
                     .signature(new StringSignature(avatarUrl + "_" + WEEK_KEY))
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)

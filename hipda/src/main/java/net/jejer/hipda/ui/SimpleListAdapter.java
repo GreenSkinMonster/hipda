@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.TextUtils;
@@ -19,12 +18,12 @@ import net.jejer.hipda.utils.Utils;
 
 public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
     private LayoutInflater mInflater;
-    private Context mCtx;
+    private BaseFragment mFragment;
     private int mType;
 
-    public SimpleListAdapter(Context context, int type) {
-        mInflater = LayoutInflater.from(context);
-        mCtx = context;
+    public SimpleListAdapter(BaseFragment fragment, int type) {
+        mInflater = LayoutInflater.from(fragment.getActivity());
+        mFragment = fragment;
         mType = type;
     }
 
@@ -50,7 +49,7 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_title.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         holder.tv_title.setText(Utils.trim(item.getTitle()));
         if (item.isNew()) {
-            holder.tv_title.setTextColor(ContextCompat.getColor(mCtx, R.color.red));
+            holder.tv_title.setTextColor(ContextCompat.getColor(mFragment.getActivity(), R.color.red));
         }
 
         if (TextUtils.isEmpty(item.getInfo())) {
@@ -81,7 +80,7 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
                 && mType != SimpleListLoader.TYPE_MYPOST
                 && mType != SimpleListLoader.TYPE_MYREPLY) {
             holder.iv_avatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(holder.iv_avatar, item.getAvatarUrl());
+            GlideHelper.loadAvatar(mFragment, holder.iv_avatar, item.getAvatarUrl());
         } else {
             holder.iv_avatar.setVisibility(View.GONE);
         }

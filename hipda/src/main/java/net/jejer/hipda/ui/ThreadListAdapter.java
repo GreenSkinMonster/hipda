@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +16,11 @@ import net.jejer.hipda.utils.Utils;
 public class ThreadListAdapter extends HiAdapter<ThreadBean> {
 
     private LayoutInflater mInflater;
+    private ThreadListFragment mFragment;
 
-    public ThreadListAdapter(Context context) {
-        mInflater = LayoutInflater.from(context);
+    public ThreadListAdapter(ThreadListFragment fragment) {
+        mInflater = LayoutInflater.from(fragment.getActivity());
+        mFragment = fragment;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class ThreadListAdapter extends HiAdapter<ThreadBean> {
 
         if (HiSettingsHelper.getInstance().isLoadAvatar()) {
             holder.avatar.setVisibility(View.VISIBLE);
-            GlideHelper.loadAvatar(holder.avatar, thread.getAvatarUrl());
+            GlideHelper.loadAvatar(mFragment, holder.avatar, thread.getAvatarUrl());
         } else {
             holder.avatar.setVisibility(View.GONE);
         }

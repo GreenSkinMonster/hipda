@@ -91,7 +91,7 @@ public class SimpleListFragment extends BaseFragment
             mType = getArguments().getInt(ARG_TYPE);
         }
 
-        mSimpleListAdapter = new SimpleListAdapter(getActivity(), mType);
+        mSimpleListAdapter = new SimpleListAdapter(this, mType);
         mCallbacks = new SimpleThreadListLoaderCallbacks();
     }
 

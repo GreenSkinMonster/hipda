@@ -1070,14 +1070,14 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             }
 
             if (imageReadyInfo.isGif()) {
-                Glide.with(mCtx)
+                Glide.with(ThreadDetailFragment.this)
                         .load(imageUrl)
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .transform(new GifTransformation(mCtx))
                         .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
             } else {
-                Glide.with(mCtx)
+                Glide.with(ThreadDetailFragment.this)
                         .load(imageUrl)
                         .asBitmap()
                         .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo)))
