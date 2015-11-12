@@ -10,13 +10,14 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.ImageReadyInfo;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
@@ -44,7 +46,6 @@ import de.greenrobot.event.EventBus;
 public class PopupImageDialog extends DialogFragment {
 
     private final static int IMAGE_SHARE_ACTION = 1;
-    private String localAbsoluteFilePath = "";
 
     private Context mCtx;
     private DetailListBean mDetailListBean;
@@ -89,9 +90,17 @@ public class PopupImageDialog extends DialogFragment {
         final Dialog dialog = new Dialog(mCtx, android.R.style.Theme_Black_NoTitleBar);
         dialog.setContentView(layout);
 
-        final ViewPager viewPager = (ViewPager) layout.findViewById(R.id.view_pager);
+        final ImageViewPager viewPager = (ImageViewPager) layout.findViewById(R.id.view_pager);
         final TextView tvImageInfo = (TextView) layout.findViewById(R.id.tv_image_info);
         final TextView tvFloorInfo = (TextView) layout.findViewById(R.id.tv_floor_info);
+        final Button btnBack = (Button) layout.findViewById(R.id.btn_back);
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
 
         final List<ContentImg> images = mDetailListBean.getContentImages();
         mPagerAdapter = new PopupImageAdapter(this, images, mSessionId);
@@ -113,6 +122,19 @@ public class PopupImageDialog extends DialogFragment {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        viewPager.setOnSwipeOutListener(new ImageViewPager.OnSwipeOutListener() {
+
+            @Override
+            public void onSwipeOutAtStart() {
+                dismiss();
+            }
+
+            @Override
+            public void onSwipeOutAtEnd() {
+                dismiss();
             }
         });
 
@@ -145,7 +167,7 @@ public class PopupImageDialog extends DialogFragment {
 
         ImageButton btnDownload = (ImageButton) layout.findViewById(R.id.btn_download_image);
         btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_download)
-                .sizeDp(20).color(ContextCompat.getColor(mCtx, R.color.silver)));
+                .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
         btnDownload.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -188,7 +210,7 @@ public class PopupImageDialog extends DialogFragment {
 
         ImageButton btnShare = (ImageButton) layout.findViewById(R.id.btn_share_image);
         btnShare.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_share)
-                .sizeDp(20).color(ContextCompat.getColor(mCtx, R.color.silver)));
+                .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
 
         btnShare.setOnClickListener(
                 new View.OnClickListener() {
@@ -213,15 +235,13 @@ public class PopupImageDialog extends DialogFragment {
                             Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        String filename = Utils.getImageFileName("Hi_Share", imageReadyInfo.getMime());
+                        String filename = Utils.getImageFileName(Constants.FILE_SHARE_PREFIX, imageReadyInfo.getMime());
 
                         File destFile = new File(Environment.getExternalStoragePublicDirectory(
                                 Environment.DIRECTORY_DOWNLOADS), filename);
 
                         try {
                             Utils.copy(new File(imageReadyInfo.getPath()), destFile);
-
-                            localAbsoluteFilePath = destFile.getAbsolutePath();
 
                             Intent shareIntent = new Intent(Intent.ACTION_SEND);
                             shareIntent.setType(imageReadyInfo.getMime());
@@ -238,11 +258,11 @@ public class PopupImageDialog extends DialogFragment {
 
         ImageButton btnNext = (ImageButton) layout.findViewById(R.id.btn_next_image);
         btnNext.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_chevron_right)
-                .sizeDp(20).color(ContextCompat.getColor(mCtx, R.color.silver)));
+                .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
         btnNext.setOnClickListener(
-                new OnSingleClickListener() {
+                new View.OnClickListener() {
                     @Override
-                    public void onSingleClick(View v) {
+                    public void onClick(View v) {
                         if (viewPager.getCurrentItem() < images.size() - 1) {
                             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
                             firstClicked = false;
@@ -261,11 +281,11 @@ public class PopupImageDialog extends DialogFragment {
 
         ImageButton btnPrev = (ImageButton) layout.findViewById(R.id.btn_previous_image);
         btnPrev.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_chevron_left)
-                .sizeDp(20).color(ContextCompat.getColor(mCtx, R.color.silver)));
+                .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
         btnPrev.setOnClickListener(
-                new OnSingleClickListener() {
+                new View.OnClickListener() {
                     @Override
-                    public void onSingleClick(View v) {
+                    public void onClick(View v) {
                         if (viewPager.getCurrentItem() > 0) {
                             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
                             lastClicked = false;
@@ -281,7 +301,6 @@ public class PopupImageDialog extends DialogFragment {
                 }
 
         );
-
         return dialog;
     }
 
@@ -290,18 +309,18 @@ public class PopupImageDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == IMAGE_SHARE_ACTION) {
-            if (!TextUtils.isEmpty(localAbsoluteFilePath)) {
-                File file = new File(localAbsoluteFilePath);
-                if (file.exists())
-                    file.delete();
-                localAbsoluteFilePath = "";
-            }
         }
 
     }
 
     @Override
     public void onDestroy() {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                Utils.cleanShareTempFiles();
+            }
+        });
         EventBus.getDefault().unregister(mPagerAdapter);
         super.onDestroy();
     }

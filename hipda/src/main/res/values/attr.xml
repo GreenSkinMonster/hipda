@@ -8,4 +8,6 @@
     <attr name="fabColorNormal" format="color" />
     <attr name="fabColorPressed" format="color" />
 
+    <attr name="actionBarMargin" format="dimension" />
+
 </resources>

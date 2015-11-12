@@ -1,9 +1,13 @@
 <resources>
 
     <!--use default actionBarSize -->
-    <style name="ThemeLightBase" parent="MaterialDrawerTheme.Light" />
+    <style name="ThemeLightBase" parent="MaterialDrawerTheme.Light">
+        <item name="actionBarMargin">8dp</item>
+    </style>
 
-    <style name="ThemeDarkBase" parent="MaterialDrawerTheme" />
+    <style name="ThemeDarkBase" parent="MaterialDrawerTheme">
+        <item name="actionBarMargin">8dp</item>
+    </style>
 
     <!-- FAB Style-->
     <style name="FloatingButtonsStyle">

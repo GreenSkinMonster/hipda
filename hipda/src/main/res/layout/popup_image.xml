@@ -9,15 +9,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/black_semi_transparent"
-        android:paddingLeft="16dp"
         android:paddingRight="8dp">
+
+        <com.mikepenz.iconics.view.IconicsButton
+            android:id="@+id/btn_back"
+            android:layout_width="56dp"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="?attr/actionBarMargin"
+            android:background="?attr/selectableItemBackground"
+            android:text="{gmd-arrow-left}"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/tv_floor_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/btn_back"
+            android:paddingLeft="4dp"
             android:textColor="@color/silver"
             android:textSize="22sp" />
 
@@ -26,7 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="@color/black"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackground"
             android:minHeight="48dp"
             android:minWidth="48dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark" />
@@ -35,19 +47,21 @@
             android:id="@+id/btn_share_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
             android:layout_toLeftOf="@+id/btn_download_image"
-            android:background="@color/black"
+            android:background="?attr/selectableItemBackground"
             android:minHeight="48dp"
             android:minWidth="48dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark" />
     </RelativeLayout>
 
-    <android.support.v4.view.ViewPager
+    <net.jejer.hipda.ui.ImageViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.0" />
-
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -61,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:background="@color/black"
+            android:background="?attr/selectableItemBackground"
             android:minHeight="48dp"
             android:minWidth="48dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark" />
@@ -80,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="@color/black"
+            android:background="?attr/selectableItemBackground"
             android:minHeight="48dp"
             android:minWidth="48dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark" />

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.os.Environment;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Display;
@@ -18,6 +19,7 @@ import org.jsoup.safety.Whitelist;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -230,6 +232,22 @@ public class Utils {
         activity.startActivity(new Intent(activity.getApplicationContext(), activity.getClass()));
         activity.overridePendingTransition(0, 0);
         System.exit(0);
+    }
+
+    public static void cleanShareTempFiles() {
+        File destFile = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS);
+        if (destFile.exists() && destFile.isDirectory()) {
+            File[] files = destFile.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String filename) {
+                    return filename.startsWith(Constants.FILE_SHARE_PREFIX);
+                }
+            });
+            for (File f : files) {
+                f.delete();
+            }
+        }
     }
 
 

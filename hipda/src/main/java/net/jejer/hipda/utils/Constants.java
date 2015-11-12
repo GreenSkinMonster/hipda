@@ -35,4 +35,6 @@ public class Constants {
     public static final String LOAD_TYPE_ONLY_WIFI = "2";
 
     public static final int MIN_CLICK_INTERVAL = 600;
+
+    public static final String FILE_SHARE_PREFIX = "Hi_Share_Temp_";
 }

@@ -78,7 +78,9 @@ public class PopupImageAdapter extends PagerAdapter {
         return imageLayout;
     }
 
-    private void displayImage(PopupImageLayout imageLayout, String imageUrl) {
+    private void displayImage(final PopupImageLayout imageLayout, String imageUrl) {
+
+        imageLayout.getProgressBar().setVisibility(View.GONE);
 
         final SubsamplingScaleImageView scaleImageView = imageLayout.getScaleImageView();
         final GlideImageView gifImageView = imageLayout.getGlideImageView();

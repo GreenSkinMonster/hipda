@@ -3,11 +3,13 @@
     <style name="ThemeLightBase" parent="MaterialDrawerTheme.Light">
         <item name="android:actionBarSize">48dp</item>
         <item name="actionBarSize">48dp</item>
+        <item name="actionBarMargin">0dp</item>
     </style>
 
     <style name="ThemeDarkBase" parent="MaterialDrawerTheme">
         <item name="android:actionBarSize">48dp</item>
         <item name="actionBarSize">48dp</item>
+        <item name="actionBarMargin">0dp</item>
     </style>
 
     <style name="ThemeLight" parent="ThemeLightBase">
