@@ -10,8 +10,8 @@
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="false"
             android:key="PERF_ENCODEUTF8"
-            android:title="@string/pref_title_encode_utf8"
-            android:summary="@string/pref_summary_encode_utf8" />
+            android:summary="@string/pref_summary_encode_utf8"
+            android:title="@string/pref_title_encode_utf8" />
 
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="false"
@@ -27,6 +27,12 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_animation_type" />
+
+        <net.jejer.hipda.ui.CustomSwitchPreference
+            android:defaultValue="true"
+            android:key="PERF_AUTO_CLEAR_MEMORY"
+            android:summary="@string/pref_summary_auto_clear_memory"
+            android:title="@string/pref_title_auto_clear_memory" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_cache">

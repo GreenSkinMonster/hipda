@@ -629,10 +629,13 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
 
     @Override
     public void onDestroy() {
-        //Logger.v( "onDestory");
         getLoaderManager().destroyLoader(0);
         ((MainFrameActivity) getActivity()).registOnSwipeCallback(null);
         EventBus.getDefault().unregister(mDetailAdapter);
+        if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_AUTO_CLEAR_MEMORY, true)
+                && Utils.isMemoryUsageHigh()) {
+            Glide.get(getActivity()).clearMemory();
+        }
         super.onDestroy();
     }
 
@@ -656,7 +659,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
             mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
 
-            //VolleyHelper.getInstance().cancelAll();
             return new DetailListLoader(mCtx, mMsgHandler, mTid, mGotoPostId, args.getInt(LOADER_PAGE_KEY, 1));
         }
 

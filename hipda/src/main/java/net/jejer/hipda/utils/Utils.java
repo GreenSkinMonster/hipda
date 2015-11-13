@@ -23,6 +23,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -250,5 +251,20 @@ public class Utils {
         }
     }
 
+    public static boolean isMemoryUsageHigh() {
+        Runtime runtime = Runtime.getRuntime();
+        return (runtime.totalMemory() - runtime.freeMemory()) > 0.6f * runtime.maxMemory();
+    }
+
+    public static void printMemoryUsage() {
+        Runtime runtime = Runtime.getRuntime();
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        Logger.e("\nmax=" + df.format(runtime.maxMemory() * 1.0f / 1024 / 1024) + "M"
+                + "\ntotal=" + df.format(runtime.totalMemory() * 1.0f / 1024 / 1024) + "M"
+                + "\nfree=" + df.format(runtime.freeMemory() * 1.0f / 1024 / 1024) + "M"
+                + "\nused=" + df.format((runtime.totalMemory() - runtime.freeMemory()) * 1.0f / 1024 / 1024) + "M"
+                + "\nusage=" + df.format((runtime.totalMemory() - runtime.freeMemory()) * 100.0f / runtime.maxMemory()) + "%");
+    }
 
 }

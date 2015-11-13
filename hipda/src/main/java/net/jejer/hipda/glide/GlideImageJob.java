@@ -1,5 +1,6 @@
 package net.jejer.hipda.glide;
 
+import android.app.Fragment;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 
@@ -26,14 +27,17 @@ import de.greenrobot.event.EventBus;
 public class GlideImageJob extends Job {
 
     private String mUrl;
+    private Fragment mFragment;
 
-    public GlideImageJob(String url, int priority, String tag) {
+    public GlideImageJob(Fragment fragment, String url, int priority, String tag) {
         super(new Params(priority).setPersistent(false).setRequiresNetwork(false).addTags(tag));
+        mFragment = fragment;
         mUrl = url;
     }
 
-    public GlideImageJob(String url, int priority, String tag, long delay) {
+    public GlideImageJob(Fragment fragment, String url, int priority, String tag, long delay) {
         super(new Params(priority).setPersistent(false).setRequiresNetwork(false).addTags(tag).delayInMs(delay));
+        mFragment = fragment;
         mUrl = url;
     }
 
@@ -45,7 +49,7 @@ public class GlideImageJob extends Job {
     @Override
     public void onRun() throws Throwable {
         try {
-            FutureTarget<File> future = Glide.with(getApplicationContext())
+            FutureTarget<File> future = Glide.with(mFragment)
                     .load(mUrl)
                     .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
 

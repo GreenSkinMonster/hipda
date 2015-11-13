@@ -264,9 +264,11 @@
     <string name="pref_noti_silent_begin">免打扰开始</string>
     <string name="pref_noti_silent_end">免打扰结束</string>
     <string name="pref_title_animation_type">动画方式</string>
+    <string name="pref_title_auto_clear_memory">自动清理内存</string>
     <string name="pref_title_remove_gray_bar">去除状态栏白条</string>
 
     <string name="pref_summary_remove_gray_bar">解决部分机型状态栏有留空白条问题</string>
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
+    <string name="pref_summary_auto_clear_memory">如果看多图的帖子很少出现崩溃问题，可以关闭此项</string>
 
 </resources>

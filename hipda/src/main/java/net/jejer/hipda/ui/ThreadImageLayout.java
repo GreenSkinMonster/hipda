@@ -15,8 +15,8 @@ import net.jejer.hipda.glide.GlideImageView;
  */
 public class ThreadImageLayout extends RelativeLayout {
 
-    private final GlideImageView giv;
-    private final ProgressBar progressBar;
+    private GlideImageView giv;
+    private ProgressBar progressBar;
 
     public ThreadImageLayout(Context context) {
         this(context, null);

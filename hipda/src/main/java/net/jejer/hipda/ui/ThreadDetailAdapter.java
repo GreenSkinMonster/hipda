@@ -175,14 +175,14 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 } else {
                     if (HiSettingsHelper.getInstance().isLoadImage()) {
                         if (delay > 0)
-                            GlideImageManager.addJob(new GlideImageJob(imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId, delay));
+                            GlideImageManager.addJob(new GlideImageJob(mDetailFragment, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId, delay));
                         else
-                            GlideImageManager.addJob(new GlideImageJob(imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
+                            GlideImageManager.addJob(new GlideImageJob(mDetailFragment, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
                     } else {
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                GlideImageManager.addJob(new GlideImageJob(imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
+                                GlideImageManager.addJob(new GlideImageJob(mDetailFragment, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
                                 giv.setOnClickListener(null);
                             }
                         });
