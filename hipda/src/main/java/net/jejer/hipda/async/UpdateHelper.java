@@ -21,7 +21,6 @@ import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
@@ -125,7 +124,7 @@ public class UpdateHelper {
                 pd.dismiss();
             }
 
-            if (!isFromGooglePlay(mCtx)) {
+            if (!Utils.isFromGooglePlay(mCtx)) {
                 final String url = downloadUrl.replace("{version}", newVersion);
                 final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
 
@@ -195,7 +194,7 @@ public class UpdateHelper {
                     forums.add("59");
                 HiSettingsHelper.getInstance().setForums(forums);
 
-                clearCache(context);
+                Utils.clearCache(context);
             }
             if (newer("2.0.10", currentVersion)) {
                 if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, ""))) {
@@ -223,42 +222,6 @@ public class UpdateHelper {
 
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
         }
-    }
-
-    private static boolean deleteDir(File file) {
-        if (file != null) {
-            if (file.isDirectory()) {
-                String[] children = file.list();
-                for (String aChildren : children) {
-                    boolean success = deleteDir(new File(file, aChildren));
-                    if (!success) {
-                        return false;
-                    }
-                }
-            }
-            return file.delete();
-        }
-        return false;
-    }
-
-    public static void clearCache(Context context) {
-        try {
-            File cache = context.getCacheDir();
-            if (cache != null && cache.isDirectory()) {
-                deleteDir(cache);
-            }
-        } catch (Exception ignored) {
-        }
-    }
-
-    public static boolean isFromGooglePlay(Context context) {
-        try {
-            String installer = context.getPackageManager()
-                    .getInstallerPackageName(context.getPackageName());
-            return "com.android.vending".equals(installer);
-        } catch (Throwable ignored) {
-        }
-        return false;
     }
 
 }

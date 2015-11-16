@@ -10,6 +10,9 @@ import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.bumptech.glide.Glide;
+
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.ui.HiApplication;
 
 import org.jsoup.Jsoup;
@@ -265,6 +268,51 @@ public class Utils {
                 + "\nfree=" + df.format(runtime.freeMemory() * 1.0f / 1024 / 1024) + "M"
                 + "\nused=" + df.format((runtime.totalMemory() - runtime.freeMemory()) * 1.0f / 1024 / 1024) + "M"
                 + "\nusage=" + df.format((runtime.totalMemory() - runtime.freeMemory()) * 100.0f / runtime.maxMemory()) + "%");
+    }
+
+    private static boolean deleteDir(File file) {
+        if (file != null) {
+            if (file.isDirectory()) {
+                String[] children = file.list();
+                for (String aChildren : children) {
+                    boolean success = deleteDir(new File(file, aChildren));
+                    if (!success) {
+                        return false;
+                    }
+                }
+            }
+            return file.delete();
+        }
+        return false;
+    }
+
+    public static void clearCache(Context context) {
+        try {
+            File cache = context.getCacheDir();
+            if (cache != null && cache.isDirectory()) {
+                deleteDir(cache);
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    public static void clearOutdatedAvatars(Context context) {
+        long deadline = System.currentTimeMillis() - GlideHelper.AVATAR_CACHE_MILLS;
+        File cacheDir = Glide.getPhotoCacheDir(context, "avatar");
+        for (File f : cacheDir.listFiles()) {
+            if (f.lastModified() < deadline)
+                f.delete();
+        }
+    }
+
+    public static boolean isFromGooglePlay(Context context) {
+        try {
+            String installer = context.getPackageManager()
+                    .getInstallerPackageName(context.getPackageName());
+            return "com.android.vending".equals(installer);
+        } catch (Throwable ignored) {
+        }
+        return false;
     }
 
 }

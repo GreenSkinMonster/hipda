@@ -11,9 +11,14 @@ import com.squareup.okhttp.ResponseBody;
 
 import net.jejer.hipda.utils.HiUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+
+import okio.BufferedSink;
+import okio.Okio;
 
 /**
  * From glide-okhttp-integration-1.3.1.jar
@@ -25,42 +30,90 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
     private InputStream stream;
     private ResponseBody responseBody;
 
+    private boolean isForumUrl;
+    private String stringUrl;
+
     public OkHttpStreamFetcher(OkHttpClient client, GlideUrl url) {
         this.client = client;
         this.url = url;
+        stringUrl = url.toStringUrl();
     }
 
     @Override
     public InputStream loadData(Priority priority) throws Exception {
-        Request.Builder requestBuilder = new Request.Builder()
-                .url(url.toStringUrl());
+        boolean isAvatarUrl = stringUrl.startsWith(HiUtils.AvatarBaseUrl);
+        isForumUrl = isAvatarUrl ? isAvatarUrl : stringUrl.startsWith(HiUtils.BaseUrl);
 
-        for (Map.Entry<String, String> headerEntry : url.getHeaders().entrySet()) {
-            String key = headerEntry.getKey();
-            requestBuilder.addHeader(key, headerEntry.getValue());
-        }
-        //hack, replace User-Agent
-        if (url.toStringUrl().startsWith(HiUtils.BaseUrl)) {
-            requestBuilder.removeHeader("User-Agent");
-            requestBuilder.header("User-Agent", HiUtils.getUserAgent());
-        }
+        if (isAvatarUrl)
+            return getAvatar();
+        else
+            return getImage();
+    }
 
-        Request request = requestBuilder.build();
+    private InputStream getImage() throws IOException {
+        Request request = getRequest();
 
         Response response = client.newCall(request).execute();
         responseBody = response.body();
         if (!response.isSuccessful()) {
-            if (response.code() == 404) {
-                String url = request.httpUrl().toString();
-                if (url.startsWith(HiUtils.AvatarBaseUrl))
-                    GlideHelper.markAvatarNotFound(url);
-            }
             throw new IOException("Request failed with code: " + response.code());
         }
 
         long contentLength = responseBody.contentLength();
         stream = ContentLengthInputStream.obtain(responseBody.byteStream(), contentLength);
         return stream;
+    }
+
+    private InputStream getAvatar() throws IOException {
+        File f = GlideHelper.getAvatarFile(stringUrl);
+        if (refetch(f)) {
+            Request request = getRequest();
+
+            Response response = client.newCall(request).execute();
+            responseBody = response.body();
+            if (!response.isSuccessful()) {
+                if (response.code() == 404) {
+                    GlideHelper.markAvatarNotFound(stringUrl);
+                    if (f.exists())
+                        f.delete();
+                    f.createNewFile();
+                }
+                throw new IOException("Request failed with code: " + response.code());
+            }
+
+            BufferedSink sink = Okio.buffer(Okio.sink(f));
+            sink.writeAll(responseBody.source());
+            sink.close();
+        } else if (f.length() == 0) {
+            GlideHelper.markAvatarNotFound(stringUrl);
+            return null;
+        }
+        return new FileInputStream(f);
+    }
+
+    private Request getRequest() {
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(stringUrl);
+
+        for (Map.Entry<String, String> headerEntry : url.getHeaders().entrySet()) {
+            String key = headerEntry.getKey();
+            requestBuilder.addHeader(key, headerEntry.getValue());
+        }
+
+        //hack, replace User-Agent
+        if (isForumUrl) {
+            requestBuilder.removeHeader("User-Agent");
+            requestBuilder.header("User-Agent", HiUtils.getUserAgent());
+        }
+
+        return requestBuilder.build();
+    }
+
+    private boolean refetch(File f) {
+        //cache avatar for 1 week, cache not found avatar for 1 day
+        return !f.exists()
+                || (f.length() > 0 && f.lastModified() < System.currentTimeMillis() - GlideHelper.AVATAR_CACHE_MILLS)
+                || (f.length() == 0 && f.lastModified() < System.currentTimeMillis() - GlideHelper.AVATAR_404_CACHE_MILLS);
     }
 
     @Override

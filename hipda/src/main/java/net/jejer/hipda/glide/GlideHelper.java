@@ -3,7 +3,6 @@ package net.jejer.hipda.glide;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -11,12 +10,8 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.model.GlideUrl;
-import com.bumptech.glide.load.model.LazyHeaders;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.signature.StringSignature;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.squareup.okhttp.Interceptor;
@@ -33,12 +28,10 @@ import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
-import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -50,18 +43,18 @@ import okio.Source;
 
 public class GlideHelper {
 
-    private static String WEEK_KEY;
     private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(512);
+    private static File AVATAR_CACHE_DIR;
 
     private static Drawable DEFAULT_USER_ICON;
+
+    public final static long AVATAR_CACHE_MILLS = 7 * 24 * 60 * 60 * 1000;
+    public final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
 
     public static void init(Context context) {
         if (!Glide.isSetup()) {
             GlideBuilder gb = new GlideBuilder(context);
 
-//            long maxMemory = Runtime.getRuntime().maxMemory();
-//            gb.setMemoryCache(new LruResourceCache(Math.round(maxMemory * 0.3f)));
-//            gb.setBitmapPool(new LruBitmapPool(Math.round(maxMemory * 0.1f)));
             gb.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 200 * 1024 * 1024));
 
             Glide.setup(gb);
@@ -86,7 +79,7 @@ public class GlideHelper {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     Response originalResponse = chain.proceed(chain.request());
-                    String url = chain.request().httpUrl().toString();
+                    String url = chain.request().urlString();
                     //avatar don't need a progress listener
                     if (url.startsWith(HiUtils.AvatarBaseUrl)) {
                         return originalResponse;
@@ -98,6 +91,8 @@ public class GlideHelper {
             });
 
             Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
+
+            AVATAR_CACHE_DIR = Glide.getPhotoCacheDir(context, "avatar");
         }
     }
 
@@ -106,62 +101,23 @@ public class GlideHelper {
     }
 
     public static void loadAvatar(BaseFragment fragment, ImageView view, String avatarUrl) {
-        if (fragment == null)
+        if (fragment == null || fragment.isDetached() || !fragment.isAdded())
             return;
 
         if (DEFAULT_USER_ICON == null)
             DEFAULT_USER_ICON = new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY);
 
-        //use year and week number as cache key
-        //avatars will be cache for one week at most
-        if (WEEK_KEY == null) {
-            Calendar calendar = Calendar.getInstance();
-            WEEK_KEY = calendar.get(Calendar.YEAR) + "_" + calendar.get(Calendar.WEEK_OF_YEAR);
-        }
         if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
             view.setImageDrawable(DEFAULT_USER_ICON);
         } else {
             Glide.with(fragment)
                     .load(avatarUrl)
-                    .signature(new StringSignature(avatarUrl + "_" + WEEK_KEY))
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .centerCrop()
                     .error(DEFAULT_USER_ICON)
                     .crossFade()
-                            //.listener(new AvatarRequestListener())
                     .into(view);
         }
-    }
-
-    private static class AvatarRequestListener implements RequestListener<String, GlideDrawable> {
-        @Override
-        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-            if (e != null) {
-                //Volley with OkHttp
-                if (e instanceof IOException
-                        && !TextUtils.isEmpty(e.getMessage())
-                        && e.getMessage().contains("404"))
-                    NOT_FOUND_AVATARS.put(model, "");
-            }
-            return false;
-        }
-
-        @Override
-        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-            return false;
-        }
-    }
-
-    public static GlideUrl getGlideUrl(String url) {
-        GlideUrl glideUrl;
-        if (Utils.nullToText(url).startsWith(HiUtils.BaseUrl)) {
-            //User-Agent is set in modified OkHttpStreamFetcher class
-            glideUrl = new GlideUrl(url, new LazyHeaders.Builder()
-                    .build());
-        } else {
-            glideUrl = new GlideUrl(url);
-        }
-        return glideUrl;
     }
 
     public static File getAvatarFile(Context ctx, String avatarUrl) {
@@ -232,5 +188,8 @@ public class GlideHelper {
         void update(String url, long bytesRead, long contentLength, boolean done);
     }
 
+    public static File getAvatarFile(String url) {
+        return new File(GlideHelper.AVATAR_CACHE_DIR, url.substring(HiUtils.AvatarBaseUrl.length()).replace("/", "_"));
+    }
 
 }

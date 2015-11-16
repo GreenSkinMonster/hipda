@@ -171,7 +171,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         Preference dialogPref = findPreference(HiSettingsHelper.PERF_ABOUT);
 
         dialogPref.setSummary(HiApplication.getAppVersion()
-                + (UpdateHelper.isFromGooglePlay(getActivity()) ? " (Google Play)" : ""));
+                + (Utils.isFromGooglePlay(getActivity()) ? " (Google Play)" : ""));
         dialogPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 FragmentUtils.showFragment(getFragmentManager(), new AboutFragment());

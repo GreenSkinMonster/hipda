@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.Constants;
@@ -806,7 +805,7 @@ public class HiSettingsHelper {
     }
 
     public boolean isAutoUpdateCheckable() {
-        if (!isAutoUpdateCheck() || UpdateHelper.isFromGooglePlay(mCtx))
+        if (!isAutoUpdateCheck() || Utils.isFromGooglePlay(mCtx))
             return false;
         Date lastCheck = HiSettingsHelper.getInstance().getLastUpdateCheckTime();
         //check update if last check is older than 12 hours
