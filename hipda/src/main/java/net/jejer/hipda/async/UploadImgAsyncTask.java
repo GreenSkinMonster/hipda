@@ -293,7 +293,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
 
         if (imageFileInfo.isGif()
                 && imageFileInfo.getFileSize() > MAX_SPECIAL_FILE_SIZE) {
-            mMessage = "GIF图片大小不能超过" + MAX_SPECIAL_FILE_SIZE / 1024 + "K";
+            mMessage = "GIF图片大小不能超过" + Utils.toSizeText(MAX_SPECIAL_FILE_SIZE);
             return null;
         }
 
@@ -375,7 +375,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         while (baos.size() > MAX_IMAGE_FILE_SIZE) {
             quality -= 10;
             if (quality <= 0) {
-                mMessage = "无法压缩图片至指定大小 " + (MAX_IMAGE_FILE_SIZE / 1024) + "K";
+                mMessage = "无法压缩图片至指定大小 " + Utils.toSizeText(MAX_IMAGE_FILE_SIZE);
                 return null;
             }
             baos.reset();

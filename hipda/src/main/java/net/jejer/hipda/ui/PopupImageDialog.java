@@ -154,10 +154,9 @@ public class PopupImageDialog extends DialogFragment {
                         } else {
                             File f = new File(imageReadyInfo.getPath());
 
-                            String sizeInK = Math.round(1.0 * f.length() / 1024) + "K";
                             String msg = "格式　: " + imageReadyInfo.getMime()
                                     + "\n分辨率: " + imageReadyInfo.getWidth() + "x" + imageReadyInfo.getHeight()
-                                    + "\n大小　: " + sizeInK;
+                                    + "\n大小　: " + Utils.toSizeText(f.length());
 
                             Toast.makeText(mCtx, msg, Toast.LENGTH_LONG).show();
                         }

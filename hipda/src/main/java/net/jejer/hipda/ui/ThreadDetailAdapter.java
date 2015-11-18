@@ -134,8 +134,10 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     contentView.addView(tv);
                 }
             } else if (content instanceof ContentImg) {
-                final String imageUrl = content.getContent();
-                int imageIndex = ((ContentImg) content).getIndexInPage();
+                final ContentImg contentImg = ((ContentImg) content);
+
+                final String imageUrl = contentImg.getContent();
+                int imageIndex = contentImg.getIndexInPage();
 
                 final ThreadImageLayout threadImageLayout = new ThreadImageLayout(mCtx);
                 final GlideImageView giv = threadImageLayout.getImageView();
@@ -179,6 +181,10 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                         else
                             GlideImageManager.addJob(new GlideImageJob(mDetailFragment, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
                     } else {
+                        if (contentImg.getFileSize() > 0) {
+                            threadImageLayout.getImageInfoTextView().setVisibility(View.VISIBLE);
+                            threadImageLayout.getImageInfoTextView().setText(Utils.toSizeText(contentImg.getFileSize()));
+                        }
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -328,8 +334,12 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     } else {
                         if (bar.getVisibility() == View.VISIBLE)
                             bar.setVisibility(View.GONE);
+                        TextView imageInfo = layout.getImageInfoTextView();
                         GlideImageView giv = layout.getImageView();
                         mDetailFragment.loadImage(imageUrl, giv);
+                        if (imageInfo.getVisibility() == View.VISIBLE) {
+                            imageInfo.setVisibility(View.GONE);
+                        }
                     }
                 }
             }

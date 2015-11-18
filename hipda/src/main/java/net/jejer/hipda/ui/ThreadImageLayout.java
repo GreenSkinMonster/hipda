@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.glide.GlideImageView;
@@ -17,6 +18,7 @@ public class ThreadImageLayout extends RelativeLayout {
 
     private GlideImageView giv;
     private ProgressBar progressBar;
+    private TextView imageInfo;
 
     public ThreadImageLayout(Context context) {
         this(context, null);
@@ -33,6 +35,7 @@ public class ThreadImageLayout extends RelativeLayout {
 
         giv = (GlideImageView) findViewById(R.id.thread_image);
         progressBar = (ProgressBar) findViewById(R.id.thread_image_progress);
+        imageInfo = (TextView) findViewById(R.id.thread_image_info);
     }
 
     public GlideImageView getImageView() {
@@ -41,6 +44,10 @@ public class ThreadImageLayout extends RelativeLayout {
 
     public ProgressBar getProgressBar() {
         return progressBar;
+    }
+
+    public TextView getImageInfoTextView() {
+        return imageInfo;
     }
 
 }

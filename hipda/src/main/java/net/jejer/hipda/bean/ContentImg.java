@@ -7,10 +7,13 @@ public class ContentImg extends ContentAbs {
     private String mFloor;
     private int mIndexInPage;
     private String mAuthor;
+    private long mFileSize;
+    private String mId;
 
-    public ContentImg(String url, boolean isInternal) {
+    public ContentImg(String url, String id, boolean isInternal) {
         if (isInternal) {
             mUrl = HiUtils.getFullUrl(url);
+            mId = id;
         } else {
             mUrl = url;
         }
@@ -49,4 +52,18 @@ public class ContentImg extends ContentAbs {
     public void setAuthor(String mAuthor) {
         this.mAuthor = mAuthor;
     }
+
+
+    public long getFileSize() {
+        return mFileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        mFileSize = fileSize;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
 }

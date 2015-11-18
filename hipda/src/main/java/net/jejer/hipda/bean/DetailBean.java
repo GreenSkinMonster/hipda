@@ -104,11 +104,24 @@ public class DetailBean {
             }
         }
 
-        public void addImg(String url, Boolean isInternal) {
-            ContentImg contentImg = new ContentImg(url, isInternal);
+        public void addImg(String url) {
+            addImg(url, null, false);
+        }
+
+        public void addImg(String url, String id, boolean isInternal) {
+            ContentImg contentImg = new ContentImg(url, id, isInternal);
             list.add(contentImg);
             mImages.add(contentImg);
             newString = true;
+        }
+
+        public void updateImgSize(String imgId, long size) {
+            for (ContentImg img : mImages) {
+                if (imgId.equals(img.getId())) {
+                    img.setFileSize(size);
+                    break;
+                }
+            }
         }
 
         public void addAttach(String url, String title, String desc) {

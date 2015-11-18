@@ -315,4 +315,28 @@ public class Utils {
         return false;
     }
 
+
+    public static long parseSizeText(String sizeText) {
+        //100.1 KB
+        //2.22 MB
+        sizeText = Utils.nullToText(sizeText).trim().toUpperCase();
+        try {
+            if (sizeText.endsWith("KB")) {
+                return Math.round(Double.parseDouble(sizeText.replace("KB", "").trim()) * 1024);
+            } else if (sizeText.endsWith("MB")) {
+                return Math.round(Double.parseDouble(sizeText.replace("MB", "").trim()) * 1024 * 1024);
+            }
+        } catch (Exception ignored) {
+        }
+        return -1;
+    }
+
+    public static String toSizeText(long fileSize) {
+        DecimalFormat df = new DecimalFormat("#.#");
+        if (fileSize > 1024 * 1024) {
+            return df.format(fileSize * 1.0 / 1024 / 1024) + " MB";
+        }
+        return df.format(fileSize * 1.0 / 1024) + " KB";
+    }
+
 }

@@ -512,9 +512,8 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         if (total > 1)
             sb.append("(" + (current + 1) + "/" + total + ")");
 
-//        sb.append(!TextUtils.isEmpty(fileName) ? " " + fileName : "");
         if (percentage == UploadImgAsyncTask.STAGE_UPLOADING) {
-            sb.append("正在压缩(~" + UploadImgAsyncTask.MAX_IMAGE_FILE_SIZE / 1024 + "K)...");
+            sb.append("正在压缩(~" + Utils.toSizeText(UploadImgAsyncTask.MAX_IMAGE_FILE_SIZE) + ")...");
         } else if (percentage == 100) {
             sb.append("服务器处理中...");
         } else {

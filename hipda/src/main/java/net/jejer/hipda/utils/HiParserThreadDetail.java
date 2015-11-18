@@ -270,7 +270,7 @@ public class HiParserThreadDetail {
             for (int j = 0; j < postimgES.size(); j++) {
                 Element imgE = postimgES.get(j);
                 if (imgE.attr("file").startsWith("attachments/day_") || imgE.attr("file").startsWith("attachment.php")) {
-                    content.addImg(imgE.attr("file"), true);
+                    content.addImg(imgE.attr("file"), imgE.attr("id"), true);
                 }
             }
 
@@ -398,14 +398,14 @@ public class HiParserThreadDetail {
                 return false;
             } else if (src.equals("images/common/none.gif") || src.startsWith("attachments/day_") || src.startsWith("attachment.php")) {
                 //internal image
-                content.addImg(e.attr("file"), true);
+                content.addImg(e.attr("file"), e.attr("id"), true);
                 return false;
             } else if (src.equals("images/common/")) {
                 //skip common icons
                 return false;
             } else if (src.startsWith("http://") || src.startsWith("https://")) {
                 //external image
-                content.addImg(src, false);
+                content.addImg(src);
                 return false;
             } else if (src.startsWith("images/attachicons/")) {
                 //attach icon
@@ -466,6 +466,14 @@ public class HiParserThreadDetail {
             Element divE = (Element) contentN;
             if (divE.hasClass("t_attach")) {
                 // remove div.t_attach
+                String divId = divE.attr("id");
+                if (!TextUtils.isEmpty(divId) && divId.startsWith("aimg_") && divId.endsWith("_menu")) {
+                    String sizeText = HttpUtils.getMiddleString(divE.text(), "(", ")");
+                    long size = Utils.parseSizeText(sizeText);
+                    if (size > 0) {
+                        content.updateImgSize(divId.substring(0, divId.length() - 5), size);
+                    }
+                }
                 return false;
             } else if (divE.hasClass("quote")) {
                 String tid = "";
