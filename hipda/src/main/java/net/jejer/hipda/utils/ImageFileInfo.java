@@ -37,7 +37,7 @@ public class ImageFileInfo {
     }
 
     public String getMime() {
-        return Utils.nullToText(mime);
+        return Utils.nullToText(mime).toLowerCase();
     }
 
     public void setMime(String mime) {
@@ -64,5 +64,9 @@ public class ImageFileInfo {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public boolean isGif() {
+        return getMime().contains("gif");
     }
 }

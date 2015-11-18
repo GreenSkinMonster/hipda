@@ -10,6 +10,7 @@ import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,10 +45,7 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
         boolean isAvatarUrl = stringUrl.startsWith(HiUtils.AvatarBaseUrl);
         isForumUrl = isAvatarUrl ? isAvatarUrl : stringUrl.startsWith(HiUtils.BaseUrl);
 
-        if (isAvatarUrl)
-            return getAvatar();
-        else
-            return getImage();
+        return isAvatarUrl ? getAvatar() : getImage();
     }
 
     private InputStream getImage() throws IOException {
@@ -67,23 +65,24 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
     private InputStream getAvatar() throws IOException {
         File f = GlideHelper.getAvatarFile(stringUrl);
         if (refetch(f)) {
-            Request request = getRequest();
+            if (!f.exists() || f.delete()) {
+                Request request = getRequest();
+                Response response = client.newCall(request).execute();
+                responseBody = response.body();
 
-            Response response = client.newCall(request).execute();
-            responseBody = response.body();
-            if (!response.isSuccessful()) {
-                if (response.code() == 404) {
-                    GlideHelper.markAvatarNotFound(stringUrl);
-                    if (f.exists())
-                        f.delete();
-                    f.createNewFile();
+                if (!response.isSuccessful()) {
+                    if (response.code() == 404) {
+                        GlideHelper.markAvatarNotFound(stringUrl);
+                        if (!f.createNewFile())
+                            Logger.e("create file failed : " + f.getName());
+                    }
+                    throw new IOException("Request failed with code: " + response.code());
                 }
-                throw new IOException("Request failed with code: " + response.code());
-            }
 
-            BufferedSink sink = Okio.buffer(Okio.sink(f));
-            sink.writeAll(responseBody.source());
-            sink.close();
+                BufferedSink sink = Okio.buffer(Okio.sink(f));
+                sink.writeAll(responseBody.source());
+                sink.close();
+            }
         } else if (f.length() == 0) {
             GlideHelper.markAvatarNotFound(stringUrl);
             return null;

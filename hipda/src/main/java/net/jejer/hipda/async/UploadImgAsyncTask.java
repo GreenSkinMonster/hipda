@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 
 import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
@@ -41,8 +42,9 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
     public final static int MAX_QUALITY = 90;
     private static final int THUMB_SIZE = 128;
 
-    public final static int MAX_IMAGE_FILE_SIZE = 300 * 1024; // max file size 300K
-    public final static int MAX_GIF_FILE_SIZE = 4 * 1024 * 1024; // max upload file size : 8M
+    private final static int MAX_PIXELS = 1200 * 1200; //file with this resolution, it's size should match to MAX_IMAGE_FILE_SIZE
+    public final static int MAX_IMAGE_FILE_SIZE = 400 * 1024; // max file size 400K
+    public final static int MAX_SPECIAL_FILE_SIZE = 4 * 1024 * 1024; // max upload file size : 8M
 
     private static final int UPLOAD_CONNECT_TIMEOUT = 15 * 1000;
     private static final int UPLOAD_READ_TIMEOUT = 5 * 60 * 1000;
@@ -289,9 +291,9 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
 
     private ByteArrayOutputStream compressImage(Uri uri, ImageFileInfo imageFileInfo) {
 
-        if (imageFileInfo.getMime().toLowerCase().contains("gif")
-                && imageFileInfo.getFileSize() > MAX_GIF_FILE_SIZE) {
-            mMessage = "GIF图片大小不能超过" + MAX_GIF_FILE_SIZE / 1024 + "K";
+        if (imageFileInfo.isGif()
+                && imageFileInfo.getFileSize() > MAX_SPECIAL_FILE_SIZE) {
+            mMessage = "GIF图片大小不能超过" + MAX_SPECIAL_FILE_SIZE / 1024 + "K";
             return null;
         }
 
@@ -304,13 +306,14 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
             return null;
         }
 
-        //gif or small jpg/png etc
+        //gif or very long image or small images etc
         if (isDirectUploadable(imageFileInfo)) {
             mThumb = ThumbnailUtils.extractThumbnail(bitmap, THUMB_SIZE, THUMB_SIZE);
             bitmap.recycle();
             return readFileToStream(imageFileInfo.getFilePath());
         }
 
+        //rotate image if needed
         if (imageFileInfo.getOrientation() > 0) {
             Matrix matrix = new Matrix();
             matrix.postRotate(imageFileInfo.getOrientation());
@@ -325,8 +328,6 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(CompressFormat.JPEG, MAX_QUALITY, baos);
 
-        int origionalSize = baos.size();
-
         if (baos.size() <= MAX_IMAGE_FILE_SIZE) {
             mThumb = ThumbnailUtils.extractThumbnail(bitmap, THUMB_SIZE, THUMB_SIZE);
             bitmap.recycle();
@@ -336,37 +337,47 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         bitmap.recycle();
         bitmap = null;
 
-        //ignore ide suggestion, and do not change following 5 lines, unless you know exactly what to do
         ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());
-        BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        newOpts.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(isBm, null, newOpts);
-        newOpts.inJustDecodeBounds = false;
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(isBm, null, opts);
 
-        int w = newOpts.outWidth;
-        int h = newOpts.outHeight;
+        int width = opts.outWidth;
+        int height = opts.outHeight;
 
-        float hh = 720f;
-        float ww = 720f;
-
-        int be = 1;//be=1表示不缩放
-        if (w > h && w > ww) {
-            be = (int) (newOpts.outWidth / ww);
-        } else if (w < h && h > hh) {
-            be = (int) (newOpts.outHeight / hh);
-        }
+        //inSampleSize is needed to avoid OOM
+        int be = (int) (Math.max(width, height) * 1.0 / 1500);
         if (be <= 0)
-            be = 1;
+            be = 1; //be=1表示不缩放
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        newOpts.inJustDecodeBounds = false;
         newOpts.inSampleSize = be;
 
         isBm = new ByteArrayInputStream(baos.toByteArray());
         Bitmap newbitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
 
+        width = newbitmap.getWidth();
+        height = newbitmap.getHeight();
+
+        //scale bitmap so later compress could run less times, once is the best result
+        if (baos.size() > MAX_IMAGE_FILE_SIZE && width * height > MAX_PIXELS) {
+            double scaleRate = Math.sqrt((width * height * 1.0) / MAX_PIXELS);
+            int scaledWidth = (int) (width / scaleRate) / 10 * 10;
+            int scaledHeight = (int) (height / (width * 1.0 / scaledWidth));
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(newbitmap, scaledWidth, scaledHeight, true);
+            newbitmap.recycle();
+            newbitmap = scaledBitmap;
+        }
+
         int quality = MAX_QUALITY;
         baos.reset();
         newbitmap.compress(CompressFormat.JPEG, quality, baos);
-        while (baos.toByteArray().length > MAX_IMAGE_FILE_SIZE) {
+        while (baos.size() > MAX_IMAGE_FILE_SIZE) {
             quality -= 10;
+            if (quality <= 0) {
+                mMessage = "无法压缩图片至指定大小 " + (MAX_IMAGE_FILE_SIZE / 1024) + "K";
+                return null;
+            }
             baos.reset();
             newbitmap.compress(CompressFormat.JPEG, quality, baos);
         }
@@ -375,22 +386,30 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         newbitmap.recycle();
         newbitmap = null;
 
-        Logger.v("Image Compressed: " + quality + "%,  size: " + baos.size() + " bytes, original size: " + origionalSize + " bytes");
+        System.gc();
         return baos;
     }
 
     private boolean isDirectUploadable(ImageFileInfo imageFileInfo) {
-        String mime = Utils.nullToText(imageFileInfo.getMime()).toLowerCase();
         long fileSize = imageFileInfo.getFileSize();
+        int w = imageFileInfo.getWidth();
+        int h = imageFileInfo.getHeight();
 
-        if (mime.contains("gif") && fileSize <= MAX_GIF_FILE_SIZE)
+        if (TextUtils.isEmpty(imageFileInfo.getFilePath()))
+            return false;
+
+        //gif image
+        if (imageFileInfo.isGif() && fileSize <= MAX_SPECIAL_FILE_SIZE)
             return true;
 
-        if ((mime.contains("jpg") || mime.contains("jpeg") || mime.contains("bmp") || mime.contains("png"))
-                && fileSize <= MAX_IMAGE_FILE_SIZE)
-            return true;
+        //very long or wide image
+        if (w > 0 && h > 0 && fileSize <= MAX_SPECIAL_FILE_SIZE) {
+            if (Math.max(w, h) * 1.0 / Math.min(w, h) >= 3)
+                return true;
+        }
 
-        return false;
+        //normal image
+        return fileSize <= MAX_IMAGE_FILE_SIZE;
     }
 
     private static ByteArrayOutputStream readFileToStream(String file) {
