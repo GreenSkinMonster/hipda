@@ -511,8 +511,8 @@ public class HiParserThreadDetail {
             }
             return false;
         } else {
-            content.addNotice("[[ERROR:UNPARSED TAG:" + contentN.nodeName() + ":" + contentN.toString() + "]]");
-            Logger.e("[[ERROR:UNPARSED TAG:" + contentN.nodeName() + "]]");
+            //content.addNotice("[[ERROR:UNPARSED TAG:" + contentN.nodeName() + ":" + contentN.toString() + "]]");
+            //Logger.e("[[ERROR:UNPARSED TAG:" + contentN.nodeName() + "]]");
             return false;
         }
     }
