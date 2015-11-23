@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
-import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
@@ -209,9 +208,6 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
                 Elements error = doc.select("div.alert_info");
                 if (error != null && error.size() > 0) {
                     mResult += error.text();
-                } else {
-                    if (HiSettingsHelper.getInstance().isErrorReportMode())
-                        ACRAUtils.acraReport("Error when posting but with response", rsp_str);
                 }
             }
         } else {
@@ -219,9 +215,6 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 
             mResult = "发表失败，无返回结果! " + errorListener.getErrorText();
             mStatus = Constants.STATUS_FAIL;
-
-            if (HiSettingsHelper.getInstance().isErrorReportMode())
-                ACRAUtils.acraReport(errorListener.getError(), "no response");
         }
 
     }

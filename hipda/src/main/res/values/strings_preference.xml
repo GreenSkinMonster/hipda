@@ -153,7 +153,6 @@
     <string name="pref_post_line_spacing_title">帖子行距调整</string>
     <string name="pref_title_bold_title">标题使用粗体</string>
     <string name="pref_screen_orientation">屏幕方向</string>
-    <string name="pref_error_report_mode">汇报错误模式</string>
     <string name="pref_title_about">关于HiPDA</string>
     <string name="pref_title_check_update">检查更新</string>
 </resources>
