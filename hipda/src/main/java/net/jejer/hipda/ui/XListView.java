@@ -359,7 +359,12 @@ public class XListView extends ListView implements OnScrollListener {
                 }
                 break;
         }
-        return super.onTouchEvent(ev);
+        try {
+            return super.onTouchEvent(ev);
+        } catch (IndexOutOfBoundsException ingored) {
+            // avoid random  IndexOutOfBoundsException error
+        }
+        return true;
     }
 
     @Override

@@ -443,6 +443,9 @@ public class ThreadListFragment extends BaseFragment
 
         @Override
         public void onItemSingleClick(AdapterView<?> listView, View itemView, int position, long row) {
+            //avoid footer click event ???
+            if (position >= mThreadListAdapter.getCount())
+                return;
             ThreadBean thread = mThreadListAdapter.getItem(position);
             String tid = thread.getTid();
             String title = thread.getTitle();
