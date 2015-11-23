@@ -313,18 +313,6 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
             return readFileToStream(imageFileInfo.getFilePath());
         }
 
-        //rotate image if needed
-        if (imageFileInfo.getOrientation() > 0) {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(imageFileInfo.getOrientation());
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-                    bitmap.getHeight(), matrix, true);
-            bitmap.recycle();
-            bitmap = null;
-            bitmap = rotatedBitmap;
-        }
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(CompressFormat.JPEG, MAX_QUALITY, baos);
 
@@ -360,11 +348,24 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         height = newbitmap.getHeight();
 
         //scale bitmap so later compress could run less times, once is the best result
-        if (baos.size() > MAX_IMAGE_FILE_SIZE && width * height > MAX_PIXELS) {
-            double scaleRate = Math.sqrt((width * height * 1.0) / MAX_PIXELS);
-            int scaledWidth = (int) (width / scaleRate) / 10 * 10;
-            int scaledHeight = (int) (height / (width * 1.0 / scaledWidth));
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(newbitmap, scaledWidth, scaledHeight, true);
+        //rotate if needed
+        if ((baos.size() > MAX_IMAGE_FILE_SIZE
+                && width * height > MAX_PIXELS)
+                || imageFileInfo.getOrientation() > 0) {
+
+            float scale = 1.0f;
+            if (width * height > MAX_PIXELS) {
+                scale = (float) Math.sqrt(MAX_PIXELS * 1.0 / (width * height));
+            }
+
+            Matrix matrix = new Matrix();
+            if (imageFileInfo.getOrientation() > 0)
+                matrix.postRotate(imageFileInfo.getOrientation());
+            matrix.postScale(scale, scale);
+
+            Bitmap scaledBitmap = Bitmap.createBitmap(newbitmap, 0, 0, newbitmap.getWidth(),
+                    newbitmap.getHeight(), matrix, true);
+
             newbitmap.recycle();
             newbitmap = scaledBitmap;
         }
@@ -396,6 +397,9 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         int h = imageFileInfo.getHeight();
 
         if (TextUtils.isEmpty(imageFileInfo.getFilePath()))
+            return false;
+
+        if (imageFileInfo.getOrientation() > 0)
             return false;
 
         //gif image
