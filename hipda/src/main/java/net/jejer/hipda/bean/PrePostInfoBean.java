@@ -14,6 +14,9 @@ public class PrePostInfoBean {
     private String subject;
     private String text;
     private String typeid;
+    private String noticeauthor;
+    private String noticeauthormsg;
+    private String noticetrimstr;
     private List<String> attaches = new ArrayList<>();
     private List<String> typeidValues = new ArrayList<>();
     private List<String> typeidNames = new ArrayList<>();
@@ -132,4 +135,28 @@ public class PrePostInfoBean {
         unusedImages.add(imgId);
     }
 
+
+    public String getNoticeauthor() {
+        return noticeauthor;
+    }
+
+    public void setNoticeauthor(String noticeauthor) {
+        this.noticeauthor = noticeauthor;
+    }
+
+    public String getNoticeauthormsg() {
+        return noticeauthormsg;
+    }
+
+    public void setNoticeauthormsg(String noticeauthormsg) {
+        this.noticeauthormsg = noticeauthormsg;
+    }
+
+    public String getNoticetrimstr() {
+        return noticetrimstr;
+    }
+
+    public void setNoticetrimstr(String noticetrimstr) {
+        this.noticetrimstr = noticetrimstr;
+    }
 }

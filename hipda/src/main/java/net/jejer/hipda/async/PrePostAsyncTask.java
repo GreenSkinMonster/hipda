@@ -131,6 +131,21 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
             result.setSubject(subjectES.first().attr("value"));
         }
 
+
+        //for replay or quote notify
+        if (mMode == PostAsyncTask.MODE_REPLY_POST
+                || mMode == PostAsyncTask.MODE_QUOTE_POST) {
+            Elements authorES = doc.select("input[name=noticeauthor]");
+            if (authorES.size() > 0)
+                result.setNoticeauthor(authorES.first().attr("value"));
+            Elements authorMsgES = doc.select("input[name=noticeauthormsg]");
+            if (authorMsgES.size() > 0)
+                result.setNoticeauthormsg(authorMsgES.first().attr("value"));
+            Elements noticeTrimES = doc.select("input[name=noticetrimstr]");
+            if (noticeTrimES.size() > 0)
+                result.setNoticetrimstr(noticeTrimES.first().attr("value"));
+        }
+
         Elements unusedImagesES = doc.select("div#unusedimgattachlist table.imglist img");
         for (int i = 0; i < unusedImagesES.size(); i++) {
             Element imgE = unusedImagesES.get(i);
