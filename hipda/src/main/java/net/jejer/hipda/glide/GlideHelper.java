@@ -11,7 +11,6 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
-import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -40,9 +39,9 @@ public class GlideHelper {
         if (!Glide.isSetup()) {
             GlideBuilder gb = new GlideBuilder(context);
 
-            long maxMemory = Runtime.getRuntime().maxMemory();
-            gb.setMemoryCache(new LruResourceCache(Math.round(maxMemory * 0.3f)));
-            gb.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 100 * 1024 * 1024));
+            //long maxMemory = Runtime.getRuntime().maxMemory();
+            //gb.setMemoryCache(new LruResourceCache(Math.round(maxMemory * 0.3f)));
+            gb.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 200 * 1024 * 1024));
 
             Glide.setup(gb);
 

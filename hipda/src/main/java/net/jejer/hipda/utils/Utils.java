@@ -63,4 +63,9 @@ public class Utils {
         return Jsoup.clean(html, "", mWhitelist, new Document.OutputSettings().prettyPrint(false));
     }
 
+    public static boolean isMemoryUsageHigh() {
+        Runtime runtime = Runtime.getRuntime();
+        return (runtime.totalMemory() - runtime.freeMemory()) > 0.6f * runtime.maxMemory();
+    }
+
 }

@@ -37,6 +37,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -52,6 +53,7 @@ import net.jejer.hipda.cache.ThreadDetailCache;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -514,6 +516,9 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
         //Logger.v( "onDestory");
         getLoaderManager().destroyLoader(0);
         ((MainFrameActivity) getActivity()).registOnSwipeCallback(null);
+        if (Utils.isMemoryUsageHigh()) {
+            Glide.get(getActivity()).clearMemory();
+        }
         super.onDestroy();
     }
 
