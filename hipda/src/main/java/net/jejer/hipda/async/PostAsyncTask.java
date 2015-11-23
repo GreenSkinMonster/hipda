@@ -12,6 +12,7 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -168,10 +169,10 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
             String noticeauthor = mInfo.getNoticeauthor();
             String noticeauthormsg = mInfo.getNoticeauthormsg();
             String noticetrimstr = mInfo.getNoticetrimstr();
-            if (!TextUtils.isEmpty(noticeauthor) && !TextUtils.isEmpty(noticeauthormsg) && !TextUtils.isEmpty(noticetrimstr)) {
+            if (!TextUtils.isEmpty(noticeauthor)) {
                 post_param.put("noticeauthor", noticeauthor);
-                post_param.put("noticeauthormsg", noticeauthormsg);
-                post_param.put("noticetrimstr", noticetrimstr);
+                post_param.put("noticeauthormsg", Utils.nullToText(noticeauthormsg));
+                post_param.put("noticetrimstr", Utils.nullToText(noticetrimstr));
             }
         }
 
