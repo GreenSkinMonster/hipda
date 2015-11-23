@@ -40,7 +40,8 @@ public class GlideImageManager {
 
                                 @Override
                                 public void d(String text, Object... args) {
-                                    Log.d(TAG, String.format(text, args));
+                                    if (isDebugEnabled())
+                                        Log.d(TAG, String.format(text, args));
                                 }
 
                                 @Override

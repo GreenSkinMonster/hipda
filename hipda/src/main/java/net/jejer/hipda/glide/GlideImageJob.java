@@ -5,6 +5,9 @@ import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.data.DataFetcher;
+import com.bumptech.glide.load.model.stream.StreamModelLoader;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.path.android.jobqueue.Job;
@@ -17,6 +20,8 @@ import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import de.greenrobot.event.EventBus;
 
@@ -28,30 +33,43 @@ public class GlideImageJob extends Job {
 
     private String mUrl;
     private Fragment mFragment;
+    private boolean mNetworkFetch;
 
-    public GlideImageJob(Fragment fragment, String url, int priority, String tag) {
-        super(new Params(priority).setPersistent(false).setRequiresNetwork(false).addTags(tag));
-        mFragment = fragment;
-        mUrl = url;
+    public GlideImageJob(Fragment fragment, String url, int priority, String tag, boolean networkFetch) {
+        this(fragment, url, priority, tag, networkFetch, 0);
     }
 
-    public GlideImageJob(Fragment fragment, String url, int priority, String tag, long delay) {
-        super(new Params(priority).setPersistent(false).setRequiresNetwork(false).addTags(tag).delayInMs(delay));
+    public GlideImageJob(Fragment fragment, String url, int priority, String tag, boolean networkFetch, long delay) {
+        super(new Params(priority)
+                .setPersistent(false)
+                .setRequiresNetwork(false)
+                .addTags(tag)
+                .delayInMs(delay > 0 ? delay : 0));
         mFragment = fragment;
         mUrl = url;
+        mNetworkFetch = networkFetch;
     }
 
     @Override
     public void onAdded() {
-        EventBus.getDefault().post(new GlideImageEvent(mUrl, 0, Constants.STATUS_IN_PROGRESS));
+        if (mNetworkFetch)
+            EventBus.getDefault().post(new GlideImageEvent(mUrl, 0, Constants.STATUS_IN_PROGRESS));
     }
 
     @Override
     public void onRun() throws Throwable {
         try {
-            FutureTarget<File> future = Glide.with(mFragment)
-                    .load(mUrl)
-                    .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+            FutureTarget<File> future;
+            if (mNetworkFetch) {
+                future = Glide.with(mFragment)
+                        .load(mUrl)
+                        .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+            } else {
+                future = Glide.with(mFragment)
+                        .using(cacheOnlyStreamLoader)
+                        .load(mUrl)
+                        .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+            }
 
             File cacheFile = future.get();
             Glide.clear(future);
@@ -90,8 +108,10 @@ public class GlideImageJob extends Job {
 
             EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, Constants.STATUS_SUCCESS));
         } catch (Exception e) {
-            Logger.e(e);
-            EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, Constants.STATUS_FAIL));
+            if (mNetworkFetch) {
+                Logger.e(e);
+                EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, Constants.STATUS_FAIL));
+            }
         }
     }
 
@@ -106,5 +126,32 @@ public class GlideImageJob extends Job {
                                                      int maxRunCount) {
         return RetryConstraint.CANCEL;
     }
+
+    private static final StreamModelLoader<String> cacheOnlyStreamLoader = new StreamModelLoader<String>() {
+        @Override
+        public DataFetcher<InputStream> getResourceFetcher(final String model, int i, int i1) {
+            return new DataFetcher<InputStream>() {
+                @Override
+                public InputStream loadData(Priority priority) throws Exception {
+                    throw new IOException();
+                }
+
+                @Override
+                public void cleanup() {
+
+                }
+
+                @Override
+                public String getId() {
+                    return model;
+                }
+
+                @Override
+                public void cancel() {
+
+                }
+            };
+        }
+    };
 
 }

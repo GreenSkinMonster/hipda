@@ -175,12 +175,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
                     loadImage(imageUrl, giv, delay);
                 } else {
-                    if (HiSettingsHelper.getInstance().isLoadImage()) {
-                        if (delay > 0)
-                            GlideImageManager.addJob(new GlideImageJob(mDetailFragment, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId, delay));
-                        else
-                            GlideImageManager.addJob(new GlideImageJob(mDetailFragment, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
-                    } else {
+                    if (!HiSettingsHelper.getInstance().isLoadImage()) {
                         if (contentImg.getFileSize() > 0) {
                             threadImageLayout.getImageInfoTextView().setVisibility(View.VISIBLE);
                             threadImageLayout.getImageInfoTextView().setText(Utils.toSizeText(contentImg.getFileSize()));
@@ -188,11 +183,18 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                GlideImageManager.addJob(new GlideImageJob(mDetailFragment, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId));
+                                GlideImageManager.addJob(new GlideImageJob(mDetailFragment, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId, true));
                                 giv.setOnClickListener(null);
                             }
                         });
                     }
+                    GlideImageManager.addJob(new GlideImageJob(
+                            mDetailFragment,
+                            imageUrl,
+                            GlideImageManager.PRIORITY_LOW,
+                            mDetailFragment.sessionId,
+                            HiSettingsHelper.getInstance().isLoadImage(),
+                            delay));
                 }
 
             } else if (content instanceof ContentAttach) {

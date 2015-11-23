@@ -68,7 +68,7 @@ public class PopupImageAdapter extends PagerAdapter {
         if (imageReadyInfo == null || !(new File(imageReadyInfo.getPath())).exists()) {
             imageLayout.getProgressBar().setVisibility(View.VISIBLE);
             imageLayout.getProgressBar().setIndeterminate(true);
-            GlideImageManager.addJob(new GlideImageJob(mDialog, imageUrl, GlideImageManager.PRIORITY_HIGH, mSessionId));
+            GlideImageManager.addJob(new GlideImageJob(mDialog, imageUrl, GlideImageManager.PRIORITY_HIGH, mSessionId, true));
         } else {
             displayImage(imageLayout, imageUrl);
         }
