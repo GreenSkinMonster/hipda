@@ -357,7 +357,7 @@ public class PostFragment extends Fragment implements UploadImgAsyncTask.UploadI
                 postBean.setFid(mFid);
                 postBean.setTypeid(mTypeid);
                 postBean.setSubject(subjectText);
-                postBean.setFloor(mMode == PostAsyncTask.MODE_EDIT_POST ? mFloor : "");
+                postBean.setFloor(mFloor);
                 new PostAsyncTask(getActivity(), mMode, mPrePostInfo, postListener).execute(postBean);
 
                 // Close SoftKeyboard
