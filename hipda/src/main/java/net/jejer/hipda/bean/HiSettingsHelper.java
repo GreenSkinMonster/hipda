@@ -1,5 +1,6 @@
 package net.jejer.hipda.bean;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -466,10 +467,11 @@ public class HiSettingsHelper {
         return mNightMode;
     }
 
+    @SuppressLint("CommitPrefEdits")
     public void setNightMode(boolean nightMode) {
         mNightMode = nightMode;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_NIGHT_MODE, nightMode).apply();
+        editor.putBoolean(PERF_NIGHT_MODE, nightMode).commit();
     }
 
     public String getFont() {
