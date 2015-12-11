@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -402,6 +403,16 @@ public class XListView extends ListView implements OnScrollListener {
         mTotalItemCount = totalItemCount;
         if (mScrollListener != null) {
             mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        }
+    }
+
+    @Override
+    public void onInitializeAccessibilityNodeInfoForItem(
+            View view, int position, AccessibilityNodeInfo info) {
+        try {
+            super.onInitializeAccessibilityNodeInfoForItem(view, position, info);
+        } catch (IndexOutOfBoundsException e) {
+            //FIXME avoid random IndexOutOfBoundsException
         }
     }
 
