@@ -12,14 +12,14 @@ import com.squareup.okhttp.ResponseBody;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
-
-import okio.BufferedSink;
-import okio.Okio;
 
 /**
  * From glide-okhttp-integration-1.3.1.jar
@@ -79,9 +79,19 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
                     throw new IOException("Request failed with code: " + response.code());
                 }
 
-                BufferedSink sink = Okio.buffer(Okio.sink(f));
-                sink.writeAll(responseBody.source());
-                sink.close();
+                InputStream is = response.body().byteStream();
+                try (BufferedInputStream input = new BufferedInputStream(is);
+                     OutputStream output = new FileOutputStream(f)) {
+                    int count;
+                    byte[] data = new byte[1024];
+                    while ((count = input.read(data)) != -1) {
+                        output.write(data, 0, count);
+                    }
+                    output.flush();
+                } catch (Exception e) {
+                    if (f.exists())
+                        f.delete();
+                }
             }
         } else if (f.length() == 0) {
             GlideHelper.markAvatarNotFound(stringUrl);
