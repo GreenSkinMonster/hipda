@@ -20,7 +20,7 @@ import android.widget.ProgressBar;
  */
 public class ContentLoadingProgressBar extends ProgressBar {
     private static final long MIN_SHOW_TIME = 500L; // ms
-    private static final long MIN_DELAY = 500L; // ms
+    private static final long MIN_DELAY = 750L; // ms
 
     private boolean mIsAttachedToWindow = false;
     private boolean mIsShown;

@@ -1,13 +1,13 @@
 package net.jejer.hipda.ui;
 
 import android.content.Context;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
- * swipe to start and end event support
- * Created by GreenSkinMonster on 2015-11-12.
+ * http://stackoverflow.com/a/16992751
  */
 public class ImageViewPager extends ViewPager {
 
@@ -28,20 +28,35 @@ public class ImageViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        float x = ev.getX();
-        switch (ev.getAction()) {
+        switch (ev.getAction() & MotionEventCompat.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-                mStartDragX = x;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (mStartDragX < x && getCurrentItem() == 0) {
-                    mListener.onSwipeOutAtStart();
-                } else if (mStartDragX > x && getCurrentItem() == getAdapter().getCount() - 1) {
-                    mListener.onSwipeOutAtEnd();
-                }
+                mStartDragX = ev.getX();
                 break;
         }
         return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (getCurrentItem() == 0 || getCurrentItem() == getAdapter().getCount() - 1) {
+            final int action = ev.getAction();
+            float x = ev.getX();
+            switch (action & MotionEventCompat.ACTION_MASK) {
+                case MotionEvent.ACTION_MOVE:
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if (getCurrentItem() == 0 && x > mStartDragX) {
+                        mListener.onSwipeOutAtStart();
+                    }
+                    if (getCurrentItem() == getAdapter().getCount() - 1 && x < mStartDragX) {
+                        mListener.onSwipeOutAtEnd();
+                    }
+                    break;
+            }
+        } else {
+            mStartDragX = 0;
+        }
+        return super.onTouchEvent(ev);
     }
 
     public interface OnSwipeOutListener {
