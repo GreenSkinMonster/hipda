@@ -18,6 +18,7 @@ import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.GifTransformation;
 import net.jejer.hipda.glide.GlideBitmapTarget;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.glide.GlideImageJob;
 import net.jejer.hipda.glide.GlideImageManager;
@@ -103,14 +104,16 @@ public class PopupImageAdapter extends PagerAdapter {
                 gifImageView.setVisibility(View.VISIBLE);
                 scaleImageView.setVisibility(View.GONE);
 
-                Glide.with(mDialog)
-                        .load(imageUrl)
-                        .asBitmap()
-                        .priority(Priority.IMMEDIATE)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .transform(new GifTransformation(mDialog.getActivity()))
-                        .error(R.drawable.image_broken)
-                        .into(new GlideBitmapTarget(gifImageView, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
+                if (GlideHelper.isOkToLoad(mDialog)) {
+                    Glide.with(mDialog)
+                            .load(imageUrl)
+                            .asBitmap()
+                            .priority(Priority.IMMEDIATE)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .transform(new GifTransformation(mDialog.getActivity()))
+                            .error(R.drawable.image_broken)
+                            .into(new GlideBitmapTarget(gifImageView, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
+                }
 
                 gifImageView.setUrl(imageUrl);
                 gifImageView.setImageReadyInfo(imageReadyInfo);

@@ -103,28 +103,32 @@ public class GlideImageView extends ImageView {
         currentUrl = mUrl;
         currentImageView = this;
         Glide.clear(this);
-        Glide.with(getContext())
-                .load(mUrl)
-                .priority(Priority.IMMEDIATE)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .skipMemoryCache(true)
-                .error(R.drawable.image_broken)
-                .override(mImageReadyInfo.getDisplayWidth(), mImageReadyInfo.getDisplayHeight())
-                .into(this);
+        if (GlideHelper.isOkToLoad(getContext())) {
+            Glide.with(getContext())
+                    .load(mUrl)
+                    .priority(Priority.IMMEDIATE)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .skipMemoryCache(true)
+                    .error(R.drawable.image_broken)
+                    .override(mImageReadyInfo.getDisplayWidth(), mImageReadyInfo.getDisplayHeight())
+                    .into(this);
+        }
     }
 
     private void stopCurrentGif() {
         try {
             if (currentImageView != null) {
                 Glide.clear(currentImageView);
-                Glide.with(getContext())
-                        .load(currentUrl)
-                        .asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .transform(new GifTransformation(getContext()))
-                        .error(R.drawable.image_broken)
-                        .override(mImageReadyInfo.getDisplayWidth(), mImageReadyInfo.getDisplayHeight())
-                        .into(currentImageView);
+                if (GlideHelper.isOkToLoad(getContext())) {
+                    Glide.with(getContext())
+                            .load(currentUrl)
+                            .asBitmap()
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                            .transform(new GifTransformation(getContext()))
+                            .error(R.drawable.image_broken)
+                            .override(mImageReadyInfo.getDisplayWidth(), mImageReadyInfo.getDisplayHeight())
+                            .into(currentImageView);
+                }
             }
         } catch (Exception ignored) {
         }

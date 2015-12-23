@@ -1,8 +1,11 @@
 package net.jejer.hipda.glide;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -101,22 +104,20 @@ public class GlideHelper {
     }
 
     public static void loadAvatar(BaseFragment fragment, ImageView view, String avatarUrl) {
-        if (fragment == null || fragment.isDetached() || !fragment.isAdded())
-            return;
-
         if (DEFAULT_USER_ICON == null)
             DEFAULT_USER_ICON = new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY);
 
         if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
             view.setImageDrawable(DEFAULT_USER_ICON);
         } else {
-            Glide.with(fragment)
-                    .load(avatarUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .centerCrop()
-                    .error(DEFAULT_USER_ICON)
-                    .crossFade()
-                    .into(view);
+            if (isOkToLoad(fragment))
+                Glide.with(fragment)
+                        .load(avatarUrl)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .centerCrop()
+                        .error(DEFAULT_USER_ICON)
+                        .crossFade()
+                        .into(view);
         }
     }
 
@@ -190,6 +191,20 @@ public class GlideHelper {
 
     public static File getAvatarFile(String url) {
         return new File(GlideHelper.AVATAR_CACHE_DIR, url.substring(HiUtils.AvatarBaseUrl.length()).replace("/", "_"));
+    }
+
+    public static boolean isOkToLoad(Context activity) {
+        if (activity != null
+                && Build.VERSION.SDK_INT >= 17
+                && activity instanceof Activity) {
+            if (((Activity) activity).isDestroyed())
+                return false;
+        }
+        return true;
+    }
+
+    public static boolean isOkToLoad(Fragment fragment) {
+        return fragment != null && fragment.getActivity() != null && !fragment.isDetached();
     }
 
 }

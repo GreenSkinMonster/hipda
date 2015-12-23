@@ -63,6 +63,7 @@ import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ThreadDetailCache;
 import net.jejer.hipda.glide.GifTransformation;
 import net.jejer.hipda.glide.GlideBitmapTarget;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageManager;
 import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
@@ -1071,21 +1072,23 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
                 giv.setClickToViewBigImage();
             }
 
-            if (imageReadyInfo.isGif()) {
-                Glide.with(ThreadDetailFragment.this)
-                        .load(imageUrl)
-                        .asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .transform(new GifTransformation(mCtx))
-                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
-            } else {
-                Glide.with(ThreadDetailFragment.this)
-                        .load(imageUrl)
-                        .asBitmap()
-                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo)))
-                        .imageDecoder(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo))
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
+            if (GlideHelper.isOkToLoad(ThreadDetailFragment.this)) {
+                if (imageReadyInfo.isGif()) {
+                    Glide.with(ThreadDetailFragment.this)
+                            .load(imageUrl)
+                            .asBitmap()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .transform(new GifTransformation(mCtx))
+                            .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
+                } else {
+                    Glide.with(ThreadDetailFragment.this)
+                            .load(imageUrl)
+                            .asBitmap()
+                            .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo)))
+                            .imageDecoder(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo))
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
+                }
             }
         } else {
             giv.setImageResource(R.drawable.image_broken);
