@@ -72,45 +72,45 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
 
                 if (!response.isSuccessful()) {
                     if (response.code() == 404) {
-                        GlideHelper.markAvatarNotFound(stringUrl);
                         if (!f.createNewFile())
                             Logger.e("create file failed : " + f.getName());
-                    }
-                    throw new IOException("Request failed with code: " + response.code());
-                }
+                    } else
+                        throw new IOException("Request failed with code: " + response.code());
+                } else {
+                    InputStream is = response.body().byteStream();
+                    BufferedInputStream input = null;
+                    OutputStream output = null;
 
-                InputStream is = response.body().byteStream();
-
-                BufferedInputStream input = null;
-                OutputStream output = null;
-
-                try {
-                    input = new BufferedInputStream(is);
-                    output = new FileOutputStream(f);
-                    int count;
-                    byte[] data = new byte[1024];
-                    while ((count = input.read(data)) != -1) {
-                        output.write(data, 0, count);
-                    }
-                    output.flush();
-                } catch (Exception e) {
-                    if (f.exists())
-                        f.delete();
-                } finally {
                     try {
-                        if (input != null)
-                            input.close();
-                        if (output != null)
-                            output.close();
-                        if (is != null)
-                            is.close();
-                    } catch (Exception ignored) {
+                        input = new BufferedInputStream(is);
+                        output = new FileOutputStream(f);
+                        int count;
+                        byte[] data = new byte[1024];
+                        while ((count = input.read(data)) != -1) {
+                            output.write(data, 0, count);
+                        }
+                        output.flush();
+                    } catch (Exception e) {
+                        if (f.exists())
+                            f.delete();
+                    } finally {
+                        try {
+                            if (input != null) input.close();
+                            if (output != null) output.close();
+                            if (is != null) is.close();
+                        } catch (Exception ignored) {
+                        }
                     }
                 }
             }
-        } else if (f.length() == 0) {
-            GlideHelper.markAvatarNotFound(stringUrl);
+        }
+        if (!f.exists()) {
+            //no memory cahce, avatar will be re-download in next ImageView
             return null;
+        } else if (f.length() == 0) {
+            //with memory cahce, avatar not found, will be re-download after one day
+            GlideHelper.markAvatarNotFound(stringUrl);
+            return new FileInputStream(GlideHelper.DEFAULT_AVATAR_FILE);
         }
         return new FileInputStream(f);
     }
