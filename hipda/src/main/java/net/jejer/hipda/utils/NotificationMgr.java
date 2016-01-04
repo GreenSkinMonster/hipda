@@ -156,7 +156,7 @@ public class NotificationMgr {
                 if (mCurrentBean.getSmsCount() == 1 && mCurrentBean.getThreadCount() == 0) {
                     title = mCurrentBean.getUsername() + " 的短消息";
                     content = mCurrentBean.getContent();
-                    if (GlideHelper.ready())
+                    if (!GlideHelper.ready())
                         GlideHelper.init(context);
                     File avatarFile = GlideHelper.getAvatarFile(context, HiUtils.getAvatarUrlByUid(mCurrentBean.getUid()));
                     if (avatarFile != null && avatarFile.exists()) {
@@ -183,12 +183,18 @@ public class NotificationMgr {
                 if (!TextUtils.isEmpty(sound))
                     notif.setSound(Uri.parse(sound));
                 if (HiSettingsHelper.getInstance().isNotiLedLight())
-                    notif.setLights(color, 1000, 1000);
+                    notif.setLights(color, 1000, 3000);
                 if (Build.VERSION.SDK_INT >= 16)
                     notif.setPriority(Notification.PRIORITY_HIGH)
                             .setVibrate(new long[0]);
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.notify(0, notif.build());
+                HiApplication.setNotified(true);
+
+                //clean count to avoid notification button on start up
+                mCurrentBean.setSmsCount(0);
+                mCurrentBean.setThreadCount(0);
+
             } else {
                 cancelNotification(context);
             }
@@ -196,8 +202,11 @@ public class NotificationMgr {
     }
 
     public static void cancelNotification(Context context) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(0);
+        if (HiApplication.isNotified()) {
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(0);
+            HiApplication.setNotified(false);
+        }
     }
 
     private static String getContentText(NotificationBean bean) {

@@ -60,6 +60,7 @@ import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HiParserThreadList;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
@@ -154,6 +155,7 @@ public class MainFrameActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         FragmentArgs args = FragmentUtils.parse(intent);
         if (args != null) {
+            HiParserThreadList.holdFetchNotify();
             clearBackStacks(false);
             args.setDirectOpen(true);
             FragmentUtils.show(getFragmentManager(), args);

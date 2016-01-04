@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.ui.HiApplication;
 
 /**
  * fetch user's message or thread notifications
@@ -15,20 +16,25 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        Logger.i("NotificationReceiver");
+        Logger.v("NotificationReceiver");
         if (!Connectivity.isConnected(context)) {
-            Logger.i("Netork is offline, do nothing.");
+            Logger.v("Netork is offline, do nothing.");
             return;
         }
 
         if (HiSettingsHelper.getInstance().isInSilentMode()) {
-            Logger.i("Notification is in silent mode, do nothing.");
+            Logger.v("Notification is in silent mode, do nothing.");
+            return;
+        }
+
+        if (HiApplication.isActivityVisible()) {
+            Logger.v("Activity is visible, do nothing.");
             return;
         }
 
         String uid = HiSettingsHelper.getInstance().getUid();
         if (HiUtils.isValidId(uid) && OkHttpHelper.getInstance().isLoggedIn()) {
-            Logger.i("Notification start checking....");
+            Logger.v("Notification start checking....");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -38,12 +44,12 @@ public class NotificationReceiver extends BroadcastReceiver {
                     } catch (Exception e) {
                         Logger.e(e);
                     } finally {
-                        Logger.i(NotificationMgr.getCurrentNotification().toString());
+                        Logger.v(NotificationMgr.getCurrentNotification().toString());
                     }
                 }
             }).start();
         } else {
-            Logger.i("User is not logged in, cancel alarm");
+            Logger.v("User is not logged in, cancel alarm");
             NotificationMgr.cancelAlarm(context);
         }
     }

@@ -16,6 +16,8 @@ import org.jsoup.select.Elements;
 
 public class HiParserThreadList {
 
+    private static long HOLD_FETCH_NOTIFY = 0;
+
     public static ThreadListBean parse(Context context, Handler handler, Document doc) {
         // Update UI
         Message msgStartParse = Message.obtain();
@@ -193,6 +195,7 @@ public class HiParserThreadList {
     }
 
     public static class parseNotifyRunnable implements Runnable {
+
         private Document mDoc;
         private Context mCtx;
 
@@ -203,8 +206,15 @@ public class HiParserThreadList {
 
         @Override
         public void run() {
-            NotificationMgr.fetchNotification(mDoc);
-            NotificationMgr.showNotification(mCtx);
+            if (System.currentTimeMillis() > HOLD_FETCH_NOTIFY + 10 * 1000) {
+                NotificationMgr.fetchNotification(mDoc);
+                NotificationMgr.showNotification(mCtx);
+            }
         }
     }
+
+    public static void holdFetchNotify() {
+        HOLD_FETCH_NOTIFY = System.currentTimeMillis();
+    }
+
 }

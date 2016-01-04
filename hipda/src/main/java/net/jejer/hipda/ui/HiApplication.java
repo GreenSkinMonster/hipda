@@ -37,6 +37,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 public class HiApplication extends Application {
 
     private static Context context;
+    private static boolean notified;
 
     @Override
     public void onCreate() {
@@ -83,6 +84,14 @@ public class HiApplication extends Application {
         } catch (Exception ignored) {
         }
         return version;
+    }
+
+    public static boolean isNotified() {
+        return notified;
+    }
+
+    public static void setNotified(boolean b) {
+        notified = b;
     }
 
 }
