@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_select_text_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:gravity="center"
+        android:padding="4dp"
+        android:textAlignment="center"
+        android:textColor="@color/hipda" />
+
+    <EditText
+        android:id="@+id/et_select_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@null"
+        android:gravity="bottom"
+        android:inputType="none"
+        android:minLines="4"
+        android:padding="6dp"
+        android:scrollbars="vertical"
+        android:text=""
+        android:textIsSelectable="true" />
+</LinearLayout>

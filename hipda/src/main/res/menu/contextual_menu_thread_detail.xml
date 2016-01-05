@@ -24,4 +24,9 @@
         android:title="@string/action_share"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_select_text"
+        android:title="@string/action_select_text"
+        app:showAsAction="never" />
+
 </menu>
