@@ -32,11 +32,11 @@ public class CursorUtils {
                 result = getImageInfo_API11to18(context, uri);
             }
         }
-        if (result == null)
+        if (result == null || TextUtils.isEmpty(result.getFilePath()))
             return new ImageFileInfo();
 
         File imageFile = new File(result.getFilePath());
-        if (TextUtils.isEmpty(result.getFilePath()) || !imageFile.exists())
+        if (!imageFile.exists())
             return new ImageFileInfo();
 
         BitmapFactory.Options options = new BitmapFactory.Options();
