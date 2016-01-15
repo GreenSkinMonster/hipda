@@ -33,7 +33,11 @@ public class ImageViewPager extends ViewPager {
                 mStartDragX = ev.getX();
                 break;
         }
-        return super.onInterceptTouchEvent(ev);
+        try {
+            return super.onInterceptTouchEvent(ev);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -56,7 +60,11 @@ public class ImageViewPager extends ViewPager {
         } else {
             mStartDragX = 0;
         }
-        return super.onTouchEvent(ev);
+        try {
+            return super.onTouchEvent(ev);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public interface OnSwipeOutListener {
