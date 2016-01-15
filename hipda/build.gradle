@@ -38,8 +38,8 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1'
     compile 'com.github.clans:fab:1.6.1'
-    compile('com.mikepenz:materialdrawer:4.5.1@aar') { transitive = true }
-    compile 'com.mikepenz:iconics-core:2.2.0@aar'
+    compile('com.mikepenz:materialdrawer:4.6.4@aar') { transitive = true }
+    compile 'com.mikepenz:iconics-core:2.5.4@aar'
     compile 'com.mikepenz:google-material-typeface:2.2.0.1@aar'
     compile 'com.mikepenz:fontawesome-typeface:4.4.0.1@aar'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
