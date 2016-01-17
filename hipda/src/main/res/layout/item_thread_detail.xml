@@ -33,7 +33,7 @@
                 android:padding="4dp"
                 android:text=""
                 android:textColor="?attr/colorAccent"
-                android:textSize="@dimen/info_text_size" />
+                android:textSize="@dimen/author_text_size"/>
 
             <TextView
                 android:id="@+id/time"
@@ -74,7 +74,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
                 android:text=""
-                android:textColor="@color/background_grey" />
+                android:textColor="?android:textColorSecondary"/>
         </RelativeLayout>
 
         <LinearLayout

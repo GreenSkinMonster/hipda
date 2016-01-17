@@ -9,6 +9,7 @@
 
     <integer name="post_text_size">21</integer>
     <integer name="title_text_size">21</integer>
+    <dimen name="author_text_size">18sp</dimen>
     <dimen name="info_text_size">17sp</dimen>
 
     <dimen name="avatar_size">48dp</dimen>

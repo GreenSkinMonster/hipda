@@ -1,24 +1,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="4dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingTop="4dp">
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:paddingBottom="2dp"
+              android:paddingLeft="8dp"
+              android:paddingRight="8dp"
+              android:paddingTop="2dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:minHeight="32dp"
-        android:paddingBottom="4dp">
+        android:paddingBottom="0dp">
 
         <ImageView
             android:id="@+id/iv_avatar"
             android:layout_width="@dimen/avatar_size"
             android:layout_height="@dimen/avatar_size"
             android:layout_alignParentLeft="true"
-            android:padding="2dp" />
+            android:layout_centerVertical="true"
+            android:padding="2dp"/>
 
         <TextView
             android:id="@+id/tv_author"
@@ -30,60 +31,61 @@
             android:singleLine="true"
             android:text=""
             android:textColor="?attr/colorAccent"
-            android:textSize="@dimen/info_text_size" />
+            android:textSize="@dimen/author_text_size"/>
 
-        <TextView
-            android:id="@+id/tv_thread_type"
+        <LinearLayout
+            android:id="@+id/ll_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="2dp"
-            android:layout_toLeftOf="@+id/iv_image_indicator"
-            android:background="@drawable/rounded_corner"
-            android:paddingBottom="1dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:paddingTop="1dp"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="?android:textColorSecondary"
-            android:textSize="12sp" />
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal">
 
-        <com.mikepenz.iconics.view.IconicsTextView
-            android:id="@+id/iv_image_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/tv_replycounter"
-            android:padding="2dp"
-            android:text="{faw-image}"
-            android:textColor="?attr/colorAccent"
-            android:textSize="@dimen/info_text_size"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/tv_thread_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/rounded_corner"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="?android:textColorSecondary"
+                android:textSize="12sp"/>
 
-        <TextView
-            android:id="@+id/tv_replycounter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/tv_create_time"
-            android:padding="2dp"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="?android:textColorSecondary"
-            android:textSize="@dimen/info_text_size" />
+            <com.mikepenz.iconics.view.IconicsTextView
+                android:id="@+id/iv_image_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4dp"
+                android:text="{faw-image}"
+                android:textColor="?attr/colorAccent"
+                android:textSize="@dimen/info_text_size"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tv_replycounter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="?android:textColorSecondary"
+                android:textSize="@dimen/info_text_size"/>
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/tv_create_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:padding="2dp"
+            android:layout_below="@+id/ll_top"
+            android:padding="1dp"
             android:singleLine="true"
             android:text=""
             android:textColor="?android:textColorSecondary"
-            android:textSize="@dimen/info_text_size" />
+            android:textSize="@dimen/info_text_size"/>
 
     </RelativeLayout>
 
@@ -98,7 +100,7 @@
             android:gravity="top"
             android:padding="4dp"
             android:text=""
-            android:textSize="18sp" />
+            android:textSize="18sp"/>
 
     </RelativeLayout>
 
