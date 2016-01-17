@@ -228,4 +228,12 @@ public abstract class BaseFragment extends Fragment {
         theButton.setEnabled(false);
     }
 
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    public boolean popFragment() {
+        return getActivity() != null && ((MainFrameActivity) getActivity()).popFragment();
+    }
+
 }

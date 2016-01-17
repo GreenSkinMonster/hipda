@@ -383,7 +383,7 @@ public class ThreadListFragment extends BaseFragment
             //pop post fragment on success
             Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
             if (fg instanceof PostFragment) {
-                ((MainFrameActivity) getActivity()).popFragment(false);
+                ((BaseFragment) fg).popFragment();
             }
 
             if (postProgressDialog != null) {

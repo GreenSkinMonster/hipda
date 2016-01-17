@@ -130,7 +130,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         Logger.v("onCreate");
         super.onCreate(savedInstanceState);
 
-        ((MainFrameActivity) getActivity()).registOnSwipeCallback(this);
         mCtx = getActivity();
 
         setHasOptionsMenu(true);
@@ -535,7 +534,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             //pop post fragment on success
             Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
             if (fg instanceof PostFragment) {
-                ((MainFrameActivity) getActivity()).popFragment(false);
+                ((BaseFragment) fg).popFragment();
             } else if (quickReply.getVisibility() == View.VISIBLE) {
                 mReplyTextTv.setText("");
                 quickReply.setVisibility(View.INVISIBLE);
@@ -631,7 +630,6 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
     @Override
     public void onDestroy() {
         getLoaderManager().destroyLoader(0);
-        ((MainFrameActivity) getActivity()).registOnSwipeCallback(null);
         EventBus.getDefault().unregister(mDetailAdapter);
         if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_AUTO_CLEAR_MEMORY, true)
                 && Utils.isMemoryUsageHigh()) {
@@ -1136,4 +1134,8 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
         return mTid;
     }
 
+    @Override
+    public boolean onBackPressed() {
+        return hideQuickReply();
+    }
 }

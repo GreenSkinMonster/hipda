@@ -194,8 +194,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                             @Override
                             public void onError(Request request, Exception e) {
                                 progress.dismissError("操作时发生错误 : " + OkHttpHelper.getErrorMessage(e));
+                                popFragment();
                                 FragmentManager fm = getActivity().getFragmentManager();
-                                ((MainFrameActivity) getActivity()).popFragment(false);
                                 Fragment fragment = fm.findFragmentByTag(SimpleListFragment.class.getName());
                                 if (fragment != null && fragment instanceof SimpleListFragment) {
                                     ((SimpleListFragment) fragment).onRefresh();
@@ -205,8 +205,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                             @Override
                             public void onResponse(String response) {
                                 progress.dismiss("操作完成");
+                                popFragment();
                                 FragmentManager fm = getActivity().getFragmentManager();
-                                ((MainFrameActivity) getActivity()).popFragment(false);
                                 Fragment fragment = fm.findFragmentByTag(SimpleListFragment.class.getName());
                                 if (fragment != null && fragment instanceof SimpleListFragment) {
                                     ((SimpleListFragment) fragment).onRefresh();

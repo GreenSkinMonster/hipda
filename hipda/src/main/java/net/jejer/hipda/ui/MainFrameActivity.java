@@ -1,12 +1,9 @@
 package net.jejer.hipda.ui;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -76,8 +73,6 @@ public class MainFrameActivity extends AppCompatActivity {
     public final static int PERMISSIONS_REQUEST_CODE = 200;
 
     private OnSwipeTouchListener mSwipeListener;
-    private Fragment mOnSwipeCallback = null;
-    private int mQuit = 0;
 
     public Drawer drawer;
     private AccountHeader accountHeader;
@@ -113,7 +108,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 if (HiSettingsHelper.getInstance().isGestureBack()
                         && !HiSettingsHelper.getInstance().getIsLandscape()
                         && !(getFragmentManager().findFragmentByTag(PostFragment.class.getName()) instanceof PostFragment)) {
-                    popFragment(false);
+                    popFragment();
                 }
             }
         };
@@ -274,7 +269,14 @@ public class MainFrameActivity extends AppCompatActivity {
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
-                popFragment(false);
+                if (getFragmentManager().getBackStackEntryCount() == 0) {
+                    if (drawer.isDrawerOpen())
+                        drawer.closeDrawer();
+                    else
+                        drawer.openDrawer();
+                } else {
+                    popFragment();
+                }
             }
         });
 
@@ -371,7 +373,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
-                popFragment(false);
+                popFragment();
                 break;
             default:
                 break;
@@ -387,39 +389,16 @@ public class MainFrameActivity extends AppCompatActivity {
             return;
         }
 
-        if (mOnSwipeCallback instanceof ThreadDetailFragment) {
-            if (((ThreadDetailFragment) mOnSwipeCallback).hideQuickReply())
+        FragmentManager fm = getFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.main_frame_container);
+
+        if (fragment instanceof BaseFragment) {
+            if (((BaseFragment) fragment).onBackPressed())
                 return;
         }
 
-        Fragment postFragment = getFragmentManager().findFragmentByTag(PostFragment.class.getName());
-        if (postFragment instanceof PostFragment && ((PostFragment) postFragment).isUserInputted()) {
-            Dialog dialog = new AlertDialog.Builder(this)
-                    .setTitle("放弃发表？")
-                    .setMessage("\n确认放弃已输入的内容吗？\n")
-                    .setPositiveButton(getResources().getString(android.R.string.ok),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    popFragment(true);
-                                }
-                            })
-                    .setNegativeButton(getResources().getString(android.R.string.cancel),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            }).create();
-            dialog.show();
-        } else {
-            if (!popFragment(true)) {
-                mQuit++;
-                if (mQuit == 1 && HiSettingsHelper.getInstance().getIsLandscape()) {
-                    Toast.makeText(this, "再按一次退出HiPDA", Toast.LENGTH_LONG).show();
-                } else {
-                    finish();
-                }
-            }
+        if (!popFragment()) {
+            finish();
         }
 
     }
@@ -437,37 +416,17 @@ public class MainFrameActivity extends AppCompatActivity {
         mActionMode = null;
     }
 
-    public boolean popFragment(boolean backPressed) {
+    public boolean popFragment() {
         FragmentManager fm = getFragmentManager();
         int count = fm.getBackStackEntryCount();
         if (count > 0) {
             fm.popBackStackImmediate();
-            count = fm.getBackStackEntryCount();
-            if (count > 0) {
-                FragmentManager.BackStackEntry backEntry = getFragmentManager().getBackStackEntryAt(count - 1);
-                String str = backEntry.getName();
-                Fragment fragment = getFragmentManager().findFragmentByTag(str);
-
-                if (fragment != null) {
-                    fragment.setHasOptionsMenu(true);
-                }
-            } else {
-                Fragment fg = fm.findFragmentById(R.id.main_frame_container);
-                if (fg != null) {
-                    fg.setHasOptionsMenu(true);
-                }
-            }
+            Fragment fg = fm.findFragmentById(R.id.main_frame_container);
+            if (fg != null)
+                fg.setHasOptionsMenu(true);
             return true;
-        } else {
-            if (!backPressed) {
-                if (drawer.isDrawerOpen())
-                    drawer.closeDrawer();
-                else
-                    drawer.openDrawer();
-            }
-            return false;
         }
-
+        return false;
     }
 
     public enum DrawerItem {
@@ -569,7 +528,6 @@ public class MainFrameActivity extends AppCompatActivity {
 
         @Override
         public void onBackStackChanged() {
-            mQuit = 0;
 
             if (mActionMode != null) {
                 try {
@@ -600,10 +558,6 @@ public class MainFrameActivity extends AppCompatActivity {
             mSwipeListener.onTouch(null, ev);
         }
         return super.dispatchTouchEvent(ev);
-    }
-
-    public void registOnSwipeCallback(Fragment f) {
-        mOnSwipeCallback = f;
     }
 
     public void updateDrawerBadge() {

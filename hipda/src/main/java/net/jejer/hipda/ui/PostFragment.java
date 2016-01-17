@@ -1,8 +1,11 @@
 package net.jejer.hipda.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -681,4 +684,28 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                 || mUploadImgButtons.size() > 0;
     }
 
+    @Override
+    public boolean onBackPressed() {
+        if (isUserInputted()) {
+            Dialog dialog = new AlertDialog.Builder(getActivity())
+                    .setTitle("放弃发表？")
+                    .setMessage("\n确认放弃已输入的内容吗？\n")
+                    .setPositiveButton(getResources().getString(android.R.string.ok),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    PostFragment.this.popFragment();
+                                }
+                            })
+                    .setNegativeButton(getResources().getString(android.R.string.cancel),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            }).create();
+            dialog.show();
+            return true;
+        }
+        return false;
+    }
 }
