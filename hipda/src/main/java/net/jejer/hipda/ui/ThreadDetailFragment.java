@@ -792,7 +792,7 @@ public class ThreadDetailFragment extends BaseFragment implements PostAsyncTask.
             mDetailListView.setItemChecked(position, true);
 
             position = position - mDetailListView.getHeaderViewsCount();
-            if (position > mDetailAdapter.getCount()) {
+            if (position >= mDetailAdapter.getCount()) {
                 return false;
             }
 
