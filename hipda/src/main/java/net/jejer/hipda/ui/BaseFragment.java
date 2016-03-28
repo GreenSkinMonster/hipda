@@ -30,8 +30,6 @@ import net.jejer.hipda.utils.Utils;
 
 import java.util.UUID;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * a base fragment
  * Created by GreenSkinMonster on 2015-05-09.
@@ -89,13 +87,11 @@ public abstract class BaseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSessionId = UUID.randomUUID().toString();
-        EventBus.getDefault().register(this);
         setRetainInstance(true);
     }
 
     @Override
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 

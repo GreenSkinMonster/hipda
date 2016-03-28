@@ -393,7 +393,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         postBean.setSubject(subjectText);
         postBean.setFloor(mFloor);
 
-        JobMgr.addJob(new PostJob(mParentSessionId, getActivity(), mMode, mPrePostInfo, postBean));
+        JobMgr.addJob(new PostJob(mParentSessionId, mMode, mPrePostInfo, postBean));
 
         // Close SoftKeyboard
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

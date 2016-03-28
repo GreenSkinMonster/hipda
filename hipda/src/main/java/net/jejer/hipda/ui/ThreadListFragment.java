@@ -58,6 +58,8 @@ import net.jejer.hipda.utils.NotificationMgr;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 public class ThreadListFragment extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -246,6 +248,8 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onResume() {
         super.onResume();
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().registerSticky(this);
         if (!mInloading) {
             if (mThreadBeans.size() == 0) {
                 refresh();
@@ -255,6 +259,12 @@ public class ThreadListFragment extends BaseFragment
                 hideListViewFooter();
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Override

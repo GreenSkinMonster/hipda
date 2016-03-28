@@ -1,10 +1,9 @@
 package net.jejer.hipda.job;
 
-import android.content.Context;
-
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
+import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Constants;
 
 import de.greenrobot.event.EventBus;
@@ -17,17 +16,15 @@ public class PostJob extends BaseJob {
     private PostBean mPostArg;
     private PrePostInfoBean mPrePostInfo;
     private int mMode;
-    private Context mCtx;
     private PostEvent mEvent;
 
-    public PostJob(String sessionId, Context ctx, int mode, PrePostInfoBean prePostInfo, PostBean postArg) {
+    public PostJob(String sessionId, int mode, PrePostInfoBean prePostInfo, PostBean postArg) {
 
         super(sessionId, JobMgr.PRIORITY_HIGH);
 
         mPostArg = postArg;
         mPrePostInfo = prePostInfo;
         mMode = mode;
-        mCtx = ctx;
 
         mEvent = new PostEvent();
         mEvent.mMode = mMode;
@@ -42,14 +39,14 @@ public class PostJob extends BaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        PostHelper postHelper = new PostHelper(mCtx, mMode, mPrePostInfo, mPostArg);
+        PostHelper postHelper = new PostHelper(HiApplication.getAppContext(), mMode, mPrePostInfo, mPostArg);
         PostBean postResult = postHelper.post();
 
         mEvent.mPostResult = postResult;
         mEvent.mStatus = postResult.getStatus();
         mEvent.mMessage = postResult.getMessage();
 
-        EventBus.getDefault().post(mEvent);
+        EventBus.getDefault().postSticky(mEvent);
     }
 
     @Override

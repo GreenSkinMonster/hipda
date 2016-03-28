@@ -300,7 +300,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     postBean.setContent(replyText);
                     postBean.setTid(mTid);
 
-                    JobMgr.addJob(new PostJob(mSessionId, getActivity(), PostHelper.MODE_QUICK_REPLY, null, postBean));
+                    JobMgr.addJob(new PostJob(mSessionId, PostHelper.MODE_QUICK_REPLY, null, postBean));
 
                     // Close SoftKeyboard
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
@@ -350,6 +350,8 @@ public class ThreadDetailFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().registerSticky(this);
         if (!mInloading) {
             if (mDetailBeans.size() == 0) {
                 refresh();
@@ -357,6 +359,12 @@ public class ThreadDetailFragment extends BaseFragment {
                 mLoadingProgressBar.hide();
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Override
@@ -565,11 +573,6 @@ public class ThreadDetailFragment extends BaseFragment {
         public void onScrollStateChanged(AbsListView view, int scrollState) {
         }
 
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @Override
