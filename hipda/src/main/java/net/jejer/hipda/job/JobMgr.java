@@ -1,4 +1,4 @@
-package net.jejer.hipda.glide;
+package net.jejer.hipda.job;
 
 import android.util.Log;
 
@@ -14,7 +14,7 @@ import net.jejer.hipda.utils.Logger;
  * Image loading manager
  * Created by GreenSkinMonster on 2015-08-27.
  */
-public class GlideImageManager {
+public class JobMgr {
 
     public final static int PRIORITY_HIGH = 9;
     public final static int PRIORITY_MIDIUM = 6;
@@ -22,12 +22,12 @@ public class GlideImageManager {
 
     private static JobManager jobManager;
 
-    private GlideImageManager() {
+    private JobMgr() {
     }
 
     private static JobManager getJobManager() {
         if (jobManager == null) {
-            synchronized (GlideImageManager.class) {
+            synchronized (JobMgr.class) {
                 if (jobManager == null) {
                     Configuration configuration = new Configuration.Builder(HiApplication.getAppContext())
                             .customLogger(new CustomLogger() {
@@ -66,7 +66,7 @@ public class GlideImageManager {
         return jobManager;
     }
 
-    public static void addJob(GlideImageJob job) {
+    public static void addJob(BaseJob job) {
         getJobManager().addJob(job);
     }
 

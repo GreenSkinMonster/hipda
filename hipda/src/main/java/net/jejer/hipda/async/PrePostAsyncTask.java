@@ -42,19 +42,19 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
 
         mUrl = HiUtils.ReplyUrl + tid;
         switch (mMode) {
-            case PostAsyncTask.MODE_REPLY_THREAD:
-            case PostAsyncTask.MODE_QUICK_REPLY:
+            case PostHelper.MODE_REPLY_THREAD:
+            case PostHelper.MODE_QUICK_REPLY:
                 break;
-            case PostAsyncTask.MODE_REPLY_POST:
+            case PostHelper.MODE_REPLY_POST:
                 mUrl += "&reppost=" + pid;
                 break;
-            case PostAsyncTask.MODE_QUOTE_POST:
+            case PostHelper.MODE_QUOTE_POST:
                 mUrl += "&repquote=" + pid;
                 break;
-            case PostAsyncTask.MODE_NEW_THREAD:
+            case PostHelper.MODE_NEW_THREAD:
                 mUrl = HiUtils.NewThreadUrl + fid;
                 break;
-            case PostAsyncTask.MODE_EDIT_POST:
+            case PostHelper.MODE_EDIT_POST:
                 //fid is not really needed, just put a value here
                 mUrl = HiUtils.EditUrl + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
                 break;
@@ -128,8 +128,8 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
         }
 
         //for replay or quote notify
-        if (mMode == PostAsyncTask.MODE_REPLY_POST
-                || mMode == PostAsyncTask.MODE_QUOTE_POST) {
+        if (mMode == PostHelper.MODE_REPLY_POST
+                || mMode == PostHelper.MODE_QUOTE_POST) {
             Elements authorES = doc.select("input[name=noticeauthor]");
             if (authorES.size() > 0)
                 result.setNoticeauthor(authorES.first().attr("value"));

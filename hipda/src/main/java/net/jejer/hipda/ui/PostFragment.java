@@ -44,12 +44,14 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.PostAsyncTask;
+import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.async.PrePostAsyncTask;
 import net.jejer.hipda.async.UploadImgAsyncTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
+import net.jejer.hipda.job.JobMgr;
+import net.jejer.hipda.job.PostJob;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -87,6 +89,8 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
     private PrePostInfoBean mPrePostInfo;
     private PrePostAsyncTask mPrePostAsyncTask;
 
+    private String mParentSessionId;
+
     private Spinner mSpForum;
     private Spinner mSpTypeIds;
 
@@ -94,12 +98,6 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
     private HorizontalScrollView mHsvView;
     private HiProgressDialog mProgressDialog;
     private boolean mImageUploading = false;
-
-    private PostAsyncTask.PostListener postListener;
-
-    public void setPostListener(PostAsyncTask.PostListener postListener) {
-        this.postListener = postListener;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -166,7 +164,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         mEtReplyMsg.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         mTvAdditional.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
 
-        if (mMode == PostAsyncTask.MODE_REPLY_THREAD && !TextUtils.isEmpty(mText)) {
+        if (mMode == PostHelper.MODE_REPLY_THREAD && !TextUtils.isEmpty(mText)) {
             mEtReplyMsg.setText(mText);
         }
 
@@ -291,22 +289,22 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         setActionBarDisplayHomeAsUpEnabled(true);
 
         switch (mMode) {
-            case PostAsyncTask.MODE_REPLY_THREAD:
+            case PostHelper.MODE_REPLY_THREAD:
                 setActionBarTitle("回复帖子");
                 break;
-            case PostAsyncTask.MODE_REPLY_POST:
+            case PostHelper.MODE_REPLY_POST:
                 setActionBarTitle("回复 " + mFloor + "# " + mFloorAuthor);
                 break;
-            case PostAsyncTask.MODE_QUOTE_POST:
+            case PostHelper.MODE_QUOTE_POST:
                 setActionBarTitle("引用 " + mFloor + "# " + mFloorAuthor);
                 break;
-            case PostAsyncTask.MODE_NEW_THREAD:
+            case PostHelper.MODE_NEW_THREAD:
                 setActionBarTitle(getActivity().getResources().getString(R.string.action_new_thread));
                 mSpForum.setVisibility(View.VISIBLE);
                 mSpTypeIds.setVisibility(View.VISIBLE);
                 mEtSubjectMsg.setVisibility(View.VISIBLE);
                 break;
-            case PostAsyncTask.MODE_EDIT_POST:
+            case PostHelper.MODE_EDIT_POST:
                 setActionBarTitle(getActivity().getResources().getString(R.string.action_edit));
                 break;
         }
@@ -336,6 +334,10 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
             default:
                 return false;
         }
+    }
+
+    public void setParentSessionId(String parentSessionId) {
+        mParentSessionId = parentSessionId;
     }
 
     private void postReply() {
@@ -391,7 +393,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         postBean.setSubject(subjectText);
         postBean.setFloor(mFloor);
 
-        new PostAsyncTask(getActivity(), mMode, mPrePostInfo, postListener).execute(postBean);
+        JobMgr.addJob(new PostJob(mParentSessionId, getActivity(), mMode, mPrePostInfo, postBean));
 
         // Close SoftKeyboard
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -572,7 +574,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                 mTvAdditional.setVisibility(View.GONE);
                 getActivity().invalidateOptionsMenu();
 
-                if (mode == PostAsyncTask.MODE_NEW_THREAD) {
+                if (mode == PostHelper.MODE_NEW_THREAD) {
                     KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
                     List<String> typeids = info.getTypeidValues();
                     if (typeids != null && typeids.size() > 0) {
@@ -592,7 +594,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                 }
 
                 if (!TextUtils.isEmpty(info.getText())) {
-                    if (mode == PostAsyncTask.MODE_EDIT_POST) {
+                    if (mode == PostHelper.MODE_EDIT_POST) {
                         mEtReplyMsg.setText(info.getText());
                         if (!TextUtils.isEmpty(info.getSubject())) {
                             mEtSubjectMsg.setText(info.getSubject());
@@ -621,7 +623,7 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                     }
                 }
 
-                if (mMode == PostAsyncTask.MODE_NEW_THREAD) {
+                if (mMode == PostHelper.MODE_NEW_THREAD) {
                     (new Handler()).postDelayed(new Runnable() {
                         public void run() {
                             mEtSubjectMsg.requestFocus();
@@ -708,4 +710,5 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
         }
         return false;
     }
+
 }

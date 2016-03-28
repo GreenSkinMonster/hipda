@@ -1,7 +1,6 @@
 package net.jejer.hipda.async;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -21,7 +20,7 @@ import org.jsoup.select.Elements;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
+public class PostHelper {
 
     public static final int MODE_REPLY_THREAD = 0;
     public static final int MODE_REPLY_POST = 1;
@@ -35,30 +34,22 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
     private int mStatus = Constants.STATUS_FAIL;
     private Context mCtx;
     private PrePostInfoBean mInfo;
+    private PostBean mPostArg;
 
-    private PostListener mPostListenerCallback;
     private String mTid;
     private String mTitle;
     private String mFloor;
 
-    public PostAsyncTask(Context ctx, int mode, PrePostInfoBean info, PostListener postListenerCallback) {
+    public PostHelper(Context ctx, int mode, PrePostInfoBean info, PostBean postArg) {
         mCtx = ctx;
         mMode = mode;
         mInfo = info;
-        mPostListenerCallback = postListenerCallback;
+        mPostArg = postArg;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        if (mPostListenerCallback != null)
-            mPostListenerCallback.onPrePost();
-    }
+    public PostBean post() {
 
-    @Override
-    protected Void doInBackground(PostBean... postBeans) {
-
-        PostBean postBean = postBeans[0];
+        PostBean postBean = mPostArg;
         String replyText = postBean.getContent();
         String tid = postBean.getTid();
         String pid = postBean.getPid();
@@ -112,18 +103,16 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
                 break;
         }
 
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void avoid) {
-        PostBean postBean = new PostBean();
         postBean.setSubject(mTitle);
         postBean.setFloor(mFloor);
         postBean.setTid(mTid);
-        if (mPostListenerCallback != null)
-            mPostListenerCallback.onPostDone(mMode, mStatus, mResult, postBean);
+
+        postBean.setMessage(mResult);
+        postBean.setStatus(mStatus);
+
+        return postBean;
     }
+
 
     private void doPost(String url, String replyText, String subject, String typeid) {
 
@@ -217,9 +206,4 @@ public class PostAsyncTask extends AsyncTask<PostBean, Void, Void> {
 
     }
 
-    public interface PostListener {
-        void onPrePost();
-
-        void onPostDone(int mode, int status, String message, PostBean postBean);
-    }
 }

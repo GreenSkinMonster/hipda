@@ -21,7 +21,7 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.PostAsyncTask;
+import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.HiUtils;
@@ -44,6 +44,8 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
 
         Bundle arguments = new Bundle();
         PostFragment fragment = new PostFragment();
+        if (mFragment != null)
+            fragment.setParentSessionId(mFragment.mSessionId);
 
         switch (item.getItemId()) {
             case R.id.action_edit:
@@ -54,10 +56,9 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                     arguments.putString(PostFragment.ARG_TID_KEY, mTid);
                     arguments.putString(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
                     arguments.putString(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
-                    arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_EDIT_POST);
+                    arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_EDIT_POST);
 
                     fragment.setArguments(arguments);
-                    fragment.setPostListener(mFragment);
 
                     mFragment.getFragmentManager().beginTransaction()
                             .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
@@ -74,10 +75,9 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 arguments.putString(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
                 arguments.putString(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
                 arguments.putString(PostFragment.ARG_FLOOR_AUTHOR_KEY, mDetailBean.getAuthor());
-                arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_REPLY_POST);
+                arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_REPLY_POST);
 
                 fragment.setArguments(arguments);
-                fragment.setPostListener(mFragment);
 
                 mFragment.getFragmentManager().beginTransaction()
                         .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
@@ -92,10 +92,9 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 arguments.putString(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
                 arguments.putString(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
                 arguments.putString(PostFragment.ARG_FLOOR_AUTHOR_KEY, mDetailBean.getAuthor());
-                arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_QUOTE_POST);
+                arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_QUOTE_POST);
 
                 fragment.setArguments(arguments);
-                fragment.setPostListener(mFragment);
 
                 mFragment.getFragmentManager().beginTransaction()
                         .add(R.id.main_frame_container, fragment, PostFragment.class.getName())

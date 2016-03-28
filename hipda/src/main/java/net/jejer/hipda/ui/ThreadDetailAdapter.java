@@ -28,10 +28,10 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
-import net.jejer.hipda.glide.GlideImageJob;
-import net.jejer.hipda.glide.GlideImageManager;
 import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
+import net.jejer.hipda.job.GlideImageJob;
+import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.HashMap;
@@ -183,16 +183,16 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                GlideImageManager.addJob(new GlideImageJob(mDetailFragment, imageUrl, GlideImageManager.PRIORITY_LOW, mDetailFragment.sessionId, true));
+                                JobMgr.addJob(new GlideImageJob(mDetailFragment, imageUrl, JobMgr.PRIORITY_LOW, mDetailFragment.mSessionId, true));
                                 giv.setOnClickListener(null);
                             }
                         });
                     }
-                    GlideImageManager.addJob(new GlideImageJob(
+                    JobMgr.addJob(new GlideImageJob(
                             mDetailFragment,
                             imageUrl,
-                            GlideImageManager.PRIORITY_LOW,
-                            mDetailFragment.sessionId,
+                            JobMgr.PRIORITY_LOW,
+                            mDetailFragment.mSessionId,
                             HiSettingsHelper.getInstance().isLoadImage(),
                             delay));
                 }

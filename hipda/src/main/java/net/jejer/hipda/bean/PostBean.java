@@ -13,6 +13,9 @@ public class PostBean {
     private String subject;
     private String content;
     private String typeid;
+    private int status;
+    private String message;
+
 
     public String getTid() {
         return tid;
@@ -70,4 +73,19 @@ public class PostBean {
         this.typeid = typeid;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }

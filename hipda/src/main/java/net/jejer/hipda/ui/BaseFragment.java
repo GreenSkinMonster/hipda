@@ -24,8 +24,13 @@ import com.mikepenz.materialdrawer.Drawer;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
+import net.jejer.hipda.job.BaseEvent;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
+
+import java.util.UUID;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * a base fragment
@@ -34,6 +39,7 @@ import net.jejer.hipda.utils.Utils;
 public abstract class BaseFragment extends Fragment {
 
     protected static final int FAB_ICON_SIZE_DP = 20;
+    protected String mSessionId;
 
     protected void setActionBarTitle(CharSequence title) {
         if (getActivity() != null) {
@@ -82,7 +88,15 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSessionId = UUID.randomUUID().toString();
+        EventBus.getDefault().register(this);
         setRetainInstance(true);
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @Override
@@ -234,6 +248,11 @@ public abstract class BaseFragment extends Fragment {
 
     public boolean popFragment() {
         return getActivity() != null && ((MainFrameActivity) getActivity()).popFragment();
+    }
+
+    @SuppressWarnings("unused")
+    public void onEventMainThread(BaseEvent event) {
+        Logger.v("BaseEvent : " + event.getClass().getSimpleName() + ", status=" + event.mStatus + ", message=" + event.mMessage);
     }
 
 }

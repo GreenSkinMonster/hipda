@@ -420,7 +420,11 @@ public class MainFrameActivity extends AppCompatActivity {
         FragmentManager fm = getFragmentManager();
         int count = fm.getBackStackEntryCount();
         if (count > 0) {
-            fm.popBackStackImmediate();
+            try {
+                fm.popBackStackImmediate();
+            } catch (IllegalStateException ignored) {
+                // There's no way to avoid getting this if saveInstanceState has already been called.
+            }
             Fragment fg = fm.findFragmentById(R.id.main_frame_container);
             if (fg != null)
                 fg.setHasOptionsMenu(true);

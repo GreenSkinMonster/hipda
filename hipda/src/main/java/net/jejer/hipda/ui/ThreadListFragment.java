@@ -41,13 +41,14 @@ import com.mikepenz.iconics.view.IconicsImageView;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
-import net.jejer.hipda.async.PostAsyncTask;
+import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.async.ThreadListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
+import net.jejer.hipda.job.PostEvent;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
@@ -58,7 +59,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThreadListFragment extends BaseFragment
-        implements PostAsyncTask.PostListener, SwipeRefreshLayout.OnRefreshListener {
+        implements SwipeRefreshLayout.OnRefreshListener {
 
     public static final String ARG_FID_KEY = "fid";
 
@@ -319,12 +320,13 @@ public class ThreadListFragment extends BaseFragment
 
     private void newThread() {
         Bundle arguments = new Bundle();
-        arguments.putInt(PostFragment.ARG_MODE_KEY, PostAsyncTask.MODE_NEW_THREAD);
+        arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_NEW_THREAD);
         arguments.putString(PostFragment.ARG_FID_KEY, mForumId + "");
 
         PostFragment fragment = new PostFragment();
+        fragment.setParentSessionId(mSessionId);
+
         fragment.setArguments(arguments);
-        fragment.setPostListener(this);
 
         if (HiSettingsHelper.getInstance().getIsLandscape()) {
             getFragmentManager().beginTransaction()
@@ -370,40 +372,6 @@ public class ThreadListFragment extends BaseFragment
         hideListViewFooter();
         mInloading = true;
         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-    }
-
-    @Override
-    public void onPrePost() {
-        postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
-    }
-
-    @Override
-    public void onPostDone(int mode, int status, String message, PostBean postBean) {
-        if (status == Constants.STATUS_SUCCESS) {
-            //pop post fragment on success
-            Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
-            if (fg instanceof PostFragment) {
-                ((BaseFragment) fg).popFragment();
-            }
-
-            if (postProgressDialog != null) {
-                postProgressDialog.dismiss(message);
-            } else {
-                Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
-            }
-
-            setHasOptionsMenu(false);
-            FragmentUtils.showThread(getFragmentManager(), true, postBean.getTid(), postBean.getSubject(), -1, -1, null, -1);
-
-            //refresh thread list
-            refresh();
-        } else {
-            if (postProgressDialog != null) {
-                postProgressDialog.dismissError(message);
-            } else {
-                Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
-            }
-        }
     }
 
     @Override
@@ -768,6 +736,45 @@ public class ThreadListFragment extends BaseFragment
             }
 
             return row;
+        }
+    }
+
+
+    @SuppressWarnings("unused")
+    public void onEventMainThread(PostEvent event) {
+
+        if (!mSessionId.equals(event.mSessionId))
+            return;
+
+        String message = event.mMessage;
+        PostBean postResult = event.mPostResult;
+
+        if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
+            postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
+        } else if (event.mStatus == Constants.STATUS_SUCCESS) {
+            //pop post fragment on success
+            Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+            if (fg instanceof PostFragment) {
+                ((BaseFragment) fg).popFragment();
+            }
+
+            if (postProgressDialog != null) {
+                postProgressDialog.dismiss(message);
+            } else {
+                Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
+            }
+
+            setHasOptionsMenu(false);
+            FragmentUtils.showThread(getFragmentManager(), true, postResult.getTid(), postResult.getSubject(), -1, -1, null, -1);
+
+            //refresh thread list
+            refresh();
+        } else {
+            if (postProgressDialog != null) {
+                postProgressDialog.dismissError(message);
+            } else {
+                Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
+            }
         }
     }
 

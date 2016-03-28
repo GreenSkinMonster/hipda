@@ -1,4 +1,4 @@
-package net.jejer.hipda.glide;
+package net.jejer.hipda.job;
 
 import android.app.Fragment;
 import android.graphics.BitmapFactory;
@@ -10,11 +10,12 @@ import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.model.stream.StreamModelLoader;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
-import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 import com.path.android.jobqueue.RetryConstraint;
 
 import net.jejer.hipda.cache.ImageContainer;
+import net.jejer.hipda.glide.GlideImageEvent;
+import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
@@ -29,7 +30,7 @@ import de.greenrobot.event.EventBus;
  * Image loading job
  * Created by GreenSkinMonster on 2015-08-27.
  */
-public class GlideImageJob extends Job {
+public class GlideImageJob extends BaseJob {
 
     private String mUrl;
     private Fragment mFragment;
