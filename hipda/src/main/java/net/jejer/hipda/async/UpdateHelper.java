@@ -23,7 +23,6 @@ import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -45,16 +44,16 @@ public class UpdateHelper {
         mCtx = ctx;
         mSilent = isSilent;
 
-        Random random = new Random();
-        if (random.nextBoolean()) {
-            checkSite = "gitcafe";
-            checkUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda-ng.md";
-            downloadUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-ng-release-{version}.apk";
-        } else {
+//        Random random = new Random();
+//        if (random.nextBoolean()) {
+//            checkSite = "gitcafe";
+//            checkUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda-ng.md";
+//            downloadUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-ng-release-{version}.apk";
+//        } else {
             checkSite = "coding";
             checkUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda-ng.md";
             downloadUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/releases/hipda-ng-release-{version}.apk";
-        }
+//        }
     }
 
     public void check() {
