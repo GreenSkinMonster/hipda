@@ -102,6 +102,11 @@ public class PopupImageDialog extends DialogFragment {
             }
         });
 
+        //mDetailListBean could be null if resumed
+        if (mDetailListBean == null) {
+            dismiss();
+        }
+
         final List<ContentImg> images = mDetailListBean.getContentImages();
         mPagerAdapter = new PopupImageAdapter(this, images, mSessionId);
         viewPager.setAdapter(mPagerAdapter);
