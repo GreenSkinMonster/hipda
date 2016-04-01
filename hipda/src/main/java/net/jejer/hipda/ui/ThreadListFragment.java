@@ -786,6 +786,7 @@ public class ThreadListFragment extends BaseFragment
                 Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
             }
         }
+        EventBus.getDefault().removeStickyEvent(event);
     }
 
 }

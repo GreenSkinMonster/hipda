@@ -46,10 +46,12 @@ import com.mikepenz.iconics.IconicsDrawable;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.async.PrePostAsyncTask;
-import net.jejer.hipda.async.UploadImgAsyncTask;
+import net.jejer.hipda.async.UploadImgHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
+import net.jejer.hipda.job.ImageUploadEvent;
+import net.jejer.hipda.job.ImageUploadJob;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.PostJob;
 import net.jejer.hipda.utils.ColorUtils;
@@ -63,7 +65,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PostFragment extends BaseFragment implements UploadImgAsyncTask.UploadImgListener {
+import de.greenrobot.event.EventBus;
+
+public class PostFragment extends BaseFragment {
     private static final int SELECT_PICTURE = 1;
 
     public static final String ARG_FID_KEY = "fid";
@@ -267,6 +271,19 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
     public void onActivityCreated(Bundle savedInstanceState) {
         Logger.v("onActivityCreated");
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().registerSticky(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Override
@@ -498,8 +515,10 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
                 imagesLayout.addView(uploadBtn, params);
             }
 
+            JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), uris.toArray(new Uri[uris.size()])));
+
             //upload all images
-            new UploadImgAsyncTask(getActivity(), this, mPrePostInfo.getUid(), mPrePostInfo.getHash()).execute(uris.toArray(new Uri[uris.size()]));
+            //new UploadImgAsyncTask(getActivity(), this, mPrePostInfo.getUid(), mPrePostInfo.getHash()).execute(uris.toArray(new Uri[uris.size()]));
 
         }
     }
@@ -509,58 +528,6 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
             mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), "\n[attachimg]" + imgId + "[/attachimg]");
             mPrePostInfo.addAttach(imgId);
         }
-    }
-
-    @Override
-    public void updateProgress(Uri uri, int total, int current, String fileName, int percentage) {
-        StringBuilder sb = new StringBuilder();
-        if (total > 1)
-            sb.append("(" + (current + 1) + "/" + total + ")");
-
-        if (percentage == UploadImgAsyncTask.STAGE_UPLOADING) {
-            sb.append("正在压缩(~" + Utils.toSizeText(UploadImgAsyncTask.MAX_IMAGE_FILE_SIZE) + ")...");
-        } else if (percentage == 100) {
-            sb.append("服务器处理中...");
-        } else {
-            sb.append("正在上传 " + percentage + "%");
-        }
-        mProgressDialog.setMessage(sb.toString());
-    }
-
-    @Override
-    public void itemComplete(final Uri uri, int total, int current, final String fileName, final String message, final String imgId, final Bitmap thumbtail) {
-        getActivity().runOnUiThread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        UploadImgButton uploadBtn = mUploadImgButtons.get(uri);
-                        if (isValidImgId(imgId)) {
-                            uploadBtn.setImgId(imgId);
-                            uploadBtn.setImageBitmap(thumbtail);
-                            uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.hipda));
-                            appendImage(imgId);
-                        } else {
-                            Toast.makeText(getActivity(), "图片上传失败："
-                                    + (!TextUtils.isEmpty(fileName) ? fileName : "")
-                                    + "\n"
-                                    + Utils.nullToText(message), Toast.LENGTH_LONG).show();
-                            uploadBtn.setVisibility(View.GONE);
-                            mUploadImgButtons.remove(uri);
-                            if (mUploadImgButtons.size() == 0 && mHsvView.getVisibility() == View.VISIBLE) {
-                                mHsvView.setVisibility(View.GONE);
-                            }
-                        }
-                    }
-                }
-        );
-
-    }
-
-    @Override
-    public void complete() {
-        mImageUploading = false;
-        if (mProgressDialog != null)
-            mProgressDialog.dismiss("上传完成");
     }
 
     private class PrePostListener implements PrePostAsyncTask.PrePostListener {
@@ -709,6 +676,70 @@ public class PostFragment extends BaseFragment implements UploadImgAsyncTask.Upl
             return true;
         }
         return false;
+    }
+
+    private void imageProcess(int total, int current, int percentage) {
+        StringBuilder sb = new StringBuilder();
+        if (total > 1)
+            sb.append("(" + (current + 1) + "/" + total + ")");
+
+        if (percentage == UploadImgHelper.STAGE_UPLOADING) {
+            sb.append("正在压缩(~" + Utils.toSizeText(UploadImgHelper.MAX_IMAGE_FILE_SIZE) + ")...");
+        } else if (percentage == 100) {
+            sb.append("服务器处理中...");
+        } else {
+            sb.append("正在上传 " + percentage + "%");
+        }
+        mProgressDialog.setMessage(sb.toString());
+    }
+
+    private void imageDone(Uri uri, String fileName, String message, String imgId, Bitmap thumbtail) {
+        UploadImgButton uploadBtn = mUploadImgButtons.get(uri);
+        if (isValidImgId(imgId)) {
+            uploadBtn.setImgId(imgId);
+            uploadBtn.setImageBitmap(thumbtail);
+            uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.hipda));
+            appendImage(imgId);
+        } else {
+            Toast.makeText(getActivity(), "图片上传失败："
+                    + (!TextUtils.isEmpty(fileName) ? fileName : "")
+                    + "\n"
+                    + Utils.nullToText(message), Toast.LENGTH_LONG).show();
+            uploadBtn.setVisibility(View.GONE);
+            mUploadImgButtons.remove(uri);
+            if (mUploadImgButtons.size() == 0 && mHsvView.getVisibility() == View.VISIBLE) {
+                mHsvView.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void imageAllDone() {
+        mImageUploading = false;
+        if (mProgressDialog != null)
+            mProgressDialog.dismiss("上传完成");
+    }
+
+    @SuppressWarnings("unused")
+    public void onEventMainThread(ImageUploadEvent event) {
+        if (!mSessionId.equals(event.mSessionId))
+            return;
+
+        Collection<ImageUploadEvent> events = new ArrayList<>();
+        if (event.holdEvents != null && event.holdEvents.size() > 0) {
+            events.addAll(event.holdEvents);
+        }
+        events.add(event);
+
+        for (ImageUploadEvent evt : events) {
+            if (evt.type == ImageUploadEvent.ALL_DONE) {
+                imageAllDone();
+            } else if (evt.type == ImageUploadEvent.ITEM_DONE) {
+                imageDone(evt.uri, evt.currentFileName, evt.message, evt.imgId, evt.thumbtail);
+            } else if (evt.type == ImageUploadEvent.UPLOADING) {
+                imageProcess(evt.total, evt.current, evt.percentage);
+            }
+        }
+        EventBus.getDefault().removeStickyEvent(event);
     }
 
 }

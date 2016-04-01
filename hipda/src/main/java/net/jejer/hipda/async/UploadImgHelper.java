@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -36,7 +35,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
+public class UploadImgHelper {
 
     public final static int STAGE_UPLOADING = -1;
     public final static int MAX_QUALITY = 90;
@@ -54,6 +53,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
     private String mUid;
     private String mHash;
     private Context mCtx;
+    private Uri[] mUris;
 
     private Uri mCurrentUri;
     private String mMessage = "";
@@ -62,54 +62,44 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
     private int mCurrent;
     private String mCurrentFileName = "";
 
-    public UploadImgAsyncTask(Context ctx, UploadImgListener v, String uid, String hash) {
+    public UploadImgHelper(Context ctx, UploadImgListener v, String uid, String hash, Uri[] uris) {
         mCtx = ctx;
         mListener = v;
         mUid = uid;
         mHash = hash;
+        mUris = uris;
     }
 
     public interface UploadImgListener {
-        void updateProgress(Uri uri, int total, int current, String currentFileName, int percentage);
+        void updateProgress(int total, int current, int percentage);
 
         void itemComplete(Uri uri, int total, int current, String currentFileName, String message, String imgId, Bitmap thumbtail);
-
-        void complete();
     }
 
-    @Override
-    protected Void doInBackground(Uri... uris) {
+    public void upload() {
 
         Map<String, String> post_param = new HashMap<>();
 
         post_param.put("uid", mUid);
         post_param.put("hash", mHash);
 
-        mTotal = uris.length;
+        mTotal = mUris.length;
 
         int i = 0;
-        for (Uri uri : uris) {
+        for (Uri uri : mUris) {
             mCurrent = i++;
             String imgId = doUploadFile(HiUtils.UploadImgUrl, post_param, uri);
-            mListener.itemComplete(uri, mTotal, mCurrent, mCurrentFileName, mMessage, imgId, mThumb);
+            if (mListener != null)
+                mListener.itemComplete(uri, mTotal, mCurrent, mCurrentFileName, mMessage, imgId, mThumb);
         }
 
-        return null;
     }
 
-    @Override
-    protected void onProgressUpdate(Integer... progress) {
-        if (mListener != null) {
-            mListener.updateProgress(mCurrentUri, mTotal, mCurrent, mCurrentFileName, progress[0]);
-        }
+    protected void updateProgress(int progress) {
+        if (mListener != null)
+            mListener.updateProgress(mTotal, mCurrent, progress);
     }
 
-    @Override
-    protected void onPostExecute(Void result) {
-        if (mListener != null) {
-            mListener.complete();
-        }
-    }
 
     private static String getBoundry() {
         StringBuilder sb = new StringBuilder();
@@ -144,7 +134,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         return res.toString();
     }
 
-    public String doUploadFile(String urlStr, Map<String, String> param, Uri uri) {
+    private String doUploadFile(String urlStr, Map<String, String> param, Uri uri) {
 
         mCurrentUri = uri;
         mThumb = null;
@@ -152,7 +142,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         mCurrentFileName = "";
 
         // update progress for start compress
-        publishProgress(STAGE_UPLOADING);
+        updateProgress(STAGE_UPLOADING);
 
         ImageFileInfo imageFileInfo = CursorUtils.getImageFileInfo(mCtx, uri);
         mCurrentFileName = imageFileInfo.getFileName();
@@ -165,8 +155,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
         String fileType = imageFileInfo.getMime();
         String imageParamName = "Filedata";
 
-        // update progress for start upload
-        publishProgress(0);
+        updateProgress(0);
 
         String BOUNDARYSTR = getBoundry();
 
@@ -218,6 +207,7 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
             postSize = Math.min(bytesLeft, maxPostSize);
             final Thread thread = Thread.currentThread();
             long mark = SystemClock.uptimeMillis();
+            long progressMark = 0;
             while (bytesLeft > 0) {
                 if (thread.isInterrupted()) {
                     throw new InterruptedIOException();
@@ -227,10 +217,13 @@ public class UploadImgAsyncTask extends AsyncTask<Uri, Integer, Void> {
                 bytesLeft -= postSize;
                 postSize = Math.min(bytesLeft, maxPostSize);
                 if (SystemClock.uptimeMillis() - mark > 250) {
-                    out.flush();
                     mark = SystemClock.uptimeMillis();
+                    out.flush();
                 }
-                publishProgress((int) ((transferred * 100) / baos.size()));
+                if (SystemClock.uptimeMillis() - progressMark > 250) {
+                    progressMark = SystemClock.uptimeMillis();
+                    updateProgress((transferred * 100) / baos.size());
+                }
             }
 
             //yes, write twice
