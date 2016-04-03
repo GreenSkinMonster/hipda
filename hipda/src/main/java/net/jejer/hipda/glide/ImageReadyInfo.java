@@ -14,17 +14,19 @@ public class ImageReadyInfo {
     private int height;
     private String path;
     private String mime;
+    private long fileSize;
     private int orientation;
 
     int maxViewWidth;
     int displayWidth;
     int displayHeight;
 
-    public ImageReadyInfo(String path, int width, int height, String mime) {
+    public ImageReadyInfo(String path, int width, int height, String mime, long fileSize) {
         this.width = width;
         this.height = height;
         this.path = path;
         this.mime = mime;
+        this.fileSize = fileSize;
     }
 
     public int getHeight() {
@@ -41,6 +43,10 @@ public class ImageReadyInfo {
 
     public String getMime() {
         return mime;
+    }
+
+    public long getFileSize() {
+        return fileSize;
     }
 
     public boolean isReady() {

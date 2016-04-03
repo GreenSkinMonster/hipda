@@ -102,7 +102,7 @@ public class GlideImageJob extends BaseJob {
                 height = options.outWidth;
             }
 
-            ImageReadyInfo imageReadyInfo = new ImageReadyInfo(cacheFile.getPath(), width, height, mime);
+            ImageReadyInfo imageReadyInfo = new ImageReadyInfo(cacheFile.getPath(), width, height, mime, cacheFile.length());
             if (orientation > 0)
                 imageReadyInfo.setOrientation(orientation);
             ImageContainer.markImageReady(mUrl, imageReadyInfo);

@@ -92,6 +92,7 @@ public class PopupImageDialog extends DialogFragment {
 
         final ImageViewPager viewPager = (ImageViewPager) layout.findViewById(R.id.view_pager);
         final TextView tvImageInfo = (TextView) layout.findViewById(R.id.tv_image_info);
+        final TextView tvImageFileInfo = (TextView) layout.findViewById(R.id.tv_image_file_info);
         final TextView tvFloorInfo = (TextView) layout.findViewById(R.id.tv_floor_info);
         final Button btnBack = (Button) layout.findViewById(R.id.btn_back);
 
@@ -123,6 +124,8 @@ public class PopupImageDialog extends DialogFragment {
                 ContentImg contentImg = images.get(position);
                 tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
                 tvImageInfo.setText((position + 1) + " / " + images.size());
+                String url = images.get(viewPager.getCurrentItem()).getContent();
+                updateImageFileInfo(tvImageFileInfo, url);
             }
 
             @Override
@@ -148,22 +151,17 @@ public class PopupImageDialog extends DialogFragment {
         tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
         tvImageInfo.setText((mImageIndex + 1) + " / " + images.size());
 
+        String url = images.get(viewPager.getCurrentItem()).getContent();
+        updateImageFileInfo(tvImageFileInfo, url);
+
         tvImageInfo.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
-                        String url = images.get(viewPager.getCurrentItem()).getContent();
-                        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
-                        if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
-                            Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
+                        if (tvImageFileInfo.getVisibility() == View.GONE) {
+                            tvImageFileInfo.setVisibility(View.VISIBLE);
                         } else {
-                            File f = new File(imageReadyInfo.getPath());
-
-                            String msg = "格式　: " + imageReadyInfo.getMime()
-                                    + "\n分辨率: " + imageReadyInfo.getWidth() + "x" + imageReadyInfo.getHeight()
-                                    + "\n大小　: " + Utils.toSizeText(f.length());
-
-                            Toast.makeText(mCtx, msg, Toast.LENGTH_LONG).show();
+                            tvImageFileInfo.setVisibility(View.GONE);
                         }
                     }
                 }
@@ -277,6 +275,17 @@ public class PopupImageDialog extends DialogFragment {
 
         );
         return dialog;
+    }
+
+    private void updateImageFileInfo(TextView tvImageFileInfo, String url) {
+        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
+        if (imageReadyInfo != null && imageReadyInfo.isReady()) {
+            String msg = imageReadyInfo.getWidth() + "x" + imageReadyInfo.getHeight()
+                    + " / " + Utils.toSizeText(imageReadyInfo.getFileSize());
+            tvImageFileInfo.setText(msg);
+        } else {
+            tvImageFileInfo.setText("?");
+        }
     }
 
     @Override
