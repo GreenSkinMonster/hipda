@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
@@ -12,8 +13,12 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import net.jejer.hipda.cache.ImageContainer;
+import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.MainFrameActivity;
+
+import java.io.File;
 
 public class HttpUtils {
 
@@ -75,6 +80,39 @@ public class HttpUtils {
         if (filename.toLowerCase().endsWith(".apk"))
             req.setMimeType("application/vnd.android.package-archive");
         dm.enqueue(req);
+    }
+
+    public static void saveImage(Context context, String url) {
+        try {
+            if (ContextCompat.checkSelfPermission(context,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(context, "需要在权限管理中授权存储空间权限", Toast.LENGTH_SHORT).show();
+                if (context instanceof Activity)
+                    ActivityCompat.requestPermissions((Activity) context,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            MainFrameActivity.PERMISSIONS_REQUEST_CODE);
+                return;
+            }
+
+            ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
+            if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
+                Toast.makeText(context, "文件还未下载完成", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String filename = Utils.getImageFileName("Hi_IMG", imageReadyInfo.getMime());
+            File destFile = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS), filename);
+            Utils.copy(new File(imageReadyInfo.getPath()), destFile);
+            Toast.makeText(context, "图片已经保存至下载目录 <" + filename + ">", Toast.LENGTH_SHORT).show();
+            //HttpUtils.download(mCtx, url, filename);
+
+            MediaScannerConnection.scanFile(context, new String[]{destFile.getPath()}, null, null);
+        } catch (Exception e) {
+            Logger.e(e);
+            Toast.makeText(context, "保存图片文件时发生错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
 }

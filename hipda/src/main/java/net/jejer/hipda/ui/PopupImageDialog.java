@@ -6,7 +6,6 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,6 +30,7 @@ import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
@@ -176,37 +176,8 @@ public class PopupImageDialog extends DialogFragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
-                        try {
-                            if (ContextCompat.checkSelfPermission(getActivity(),
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                    != PackageManager.PERMISSION_GRANTED) {
-                                Toast.makeText(getActivity(), "需要在权限管理中授权存储空间权限", Toast.LENGTH_SHORT).show();
-                                ActivityCompat.requestPermissions(getActivity(),
-                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        MainFrameActivity.PERMISSIONS_REQUEST_CODE);
-                                return;
-                            }
-
-                            String url = images.get(viewPager.getCurrentItem()).getContent();
-                            ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
-                            if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
-                                Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-
-                            String filename = Utils.getImageFileName("Hi_IMG", imageReadyInfo.getMime());
-                            File destFile = new File(Environment.getExternalStoragePublicDirectory(
-                                    Environment.DIRECTORY_DOWNLOADS), filename);
-                            Utils.copy(new File(imageReadyInfo.getPath()), destFile);
-                            Toast.makeText(mCtx, "图片已经保存至下载目录 <" + filename + ">", Toast.LENGTH_SHORT).show();
-                            //HttpUtils.download(mCtx, url, filename);
-
-                            MediaScannerConnection.scanFile(mCtx, new String[]{destFile.getPath()}, null, null);
-                        } catch (Exception e) {
-                            Logger.e(e);
-                            Toast.makeText(mCtx, "保存图片文件时发生错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-
+                        String url = images.get(viewPager.getCurrentItem()).getContent();
+                        HttpUtils.saveImage(getActivity(), url);
                     }
                 }
 
