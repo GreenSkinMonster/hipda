@@ -66,7 +66,7 @@ public class GlideHelper {
         if (!Glide.isSetup()) {
             GlideBuilder gb = new GlideBuilder(context);
 
-            gb.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 200 * 1024 * 1024));
+            gb.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 150 * 1024 * 1024));
 
             Glide.setup(gb);
 
