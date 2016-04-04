@@ -339,4 +339,16 @@ public class Utils {
         return df.format(fileSize * 1.0 / 1024) + " KB";
     }
 
+    public static String toCountText(String countText) {
+        if (countText.length() > 5
+                && TextUtils.isDigitsOnly(countText)) {
+            long count = Long.parseLong(countText);
+            if (count > 99999) {
+                DecimalFormat df = new DecimalFormat("#.#");
+                return df.format(count * 1.0 / 10000) + "万";
+            }
+        }
+        return countText;
+    }
+
 }
