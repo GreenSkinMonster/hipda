@@ -1,7 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorInflater;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
@@ -119,6 +117,7 @@ public abstract class BaseFragment extends Fragment {
         super.onDestroyView();
     }
 
+    /*
     @Override
     public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
         //http://daniel-codes.blogspot.sg/2013/09/smoothing-performance-on-fragment.html
@@ -151,6 +150,7 @@ public abstract class BaseFragment extends Fragment {
         }
         return animator;
     }
+    */
 
     void showSendSmsDialog(final String uid, final String username, final PostSmsAsyncTask.SmsPostListener listener) {
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
