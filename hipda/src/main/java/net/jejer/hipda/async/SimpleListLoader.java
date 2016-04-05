@@ -170,10 +170,10 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 
         @Override
         public void onError(Request request, Exception e) {
-            Logger.e(e);
             Toast.makeText(mCtx,
-                    OkHttpHelper.getErrorMessage(e),
+                    OkHttpHelper.getErrorMessage(e).getMessage(),
                     Toast.LENGTH_LONG).show();
+
             synchronized (mLocker) {
                 mRsp = null;
                 mLocker.notify();

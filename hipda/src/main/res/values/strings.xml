@@ -12,6 +12,7 @@
     <string name="action_copy">复制</string>
     <string name="action_select_text">文字选择</string>
     <string name="action_share">分享</string>
+    <string name="action_close">关闭</string>
     <string name="action_only_author">只看楼主</string>
     <string name="action_open_url">浏览器打开</string>
     <string name="action_copy_url">复制帖子地址</string>

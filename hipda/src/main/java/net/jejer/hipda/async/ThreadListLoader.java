@@ -11,12 +11,12 @@ import com.squareup.okhttp.Request;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadListBean;
+import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadList;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -111,13 +111,14 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
 
         @Override
         public void onError(Request request, Exception e) {
-            Logger.e(e);
-
             Message msg = Message.obtain();
             msg.what = ThreadListFragment.STAGE_ERROR;
             Bundle b = new Bundle();
-            String text = "无法访问HiPDA : " + OkHttpHelper.getErrorMessage(e);
-            b.putString(ThreadListFragment.STAGE_ERROR_KEY, text);
+
+            NetworkError message = OkHttpHelper.getErrorMessage(e);
+            b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA : " + message.getMessage());
+            b.putString(ThreadListFragment.STAGE_DETAIL_KEY, message.getDetail());
+
             msg.setData(b);
             mHandler.sendMessage(msg);
 

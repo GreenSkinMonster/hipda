@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.squareup.okhttp.Request;
 
 import net.jejer.hipda.bean.DetailListBean;
+import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadListFragment;
@@ -122,13 +123,14 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 
         @Override
         public void onError(Request request, Exception e) {
-            Logger.e(e);
-
             Message msg = Message.obtain();
             msg.what = ThreadListFragment.STAGE_ERROR;
             Bundle b = new Bundle();
-            String text = "无法访问HiPDA : " + OkHttpHelper.getErrorMessage(e);
-            b.putString(ThreadListFragment.STAGE_ERROR_KEY, text);
+
+            NetworkError message = OkHttpHelper.getErrorMessage(e);
+            b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA : " + message.getMessage());
+            b.putString(ThreadListFragment.STAGE_DETAIL_KEY, message.getDetail());
+
             msg.setData(b);
             mHandler.sendMessage(msg);
 

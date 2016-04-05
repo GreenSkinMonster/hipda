@@ -54,6 +54,7 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
+import net.jejer.hipda.utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,7 @@ public class ThreadListFragment extends BaseFragment
     public final static int STAGE_PREFETCH = 5;
     public final static int STAGE_REFRESH = 6;
     public final static String STAGE_ERROR_KEY = "ERROR_MSG";
+    public final static String STAGE_DETAIL_KEY = "ERROR_DETAIL";
 
     private Context mCtx;
     private int mForumId = 0;
@@ -668,10 +670,10 @@ public class ThreadListFragment extends BaseFragment
             Bundle b = msg.getData();
             switch (msg.what) {
                 case STAGE_ERROR:
-                    mTipBar.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.red));
-                    mTipBar.setText(b.getString(STAGE_ERROR_KEY));
-                    Logger.e(b.getString(STAGE_ERROR_KEY));
-                    mTipBar.setVisibility(View.VISIBLE);
+                    UIUtils.errorSnack(getView(),
+                            b.getString(STAGE_ERROR_KEY),
+                            b.getString(STAGE_DETAIL_KEY))
+                            .show();
                     break;
                 case STAGE_CLEAN:
                     mTipBar.setVisibility(View.INVISIBLE);

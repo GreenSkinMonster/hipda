@@ -96,7 +96,7 @@ public class LoginHelper {
                 return element.attr("value");
             }
         } catch (Exception e) {
-            mErrorMsg = OkHttpHelper.getErrorMessage(e);
+            mErrorMsg = OkHttpHelper.getErrorMessage(e).getMessage();
         }
         return rstStr;
     }

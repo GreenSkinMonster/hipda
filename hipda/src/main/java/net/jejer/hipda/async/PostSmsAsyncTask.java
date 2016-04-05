@@ -62,7 +62,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
                     }
                 }
             } catch (Exception e) {
-                mResult = OkHttpHelper.getErrorMessage(e);
+                mResult = OkHttpHelper.getErrorMessage(e).getMessage();
             }
             retry++;
         } while (!done && retry < 3);

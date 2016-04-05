@@ -75,6 +75,7 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.ImageSizeUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
@@ -908,11 +909,11 @@ public class ThreadDetailFragment extends BaseFragment {
 
             switch (msg.what) {
                 case ThreadListFragment.STAGE_ERROR:
-                    mTipBar.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.red));
                     Bundle b = msg.getData();
-                    mTipBar.setText(b.getString(ThreadListFragment.STAGE_ERROR_KEY));
-                    Logger.e(b.getString(ThreadListFragment.STAGE_ERROR_KEY));
-                    mTipBar.setVisibility(View.VISIBLE);
+                    UIUtils.errorSnack(getView(),
+                            b.getString(ThreadListFragment.STAGE_ERROR_KEY),
+                            b.getString(ThreadListFragment.STAGE_DETAIL_KEY))
+                            .show();
                     break;
                 case ThreadListFragment.STAGE_CLEAN:
                     mTipBar.setVisibility(View.INVISIBLE);

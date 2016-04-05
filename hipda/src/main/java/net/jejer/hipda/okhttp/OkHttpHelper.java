@@ -165,6 +165,7 @@ public class OkHttpHelper {
         handler.post(new Runnable() {
             @Override
             public void run() {
+                Logger.e(e.getClass().getName() + "\n" + e.getMessage());
                 callback.onError(request, e);
             }
         });
@@ -196,7 +197,7 @@ public class OkHttpHelper {
         }
     };
 
-    public static String getErrorMessage(Exception e) {
+    public static NetworkError getErrorMessage(Exception e) {
         String msg = e.getClass().getSimpleName();
         if (HiApplication.getAppContext() != null
                 && !Connectivity.isConnected(HiApplication.getAppContext())) {
@@ -211,9 +212,7 @@ public class OkHttpHelper {
                 msg = "错误代码 (" + emsg.substring("Unexpected code ".length(), emsg.indexOf(",")) + ")";
             }
         }
-        if (HiSettingsHelper.getInstance().isErrorReportMode())
-            msg += "\n>>> " + e.getClass().getName() + " --- " + e.getMessage() + " <<<";
-        return msg;
+        return new NetworkError(msg, e.getClass().getName() + "\n" + e.getMessage());
     }
 
     public void clearCookies() {
