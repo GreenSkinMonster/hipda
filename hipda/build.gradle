@@ -44,6 +44,7 @@ dependencies {
     compile 'com.mikepenz:fontawesome-typeface:4.5.0.1@aar'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
     compile('ch.acra:acra:4.8.5') {
         exclude group: 'org.json'
     }
