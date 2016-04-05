@@ -56,7 +56,7 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/tv_replycounter"
             android:padding="2dp"
-            android:text="{faw-image}"
+            android:text="{faw-picture-o}"
             android:textColor="?attr/colorAccent"
             android:textSize="@dimen/info_text_size"
             android:visibility="gone"/>

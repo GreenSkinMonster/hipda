@@ -216,7 +216,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
                     }
                 });
-        popDialog.setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_warning).sizeDp(24).color(Color.RED));
+        popDialog.setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_exclamation_circle).sizeDp(24).color(Color.RED));
         popDialog.setNegativeButton("取消", null);
         popDialog.create().show();
     }

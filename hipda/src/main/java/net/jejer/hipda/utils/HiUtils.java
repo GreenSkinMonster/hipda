@@ -61,7 +61,7 @@ public class HiUtils {
             FontAwesome.Icon.faw_shopping_cart,
             FontAwesome.Icon.faw_forumbee,
             FontAwesome.Icon.faw_book,
-            FontAwesome.Icon.faw_mobile_phone,
+            FontAwesome.Icon.faw_mobile,
             FontAwesome.Icon.faw_reddit
     };
 
@@ -93,7 +93,7 @@ public class HiUtils {
     public final static String[] BS_TYPE_IDS = {"", "1", "2", "3", "4", "5", "6", "7", "8"};
     public final static IIcon[] BS_TYPE_ICONS = {
             FontAwesome.Icon.faw_tags,
-            FontAwesome.Icon.faw_mobile_phone,
+            FontAwesome.Icon.faw_mobile,
             FontAwesome.Icon.faw_tablet,
             FontAwesome.Icon.faw_laptop,
             FontAwesome.Icon.faw_wifi,

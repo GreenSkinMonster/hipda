@@ -80,7 +80,6 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Logger.v("onCreate");
 
         if (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT == HiSettingsHelper.getInstance().getScreenOrietation()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -258,8 +257,6 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .build();
 
-        //fix input layout problem when withTranslucentStatusBar enabled
-        drawer.keyboardSupportEnabled(this, true);
         //drawer.getRecyclerView().setVerticalScrollBarEnabled(false);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -459,7 +456,7 @@ public class MainFrameActivity extends AppCompatActivity {
             //clear all backStacks from menu click
             clearBackStacks(false);
 
-            switch (iDrawerItem.getIdentifier()) {
+            switch ((int) iDrawerItem.getIdentifier()) {
                 case Constants.DRAWER_SEARCH:    // search
                     Bundle searchBundle = new Bundle();
                     searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SEARCH);
@@ -503,7 +500,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     break;
                 default:
                     //for forums
-                    int forumId = iDrawerItem.getIdentifier();
+                    int forumId = (int) iDrawerItem.getIdentifier();
                     FragmentUtils.showForum(getFragmentManager(), forumId);
                     break;
             }
