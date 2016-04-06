@@ -63,9 +63,12 @@ import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 
-import de.greenrobot.event.EventBus;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainFrameActivity extends AppCompatActivity {
@@ -603,7 +606,8 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(LoginEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LoginEvent event) {
         updateAccountHeader();
     }
 

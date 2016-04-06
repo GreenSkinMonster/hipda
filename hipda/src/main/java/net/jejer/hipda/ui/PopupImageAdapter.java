@@ -26,6 +26,9 @@ import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.utils.Logger;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -153,7 +156,8 @@ public class PopupImageAdapter extends PagerAdapter {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(GlideImageEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(GlideImageEvent event) {
         PopupImageLayout imageLayout = imageViewMap.get(event.getImageUrl());
         if (imageLayout != null
                 && ViewCompat.isAttachedToWindow(imageLayout)) {

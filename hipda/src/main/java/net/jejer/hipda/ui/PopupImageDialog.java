@@ -34,10 +34,10 @@ import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * image gallery

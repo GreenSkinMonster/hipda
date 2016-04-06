@@ -6,10 +6,10 @@ import android.net.Uri;
 import net.jejer.hipda.async.UploadImgHelper;
 import net.jejer.hipda.ui.HiApplication;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.Collection;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by GreenSkinMonster on 2016-04-01.

@@ -59,13 +59,15 @@ import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import de.greenrobot.event.EventBus;
 
 public class PostFragment extends BaseFragment {
     private static final int SELECT_PICTURE = 1;
@@ -277,7 +279,7 @@ public class PostFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().registerSticky(this);
+            EventBus.getDefault().register(this);
     }
 
     @Override
@@ -720,7 +722,8 @@ public class PostFragment extends BaseFragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(ImageUploadEvent event) {
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(ImageUploadEvent event) {
         if (!mSessionId.equals(event.mSessionId))
             return;
 

@@ -20,11 +20,12 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import de.greenrobot.event.EventBus;
 
 /**
  * Image loading job

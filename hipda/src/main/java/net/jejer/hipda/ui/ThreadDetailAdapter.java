@@ -34,6 +34,9 @@ import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.utils.Utils;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -321,7 +324,8 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(GlideImageEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(GlideImageEvent event) {
         String imageUrl = event.getImageUrl();
         if (!TextUtils.isEmpty(imageUrl)
                 && imageLayoutMap.containsKey(imageUrl)) {

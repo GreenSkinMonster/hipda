@@ -36,6 +36,8 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,7 +46,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
-import de.greenrobot.event.EventBus;
 import okio.Buffer;
 import okio.BufferedSource;
 import okio.ForwardingSource;

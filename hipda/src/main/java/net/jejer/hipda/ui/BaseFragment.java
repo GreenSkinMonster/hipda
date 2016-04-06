@@ -26,6 +26,9 @@ import net.jejer.hipda.job.BaseEvent;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.UUID;
 
 /**
@@ -247,7 +250,8 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(BaseEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(BaseEvent event) {
         Logger.v("BaseEvent : " + event.getClass().getSimpleName() + ", status=" + event.mStatus + ", message=" + event.mMessage);
     }
 

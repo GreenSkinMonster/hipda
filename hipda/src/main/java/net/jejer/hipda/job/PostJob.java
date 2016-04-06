@@ -6,7 +6,7 @@ import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Constants;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by GreenSkinMonster on 2016-03-28.

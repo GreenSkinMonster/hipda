@@ -56,10 +56,12 @@ import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 public class ThreadListFragment extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener {
@@ -251,7 +253,7 @@ public class ThreadListFragment extends BaseFragment
     public void onResume() {
         super.onResume();
         if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().registerSticky(this);
+            EventBus.getDefault().register(this);
         if (!mInloading) {
             if (mThreadBeans.size() == 0) {
                 refresh();
@@ -753,7 +755,8 @@ public class ThreadListFragment extends BaseFragment
 
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(PostEvent event) {
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(PostEvent event) {
 
         if (!mSessionId.equals(event.mSessionId))
             return;
