@@ -30,7 +30,6 @@ import android.widget.Toast;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.squareup.okhttp.Request;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
@@ -46,6 +45,8 @@ import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Request;
 
 public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPostListener {
 

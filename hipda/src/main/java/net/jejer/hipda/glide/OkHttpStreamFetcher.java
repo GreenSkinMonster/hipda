@@ -4,10 +4,6 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.util.ContentLengthInputStream;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -20,6 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * From glide-okhttp-integration-1.3.1.jar
@@ -150,11 +151,7 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
             }
         }
         if (responseBody != null) {
-            try {
-                responseBody.close();
-            } catch (IOException e) {
-                // Ignored.
-            }
+            responseBody.close();
         }
     }
 

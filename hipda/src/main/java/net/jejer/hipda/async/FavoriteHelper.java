@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
-import com.squareup.okhttp.Request;
-
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
@@ -22,6 +20,8 @@ import org.jsoup.select.Elements;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import okhttp3.Request;
 
 
 public class FavoriteHelper {
@@ -229,7 +229,6 @@ public class FavoriteHelper {
         OkHttpHelper.getInstance().asyncGet(url, new OkHttpHelper.ResultCallback() {
             @Override
             public void onError(Request request, Exception e) {
-                Logger.e(e);
                 Toast.makeText(ctx, "添加失败 : " + OkHttpHelper.getErrorMessage(e), Toast.LENGTH_SHORT).show();
             }
 
@@ -254,7 +253,6 @@ public class FavoriteHelper {
         OkHttpHelper.getInstance().asyncGet(url, new OkHttpHelper.ResultCallback() {
             @Override
             public void onError(Request request, Exception e) {
-                Logger.e(e);
                 Toast.makeText(ctx, "移除失败 : " + OkHttpHelper.getErrorMessage(e), Toast.LENGTH_SHORT).show();
             }
 

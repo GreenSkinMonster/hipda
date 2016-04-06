@@ -14,6 +14,7 @@ import net.jejer.hipda.ui.HiApplication;
 public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";
     public static final String BaseUrl = "http://www.hi-pda.com/forum/";
+    public static final String CookieDomain = "hi-pda.com";
     public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
     public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
     public static final String ReplyUrl = BaseUrl + "post.php?action=reply&tid=";

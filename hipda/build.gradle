@@ -28,7 +28,7 @@ android {
 
 dependencies {
     compile 'org.jsoup:jsoup:1.8.3'
-    compile('com.squareup.okhttp:okhttp:2.7.0') {
+    compile('com.squareup.okhttp3:okhttp:3.2.0') {
         exclude group: 'com.squareup.okio'
     }
     //compile 'com.squareup.okio:okio:1.7.0-SNAPSHOT'

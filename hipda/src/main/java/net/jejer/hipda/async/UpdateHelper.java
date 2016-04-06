@@ -11,8 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.squareup.okhttp.Request;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -26,6 +24,8 @@ import net.jejer.hipda.utils.Utils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
+
+import okhttp3.Request;
 
 /**
  * check and download update file

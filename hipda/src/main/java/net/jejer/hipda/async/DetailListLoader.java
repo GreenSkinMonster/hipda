@@ -7,8 +7,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.squareup.okhttp.Request;
-
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -21,6 +19,8 @@ import net.jejer.hipda.utils.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+import okhttp3.Request;
 
 public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 

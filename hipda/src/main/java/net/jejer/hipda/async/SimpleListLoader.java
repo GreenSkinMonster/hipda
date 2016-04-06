@@ -5,8 +5,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.squareup.okhttp.Request;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -20,6 +18,8 @@ import org.jsoup.nodes.Document;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+import okhttp3.Request;
 
 public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     public static final int TYPE_MYREPLY = 0;

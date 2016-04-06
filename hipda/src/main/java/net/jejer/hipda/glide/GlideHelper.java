@@ -21,11 +21,6 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 
 import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.okhttp.LoggingInterceptor;
@@ -46,6 +41,11 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSource;
 import okio.ForwardingSource;
@@ -71,16 +71,17 @@ public class GlideHelper {
 
             Glide.setup(gb);
 
-            OkHttpClient client = new OkHttpClient();
-            client.setConnectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-            client.setReadTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-            client.setWriteTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
+                    .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
+                    .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
 
             if (Logger.isDebug())
-                client.interceptors().add(new LoggingInterceptor());
+                builder.addInterceptor(new LoggingInterceptor());
 
             final ProgressListener progressListener = new ProgressListener() {
                 private long progressMark = 0;
+
                 @Override
                 public void update(String url, long bytesRead, long contentLength, boolean done) {
                     if (SystemClock.uptimeMillis() - progressMark > 50) {
@@ -91,11 +92,11 @@ public class GlideHelper {
                 }
             };
 
-            client.networkInterceptors().add(new Interceptor() {
+            builder.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     Response originalResponse = chain.proceed(chain.request());
-                    String url = chain.request().urlString();
+                    String url = chain.request().url().toString();
                     //avatar don't need a progress listener
                     if (url.startsWith(HiUtils.AvatarBaseUrl)) {
                         return originalResponse;
@@ -105,6 +106,8 @@ public class GlideHelper {
                             .build();
                 }
             });
+
+            OkHttpClient client = builder.build();
 
             Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
 
@@ -179,12 +182,12 @@ public class GlideHelper {
         }
 
         @Override
-        public long contentLength() throws IOException {
+        public long contentLength() {
             return responseBody.contentLength();
         }
 
         @Override
-        public BufferedSource source() throws IOException {
+        public BufferedSource source() {
             if (bufferedSource == null) {
                 bufferedSource = Okio.buffer(source(responseBody.source()));
             }

@@ -4,16 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.cookie.PersistentCookieStore;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.HiUtils;
@@ -21,15 +12,23 @@ import net.jejer.hipda.utils.Logger;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.HttpCookie;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * helper class for okhttp
@@ -44,17 +43,33 @@ public class OkHttpHelper {
     private Handler handler;
 
     private OkHttpHelper() {
-        client = new OkHttpClient();
-        client.setConnectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-        client.setReadTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-        client.setWriteTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
 
-        cookieStore = new PersistentCookieStore(HiApplication.getAppContext());
-        CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-        client.setCookieHandler(cookieManager);
+        cookieStore = new PersistentCookieStore(HiApplication.getAppContext(), HiUtils.CookieDomain);
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
+                .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
+                .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
+                .cookieJar(new CookieJar() {
+                    @Override
+                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                        if (cookies != null && cookies.size() > 0) {
+                            for (Cookie item : cookies) {
+                                cookieStore.add(url, item);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public List<Cookie> loadForRequest(HttpUrl url) {
+                        return cookieStore.get(url);
+                    }
+                });
 
         if (Logger.isDebug())
-            client.interceptors().add(new LoggingInterceptor());
+            builder.addInterceptor(new LoggingInterceptor());
+
+        client = builder.build();
 
         handler = new Handler(Looper.getMainLooper());
     }
@@ -81,7 +96,7 @@ public class OkHttpHelper {
     private Request buildPostFormRequest(String url, Map<String, String> params, Object tag)
             throws UnsupportedEncodingException {
 
-        FormEncodingBuilder builder = new FormEncodingBuilder();
+        FormBody.Builder builder = new FormBody.Builder();
         if (params != null) {
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 builder.addEncoded(entry.getKey(),
@@ -121,12 +136,12 @@ public class OkHttpHelper {
         Request request = buildGetRequest(url, tag);
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Request request, IOException e) {
-                handleFailureCallback(request, e, rspCallBack);
+            public void onFailure(Call call, IOException e) {
+                handleFailureCallback(call.request(), e, rspCallBack);
             }
 
             @Override
-            public void onResponse(Response response) {
+            public void onResponse(Call call, Response response) {
                 try {
                     String body = getResponseBody(response);
                     handleSuccessCallback(body, rspCallBack);
@@ -221,9 +236,9 @@ public class OkHttpHelper {
     }
 
     public boolean isLoggedIn() {
-        List<HttpCookie> cookies = cookieStore.getCookies();
-        for (HttpCookie cookie : cookies) {
-            if ("cdb_auth".equals(cookie.getName())) {
+        List<Cookie> cookies = cookieStore.getCookies();
+        for (Cookie cookie : cookies) {
+            if ("cdb_auth".equals(cookie.name())) {
                 return true;
             }
         }
@@ -231,10 +246,10 @@ public class OkHttpHelper {
     }
 
     public String getAuthCookie() {
-        List<HttpCookie> cookies = cookieStore.getCookies();
-        for (HttpCookie cookie : cookies) {
-            if ("cdb_auth".equals(cookie.getName())) {
-                return cookie.getValue();
+        List<Cookie> cookies = cookieStore.getCookies();
+        for (Cookie cookie : cookies) {
+            if ("cdb_auth".equals(cookie.name())) {
+                return cookie.value();
             }
         }
         return null;

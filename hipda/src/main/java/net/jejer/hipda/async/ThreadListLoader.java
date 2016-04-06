@@ -7,8 +7,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.squareup.okhttp.Request;
-
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.okhttp.NetworkError;
@@ -20,6 +18,8 @@ import net.jejer.hipda.utils.HiUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+import okhttp3.Request;
 
 public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
     private Context mCtx;
