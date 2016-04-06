@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "net.jejer.hipda.ng"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 23
     }
 
