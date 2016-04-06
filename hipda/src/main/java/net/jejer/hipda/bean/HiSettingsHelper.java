@@ -40,6 +40,7 @@ public class HiSettingsHelper {
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
     public static final String PERF_TAILURL = "PERF_TAILURL";
     public static final String PERF_THEME = "PERF_THEME";
+    public static final String PERF_PRIMARY_COLOR = "PERF_PRIMARY_COLOR";
     public static final String PERF_NIGHT_THEME = "PERF_NIGHT_THEME";
     public static final String PERF_NIGHT_MODE = "PERF_NIGHT_MODE";
     public static final String PERF_NAVBAR_COLORED = "PERF_NAVBAR_COLORED";
@@ -92,6 +93,7 @@ public class HiSettingsHelper {
     private String mTailUrl = "";
 
     private String mTheme = "";
+    private int mPrimaryColor = 0;
     private String mNightTheme = "";
     private boolean mNightMode = false;
     private boolean mNavBarColor = false;
@@ -199,6 +201,7 @@ public class HiSettingsHelper {
         getTailTextFromPref();
         getTailUrlFromPref();
         getThemeFromPref();
+        getPrimaryColorFromPref();
         getNightThemeFromPref();
         isNightModeFromPref();
         isNavBarColoredFromPref();
@@ -441,6 +444,21 @@ public class HiSettingsHelper {
         mTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_THEME, theme).apply();
+    }
+
+    public int getPrimaryColor() {
+        return mPrimaryColor;
+    }
+
+    public int getPrimaryColorFromPref() {
+        mPrimaryColor = mSharedPref.getInt(PERF_PRIMARY_COLOR, 0);
+        return mPrimaryColor;
+    }
+
+    public void setPrimaryColor(int primaryColor) {
+        mPrimaryColor = primaryColor;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putInt(PERF_PRIMARY_COLOR, primaryColor).apply();
     }
 
     public String getNightTheme() {

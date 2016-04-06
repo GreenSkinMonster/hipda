@@ -7,11 +7,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.squareup.okhttp.Request;
 
+import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
@@ -50,9 +52,9 @@ public class UpdateHelper {
 //            checkUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda-ng.md";
 //            downloadUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-ng-release-{version}.apk";
 //        } else {
-            checkSite = "coding";
-            checkUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda-ng.md";
-            downloadUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/releases/hipda-ng-release-{version}.apk";
+        checkSite = "coding";
+        checkUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda-ng.md";
+        downloadUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/releases/hipda-ng-release-{version}.apk";
 //        }
     }
 
@@ -216,6 +218,29 @@ public class UpdateHelper {
                             names.add(username);
                     }
                     HiSettingsHelper.getInstance().setBlanklistUsernames(names);
+                }
+            }
+
+            if (newer(installedVersion, "2.2.10")) {
+                String theme = HiSettingsHelper.getInstance().getTheme();
+                int primaryColor = 0;
+                if ("light-deep_orange".equals(theme)) {
+                    theme = "light";
+                    primaryColor = ContextCompat.getColor(context, R.color.md_orange_700);
+                } else if ("light-blue_grey".equals(theme)) {
+                    theme = "light";
+                    primaryColor = ContextCompat.getColor(context, R.color.md_blue_grey_700);
+                } else if ("light-teal".equals(theme)) {
+                    theme = "light";
+                    primaryColor = ContextCompat.getColor(context, R.color.md_teal_700);
+                } else if ("light-indigo".equals(theme)) {
+                    theme = "light";
+                    primaryColor = ContextCompat.getColor(context, R.color.md_indigo_700);
+                }
+
+                if (primaryColor != 0) {
+                    HiSettingsHelper.getInstance().setTheme(theme);
+                    HiSettingsHelper.getInstance().setPrimaryColor(primaryColor);
                 }
             }
 

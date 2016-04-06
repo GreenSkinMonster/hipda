@@ -34,6 +34,7 @@ public class SettingMainFragment extends BaseSettingFragment {
 
     private int mScreenOrietation;
     private String mTheme;
+    private int mPrimaryColor;
     private Set<String> mForums;
     private boolean mNavBarColored;
     private String mFont;
@@ -79,6 +80,7 @@ public class SettingMainFragment extends BaseSettingFragment {
 
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
         mTheme = HiSettingsHelper.getInstance().getActiveTheme();
+        mPrimaryColor = HiSettingsHelper.getInstance().getPrimaryColor();
         mForums = HiSettingsHelper.getInstance().getForums();
         mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
         mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
@@ -114,6 +116,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         if (mCacheCleared
                 || HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getActiveTheme().equals(mTheme)
+                || HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled

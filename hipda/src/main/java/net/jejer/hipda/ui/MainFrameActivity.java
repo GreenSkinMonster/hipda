@@ -91,7 +91,9 @@ public class MainFrameActivity extends AppCompatActivity {
 
         EventBus.getDefault().register(this);
 
-        setTheme(HiUtils.getThemeValue(HiSettingsHelper.getInstance().getActiveTheme()));
+        setTheme(HiUtils.getThemeValue(this,
+                HiSettingsHelper.getInstance().getActiveTheme(),
+                HiSettingsHelper.getInstance().getPrimaryColor()));
         if (Build.VERSION.SDK_INT >= 21 && HiSettingsHelper.getInstance().isNavBarColored()) {
             getWindow().setNavigationBarColor(ColorUtils.getColorPrimary(this));
         }

@@ -96,19 +96,11 @@
         <item>浅色</item>
         <item>深色</item>
         <item>纯黑</item>
-        <item>浅色(橙)</item>
-        <item>浅色(蓝灰)</item>
-        <item>浅色(蓝绿)</item>
-        <item>浅色(靛青)</item>
     </string-array>
     <string-array name="pref_title_theme_values">
         <item>light</item>
         <item>dark</item>
         <item>black</item>
-        <item>light-deep_orange</item>
-        <item>light-blue_grey</item>
-        <item>light-teal</item>
-        <item>light-indigo</item>
     </string-array>
 
     <string-array name="pref_title_night_theme_names">
@@ -211,7 +203,7 @@
         <item>1</item>
     </string-array>
 
-    <string-array name="empty_array" />
+    <string-array name="empty_array"/>
 
     <string name="pref_category_forum">论坛选项</string>
     <string name="pref_category_tail">小尾巴</string>
@@ -244,8 +236,9 @@
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blacklist">黑名单, 每行一个用户名</string>
     <string name="pref_title_theme">界面主题</string>
+    <string name="pref_title_primary_color">界面主体色</string>
     <string name="pref_title_night_theme">夜间模式主题</string>
-    <string name="pref_title_navbar_colored">虚拟按键背景色</string>
+    <string name="pref_title_navbar_colored">导航栏着色</string>
     <string name="pref_title_font">字体</string>
     <string name="pref_title_forum">版面选择</string>
     <string name="pref_title_textsize_adjust_title">标题字号调整</string>
@@ -270,5 +263,6 @@
     <string name="pref_summary_remove_gray_bar">解决部分机型状态栏有留空白条问题</string>
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
     <string name="pref_summary_auto_clear_memory">如果看多图的帖子很少出现崩溃问题，可以关闭此项</string>
+    <string name="pref_summary_primary_color">仅浅色主题有效</string>
 
 </resources>

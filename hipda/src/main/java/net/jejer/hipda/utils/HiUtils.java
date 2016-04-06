@@ -1,5 +1,7 @@
 package net.jejer.hipda.utils;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
@@ -131,31 +133,65 @@ public class HiUtils {
         return url;
     }
 
-    public static int getThemeValue(String theme) {
-        if ("light".equals(theme)) {
-            return R.style.ThemeLight;
-        } else if ("dark".equals(theme)) {
+    public static int getThemeValue(Context context, String theme, int primaryColor) {
+        if ("dark".equals(theme)) {
             return R.style.ThemeDark;
         } else if ("black".equals(theme)) {
             return R.style.ThemeBlack;
-        } else if ("light-deep_orange".equals(theme)) {
-            return R.style.ThemeLight_DeepOrange;
-        } else if ("light-blue_grey".equals(theme)) {
-            return R.style.ThemeLight_BlueGrey;
-        } else if ("light-teal".equals(theme)) {
-            return R.style.ThemeLight_Teal;
-        } else if ("light-indigo".equals(theme)) {
-            return R.style.ThemeLight_Indigo;
+        } else if ("light".equals(theme)) {
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_red_700))
+                return R.style.ThemeLight_Red;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_pink_700))
+                return R.style.ThemeLight_Pink;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_purple_700))
+                return R.style.ThemeLight_Purple;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_deep_purple_700))
+                return R.style.ThemeLight_DeepPurple;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_indigo_700))
+                return R.style.ThemeLight_Indigo;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_blue_700))
+                return R.style.ThemeLight_Blue;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_light_blue_700))
+                return R.style.ThemeLight_LightBlue;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_cyan_700))
+                return R.style.ThemeLight_Cyan;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_teal_700))
+                return R.style.ThemeLight_Teal;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_green_700))
+                return R.style.ThemeLight_Green;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_light_green_700))
+                return R.style.ThemeLight_LightGreen;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_lime_700))
+                return R.style.ThemeLight_Lime;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_yellow_700))
+                return R.style.ThemeLight_Yellow;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_amber_700))
+                return R.style.ThemeLight_Amber;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_orange_700))
+                return R.style.ThemeLight_Orange;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_deep_orange_700))
+                return R.style.ThemeLight_DeepOrange;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_brown_700))
+                return R.style.ThemeLight_Brown;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_grey_700))
+                return R.style.ThemeLight_Grey;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_blue_grey_700))
+                return R.style.ThemeLight_BlueGrey;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_black_1000))
+                return R.style.ThemeLight_Black;
         }
         HiSettingsHelper.getInstance().setTheme("light");
-        return R.style.ThemeLight;
+        HiSettingsHelper.getInstance().setPrimaryColor(ContextCompat.getColor(context, R.color.md_blue_grey_700));
+        return R.style.ThemeLight_BlueGrey;
     }
 
-    public static boolean isValidId(String id) {
+    public static boolean isValidId
+            (String id) {
         return !TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id) && Integer.parseInt(id) > 0;
     }
 
-    public static String getUserAgent() {
+    public static String getUserAgent
+            () {
         if (userAgent == null)
             userAgent = UserAgentPrefix + " " + HiApplication.getAppVersion();
         return userAgent;

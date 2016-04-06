@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/pref_category_theme">
         <ListPreference
@@ -9,7 +10,14 @@
             android:key="PERF_THEME"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_title_theme" />
+            android:title="@string/pref_title_theme"/>
+
+        <com.thebluealliance.spectrum.SpectrumPreference
+            android:defaultValue="@color/md_blue_grey_700"
+            android:key="PERF_PRIMARY_COLOR"
+            android:summary="@string/pref_summary_primary_color"
+            android:title="@string/pref_title_primary_color"
+            app:spectrum_colors="@array/material_colors"/>
 
         <ListPreference
             android:defaultValue=""
@@ -18,12 +26,12 @@
             android:key="PERF_NIGHT_THEME"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_title_night_theme" />
+            android:title="@string/pref_title_night_theme"/>
 
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="false"
             android:key="PERF_NAVBAR_COLORED"
-            android:title="@string/pref_title_navbar_colored" />
+            android:title="@string/pref_title_navbar_colored"/>
 
     </PreferenceCategory>
 
@@ -35,7 +43,7 @@
             android:key="PERF_FONT"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_title_font" />
+            android:title="@string/pref_title_font"/>
 
         <ListPreference
             android:defaultValue="0"
@@ -44,7 +52,7 @@
             android:key="PERF_TEXTSIZE_TITLE_ADJ"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_title_textsize_adjust_title" />
+            android:title="@string/pref_title_textsize_adjust_title"/>
 
         <ListPreference
             android:defaultValue="0"
@@ -53,7 +61,7 @@
             android:key="PERF_TEXTSIZE_POST_ADJ"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_post_textsize_adjust_title" />
+            android:title="@string/pref_post_textsize_adjust_title"/>
 
         <ListPreference
             android:defaultValue="0"
@@ -62,7 +70,7 @@
             android:key="PERF_POST_LINE_SPACING"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_post_line_spacing_title" />
+            android:title="@string/pref_post_line_spacing_title"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_other">
@@ -73,12 +81,12 @@
             android:key="PERF_SCREEN_ORIENTATION"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_screen_orientation" />
+            android:title="@string/pref_screen_orientation"/>
 
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="false"
             android:key="PERF_GESTURE_BACK"
-            android:title="@string/pref_title_gesture_back" />
+            android:title="@string/pref_title_gesture_back"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
