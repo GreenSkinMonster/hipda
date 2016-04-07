@@ -3,8 +3,6 @@ package net.jejer.hipda.ui;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Loader;
 import android.database.AbstractCursor;
@@ -30,7 +28,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -40,7 +37,6 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.utils.Constants;
@@ -62,7 +58,6 @@ public class SimpleListFragment extends BaseFragment
 
     private ListView mThreadListView;
     private View mFooterView;
-    private TextView mTipBar;
     private SimpleListAdapter mSimpleListAdapter;
     private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
     private LoaderManager.LoaderCallbacks<SimpleListBean> mCallbacks;
@@ -106,24 +101,6 @@ public class SimpleListFragment extends BaseFragment
         ProgressBar progressBar = (ProgressBar) mFooterView.findViewById(R.id.footer_progressbar);
         progressBar.getIndeterminateDrawable()
                 .setColorFilter(Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
-
-        mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
-        mTipBar.setVisibility(View.GONE);
-        mTipBar.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mTipBar.setVisibility(View.INVISIBLE);
-                if (HiSettingsHelper.getInstance().isErrorReportMode()) {
-                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("ERROR TIP FROM HiPDA", mTipBar.getText());
-                    clipboard.setPrimaryClip(clip);
-                    Toast.makeText(getActivity(), "错误信息已经复制至粘贴板", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "请在\"设置-其它\"中启用\"显示详细错误信息\"后再进行反馈", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            }
-        });
 
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
@@ -414,7 +391,6 @@ public class SimpleListFragment extends BaseFragment
 
         @Override
         public void onLoadFinished(Loader<SimpleListBean> loader, SimpleListBean list) {
-            mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
@@ -461,7 +437,6 @@ public class SimpleListFragment extends BaseFragment
         public void onLoaderReset(Loader<SimpleListBean> arg0) {
             Logger.v("onLoaderReset");
 
-            mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();

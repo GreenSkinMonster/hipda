@@ -63,16 +63,6 @@
         fab:fab_colorPressed="@color/pink_pressed"
         fab:fab_shadowColor="@android:color/transparent" />
 
-    <TextView
-        android:id="@+id/thread_list_tipbar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="?attr/colorAccent"
-        android:gravity="center"
-        android:textColor="@android:color/primary_text_dark"
-        android:visibility="visible" />
-
     <net.jejer.hipda.ui.ContentLoadingProgressBar
         android:id="@+id/list_loading"
         style="?android:attr/progressBarStyle"

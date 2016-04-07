@@ -236,7 +236,7 @@
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blacklist">黑名单, 每行一个用户名</string>
     <string name="pref_title_theme">界面主题</string>
-    <string name="pref_title_primary_color">界面主体色</string>
+    <string name="pref_title_primary_color">界面主色调</string>
     <string name="pref_title_night_theme">夜间模式主题</string>
     <string name="pref_title_navbar_colored">导航栏着色</string>
     <string name="pref_title_font">字体</string>

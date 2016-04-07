@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.ui.HiApplication;
 
 /**
  * Created by GreenSkinMonster on 2016-04-05.
@@ -23,7 +25,8 @@ public class UIUtils {
     }
 
     public static Snackbar errorSnack(View view, CharSequence message, CharSequence detail) {
-        return makeSnack(view, message, detail, Snackbar.LENGTH_LONG, Color.YELLOW);
+        return makeSnack(view, message, detail, Snackbar.LENGTH_LONG,
+                ContextCompat.getColor(HiApplication.getAppContext(), R.color.md_red_500));
     }
 
     public static Snackbar makeSnack(final View view, final CharSequence message, final CharSequence detail, int length, int textColor) {

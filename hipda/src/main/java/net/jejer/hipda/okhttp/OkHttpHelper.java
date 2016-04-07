@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import com.bumptech.glide.Glide;
+
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
@@ -19,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
+import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Cookie;
@@ -37,6 +41,13 @@ import okhttp3.Response;
 public class OkHttpHelper {
 
     public final static int NETWORK_TIMEOUT_SECS = 10;
+    public final static int MAX_RETRY_TIMES = 3;
+
+    public final static int DEFAULT = 0;
+    public final static int FORCE_NETWORK = 1;
+    public final static int FORCE_CACHE = 2;
+    public final static int PREFER_CACHE = 3;
+    public final static int PREFER_RECENT_CACHE = 4;
 
     private OkHttpClient client;
     private PersistentCookieStore cookieStore;
@@ -46,10 +57,13 @@ public class OkHttpHelper {
 
         cookieStore = new PersistentCookieStore(HiApplication.getAppContext(), HiUtils.CookieDomain);
 
+        Cache cache = new Cache(Glide.getPhotoCacheDir(HiApplication.getAppContext(), "okhttp"), 20 * 1024 * 1024);
+
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
+                .cache(cache)
                 .cookieJar(new CookieJar() {
                     @Override
                     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
@@ -82,10 +96,13 @@ public class OkHttpHelper {
         return SingletonHolder.INSTANCE;
     }
 
-    private Request buildGetRequest(String url, Object tag) {
+    private Request buildGetRequest(String url, Object tag, CacheControl cacheControl) {
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .header("User-Agent", HiUtils.getUserAgent());
+
+        if (cacheControl != null)
+            builder.cacheControl(cacheControl);
 
         if (tag != null)
             builder.tag(tag);
@@ -108,7 +125,8 @@ public class OkHttpHelper {
         Request.Builder reqBuilder = new Request.Builder();
         reqBuilder.url(url)
                 .header("User-Agent", HiUtils.getUserAgent())
-                .post(requestBody);
+                .post(requestBody)
+                .cacheControl(CacheControl.FORCE_NETWORK);
 
         if (tag != null)
             reqBuilder.tag(tag);
@@ -117,7 +135,11 @@ public class OkHttpHelper {
     }
 
     public String get(String url) throws IOException {
-        Request request = buildGetRequest(url, null);
+        return get(url, FORCE_NETWORK);
+    }
+
+    public String get(String url, int cacheType) throws IOException {
+        Request request = buildGetRequest(url, null, getCacheControl(cacheType));
 
         Call call = client.newCall(request);
         Response response = call.execute();
@@ -133,7 +155,7 @@ public class OkHttpHelper {
         if (callback == null) callback = DEFAULT_CALLBACK;
         final ResultCallback rspCallBack = callback;
 
-        Request request = buildGetRequest(url, tag);
+        Request request = buildGetRequest(url, tag, null);
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -157,7 +179,6 @@ public class OkHttpHelper {
         Response response = client.newCall(request).execute();
         return getResponseBody(response);
     }
-
 
     private String getResponseBody(Response response) throws IOException {
         if (!response.isSuccessful()) {
@@ -253,6 +274,24 @@ public class OkHttpHelper {
             }
         }
         return null;
+    }
+
+    public CacheControl getCacheControl(int cacheType) {
+        if (cacheType == FORCE_NETWORK) {
+            return CacheControl.FORCE_NETWORK;
+        } else if (cacheType == FORCE_CACHE) {
+            return CacheControl.FORCE_CACHE;
+        }
+        return null;
+    }
+
+    public void cancel(Object tag) {
+        for (Call call : client.dispatcher().queuedCalls()) {
+            if (tag.equals(call.request().tag())) call.cancel();
+        }
+        for (Call call : client.dispatcher().runningCalls()) {
+            if (tag.equals(call.request().tag())) call.cancel();
+        }
     }
 
 }

@@ -19,7 +19,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.GestureDetector;
@@ -102,7 +101,6 @@ public class ThreadDetailFragment extends BaseFragment {
     private String mTitle;
     private String mFid;
     private XListView mDetailListView;
-    private TextView mTipBar;
     private ThreadListLoaderCallbacks mLoaderCallbacks;
     private ThreadDetailAdapter mDetailAdapter;
     private List<DetailBean> mDetailBeans = new ArrayList<>();
@@ -172,24 +170,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
         mDetailListView = (XListView) view.findViewById(R.id.lv_thread_details);
         mDetailListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        mTipBar = (TextView) view.findViewById(R.id.thread_detail_tipbar);
-        mTipBar.setVisibility(View.INVISIBLE);
-        mTipBar.bringToFront();
-        mTipBar.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mTipBar.setVisibility(View.INVISIBLE);
-                if (HiSettingsHelper.getInstance().isErrorReportMode()) {
-                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("ERROR TIP FROM HiPDA", mTipBar.getText());
-                    clipboard.setPrimaryClip(clip);
-                    Toast.makeText(getActivity(), "错误信息已经复制至粘贴板", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "请在\"设置-其它\"中启用\"显示详细错误信息\"后再进行反馈", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            }
-        });
 
         mFam = (FloatingActionMenu) view.findViewById(R.id.multiple_actions);
         mFam.setVisibility(View.INVISIBLE);
@@ -907,7 +887,6 @@ public class ThreadDetailFragment extends BaseFragment {
     private class ThreadDetailMsgHandler implements Handler.Callback {
         @Override
         public boolean handleMessage(Message msg) {
-
             switch (msg.what) {
                 case ThreadListFragment.STAGE_ERROR:
                     Bundle b = msg.getData();
@@ -915,34 +894,6 @@ public class ThreadDetailFragment extends BaseFragment {
                             b.getString(ThreadListFragment.STAGE_ERROR_KEY),
                             b.getString(ThreadListFragment.STAGE_DETAIL_KEY))
                             .show();
-                    break;
-                case ThreadListFragment.STAGE_CLEAN:
-                    mTipBar.setVisibility(View.INVISIBLE);
-                    break;
-                case ThreadListFragment.STAGE_DONE:
-//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
-//                    mTipBar.setText(pageStr + "加载完成");
-//                    mTipBar.setVisibility(View.VISIBLE);
-                    break;
-                case ThreadListFragment.STAGE_RELOGIN:
-                    mTipBar.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.purple));
-                    mTipBar.setText("正在登录");
-                    mTipBar.setVisibility(View.VISIBLE);
-                    break;
-                case ThreadListFragment.STAGE_GET_WEBPAGE:
-//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
-//                    mTipBar.setText(pageStr + "正在获取页面");
-//                    mTipBar.setVisibility(View.VISIBLE);
-                    break;
-                case ThreadListFragment.STAGE_PARSE:
-//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
-//                    mTipBar.setText(pageStr + "正在解析页面");
-//                    mTipBar.setVisibility(View.VISIBLE);
-                    break;
-                case ThreadListFragment.STAGE_PREFETCH:
-//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
-//                    mTipBar.setText("正在预读下一页");
-//                    mTipBar.setVisibility(View.VISIBLE);
                     break;
             }
             return false;

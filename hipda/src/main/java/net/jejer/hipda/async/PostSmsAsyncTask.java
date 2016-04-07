@@ -54,7 +54,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
                 if (!TextUtils.isEmpty(rsp_str)) {
                     if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
                         int status = new LoginHelper(mCtx, null).login();
-                        if (status > Constants.STATUS_FAIL) {
+                        if (status == Constants.STATUS_FAIL_ABORT) {
                             break;
                         }
                     } else {

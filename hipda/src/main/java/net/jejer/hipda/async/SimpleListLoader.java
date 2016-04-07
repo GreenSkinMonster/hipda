@@ -19,8 +19,6 @@ import org.jsoup.nodes.Document;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import okhttp3.Request;
-
 public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     public static final int TYPE_MYREPLY = 0;
     public static final int TYPE_MYPOST = 1;
@@ -36,8 +34,6 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     private int mType;
     private int mPage = 1;
     private String mExtra = "";
-    private final Object mLocker = new Object();
-    private String mRsp;
     private SimpleListBean data;
 
     public SimpleListLoader(Context context, int type, int page, String extra) {
@@ -61,42 +57,42 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 
     @Override
     public SimpleListBean loadInBackground() {
-
-        int count = 0;
-        boolean getOk = false;
-        do {
-            fetchSimpleList(mType);
-
-            synchronized (mLocker) {
-                try {
-                    mLocker.wait();
-                } catch (InterruptedException ignored) {
-                }
-            }
-
-            if (mRsp != null) {
-                if (!LoginHelper.checkLoggedin(mCtx, mRsp)) {
-                    int status = new LoginHelper(mCtx, null).login();
-                    if (status > Constants.STATUS_FAIL) {
-                        break;
+        for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
+            try {
+                String resp = fetchSimpleList(mType);
+                if (resp != null) {
+                    if (!LoginHelper.checkLoggedin(mCtx, resp)) {
+                        int status = new LoginHelper(mCtx, null).login();
+                        if (status == Constants.STATUS_FAIL_ABORT) {
+                            break;
+                        }
+                    } else {
+                        Document doc = Jsoup.parse(resp);
+                        data = HiParser.parseSimpleList(mCtx, mType, doc);
+                        return data;
                     }
-                } else {
-                    getOk = true;
                 }
+            } catch (Exception e) {
+                Toast.makeText(mCtx,
+                        OkHttpHelper.getErrorMessage(e).getMessage(),
+                        Toast.LENGTH_LONG).show();
+
+//                Message msg = Message.obtain();
+//                msg.what = ThreadListFragment.STAGE_ERROR;
+//                Bundle b = new Bundle();
+//
+//                NetworkError message = OkHttpHelper.getErrorMessage(e);
+//                b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA  : " + message.getMessage());
+//                b.putString(ThreadListFragment.STAGE_DETAIL_KEY, message.getDetail());
+//
+//                msg.setData(b);
+//                mHandler.sendMessage(msg);
             }
-            count++;
-        } while (!getOk && count < 3);
-
-        if (!getOk) {
-            return null;
         }
-
-        Document doc = Jsoup.parse(mRsp);
-        data = HiParser.parseSimpleList(mCtx, mType, doc);
-        return data;
+        return null;
     }
 
-    private void fetchSimpleList(int type) {
+    private String fetchSimpleList(int type) throws Exception {
         String url = null;
         switch (type) {
             case TYPE_MYREPLY:
@@ -162,31 +158,6 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
             default:
                 break;
         }
-
-        OkHttpHelper.getInstance().asyncGet(url, new SimpleListCallback());
+        return OkHttpHelper.getInstance().get(url);
     }
-
-    private class SimpleListCallback implements OkHttpHelper.ResultCallback {
-
-        @Override
-        public void onError(Request request, Exception e) {
-            Toast.makeText(mCtx,
-                    OkHttpHelper.getErrorMessage(e).getMessage(),
-                    Toast.LENGTH_LONG).show();
-
-            synchronized (mLocker) {
-                mRsp = null;
-                mLocker.notify();
-            }
-        }
-
-        @Override
-        public void onResponse(String response) {
-            mRsp = response;
-            synchronized (mLocker) {
-                mLocker.notify();
-            }
-        }
-    }
-
 }

@@ -19,18 +19,11 @@ import net.jejer.hipda.utils.HiUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import okhttp3.Request;
-
 public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
     private Context mCtx;
     private int mForumId = 0;
     private int mPage = 1;
-    private final Object mLocker = new Object();
-    private String mRsp;
     private Handler mHandler;
-
-    private final static int MAX_TIMES = 3;
-    private int count = 0;
     private ThreadListBean data;
 
     public ThreadListLoader(Context context, Handler handler, int forumId, int page) {
@@ -54,48 +47,41 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
 
     @Override
     public ThreadListBean loadInBackground() {
-        if (mForumId == 0) {
+        if (mForumId == 0)
             return null;
-        }
 
-        boolean getOk = false;
-        do {
-            count++;
-            fetchForumList();
-
-            synchronized (mLocker) {
-                try {
-                    mLocker.wait();
-                } catch (InterruptedException ignored) {
-                }
-            }
-
-            if (mRsp != null) {
-                if (!LoginHelper.checkLoggedin(mCtx, mRsp)) {
-                    int status = new LoginHelper(mCtx, mHandler).login();
-                    if (status > Constants.STATUS_FAIL) {
-                        break;
+        for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
+            try {
+                String resp = fetchForumList();
+                if (resp != null) {
+                    if (!LoginHelper.checkLoggedin(mCtx, resp)) {
+                        int status = new LoginHelper(mCtx, mHandler).login();
+                        if (status == Constants.STATUS_FAIL_ABORT) {
+                            break;
+                        }
+                    } else {
+                        Document doc = Jsoup.parse(resp);
+                        data = HiParserThreadList.parse(mCtx, mHandler, doc);
+                        return data;
                     }
-                } else {
-                    getOk = true;
                 }
+            } catch (Exception e) {
+                Message msg = Message.obtain();
+                msg.what = ThreadListFragment.STAGE_ERROR;
+                Bundle b = new Bundle();
+
+                NetworkError message = OkHttpHelper.getErrorMessage(e);
+                b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA : " + message.getMessage());
+                b.putString(ThreadListFragment.STAGE_DETAIL_KEY, message.getDetail());
+
+                msg.setData(b);
+                mHandler.sendMessage(msg);
             }
-        } while (!getOk && count <= MAX_TIMES);
-
-        if (!getOk) {
-            return null;
         }
-
-        Document doc = Jsoup.parse(mRsp);
-        data = HiParserThreadList.parse(mCtx, mHandler, doc);
-        return data;
+        return null;
     }
 
-    private void fetchForumList() {
-        Message msg = Message.obtain();
-        msg.what = ThreadListFragment.STAGE_GET_WEBPAGE;
-        mHandler.sendMessage(msg);
-
+    private String fetchForumList() throws Exception {
         String mUrl = HiUtils.ThreadListUrl + mForumId + "&page=" + mPage;
         if (mForumId == HiUtils.FID_BS && TextUtils.isDigitsOnly(HiSettingsHelper.getInstance().getBSTypeId())) {
             mUrl += "&filter=type&typeid=" + HiSettingsHelper.getInstance().getBSTypeId();
@@ -103,37 +89,6 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
         if (HiSettingsHelper.getInstance().isSortByPostTime(mForumId)) {
             mUrl += "&orderby=dateline";
         }
-
-        OkHttpHelper.getInstance().asyncGet(mUrl, new ThreadListCallback());
-    }
-
-    private class ThreadListCallback implements OkHttpHelper.ResultCallback {
-
-        @Override
-        public void onError(Request request, Exception e) {
-            Message msg = Message.obtain();
-            msg.what = ThreadListFragment.STAGE_ERROR;
-            Bundle b = new Bundle();
-
-            NetworkError message = OkHttpHelper.getErrorMessage(e);
-            b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA : " + message.getMessage());
-            b.putString(ThreadListFragment.STAGE_DETAIL_KEY, message.getDetail());
-
-            msg.setData(b);
-            mHandler.sendMessage(msg);
-
-            synchronized (mLocker) {
-                mRsp = null;
-                mLocker.notify();
-            }
-        }
-
-        @Override
-        public void onResponse(String response) {
-            mRsp = response;
-            synchronized (mLocker) {
-                mLocker.notify();
-            }
-        }
+        return OkHttpHelper.getInstance().get(mUrl);
     }
 }

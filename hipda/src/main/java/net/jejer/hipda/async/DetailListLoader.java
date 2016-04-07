@@ -15,26 +15,18 @@ import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadDetail;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-
-import okhttp3.Request;
 
 public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 
     private Context mCtx;
     private Handler mHandler;
 
-    private final static int MAX_TIMES = 3;
-    private int count = 0;
-
-    private final Object mLocker = new Object();
     private String mTid;
     private String mGotoPostId;
     private int mPage;
-    private String mRsp;
     private DetailListBean data;
 
     public DetailListLoader(Context context, Handler handler, String tid, String gotoPostId, int page) {
@@ -59,44 +51,41 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
 
     @Override
     public DetailListBean loadInBackground() {
-
-        if (TextUtils.isEmpty(mTid) && TextUtils.isEmpty(mGotoPostId)) {
+        if (TextUtils.isEmpty(mTid) && TextUtils.isEmpty(mGotoPostId))
             return null;
-        }
 
-        boolean getOk = false;
-        do {
-            count++;
-            fetchDetail();
-            synchronized (mLocker) {
-                try {
-                    mLocker.wait();
-                } catch (InterruptedException ignored) {
-                }
-            }
-
-            if (mRsp != null) {
-                if (!LoginHelper.checkLoggedin(mCtx, mRsp)) {
-                    int status = new LoginHelper(mCtx, mHandler).login();
-                    if (status > Constants.STATUS_FAIL) {
-                        break;
+        for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
+            try {
+                String resp = fetchDetail();
+                if (resp != null) {
+                    if (!LoginHelper.checkLoggedin(mCtx, resp)) {
+                        int status = new LoginHelper(mCtx, mHandler).login();
+                        if (status == Constants.STATUS_FAIL_ABORT) {
+                            break;
+                        }
+                    } else {
+                        Document doc = Jsoup.parse(resp);
+                        data = HiParserThreadDetail.parse(mCtx, mHandler, doc, mTid == null);
+                        return data;
                     }
-                } else {
-                    getOk = true;
                 }
-            }
-        } while (!getOk && count <= MAX_TIMES);
-        if (!getOk) {
-            Logger.e("Load Detail Fail");
-            return null;
-        }
+            } catch (Exception e) {
+                Message msg = Message.obtain();
+                msg.what = ThreadListFragment.STAGE_ERROR;
+                Bundle b = new Bundle();
 
-        Document doc = Jsoup.parse(mRsp);
-        data = HiParserThreadDetail.parse(mCtx, mHandler, doc, mTid == null);
-        return data;
+                NetworkError message = OkHttpHelper.getErrorMessage(e);
+                b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA  : " + message.getMessage());
+                b.putString(ThreadListFragment.STAGE_DETAIL_KEY, message.getDetail());
+
+                msg.setData(b);
+                mHandler.sendMessage(msg);
+            }
+        }
+        return null;
     }
 
-    private void fetchDetail() {
+    private String fetchDetail() throws Exception {
         Message msg = Message.obtain();
         msg.what = ThreadListFragment.STAGE_GET_WEBPAGE;
         Bundle b = new Bundle();
@@ -116,37 +105,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
             mUrl = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
         }
 
-        OkHttpHelper.getInstance().asyncGet(mUrl, new DetailListCallback(), TextUtils.isEmpty(mTid) ? null : "tid=" + mTid);
-    }
-
-    private class DetailListCallback implements OkHttpHelper.ResultCallback {
-
-        @Override
-        public void onError(Request request, Exception e) {
-            Message msg = Message.obtain();
-            msg.what = ThreadListFragment.STAGE_ERROR;
-            Bundle b = new Bundle();
-
-            NetworkError message = OkHttpHelper.getErrorMessage(e);
-            b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA : " + message.getMessage());
-            b.putString(ThreadListFragment.STAGE_DETAIL_KEY, message.getDetail());
-
-            msg.setData(b);
-            mHandler.sendMessage(msg);
-
-            synchronized (mLocker) {
-                mRsp = null;
-                mLocker.notify();
-            }
-        }
-
-        @Override
-        public void onResponse(String response) {
-            mRsp = response;
-            synchronized (mLocker) {
-                mLocker.notify();
-            }
-        }
+        return OkHttpHelper.getInstance().get(mUrl);
     }
 
 }

@@ -4,8 +4,6 @@ package net.jejer.hipda.ui;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Loader;
 import android.graphics.Color;
@@ -13,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -88,7 +85,6 @@ public class ThreadListFragment extends BaseFragment
     private List<ThreadBean> mThreadBeans = new ArrayList<>();
     private ListView mThreadListView;
     private ProgressBar mFooterProgressBar;
-    private TextView mTipBar;
     private boolean mInloading = false;
     private Handler mMsgHandler;
     private HiProgressDialog postProgressDialog;
@@ -135,25 +131,6 @@ public class ThreadListFragment extends BaseFragment
         mFooterProgressBar.getIndeterminateDrawable()
                 .setColorFilter(Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
         mThreadListView.addFooterView(mFooterView);
-
-        mTipBar = (TextView) view.findViewById(R.id.thread_list_tipbar);
-        mTipBar.setVisibility(View.INVISIBLE);
-        mTipBar.bringToFront();
-        mTipBar.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mTipBar.setVisibility(View.INVISIBLE);
-                if (HiSettingsHelper.getInstance().isErrorReportMode()) {
-                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("ERROR TIP FROM HiPDA", mTipBar.getText());
-                    clipboard.setPrimaryClip(clip);
-                    Toast.makeText(getActivity(), "错误信息已经复制至粘贴板", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "请在\"设置-其它\"中启用\"显示详细错误信息\"后再进行反馈", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            }
-        });
 
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
@@ -548,7 +525,6 @@ public class ThreadListFragment extends BaseFragment
             Logger.v("onLoaderReset enter");
 
             mInloading = false;
-            mTipBar.setVisibility(View.INVISIBLE);
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
             hideListViewFooter();
@@ -677,39 +653,10 @@ public class ThreadListFragment extends BaseFragment
                             b.getString(STAGE_DETAIL_KEY))
                             .show();
                     break;
-                case STAGE_CLEAN:
-                    mTipBar.setVisibility(View.INVISIBLE);
-                    break;
-                case STAGE_DONE:
-//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.green));
-//                    mTipBar.setText(page + "加载完成");
-//                    mTipBar.setVisibility(View.VISIBLE);
-                    break;
-                case STAGE_RELOGIN:
-                    mTipBar.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.purple));
-                    mTipBar.setText("正在登录");
-                    mTipBar.setVisibility(View.VISIBLE);
-                    break;
-                case STAGE_GET_WEBPAGE:
-//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.purple));
-//                    mTipBar.setText(page + "正在获取页面");
-//                    mTipBar.setVisibility(View.VISIBLE);
-                    break;
-                case STAGE_PARSE:
-//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
-//                    mTipBar.setText(page + "正在解析页面");
-//                    mTipBar.setVisibility(View.VISIBLE);
-                    break;
                 case STAGE_REFRESH:
-//                    mTipBar.setBackgroundColor(mCtx.getResources().getColor(R.color.orange));
-//                    mTipBar.setText("正在刷新");
-//                    mTipBar.setVisibility(View.VISIBLE);
                     refresh();
                     break;
                 case STAGE_NOT_LOGIN:
-                    mTipBar.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.pink));
-                    mTipBar.setText(b.getString(STAGE_ERROR_KEY));
-                    mTipBar.setVisibility(View.VISIBLE);
                     mThreadBeans.clear();
                     mThreadListAdapter.setBeans(mThreadBeans);
                     showLoginDialog();
