@@ -67,12 +67,10 @@ public class ThreadListFragment extends BaseFragment
 
     public final static int STAGE_NOT_LOGIN = -2;
     public final static int STAGE_ERROR = -1;
-    public final static int STAGE_CLEAN = 0;
     public final static int STAGE_RELOGIN = 1;
     public final static int STAGE_GET_WEBPAGE = 2;
     public final static int STAGE_PARSE = 3;
     public final static int STAGE_DONE = 4;
-    public final static int STAGE_PREFETCH = 5;
     public final static int STAGE_REFRESH = 6;
     public final static String STAGE_ERROR_KEY = "ERROR_MSG";
     public final static String STAGE_DETAIL_KEY = "ERROR_DETAIL";
@@ -222,7 +220,7 @@ public class ThreadListFragment extends BaseFragment
             loadingProgressBar.show();
             mInloading = true;
             getLoaderManager().initLoader(0, null, mCallbacks);
-            getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+            //getLoaderManager().restartLoader(0, bundle, mCallbacks).forceLoad();
         }
     }
 
@@ -434,7 +432,7 @@ public class ThreadListFragment extends BaseFragment
     private class ThreadListLoaderCallbacks implements LoaderManager.LoaderCallbacks<ThreadListBean> {
 
         @Override
-        public Loader<ThreadListBean> onCreateLoader(int arg0, Bundle arg1) {
+        public Loader<ThreadListBean> onCreateLoader(int arg0, Bundle bundle) {
             if (mPage == 1 && !swipeLayout.isRefreshing())
                 loadingProgressBar.show();
             return new ThreadListLoader(mCtx, mMsgHandler, mForumId, mPage);
@@ -513,11 +511,12 @@ public class ThreadListFragment extends BaseFragment
             Message msgDone = Message.obtain();
             msgDone.what = STAGE_DONE;
             mMsgHandler.sendMessage(msgDone);
-            Message msgClean = Message.obtain();
-            msgClean.what = STAGE_CLEAN;
-            mMsgHandler.sendMessageDelayed(msgClean, 1000);
 
             mFam.setVisibility(View.VISIBLE);
+
+            if (mPage == 1 && threads.isFromCahce())
+                refresh();
+
         }
 
         @Override
@@ -644,7 +643,6 @@ public class ThreadListFragment extends BaseFragment
     private class ThreadListMsgHandler implements Handler.Callback {
         @Override
         public boolean handleMessage(Message msg) {
-            String page = "(第" + mPage + "页)";
             Bundle b = msg.getData();
             switch (msg.what) {
                 case STAGE_ERROR:
@@ -729,7 +727,6 @@ public class ThreadListFragment extends BaseFragment
             setHasOptionsMenu(false);
             FragmentUtils.showThread(getFragmentManager(), true, postResult.getTid(), postResult.getSubject(), -1, -1, null, -1);
 
-            //refresh thread list
             refresh();
         } else {
             if (postProgressDialog != null) {

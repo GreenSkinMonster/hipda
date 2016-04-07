@@ -629,10 +629,6 @@ public class ThreadDetailFragment extends BaseFragment {
                 return;
             }
 
-            Message msgClean = Message.obtain();
-            msgClean.what = ThreadListFragment.STAGE_CLEAN;
-            mMsgHandler.sendMessage(msgClean);
-
             // Set title
             if (details.getTitle() != null && !details.getTitle().isEmpty()) {
                 mTitle = details.getTitle();

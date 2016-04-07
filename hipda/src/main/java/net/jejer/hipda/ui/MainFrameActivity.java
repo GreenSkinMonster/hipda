@@ -122,6 +122,7 @@ public class MainFrameActivity extends AppCompatActivity {
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
 
         if (savedInstanceState == null) {
+            HiApplication.setFirstLoad(true);
             int fid = HiSettingsHelper.getInstance().getLastForumId();
 
             FragmentArgs args = FragmentUtils.parse(getIntent());

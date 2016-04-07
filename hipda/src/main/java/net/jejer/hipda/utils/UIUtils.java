@@ -26,7 +26,7 @@ public class UIUtils {
 
     public static Snackbar errorSnack(View view, CharSequence message, CharSequence detail) {
         return makeSnack(view, message, detail, Snackbar.LENGTH_LONG,
-                ContextCompat.getColor(HiApplication.getAppContext(), R.color.md_red_500));
+                ContextCompat.getColor(HiApplication.getAppContext(), R.color.md_yellow_500));
     }
 
     public static Snackbar makeSnack(final View view, final CharSequence message, final CharSequence detail, int length, int textColor) {
@@ -35,7 +35,6 @@ public class UIUtils {
 
         if (!TextUtils.isEmpty(detail)) {
             snackbar.setAction("详情", new View.OnClickListener() {
-
                 @Override
                 public void onClick(View v) {
                     UIUtils.showMessageDialog(view.getContext(),

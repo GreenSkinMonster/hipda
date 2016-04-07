@@ -6,5 +6,6 @@ package net.jejer.hipda.job;
 public class BaseEvent {
     public int mStatus;
     public String mMessage;
+    public String mDetail;
     public String mSessionId;
 }

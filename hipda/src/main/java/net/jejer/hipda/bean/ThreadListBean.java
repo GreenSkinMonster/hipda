@@ -8,7 +8,8 @@ public class ThreadListBean {
     public int count;
     public boolean parsed = false;
     private String uid;
-    public List<ThreadBean> threads = new ArrayList<ThreadBean>();
+    private boolean fromCahce;
+    public List<ThreadBean> threads = new ArrayList<>();
 
     public ThreadListBean() {
         count = 0;
@@ -25,5 +26,13 @@ public class ThreadListBean {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public boolean isFromCahce() {
+        return fromCahce;
+    }
+
+    public void setFromCahce(boolean fromCahce) {
+        this.fromCahce = fromCahce;
     }
 }

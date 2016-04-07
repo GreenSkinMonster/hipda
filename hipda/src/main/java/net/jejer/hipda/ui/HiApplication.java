@@ -38,6 +38,7 @@ public class HiApplication extends Application {
 
     private static Context context;
     private static boolean notified;
+    private static boolean mFirstLoad = true;
 
     @Override
     public void onCreate() {
@@ -52,9 +53,9 @@ public class HiApplication extends Application {
 
         if (Constants.FONT_ROBOTO_SLAB.equals(HiSettingsHelper.getInstance().getFont())) {
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                            .setDefaultFontPath("fonts/RobotoSlab-Regular.ttf")
-                            .setFontAttrId(R.attr.fontPath)
-                            .build()
+                    .setDefaultFontPath("fonts/RobotoSlab-Regular.ttf")
+                    .setFontAttrId(R.attr.fontPath)
+                    .build()
             );
         }
     }
@@ -94,4 +95,11 @@ public class HiApplication extends Application {
         notified = b;
     }
 
+    public static boolean isFirstLoad() {
+        return mFirstLoad;
+    }
+
+    public static void setFirstLoad(boolean firstLoad) {
+        mFirstLoad = firstLoad;
+    }
 }

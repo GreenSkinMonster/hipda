@@ -3,16 +3,18 @@ package net.jejer.hipda.async;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.SimpleListBean;
+import net.jejer.hipda.job.SimpleListEvent;
+import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -73,20 +75,11 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
                     }
                 }
             } catch (Exception e) {
-                Toast.makeText(mCtx,
-                        OkHttpHelper.getErrorMessage(e).getMessage(),
-                        Toast.LENGTH_LONG).show();
-
-//                Message msg = Message.obtain();
-//                msg.what = ThreadListFragment.STAGE_ERROR;
-//                Bundle b = new Bundle();
-//
-//                NetworkError message = OkHttpHelper.getErrorMessage(e);
-//                b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA  : " + message.getMessage());
-//                b.putString(ThreadListFragment.STAGE_DETAIL_KEY, message.getDetail());
-//
-//                msg.setData(b);
-//                mHandler.sendMessage(msg);
+                SimpleListEvent event = new SimpleListEvent();
+                NetworkError message = OkHttpHelper.getErrorMessage(e);
+                event.mMessage = "加载失败 : " + message.getMessage();
+                event.mDetail = message.getDetail();
+                EventBus.getDefault().post(event);
             }
         }
         return null;

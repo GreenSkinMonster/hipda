@@ -39,11 +39,17 @@ import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.job.SimpleListEvent;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -78,8 +84,8 @@ public class SimpleListFragment extends BaseFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
 
-        Logger.v("onCreate");
         setHasOptionsMenu(true);
 
         if (getArguments().containsKey(ARG_TYPE)) {
@@ -88,6 +94,12 @@ public class SimpleListFragment extends BaseFragment
 
         mSimpleListAdapter = new SimpleListAdapter(this, mType);
         mCallbacks = new SimpleThreadListLoaderCallbacks();
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @Override
@@ -539,6 +551,12 @@ public class SimpleListFragment extends BaseFragment
         } else {
             smsPostProgressDialog.dismissError(message);
         }
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(SimpleListEvent event) {
+        UIUtils.errorSnack(getView(), event.mMessage, event.mDetail).show();
     }
 
 }
