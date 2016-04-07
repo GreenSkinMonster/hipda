@@ -31,7 +31,9 @@ public class AboutFragment extends BaseFragment {
         ViewGroup aboutLayout = (ViewGroup) view.findViewById(R.id.about_layout);
 
         TextView tvAppVersion = (TextView) view.findViewById(R.id.app_version);
-        tvAppVersion.setText(getResources().getString(R.string.app_name) + " " + HiApplication.getAppVersion());
+        tvAppVersion.setText(getResources().getString(R.string.app_name)
+                + " " + HiApplication.getAppVersion()
+                + "\n" + getResources().getString(R.string.author));
 
         String[] credits = getResources().getStringArray(R.array.credits);
 

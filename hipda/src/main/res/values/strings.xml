@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">HiPDA·NG</string>
+    <string name="author">作者 ：绿皮怪兽</string>
     <string name="action_refresh">刷新</string>
     <string name="action_image_gallery">图片浏览</string>
     <string name="action_reply">回复</string>

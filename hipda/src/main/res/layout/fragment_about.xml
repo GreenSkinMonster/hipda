@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <net.jejer.hipda.ui.SlidingScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+                                      android:layout_width="match_parent"
+                                      android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/about_layout"
@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="12dp"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/ic_launcher"/>
 
         <TextView
             android:id="@+id/app_version"
@@ -26,7 +26,8 @@
             android:layout_marginBottom="6dp"
             android:padding="4dp"
             android:text="0.0.00"
-            android:textSize="16sp" />
+            android:textAlignment="center"
+            android:textSize="16sp"/>
 
     </LinearLayout>
 </net.jejer.hipda.ui.SlidingScrollView>
