@@ -74,7 +74,7 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
                 Bundle b = new Bundle();
 
                 NetworkError message = OkHttpHelper.getErrorMessage(e);
-                b.putString(ThreadListFragment.STAGE_ERROR_KEY, "无法访问HiPDA : " + message.getMessage());
+                b.putString(ThreadListFragment.STAGE_ERROR_KEY, message.getMessage());
                 b.putString(ThreadListFragment.STAGE_DETAIL_KEY, message.getDetail());
 
                 msg.setData(b);

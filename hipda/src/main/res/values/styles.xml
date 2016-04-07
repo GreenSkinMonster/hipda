@@ -258,4 +258,12 @@
         <item name="android:windowExitAnimation">@anim/dialong_out_right</item>
     </style>
 
+    <style name="AppTheme.Launcher" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="colorPrimaryDark">@color/splash_background</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 </resources>

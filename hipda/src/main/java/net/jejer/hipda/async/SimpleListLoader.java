@@ -77,7 +77,7 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
             } catch (Exception e) {
                 SimpleListEvent event = new SimpleListEvent();
                 NetworkError message = OkHttpHelper.getErrorMessage(e);
-                event.mMessage = "加载失败 : " + message.getMessage();
+                event.mMessage = message.getMessage();
                 event.mDetail = message.getDetail();
                 EventBus.getDefault().post(event);
             }

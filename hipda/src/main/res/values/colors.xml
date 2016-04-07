@@ -51,6 +51,8 @@
 
     <color name="nearly_black">#1E1E1E</color>
 
+    <color name="splash_background">@color/md_grey_800</color>
+
     <array name="material_colors">
         <item>@color/md_red_700</item>
         <item>@color/md_pink_700</item>

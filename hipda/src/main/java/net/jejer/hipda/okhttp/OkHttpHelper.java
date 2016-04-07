@@ -248,6 +248,7 @@ public class OkHttpHelper {
                 msg = "错误代码 (" + emsg.substring("Unexpected code ".length(), emsg.indexOf(",")) + ")";
             }
         }
+        msg = "加载失败 : " + msg;
         return new NetworkError(msg, e.getClass().getName() + "\n" + e.getMessage());
     }
 
