@@ -122,16 +122,10 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                 tv.setPadding(8, 8, 8, 8);
 
-                //dirty hack, remove extra <br>
                 String cnt = content.getContent();
-                if (trimBr) {
-                    if (cnt.startsWith("<br><br><br>")) {
-                        cnt = cnt.substring("<br><br>".length());
-                    } else if (cnt.startsWith("<br><br>")) {
-                        cnt = cnt.substring("<br>".length());
-                    }
-                }
-                if (!"<br>".equals(cnt)) {
+                if (trimBr)
+                    cnt = Utils.removeLeadingBlank(cnt);
+                if (!TextUtils.isEmpty(cnt)) {
                     tv.setText(cnt);
                     tv.setFocusable(false);
                     contentView.addView(tv);
@@ -215,7 +209,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
                 tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
                 tv.setAutoLinkMask(Linkify.WEB_URLS);
-                tv.setText(content.getContent());
+                tv.setText(Utils.removeLeadingBlank(content.getContent()));
                 tv.setFocusable(false);    // make convertView long clickable.
 
                 contentView.addView(quoteLayout);
@@ -259,6 +253,8 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                         text = ((ContentQuote) content).getText();
                     }
                 }
+
+                text = Utils.removeLeadingBlank(text);
 
                 LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text, parent, false);
 

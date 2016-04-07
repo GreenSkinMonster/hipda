@@ -351,4 +351,24 @@ public class Utils {
         return countText;
     }
 
+    public static String removeLeadingBlank(String s) {
+        int cutIndex = 0;
+        boolean match = true;
+        String[] blanks = {"<br>", (char) 160 + "", (char) 32 + ""};
+        while (match) {
+            match = false;
+            for (String blank : blanks) {
+                if (s.length() > cutIndex + blank.length()
+                        && s.substring(cutIndex, cutIndex + blank.length()).equals(blank)) {
+                    cutIndex += blank.length();
+                    match = true;
+                    break;
+                }
+            }
+        }
+        if (cutIndex > 0)
+            s = s.substring(cutIndex);
+        return s;
+    }
+
 }
