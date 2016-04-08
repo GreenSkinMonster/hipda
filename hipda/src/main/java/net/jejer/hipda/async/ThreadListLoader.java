@@ -11,7 +11,6 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
-import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadList;
@@ -92,17 +91,17 @@ public class ThreadListLoader extends AsyncTaskLoader<ThreadListBean> {
         if (HiSettingsHelper.getInstance().isSortByPostTime(mForumId)) {
             mUrl += "&orderby=dateline";
         }
-        if (HiApplication.isFirstLoad()) {
-            HiApplication.setFirstLoad(false);
-            try {
-                String resp = OkHttpHelper.getInstance().get(mUrl, OkHttpHelper.FORCE_CACHE);
-                if (resp != null) {
-                    mFromCache = true;
-                    return resp;
-                }
-            } catch (Exception ignored) {
-            }
-        }
+//        if (HiApplication.isFirstLoad()) {
+//            HiApplication.setFirstLoad(false);
+//            try {
+//                String resp = OkHttpHelper.getInstance().get(mUrl, OkHttpHelper.FORCE_CACHE);
+//                if (resp != null) {
+//                    mFromCache = true;
+//                    return resp;
+//                }
+//            } catch (Exception ignored) {
+//            }
+//        }
         return OkHttpHelper.getInstance().get(mUrl);
     }
 }
