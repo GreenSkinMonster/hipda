@@ -70,7 +70,6 @@ public class HiSettingsHelper {
     public static final String PERF_NOTI_SILENT_END = "PERF_NOTI_SILENT_END";
     public static final String PERF_BS_TYPE_ID = "PERF_BS_TYPE_ID";
     public static final String PERF_ANIMATION_TYPE = "PERF_ANIMATION_TYPE";
-    public static final String PERF_REMOVE_GRAY_BAR = "PERF_REMOVE_GRAY_BAR";
     public static final String PERF_AUTO_CLEAR_MEMORY = "PERF_AUTO_CLEAR_MEMORY";
     public static final String PERF_ICON = "PERF_ICON";
 
@@ -873,10 +872,6 @@ public class HiSettingsHelper {
 
     public boolean isNewAnimationType() {
         return "1".equals(getAnimationType());
-    }
-
-    public boolean isRemoveGrayBar() {
-        return getBooleanValue(PERF_REMOVE_GRAY_BAR, false);
     }
 
     public String getStringValue(String key, String defaultValue) {

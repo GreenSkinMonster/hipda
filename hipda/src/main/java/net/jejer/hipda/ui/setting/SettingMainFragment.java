@@ -1,7 +1,5 @@
 package net.jejer.hipda.ui.setting;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -45,7 +43,6 @@ public class SettingMainFragment extends BaseSettingFragment {
     private String mFont;
     static boolean mCacheCleared;
     private boolean mNightSwitchEnabled;
-    private boolean mRemoveGrayBar;
     private String mIcon;
 
     @Override
@@ -91,7 +88,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
         mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
         mFont = HiSettingsHelper.getInstance().getFont();
-        mRemoveGrayBar = HiSettingsHelper.getInstance().isRemoveGrayBar();
         mIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
     }
 
@@ -131,7 +127,6 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
-                || mRemoveGrayBar != HiSettingsHelper.getInstance().isRemoveGrayBar()
                 || !HiSettingsHelper.getInstance().getFont().equals(mFont)
                 || !mIcon.equals(newIcon)) {
             mCacheCleared = false;
@@ -207,7 +202,6 @@ public class SettingMainFragment extends BaseSettingFragment {
     private void setIcon(int icon) {
         Context ctx = getActivity();
         PackageManager pm = getActivity().getPackageManager();
-        ActivityManager am = (ActivityManager) getActivity().getSystemService(Activity.ACTIVITY_SERVICE);
 
         pm.setComponentEnabledSetting(
                 new ComponentName(ctx, "net.jejer.hipda.ng.MainActivity-Original"),
@@ -224,16 +218,6 @@ public class SettingMainFragment extends BaseSettingFragment {
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP
         );
-
-//        Intent i = new Intent(Intent.ACTION_MAIN);
-//        i.addCategory(Intent.CATEGORY_HOME);
-//        i.addCategory(Intent.CATEGORY_DEFAULT);
-//        List<ResolveInfo> resolves = pm.queryIntentActivities(i, 0);
-//        for (ResolveInfo res : resolves) {
-//            if (res.activityInfo != null) {
-//                am.killBackgroundProcesses(res.activityInfo.packageName);
-//            }
-//        }
     }
 
 }

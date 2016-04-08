@@ -13,12 +13,6 @@
             android:summary="@string/pref_summary_encode_utf8"
             android:title="@string/pref_title_encode_utf8" />
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
-            android:defaultValue="false"
-            android:key="PERF_REMOVE_GRAY_BAR"
-            android:summary="@string/pref_summary_remove_gray_bar"
-            android:title="@string/pref_title_remove_gray_bar" />
-
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/pref_animation_type"
