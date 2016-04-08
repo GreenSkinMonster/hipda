@@ -11,6 +11,7 @@ import android.widget.Toast;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
@@ -38,6 +39,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
     public void onStop() {
         super.onStop();
         setActionBarTitle("设置");
+        HttpUtils.getSaveFolder();
     }
 
     private void checkPreferenceResource() {
@@ -95,6 +97,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 addPreferencesFromResource(R.xml.pref_network);
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_IMAGE_LOAD_TYPE));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_AVATAR_LOAD_TYPE));
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SAVE_FOLDER));
                 break;
 
             case SCREEN_OTHER:
@@ -141,6 +144,5 @@ public class SettingNestedFragment extends BaseSettingFragment {
         findPreference(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN).setEnabled(isNotiTaskEnabled);
         findPreference(HiSettingsHelper.PERF_NOTI_SILENT_END).setEnabled(isNotiTaskEnabled);
     }
-
 
 }

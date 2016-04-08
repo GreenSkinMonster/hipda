@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
-import android.os.Environment;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Display;
@@ -239,8 +238,7 @@ public class Utils {
     }
 
     public static void cleanShareTempFiles() {
-        File destFile = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS);
+        File destFile = HttpUtils.getSaveFolder();
         if (destFile.exists() && destFile.isDirectory()) {
             File[] files = destFile.listFiles(new FilenameFilter() {
                 @Override

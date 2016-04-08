@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -102,10 +103,9 @@ public class HttpUtils {
             }
 
             String filename = Utils.getImageFileName("Hi_IMG", imageReadyInfo.getMime());
-            File destFile = new File(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS), filename);
+            File destFile = new File(getSaveFolder(), filename);
             Utils.copy(new File(imageReadyInfo.getPath()), destFile);
-            Toast.makeText(context, "图片已经保存至下载目录 <" + filename + ">", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "图片已经保存 <" + filename + ">", Toast.LENGTH_SHORT).show();
             //HttpUtils.download(mCtx, url, filename);
 
             MediaScannerConnection.scanFile(context, new String[]{destFile.getPath()}, null, null);
@@ -113,6 +113,17 @@ public class HttpUtils {
             Logger.e(e);
             Toast.makeText(context, "保存图片文件时发生错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    public static File getSaveFolder() {
+        String saveFolder = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_SAVE_FOLDER, "");
+        File dir = new File(saveFolder);
+        if (saveFolder.startsWith("/") && dir.exists() && dir.isDirectory() && dir.canWrite()) {
+            return dir;
+        }
+        dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_SAVE_FOLDER, dir.getAbsolutePath());
+        return dir;
     }
 
 }

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -209,9 +208,7 @@ public class PopupImageDialog extends DialogFragment {
                             return;
                         }
                         String filename = Utils.getImageFileName(Constants.FILE_SHARE_PREFIX, imageReadyInfo.getMime());
-
-                        File destFile = new File(Environment.getExternalStoragePublicDirectory(
-                                Environment.DIRECTORY_DOWNLOADS), filename);
+                        File destFile = new File(HttpUtils.getSaveFolder(), filename);
 
                         try {
                             Utils.copy(new File(imageReadyInfo.getPath()), destFile);
