@@ -167,7 +167,7 @@ public class NotificationMgr {
                 }
 
                 if (icon == null)
-                    icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+                    icon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
 
                 final NotificationCompat.Builder notif = new NotificationCompat.Builder(context)
                         .setContentTitle(title)

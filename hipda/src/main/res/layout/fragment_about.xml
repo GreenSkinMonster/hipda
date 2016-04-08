@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="12dp"
-            android:src="@drawable/ic_launcher"/>
+            android:src="@mipmap/ic_launcher"/>
 
         <TextView
             android:id="@+id/app_version"

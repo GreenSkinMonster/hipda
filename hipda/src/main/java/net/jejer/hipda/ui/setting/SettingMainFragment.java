@@ -1,9 +1,14 @@
 package net.jejer.hipda.ui.setting;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.support.v4.widget.DrawerLayout;
@@ -41,6 +46,7 @@ public class SettingMainFragment extends BaseSettingFragment {
     static boolean mCacheCleared;
     private boolean mNightSwitchEnabled;
     private boolean mRemoveGrayBar;
+    private String mIcon;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,6 +92,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
         mFont = HiSettingsHelper.getInstance().getFont();
         mRemoveGrayBar = HiSettingsHelper.getInstance().isRemoveGrayBar();
+        mIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
     }
 
     @Override
@@ -113,6 +120,10 @@ public class SettingMainFragment extends BaseSettingFragment {
         if (!HiSettingsHelper.getInstance().isGestureBack() && getActivity() != null)
             ((MainFrameActivity) getActivity()).drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
+        String newIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
+        if (!mIcon.equals(newIcon))
+            setIcon(Integer.parseInt(newIcon));
+
         if (mCacheCleared
                 || HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getActiveTheme().equals(mTheme)
@@ -121,7 +132,8 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
                 || mRemoveGrayBar != HiSettingsHelper.getInstance().isRemoveGrayBar()
-                || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
+                || !HiSettingsHelper.getInstance().getFont().equals(mFont)
+                || !mIcon.equals(newIcon)) {
             mCacheCleared = false;
             Utils.restartActivity(getActivity());
         }
@@ -190,6 +202,38 @@ public class SettingMainFragment extends BaseSettingFragment {
             }
         });
 
+    }
+
+    private void setIcon(int icon) {
+        Context ctx = getActivity();
+        PackageManager pm = getActivity().getPackageManager();
+        ActivityManager am = (ActivityManager) getActivity().getSystemService(Activity.ACTIVITY_SERVICE);
+
+        pm.setComponentEnabledSetting(
+                new ComponentName(ctx, "net.jejer.hipda.ng.MainActivity-Original"),
+                icon == Constants.ICON_ORIGINAL ?
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+        );
+
+        pm.setComponentEnabledSetting(
+                new ComponentName(ctx, "net.jejer.hipda.ng.MainActivity-Round"),
+                icon == Constants.ICON_ROUND ?
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+        );
+
+//        Intent i = new Intent(Intent.ACTION_MAIN);
+//        i.addCategory(Intent.CATEGORY_HOME);
+//        i.addCategory(Intent.CATEGORY_DEFAULT);
+//        List<ResolveInfo> resolves = pm.queryIntentActivities(i, 0);
+//        for (ResolveInfo res : resolves) {
+//            if (res.activityInfo != null) {
+//                am.killBackgroundProcesses(res.activityInfo.packageName);
+//            }
+//        }
     }
 
 }

@@ -37,4 +37,8 @@ public class Constants {
     public static final int MIN_CLICK_INTERVAL = 600;
 
     public static final String FILE_SHARE_PREFIX = "Hi_Share_Temp_";
+
+    public static final int ICON_ORIGINAL = 0;
+    public static final int ICON_ROUND = 1;
+    public static final int ICON_BIGGER = 2;
 }

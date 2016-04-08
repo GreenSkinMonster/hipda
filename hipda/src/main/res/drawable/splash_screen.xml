@@ -3,8 +3,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android"
             android:opacity="opaque">
     <item android:drawable="@color/splash_background"/>
-    <item
-        android:bottom="@dimen/launch_screen_logo_bottom">
+    <item>
         <bitmap
             android:gravity="center"
             android:src="@drawable/splash"/>

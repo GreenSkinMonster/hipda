@@ -72,6 +72,7 @@ public class HiSettingsHelper {
     public static final String PERF_ANIMATION_TYPE = "PERF_ANIMATION_TYPE";
     public static final String PERF_REMOVE_GRAY_BAR = "PERF_REMOVE_GRAY_BAR";
     public static final String PERF_AUTO_CLEAR_MEMORY = "PERF_AUTO_CLEAR_MEMORY";
+    public static final String PERF_ICON = "PERF_ICON";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
