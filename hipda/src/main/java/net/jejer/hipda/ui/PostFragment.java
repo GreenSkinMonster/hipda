@@ -57,6 +57,7 @@ import net.jejer.hipda.job.PostJob;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -94,11 +95,12 @@ public class PostFragment extends BaseFragment {
     private PrePostAsyncTask.PrePostListener mPrePostListener = new PrePostListener();
     private PrePostInfoBean mPrePostInfo;
     private PrePostAsyncTask mPrePostAsyncTask;
+    private String mForumName;
 
     private String mParentSessionId;
 
-    private Spinner mSpForum;
     private Spinner mSpTypeIds;
+    private int mSpSelection;
 
     private Map<Uri, UploadImgButton> mUploadImgButtons = new HashMap<>();
     private HorizontalScrollView mHsvView;
@@ -133,14 +135,6 @@ public class PostFragment extends BaseFragment {
         if (getArguments().containsKey(ARG_TEXT_KEY)) {
             mText = getArguments().getString(ARG_TEXT_KEY);
         }
-
-        // Start fetch info
-        mPrePostAsyncTask = new PrePostAsyncTask(getActivity(), mPrePostListener, mMode);
-        PostBean postBean = new PostBean();
-        postBean.setTid(mTid);
-        postBean.setPid(mPid);
-        postBean.setFid(mFid);
-        mPrePostAsyncTask.execute(postBean);
     }
 
     @Override
@@ -150,16 +144,11 @@ public class PostFragment extends BaseFragment {
 
         mEtReplyMsg = (EditText) view.findViewById(R.id.et_reply);
         mTvAdditional = (TextView) view.findViewById(R.id.et_additional);
-        mTvAdditional.setText("正在收集信息");
 
-        mSpForum = (Spinner) view.findViewById(R.id.sp_fid);
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_row);
         adapter.addAll(HiUtils.FORUMS);
-        mSpForum.setAdapter(adapter);
-        mSpForum.setOnItemSelectedListener(new FidSelectListener());
-        mSpForum.setEnabled(false);
         if (mFid != null && TextUtils.isDigitsOnly(mFid)) {
-            mSpForum.setSelection(HiUtils.getForumIndexByFid(Integer.parseInt(mFid)));
+            mForumName = HiUtils.FORUMS[HiUtils.getForumIndexByFid(Integer.parseInt(mFid))];
         }
 
         mSpTypeIds = (Spinner) view.findViewById(R.id.sp_typeid);
@@ -270,16 +259,21 @@ public class PostFragment extends BaseFragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        Logger.v("onActivityCreated");
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
+        if (mPrePostInfo == null) {
+            mTvAdditional.setText("正在收集信息");
+            mPrePostAsyncTask = new PrePostAsyncTask(getActivity(), mPrePostListener, mMode);
+            PostBean postBean = new PostBean();
+            postBean.setTid(mTid);
+            postBean.setPid(mPid);
+            postBean.setFid(mFid);
+            mPrePostAsyncTask.execute(postBean);
+        } else {
+            setupPrePostInfo();
+        }
     }
 
     @Override
@@ -318,8 +312,7 @@ public class PostFragment extends BaseFragment {
                 setActionBarTitle("引用 " + mFloor + "# " + mFloorAuthor);
                 break;
             case PostHelper.MODE_NEW_THREAD:
-                setActionBarTitle(getActivity().getResources().getString(R.string.action_new_thread));
-                mSpForum.setVisibility(View.VISIBLE);
+                setActionBarTitle(mForumName);
                 mSpTypeIds.setVisibility(View.VISIBLE);
                 mEtSubjectMsg.setVisibility(View.VISIBLE);
                 break;
@@ -457,8 +450,7 @@ public class PostFragment extends BaseFragment {
                 return;
             }
 
-            mProgressDialog = new HiProgressDialog(getActivity());
-            mProgressDialog.show();
+            mProgressDialog = HiProgressDialog.show(getActivity(), "处理中...");
 
             //generate upload image buttons
             for (Uri uri : uris) {
@@ -518,10 +510,6 @@ public class PostFragment extends BaseFragment {
             }
 
             JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), uris.toArray(new Uri[uris.size()])));
-
-            //upload all images
-            //new UploadImgAsyncTask(getActivity(), this, mPrePostInfo.getUid(), mPrePostInfo.getHash()).execute(uris.toArray(new Uri[uris.size()]));
-
         }
     }
 
@@ -534,100 +522,104 @@ public class PostFragment extends BaseFragment {
 
     private class PrePostListener implements PrePostAsyncTask.PrePostListener {
         @Override
-        public void PrePostComplete(int mode, boolean result,
-                                    PrePostInfoBean info) {
+        public void PrePostComplete(int mode, boolean result, PrePostInfoBean info) {
             if (mTvAdditional == null)
                 return;
             if (result) {
                 mPrePostInfo = info;
-                mTvAdditional.setVisibility(View.GONE);
-                getActivity().invalidateOptionsMenu();
-
-                if (mode == PostHelper.MODE_NEW_THREAD) {
-                    KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
-                    List<String> typeids = info.getTypeidValues();
-                    if (typeids != null && typeids.size() > 0) {
-                        adapter.setEntryValues(info.getTypeidValues().toArray(new String[typeids.size()]));
-                        adapter.setEntries(info.getTypeidNames().toArray(new String[typeids.size()]));
-                        mSpTypeIds.setAdapter(adapter);
-                        mSpTypeIds.setVisibility(View.VISIBLE);
-                    } else {
-                        String[] noNames = {"无分类"};
-                        String[] noValues = {"0"};
-                        adapter.setEntries(noNames);
-                        adapter.setEntryValues(noValues);
-                        mSpTypeIds.setAdapter(adapter);
-                        mSpTypeIds.setVisibility(View.VISIBLE);
-                        mSpTypeIds.setEnabled(false);
-                    }
-                }
-
-                if (!TextUtils.isEmpty(info.getText())) {
-                    if (mode == PostHelper.MODE_EDIT_POST) {
-                        mEtReplyMsg.setText(info.getText());
-                        if (!TextUtils.isEmpty(info.getSubject())) {
-                            mEtSubjectMsg.setText(info.getSubject());
-                            mEtSubjectMsg.setVisibility(View.VISIBLE);
-                        }
-                        List<String> typeids = info.getTypeidValues();
-                        if (typeids != null && typeids.size() > 0) {
-                            String typeid = info.getTypeid();
-                            KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
-                            adapter.setEntryValues(info.getTypeidValues().toArray(new String[typeids.size()]));
-                            adapter.setEntries(info.getTypeidNames().toArray(new String[typeids.size()]));
-                            mSpTypeIds.setAdapter(adapter);
-                            mSpTypeIds.setVisibility(View.VISIBLE);
-                            mSpForum.setVisibility(View.VISIBLE);
-                            for (int i = 0; i < typeids.size(); i++) {
-                                String tmpid = typeids.get(i);
-                                if (tmpid.equals(typeid)) {
-                                    mSpTypeIds.setSelection(i);
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        mTvAdditional.setText(info.getText());
-                        mTvAdditional.setVisibility(View.VISIBLE);
-                    }
-                }
-
-                if (mMode == PostHelper.MODE_NEW_THREAD) {
-                    (new Handler()).postDelayed(new Runnable() {
-                        public void run() {
-                            mEtSubjectMsg.requestFocus();
-                            long t = SystemClock.uptimeMillis();
-                            mEtSubjectMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
-                            mEtSubjectMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
-                        }
-                    }, 100);
-                } else {
-                    (new Handler()).postDelayed(new Runnable() {
-                        public void run() {
-                            mEtReplyMsg.requestFocus();
-                            long t = SystemClock.uptimeMillis();
-                            mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
-                            mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
-                            mEtReplyMsg.setSelection(mEtReplyMsg.getText().length());
-                        }
-                    }, 100);
-                }
-
+                setupPrePostInfo();
             } else {
+                mTvAdditional.setVisibility(View.VISIBLE);
                 mTvAdditional.setText("收集信息失败，请返回重试");
                 mTvAdditional.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
             }
         }
     }
 
-    private class FidSelectListener implements Spinner.OnItemSelectedListener {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            mFid = String.valueOf(HiUtils.getForumID((int) id));
+    private void setupPrePostInfo() {
+        if (mPrePostInfo == null)
+            return;
+
+        mTvAdditional.setVisibility(View.GONE);
+        getActivity().invalidateOptionsMenu();
+
+        if (mMode == PostHelper.MODE_NEW_THREAD
+                && (mSpTypeIds.getAdapter() == null
+                || mSpTypeIds.getAdapter().getCount() == 0)) {
+            KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
+            List<String> typeids = mPrePostInfo.getTypeidValues();
+            if (typeids != null && typeids.size() > 0) {
+                adapter.setEntryValues(mPrePostInfo.getTypeidValues().toArray(new String[typeids.size()]));
+                adapter.setEntries(mPrePostInfo.getTypeidNames().toArray(new String[typeids.size()]));
+                mSpTypeIds.setAdapter(adapter);
+                mSpTypeIds.setVisibility(View.VISIBLE);
+                if (mSpSelection >= 0 && mSpSelection < adapter.getCount())
+                    mSpTypeIds.setSelection(mSpSelection);
+            } else {
+                String[] noNames = {"无分类"};
+                String[] noValues = {"0"};
+                adapter.setEntries(noNames);
+                adapter.setEntryValues(noValues);
+                mSpTypeIds.setAdapter(adapter);
+                mSpTypeIds.setVisibility(View.VISIBLE);
+                mSpTypeIds.setEnabled(false);
+            }
         }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
+        if (!TextUtils.isEmpty(mPrePostInfo.getText())) {
+            if (mMode == PostHelper.MODE_EDIT_POST) {
+                mEtReplyMsg.setText(mPrePostInfo.getText());
+                if (!TextUtils.isEmpty(mPrePostInfo.getSubject())) {
+                    mEtSubjectMsg.setText(mPrePostInfo.getSubject());
+                    mEtSubjectMsg.setVisibility(View.VISIBLE);
+                }
+                List<String> typeids = mPrePostInfo.getTypeidValues();
+                if (typeids != null && typeids.size() > 0) {
+                    String typeid = mPrePostInfo.getTypeid();
+                    KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
+                    adapter.setEntryValues(mPrePostInfo.getTypeidValues().toArray(new String[typeids.size()]));
+                    adapter.setEntries(mPrePostInfo.getTypeidNames().toArray(new String[typeids.size()]));
+                    mSpTypeIds.setAdapter(adapter);
+                    mSpTypeIds.setVisibility(View.VISIBLE);
+                    for (int i = 0; i < typeids.size(); i++) {
+                        String tmpid = typeids.get(i);
+                        if (tmpid.equals(typeid)) {
+                            mSpTypeIds.setSelection(i);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                mTvAdditional.setText(Utils.trim(mText));
+                mTvAdditional.setVisibility(View.VISIBLE);
+                mTvAdditional.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        UIUtils.showMessageDialog(getActivity(), "详细内容", mText);
+                    }
+                });
+            }
+        }
+
+        if (mMode == PostHelper.MODE_NEW_THREAD) {
+            (new Handler()).postDelayed(new Runnable() {
+                public void run() {
+                    mEtSubjectMsg.requestFocus();
+                    long t = SystemClock.uptimeMillis();
+                    mEtSubjectMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
+                    mEtSubjectMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
+                }
+            }, 100);
+        } else {
+            (new Handler()).postDelayed(new Runnable() {
+                public void run() {
+                    mEtReplyMsg.requestFocus();
+                    long t = SystemClock.uptimeMillis();
+                    mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
+                    mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
+                    mEtReplyMsg.setSelection(mEtReplyMsg.getText().length());
+                }
+            }, 100);
         }
     }
 
@@ -636,6 +628,7 @@ public class PostFragment extends BaseFragment {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             KeyValueArrayAdapter adapter = (KeyValueArrayAdapter) parent.getAdapter();
             mTypeid = adapter.getEntryValue(pos);
+            mSpSelection = pos;
         }
 
         @Override
@@ -734,12 +727,12 @@ public class PostFragment extends BaseFragment {
         events.add(event);
 
         for (ImageUploadEvent evt : events) {
-            if (evt.type == ImageUploadEvent.ALL_DONE) {
-                imageAllDone();
+            if (evt.type == ImageUploadEvent.UPLOADING) {
+                imageProcess(evt.total, evt.current, evt.percentage);
             } else if (evt.type == ImageUploadEvent.ITEM_DONE) {
                 imageDone(evt.uri, evt.currentFileName, evt.message, evt.imgId, evt.thumbtail);
-            } else if (evt.type == ImageUploadEvent.UPLOADING) {
-                imageProcess(evt.total, evt.current, evt.percentage);
+            } else if (evt.type == ImageUploadEvent.ALL_DONE) {
+                imageAllDone();
             }
         }
         EventBus.getDefault().removeStickyEvent(event);

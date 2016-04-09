@@ -71,6 +71,7 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 arguments.putString(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
                 arguments.putString(PostFragment.ARG_FLOOR_AUTHOR_KEY, mDetailBean.getAuthor());
                 arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_REPLY_POST);
+                arguments.putString(PostFragment.ARG_TEXT_KEY, mDetailBean.getContents().getCopyText());
 
                 fragment.setArguments(arguments);
 
@@ -88,6 +89,7 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 arguments.putString(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
                 arguments.putString(PostFragment.ARG_FLOOR_AUTHOR_KEY, mDetailBean.getAuthor());
                 arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_QUOTE_POST);
+                arguments.putString(PostFragment.ARG_TEXT_KEY, mDetailBean.getContents().getCopyText());
 
                 fragment.setArguments(arguments);
 

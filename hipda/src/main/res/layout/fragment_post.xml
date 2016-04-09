@@ -1,7 +1,7 @@
 <net.jejer.hipda.ui.SlidingScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?list_item_background">
+                                      android:layout_width="match_parent"
+                                      android:layout_height="match_parent"
+                                      android:background="?list_item_background">
 
     <LinearLayout
         android:id="@+id/layout_post"
@@ -27,40 +27,34 @@
             android:maxLines="4"
             android:padding="6dp"
             android:text=""
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
-            <Spinner
-                android:id="@+id/sp_fid"
-                android:layout_width="140dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/rounded_corner"
-                android:visibility="gone" />
+            <EditText
+                android:id="@+id/et_subject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/sp_typeid"
+                android:gravity="bottom"
+                android:hint="@string/hint_subject"
+                android:inputType="none"
+                android:singleLine="false"
+                android:textSize="20sp"
+                android:visibility="gone"/>
 
             <Spinner
                 android:id="@+id/sp_typeid"
-                android:layout_width="fill_parent"
+                android:layout_width="@dimen/post_type_spinner_width"
                 android:layout_height="match_parent"
-                android:visibility="gone" />
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"/>
+        </RelativeLayout>
 
-        </LinearLayout>
-
-        <EditText
-            android:id="@+id/et_subject"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:gravity="bottom"
-            android:hint="@string/hint_subject"
-            android:inputType="none"
-            android:singleLine="false"
-            android:textSize="20sp"
-            android:visibility="gone" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -76,7 +70,7 @@
                 android:inputType="textMultiLine"
                 android:minLines="6"
                 android:singleLine="false"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
             <ImageButton
                 android:id="@+id/ib_reply"
@@ -85,7 +79,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="4dp"
-                android:background="?android:selectableItemBackground" />
+                android:background="?android:selectableItemBackground"/>
 
         </RelativeLayout>
 
@@ -100,13 +94,13 @@
                 android:id="@+id/ll_images"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal" />
+                android:orientation="horizontal"/>
         </HorizontalScrollView>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/background_grey" />
+            android:background="@color/background_grey"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -121,28 +115,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="42dp"
                 android:background="?attr/background"
-                android:text="默认表情" />
+                android:text="默认表情"/>
 
             <Button
                 android:id="@+id/btn2_emoji"
                 android:layout_width="wrap_content"
                 android:layout_height="42dp"
                 android:background="@color/background_grey"
-                android:text="酷酷猴" />
+                android:text="酷酷猴"/>
 
             <Button
                 android:id="@+id/btn3_emoji"
                 android:layout_width="wrap_content"
                 android:layout_height="42dp"
                 android:background="@color/background_grey"
-                android:text="呆呆男" />
+                android:text="呆呆男"/>
 
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="?attr/background" />
+            android:background="?attr/background"/>
 
         <net.jejer.hipda.ui.ExpandableHeightGridView
             android:id="@+id/tab1_emoji"
@@ -154,7 +148,7 @@
             android:isScrollContainer="false"
             android:numColumns="auto_fit"
             android:stretchMode="columnWidth"
-            android:verticalSpacing="6dp" />
+            android:verticalSpacing="6dp"/>
 
         <net.jejer.hipda.ui.ExpandableHeightGridView
             android:id="@+id/tab2_emoji"
@@ -167,7 +161,7 @@
             android:numColumns="auto_fit"
             android:stretchMode="columnWidth"
             android:verticalSpacing="6dp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <net.jejer.hipda.ui.ExpandableHeightGridView
             android:id="@+id/tab3_emoji"
@@ -180,7 +174,7 @@
             android:numColumns="auto_fit"
             android:stretchMode="columnWidth"
             android:verticalSpacing="6dp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
     </LinearLayout>
 
