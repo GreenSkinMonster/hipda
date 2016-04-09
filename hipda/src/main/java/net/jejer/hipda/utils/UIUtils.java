@@ -20,16 +20,23 @@ import net.jejer.hipda.ui.HiApplication;
  */
 public class UIUtils {
 
-    public static Snackbar infoSnack(View view, CharSequence message) {
-        return makeSnack(view, message, null, Snackbar.LENGTH_SHORT, Color.WHITE);
+    public static void infoSnack(View view, CharSequence message) {
+        if (view != null) {
+            makeSnack(view, message, null, Snackbar.LENGTH_SHORT, Color.WHITE)
+                    .show();
+        }
     }
 
-    public static Snackbar errorSnack(View view, CharSequence message, CharSequence detail) {
-        return makeSnack(view, message, detail, Snackbar.LENGTH_LONG,
-                ContextCompat.getColor(HiApplication.getAppContext(), R.color.md_yellow_500));
+    public static void errorSnack(View view, CharSequence message, CharSequence detail) {
+        if (view != null) {
+            makeSnack(view, message, detail, Snackbar.LENGTH_LONG,
+                    ContextCompat.getColor(HiApplication.getAppContext(),
+                            R.color.md_yellow_500))
+                    .show();
+        }
     }
 
-    public static Snackbar makeSnack(final View view, final CharSequence message, final CharSequence detail, int length, int textColor) {
+    private static Snackbar makeSnack(final View view, final CharSequence message, final CharSequence detail, int length, int textColor) {
         final Snackbar snackbar = Snackbar.make(view, message, length);
         setSnackbarMessageTextColor(snackbar, textColor);
 

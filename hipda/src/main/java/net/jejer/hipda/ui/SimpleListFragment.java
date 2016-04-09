@@ -556,7 +556,7 @@ public class SimpleListFragment extends BaseFragment
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SimpleListEvent event) {
-        UIUtils.errorSnack(getView(), event.mMessage, event.mDetail).show();
+        UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
     }
 
 }

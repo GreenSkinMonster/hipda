@@ -888,8 +888,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     Bundle b = msg.getData();
                     UIUtils.errorSnack(getView(),
                             b.getString(ThreadListFragment.STAGE_ERROR_KEY),
-                            b.getString(ThreadListFragment.STAGE_DETAIL_KEY))
-                            .show();
+                            b.getString(ThreadListFragment.STAGE_DETAIL_KEY));
                     break;
             }
             return false;

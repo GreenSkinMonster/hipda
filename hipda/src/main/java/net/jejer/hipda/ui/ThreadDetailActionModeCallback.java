@@ -141,6 +141,7 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
         menu.findItem(R.id.action_quote).setIcon(new IconicsDrawable(mFragment.getActivity(), GoogleMaterial.Icon.gmd_format_quote).actionBar().color(Color.WHITE));
         menu.findItem(R.id.action_copy).setIcon(new IconicsDrawable(mFragment.getActivity(), GoogleMaterial.Icon.gmd_copy).actionBar().color(Color.WHITE));
         menu.findItem(R.id.action_share_post).setIcon(new IconicsDrawable(mFragment.getActivity(), GoogleMaterial.Icon.gmd_share).actionBar().color(Color.WHITE));
+        menu.findItem(R.id.action_select_text).setIcon(new IconicsDrawable(mFragment.getActivity(), GoogleMaterial.Icon.gmd_text_format).actionBar().color(Color.WHITE));
 
         if (!mDetailBean.getAuthor().equalsIgnoreCase(HiSettingsHelper.getInstance().getUsername())) {
             MenuItem item = menu.findItem(R.id.action_edit);

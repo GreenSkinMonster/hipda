@@ -648,8 +648,7 @@ public class ThreadListFragment extends BaseFragment
                 case STAGE_ERROR:
                     UIUtils.errorSnack(getView(),
                             b.getString(STAGE_ERROR_KEY),
-                            b.getString(STAGE_DETAIL_KEY))
-                            .show();
+                            b.getString(STAGE_DETAIL_KEY));
                     break;
                 case STAGE_REFRESH:
                     refresh();
