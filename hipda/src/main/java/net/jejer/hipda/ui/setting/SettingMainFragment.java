@@ -212,7 +212,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         );
 
         pm.setComponentEnabledSetting(
-                new ComponentName(ctx, "net.jejer.hipda.ng.MainActivity-Round"),
+                new ComponentName(ctx, "net.jejer.hipda.ng.MainActivity-Circle"),
                 icon == Constants.ICON_ROUND ?
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED,

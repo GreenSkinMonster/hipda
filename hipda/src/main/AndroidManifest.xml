@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="net.jejer.hipda"
           xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="49"
-          android:versionName="2.2.09">
+          android:versionCode="50"
+          android:versionName="2.2.10">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -38,9 +38,9 @@
         </activity-alias>
 
         <activity-alias
-            android:name=".ng.MainActivity-Round"
-            android:enabled="true"
-            android:icon="@mipmap/ic_launcher_round"
+            android:name=".ng.MainActivity-Circle"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_circle"
             android:label="@string/app_name"
             android:targetActivity=".ui.MainFrameActivity">
             <intent-filter>

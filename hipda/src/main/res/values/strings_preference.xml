@@ -125,7 +125,7 @@
 
     <string-array name="pref_font_titles">
         <item>默认</item>
-        <item>Roboto Slab (英文)</item>
+        <item>Roboto Slab</item>
     </string-array>
     <string-array name="pref_font_values">
         <item></item>
@@ -245,11 +245,11 @@
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_blacklist">黑名单, 每行一个用户名</string>
     <string name="pref_title_theme">界面主题</string>
-    <string name="pref_title_icon">启动图标</string>
+    <string name="pref_title_icon">程序图标</string>
     <string name="pref_title_primary_color">界面主色调</string>
     <string name="pref_title_night_theme">夜间模式主题</string>
     <string name="pref_title_navbar_colored">导航栏着色</string>
-    <string name="pref_title_font">字体</string>
+    <string name="pref_title_font">英文字体</string>
     <string name="pref_title_forum">版面选择</string>
     <string name="pref_title_textsize_adjust_title">标题字号调整</string>
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
