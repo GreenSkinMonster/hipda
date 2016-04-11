@@ -572,10 +572,8 @@ public class ThreadDetailFragment extends BaseFragment {
     public void onDestroy() {
         getLoaderManager().destroyLoader(0);
         EventBus.getDefault().unregister(mDetailAdapter);
-        if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_AUTO_CLEAR_MEMORY, true)
-                && Utils.isMemoryUsageHigh()) {
+        if (Utils.isMemoryUsageHigh())
             Glide.get(getActivity()).clearMemory();
-        }
         super.onDestroy();
     }
 
