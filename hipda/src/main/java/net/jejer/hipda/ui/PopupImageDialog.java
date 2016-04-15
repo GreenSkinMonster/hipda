@@ -167,7 +167,7 @@ public class PopupImageDialog extends DialogFragment {
         );
 
         ImageButton btnDownload = (ImageButton) layout.findViewById(R.id.btn_download_image);
-        btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_download)
+        btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_file_download)
                 .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
         btnDownload.setOnClickListener(
                 new View.OnClickListener() {

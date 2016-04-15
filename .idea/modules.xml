@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/emoji/emoji.iml" filepath="$PROJECT_DIR$/emoji/emoji.iml" />
       <module fileurl="file://$PROJECT_DIR$/hipda.iml" filepath="$PROJECT_DIR$/hipda.iml" />
       <module fileurl="file://$PROJECT_DIR$/hipda/hipda-hipda.iml" filepath="$PROJECT_DIR$/hipda/hipda-hipda.iml" />
     </modules>

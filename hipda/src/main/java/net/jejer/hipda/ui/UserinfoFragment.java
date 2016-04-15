@@ -172,7 +172,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
 
         menu.clear();
         inflater.inflate(R.menu.menu_userinfo, menu);
-        menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_comment_edit).actionBar().color(Color.WHITE));
+        menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_insert_comment).actionBar().color(Color.WHITE));
 
         setActionBarDisplayHomeAsUpEnabled(true);
         setActionBarTitle(mUsername);

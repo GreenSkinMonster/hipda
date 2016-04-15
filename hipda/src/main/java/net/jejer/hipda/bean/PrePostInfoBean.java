@@ -1,7 +1,9 @@
 package net.jejer.hipda.bean;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * bean for getting pre post info
@@ -18,10 +20,9 @@ public class PrePostInfoBean {
     private String noticeauthormsg;
     private String noticetrimstr;
     private List<String> attaches = new ArrayList<>();
-    private List<String> typeidValues = new ArrayList<>();
-    private List<String> typeidNames = new ArrayList<>();
     private List<String> attachdel = new ArrayList<>();
     private List<String> unusedImages = new ArrayList<>();
+    private Map<String, String> typeValues = new LinkedHashMap<>();
 
     public List<String> getAttachdel() {
         return attachdel;
@@ -79,22 +80,6 @@ public class PrePostInfoBean {
         this.typeid = typeid;
     }
 
-    public List<String> getTypeidNames() {
-        return typeidNames;
-    }
-
-    public void setTypeidNames(List<String> typeidNames) {
-        this.typeidNames = typeidNames;
-    }
-
-    public List<String> getTypeidValues() {
-        return typeidValues;
-    }
-
-    public void setTypeidValues(List<String> typeidValues) {
-        this.typeidValues = typeidValues;
-    }
-
     public String getUid() {
         return uid;
     }
@@ -103,16 +88,9 @@ public class PrePostInfoBean {
         this.uid = uid;
     }
 
-    public void addTypeidValues(String value) {
-        typeidValues.add(value);
-    }
-
-    public void addTypeidNames(String name) {
-        typeidNames.add(name);
-    }
-
     public void addAttach(String attach) {
-        attaches.add(attach);
+        if (!attaches.contains(attach))
+            attaches.add(attach);
     }
 
     public void removeAttach(String attach) {
@@ -157,5 +135,13 @@ public class PrePostInfoBean {
 
     public void setNoticetrimstr(String noticetrimstr) {
         this.noticetrimstr = noticetrimstr;
+    }
+
+    public Map<String, String> getTypeValues() {
+        return typeValues;
+    }
+
+    public void setTypeValues(Map<String, String> typeValues) {
+        this.typeValues = typeValues;
     }
 }

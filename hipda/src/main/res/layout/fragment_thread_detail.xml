@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<net.jejer.hipda.ui.SlidingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+<net.jejer.hipda.ui.SlidingRelativeLayout
     android:id="@+id/fragment_detail"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?list_item_background">
@@ -14,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:clickable="true"
         android:divider="?list_item_divider"
-        android:dividerHeight="1dp" />
+        android:dividerHeight="1dp"/>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/multiple_actions"
@@ -36,19 +38,19 @@
             android:id="@+id/action_fab_goto_page"
             style="@style/FloatingButtonsStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_refresh"
             style="@style/FloatingButtonsStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_quick_reply"
             style="@style/FloatingButtonsStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 
@@ -65,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentTop="true"
-            android:background="@color/silver" />
+            android:background="@color/silver"/>
 
         <ImageButton
             android:id="@+id/ib_goto_post"
@@ -74,9 +76,10 @@
             android:layout_alignBottom="@+id/tv_reply_text"
             android:layout_alignParentLeft="true"
             android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/action_reply" />
+            android:contentDescription="@string/action_reply"/>
 
-        <EditText
+
+        <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/tv_reply_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -91,7 +94,8 @@
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
             android:singleLine="false"
-            android:text="" />
+            android:text=""
+            app:emojiSize="26sp"/>
 
         <ImageButton
             android:id="@+id/ib_reply_post"
@@ -100,7 +104,7 @@
             android:layout_alignBottom="@+id/tv_reply_text"
             android:layout_alignParentRight="true"
             android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/ib_quick_send" />
+            android:contentDescription="@string/ib_quick_send"/>
 
     </RelativeLayout>
 
@@ -111,6 +115,6 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:indeterminate="true"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 
 </net.jejer.hipda.ui.SlidingRelativeLayout>

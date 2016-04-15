@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.jejer.hipda.ui.SlidingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<net.jejer.hipda.ui.SlidingRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?list_item_background"
@@ -12,14 +14,14 @@
         android:layout_above="@+id/border_line"
         android:divider="@android:color/transparent"
         android:stackFromBottom="true"
-        android:transcriptMode="normal" />
+        android:transcriptMode="normal"/>
 
     <View
         android:id="@+id/border_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@+id/rl_input"
-        android:background="@color/silver" />
+        android:background="@color/silver"/>
 
     <RelativeLayout
         android:id="@+id/rl_input"
@@ -29,11 +31,20 @@
         android:background="?list_item_background"
         android:orientation="horizontal">
 
-        <EditText
+        <ImageButton
+            android:id="@+id/ib_emoji_switch"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignBottom="@+id/et_sms"
+            android:layout_alignParentLeft="true"
+            android:background="?attr/selectableItemBackground"/>
+
+        <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/et_sms"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/ib_send_sms"
+            android:layout_toRightOf="@+id/ib_emoji_switch"
             android:gravity="bottom"
             android:hint="@string/txt_quick_hint"
             android:inputType="textMultiLine"
@@ -43,7 +54,8 @@
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
             android:singleLine="false"
-            android:text="" />
+            android:text=""
+            app:emojiSize="26sp"/>
 
         <ImageButton
             android:id="@+id/ib_send_sms"
@@ -52,7 +64,7 @@
             android:layout_alignBottom="@+id/et_sms"
             android:layout_alignParentRight="true"
             android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/ib_quick_send" />
+            android:contentDescription="@string/ib_quick_send"/>
     </RelativeLayout>
 
     <net.jejer.hipda.ui.ContentLoadingProgressBar
@@ -62,6 +74,6 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:indeterminate="true"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 
 </net.jejer.hipda.ui.SlidingRelativeLayout>

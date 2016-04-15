@@ -140,7 +140,7 @@ public class ThreadListFragment extends BaseFragment
         mFam.setVisibility(View.INVISIBLE);
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
-        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh_alt).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP + 4));
+        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -680,8 +680,13 @@ public class ThreadListFragment extends BaseFragment
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            View row = inflater.inflate(R.layout.item_forum_type, parent, false);
+            View row;
+            if (convertView == null) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                row = inflater.inflate(R.layout.item_forum_type, parent, false);
+            } else {
+                row = convertView;
+            }
             IconicsImageView icon = (IconicsImageView) row.findViewById(R.id.forum_type_icon);
             TextView text = (TextView) row.findViewById(R.id.forum_type_text);
 
@@ -691,6 +696,7 @@ public class ThreadListFragment extends BaseFragment
                 text.setTextColor(ColorUtils.getColorAccent(getActivity()));
             } else {
                 icon.setImageDrawable(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(ColorUtils.getDefaultTextColor(getActivity())).sizeDp(20));
+                text.setTextColor(ColorUtils.getDefaultTextColor(getActivity()));
             }
 
             return row;

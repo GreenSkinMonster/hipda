@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -30,6 +29,7 @@ import android.widget.Toast;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.vanniktech.emoji.EmojiEditText;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
@@ -59,7 +59,10 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     private List<SimpleListItemBean> mSmsBeans = new ArrayList<>();
     private SmsListLoaderCallbacks mLoaderCallbacks;
     private ListView mListView;
-    private EditText mEtSms;
+
+    private EmojiEditText mEtSms;
+    private ImageButton mIbEmojiSwitch;
+    private ImageButton mIbSendSms;
 
     private HiProgressDialog postProgressDialog;
     private ContentLoadingProgressBar loadingProgressBar;
@@ -113,12 +116,12 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             }
         });
 
-        ImageButton postIb = (ImageButton) view.findViewById(R.id.ib_send_sms);
-        postIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail_send).sizeDp(28).color(Color.GRAY));
+        mIbSendSms = (ImageButton) view.findViewById(R.id.ib_send_sms);
+        mIbSendSms.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
 
-        mEtSms = (EditText) view.findViewById(R.id.et_sms);
+        mEtSms = (EmojiEditText) view.findViewById(R.id.et_sms);
         mEtSms.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
-        postIb.setOnClickListener(new View.OnClickListener() {
+        mIbSendSms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String replyText = mEtSms.getText().toString();
@@ -130,6 +133,9 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                 }
             }
         });
+
+        mIbEmojiSwitch = (ImageButton) view.findViewById(R.id.ib_emoji_switch);
+        setUpEmojiPopup(mEtSms, mIbEmojiSwitch);
 
         return view;
     }

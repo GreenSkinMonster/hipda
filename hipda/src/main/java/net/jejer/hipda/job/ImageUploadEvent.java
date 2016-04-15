@@ -1,8 +1,5 @@
 package net.jejer.hipda.job;
 
-import android.graphics.Bitmap;
-import android.net.Uri;
-
 import java.util.Collection;
 
 /**
@@ -17,13 +14,10 @@ public class ImageUploadEvent extends BaseEvent {
     public Collection<ImageUploadEvent> holdEvents;
 
     public int type;
-    public Uri uri;
     public int total;
     public int current;
-    public String currentFileName;
     public int percentage;
     public String message;
-    public String imgId;
-    public Bitmap thumbtail;
+    public UploadImage mImage;
 
 }

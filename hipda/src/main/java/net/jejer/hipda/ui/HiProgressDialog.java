@@ -47,7 +47,7 @@ public class HiProgressDialog extends ProgressDialog {
             setMessage(message);
         if (status == ERROR) {
             setIndeterminateDrawable(new IconicsDrawable(getContext(),
-                    GoogleMaterial.Icon.gmd_alert_octagon).sizeDp(48)
+                    GoogleMaterial.Icon.gmd_error).sizeDp(48)
                     .color(ContextCompat.getColor(getContext(), R.color.red)));
         } else {
             setIndeterminateDrawable(new IconicsDrawable(getContext(),

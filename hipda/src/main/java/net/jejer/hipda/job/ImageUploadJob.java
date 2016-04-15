@@ -62,16 +62,20 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
 
     @Override
     public void itemComplete(Uri uri, int total, int current, String currentFileName, String message, String imgId, Bitmap thumbtail) {
+        UploadImage image = new UploadImage();
+        image.setFileName(currentFileName);
+        image.setImgId(imgId);
+        image.setThumb(thumbtail);
+        image.setUri(uri);
+
         ImageUploadEvent event = new ImageUploadEvent();
         event.mSessionId = mSessionId;
         event.type = ImageUploadEvent.ITEM_DONE;
-        event.uri = uri;
         event.total = total;
         event.current = current;
-        event.currentFileName = currentFileName;
         event.message = message;
-        event.thumbtail = thumbtail;
-        event.imgId = imgId;
+        event.mImage = image;
+
         if (HiApplication.isActivityVisible()) {
             EventBus.getDefault().post(event);
         } else {

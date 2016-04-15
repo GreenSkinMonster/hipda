@@ -37,7 +37,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -48,6 +47,7 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.vanniktech.emoji.EmojiEditText;
 
 import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
@@ -114,7 +114,8 @@ public class ThreadDetailFragment extends BaseFragment {
     private int mFloorOfPage = -1;    // for every page start form 1
     private boolean mInloading = false;
     private boolean mPrefetching = false;
-    private TextView mReplyTextTv;
+    private EmojiEditText mEtReply;
+    private ImageButton mIbEmojiSwitch;
     private View quickReply;
     private Handler mMsgHandler;
     private boolean mAuthorOnly = false;
@@ -177,7 +178,7 @@ public class ThreadDetailFragment extends BaseFragment {
         mLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.detail_loading);
 
         FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
-        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh_alt).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP + 4));
+        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -189,7 +190,7 @@ public class ThreadDetailFragment extends BaseFragment {
         });
 
         FloatingActionButton fabQuickReply = (FloatingActionButton) view.findViewById(R.id.action_fab_quick_reply);
-        fabQuickReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail_reply).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+        fabQuickReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_reply).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
         fabQuickReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -199,16 +200,16 @@ public class ThreadDetailFragment extends BaseFragment {
                 quickReply.bringToFront();
                 (new Handler()).postDelayed(new Runnable() {
                     public void run() {
-                        mReplyTextTv.requestFocus();
-                        mReplyTextTv.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-                        mReplyTextTv.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+                        mEtReply.requestFocus();
+                        mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                        mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
                     }
                 }, 100);
             }
         });
 
         FloatingActionButton fabGotoPage = (FloatingActionButton) view.findViewById(R.id.action_fab_goto_page);
-        fabGotoPage.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_swap).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
+        fabGotoPage.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_swap_horiz).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
         fabGotoPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -267,14 +268,15 @@ public class ThreadDetailFragment extends BaseFragment {
 
 
         quickReply = view.findViewById(R.id.quick_reply);
-        mReplyTextTv = (TextView) quickReply.findViewById(R.id.tv_reply_text);
-        mReplyTextTv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+        mEtReply = (EmojiEditText) quickReply.findViewById(R.id.tv_reply_text);
+        mEtReply.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+
         ImageButton mPostReplyIb = (ImageButton) quickReply.findViewById(R.id.ib_reply_post);
-        mPostReplyIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail_send).sizeDp(28).color(Color.GRAY));
+        mPostReplyIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
         mPostReplyIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String replyText = mReplyTextTv.getText().toString();
+                String replyText = mEtReply.getText().toString();
                 if (Utils.getWordCount(replyText) < 5) {
                     Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
                 } else {
@@ -287,23 +289,14 @@ public class ThreadDetailFragment extends BaseFragment {
                     // Close SoftKeyboard
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
                             Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mReplyTextTv.getWindowToken(), 0);
+                    imm.hideSoftInputFromWindow(mEtReply.getWindowToken(), 0);
                     mFam.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        ImageButton mGotoPostIb = (ImageButton) quickReply.findViewById(R.id.ib_goto_post);
-        mGotoPostIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail_reply).sizeDp(28).color(Color.GRAY));
-        mGotoPostIb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setHasOptionsMenu(false);
-                String replyText = mReplyTextTv.getText().toString();
-                showPost(replyText);
-                hideQuickReply();
-            }
-        });
+        mIbEmojiSwitch = (ImageButton) quickReply.findViewById(R.id.ib_goto_post);
+        setUpEmojiPopup(mEtReply, mIbEmojiSwitch);
 
         return view;
     }
@@ -843,7 +836,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
     public boolean hideQuickReply() {
         if (quickReply != null && quickReply.getVisibility() == View.VISIBLE) {
-            mReplyTextTv.setText("");
+            mEtReply.setText("");
             quickReply.setVisibility(View.INVISIBLE);
             mFam.setVisibility(View.VISIBLE);
             return true;
@@ -1044,6 +1037,10 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     public boolean onBackPressed() {
+        Logger.e("onBackPressed");
+        if (mEmojiPopup != null && mEmojiPopup.isShowing()) {
+            mEmojiPopup.dismiss();
+        }
         return hideQuickReply();
     }
 
@@ -1064,7 +1061,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (fg instanceof PostFragment) {
                 ((BaseFragment) fg).popFragment();
             } else if (quickReply.getVisibility() == View.VISIBLE) {
-                mReplyTextTv.setText("");
+                mEtReply.setText("");
                 quickReply.setVisibility(View.INVISIBLE);
             }
 

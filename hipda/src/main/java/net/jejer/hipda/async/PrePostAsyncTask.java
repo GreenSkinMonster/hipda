@@ -6,11 +6,11 @@ import android.text.TextUtils;
 
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
+import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
 import org.jsoup.Jsoup;
@@ -18,11 +18,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean> {
 
     private PrePostListener mListener;
     private Context mCtx;
     private int mMode;
+    private String mMessage;
 
     private String mUrl;
 
@@ -60,34 +64,28 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
                 break;
         }
 
-        String rsp_str = "";
-        Boolean rspOk = false;
-        int retry = 0;
-        do {
+
+        for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
             try {
-                rsp_str = OkHttpHelper.getInstance().get(mUrl);
-                if (!TextUtils.isEmpty(rsp_str)) {
-                    if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
+                String resp = OkHttpHelper.getInstance().get(mUrl);
+                if (resp != null) {
+                    if (!LoginHelper.checkLoggedin(mCtx, resp)) {
                         int status = new LoginHelper(mCtx, null).login();
                         if (status == Constants.STATUS_FAIL_ABORT) {
                             break;
                         }
                     } else {
-                        rspOk = true;
+                        Document doc = Jsoup.parse(resp);
+                        return parseRsp(doc);
                     }
                 }
             } catch (Exception e) {
-                Logger.e(e);
+                NetworkError message = OkHttpHelper.getErrorMessage(e);
+                mMessage = message.getMessage();
             }
-            retry++;
-        } while (!rspOk && retry < 3);
-
-        if (!rspOk) {
-            return null;
         }
 
-        Document doc = Jsoup.parse(rsp_str);
-        return parseRsp(doc);
+        return null;
     }
 
     private PrePostInfoBean parseRsp(Document doc) {
@@ -95,6 +93,7 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
 
         Elements formhashES = doc.select("input[name=formhash]");
         if (formhashES.size() < 1) {
+            mMessage = "页面解析错误";
             return result;
         } else {
             result.setFormhash(formhashES.first().attr("value"));
@@ -155,27 +154,27 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
         }
 
         Elements typeidES = doc.select("#typeid > option");
+        Map<String, String> values = new LinkedHashMap<>();
         for (int i = 0; i < typeidES.size(); i++) {
             Element typeidEl = typeidES.get(i);
-            result.addTypeidValues(typeidEl.val());
-            result.addTypeidNames(typeidEl.text());
-            if ("selected".equals(typeidEl.attr("selected")))
+            values.put(typeidEl.val(), typeidEl.text());
+            if (i == 0 || "selected".equals(typeidEl.attr("selected")))
                 result.setTypeid(typeidEl.val());
         }
+        result.setTypeValues(values);
         return result;
     }
 
     @Override
-    protected void onPostExecute(PrePostInfoBean result) {
-        if (result == null) {
-            mListener.PrePostComplete(mMode, false, null);
-            return;
-        }
-        mListener.PrePostComplete(mMode, !TextUtils.isEmpty(result.getFormhash()), result);
+    protected void onPostExecute(PrePostInfoBean info) {
+        if (info != null && !TextUtils.isEmpty(info.getFormhash()))
+            mListener.PrePostComplete(mMode, true, null, info);
+        else
+            mListener.PrePostComplete(mMode, false, mMessage, null);
     }
 
     public interface PrePostListener {
-        void PrePostComplete(int mode, boolean result, PrePostInfoBean info);
+        void PrePostComplete(int mode, boolean result, String message, PrePostInfoBean info);
     }
 
 }

@@ -7,17 +7,15 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,23 +23,18 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.vanniktech.emoji.EmojiEditText;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
@@ -54,6 +47,9 @@ import net.jejer.hipda.job.ImageUploadEvent;
 import net.jejer.hipda.job.ImageUploadJob;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.PostJob;
+import net.jejer.hipda.job.UploadImage;
+import net.jejer.hipda.ui.adapter.GridImageAdapter;
+import net.jejer.hipda.ui.adapter.ThreadTypeAdapter;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -66,8 +62,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class PostFragment extends BaseFragment {
@@ -87,29 +82,34 @@ public class PostFragment extends BaseFragment {
     private String mFloor;
     private String mFloorAuthor;
     private String mText;
-    private String mTypeid = "0";
+    private String mTypeId = "0";
     private int mMode;
-    private TextView mTvAdditional;
-    private EditText mEtSubjectMsg;
-    private EditText mEtReplyMsg;
+    private TextView mTvQuoteText;
+    private TextView mTvType;
+    private TextView mTvImagesInfo;
+    private EditText mEtSubject;
+    private EmojiEditText mEtContent;
+    private ImageButton mIbEmojiSwitch;
+    private int mContentPosition = -1;
+
     private PrePostAsyncTask.PrePostListener mPrePostListener = new PrePostListener();
     private PrePostInfoBean mPrePostInfo;
     private PrePostAsyncTask mPrePostAsyncTask;
+    private Snackbar mSnackbar;
+    private int mFetchInfoCount = 0;
+    private boolean mFetchingInfo = false;
+
     private String mForumName;
-
     private String mParentSessionId;
+    private Map<String, String> mTypeValues;
 
-    private Spinner mSpTypeIds;
-    private int mSpSelection;
-
-    private Map<Uri, UploadImgButton> mUploadImgButtons = new HashMap<>();
-    private HorizontalScrollView mHsvView;
+    private GridImageAdapter mImageAdapter;
     private HiProgressDialog mProgressDialog;
     private boolean mImageUploading = false;
+    private Map<Uri, UploadImage> mUploadImages = new LinkedHashMap<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Logger.v("onCreate");
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
@@ -139,121 +139,54 @@ public class PostFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
-        mEtReplyMsg = (EditText) view.findViewById(R.id.et_reply);
-        mTvAdditional = (TextView) view.findViewById(R.id.et_additional);
+        mEtContent = (EmojiEditText) view.findViewById(R.id.et_reply);
+        mTvQuoteText = (TextView) view.findViewById(R.id.tv_quote_text);
+        mTvType = (TextView) view.findViewById(R.id.tv_type);
+        mTvImagesInfo = (TextView) view.findViewById(R.id.tv_image_info);
 
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_row);
-        adapter.addAll(HiUtils.FORUMS);
+        mImageAdapter = new GridImageAdapter(getActivity());
+
+        mTvImagesInfo.setText("图片信息");
+        mTvImagesInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContentPosition = mEtContent.getSelectionStart();
+                showImagesDialog();
+            }
+        });
+        updateImageInfo();
+
         if (mFid != null && TextUtils.isDigitsOnly(mFid)) {
             mForumName = HiUtils.FORUMS[HiUtils.getForumIndexByFid(Integer.parseInt(mFid))];
         }
 
-        mSpTypeIds = (Spinner) view.findViewById(R.id.sp_typeid);
-        mSpTypeIds.setOnItemSelectedListener(new TypeidSelectListener());
-
-        mEtSubjectMsg = (EditText) view.findViewById(R.id.et_subject);
-
-        mEtReplyMsg.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
-        mTvAdditional.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+        mEtSubject = (EditText) view.findViewById(R.id.et_subject);
+        mEtContent.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+        mEtSubject.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && mEmojiPopup != null && mEmojiPopup.isShowing())
+                    mEmojiPopup.dismiss();
+            }
+        });
 
         if (mMode == PostHelper.MODE_REPLY_THREAD && !TextUtils.isEmpty(mText)) {
-            mEtReplyMsg.setText(mText);
+            mEtContent.setText(mText);
         }
 
-        final ExpandableHeightGridView gvTab1 = (ExpandableHeightGridView) view.findViewById(R.id.tab1_emoji);
-        gvTab1.setExpanded(true);
-        gvTab1.setAdapter(new EmojiAdapter(getActivity(), 1));
-        gvTab1.setOnItemClickListener(new GridView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), (String) gvTab1.getAdapter().getItem(position));
-            }
-        });
-        final ExpandableHeightGridView gvTab2 = (ExpandableHeightGridView) view.findViewById(R.id.tab2_emoji);
-        gvTab2.setExpanded(true);
-        gvTab2.setAdapter(new EmojiAdapter(getActivity(), 2));
-        gvTab2.setOnItemClickListener(new GridView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), (String) gvTab2.getAdapter().getItem(position));
-            }
-        });
-        final ExpandableHeightGridView gvTab3 = (ExpandableHeightGridView) view.findViewById(R.id.tab3_emoji);
-        gvTab3.setExpanded(true);
-        gvTab3.setAdapter(new EmojiAdapter(getActivity(), 3));
-        gvTab3.setOnItemClickListener(new GridView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), (String) gvTab3.getAdapter().getItem(position));
-            }
-        });
-
-        TypedValue typedValue = new TypedValue();
-        getActivity().getTheme().resolveAttribute(R.attr.background, typedValue, true);
-        final int selectedBtnColorId = typedValue.resourceId;
-
-        WindowManager w = getActivity().getWindowManager();
-        Point size = new Point();
-        w.getDefaultDisplay().getSize(size);
-        int measuredWidth = size.x;
-
-        final Button emojiBtn1 = (Button) view.findViewById(R.id.btn1_emoji);
-        final Button emojiBtn2 = (Button) view.findViewById(R.id.btn2_emoji);
-        final Button emojiBtn3 = (Button) view.findViewById(R.id.btn3_emoji);
-        emojiBtn1.setWidth(measuredWidth / 3);
-        emojiBtn2.setWidth(measuredWidth / 3);
-        emojiBtn3.setWidth(measuredWidth / 3);
-        emojiBtn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                emojiBtn1.setBackgroundColor(ContextCompat.getColor(getActivity(), selectedBtnColorId));
-                emojiBtn2.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
-                emojiBtn3.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
-                gvTab1.setVisibility(View.VISIBLE);
-                gvTab2.setVisibility(View.GONE);
-                gvTab3.setVisibility(View.GONE);
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
-            }
-        });
-        emojiBtn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                emojiBtn1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
-                emojiBtn2.setBackgroundColor(ContextCompat.getColor(getActivity(), selectedBtnColorId));
-                emojiBtn3.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
-                gvTab1.setVisibility(View.GONE);
-                gvTab2.setVisibility(View.VISIBLE);
-                gvTab3.setVisibility(View.GONE);
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
-            }
-        });
-        emojiBtn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                emojiBtn1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
-                emojiBtn2.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
-                emojiBtn3.setBackgroundColor(ContextCompat.getColor(getActivity(), selectedBtnColorId));
-                gvTab1.setVisibility(View.GONE);
-                gvTab2.setVisibility(View.GONE);
-                gvTab3.setVisibility(View.VISIBLE);
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
-            }
-        });
-
         final ImageButton ibReply = (ImageButton) view.findViewById(R.id.ib_reply);
-        ibReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_mail_send).sizeDp(28).color(ColorUtils.getColorAccent(getActivity())));
+        ibReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(ColorUtils.getColorAccent(getActivity())));
         ibReply.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
                 postReply();
             }
         });
+
+        mIbEmojiSwitch = (ImageButton) view.findViewById(R.id.ib_emoji_switch);
+        setUpEmojiPopup(mEtContent, mIbEmojiSwitch);
 
         return view;
     }
@@ -264,15 +197,29 @@ public class PostFragment extends BaseFragment {
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         if (mPrePostInfo == null) {
-            mTvAdditional.setText("正在收集信息");
-            mPrePostAsyncTask = new PrePostAsyncTask(getActivity(), mPrePostListener, mMode);
-            PostBean postBean = new PostBean();
-            postBean.setTid(mTid);
-            postBean.setPid(mPid);
-            postBean.setFid(mFid);
-            mPrePostAsyncTask.execute(postBean);
+            fetchPrePostInfo();
         } else {
             setupPrePostInfo();
+        }
+
+        if (mMode == PostHelper.MODE_NEW_THREAD) {
+            (new Handler()).postDelayed(new Runnable() {
+                public void run() {
+                    mEtSubject.requestFocus();
+                    long t = SystemClock.uptimeMillis();
+                    mEtSubject.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
+                    mEtSubject.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
+                }
+            }, 100);
+        } else {
+            (new Handler()).postDelayed(new Runnable() {
+                public void run() {
+                    mEtContent.requestFocus();
+                    long t = SystemClock.uptimeMillis();
+                    mEtContent.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
+                    mEtContent.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
+                }
+            }, 100);
         }
     }
 
@@ -284,19 +231,18 @@ public class PostFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        Logger.v("onDestroy");
+        if (mSnackbar != null)
+            mSnackbar.dismiss();
         mPrePostAsyncTask.cancel(true);
+        super.onDestroy();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Logger.v("onCreateOptionsMenu");
-
         menu.clear();
         inflater.inflate(R.menu.menu_reply, menu);
 
-        menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_comment_image).actionBar().color(Color.WHITE));
+        menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_add_a_photo).actionBar().color(Color.WHITE));
 
         setActionBarTitle(R.string.action_reply);
         setActionBarDisplayHomeAsUpEnabled(true);
@@ -313,8 +259,7 @@ public class PostFragment extends BaseFragment {
                 break;
             case PostHelper.MODE_NEW_THREAD:
                 setActionBarTitle(mForumName);
-                mSpTypeIds.setVisibility(View.VISIBLE);
-                mEtSubjectMsg.setVisibility(View.VISIBLE);
+                mEtSubject.setVisibility(View.VISIBLE);
                 break;
             case PostHelper.MODE_EDIT_POST:
                 setActionBarTitle(getActivity().getResources().getString(R.string.action_edit));
@@ -332,8 +277,10 @@ public class PostFragment extends BaseFragment {
                 return false;
             case R.id.action_upload_img:
                 if (mPrePostInfo == null) {
+                    fetchPrePostInfo();
                     Toast.makeText(getActivity(), "请等待信息收集结束再选择图片", Toast.LENGTH_LONG).show();
                 } else {
+                    mContentPosition = mEtContent.getSelectionStart();
                     Intent intent = new Intent();
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -353,16 +300,20 @@ public class PostFragment extends BaseFragment {
     }
 
     private void postReply() {
-        if (mPrePostInfo == null)
+        if (mPrePostInfo == null) {
+            fetchPrePostInfo();
             Toast.makeText(getActivity(), "请等待信息收集结束再发送", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        if (mSpTypeIds.getVisibility() == View.VISIBLE && (HiUtils.FID_BS + "").equals(mFid) && "0".equals(mTypeid)) {
+        if (mMode == PostHelper.MODE_NEW_THREAD &&
+                (HiUtils.FID_BS + "").equals(mFid) && "0".equals(mTypeId)) {
             Toast.makeText(getActivity(), "B&S版发帖必须指定分类", Toast.LENGTH_LONG).show();
             return;
         }
 
-        String subjectText = mEtSubjectMsg.getText().toString();
-        if (mEtSubjectMsg.getVisibility() == View.VISIBLE) {
+        String subjectText = mEtSubject.getText().toString();
+        if (mEtSubject.getVisibility() == View.VISIBLE) {
             if (Utils.getWordCount(subjectText) < 5) {
                 Toast.makeText(getActivity(), "主题字数必须大于 5", Toast.LENGTH_LONG).show();
                 return;
@@ -373,20 +324,20 @@ public class PostFragment extends BaseFragment {
             }
         }
 
-        String replyText = mEtReplyMsg.getText().toString();
+        String replyText = mEtContent.getText().toString();
         if (Utils.getWordCount(replyText) < 5) {
             Toast.makeText(getActivity(), "帖子内容字数必须大于 5", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if (mUploadImgButtons.size() > 0) {
+        if (mUploadImages.size() > 0) {
             boolean needWarn = false;
-            for (UploadImgButton uploadBtn : mUploadImgButtons.values()) {
+            for (UploadImage uploadBtn : mUploadImages.values()) {
                 if (isValidImgId(uploadBtn.getImgId())) {
                     String attachStr = "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]";
                     if (!replyText.contains(attachStr)) {
                         needWarn = true;
-                        uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.orange));
+                        //uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.orange));
                     }
                 }
             }
@@ -401,7 +352,7 @@ public class PostFragment extends BaseFragment {
         postBean.setTid(mTid);
         postBean.setPid(mPid);
         postBean.setFid(mFid);
-        postBean.setTypeid(mTypeid);
+        postBean.setTypeid(mTypeId);
         postBean.setSubject(subjectText);
         postBean.setFloor(mFloor);
 
@@ -409,12 +360,11 @@ public class PostFragment extends BaseFragment {
 
         // Close SoftKeyboard
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mEtReplyMsg.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(mEtContent.getWindowToken(), 0);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Logger.v("onActivityResult");
         //avoid double click select button
         if (mImageUploading) {
             return;
@@ -434,105 +384,90 @@ public class PostFragment extends BaseFragment {
                 if (clipData != null && clipData.getItemCount() > 0) {
                     for (int i = 0; i < clipData.getItemCount(); i++) {
                         Uri tmp = clipData.getItemAt(i).getUri();
-                        if (!mUploadImgButtons.containsKey(tmp))
+                        if (!mUploadImages.containsKey(tmp))
                             uris.add(tmp);
                     }
                     findData = true;
                 }
             }
             if (!findData && data.getData() != null) {
-                if (!mUploadImgButtons.containsKey(data.getData()))
+                if (!mUploadImages.containsKey(data.getData()))
                     uris.add(data.getData());
             }
 
             if (uris.size() == 0) {
-                Toast.makeText(getActivity(), "选择的图片重复了", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "选择的图片重复", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             mProgressDialog = HiProgressDialog.show(getActivity(), "处理中...");
-
-            //generate upload image buttons
-            for (Uri uri : uris) {
-                final UploadImgButton uploadBtn = new UploadImgButton(getActivity());
-                uploadBtn.setOnClickListener(new Button.OnClickListener() {
-                    @Override
-                    public void onClick(View arg0) {
-                        if (isValidImgId(uploadBtn.getImgId())) {
-                            appendImage(uploadBtn.getImgId());
-                            uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.hipda));
-                        }
-                    }
-                });
-                uploadBtn.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        if (isValidImgId(uploadBtn.getImgId())) {
-                            mPrePostInfo.removeAttach(uploadBtn.getImgId());
-                            mPrePostInfo.addAttachdel(uploadBtn.getImgId());
-                        }
-
-                        Uri key = null;
-                        for (Map.Entry<Uri, UploadImgButton> entry : mUploadImgButtons.entrySet()) {
-                            if (entry.getValue().equals(uploadBtn)) {
-                                key = entry.getKey();
-                                break;
-                            }
-                        }
-                        if (key != null)
-                            mUploadImgButtons.remove(key);
-
-                        uploadBtn.setVisibility(View.GONE);
-                        if (!TextUtils.isEmpty(mEtReplyMsg.getText()) && isValidImgId(uploadBtn.getImgId()))
-                            mEtReplyMsg.setText(mEtReplyMsg.getText().toString().replace("[attachimg]" + uploadBtn.getImgId() + "[/attachimg]", ""));
-                        if (mUploadImgButtons.size() == 0 && mHsvView.getVisibility() == View.VISIBLE)
-                            mHsvView.setVisibility(View.GONE);
-                        return true;
-                    }
-                });
-                mUploadImgButtons.put(uri, uploadBtn);
-
-                mHsvView = (HorizontalScrollView) getActivity().findViewById(R.id.hsv_images);
-                if (mHsvView.getVisibility() == View.GONE)
-                    mHsvView.setVisibility(View.VISIBLE);
-                LinearLayout imagesLayout = (LinearLayout) getActivity().findViewById(R.id.ll_images);
-                uploadBtn.setPadding(4, 4, 4, 4);
-                uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_grey));
-                uploadBtn.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_action_image));
-                uploadBtn.setAdjustViewBounds(true);
-                uploadBtn.setScaleType(ImageView.ScaleType.FIT_XY);
-                LinearLayout.LayoutParams params =
-                        new LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT);
-                params.setMargins(2, 0, 2, 6);
-                imagesLayout.addView(uploadBtn, params);
-            }
-
             JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), uris.toArray(new Uri[uris.size()])));
         }
     }
 
-    public void appendImage(String imgId) {
+    private void updateImageInfo() {
+        if (mUploadImages.size() > 0) {
+            mTvImagesInfo.setVisibility(View.VISIBLE);
+            mTvImagesInfo.setText("图片 <" + mUploadImages.size() + ">");
+            if (mImageAdapter != null)
+                mImageAdapter.setImages(mUploadImages.values());
+        } else {
+            mTvImagesInfo.setText("没有图片");
+            mTvImagesInfo.setVisibility(View.GONE);
+        }
+    }
+
+    private void appendImage(String imgId) {
         if (isValidImgId(imgId)) {
-            mEtReplyMsg.getText().insert(mEtReplyMsg.getSelectionStart(), "\n[attachimg]" + imgId + "[/attachimg]");
+            String imgTxt = "[attachimg]" + imgId + "[/attachimg]";
+            int selectionStart = mContentPosition;
+            if (mContentPosition < 0 || mContentPosition > mEtContent.length())
+                selectionStart = mEtContent.getSelectionStart();
+            if (selectionStart > 0 && mEtContent.getText().charAt(selectionStart - 1) != '\n')
+                imgTxt = "\n" + imgTxt;
+            if (mEtContent.getText().length() > selectionStart && mEtContent.getText().charAt(selectionStart) != '\n')
+                imgTxt = imgTxt + "\n";
+            mEtContent.getText().insert(selectionStart, imgTxt);
             mPrePostInfo.addAttach(imgId);
         }
     }
 
     private class PrePostListener implements PrePostAsyncTask.PrePostListener {
         @Override
-        public void PrePostComplete(int mode, boolean result, PrePostInfoBean info) {
-            if (mTvAdditional == null)
-                return;
+        public void PrePostComplete(int mode, boolean result, String message, PrePostInfoBean info) {
+            mFetchingInfo = false;
             if (result) {
                 mPrePostInfo = info;
                 setupPrePostInfo();
+                if (mFetchInfoCount > 1)
+                    Toast.makeText(getActivity(), "收集信息成功", Toast.LENGTH_SHORT).show();
             } else {
-                mTvAdditional.setVisibility(View.VISIBLE);
-                mTvAdditional.setText("收集信息失败，请返回重试");
-                mTvAdditional.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
+                if (getView() != null) {
+                    mSnackbar = Snackbar.make(getView(), "收集信息失败 : " + message, Snackbar.LENGTH_LONG);
+                    UIUtils.setSnackbarMessageTextColor(mSnackbar, ContextCompat.getColor(getActivity(), R.color.md_yellow_500));
+                    mSnackbar.setAction("重试", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            fetchPrePostInfo();
+                            mSnackbar.dismiss();
+                        }
+                    });
+                    mSnackbar.show();
+                }
             }
+        }
+    }
+
+    private void fetchPrePostInfo() {
+        if (!mFetchingInfo) {
+            mFetchingInfo = true;
+            mFetchInfoCount++;
+            mPrePostAsyncTask = new PrePostAsyncTask(getActivity(), mPrePostListener, mMode);
+            PostBean postBean = new PostBean();
+            postBean.setTid(mTid);
+            postBean.setPid(mPid);
+            postBean.setFid(mFid);
+            mPrePostAsyncTask.execute(postBean);
         }
     }
 
@@ -540,99 +475,40 @@ public class PostFragment extends BaseFragment {
         if (mPrePostInfo == null)
             return;
 
-        mTvAdditional.setVisibility(View.GONE);
         getActivity().invalidateOptionsMenu();
 
-        if (mMode == PostHelper.MODE_NEW_THREAD
-                && (mSpTypeIds.getAdapter() == null
-                || mSpTypeIds.getAdapter().getCount() == 0)) {
-            KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
-            List<String> typeids = mPrePostInfo.getTypeidValues();
-            if (typeids != null && typeids.size() > 0) {
-                adapter.setEntryValues(mPrePostInfo.getTypeidValues().toArray(new String[typeids.size()]));
-                adapter.setEntries(mPrePostInfo.getTypeidNames().toArray(new String[typeids.size()]));
-                mSpTypeIds.setAdapter(adapter);
-                mSpTypeIds.setVisibility(View.VISIBLE);
-                if (mSpSelection >= 0 && mSpSelection < adapter.getCount())
-                    mSpTypeIds.setSelection(mSpSelection);
-            } else {
-                String[] noNames = {"无分类"};
-                String[] noValues = {"0"};
-                adapter.setEntries(noNames);
-                adapter.setEntryValues(noValues);
-                mSpTypeIds.setAdapter(adapter);
-                mSpTypeIds.setVisibility(View.VISIBLE);
-                mSpTypeIds.setEnabled(false);
-            }
+        mTypeValues = mPrePostInfo.getTypeValues();
+        mTypeId = mPrePostInfo.getTypeid();
+
+        if (mTypeValues.size() > 0) {
+            mTvType.setText(mTypeValues.get(mTypeId));
+            mTvType.setTag(mTypeId);
+            mTvType.setVisibility(View.VISIBLE);
+            mTvType.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showThreadTypesDialog();
+                }
+            });
         }
 
         if (!TextUtils.isEmpty(mPrePostInfo.getText())) {
             if (mMode == PostHelper.MODE_EDIT_POST) {
-                mEtReplyMsg.setText(mPrePostInfo.getText());
+                mEtContent.setText(mPrePostInfo.getText());
                 if (!TextUtils.isEmpty(mPrePostInfo.getSubject())) {
-                    mEtSubjectMsg.setText(mPrePostInfo.getSubject());
-                    mEtSubjectMsg.setVisibility(View.VISIBLE);
-                }
-                List<String> typeids = mPrePostInfo.getTypeidValues();
-                if (typeids != null && typeids.size() > 0) {
-                    String typeid = mPrePostInfo.getTypeid();
-                    KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
-                    adapter.setEntryValues(mPrePostInfo.getTypeidValues().toArray(new String[typeids.size()]));
-                    adapter.setEntries(mPrePostInfo.getTypeidNames().toArray(new String[typeids.size()]));
-                    mSpTypeIds.setAdapter(adapter);
-                    mSpTypeIds.setVisibility(View.VISIBLE);
-                    for (int i = 0; i < typeids.size(); i++) {
-                        String tmpid = typeids.get(i);
-                        if (tmpid.equals(typeid)) {
-                            mSpTypeIds.setSelection(i);
-                            break;
-                        }
-                    }
+                    mEtSubject.setText(mPrePostInfo.getSubject());
+                    mEtSubject.setVisibility(View.VISIBLE);
                 }
             } else {
-                mTvAdditional.setText(Utils.trim(mText));
-                mTvAdditional.setVisibility(View.VISIBLE);
-                mTvAdditional.setOnClickListener(new View.OnClickListener() {
+                mTvQuoteText.setText(mText);
+                mTvQuoteText.setVisibility(View.VISIBLE);
+                mTvQuoteText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        UIUtils.showMessageDialog(getActivity(), "详细内容", mText);
+                        UIUtils.showMessageDialog(getActivity(), mFloor + "# " + mFloorAuthor, mText);
                     }
                 });
             }
-        }
-
-        if (mMode == PostHelper.MODE_NEW_THREAD) {
-            (new Handler()).postDelayed(new Runnable() {
-                public void run() {
-                    mEtSubjectMsg.requestFocus();
-                    long t = SystemClock.uptimeMillis();
-                    mEtSubjectMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
-                    mEtSubjectMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
-                }
-            }, 100);
-        } else {
-            (new Handler()).postDelayed(new Runnable() {
-                public void run() {
-                    mEtReplyMsg.requestFocus();
-                    long t = SystemClock.uptimeMillis();
-                    mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
-                    mEtReplyMsg.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
-                    mEtReplyMsg.setSelection(mEtReplyMsg.getText().length());
-                }
-            }, 100);
-        }
-    }
-
-    private class TypeidSelectListener implements Spinner.OnItemSelectedListener {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            KeyValueArrayAdapter adapter = (KeyValueArrayAdapter) parent.getAdapter();
-            mTypeid = adapter.getEntryValue(pos);
-            mSpSelection = pos;
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
         }
     }
 
@@ -643,9 +519,9 @@ public class PostFragment extends BaseFragment {
     }
 
     public boolean isUserInputted() {
-        return !TextUtils.isEmpty(mEtReplyMsg.getText())
-                || !TextUtils.isEmpty(mEtSubjectMsg.getText())
-                || mUploadImgButtons.size() > 0;
+        return !TextUtils.isEmpty(mEtContent.getText())
+                || !TextUtils.isEmpty(mEtSubject.getText())
+                || mUploadImages.size() > 0;
     }
 
     @Override
@@ -673,6 +549,55 @@ public class PostFragment extends BaseFragment {
         return false;
     }
 
+    private void showThreadTypesDialog() {
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View viewlayout = inflater.inflate(R.layout.dialog_forum_types, null);
+
+        final ListView listView = (ListView) viewlayout.findViewById(R.id.lv_forum_types);
+
+        listView.setAdapter(new ThreadTypeAdapter(getActivity(), mTypeValues));
+
+        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
+        popDialog.setView(viewlayout);
+        final AlertDialog dialog = popDialog.create();
+        dialog.show();
+
+        listView.setOnItemClickListener(new OnViewItemSingleClickListener() {
+            @Override
+            public void onItemSingleClick(AdapterView<?> adapterView, View view, int position, long row) {
+                String key = mTypeValues.keySet().toArray()[position].toString();
+                mTypeId = key;
+                mTvType.setText(mTypeValues.get(mTypeId));
+                dialog.dismiss();
+            }
+        });
+
+    }
+
+    private void showImagesDialog() {
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View viewlayout = inflater.inflate(R.layout.dialog_images, null);
+
+        final GridView gridView = (GridView) viewlayout.findViewById(R.id.gv_images);
+
+        gridView.setAdapter(mImageAdapter);
+
+        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
+        popDialog.setView(viewlayout);
+        final AlertDialog dialog = popDialog.create();
+        dialog.show();
+
+        gridView.setOnItemClickListener(new OnViewItemSingleClickListener() {
+            @Override
+            public void onItemSingleClick(AdapterView<?> adapterView, View view, int position, long row) {
+                if (view.getTag() != null)
+                    appendImage(view.getTag().toString());
+                dialog.dismiss();
+            }
+        });
+
+    }
+
     private void imageProcess(int total, int current, int percentage) {
         StringBuilder sb = new StringBuilder();
         if (total > 1)
@@ -688,30 +613,22 @@ public class PostFragment extends BaseFragment {
         mProgressDialog.setMessage(sb.toString());
     }
 
-    private void imageDone(Uri uri, String fileName, String message, String imgId, Bitmap thumbtail) {
-        UploadImgButton uploadBtn = mUploadImgButtons.get(uri);
-        if (isValidImgId(imgId)) {
-            uploadBtn.setImgId(imgId);
-            uploadBtn.setImageBitmap(thumbtail);
-            uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.hipda));
-            appendImage(imgId);
+    private void imageDone(ImageUploadEvent event) {
+        UploadImage image = event.mImage;
+        mUploadImages.put(image.getUri(), image);
+        if (isValidImgId(image.getImgId())) {
+            mEmojiPopup.addImage(image.getImgId(), image.getThumb());
+            appendImage(image.getImgId());
         } else {
-            Toast.makeText(getActivity(), "图片上传失败："
-                    + (!TextUtils.isEmpty(fileName) ? fileName : "")
-                    + "\n"
-                    + Utils.nullToText(message), Toast.LENGTH_LONG).show();
-            uploadBtn.setVisibility(View.GONE);
-            mUploadImgButtons.remove(uri);
-            if (mUploadImgButtons.size() == 0 && mHsvView.getVisibility() == View.VISIBLE) {
-                mHsvView.setVisibility(View.GONE);
-            }
+            UIUtils.errorSnack(getView(), "图片上传失败：" + Utils.nullToText(event.message), event.mDetail);
         }
+        updateImageInfo();
     }
 
     private void imageAllDone() {
         mImageUploading = false;
-        if (mProgressDialog != null)
-            mProgressDialog.dismiss("上传完成");
+        mProgressDialog.dismiss();
+        updateImageInfo();
     }
 
     @SuppressWarnings("unused")
@@ -730,7 +647,7 @@ public class PostFragment extends BaseFragment {
             if (evt.type == ImageUploadEvent.UPLOADING) {
                 imageProcess(evt.total, evt.current, evt.percentage);
             } else if (evt.type == ImageUploadEvent.ITEM_DONE) {
-                imageDone(evt.uri, evt.currentFileName, evt.message, evt.imgId, evt.thumbtail);
+                imageDone(evt);
             } else if (evt.type == ImageUploadEvent.ALL_DONE) {
                 imageAllDone();
             }

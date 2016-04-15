@@ -234,6 +234,10 @@ public class OkHttpHelper {
     };
 
     public static NetworkError getErrorMessage(Exception e) {
+        return getErrorMessage(e, true);
+    }
+
+    public static NetworkError getErrorMessage(Exception e, boolean longVersion) {
         String msg = e.getClass().getSimpleName();
         if (HiApplication.getAppContext() != null
                 && !Connectivity.isConnected(HiApplication.getAppContext())) {
@@ -248,7 +252,8 @@ public class OkHttpHelper {
                 msg = "错误代码 (" + emsg.substring("Unexpected code ".length(), emsg.indexOf(",")) + ")";
             }
         }
-        msg = "加载失败 : " + msg;
+        if (longVersion)
+            msg = "加载失败 : " + msg;
         return new NetworkError(msg, e.getClass().getName() + "\n" + e.getMessage());
     }
 

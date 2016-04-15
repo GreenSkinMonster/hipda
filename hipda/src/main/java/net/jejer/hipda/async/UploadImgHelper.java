@@ -207,7 +207,8 @@ public class UploadImgHelper {
             postSize = Math.min(bytesLeft, maxPostSize);
             final Thread thread = Thread.currentThread();
             long mark = SystemClock.uptimeMillis();
-            long progressMark = 0;
+            int lastProgress = 0;
+
             while (bytesLeft > 0) {
                 if (thread.isInterrupted()) {
                     throw new InterruptedIOException();
@@ -220,10 +221,9 @@ public class UploadImgHelper {
                     mark = SystemClock.uptimeMillis();
                     out.flush();
                 }
-                if (SystemClock.uptimeMillis() - progressMark > 250) {
-                    progressMark = SystemClock.uptimeMillis();
-                    updateProgress((transferred * 100) / baos.size());
-                }
+                int progress = (transferred * 100) / baos.size();
+                if (progress >= 95 || progress - lastProgress >= 5)
+                    updateProgress(progress);
             }
 
             //yes, write twice

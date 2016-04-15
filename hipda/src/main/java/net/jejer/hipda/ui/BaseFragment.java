@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBar;
@@ -16,9 +17,19 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.Drawer;
+import com.vanniktech.emoji.EmojiEditText;
+import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.emoji.Emoji;
+import com.vanniktech.emoji.listeners.OnEmojiClickedListener;
+import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
+import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
+import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
@@ -39,6 +50,9 @@ public abstract class BaseFragment extends Fragment {
 
     protected static final int FAB_ICON_SIZE_DP = 20;
     protected String mSessionId;
+    protected EmojiPopup mEmojiPopup;
+    protected IconicsDrawable mKeyboardDrawable;
+    protected IconicsDrawable mFaceDrawable;
 
     protected void setActionBarTitle(CharSequence title) {
         if (getActivity() != null) {
@@ -93,19 +107,19 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        if (mEmojiPopup != null)
+            mEmojiPopup.cleanup();
         super.onDestroy();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Logger.v("onAttach : " + getClass().getName());
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Logger.v("onDetach : " + getClass().getName());
     }
 
     public void scrollToTop() {
@@ -247,6 +261,44 @@ public abstract class BaseFragment extends Fragment {
 
     public boolean popFragment() {
         return getActivity() != null && ((MainFrameActivity) getActivity()).popFragment();
+    }
+
+    protected void setUpEmojiPopup(final EmojiEditText mEtContent, final ImageButton mIbEmojiSwitch) {
+        if (mKeyboardDrawable == null)
+            mKeyboardDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_keyboard).sizeDp(28).color(Color.GRAY);
+        if (mFaceDrawable == null)
+            mFaceDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_tag_faces).sizeDp(28).color(Color.GRAY);
+
+        mIbEmojiSwitch.setImageDrawable(mFaceDrawable);
+        mIbEmojiSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEmojiPopup.toggle();
+            }
+        });
+
+        mEmojiPopup = ((MainFrameActivity) getActivity()).getEmojiBuilder()
+                .setOnEmojiClickedListener(new OnEmojiClickedListener() {
+                    @Override
+                    public void onEmojiClicked(final Emoji emoji) {
+                        mEtContent.requestFocus();
+                    }
+                }).setOnEmojiPopupShownListener(new OnEmojiPopupShownListener() {
+                    @Override
+                    public void onEmojiPopupShown() {
+                        mIbEmojiSwitch.setImageDrawable(mKeyboardDrawable);
+                    }
+                }).setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
+                    @Override
+                    public void onEmojiPopupDismiss() {
+                        mIbEmojiSwitch.setImageDrawable(mFaceDrawable);
+                    }
+                }).setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
+                    @Override
+                    public void onKeyboardClose() {
+                        mEmojiPopup.dismiss();
+                    }
+                }).build(mEtContent);
     }
 
     @SuppressWarnings("unused")

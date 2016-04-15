@@ -1,181 +1,124 @@
-<net.jejer.hipda.ui.SlidingScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-                                      android:layout_width="match_parent"
-                                      android:layout_height="match_parent"
-                                      android:background="?list_item_background">
+<net.jejer.hipda.ui.SlidingLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?list_item_background"
+    android:clickable="true"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/layout_post"
+    <EditText
+        android:id="@+id/et_subject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
         android:gravity="bottom"
-        android:orientation="vertical">
+        android:hint="@string/hint_subject"
+        android:inputType="none"
+        android:singleLine="true"
+        android:textSize="20sp"
+        android:visibility="gone"/>
 
-        <EditText
-            android:id="@+id/et_additional"
-            android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_quote_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:background="@drawable/rounded_corner"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:padding="4dp"
+        android:text=""
+        android:textSize="17sp"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
+
+        <TextView
+            android:id="@+id/tv_prepost_info"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
             android:layout_margin="4dp"
-            android:background="@drawable/rounded_corner"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:gravity="left"
-            android:inputType="none"
-            android:maxLines="4"
+            android:background="@drawable/lable_background"
             android:padding="6dp"
             android:text=""
-            android:textSize="16sp"/>
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/et_subject"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/sp_typeid"
-                android:gravity="bottom"
-                android:hint="@string/hint_subject"
-                android:inputType="none"
-                android:singleLine="false"
-                android:textSize="20sp"
-                android:visibility="gone"/>
-
-            <Spinner
-                android:id="@+id/sp_typeid"
-                android:layout_width="@dimen/post_type_spinner_width"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"/>
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/et_reply"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@+id/ib_reply"
-                android:gravity="bottom"
-                android:inputType="textMultiLine"
-                android:minLines="6"
-                android:singleLine="false"
-                android:textSize="16sp"/>
-
-            <ImageButton
-                android:id="@+id/ib_reply"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="4dp"
-                android:background="?android:selectableItemBackground"/>
-
-        </RelativeLayout>
-
-
-        <HorizontalScrollView
-            android:id="@+id/hsv_images"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:id="@+id/ll_images"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"/>
-        </HorizontalScrollView>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/background_grey"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="0dp">
-
-            <Button
-                android:id="@+id/btn1_emoji"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:background="?attr/background"
-                android:text="默认表情"/>
-
-            <Button
-                android:id="@+id/btn2_emoji"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:background="@color/background_grey"
-                android:text="酷酷猴"/>
-
-            <Button
-                android:id="@+id/btn3_emoji"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:background="@color/background_grey"
-                android:text="呆呆男"/>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="?attr/background"/>
-
-        <net.jejer.hipda.ui.ExpandableHeightGridView
-            android:id="@+id/tab1_emoji"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnWidth="40dp"
-            android:gravity="center"
-            android:horizontalSpacing="6dp"
-            android:isScrollContainer="false"
-            android:numColumns="auto_fit"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="6dp"/>
-
-        <net.jejer.hipda.ui.ExpandableHeightGridView
-            android:id="@+id/tab2_emoji"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnWidth="40dp"
-            android:gravity="center"
-            android:horizontalSpacing="6dp"
-            android:isScrollContainer="false"
-            android:numColumns="auto_fit"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="6dp"
+            android:textColor="@color/md_white_1000"
+            android:textSize="17sp"
             android:visibility="gone"/>
 
-        <net.jejer.hipda.ui.ExpandableHeightGridView
-            android:id="@+id/tab3_emoji"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_type"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:columnWidth="40dp"
-            android:gravity="center"
-            android:horizontalSpacing="6dp"
-            android:isScrollContainer="false"
-            android:numColumns="auto_fit"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="6dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/lable_background"
+            android:padding="4dp"
+            android:text=""
+            android:textColor="@color/md_white_1000"
+            android:textSize="17sp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv_image_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:background="@drawable/lable_background"
+            android:padding="4dp"
+            android:text=""
+            android:textColor="@color/md_white_1000"
+            android:textSize="17sp"
             android:visibility="gone"/>
 
     </LinearLayout>
 
-</net.jejer.hipda.ui.SlidingScrollView>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true">
+
+        <ImageButton
+            android:id="@+id/ib_emoji_switch"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="4dp"
+            android:background="?android:selectableItemBackground"/>
+
+        <ImageButton
+            android:id="@+id/ib_reply"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="4dp"
+            android:background="?android:selectableItemBackground"/>
+
+        <com.vanniktech.emoji.EmojiEditText
+            android:id="@+id/et_reply"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/ib_reply"
+            android:layout_toRightOf="@+id/ib_emoji_switch"
+            android:gravity="bottom"
+            android:inputType="textMultiLine"
+            android:minLines="6"
+            android:scrollbars="vertical"
+            android:singleLine="false"
+            android:textSize="16sp"
+            app:emojiSize="26sp"/>
+
+    </RelativeLayout>
+
+</net.jejer.hipda.ui.SlidingLinearLayout>

@@ -1,6 +1,7 @@
 package net.jejer.hipda.bean;
 
 import net.jejer.hipda.ui.textstyle.TextStyle;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -154,7 +155,7 @@ public class DetailBean {
                 if (o instanceof ContentText || o instanceof ContentQuote)
                     sb.append(o.getCopyText());
             }
-            return sb.toString();
+            return Utils.trim(sb.toString());
         }
 
         public String getContent() {

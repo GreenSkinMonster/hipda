@@ -55,7 +55,7 @@ public class UIUtils {
         return snackbar;
     }
 
-    private static void setSnackbarMessageTextColor(Snackbar snackbar, int color) {
+    public static void setSnackbarMessageTextColor(Snackbar snackbar, int color) {
         View view = snackbar.getView();
         ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(color);
     }

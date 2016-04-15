@@ -18,7 +18,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="?attr/actionBarMargin"
             android:background="?attr/selectableItemBackground"
-            android:text="{gmd-arrow-left}"
+            android:text="{gmd-arrow-back}"
             android:textColor="@color/white"
             android:textSize="24sp"/>
 

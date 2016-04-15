@@ -46,6 +46,7 @@ import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.vanniktech.emoji.EmojiPopup;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
@@ -80,6 +81,7 @@ public class MainFrameActivity extends AppCompatActivity {
     public Drawer drawer;
     private AccountHeader accountHeader;
     private ActionMode mActionMode;
+    private View rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +105,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_frame);
+        rootView = findViewById(R.id.main_activity_root_view);
 
         setupDrawer();
 
@@ -213,8 +216,8 @@ public class MainFrameActivity extends AppCompatActivity {
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_assignment_account));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_comments));
+        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_assignment_ind));
+        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_assignment));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_email)
                 .withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.grey)));
@@ -603,6 +606,10 @@ public class MainFrameActivity extends AppCompatActivity {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         }
+    }
+
+    public EmojiPopup.Builder getEmojiBuilder() {
+        return EmojiPopup.Builder.fromRootView(rootView);
     }
 
     @SuppressWarnings("unused")
