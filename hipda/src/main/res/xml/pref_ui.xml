@@ -89,7 +89,7 @@
             android:title="@string/pref_title_gesture_back"/>
 
         <ListPreference
-            android:defaultValue=""
+            android:defaultValue="0"
             android:entries="@array/pref_icon"
             android:entryValues="@array/pref_icon_values"
             android:key="PERF_ICON"

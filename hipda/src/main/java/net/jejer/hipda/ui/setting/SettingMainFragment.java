@@ -117,7 +117,7 @@ public class SettingMainFragment extends BaseSettingFragment {
             ((MainFrameActivity) getActivity()).drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
         String newIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
-        if (!mIcon.equals(newIcon))
+        if (TextUtils.isDigitsOnly(newIcon) && !mIcon.equals(newIcon))
             setIcon(Integer.parseInt(newIcon));
 
         if (mCacheCleared
