@@ -39,11 +39,11 @@ public class UploadImgHelper {
 
     public final static int STAGE_UPLOADING = -1;
     public final static int MAX_QUALITY = 90;
-    private static final int THUMB_SIZE = 128;
+    private static final int THUMB_SIZE = 192;
 
     private final static int MAX_PIXELS = 1200 * 1200; //file with this resolution, it's size should match to MAX_IMAGE_FILE_SIZE
     public final static int MAX_IMAGE_FILE_SIZE = 400 * 1024; // max file size 400K
-    public final static int MAX_SPECIAL_FILE_SIZE = 4 * 1024 * 1024; // max upload file size : 8M
+    public final static int MAX_SPECIAL_FILE_SIZE = 8 * 1024 * 1024; // max upload file size : 8M
 
     private static final int UPLOAD_CONNECT_TIMEOUT = 15 * 1000;
     private static final int UPLOAD_READ_TIMEOUT = 5 * 60 * 1000;
