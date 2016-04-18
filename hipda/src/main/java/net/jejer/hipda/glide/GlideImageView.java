@@ -11,6 +11,7 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.OnSingleClickListener;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.utils.HttpUtils;
@@ -73,13 +74,15 @@ public class GlideImageView extends ImageView {
     public void setClickToViewBigImage() {
         setClickable(true);
         setOnClickListener(new GlideImageViewClickHandler());
-        setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                HttpUtils.saveImage(getContext(), mUrl);
-                return true;
-            }
-        });
+        if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_LONG_CLICK_SAVE_IMAGE, false)) {
+            setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    HttpUtils.saveImage(getContext(), mUrl);
+                    return true;
+                }
+            });
+        }
     }
 
     private class GlideImageViewClickHandler extends OnSingleClickListener {
