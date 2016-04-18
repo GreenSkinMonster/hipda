@@ -98,6 +98,7 @@ public class PostFragment extends BaseFragment {
     private Snackbar mSnackbar;
     private int mFetchInfoCount = 0;
     private boolean mFetchingInfo = false;
+    private ContentLoadingProgressBar mProgressBar;
 
     private String mForumName;
     private String mParentSessionId;
@@ -145,6 +146,7 @@ public class PostFragment extends BaseFragment {
         mTvQuoteText = (TextView) view.findViewById(R.id.tv_quote_text);
         mTvType = (TextView) view.findViewById(R.id.tv_type);
         mTvImagesInfo = (TextView) view.findViewById(R.id.tv_image_info);
+        mProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.preinfo_loading);
 
         mImageAdapter = new GridImageAdapter(getActivity());
 
@@ -197,7 +199,7 @@ public class PostFragment extends BaseFragment {
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         if (mPrePostInfo == null) {
-            fetchPrePostInfo();
+            fetchPrePostInfo(false);
         } else {
             setupPrePostInfo();
         }
@@ -277,7 +279,7 @@ public class PostFragment extends BaseFragment {
                 return false;
             case R.id.action_upload_img:
                 if (mPrePostInfo == null) {
-                    fetchPrePostInfo();
+                    fetchPrePostInfo(false);
                     Toast.makeText(getActivity(), "请等待信息收集结束再选择图片", Toast.LENGTH_LONG).show();
                 } else {
                     mContentPosition = mEtContent.getSelectionStart();
@@ -301,7 +303,7 @@ public class PostFragment extends BaseFragment {
 
     private void postReply() {
         if (mPrePostInfo == null) {
-            fetchPrePostInfo();
+            fetchPrePostInfo(false);
             Toast.makeText(getActivity(), "请等待信息收集结束再发送", Toast.LENGTH_LONG).show();
             return;
         }
@@ -436,6 +438,7 @@ public class PostFragment extends BaseFragment {
         @Override
         public void PrePostComplete(int mode, boolean result, String message, PrePostInfoBean info) {
             mFetchingInfo = false;
+            mProgressBar.hide();
             if (result) {
                 mPrePostInfo = info;
                 setupPrePostInfo();
@@ -448,7 +451,7 @@ public class PostFragment extends BaseFragment {
                     mSnackbar.setAction("重试", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            fetchPrePostInfo();
+                            fetchPrePostInfo(true);
                             mSnackbar.dismiss();
                         }
                     });
@@ -458,10 +461,14 @@ public class PostFragment extends BaseFragment {
         }
     }
 
-    private void fetchPrePostInfo() {
+    private void fetchPrePostInfo(boolean showProgressNow) {
         if (!mFetchingInfo) {
             mFetchingInfo = true;
             mFetchInfoCount++;
+            if (showProgressNow)
+                mProgressBar.showNow();
+            else
+                mProgressBar.show();
             mPrePostAsyncTask = new PrePostAsyncTask(getActivity(), mPrePostListener, mMode);
             PostBean postBean = new PostBean();
             postBean.setTid(mTid);
