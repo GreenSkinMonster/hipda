@@ -1037,7 +1037,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     public boolean onBackPressed() {
-        Logger.e("onBackPressed");
         if (mEmojiPopup != null && mEmojiPopup.isShowing()) {
             mEmojiPopup.dismiss();
         }
