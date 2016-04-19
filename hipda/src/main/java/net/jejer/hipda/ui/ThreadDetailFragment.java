@@ -294,6 +294,16 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
             }
         });
+        mPostReplyIb.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setHasOptionsMenu(false);
+                String replyText = mEtReply.getText().toString();
+                showPost(replyText);
+                hideQuickReply();
+                return true;
+            }
+        });
 
         mIbEmojiSwitch = (ImageButton) quickReply.findViewById(R.id.ib_goto_post);
         setUpEmojiPopup(mEtReply, mIbEmojiSwitch);
