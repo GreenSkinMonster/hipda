@@ -94,8 +94,6 @@ public class MainFrameActivity extends AppCompatActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
         }
 
-        EventBus.getDefault().register(this);
-
         setTheme(HiUtils.getThemeValue(this,
                 HiSettingsHelper.getInstance().getActiveTheme(),
                 HiSettingsHelper.getInstance().getPrimaryColor()));
@@ -107,6 +105,7 @@ public class MainFrameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_frame);
         rootView = findViewById(R.id.main_activity_root_view);
 
+        EventBus.getDefault().register(this);
         setupDrawer();
 
         // Prepare gesture detector

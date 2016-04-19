@@ -86,7 +86,8 @@
             android:layout_height="32dp"
             android:layout_gravity="center_vertical"
             android:indeterminate="true"
-            android:padding="4dp"/>
+            android:padding="4dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

@@ -52,7 +52,6 @@ import net.jejer.hipda.ui.adapter.GridImageAdapter;
 import net.jejer.hipda.ui.adapter.ThreadTypeAdapter;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -220,6 +219,8 @@ public class PostFragment extends BaseFragment {
                     long t = SystemClock.uptimeMillis();
                     mEtContent.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
                     mEtContent.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
+                    if (mContentPosition < 0)
+                        mEtContent.setSelection(mEtContent.getText().length());
                 }
             }, 100);
         }
@@ -272,7 +273,6 @@ public class PostFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Implemented in activity
@@ -572,8 +572,7 @@ public class PostFragment extends BaseFragment {
         listView.setOnItemClickListener(new OnViewItemSingleClickListener() {
             @Override
             public void onItemSingleClick(AdapterView<?> adapterView, View view, int position, long row) {
-                String key = mTypeValues.keySet().toArray()[position].toString();
-                mTypeId = key;
+                mTypeId = mTypeValues.keySet().toArray()[position].toString();
                 mTvType.setText(mTypeValues.get(mTypeId));
                 dialog.dismiss();
             }
