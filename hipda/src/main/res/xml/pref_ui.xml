@@ -88,6 +88,11 @@
             android:key="PERF_GESTURE_BACK"
             android:title="@string/pref_title_gesture_back"/>
 
+        <net.jejer.hipda.ui.CustomSwitchPreference
+            android:defaultValue="false"
+            android:key="PERF_CIRCLE_AVATAR"
+            android:title="@string/pref_title_circle_avatar"/>
+
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/pref_icon"

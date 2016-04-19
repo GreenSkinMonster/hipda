@@ -244,6 +244,7 @@
     <string name="pref_title_encode_utf8">使用UTF8编码</string>
     <string name="pref_title_long_click_save_image">长按保存图片</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
+    <string name="pref_title_circle_avatar">圆形头像</string>
     <string name="pref_title_blacklist">黑名单, 每行一个用户名</string>
     <string name="pref_title_theme">界面主题</string>
     <string name="pref_title_icon">程序图标</string>

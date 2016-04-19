@@ -22,6 +22,7 @@ import com.bumptech.glide.request.target.Target;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.okhttp.LoggingInterceptor;
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -41,6 +42,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -136,13 +138,24 @@ public class GlideHelper {
             if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
                 avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
             }
-            Glide.with(fragment)
-                    .load(avatarUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .centerCrop()
-                    .error(DEFAULT_USER_ICON)
-                    .crossFade()
-                    .into(view);
+            if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, false)) {
+                Glide.with(fragment)
+                        .load(avatarUrl)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .centerCrop()
+                        .error(DEFAULT_USER_ICON)
+                        .crossFade()
+                        .bitmapTransform(new CropCircleTransformation(fragment.getActivity()))
+                        .into(view);
+            } else {
+                Glide.with(fragment)
+                        .load(avatarUrl)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .centerCrop()
+                        .error(DEFAULT_USER_ICON)
+                        .crossFade()
+                        .into(view);
+            }
         }
     }
 

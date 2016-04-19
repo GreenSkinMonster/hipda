@@ -73,6 +73,7 @@ public class HiSettingsHelper {
     public static final String PERF_ICON = "PERF_ICON";
     public static final String PERF_SAVE_FOLDER = "PERF_SAVE_FOLDER";
     public static final String PERF_LONG_CLICK_SAVE_IMAGE = "PERF_LONG_CLICK_SAVE_IMAGE";
+    public static final String PERF_CIRCLE_AVATAR = "PERF_CIRCLE_AVATAR";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
