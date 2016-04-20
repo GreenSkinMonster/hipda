@@ -277,6 +277,14 @@ public abstract class BaseFragment extends Fragment {
             }
         });
 
+        mEtContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mEmojiPopup.isShowing())
+                    mEmojiPopup.dismiss();
+            }
+        });
+
         mEmojiPopup = ((MainFrameActivity) getActivity()).getEmojiBuilder()
                 .setOnEmojiClickedListener(new OnEmojiClickedListener() {
                     @Override
