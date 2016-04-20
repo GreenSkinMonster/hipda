@@ -142,7 +142,6 @@ public class GlideHelper {
                 Glide.with(fragment)
                         .load(avatarUrl)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .centerCrop()
                         .error(DEFAULT_USER_ICON)
                         .crossFade()
                         .bitmapTransform(new CropCircleTransformation(fragment.getActivity()))
