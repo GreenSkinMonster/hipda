@@ -3,6 +3,7 @@ package net.jejer.hipda.job;
 import android.app.Fragment;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
+import android.os.SystemClock;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -61,6 +62,7 @@ public class GlideImageJob extends BaseJob {
     @Override
     public void onRun() throws Throwable {
         try {
+            long start = SystemClock.uptimeMillis();
             FutureTarget<File> future;
             if (mNetworkFetch) {
                 future = Glide.with(mFragment)
@@ -75,6 +77,10 @@ public class GlideImageJob extends BaseJob {
 
             File cacheFile = future.get();
             Glide.clear(future);
+
+            double speed = -1;
+            if (mNetworkFetch)
+                speed = cacheFile.length() * 1.0f / 1024 / (SystemClock.uptimeMillis() - start) * 1000;
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
@@ -104,6 +110,7 @@ public class GlideImageJob extends BaseJob {
             }
 
             ImageReadyInfo imageReadyInfo = new ImageReadyInfo(cacheFile.getPath(), width, height, mime, cacheFile.length());
+            imageReadyInfo.setSpeed(speed);
             if (orientation > 0)
                 imageReadyInfo.setOrientation(orientation);
             ImageContainer.markImageReady(mUrl, imageReadyInfo);

@@ -16,6 +16,7 @@ public class ImageReadyInfo {
     private String mime;
     private long fileSize;
     private int orientation;
+    private double speed;
 
     int maxViewWidth;
     int displayWidth;
@@ -63,6 +64,14 @@ public class ImageReadyInfo {
 
     public void setOrientation(int orientation) {
         this.orientation = orientation;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
     public int getDisplayHeight() {

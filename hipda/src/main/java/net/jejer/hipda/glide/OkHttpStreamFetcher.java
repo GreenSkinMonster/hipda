@@ -86,7 +86,7 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
                         input = new BufferedInputStream(is);
                         output = new FileOutputStream(f);
                         int count;
-                        byte[] data = new byte[1024];
+                        byte[] data = new byte[2048];
                         while ((count = input.read(data)) != -1) {
                             output.write(data, 0, count);
                         }

@@ -26,6 +26,7 @@ import com.mikepenz.iconics.IconicsDrawable;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.DetailListBean;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.utils.Constants;
@@ -36,6 +37,7 @@ import net.jejer.hipda.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -279,6 +281,10 @@ public class PopupImageDialog extends DialogFragment {
         if (imageReadyInfo != null && imageReadyInfo.isReady()) {
             String msg = imageReadyInfo.getWidth() + "x" + imageReadyInfo.getHeight()
                     + " / " + Utils.toSizeText(imageReadyInfo.getFileSize());
+            if (HiSettingsHelper.getInstance().isErrorReportMode()) {
+                DecimalFormat df = new DecimalFormat("#.##");
+                msg += " / " + df.format(imageReadyInfo.getSpeed()) + " K/s";
+            }
             tvImageFileInfo.setText(msg);
         } else {
             tvImageFileInfo.setText("?");
