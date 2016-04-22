@@ -318,7 +318,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         }
     }
 
-
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GlideImageEvent event) {

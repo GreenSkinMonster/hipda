@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -135,26 +136,28 @@ public class GlideHelper {
 
     public static void loadAvatar(BaseFragment fragment, ImageView view, String avatarUrl) {
         if (isOkToLoad(fragment)) {
-            if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
-                avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
-            }
-            if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, false)) {
-                Glide.with(fragment)
-                        .load(avatarUrl)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .error(DEFAULT_USER_ICON)
-                        .crossFade()
-                        .bitmapTransform(new CropCircleTransformation(fragment.getActivity()))
-                        .into(view);
-            } else {
-                Glide.with(fragment)
-                        .load(avatarUrl)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .centerCrop()
-                        .error(DEFAULT_USER_ICON)
-                        .crossFade()
-                        .into(view);
-            }
+            loadAvatar(Glide.with(fragment), view, avatarUrl);
+        }
+    }
+
+    public static void loadAvatar(RequestManager glide, ImageView view, String avatarUrl) {
+        if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
+            avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
+        }
+        if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, false)) {
+            glide.load(avatarUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .error(DEFAULT_USER_ICON)
+                    .crossFade()
+                    .bitmapTransform(new CropCircleTransformation(HiApplication.getAppContext()))
+                    .into(view);
+        } else {
+            glide.load(avatarUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .centerCrop()
+                    .error(DEFAULT_USER_ICON)
+                    .crossFade()
+                    .into(view);
         }
     }
 
@@ -224,6 +227,7 @@ public class GlideHelper {
 
     interface ProgressListener {
         void update(String url, long bytesRead, long contentLength, boolean done);
+
     }
 
     public static File getAvatarFile(String url) {

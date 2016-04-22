@@ -1,11 +1,12 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:paddingBottom="4dp"
-              android:paddingLeft="8dp"
-              android:paddingRight="8dp"
-              android:paddingTop="4dp">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="4dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -38,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="2dp"
-            android:layout_toLeftOf="@+id/iv_image_indicator"
+            android:layout_toLeftOf="@+id/tv_image_indicator"
             android:background="@drawable/rounded_corner"
             android:paddingBottom="1dp"
             android:paddingLeft="4dp"
@@ -50,7 +51,7 @@
             android:textSize="12sp"/>
 
         <com.mikepenz.iconics.view.IconicsTextView
-            android:id="@+id/iv_image_indicator"
+            android:id="@+id/tv_image_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

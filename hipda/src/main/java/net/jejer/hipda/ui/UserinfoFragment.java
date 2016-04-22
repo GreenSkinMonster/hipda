@@ -78,7 +78,6 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Logger.v("onCreate");
         setHasOptionsMenu(true);
 
         if (getArguments().containsKey(ARG_USERNAME)) {

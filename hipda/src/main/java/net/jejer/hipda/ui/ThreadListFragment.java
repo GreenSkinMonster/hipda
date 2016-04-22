@@ -30,6 +30,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -49,7 +50,6 @@ import net.jejer.hipda.job.PostEvent;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 
@@ -96,7 +96,6 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Logger.v("onCreate");
         super.onCreate(savedInstanceState);
 
         mCtx = getActivity();
@@ -113,16 +112,15 @@ public class ThreadListFragment extends BaseFragment
 
         setHasOptionsMenu(true);
         mCallbacks = new ThreadListLoaderCallbacks();
-        mThreadListAdapter = new ThreadListAdapter(this);
-
         mMsgHandler = new Handler(new ThreadListMsgHandler());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
         mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
+
+        mThreadListAdapter = new ThreadListAdapter(Glide.with(this));
 
         View mFooterView = inflater.inflate(R.layout.vw_thread_list_footer, mThreadListView, false);
         mFooterProgressBar = (ProgressBar) mFooterView.findViewById(R.id.footer_progressbar);
@@ -248,8 +246,6 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Logger.v("onCreateOptionsMenu");
-
         menu.clear();
         inflater.inflate(R.menu.menu_thread_list, menu);
         if (mForumId == HiUtils.FID_BS) {
@@ -285,7 +281,6 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Implemented in activity
@@ -339,15 +334,8 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public void onDestroy() {
-        Logger.v("onDestory");
         getLoaderManager().destroyLoader(0);
         super.onDestroy();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Logger.v("onDestroyView");
-        super.onDestroyView();
     }
 
     @Override
@@ -440,8 +428,6 @@ public class ThreadListFragment extends BaseFragment
 
         @Override
         public void onLoadFinished(Loader<ThreadListBean> loader, ThreadListBean threads) {
-            Logger.v("onLoadFinished enter");
-
             mInloading = false;
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
@@ -521,8 +507,6 @@ public class ThreadListFragment extends BaseFragment
 
         @Override
         public void onLoaderReset(Loader<ThreadListBean> arg0) {
-            Logger.v("onLoaderReset enter");
-
             mInloading = false;
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
