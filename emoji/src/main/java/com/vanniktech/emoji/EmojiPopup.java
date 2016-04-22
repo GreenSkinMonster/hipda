@@ -48,6 +48,8 @@ public final class EmojiPopup {
     @Nullable
     private OnEmojiPopupDismissListener onEmojiPopupDismissListener;
 
+    private ViewTreeObserver.OnGlobalLayoutListener mOnGlobalLayoutListener;
+
     @NonNull
     private final RecentEmoji recentEmoji;
 
@@ -146,47 +148,49 @@ public final class EmojiPopup {
     }
 
     private void setSizeForSoftKeyboard() {
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                final Rect rect = new Rect();
-                rootView.getWindowVisibleDisplayFrame(rect);
+        if (mOnGlobalLayoutListener == null)
+            mOnGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    final Rect rect = new Rect();
+                    rootView.getWindowVisibleDisplayFrame(rect);
 
-                int heightDifference = getUsableScreenHeight() - (rect.bottom - rect.top);
+                    int heightDifference = getUsableScreenHeight() - (rect.bottom - rect.top);
 
-                final Resources resources = context.getResources();
-                final int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+                    final Resources resources = context.getResources();
+                    final int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
 
-                if (resourceId > 0) {
-                    heightDifference -= resources.getDimensionPixelSize(resourceId);
-                }
-
-                if (heightDifference > MIN_KEYBOARD_HEIGHT) {
-                    keyBoardHeight = heightDifference;
-                    popupWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
-                    popupWindow.setHeight(keyBoardHeight);
-
-                    if (!isKeyboardOpen && onSoftKeyboardOpenListener != null) {
-                        onSoftKeyboardOpenListener.onKeyboardOpen(keyBoardHeight);
+                    if (resourceId > 0) {
+                        heightDifference -= resources.getDimensionPixelSize(resourceId);
                     }
 
-                    isKeyboardOpen = true;
+                    if (heightDifference > MIN_KEYBOARD_HEIGHT) {
+                        keyBoardHeight = heightDifference;
+                        popupWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
+                        popupWindow.setHeight(keyBoardHeight);
 
-                    if (isPendingOpen) {
-                        showAtBottom();
-                        isPendingOpen = false;
-                    }
-                } else {
-                    if (isKeyboardOpen) {
-                        isKeyboardOpen = false;
+                        if (!isKeyboardOpen && onSoftKeyboardOpenListener != null) {
+                            onSoftKeyboardOpenListener.onKeyboardOpen(keyBoardHeight);
+                        }
 
-                        if (onSoftKeyboardCloseListener != null) {
-                            onSoftKeyboardCloseListener.onKeyboardClose();
+                        isKeyboardOpen = true;
+
+                        if (isPendingOpen) {
+                            showAtBottom();
+                            isPendingOpen = false;
+                        }
+                    } else {
+                        if (isKeyboardOpen) {
+                            isKeyboardOpen = false;
+
+                            if (onSoftKeyboardCloseListener != null) {
+                                onSoftKeyboardCloseListener.onKeyboardClose();
+                            }
                         }
                     }
                 }
-            }
-        });
+            };
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
     }
 
     private int getUsableScreenHeight() {
@@ -208,6 +212,7 @@ public final class EmojiPopup {
     }
 
     public void cleanup() {
+        rootView.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
         EmojiHandler.cleanup();
     }
 
