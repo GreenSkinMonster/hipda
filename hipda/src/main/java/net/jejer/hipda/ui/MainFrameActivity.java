@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -12,8 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -147,8 +144,6 @@ public class MainFrameActivity extends AppCompatActivity {
                 if (!NotificationMgr.isAlarmRuning(this))
                     NotificationMgr.startAlarm(this);
             }
-
-            askForPermission();
         }
     }
 
@@ -615,21 +610,6 @@ public class MainFrameActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginEvent event) {
         updateAccountHeader();
-    }
-
-    public void askForPermission() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                Toast.makeText(this, "下载、上传图片或者附件需要您授权存储空间读写的权限", Toast.LENGTH_LONG).show();
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSIONS_REQUEST_CODE);
-        }
     }
 
     @Override
