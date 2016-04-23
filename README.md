@@ -23,3 +23,5 @@ Google Play https://play.google.com/store/apps/details?id=net.jejer.hipda.ng
 - EventBus - https://github.com/greenrobot/EventBus
 - Android Priority Job Queue - https://github.com/yigit/android-priority-jobqueue
 - Jsoup - http://jsoup.org/
+- Emoji - https://github.com/vanniktech/Emoji
+- Spectrum - https://github.com/the-blue-alliance/spectrum
