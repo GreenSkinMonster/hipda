@@ -246,8 +246,10 @@ public class Utils {
                     return filename.startsWith(Constants.FILE_SHARE_PREFIX);
                 }
             });
-            for (File f : files) {
-                f.delete();
+            if (files != null) {
+                for (File f : files) {
+                    f.delete();
+                }
             }
         }
     }
