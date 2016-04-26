@@ -198,9 +198,9 @@ public class TextViewWithEmoticon extends TextView {
                     }
 
                     HttpUtils.download(mCtx, getURL(), fileName);
-                } catch (SecurityException e) {
+                } catch (Exception e) {
                     Logger.e(e);
-                    Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         };

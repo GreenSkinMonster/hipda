@@ -239,7 +239,7 @@ public class Utils {
 
     public static void cleanShareTempFiles() {
         File destFile = HttpUtils.getSaveFolder();
-        if (destFile.exists() && destFile.isDirectory()) {
+        if (destFile.exists() && destFile.isDirectory() && destFile.canWrite()) {
             File[] files = destFile.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String filename) {

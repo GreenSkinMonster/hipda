@@ -137,9 +137,9 @@ public class UpdateHelper {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 try {
                                                     HttpUtils.download(mCtx, url, filename);
-                                                } catch (SecurityException e) {
+                                                } catch (Exception e) {
                                                     Logger.e(e);
-                                                    Toast.makeText(mCtx, "抱歉，下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(mCtx, "下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {

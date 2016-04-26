@@ -50,7 +50,7 @@ public class HttpUtils {
         }
     }
 
-    public static void download(Context ctx, String url, String filename) throws SecurityException {
+    public static void download(Context ctx, String url, String filename) {
         String authCookie = OkHttpHelper.getInstance().getAuthCookie();
 
         if (TextUtils.isEmpty(url) || TextUtils.isEmpty(filename)
@@ -70,17 +70,19 @@ public class HttpUtils {
             return;
         }
 
-        DownloadManager dm = (DownloadManager) ctx.getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
-        req.addRequestHeader("User-agent", HiUtils.getUserAgent());
-        if (url.startsWith(HiUtils.BaseUrl)) {
-            req.addRequestHeader("Cookie", "cdb_auth=" + authCookie);
+        if (DownloadManagerResolver.resolve(ctx)) {
+            DownloadManager dm = (DownloadManager) ctx.getSystemService(Context.DOWNLOAD_SERVICE);
+            DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+            req.addRequestHeader("User-agent", HiUtils.getUserAgent());
+            if (url.startsWith(HiUtils.BaseUrl)) {
+                req.addRequestHeader("Cookie", "cdb_auth=" + authCookie);
+            }
+            req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+            if (filename.toLowerCase().endsWith(".apk"))
+                req.setMimeType("application/vnd.android.package-archive");
+            dm.enqueue(req);
         }
-        req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-        if (filename.toLowerCase().endsWith(".apk"))
-            req.setMimeType("application/vnd.android.package-archive");
-        dm.enqueue(req);
     }
 
     public static void saveImage(Context context, String url) {
