@@ -212,7 +212,11 @@ public final class EmojiPopup {
     }
 
     public void cleanup() {
-        rootView.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            rootView.getViewTreeObserver().removeGlobalOnLayoutListener(mOnGlobalLayoutListener);
+        } else {
+            rootView.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
+        }
         EmojiHandler.cleanup();
     }
 
