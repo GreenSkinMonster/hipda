@@ -1,4 +1,19 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion as int
@@ -56,9 +71,14 @@ dependencies {
     compile('com.thebluealliance:spectrum:0.2.1') {
         exclude group: 'org.greenrobot'
     }
-    compile('ch.acra:acra:4.8.5') {
-        exclude group: 'org.json'
-    }
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':emoji')
+
+//    compile('ch.acra:acra:4.8.5') {
+//        exclude group: 'org.json'
+//    }
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+        transitive = true;
+    }
 }

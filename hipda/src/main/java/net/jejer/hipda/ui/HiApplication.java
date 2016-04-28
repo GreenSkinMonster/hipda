@@ -3,37 +3,20 @@ package net.jejer.hipda.ui;
 import android.app.Application;
 import android.content.Context;
 
+import com.crashlytics.android.Crashlytics;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.Constants;
 
-import org.acra.ACRA;
-import org.acra.ReportField;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
-
+import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
- * for error report
  * Created by GreenSkinMonster on 2015-03-28.
  */
-@ReportsCrashes(
-        mailTo = "chartreuse.orc@gmail.com",
-        customReportContent = {ReportField.APP_VERSION_CODE,
-                ReportField.APP_VERSION_NAME,
-                ReportField.ANDROID_VERSION,
-                ReportField.PHONE_MODEL,
-                ReportField.CUSTOM_DATA,
-                ReportField.STACK_TRACE,
-                ReportField.APPLICATION_LOG,
-                ReportField.LOGCAT
-        },
-        mode = ReportingInteractionMode.TOAST,
-        resToastText = R.string.crash_toast_text)
 public class HiApplication extends Application {
 
     private static Context context;
@@ -45,8 +28,7 @@ public class HiApplication extends Application {
         super.onCreate();
         HiApplication.context = getApplicationContext();
 
-        ACRA.init(this);
-        ACRAUtils.init(context);
+        Fabric.with(this, new Crashlytics());
 
         UpdateHelper.updateApp(context);
         GlideHelper.init(context);

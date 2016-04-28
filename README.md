@@ -12,6 +12,10 @@ Google Play https://play.google.com/store/apps/details?id=net.jejer.hipda.ng
 多谢原作者 jejer 的分享   
 原项目发布于 http://www.hi-pda.com/forum/viewthread.php?tid=1408844   
 
+# 开发者注意
+
+请把 hipad/fabric.properties.example 复制为 fabric.properties ，否则编译可能失败
+
 #Credits
 - HiPDA简洁版 - https://bitbucket.org/jejer/hipda/
 - Glide - https://github.com/bumptech/glide
