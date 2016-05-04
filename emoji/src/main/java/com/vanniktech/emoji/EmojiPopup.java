@@ -1,6 +1,7 @@
 package com.vanniktech.emoji;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -26,13 +27,14 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 
 public final class EmojiPopup {
     private static final int MIN_KEYBOARD_HEIGHT = 100;
+    private static final String PREFERENCE_NAME = "emoji-recent-manager";
+    private static final String PREF_KEYBOARD_HEIGHT = "PREF_KEYBOARD_HEIGHT";
 
     private final EmojiEditText emojiEditText;
     private final View rootView;
     private final Context context;
 
     private int keyBoardHeight;
-    private boolean isPendingOpen;
     private boolean isKeyboardOpen;
 
     @Nullable
@@ -48,18 +50,56 @@ public final class EmojiPopup {
     @Nullable
     private OnEmojiPopupDismissListener onEmojiPopupDismissListener;
 
-    private ViewTreeObserver.OnGlobalLayoutListener mOnGlobalLayoutListener;
-
     @NonNull
     private final RecentEmoji recentEmoji;
 
     private final PopupWindow popupWindow;
+    private final ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            final Rect rect = new Rect();
+            rootView.getWindowVisibleDisplayFrame(rect);
+
+            int heightDifference = getUsableScreenHeight() - (rect.bottom - rect.top);
+
+            final Resources resources = context.getResources();
+            final int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+
+            if (resourceId > 0) {
+                heightDifference -= resources.getDimensionPixelSize(resourceId);
+            }
+
+            if (heightDifference > MIN_KEYBOARD_HEIGHT) {
+                if (keyBoardHeight != heightDifference) {
+                    keyBoardHeight = heightDifference;
+                    getPreferences().edit().putInt(PREF_KEYBOARD_HEIGHT, keyBoardHeight).apply();
+                    if (popupWindow.isShowing())
+                        popupWindow.setHeight(keyBoardHeight);
+                }
+
+                if (!isKeyboardOpen && onSoftKeyboardOpenListener != null) {
+                    onSoftKeyboardOpenListener.onKeyboardOpen(keyBoardHeight);
+                }
+
+                isKeyboardOpen = true;
+            } else {
+                if (isKeyboardOpen) {
+                    isKeyboardOpen = false;
+
+                    if (onSoftKeyboardCloseListener != null) {
+                        onSoftKeyboardCloseListener.onKeyboardClose();
+                    }
+                }
+            }
+        }
+    };
 
     private EmojiPopup(final View rootView, final EmojiEditText emojiEditText, @Nullable final RecentEmoji recent) {
         this.context = rootView.getContext();
         this.rootView = rootView;
         this.emojiEditText = emojiEditText;
         this.recentEmoji = recent != null ? recent : new RecentEmojiManager(context);
+        this.keyBoardHeight = getPreferences().getInt(PREF_KEYBOARD_HEIGHT, 0);
 
         popupWindow = new PopupWindow(context);
         popupWindow.setBackgroundDrawable(new BitmapDrawable(context.getResources(), (Bitmap) null)); // To avoid borders & overdraw
@@ -99,23 +139,21 @@ public final class EmojiPopup {
                 }
             }
         });
-        setSizeForSoftKeyboard();
     }
 
     private void showAtBottom() {
-        popupWindow.showAtLocation(rootView, Gravity.BOTTOM, 0, 0);
-    }
-
-    private void showAtBottomPending() {
-        if (isKeyboardOpen) {
-            showAtBottom();
-        } else {
-            isPendingOpen = true;
+        if (keyBoardHeight > MIN_KEYBOARD_HEIGHT) {
+            popupWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
+            popupWindow.setHeight(keyBoardHeight);
         }
+        popupWindow.showAtLocation(rootView, Gravity.BOTTOM, 0, 0);
+        isKeyboardOpen = true;
     }
 
     public void toggle() {
         if (!popupWindow.isShowing()) {
+            rootView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
+
             if (isKeyboardOpen) {
                 // If keyboard is visible, simply show the emoji popup
                 this.showAtBottom();
@@ -124,7 +162,7 @@ public final class EmojiPopup {
                 emojiEditText.setFocusableInTouchMode(true);
                 emojiEditText.requestFocus();
 
-                this.showAtBottomPending();
+                this.showAtBottom();
 
                 final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.showSoftInput(emojiEditText, InputMethodManager.SHOW_IMPLICIT);
@@ -143,54 +181,9 @@ public final class EmojiPopup {
     }
 
     public void dismiss() {
+        Utils.removeOnGlobalLayoutListener(rootView, onGlobalLayoutListener);
         popupWindow.dismiss();
         recentEmoji.persist();
-    }
-
-    private void setSizeForSoftKeyboard() {
-        if (mOnGlobalLayoutListener == null)
-            mOnGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    final Rect rect = new Rect();
-                    rootView.getWindowVisibleDisplayFrame(rect);
-
-                    int heightDifference = getUsableScreenHeight() - (rect.bottom - rect.top);
-
-                    final Resources resources = context.getResources();
-                    final int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-
-                    if (resourceId > 0) {
-                        heightDifference -= resources.getDimensionPixelSize(resourceId);
-                    }
-
-                    if (heightDifference > MIN_KEYBOARD_HEIGHT) {
-                        keyBoardHeight = heightDifference;
-                        popupWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
-                        popupWindow.setHeight(keyBoardHeight);
-
-                        if (!isKeyboardOpen && onSoftKeyboardOpenListener != null) {
-                            onSoftKeyboardOpenListener.onKeyboardOpen(keyBoardHeight);
-                        }
-
-                        isKeyboardOpen = true;
-
-                        if (isPendingOpen) {
-                            showAtBottom();
-                            isPendingOpen = false;
-                        }
-                    } else {
-                        if (isKeyboardOpen) {
-                            isKeyboardOpen = false;
-
-                            if (onSoftKeyboardCloseListener != null) {
-                                onSoftKeyboardCloseListener.onKeyboardClose();
-                            }
-                        }
-                    }
-                }
-            };
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
     }
 
     private int getUsableScreenHeight() {
@@ -205,19 +198,6 @@ public final class EmojiPopup {
         } else {
             return rootView.getRootView().getHeight();
         }
-    }
-
-    public void addImage(String imgId, Bitmap bitmap) {
-        EmojiHandler.addImage(imgId, bitmap);
-    }
-
-    public void cleanup() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            rootView.getViewTreeObserver().removeGlobalOnLayoutListener(mOnGlobalLayoutListener);
-        } else {
-            rootView.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
-        }
-        EmojiHandler.cleanup();
     }
 
     public static final class Builder {
@@ -301,6 +281,19 @@ public final class EmojiPopup {
             emojiPopup.onEmojiBackspaceClickListener = onEmojiBackspaceClickListener;
             return emojiPopup;
         }
+    }
+
+    private SharedPreferences getPreferences() {
+        return context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+    }
+
+    public void addImage(String imgId, Bitmap bitmap) {
+        EmojiHandler.addImage(imgId, bitmap);
+    }
+
+    public void cleanup() {
+        dismiss();
+        EmojiHandler.cleanup();
     }
 
 }
