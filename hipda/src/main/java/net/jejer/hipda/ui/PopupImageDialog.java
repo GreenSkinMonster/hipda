@@ -107,6 +107,7 @@ public class PopupImageDialog extends DialogFragment {
         //mDetailListBean could be null if resumed
         if (mDetailListBean == null) {
             dismiss();
+            return dialog;
         }
 
         final List<ContentImg> images = mDetailListBean.getContentImages();
