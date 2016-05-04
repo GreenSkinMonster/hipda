@@ -153,7 +153,7 @@ public class FragmentUtils {
         fragment.setArguments(argments);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_frame_container, fragment, fragment.getClass().getName())
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public static void showThread(FragmentManager fragmentManager, boolean directOpen, String tid, String title, int page, int floor, String pid, int maxPage) {
@@ -228,14 +228,17 @@ public class FragmentUtils {
         }
 //        }
 
-        if (skipEnterAnimation)
+        if (skipEnterAnimation) {
+            //noinspection ResourceType
             transaction.setCustomAnimations(0, 0, 0, slideOutAnim);
-        else
+        } else {
+            //noinspection ResourceType
             transaction.setCustomAnimations(slideInAnim, slideOutAnim, slideInAnim, slideOutAnim);
+        }
 
         transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
                 .addToBackStack(fragment.getClass().getName())
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public static void showFragment(FragmentManager fragmentManager, Fragment fragment) {
