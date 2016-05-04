@@ -75,9 +75,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':emoji')
 
-//    compile('ch.acra:acra:4.8.5') {
-//        exclude group: 'org.json'
-//    }
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
