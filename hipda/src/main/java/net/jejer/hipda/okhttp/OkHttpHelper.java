@@ -4,8 +4,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
-import com.bumptech.glide.Glide;
-
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
@@ -21,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -57,13 +54,13 @@ public class OkHttpHelper {
 
         cookieStore = new PersistentCookieStore(HiApplication.getAppContext(), HiUtils.CookieDomain);
 
-        Cache cache = new Cache(Glide.getPhotoCacheDir(HiApplication.getAppContext(), "okhttp"), 20 * 1024 * 1024);
+        //Cache cache = new Cache(Glide.getPhotoCacheDir(HiApplication.getAppContext(), "okhttp"), 20 * 1024 * 1024);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
-                .cache(cache)
+                //.cache(cache)
                 .cookieJar(new CookieJar() {
                     @Override
                     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
