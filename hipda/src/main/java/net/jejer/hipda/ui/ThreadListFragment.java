@@ -316,12 +316,12 @@ public class ThreadListFragment extends BaseFragment
             getFragmentManager().beginTransaction()
                     .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
                     .addToBackStack(PostFragment.class.getName())
-                    .commit();
+                    .commitAllowingStateLoss();
         } else {
             getFragmentManager().beginTransaction()
                     .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
                     .addToBackStack(PostFragment.class.getName())
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 
@@ -648,11 +648,13 @@ public class ThreadListFragment extends BaseFragment
     }
 
     private void showLoginDialog() {
-        LoginDialog dialog = LoginDialog.getInstance(getActivity());
-        if (dialog != null) {
-            dialog.setHandler(mMsgHandler);
-            dialog.setTitle("用户登录");
-            dialog.show();
+        if (isAdded()) {
+            LoginDialog dialog = LoginDialog.getInstance(getActivity());
+            if (dialog != null) {
+                dialog.setHandler(mMsgHandler);
+                dialog.setTitle("用户登录");
+                dialog.show();
+            }
         }
     }
 
