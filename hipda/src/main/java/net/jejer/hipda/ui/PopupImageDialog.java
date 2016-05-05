@@ -303,13 +303,15 @@ public class PopupImageDialog extends DialogFragment {
 
     @Override
     public void onDestroy() {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                Utils.cleanShareTempFiles();
-            }
-        });
-        EventBus.getDefault().unregister(mPagerAdapter);
+        if (mPagerAdapter != null) {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.cleanShareTempFiles();
+                }
+            });
+            EventBus.getDefault().unregister(mPagerAdapter);
+        }
         super.onDestroy();
     }
 }
