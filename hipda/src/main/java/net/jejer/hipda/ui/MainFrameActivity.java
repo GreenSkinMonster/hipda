@@ -560,7 +560,11 @@ public class MainFrameActivity extends AppCompatActivity {
         if (HiSettingsHelper.getInstance().isGestureBack()) {
             mSwipeListener.onTouch(null, ev);
         }
-        return super.dispatchTouchEvent(ev);
+        try {
+            return super.dispatchTouchEvent(ev);
+        } catch (IndexOutOfBoundsException e) {
+            return true;
+        }
     }
 
     public void updateDrawerBadge() {
