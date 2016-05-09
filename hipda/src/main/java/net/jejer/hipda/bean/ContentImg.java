@@ -1,7 +1,5 @@
 package net.jejer.hipda.bean;
 
-import net.jejer.hipda.utils.HiUtils;
-
 public class ContentImg extends ContentAbs {
     private String mUrl;
     private String mFloor;
@@ -10,13 +8,9 @@ public class ContentImg extends ContentAbs {
     private long mFileSize;
     private String mId;
 
-    public ContentImg(String url, String id, boolean isInternal) {
-        if (isInternal) {
-            mUrl = HiUtils.getFullUrl(url);
-            mId = id;
-        } else {
-            mUrl = url;
-        }
+    public ContentImg(String url, String id) {
+        mUrl = url;
+        mId = id;
     }
 
     @Override

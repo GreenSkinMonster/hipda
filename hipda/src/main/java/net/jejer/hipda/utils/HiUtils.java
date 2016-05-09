@@ -14,6 +14,7 @@ import net.jejer.hipda.ui.HiApplication;
 public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";
     public static final String BaseUrl = "http://www.hi-pda.com/forum/";
+    public static final String ImageBaseUrl = "http://img.hi-pda.com/forum/";
     public static final String CookieDomain = "hi-pda.com";
     public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
     public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
@@ -49,7 +50,7 @@ public class HiUtils {
 
     private static String userAgent;
 
-    public final static String SMILE_PATH = "images/smilies/";
+    public final static String SMILE_PATH = ImageBaseUrl + "images/smilies/";
 
     private final static String AVATAR_BASE = "000000000";
     public static int MAX_THREADS_IN_PAGE = 50;

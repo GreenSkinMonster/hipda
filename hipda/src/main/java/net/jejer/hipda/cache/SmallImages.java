@@ -15,7 +15,7 @@ public class SmallImages {
     private static Map<String, Integer> IMAGES = new HashMap<>();
 
     static {
-        IMAGES.put(HiUtils.BaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
+        IMAGES.put(HiUtils.ImageBaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
     }
 
     public static boolean contains(String url) {

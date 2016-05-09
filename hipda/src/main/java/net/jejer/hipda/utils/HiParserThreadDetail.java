@@ -268,8 +268,9 @@ public class HiParserThreadDetail {
             Elements postimgES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.t_msgfontfix div.postattachlist img");
             for (int j = 0; j < postimgES.size(); j++) {
                 Element imgE = postimgES.get(j);
-                if (imgE.attr("file").startsWith("attachments/day_") || imgE.attr("file").startsWith("attachment.php")) {
-                    content.addImg(imgE.attr("file"), imgE.attr("id"), true);
+                if (imgE.attr("file").startsWith(HiUtils.ImageBaseUrl + "attachments/day_")
+                        || imgE.attr("file").startsWith(HiUtils.ImageBaseUrl + "attachment.php")) {
+                    content.addImg(imgE.attr("file"), imgE.attr("id"));
                 }
             }
 
@@ -396,22 +397,19 @@ public class HiParserThreadDetail {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
                 return false;
-            } else if (src.equals("images/common/none.gif") || src.startsWith("attachments/day_") || src.startsWith("attachment.php")) {
+            } else if (src.equals(HiUtils.ImageBaseUrl + "images/common/none.gif")
+                    || src.startsWith(HiUtils.ImageBaseUrl + "attachments/day_")
+                    || src.startsWith(HiUtils.ImageBaseUrl + "attachment.php")) {
                 //internal image
-                content.addImg(e.attr("file"), e.attr("id"), true);
+                content.addImg(e.attr("file"), e.attr("id"));
                 return false;
-            } else if (src.equals("images/common/")) {
+            } else if (src.startsWith(HiUtils.ImageBaseUrl + "images/default/")
+                    || src.startsWith(HiUtils.ImageBaseUrl + "images/attachicons/")) {
                 //skip common icons
                 return false;
             } else if (src.startsWith("http://") || src.startsWith("https://")) {
                 //external image
                 content.addImg(src);
-                return false;
-            } else if (src.startsWith("images/attachicons/")) {
-                //attach icon
-                return false;
-            } else if (src.startsWith("images/default/")) {
-                //default icon
                 return false;
             } else {
                 content.addNotice("[[ERROR:UNPARSED IMG:" + src + "]]");

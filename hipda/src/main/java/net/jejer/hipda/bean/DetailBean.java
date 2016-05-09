@@ -106,11 +106,11 @@ public class DetailBean {
         }
 
         public void addImg(String url) {
-            addImg(url, null, false);
+            addImg(url, null);
         }
 
-        public void addImg(String url, String id, boolean isInternal) {
-            ContentImg contentImg = new ContentImg(url, id, isInternal);
+        public void addImg(String url, String id) {
+            ContentImg contentImg = new ContentImg(url, id);
             list.add(contentImg);
             mImages.add(contentImg);
             newString = true;
