@@ -251,7 +251,7 @@ public class HiParserThreadDetail {
             for (int j = 0; j < postimgES.size(); j++) {
                 Element imgE = postimgES.get(j);
                 if (imgE.attr("file").startsWith("attachments/day_") || imgE.attr("file").startsWith("attachment.php")) {
-                    content.addImg(imgE.attr("file"), true);
+                    content.addImg(imgE.attr("file"));
                 }
             }
 
@@ -372,26 +372,24 @@ public class HiParserThreadDetail {
             Element e = (Element) contentN;
             String src = e.attr("src");
 
-            if (src.startsWith("images/smilies/")) {
+            if (src.startsWith(HiUtils.SMILE_PATH)) {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
                 return false;
-            } else if (src.equals("images/common/none.gif") || src.startsWith("attachments/day_") || src.startsWith("attachment.php")) {
+            } else if (src.equals(HiUtils.ImageBaseUrl + "images/common/none.gif")
+                    || src.startsWith(HiUtils.ImageBaseUrl + "attachments/day_")
+                    || src.startsWith(HiUtils.ImageBaseUrl + "attachment.php")) {
                 //internal image
-                content.addImg(e.attr("file"), true);
+                content.addImg(e.attr("file"));
                 return false;
-            } else if (src.equals("images/common/")) {
+            } else if (src.startsWith(HiUtils.ImageBaseUrl + "images/default/")
+                    || src.startsWith(HiUtils.ImageBaseUrl + "images/attachicons/")
+                    || src.startsWith(HiUtils.ImageBaseUrl + "images/common/")) {
                 //skip common icons
                 return false;
             } else if (src.startsWith("http://") || src.startsWith("https://")) {
                 //external image
-                content.addImg(src, false);
-                return false;
-            } else if (src.startsWith("images/attachicons/")) {
-                //attach icon
-                return false;
-            } else if (src.startsWith("images/default/")) {
-                //default icon
+                content.addImg(src);
                 return false;
             } else {
                 content.addNotice("[[ERROR:UNPARSED IMG:" + src + "]]");

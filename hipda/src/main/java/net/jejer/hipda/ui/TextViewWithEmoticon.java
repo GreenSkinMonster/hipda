@@ -20,6 +20,7 @@ import android.widget.Toast;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 
@@ -63,8 +64,8 @@ public class TextViewWithEmoticon extends TextView {
     private Html.ImageGetter imageGetter = new Html.ImageGetter() {
         public Drawable getDrawable(String src) {
             Drawable icon = null;
-            if (!TextUtils.isEmpty(src) && src.startsWith("images/smilies/") && src.contains(".")) {
-                src = src.substring("images/smilies/".length(), src.lastIndexOf(".")).replace("/", "_");
+            if (!TextUtils.isEmpty(src) && src.startsWith(HiUtils.SMILE_PATH) && src.contains(".")) {
+                src = src.substring((HiUtils.SMILE_PATH).length(), src.lastIndexOf(".")).replace("/", "_");
                 int id = mCtx.getResources().getIdentifier(src, "drawable", mCtx.getPackageName());
                 if (id != 0) {
                     icon = mCtx.getResources().getDrawable(id);

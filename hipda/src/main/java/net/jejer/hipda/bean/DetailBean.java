@@ -102,8 +102,8 @@ public class DetailBean {
             }
         }
 
-        public void addImg(String url, Boolean isInternal) {
-            list.add(new ContentImg(url, isInternal));
+        public void addImg(String url) {
+            list.add(new ContentImg(url));
             newString = true;
         }
 
