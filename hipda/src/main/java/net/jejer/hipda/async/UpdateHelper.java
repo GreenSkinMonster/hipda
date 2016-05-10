@@ -52,7 +52,7 @@ public class UpdateHelper {
         HiSettingsHelper.getInstance().setAutoUpdateCheck(true);
         HiSettingsHelper.getInstance().setLastUpdateCheckTime(new Date());
 
-        String updateUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda.md";
+        String updateUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda.md";
         StringRequest sReq = new HiStringRequest(updateUrl, new SuccessListener(), new ErrorListener());
         VolleyHelper.getInstance().add(sReq);
     }
@@ -82,7 +82,7 @@ public class UpdateHelper {
                     pd.dismiss();
                 }
 
-                final String url = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-release-" + newVersion + ".apk";
+                final String url = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/releases/hipda-release-" + newVersion + ".apk";
                 final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
 
                 Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
