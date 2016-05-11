@@ -360,10 +360,9 @@ public class HiParser {
                 item.setAuthor(a.text());
                 item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
             } else if (href.startsWith(HiUtils.BaseUrl + "viewthread.php")) {
-                // Thread Name and TID and PID
                 item.setTitle(a.text());
+                item.setTid(HttpUtils.getMiddleString(a.attr("href"), "tid=", "&"));
             } else if (href.startsWith(HiUtils.BaseUrl + "redirect.php?from=notice&goto=findpost")) {
-                // Thread Name and TID and PID
                 item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", "&"));
                 item.setPid(HttpUtils.getMiddleString(a.attr("href"), "pid=", "&"));
             }
