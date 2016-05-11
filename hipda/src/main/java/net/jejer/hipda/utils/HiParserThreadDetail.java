@@ -392,8 +392,7 @@ public class HiParserThreadDetail {
             Element e = (Element) contentN;
             String src = e.attr("src");
 
-            if (src.startsWith(HiUtils.SMILE_PATH)
-                    || SmallImages.contains(src)) {
+            if (src.startsWith(HiUtils.SMILE_PATH) || SmallImages.contains(src)) {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
                 return false;
@@ -403,9 +402,8 @@ public class HiParserThreadDetail {
                 //internal image
                 content.addImg(e.attr("file"), e.attr("id"));
                 return false;
-            } else if (src.startsWith(HiUtils.ImageBaseUrl + "images/default/")
-                    || src.startsWith(HiUtils.ImageBaseUrl + "images/attachicons/")) {
-                //skip common icons
+            } else if (src.startsWith(HiUtils.ImageBaseUrl + "images/")) {
+                //skip common/default/attach icons
                 return false;
             } else if (src.startsWith("http://") || src.startsWith("https://")) {
                 //external image

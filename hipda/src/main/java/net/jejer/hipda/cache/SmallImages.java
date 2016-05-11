@@ -16,6 +16,7 @@ public class SmallImages {
 
     static {
         IMAGES.put(HiUtils.ImageBaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
+        IMAGES.put(HiUtils.BaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
     }
 
     public static boolean contains(String url) {
