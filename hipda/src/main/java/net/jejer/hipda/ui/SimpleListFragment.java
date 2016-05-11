@@ -342,6 +342,9 @@ public class SimpleListFragment extends BaseFragment
 
         @Override
         public void onItemClick(AdapterView<?> listView, View itemView, int position, long row) {
+            if (position < 0 || position >= mSimpleListAdapter.getCount()) {
+                return;
+            }
             setHasOptionsMenu(false);
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
 
