@@ -13,9 +13,13 @@ import net.jejer.hipda.ui.HiApplication;
 
 public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";
+
     public static final String BaseUrl = "http://www.hi-pda.com/forum/";
     public static final String ImageBaseUrl = "http://img.hi-pda.com/forum/";
+    public static final String AvatarBaseUrl = ImageBaseUrl + "uc_server//data/avatar/";
+    public final static String SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
     public static final String CookieDomain = "hi-pda.com";
+
     public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
     public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
     public static final String ReplyUrl = BaseUrl + "post.php?action=reply&tid=";
@@ -43,14 +47,11 @@ public class HiUtils {
     public static final String FavoriteAddUrl = BaseUrl + "my.php?item={item}&action=add&inajax=1&ajaxtarget=favorite_msg&tid={tid}";
     public static final String FavoriteRemoveUrl = BaseUrl + "my.php?item={item}&action=remove&inajax=1&ajaxtarget=favorite_msg&tid={tid}";
     public static final String UserInfoUrl = BaseUrl + "space.php?uid=";
-    public static final String AvatarBaseUrl = BaseUrl + "uc_server/data/avatar/";
 
     public static final String LoginSubmit = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
     public static final String LoginGetFormHash = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
 
     private static String userAgent;
-
-    public final static String SMILE_PATH = ImageBaseUrl + "images/smilies/";
 
     private final static String AVATAR_BASE = "000000000";
     public static int MAX_THREADS_IN_PAGE = 50;

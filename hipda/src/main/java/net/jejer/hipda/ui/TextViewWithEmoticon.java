@@ -88,9 +88,9 @@ public class TextViewWithEmoticon extends TextView {
                 icon = ContextCompat.getDrawable(mCtx, SmallImages.getDrawable(src));
                 icon.setBounds(0, 0, getLineHeight() / 2, getLineHeight() / 2);
             } else {
-                int idx = src.indexOf(HiUtils.SMILE_PATH);
+                int idx = src.indexOf(HiUtils.SmiliesBaseUrl);
                 if (idx != -1 && src.indexOf(".", idx) != -1) {
-                    src = src.substring(src.indexOf(HiUtils.SMILE_PATH) + HiUtils.SMILE_PATH.length(), src.lastIndexOf(".")).replace("/", "_");
+                    src = src.substring(src.indexOf(HiUtils.SmiliesBaseUrl) + HiUtils.SmiliesBaseUrl.length(), src.lastIndexOf(".")).replace("/", "_");
                     int id = mCtx.getResources().getIdentifier(src, "drawable", mCtx.getPackageName());
                     if (id != 0) {
                         icon = ContextCompat.getDrawable(mCtx, id);

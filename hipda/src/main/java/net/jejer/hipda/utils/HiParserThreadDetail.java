@@ -392,7 +392,7 @@ public class HiParserThreadDetail {
             Element e = (Element) contentN;
             String src = e.attr("src");
 
-            if (src.startsWith(HiUtils.SMILE_PATH) || SmallImages.contains(src)) {
+            if (src.startsWith(HiUtils.SmiliesBaseUrl) || SmallImages.contains(src)) {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
                 return false;
