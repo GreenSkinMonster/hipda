@@ -238,7 +238,8 @@ public class PostFragment extends BaseFragment {
     public void onDestroy() {
         if (mSnackbar != null)
             mSnackbar.dismiss();
-        mPrePostAsyncTask.cancel(true);
+        if (mPrePostAsyncTask != null)
+            mPrePostAsyncTask.cancel(true);
         super.onDestroy();
     }
 
