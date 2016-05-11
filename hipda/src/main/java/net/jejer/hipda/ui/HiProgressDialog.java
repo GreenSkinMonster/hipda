@@ -20,6 +20,7 @@ public class HiProgressDialog extends ProgressDialog {
 
     public final static int INFO = 0;
     public final static int ERROR = 9;
+    private boolean mAttachedToWindow = false;
 
     public HiProgressDialog(Context context) {
         super(context);
@@ -60,7 +61,8 @@ public class HiProgressDialog extends ProgressDialog {
             }
 
             public void onFinish() {
-                dismiss();
+                if (mAttachedToWindow && HiProgressDialog.this.isShowing())
+                    dismiss();
             }
         }.start();
     }
@@ -68,9 +70,16 @@ public class HiProgressDialog extends ProgressDialog {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+        mAttachedToWindow = true;
         setCancelable(false);
         if (getWindow() != null)
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        mAttachedToWindow = false;
+        super.onDetachedFromWindow();
     }
 
     public static HiProgressDialog show(Context context, String message) {
