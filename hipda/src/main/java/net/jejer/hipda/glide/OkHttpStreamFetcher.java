@@ -43,10 +43,12 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
 
     @Override
     public InputStream loadData(Priority priority) throws Exception {
-        boolean isAvatarUrl = stringUrl.startsWith(HiUtils.AvatarBaseUrl);
-        isForumUrl = isAvatarUrl ? isAvatarUrl : stringUrl.startsWith(HiUtils.ImageBaseUrl);
-
-        return isAvatarUrl ? getAvatar() : getImage();
+        isForumUrl = stringUrl.startsWith(HiUtils.ImageBaseUrl);
+        if (isForumUrl && stringUrl.contains(HiUtils.AvatarSuffix)) {
+            return getAvatar();
+        } else {
+            return getImage();
+        }
     }
 
     private InputStream getImage() throws IOException {

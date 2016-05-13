@@ -16,9 +16,10 @@ public class HiUtils {
 
     public static final String BaseUrl = "http://www.hi-pda.com/forum/";
     public static final String ImageBaseUrl = "http://img.hi-pda.com/forum/";
-    public static final String AvatarBaseUrl = ImageBaseUrl + "uc_server//data/avatar/";
+    public static final String AvatarBaseUrl = ImageBaseUrl + "uc_server/data/avatar/";
     public final static String SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
     public static final String CookieDomain = "hi-pda.com";
+    public static final String AvatarSuffix = "_avatar_middle.jpg";
 
     public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
     public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
@@ -132,7 +133,7 @@ public class HiUtils {
                 + fullUid.substring(0, 3) + "/"
                 + fullUid.substring(3, 5) + "/"
                 + fullUid.substring(5, 7) + "/"
-                + fullUid.substring(7, 9) + "_avatar_middle.jpg";
+                + fullUid.substring(7, 9) + HiUtils.AvatarSuffix;
         return url;
     }
 
@@ -188,13 +189,11 @@ public class HiUtils {
         return R.style.ThemeLight_BlueGrey;
     }
 
-    public static boolean isValidId
-            (String id) {
+    public static boolean isValidId(String id) {
         return !TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id) && Integer.parseInt(id) > 0;
     }
 
-    public static String getUserAgent
-            () {
+    public static String getUserAgent() {
         if (userAgent == null)
             userAgent = UserAgentPrefix + " " + HiApplication.getAppVersion();
         return userAgent;
