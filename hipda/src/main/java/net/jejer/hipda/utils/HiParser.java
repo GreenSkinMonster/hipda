@@ -249,7 +249,7 @@ public class HiParser {
             // new
             Elements imgES = pciteES.first().select("img");
             if (imgES.size() > 0) {
-                if (imgES.first().attr("src").equals("images/default/notice_newpm.gif")) {
+                if (imgES.first().attr("src").contains(HiUtils.NewPMImage)) {
                     item.setNew(true);
                 }
             }
@@ -339,7 +339,7 @@ public class HiParser {
         // new
         Elements imgES = root.select("img");
         if (imgES.size() > 0) {
-            if (imgES.first().attr("src").equals("images/default/notice_newpm.gif")) {
+            if (imgES.first().attr("src").contains(HiUtils.NewPMImage)) {
                 item.setNew(true);
             }
         }
@@ -391,7 +391,7 @@ public class HiParser {
         // new
         Elements imgES = root.select("img");
         if (imgES.size() > 0) {
-            if (imgES.first().attr("src").equals("images/default/notice_newpm.gif")) {
+            if (imgES.first().attr("src").contains(HiUtils.NewPMImage)) {
                 item.setNew(true);
             }
         }
@@ -460,7 +460,7 @@ public class HiParser {
             // new
             Elements imgES = pciteES.first().select("img");
             if (imgES.size() > 0) {
-                if (imgES.first().attr("src").equals("images/default/notice_newpm.gif")) {
+                if (imgES.first().attr("src").contains(HiUtils.NewPMImage)) {
                     item.setNew(true);
                 }
             }

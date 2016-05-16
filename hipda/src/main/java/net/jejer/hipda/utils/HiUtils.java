@@ -20,6 +20,7 @@ public class HiUtils {
     public final static String SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
     public static final String CookieDomain = "hi-pda.com";
     public static final String AvatarSuffix = "_avatar_middle.jpg";
+    public static final String NewPMImage = "images/default/notice_newpm.gif";
 
     public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
     public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
