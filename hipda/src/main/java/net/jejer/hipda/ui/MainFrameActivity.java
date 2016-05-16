@@ -562,7 +562,7 @@ public class MainFrameActivity extends AppCompatActivity {
         }
         try {
             return super.dispatchTouchEvent(ev);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
             return true;
         }
     }

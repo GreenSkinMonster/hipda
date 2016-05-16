@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
@@ -238,7 +237,7 @@ public class TextViewWithEmoticon extends TextView {
                 if (action == MotionEvent.ACTION_UP) {
                     try {
                         link[0].onClick(this);
-                    } catch (ActivityNotFoundException ignored) {
+                    } catch (Exception ignored) {
                         //hack, catch ActivityNotFoundException
                     }
                 }

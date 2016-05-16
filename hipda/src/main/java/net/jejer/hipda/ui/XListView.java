@@ -2,6 +2,7 @@ package net.jejer.hipda.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -366,6 +367,14 @@ public class XListView extends ListView implements OnScrollListener {
             // avoid random  IndexOutOfBoundsException error
         }
         return true;
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        try {
+            super.dispatchDraw(canvas);
+        } catch (IndexOutOfBoundsException ignored) {
+        }
     }
 
     @Override

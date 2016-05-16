@@ -730,7 +730,7 @@ public class ThreadDetailFragment extends BaseFragment {
             mDetailListView.setItemChecked(position, true);
 
             position = position - mDetailListView.getHeaderViewsCount();
-            if (position >= mDetailAdapter.getCount()) {
+            if (position < 0 || position >= mDetailAdapter.getCount()) {
                 return false;
             }
 
