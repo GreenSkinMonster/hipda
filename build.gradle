@@ -26,7 +26,7 @@ ext {
     targetSdkVersion = 23
 
     buildToolsVersion = '23.0.3'
-    supportLibraryVersion = '23.3.0'
+    supportLibraryVersion = '23.4.0'
 
     supportAppCompat = "com.android.support:appcompat-v7:$supportLibraryVersion"
     supportV4 = "com.android.support:support-v4:$supportLibraryVersion"
