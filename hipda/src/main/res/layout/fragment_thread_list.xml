@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.jejer.hipda.ui.SlidingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
     android:id="@+id/fragment_threadlist"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?list_item_background">
@@ -17,7 +18,7 @@
             android:layout_height="wrap_content"
             android:divider="?list_item_divider"
             android:dividerHeight="1dp"
-            android:listSelector="@android:color/transparent" />
+            android:listSelector="@android:color/transparent"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -41,13 +42,13 @@
             android:id="@+id/action_fab_new_thread"
             style="@style/FloatingButtonsStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/action_fab_refresh"
             style="@style/FloatingButtonsStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
     </com.github.clans.fab.FloatingActionMenu>
 
     <com.github.clans.fab.FloatingActionButton
@@ -61,7 +62,7 @@
         android:visibility="gone"
         fab:fab_colorNormal="@color/pink"
         fab:fab_colorPressed="@color/pink_pressed"
-        fab:fab_shadowColor="@android:color/transparent" />
+        fab:fab_shadowColor="@android:color/transparent"/>
 
     <net.jejer.hipda.ui.ContentLoadingProgressBar
         android:id="@+id/list_loading"
@@ -70,6 +71,6 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:indeterminate="true"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 
-</net.jejer.hipda.ui.SlidingRelativeLayout>
+</RelativeLayout>
