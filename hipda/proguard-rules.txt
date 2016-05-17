@@ -9,6 +9,9 @@
 -dontwarn android.net.**
 
 -keeppackagenames org.jsoup.nodes
+-keep public class org.jsoup.** {
+    public *;
+}
 
 -keep class com.android.volley.** {*;}
 -keep class com.android.volley.toolbox.** {*;}
