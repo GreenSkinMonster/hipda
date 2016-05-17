@@ -107,6 +107,7 @@ public class PostFragment extends BaseFragment {
     private HiProgressDialog mProgressDialog;
     private boolean mImageUploading = false;
     private Map<Uri, UploadImage> mUploadImages = new LinkedHashMap<>();
+    private Collection<Uri> mHoldedImages = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -406,7 +407,12 @@ public class PostFragment extends BaseFragment {
             }
 
             mProgressDialog = HiProgressDialog.show(getActivity(), "处理中...");
-            JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), uris.toArray(new Uri[uris.size()])));
+            if (mPrePostInfo != null) {
+                JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), uris.toArray(new Uri[uris.size()])));
+            } else {
+                //hold selected images, upload them after fetch pre post info success
+                mHoldedImages.addAll(uris);
+            }
         }
     }
 
@@ -519,6 +525,12 @@ public class PostFragment extends BaseFragment {
                     }
                 });
             }
+        }
+
+        //try to upload holded images when pre post info is ready
+        if (mHoldedImages != null && mHoldedImages.size() > 0) {
+            JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), mHoldedImages.toArray(new Uri[mHoldedImages.size()])));
+            mHoldedImages.clear();
         }
     }
 
