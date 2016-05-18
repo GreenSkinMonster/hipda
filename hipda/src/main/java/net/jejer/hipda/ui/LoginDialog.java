@@ -102,7 +102,8 @@ public class LoginDialog extends Dialog {
                     protected void onPostExecute(Integer result) {
                         if (result == Constants.STATUS_SUCCESS) {
                             Toast.makeText(mCtx, "登录成功", Toast.LENGTH_SHORT).show();
-                            dismiss();
+                            if (LoginDialog.this.isShowing())
+                                dismiss();
                             isShown = false;
                             if (mHandler != null) {
                                 Message msg = Message.obtain();
