@@ -2,6 +2,7 @@ package net.jejer.hipda.async;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -224,6 +225,11 @@ public class FavoriteHelper {
     }
 
     public void addFavorite(final Context ctx, final String item, final String tid) {
+        if (TextUtils.isEmpty(item) || TextUtils.isEmpty(tid)) {
+            Toast.makeText(ctx, "参数错误", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String url = HiUtils.FavoriteAddUrl.replace("{item}", item).replace("{tid}", tid);
 
         OkHttpHelper.getInstance().asyncGet(url, new OkHttpHelper.ResultCallback() {
@@ -248,6 +254,11 @@ public class FavoriteHelper {
     }
 
     public void removeFavorite(final Context ctx, final String item, final String tid) {
+        if (TextUtils.isEmpty(item) || TextUtils.isEmpty(tid)) {
+            Toast.makeText(ctx, "参数错误", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String url = HiUtils.FavoriteRemoveUrl.replace("{item}", item).replace("{tid}", tid);
 
         OkHttpHelper.getInstance().asyncGet(url, new OkHttpHelper.ResultCallback() {
