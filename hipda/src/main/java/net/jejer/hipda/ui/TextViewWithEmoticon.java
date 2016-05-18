@@ -196,7 +196,7 @@ public class TextViewWithEmoticon extends TextView {
                         if (fileName.contains(" ("))
                             fileName = fileName.substring(0, fileName.lastIndexOf(" (")).trim();
                     }
-
+                    Toast.makeText(mCtx, "开始下载 " + fileName + " ...", Toast.LENGTH_SHORT).show();
                     HttpUtils.download(mCtx, getURL(), fileName);
                 } catch (Exception e) {
                     Logger.e(e);
@@ -237,8 +237,8 @@ public class TextViewWithEmoticon extends TextView {
                 if (action == MotionEvent.ACTION_UP) {
                     try {
                         link[0].onClick(this);
-                    } catch (Exception ignored) {
-                        //hack, catch ActivityNotFoundException
+                    } catch (Exception e) {
+                        Toast.makeText(mCtx, "发生错误 : " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
                 ret = true;
