@@ -291,10 +291,10 @@ public class HiParser {
                 item = parseNotifyThread(divES.first());
             } else if (divES.first().hasClass("f_quote")) {
                 // user quote your post
-                item = parseNotifyQuoteandReply(divES.first());
+                item = parseNotifyQuoteAndReply(divES.first());
             } else if (divES.first().hasClass("f_reply")) {
                 // user reply your post
-                item = parseNotifyQuoteandReply(divES.first());
+                item = parseNotifyQuoteAndReply(divES.first());
             }
 
             if (item != null) {
@@ -336,19 +336,12 @@ public class HiParser {
         else
             info += "回复了您的帖子 ";
 
-        // new
-        Elements imgES = root.select("img");
-        if (imgES.size() > 0) {
-            if (imgES.first().attr("src").contains(HiUtils.NewPMImage)) {
-                item.setNew(true);
-            }
-        }
-
+        item.setNew(true);
         item.setInfo(info);
         return item;
     }
 
-    public static SimpleListItemBean parseNotifyQuoteandReply(Element root) {
+    public static SimpleListItemBean parseNotifyQuoteAndReply(Element root) {
         SimpleListItemBean item = new SimpleListItemBean();
 
 
