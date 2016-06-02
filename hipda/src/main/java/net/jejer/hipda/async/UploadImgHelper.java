@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.ImageFileInfo;
@@ -182,6 +183,7 @@ public class UploadImgHelper {
             urlConnection = (HttpURLConnection) url.openConnection();
 
             urlConnection.setRequestProperty("User-Agent", HiUtils.getUserAgent());
+            urlConnection.setRequestProperty("Cookie", "cdb_auth=" + OkHttpHelper.getInstance().getAuthCookie());
 
             urlConnection.setConnectTimeout(UPLOAD_CONNECT_TIMEOUT);
             urlConnection.setReadTimeout(UPLOAD_READ_TIMEOUT);
@@ -236,7 +238,6 @@ public class UploadImgHelper {
                 mMessage = "上传错误代码 : " + status;
                 return null;
             }
-            Logger.v("uploading image, response : " + urlConnection.getResponseCode() + ", " + urlConnection.getResponseMessage());
             InputStream in = urlConnection.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String inputLine = "";
