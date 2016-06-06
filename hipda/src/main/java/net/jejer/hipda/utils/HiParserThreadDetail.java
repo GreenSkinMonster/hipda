@@ -250,7 +250,8 @@ public class HiParserThreadDetail {
             Elements postimgES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.t_msgfontfix div.postattachlist img");
             for (int j = 0; j < postimgES.size(); j++) {
                 Element imgE = postimgES.get(j);
-                if (imgE.attr("file").startsWith("attachments/day_") || imgE.attr("file").startsWith("attachment.php")) {
+                if (imgE.attr("file").startsWith(HiUtils.ImageBaseUrl + "attachments/day_")
+                        || imgE.attr("file").startsWith(HiUtils.ImageBaseUrl + "attachment.php")) {
                     content.addImg(imgE.attr("file"));
                 }
             }
