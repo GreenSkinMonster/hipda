@@ -100,7 +100,7 @@ public class SettingsFragment extends PreferenceFragment {
         dialogPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 final Dialog dialog = new AboutDialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
-                dialog.getWindow().setWindowAnimations(android.R.anim.fade_in);
+                //dialog.getWindow().setWindowAnimations(android.R.anim.fade_in);
                 dialog.show();
                 return true;
             }
