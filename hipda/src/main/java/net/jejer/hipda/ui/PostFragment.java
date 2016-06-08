@@ -516,6 +516,7 @@ public class PostFragment extends BaseFragment {
                     mEtSubject.setVisibility(View.VISIBLE);
                 }
             } else {
+                mTvQuoteText.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                 mTvQuoteText.setText(mText);
                 mTvQuoteText.setVisibility(View.VISIBLE);
                 mTvQuoteText.setOnClickListener(new View.OnClickListener() {

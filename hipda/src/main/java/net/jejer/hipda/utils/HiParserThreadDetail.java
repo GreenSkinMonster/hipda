@@ -20,6 +20,7 @@ import net.jejer.hipda.ui.textstyle.TextStyleHolder;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.util.regex.Matcher;
@@ -347,8 +348,11 @@ public class HiParserThreadDetail {
             textStyles.addStyle(level, contentN.nodeName());
             return true;
         } else if (contentN.nodeName().equals("#text")) {
-            //don't use text() here, or &lt; &gt; will be parsed to < >, become to unsupported tag
-            String text = contentN.outerHtml();
+            //replace  < >  to &lt; &gt; , or they will become to unsupported tag
+            String text = ((TextNode) contentN).text()
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;");
+
             TextStyle ts = null;
             if (textStyles.getTextStyle(level - 1) != null)
                 ts = textStyles.getTextStyle(level - 1).newInstance();
