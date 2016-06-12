@@ -395,16 +395,18 @@ public class HiParserThreadDetail {
         } else if (contentN.nodeName().equals("img")) {
             Element e = (Element) contentN;
             String src = e.attr("src");
+            String file = e.attr("file");
 
-            if (src.startsWith(HiUtils.SmiliesBaseUrl) || SmallImages.contains(src)) {
+            if (!TextUtils.isEmpty(file)
+                    && (src.equals(HiUtils.ImageBaseUrl + "images/common/none.gif")
+                    || src.startsWith(HiUtils.ImageBaseUrl + "attachments/day_")
+                    || src.startsWith(HiUtils.ImageBaseUrl + "attachment.php"))) {
+                //internal image
+                content.addImg(file, e.attr("id"));
+                return false;
+            } else if (src.startsWith(HiUtils.SmiliesBaseUrl) || SmallImages.contains(src)) {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
-                return false;
-            } else if (src.equals(HiUtils.ImageBaseUrl + "images/common/none.gif")
-                    || src.startsWith(HiUtils.ImageBaseUrl + "attachments/day_")
-                    || src.startsWith(HiUtils.ImageBaseUrl + "attachment.php")) {
-                //internal image
-                content.addImg(e.attr("file"), e.attr("id"));
                 return false;
             } else if (src.startsWith(HiUtils.ImageBaseUrl + "images/")) {
                 //skip common/default/attach icons
