@@ -44,7 +44,8 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
 
         switch (item.getItemId()) {
             case R.id.action_edit:
-                if (mDetailBean.getAuthor().equals(HiSettingsHelper.getInstance().getUsername())) {
+                if (mDetailBean.getUid().equals(HiSettingsHelper.getInstance().getUid())
+                        || mDetailBean.getAuthor().equalsIgnoreCase(HiSettingsHelper.getInstance().getUsername())) {
                     mFragment.setHasOptionsMenu(false);
 
                     arguments.putString(PostFragment.ARG_FID_KEY, mFid);

@@ -156,7 +156,7 @@ public class HiParserThreadDetail {
             }
             String uidUrl = postauthorAES.first().attr("href");
             String uid = HttpUtils.getMiddleString(uidUrl, "uid=", "&");
-            if (uid != null) {
+            if (!TextUtils.isEmpty(uid)) {
                 detail.setUid(uid);
             } else {
                 continue;
