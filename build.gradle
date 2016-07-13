@@ -22,11 +22,11 @@ allprojects {
 
 ext {
     minSdkVersion = 15
-    compileSdkVersion = 23
-    targetSdkVersion = 23
+    compileSdkVersion = 24
+    targetSdkVersion = 24
 
-    buildToolsVersion = '23.0.3'
-    supportLibraryVersion = '23.4.0'
+    buildToolsVersion = '24.0.0'
+    supportLibraryVersion = '24.0.0'
 
     supportAppCompat = "com.android.support:appcompat-v7:$supportLibraryVersion"
     supportV4 = "com.android.support:support-v4:$supportLibraryVersion"
