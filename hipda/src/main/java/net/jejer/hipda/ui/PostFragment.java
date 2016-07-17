@@ -286,6 +286,11 @@ public class PostFragment extends BaseFragment {
                     fetchPrePostInfo(false);
                     Toast.makeText(getActivity(), "请等待信息收集结束再选择图片", Toast.LENGTH_LONG).show();
                 } else {
+
+                    if (UIUtils.askForPermission(getActivity())) {
+                        return true;
+                    }
+
                     mContentPosition = mEtContent.getSelectionStart();
                     Intent intent = new Intent();
                     intent.setType("image/*");

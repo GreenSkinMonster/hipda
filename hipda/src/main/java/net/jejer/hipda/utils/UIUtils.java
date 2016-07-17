@@ -1,19 +1,25 @@
 package net.jejer.hipda.utils;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiApplication;
+import net.jejer.hipda.ui.MainFrameActivity;
 
 /**
  * Created by GreenSkinMonster on 2016-04-05.
@@ -80,6 +86,20 @@ public class UIUtils {
         alertDialog.setNegativeButton(context.getResources().getString(R.string.action_close), null);
         alertDialog.show();
         etText.requestFocus();
+    }
+
+    public static boolean askForPermission(Context ctx) {
+        if (ContextCompat.checkSelfPermission(ctx,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(ctx, "需要授予 \"存储空间\" 权限", Toast.LENGTH_SHORT).show();
+            if (ctx instanceof Activity)
+                ActivityCompat.requestPermissions((Activity) ctx,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MainFrameActivity.PERMISSIONS_REQUEST_CODE);
+            return true;
+        }
+        return false;
     }
 
 }

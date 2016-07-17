@@ -1,15 +1,12 @@
 package net.jejer.hipda.ui;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -32,6 +29,7 @@ import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -192,13 +190,7 @@ public class PopupImageDialog extends DialogFragment {
                     @Override
                     public void onClick(View arg0) {
 
-                        if (ContextCompat.checkSelfPermission(getActivity(),
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                != PackageManager.PERMISSION_GRANTED) {
-                            Toast.makeText(getActivity(), "需要在权限管理中授权存储空间权限", Toast.LENGTH_SHORT).show();
-                            ActivityCompat.requestPermissions(getActivity(),
-                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                    MainFrameActivity.PERMISSIONS_REQUEST_CODE);
+                        if (UIUtils.askForPermission(getActivity())) {
                             return;
                         }
 
