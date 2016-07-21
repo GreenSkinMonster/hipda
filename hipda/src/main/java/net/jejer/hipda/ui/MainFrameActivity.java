@@ -242,7 +242,7 @@ public class MainFrameActivity extends AppCompatActivity {
         stickyDrawerItems.add(new DividerDrawerItem());
         for (int i = 0; i < HiUtils.FORUM_IDS.length; i++) {
             if (HiUtils.isForumEnabled(HiUtils.FORUM_IDS[i]))
-                stickyDrawerItems.add(new PrimaryDrawerItem().withName(HiUtils.FORUMS[i])
+                stickyDrawerItems.add(new PrimaryDrawerItem().withName(HiUtils.FORUM_NAMES[i])
                         .withIdentifier(HiUtils.FORUM_IDS[i])
                         .withIcon(HiUtils.FORUM_ICONS[i]));
         }

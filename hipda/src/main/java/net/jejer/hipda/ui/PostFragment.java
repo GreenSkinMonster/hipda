@@ -162,8 +162,8 @@ public class PostFragment extends BaseFragment {
 
         if (mFid != null && TextUtils.isDigitsOnly(mFid)) {
             int fid = Integer.parseInt(mFid);
-            if (fid >= 0 && fid < HiUtils.FORUMS.length)
-                mForumName = HiUtils.FORUMS[HiUtils.getForumIndexByFid(fid)];
+            if (fid >= 0 && fid < HiUtils.FORUM_NAMES.length)
+                mForumName = HiUtils.FORUM_NAMES[HiUtils.getForumIndexByFid(fid)];
         }
 
         mEtSubject = (EditText) view.findViewById(R.id.et_subject);

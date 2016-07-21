@@ -64,7 +64,7 @@ public class FragmentUtils {
         if (url.startsWith(HiUtils.BaseUrl + "forumdisplay.php")) {
             if (url.contains("fid")) {
                 String fid = HttpUtils.getMiddleString(url, "fid=", "&");
-                if (HiUtils.isValidId(fid) && HiUtils.isForumEnabled(Integer.parseInt(fid))) {
+                if (HiUtils.isValidId(fid) && HiUtils.isForumValid(Integer.parseInt(fid))) {
                     FragmentArgs args = new FragmentArgs();
                     args.setType(FragmentArgs.TYPE_FORUM);
                     args.setFid(Integer.parseInt(fid));
@@ -147,7 +147,7 @@ public class FragmentUtils {
     public static void showForum(FragmentManager fragmentManager, int fid) {
         //show forum always use Transaction.replace
         Bundle argments = new Bundle();
-        if (HiUtils.isForumEnabled(fid))
+        if (HiUtils.isForumValid(fid))
             argments.putInt(ThreadListFragment.ARG_FID_KEY, fid);
         ThreadListFragment fragment = new ThreadListFragment();
         fragment.setArguments(argments);
@@ -246,6 +246,8 @@ public class FragmentUtils {
     }
 
     public static void show(FragmentManager fragmentManager, FragmentArgs args) {
+        if (args == null)
+            return;
         if (args.getType() == FragmentArgs.TYPE_THREAD)
             showThread(fragmentManager, args.isDirectOpen(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
         else if (args.getType() == FragmentArgs.TYPE_SPACE)
@@ -256,6 +258,8 @@ public class FragmentUtils {
             showSmsDetail(fragmentManager, args.isDirectOpen(), args.getUid(), args.getUsername());
         else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY)
             showThreadNotify(fragmentManager, args.isDirectOpen());
+        else if (args.getType() == FragmentArgs.TYPE_FORUM)
+            showForum(fragmentManager, args.getFid());
     }
 
 }

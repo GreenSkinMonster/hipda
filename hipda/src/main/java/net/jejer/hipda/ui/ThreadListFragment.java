@@ -4,7 +4,9 @@ package net.jejer.hipda.ui;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,7 +14,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +28,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
@@ -52,6 +57,7 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
+import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -104,7 +110,7 @@ public class ThreadListFragment extends BaseFragment
             mForumId = getArguments().getInt(ARG_FID_KEY);
         }
         int forumIdx = HiUtils.getForumIndexByFid(mForumId);
-        if (forumIdx == -1 || !HiUtils.isForumEnabled(mForumId)) {
+        if (forumIdx == -1) {
             mForumId = HiUtils.FID_DISCOVERY;
         }
 
@@ -260,7 +266,7 @@ public class ThreadListFragment extends BaseFragment
 
         int forumIdx = HiUtils.getForumIndexByFid(mForumId);
 
-        setActionBarTitle(HiUtils.FORUMS[forumIdx]);
+        setActionBarTitle(HiUtils.FORUM_NAMES[forumIdx]);
         setActionBarDisplayHomeAsUpEnabled(false);
         syncActionBarState();
 
@@ -297,6 +303,9 @@ public class ThreadListFragment extends BaseFragment
             case R.id.action_filter_by_type:
                 showForumTypesDialog();
                 return true;
+            case R.id.action_open_by_url:
+                showOpenUrlDialog();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -327,7 +336,7 @@ public class ThreadListFragment extends BaseFragment
 
     public void resetActionBarTitle() {
         int forumIdx = HiUtils.getForumIndexByFid(mForumId);
-        setActionBarTitle(HiUtils.FORUMS[forumIdx]);
+        setActionBarTitle(HiUtils.FORUM_NAMES[forumIdx]);
         setActionBarDisplayHomeAsUpEnabled(false);
         syncActionBarState();
     }
@@ -591,6 +600,59 @@ public class ThreadListFragment extends BaseFragment
             }
         });
 
+    }
+
+    private void showOpenUrlDialog() {
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View viewlayout = inflater.inflate(R.layout.dialog_open_by_url, null);
+
+        String urlFromClip = HiUtils.ThreadListUrl;
+        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard.hasPrimaryClip()) {
+            String text = Utils.nullToText(clipboard.getPrimaryClip().getItemAt(0).getText()).replace("\n", "").trim();
+            if (FragmentUtils.parseUrl(text) != null)
+                urlFromClip = text;
+        }
+
+        final EditText etUrl = (EditText) viewlayout.findViewById(R.id.et_url);
+        etUrl.setText(urlFromClip);
+        etUrl.selectAll();
+        etUrl.requestFocus();
+
+        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
+        popDialog.setTitle(mCtx.getResources().getString(R.string.action_open_by_url));
+        popDialog.setView(viewlayout);
+        popDialog.setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                FragmentUtils.show(getFragmentManager(), FragmentUtils.parseUrl(Utils.nullToText(etUrl.getText()).replace("\n", "").trim()));
+            }
+        });
+
+        final AlertDialog dialog = popDialog.create();
+
+        etUrl.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String url = Utils.nullToText(etUrl.getText()).replace("\n", "").trim();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(FragmentUtils.parseUrl(url) != null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        dialog.show();
+
+        String url = Utils.nullToText(etUrl.getText()).replace("\n", "").trim();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(FragmentUtils.parseUrl(url) != null);
     }
 
     public void showNotification() {

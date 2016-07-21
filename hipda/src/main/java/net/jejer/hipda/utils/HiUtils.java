@@ -8,6 +8,7 @@ import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.iconics.typeface.IIcon;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.bean.Forum;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiApplication;
 
@@ -61,16 +62,44 @@ public class HiUtils {
     public final static int FID_BS = 6;
     public final static int FID_DISCOVERY = 2;
 
-    public final static String[] FORUMS = {"Discovery", "Buy & Sell", "Geek Talks", "E-INK", "PalmOS", "疑似机器人"};
-    public final static int[] FORUM_IDS = {FID_DISCOVERY, FID_BS, 7, 59, 12, 57};
-    public final static IIcon[] FORUM_ICONS = {
-            FontAwesome.Icon.faw_cc_discover,
-            FontAwesome.Icon.faw_shopping_cart,
-            FontAwesome.Icon.faw_forumbee,
-            FontAwesome.Icon.faw_book,
-            FontAwesome.Icon.faw_mobile,
-            FontAwesome.Icon.faw_reddit
+    public final static Forum[] FORUMS = {
+            new Forum(FID_DISCOVERY, "Discovery", FontAwesome.Icon.faw_cc_discover, 1),
+            new Forum(FID_BS, "Buy & Sell", FontAwesome.Icon.faw_shopping_cart, 1),
+            new Forum(7, "Geek Talks", FontAwesome.Icon.faw_forumbee, 1),
+            new Forum(59, "E-INK", FontAwesome.Icon.faw_book, 1),
+            new Forum(12, "PalmOS", FontAwesome.Icon.faw_mobile, 1),
+            new Forum(57, "疑似机器人", FontAwesome.Icon.faw_reddit, 1),
+            new Forum(63, "已完成交易", FontAwesome.Icon.faw_circle, 1),
+            new Forum(62, "Joggler", FontAwesome.Icon.faw_circle, 1),
+            new Forum(5, "站务与公告", FontAwesome.Icon.faw_circle, 1),
+            new Forum(9, "Smartphone", FontAwesome.Icon.faw_circle, 1),
+            new Forum(56, "iPhone, iPod Touch，iPad", FontAwesome.Icon.faw_circle, 1),
+            new Forum(60, "Android, Chrome, & Google", FontAwesome.Icon.faw_circle, 1),
+            new Forum(14, "Windows Mobile，PocketPC，HPC", FontAwesome.Icon.faw_circle, 1),
+            new Forum(22, "麦客爱苹果", FontAwesome.Icon.faw_circle, 1),
+            new Forum(50, "DC,NB,MP3,Gadgets", FontAwesome.Icon.faw_circle, 1),
+            new Forum(24, "意欲蔓延", FontAwesome.Icon.faw_circle, 1),
+            new Forum(25, "吃喝玩乐", FontAwesome.Icon.faw_circle, 1),
+            new Forum(51, "La Femme", FontAwesome.Icon.faw_circle, 1),
+            new Forum(65, "改版建议", FontAwesome.Icon.faw_circle, 1),
+            new Forum(64, "只讨论2.0", FontAwesome.Icon.faw_circle, 1),
     };
+
+    public static String[] FORUM_NAMES;
+    public static int[] FORUM_IDS;
+    public static IIcon[] FORUM_ICONS;
+
+    static {
+        FORUM_NAMES = new String[FORUMS.length];
+        FORUM_IDS = new int[FORUMS.length];
+        FORUM_ICONS = new IIcon[FORUMS.length];
+        for (int i = 0; i < FORUMS.length; i++) {
+            Forum forum = FORUMS[i];
+            FORUM_NAMES[i] = forum.getName();
+            FORUM_IDS[i] = forum.getId();
+            FORUM_ICONS[i] = forum.getIcon();
+        }
+    }
 
     public static int getForumID(int idx) {
         return FORUM_IDS[idx];
@@ -94,6 +123,10 @@ public class HiUtils {
                 return true;
         }
         return false;
+    }
+
+    public static boolean isForumValid(int fid) {
+        return getForumIndexByFid(fid) != -1;
     }
 
     public final static String[] BS_TYPES = {"全部", "手机", "掌上电脑", "笔记本电脑", "无线产品", "数码相机、摄像机", "MP3随身听", "各类配件", "其他好玩的"};
@@ -191,7 +224,11 @@ public class HiUtils {
     }
 
     public static boolean isValidId(String id) {
-        return !TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id) && Integer.parseInt(id) > 0;
+        try {
+            return !TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id) && Integer.parseInt(id) > 0;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public static String getUserAgent() {

@@ -19,6 +19,7 @@
     <string name="action_copy_url">复制帖子地址</string>
     <string name="action_post_font">行距设置</string>
     <string name="action_thread_list_settings">帖子设置</string>
+    <string name="action_open_by_url">打开站内地址</string>
     <string name="action_upload_img">上传图片</string>
     <string name="action_add_favorite">添加收藏</string>
     <string name="action_remove_favorite">取消收藏</string>
@@ -71,6 +72,7 @@
     <string name="prefix_search_fulltext">全文搜索：</string>
     <string name="prefix_search_history">搜索记录：</string>
     <string name="user_online">目前在线</string>
+    <string name="site_url">站内地址</string>
 
     <string name="crash_toast_text">HiPDA·NG 发生了意外，请协助通过邮件反馈错误信息</string>
 

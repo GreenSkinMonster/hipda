@@ -24,4 +24,8 @@
         android:id="@+id/action_thread_list_settings"
         android:title="@string/action_thread_list_settings" />
 
+    <item
+        android:id="@+id/action_open_by_url"
+        android:title="@string/action_open_by_url" />
+
 </menu>
