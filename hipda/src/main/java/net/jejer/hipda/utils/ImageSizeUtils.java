@@ -8,9 +8,9 @@ public class ImageSizeUtils {
 
     private static long MAX_MEMORY = -1;
 
-    public final static int NORMAL_IMAGE_DECODE_WIDTH = 450;
-    public final static int SMALLER_IMAGE_DECODE_WIDTH = 420;
-    public final static int SMALLEST_IMAGE_DECODE_WIDTH = 380;
+    public final static int NORMAL_IMAGE_DECODE_WIDTH = 560;
+    public final static int SMALLER_IMAGE_DECODE_WIDTH = 460;
+    public final static int SMALLEST_IMAGE_DECODE_WIDTH = 420;
 
     public final static int GIF_DECODE_WIDTH = 320;
 
