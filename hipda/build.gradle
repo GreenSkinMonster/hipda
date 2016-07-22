@@ -69,6 +69,8 @@ dependencies {
         exclude group: 'org.greenrobot'
     }
 
+    compile 'com.daasuu:BubbleLayout:1.1.1'
+
     //compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':emoji')
 

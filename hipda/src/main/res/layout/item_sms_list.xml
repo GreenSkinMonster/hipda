@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -11,9 +12,9 @@
         android:id="@+id/iv_friend_avatar"
         android:layout_width="@dimen/avatar_size"
         android:layout_height="@dimen/avatar_size"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="6dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
         android:padding="2dp"
         android:visibility="invisible" />
 
@@ -24,19 +25,30 @@
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/iv_my_avatar"
         android:layout_toRightOf="@+id/iv_friend_avatar"
-        android:background="@drawable/rounded_corner"
-        android:orientation="vertical"
-        android:padding="4dp">
+        android:orientation="vertical">
 
-        <net.jejer.hipda.ui.TextViewWithEmoticon
-            android:id="@+id/tv_content"
-            android:layout_width="match_parent"
+        <com.daasuu.bl.BubbleLayout
+            android:id="@+id/bl_bubble"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:gravity="center"
-            android:padding="4dp"
-            android:text=""
-            android:textSize="16sp" />
+            android:layout_marginTop="8dp"
+            android:padding="6dp"
+            app:bl_arrowDirection="right"
+            app:bl_arrowHeight="8dp"
+            app:bl_arrowPosition="16dp"
+            app:bl_arrowWidth="8dp"
+            app:bl_cornersRadius="6dp">
+
+            <net.jejer.hipda.ui.TextViewWithEmoticon
+                android:id="@+id/tv_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:padding="2dp"
+                android:text=""
+                android:textSize="16sp" />
+
+        </com.daasuu.bl.BubbleLayout>
 
         <LinearLayout
             android:id="@+id/sms_info_layout"
@@ -61,6 +73,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
                 android:text=""
                 android:textColor="?android:textColorSecondary"
                 android:textSize="15sp" />
@@ -72,10 +86,10 @@
         android:id="@+id/iv_my_avatar"
         android:layout_width="@dimen/avatar_size"
         android:layout_height="@dimen/avatar_size"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:layout_gravity="right"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="8dp"
         android:padding="2dp"
         android:visibility="invisible" />
 

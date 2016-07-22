@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui;
 
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -8,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.daasuu.bl.ArrowDirection;
+import com.daasuu.bl.BubbleLayout;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -45,6 +49,10 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         holder.iv_my_avatar = (ImageView) convertView.findViewById(R.id.iv_my_avatar);
         holder.iv_friend_avatar = (ImageView) convertView.findViewById(R.id.iv_friend_avatar);
         holder.info_layout = (LinearLayout) convertView.findViewById(R.id.sms_info_layout);
+        holder.bubble_layout = (BubbleLayout) convertView.findViewById(R.id.bl_bubble);
+
+        holder.iv_my_avatar.setVisibility(View.INVISIBLE);
+        holder.iv_friend_avatar.setVisibility(View.INVISIBLE);
 
         if (item.getUid().equals(HiSettingsHelper.getInstance().getUid())) {
             holder.iv_my_avatar.setTag(R.id.avatar_tag_uid, item.getUid());
@@ -55,28 +63,40 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         }
 
         if (item.getUid().equals(HiSettingsHelper.getInstance().getUid())) {
-            holder.tv_content.setGravity(Gravity.RIGHT);
             holder.info_layout.setGravity(Gravity.RIGHT);
+            holder.bubble_layout.setArrowDirection(ArrowDirection.RIGHT);
+            holder.bubble_layout.setBubbleColor(ContextCompat.getColor(convertView.getContext(), R.color.md_yellow_400));
+
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.bubble_layout.getLayoutParams();
+            params.gravity = Gravity.RIGHT;
+            holder.bubble_layout.setLayoutParams(params);
+
             if (HiSettingsHelper.getInstance().isLoadAvatar()) {
                 holder.iv_my_avatar.setVisibility(View.VISIBLE);
-                holder.iv_friend_avatar.setVisibility(View.INVISIBLE);
                 if (!TextUtils.isEmpty(item.getUid())) {
                     holder.iv_my_avatar.setOnClickListener(mAvatarListener);
                 }
                 GlideHelper.loadAvatar(mFragment, holder.iv_my_avatar, item.getAvatarUrl());
             }
         } else {
-            holder.tv_content.setGravity(Gravity.LEFT);
             holder.info_layout.setGravity(Gravity.LEFT);
+            holder.bubble_layout.setArrowDirection(ArrowDirection.LEFT);
+            holder.bubble_layout.setForegroundGravity(Gravity.LEFT);
+            holder.bubble_layout.setBubbleColor(ContextCompat.getColor(convertView.getContext(), R.color.md_grey_300));
+
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.bubble_layout.getLayoutParams();
+            params.gravity = Gravity.LEFT;
+            holder.bubble_layout.setLayoutParams(params);
+
             if (HiSettingsHelper.getInstance().isLoadAvatar()) {
                 holder.iv_friend_avatar.setVisibility(View.VISIBLE);
-                holder.iv_my_avatar.setVisibility(View.INVISIBLE);
                 if (!TextUtils.isEmpty(item.getUid())) {
                     holder.iv_friend_avatar.setOnClickListener(mAvatarListener);
                 }
                 GlideHelper.loadAvatar(mFragment, holder.iv_friend_avatar, item.getAvatarUrl());
             }
         }
+
         if (!HiSettingsHelper.getInstance().isLoadAvatar()) {
             if (item.getUid().equals(HiSettingsHelper.getInstance().getUid())) {
                 holder.iv_my_avatar.setVisibility(View.GONE);
@@ -97,6 +117,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_content.setFocusable(false);
 
         holder.tv_content.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+        holder.tv_content.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.black));
 
         if (item.isNew())
             holder.tv_isnew.setVisibility(View.VISIBLE);
@@ -113,5 +134,6 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         ImageView iv_my_avatar;
         ImageView iv_friend_avatar;
         LinearLayout info_layout;
+        BubbleLayout bubble_layout;
     }
 }

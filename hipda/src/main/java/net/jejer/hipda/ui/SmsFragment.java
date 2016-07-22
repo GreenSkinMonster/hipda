@@ -40,7 +40,6 @@ import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
@@ -143,7 +142,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Logger.v("onActivityCreated");
 
         mListView.setAdapter(mSmsAdapter);
 
@@ -157,7 +155,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Logger.v("onCreateOptionsMenu");
         menu.clear();
 
         inflater.inflate(R.menu.menu_sms_detail, menu);
@@ -265,10 +262,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         }
 
         @Override
-        public void onLoadFinished(Loader<SimpleListBean> loader,
-                                   SimpleListBean list) {
-
-            Logger.v("onLoadFinished enter");
+        public void onLoadFinished(Loader<SimpleListBean> loader, SimpleListBean list) {
             loadingProgressBar.hide();
 
             if (list == null || list.getCount() == 0) {
@@ -280,24 +274,26 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             mSmsBeans.clear();
             mSmsBeans.addAll(list.getAll());
             mSmsAdapter.setBeans(mSmsBeans);
-            mListView.setSelection(mSmsAdapter.getCount());
         }
 
         @Override
         public void onLoaderReset(Loader<SimpleListBean> arg0) {
-            Logger.v("onLoaderReset");
         }
     }
 
     class AvatarOnClickListener extends OnSingleClickListener {
         @Override
-        public void onSingleClick(View arg0) {
-            String uid = (String) arg0.getTag(R.id.avatar_tag_uid);
-            String username = (String) arg0.getTag(R.id.avatar_tag_username);
+        public void onSingleClick(View view) {
+            String uid = (String) view.getTag(R.id.avatar_tag_uid);
+            String username = (String) view.getTag(R.id.avatar_tag_username);
 
             FragmentUtils.showSpace(getFragmentManager(), false, uid, username);
-
         }
     }
 
+    @Override
+    public void scrollToTop() {
+        if (mSmsAdapter != null && mSmsAdapter.getCount() > 0)
+            mListView.setSelection(0);
+    }
 }
