@@ -21,6 +21,7 @@
     <string name="action_thread_list_settings">帖子设置</string>
     <string name="action_open_by_url">打开站内地址</string>
     <string name="action_upload_img">上传图片</string>
+    <string name="action_restore_content">恢复输入内容</string>
     <string name="action_add_favorite">添加收藏</string>
     <string name="action_remove_favorite">取消收藏</string>
     <string name="action_add_attention">添加关注</string>

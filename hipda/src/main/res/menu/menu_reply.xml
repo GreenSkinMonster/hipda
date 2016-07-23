@@ -7,4 +7,9 @@
         android:title="@string/action_upload_img"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/action_restore_content"
+        android:title="@string/action_restore_content"
+        app:showAsAction="never"/>
+
 </menu>

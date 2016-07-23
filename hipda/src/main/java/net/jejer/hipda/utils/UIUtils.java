@@ -80,12 +80,14 @@ public class UIUtils {
         final EditText etText = (EditText) viewlayout.findViewById(R.id.et_select_text);
         etText.setText(detail);
         etText.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
-        etText.setLineSpacing(4, 1.1f);
+        UIUtils.setLineSpacing(etText);
 
         alertDialog.setView(viewlayout);
         alertDialog.setNegativeButton(context.getResources().getString(R.string.action_close), null);
         alertDialog.show();
         etText.requestFocus();
+        if (detail.length() > 0)
+            etText.setSelection(0);
     }
 
     public static boolean askForPermission(Context ctx) {
@@ -100,6 +102,22 @@ public class UIUtils {
             return true;
         }
         return false;
+    }
+
+    public static void setLineSpacing(TextView textView) {
+        float lineSpacingExtra = 2;
+        float lineSpacingMultiplier = 1.1f;
+        if (HiSettingsHelper.getInstance().getPostLineSpacing() == 1) {
+            lineSpacingExtra = 4;
+            lineSpacingMultiplier = 1.2f;
+        } else if (HiSettingsHelper.getInstance().getPostLineSpacing() == 2) {
+            lineSpacingExtra = 6;
+            lineSpacingMultiplier = 1.3f;
+        } else if (HiSettingsHelper.getInstance().getPostLineSpacing() == 3) {
+            lineSpacingExtra = 8;
+            lineSpacingMultiplier = 1.4f;
+        }
+        textView.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
     }
 
 }

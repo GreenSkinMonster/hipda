@@ -17,13 +17,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.jejer.hipda.bean.DetailBean;
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 public class TextViewWithEmoticon extends TextView {
@@ -50,19 +50,7 @@ public class TextViewWithEmoticon extends TextView {
         setTextColor(ColorUtils.getDefaultTextColor(mCtx));
         setLinkTextColor(ColorUtils.getColorAccent(mCtx));
 
-        float lineSpacingExtra = 2;
-        float lineSpacingMultiplier = 1.1f;
-        if (HiSettingsHelper.getInstance().getPostLineSpacing() == 1) {
-            lineSpacingExtra = 4;
-            lineSpacingMultiplier = 1.2f;
-        } else if (HiSettingsHelper.getInstance().getPostLineSpacing() == 2) {
-            lineSpacingExtra = 6;
-            lineSpacingMultiplier = 1.3f;
-        } else if (HiSettingsHelper.getInstance().getPostLineSpacing() == 3) {
-            lineSpacingExtra = 8;
-            lineSpacingMultiplier = 1.4f;
-        }
-        setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
+        UIUtils.setLineSpacing(this);
     }
 
     public void setFragment(BaseFragment fragment) {

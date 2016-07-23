@@ -15,7 +15,9 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -43,6 +46,8 @@ import net.jejer.hipda.async.UploadImgHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
+import net.jejer.hipda.db.Content;
+import net.jejer.hipda.db.ContentDao;
 import net.jejer.hipda.job.ImageUploadEvent;
 import net.jejer.hipda.job.ImageUploadJob;
 import net.jejer.hipda.job.JobMgr;
@@ -108,6 +113,7 @@ public class PostFragment extends BaseFragment {
     private boolean mImageUploading = false;
     private Map<Uri, UploadImage> mUploadImages = new LinkedHashMap<>();
     private Collection<Uri> mHoldedImages = new ArrayList<>();
+    private long mLastSavedTime = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -168,6 +174,33 @@ public class PostFragment extends BaseFragment {
 
         mEtSubject = (EditText) view.findViewById(R.id.et_subject);
         mEtContent.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+        UIUtils.setLineSpacing(mEtContent);
+
+        mEtContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                savePostConent(false);
+            }
+        });
+
+        mEtContent.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    savePostConent(true);
+            }
+        });
+
         mEtSubject.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -193,6 +226,18 @@ public class PostFragment extends BaseFragment {
         setUpEmojiPopup(mEtContent, mIbEmojiSwitch);
 
         return view;
+    }
+
+    private void savePostConent(boolean force) {
+        if (force || SystemClock.uptimeMillis() - mLastSavedTime > 3000) {
+            mLastSavedTime = SystemClock.uptimeMillis();
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    ContentDao.saveContent(mSessionId, mEtContent.getText().toString());
+                }
+            });
+        }
     }
 
     @Override
@@ -232,11 +277,13 @@ public class PostFragment extends BaseFragment {
     @Override
     public void onPause() {
         EventBus.getDefault().unregister(this);
+        savePostConent(true);
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
+        ContentDao.cleanup();
         if (mSnackbar != null)
             mSnackbar.dismiss();
         if (mPrePostAsyncTask != null)
@@ -301,6 +348,8 @@ public class PostFragment extends BaseFragment {
                             "Select Picture"), SELECT_PICTURE);
                 }
                 return true;
+            case R.id.action_restore_content:
+                showRestoreContentDialog();
             default:
                 return false;
         }
@@ -421,6 +470,41 @@ public class PostFragment extends BaseFragment {
         }
     }
 
+    private void showRestoreContentDialog() {
+        final Content[] contents = ContentDao.getSavedContents(mSessionId);
+
+        if (contents == null || contents.length == 0) {
+            Toast.makeText(getActivity(), "没有之前输入的内容", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View viewlayout = inflater.inflate(R.layout.dialog_restore_content, null);
+
+        final ListView listView = (ListView) viewlayout.findViewById(R.id.lv_contents);
+
+
+        listView.setAdapter(new SavedContentsAdapter(getActivity(), 0, contents));
+
+        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
+        popDialog.setView(viewlayout);
+        final AlertDialog dialog = popDialog.create();
+        dialog.show();
+
+        listView.setOnItemClickListener(new OnViewItemSingleClickListener() {
+            @Override
+            public void onItemSingleClick(AdapterView<?> adapterView, View view, int position, long row) {
+                if (!TextUtils.isEmpty(mEtContent.getText()) && !mEtContent.getText().toString().endsWith("\n"))
+                    mEtContent.append("\n");
+                mEtContent.append(contents[position].getContent());
+                mEtContent.requestFocus();
+                mEtContent.setSelection(mEtContent.getText().length());
+                dialog.dismiss();
+            }
+        });
+
+    }
+
     private void updateImageInfo() {
         if (mUploadImages.size() > 0) {
             mTvImagesInfo.setVisibility(View.VISIBLE);
@@ -435,15 +519,15 @@ public class PostFragment extends BaseFragment {
 
     private void appendImage(String imgId) {
         if (isValidImgId(imgId)) {
-            String imgTxt = "[attachimg]" + imgId + "[/attachimg]";
+            String imgTxt = "[attachimg]" + imgId + "[/attachimg]\n";
             int selectionStart = mContentPosition;
             if (mContentPosition < 0 || mContentPosition > mEtContent.length())
                 selectionStart = mEtContent.getSelectionStart();
             if (selectionStart > 0 && mEtContent.getText().charAt(selectionStart - 1) != '\n')
                 imgTxt = "\n" + imgTxt;
-            if (mEtContent.getText().length() > selectionStart && mEtContent.getText().charAt(selectionStart) != '\n')
-                imgTxt = imgTxt + "\n";
             mEtContent.getText().insert(selectionStart, imgTxt);
+            mEtContent.setSelection(selectionStart + imgTxt.length());
+            mEtContent.requestFocus();
             mPrePostInfo.addAttach(imgId);
         }
     }
@@ -522,6 +606,7 @@ public class PostFragment extends BaseFragment {
                 }
             } else {
                 mTvQuoteText.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+                UIUtils.setLineSpacing(mTvQuoteText);
                 mTvQuoteText.setText(mText);
                 mTvQuoteText.setVisibility(View.VISIBLE);
                 mTvQuoteText.setOnClickListener(new View.OnClickListener() {
@@ -680,6 +765,35 @@ public class PostFragment extends BaseFragment {
             }
         }
         EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    private class SavedContentsAdapter extends ArrayAdapter {
+        Content[] contents;
+
+        public SavedContentsAdapter(Context context, int resource, Content[] objects) {
+            super(context, resource, objects);
+            contents = objects;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row;
+            if (convertView == null) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                row = inflater.inflate(R.layout.item_saved_content, parent, false);
+            } else {
+                row = convertView;
+            }
+            Content content = contents[position];
+
+            TextView tvContent = (TextView) row.findViewById(R.id.tv_content);
+            TextView tvDesc = (TextView) row.findViewById(R.id.tv_desc);
+
+            tvContent.setText(content.getContent().replace("\n", " "));
+            tvDesc.setText(content.getDesc());
+
+            return row;
+        }
     }
 
 }

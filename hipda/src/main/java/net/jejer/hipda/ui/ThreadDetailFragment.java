@@ -73,7 +73,6 @@ import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.ImageSizeUtils;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -128,7 +127,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Logger.v("onCreate");
         super.onCreate(savedInstanceState);
 
         mCtx = getActivity();
@@ -166,7 +164,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_thread_detail, container, false);
 
         mDetailListView = (XListView) view.findViewById(R.id.lv_thread_details);
@@ -313,7 +310,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Logger.v("onActivityCreated");
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
@@ -354,8 +350,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Logger.v("onCreateOptionsMenu");
-
         menu.clear();
         inflater.inflate(R.menu.menu_thread_detail, menu);
 
@@ -368,8 +362,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        Logger.v("onPrepareOptionsMenu");
-
         super.onPrepareOptionsMenu(menu);
         MenuItem favoritesMenuItem = menu.findItem(R.id.action_add_favorite);
         if (favoritesMenuItem == null)
@@ -390,7 +382,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Implemented in activity
@@ -594,8 +585,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
         @Override
         public Loader<DetailListBean> onCreateLoader(int id, Bundle args) {
-            Logger.v("onCreateLoader");
-
             // Re-enable after load complete if needed.
             mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
             mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
@@ -605,8 +594,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
         @Override
         public void onLoadFinished(Loader<DetailListBean> loader, DetailListBean details) {
-            Logger.v("onLoadFinished");
-
             mInloading = false;
             mPrefetching = false;
             mLoadingProgressBar.hide();
