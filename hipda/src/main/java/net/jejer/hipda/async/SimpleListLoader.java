@@ -6,6 +6,9 @@ import android.text.TextUtils;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.SimpleListBean;
+import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.db.History;
+import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.job.SimpleListEvent;
 import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -20,6 +23,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
 
 public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     public static final int TYPE_MYREPLY = 0;
@@ -31,6 +35,7 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     public static final int TYPE_FAVORITES = 6;
     public static final int TYPE_SEARCH_USER_THREADS = 7;
     public static final int TYPE_ATTENTION = 8;
+    public static final int TYPE_HISTORIES = 9;
 
     private Context mCtx;
     private int mType;
@@ -59,6 +64,25 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
 
     @Override
     public SimpleListBean loadInBackground() {
+        if (mType == TYPE_HISTORIES) {
+            data = new SimpleListBean();
+            List<History> histories = HistoryDao.getHistories();
+            for (History history : histories) {
+                SimpleListItemBean bean = new SimpleListItemBean();
+                String forumName = "";
+                if (!TextUtils.isEmpty(history.getFid()) && TextUtils.isDigitsOnly(history.getFid()))
+                    forumName = HiUtils.getForumNameByFid(Integer.parseInt(history.getFid()));
+                bean.setTid(history.getTid());
+                bean.setUid(history.getUid());
+                bean.setTitle(history.getTitle());
+                bean.setTime(forumName + " " + history.getPostTime());
+                bean.setAvatarUrl(HiUtils.getAvatarUrlByUid(history.getUid()));
+                bean.setForum(history.getUsername());
+                data.add(bean);
+            }
+            return data;
+        }
+
         for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
             try {
                 String resp = fetchSimpleList(mType);

@@ -60,6 +60,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ThreadDetailCache;
+import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.glide.GifTransformation;
 import net.jejer.hipda.glide.GlideBitmapTarget;
 import net.jejer.hipda.glide.GlideHelper;
@@ -124,6 +125,8 @@ public class ThreadDetailFragment extends BaseFragment {
     private HiProgressDialog postProgressDialog;
     private FloatingActionMenu mFam;
     private ContentLoadingProgressBar mLoadingProgressBar;
+
+    private boolean mHistorySaved = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -593,7 +596,7 @@ public class ThreadDetailFragment extends BaseFragment {
         }
 
         @Override
-        public void onLoadFinished(Loader<DetailListBean> loader, DetailListBean details) {
+        public void onLoadFinished(Loader<DetailListBean> loader, final DetailListBean details) {
             mInloading = false;
             mPrefetching = false;
             mLoadingProgressBar.hide();
@@ -660,6 +663,12 @@ public class ThreadDetailFragment extends BaseFragment {
             }
 
             setPullLoadStatus();
+
+            if (!mHistorySaved) {
+                mHistorySaved = true;
+                HistoryDao.updateHistoryInBackground(mTid, mFid, mTitle);
+            }
+
         }
 
 

@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleListBean {
-    private List<SimpleListItemBean> mSimpleListItemBeans
-            = new ArrayList<SimpleListItemBean>();
+    private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
     private int mCount = 0;
     private String mSearchIdUrl;
     private int mMaxPage;

@@ -16,8 +16,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.LoginHelper;
+import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.Constants;
 
@@ -110,7 +110,7 @@ public class LoginDialog extends Dialog {
                                 msg.what = ThreadListFragment.STAGE_REFRESH;
                                 mHandler.sendMessage(msg);
                             }
-                            FavoriteHelper.getInstance().updateCache();
+                            TaskHelper.runDailyTask(true);
                         } else {
                             Toast.makeText(mCtx, loginHelper.getErrorMsg(), Toast.LENGTH_SHORT).show();
                             HiSettingsHelper.getInstance().setUsername("");

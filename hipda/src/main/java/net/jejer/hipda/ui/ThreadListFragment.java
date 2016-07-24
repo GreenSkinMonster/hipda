@@ -51,6 +51,7 @@ import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
+import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.job.PostEvent;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
@@ -405,6 +406,7 @@ public class ThreadListFragment extends BaseFragment
             String title = thread.getTitle();
             setHasOptionsMenu(false);
             FragmentUtils.showThread(getFragmentManager(), false, tid, title, -1, -1, null, thread.getMaxPage());
+            HistoryDao.saveHistoryInBackground(tid, "", title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
         }
 
     }
@@ -422,6 +424,7 @@ public class ThreadListFragment extends BaseFragment
             }
             setHasOptionsMenu(false);
             FragmentUtils.showThread(getFragmentManager(), false, tid, title, page, ThreadDetailFragment.LAST_FLOOR, null, thread.getMaxPage());
+            HistoryDao.saveHistoryInBackground(tid, "", title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
             return true;
         }
     }

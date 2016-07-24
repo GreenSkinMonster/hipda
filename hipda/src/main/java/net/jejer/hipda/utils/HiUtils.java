@@ -114,6 +114,13 @@ public class HiUtils {
         return -1;
     }
 
+    public static String getForumNameByFid(int fid) {
+        int idx = getForumIndexByFid(fid);
+        if (idx == -1)
+            return "";
+        return FORUM_NAMES[idx];
+    }
+
     public static boolean isForumEnabled(int fid) {
         if (fid == FID_DISCOVERY) {
             return true;

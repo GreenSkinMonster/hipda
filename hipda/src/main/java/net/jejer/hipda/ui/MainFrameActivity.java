@@ -46,9 +46,9 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.vanniktech.emoji.EmojiPopup;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.LoginEvent;
 import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -138,7 +138,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 new UpdateHelper(this, true).check();
             }
 
-            FavoriteHelper.getInstance().updateCache();
+            TaskHelper.runDailyTask(false);
 
             if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
                 if (!NotificationMgr.isAlarmRuning(this))
@@ -213,6 +213,7 @@ public class MainFrameActivity extends AppCompatActivity {
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_assignment_ind));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_assignment));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite));
+        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_histories).withIdentifier(DrawerItem.HISTORIES.id).withIcon(GoogleMaterial.Icon.gmd_history));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_email)
                 .withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.grey)));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications)
@@ -365,7 +366,6 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -437,6 +437,7 @@ public class MainFrameActivity extends AppCompatActivity {
         MY_POST(Constants.DRAWER_MYPOST),
         MY_REPLY(Constants.DRAWER_MYREPLY),
         MY_FAVORITES(Constants.DRAWER_FAVORITES),
+        HISTORIES(Constants.DRAWER_HISTORIES),
         SMS(Constants.DRAWER_SMS),
         THREAD_NOTIFY(Constants.DRAWER_THREADNOTIFY),
         SETTINGS(Constants.DRAWER_SETTINGS);
@@ -459,41 +460,48 @@ public class MainFrameActivity extends AppCompatActivity {
             clearBackStacks(false);
 
             switch ((int) iDrawerItem.getIdentifier()) {
-                case Constants.DRAWER_SEARCH:    // search
+                case Constants.DRAWER_SEARCH:
                     Bundle searchBundle = new Bundle();
                     searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SEARCH);
                     SimpleListFragment searchFragment = new SimpleListFragment();
                     searchFragment.setArguments(searchBundle);
                     FragmentUtils.showFragment(getFragmentManager(), searchFragment, true);
                     break;
-                case Constants.DRAWER_MYPOST:    // my posts
+                case Constants.DRAWER_MYPOST:
                     Bundle postsBundle = new Bundle();
                     postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYPOST);
                     SimpleListFragment postsFragment = new SimpleListFragment();
                     postsFragment.setArguments(postsBundle);
                     FragmentUtils.showFragment(getFragmentManager(), postsFragment, true);
                     break;
-                case Constants.DRAWER_MYREPLY:    // my reply
+                case Constants.DRAWER_MYREPLY:
                     Bundle replyBundle = new Bundle();
                     replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYREPLY);
                     SimpleListFragment replyFragment = new SimpleListFragment();
                     replyFragment.setArguments(replyBundle);
                     FragmentUtils.showFragment(getFragmentManager(), replyFragment, true);
                     break;
-                case Constants.DRAWER_FAVORITES:    // my favorites
+                case Constants.DRAWER_FAVORITES:
                     Bundle favBundle = new Bundle();
                     favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_FAVORITES);
                     SimpleListFragment favFragment = new SimpleListFragment();
                     favFragment.setArguments(favBundle);
                     FragmentUtils.showFragment(getFragmentManager(), favFragment, true);
                     break;
-                case Constants.DRAWER_SMS:    // sms
+                case Constants.DRAWER_HISTORIES:
+                    Bundle hisBundle = new Bundle();
+                    hisBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_HISTORIES);
+                    SimpleListFragment hisFragment = new SimpleListFragment();
+                    hisFragment.setArguments(hisBundle);
+                    FragmentUtils.showFragment(getFragmentManager(), hisFragment, true);
+                    break;
+                case Constants.DRAWER_SMS:
                     FragmentUtils.showSmsList(getFragmentManager(), true);
                     break;
-                case Constants.DRAWER_THREADNOTIFY:    // thread notify
+                case Constants.DRAWER_THREADNOTIFY:
                     FragmentUtils.showThreadNotify(getFragmentManager(), true);
                     break;
-                case Constants.DRAWER_SETTINGS:    // settings
+                case Constants.DRAWER_SETTINGS:
                     Fragment fragment = new SettingMainFragment();
                     getFragmentManager().beginTransaction()
                             .replace(R.id.main_frame_container, fragment, fragment.getClass().getName())

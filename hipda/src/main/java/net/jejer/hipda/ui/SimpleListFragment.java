@@ -104,7 +104,6 @@ public class SimpleListFragment extends BaseFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Logger.v("onCreateView");
         View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
         mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
 
@@ -126,8 +125,6 @@ public class SimpleListFragment extends BaseFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Logger.v("onActivityCreated");
-
         // destroyLoader called here to avoid onLoadFinished called when onResume
         getLoaderManager().destroyLoader(0);
 
@@ -143,6 +140,7 @@ public class SimpleListFragment extends BaseFragment
             case SimpleListLoader.TYPE_THREAD_NOTIFY:
             case SimpleListLoader.TYPE_FAVORITES:
             case SimpleListLoader.TYPE_ATTENTION:
+            case SimpleListLoader.TYPE_HISTORIES:
                 if (mSimpleListAdapter.getCount() == 0) {
                     loadingProgressBar.show();
                     getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
@@ -155,8 +153,6 @@ public class SimpleListFragment extends BaseFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Logger.v("onCreateOptionsMenu");
-
         menu.clear();
 
         setActionBarDisplayHomeAsUpEnabled(true);
@@ -183,6 +179,9 @@ public class SimpleListFragment extends BaseFragment
                 inflater.inflate(R.menu.menu_favorites, menu);
                 mFavoritesMenuItem = menu.getItem(0);
                 mFavoritesMenuItem.setTitle(R.string.action_attention);
+                break;
+            case SimpleListLoader.TYPE_HISTORIES:
+                setActionBarTitle(R.string.title_drawer_histories);
                 break;
             case SimpleListLoader.TYPE_ATTENTION:
                 setActionBarTitle(R.string.title_my_attention);
@@ -450,8 +449,6 @@ public class SimpleListFragment extends BaseFragment
 
         @Override
         public void onLoaderReset(Loader<SimpleListBean> arg0) {
-            Logger.v("onLoaderReset");
-
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();

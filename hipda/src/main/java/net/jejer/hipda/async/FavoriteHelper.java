@@ -18,7 +18,6 @@ import org.jsoup.nodes.Node;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,7 +32,6 @@ public class FavoriteHelper {
     private final static int MAX_CACHE_PAGE = 3;
     private final static String FAV_CACHE_PREFS = "FavCachePrefsFile";
 
-    private final static String LAST_CACHE_TIME_KEY = "lastCacheTime";
     private final static String FAVORITES_CACHE_KEY = "favorites";
     private final static String ATTENTION_CACHE_KEY = "attention";
 
@@ -56,30 +54,7 @@ public class FavoriteHelper {
         return SingletonHolder.INSTANCE;
     }
 
-    public void updateCache() {
-        String millis = mCachePref.getString(LAST_CACHE_TIME_KEY, "");
-        Date last = null;
-        if (millis.length() > 0) {
-            try {
-                last = new Date(Long.parseLong(millis));
-            } catch (Exception ignored) {
-            }
-        }
-        if (last == null || System.currentTimeMillis() > last.getTime() + 24 * 60 * 60 * 1000) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    FavoriteHelper.getInstance().fetchMyFavorites();
-                    FavoriteHelper.getInstance().fetchMyAttention();
-                }
-            }).start();
-            SharedPreferences.Editor editor = mCachePref.edit();
-            editor.remove(LAST_CACHE_TIME_KEY).apply();
-            editor.putString(LAST_CACHE_TIME_KEY, System.currentTimeMillis() + "").apply();
-        }
-    }
-
-    private void fetchMyFavorites() {
+    public void fetchMyFavorites() {
         Set<String> favTids = new HashSet<>();
         for (int i = 1; i <= MAX_CACHE_PAGE; i++) {
             ParseResult result = fetchMyFavorites(TYPE_FAVORITE, i);
@@ -97,7 +72,7 @@ public class FavoriteHelper {
         editor.putStringSet(FAVORITES_CACHE_KEY, mFavoritesCache).apply();
     }
 
-    private void fetchMyAttention() {
+    public void fetchMyAttention() {
         Set<String> attTids = new HashSet<>();
         for (int i = 1; i <= MAX_CACHE_PAGE; i++) {
             ParseResult result = fetchMyFavorites(TYPE_ATTENTION, i);

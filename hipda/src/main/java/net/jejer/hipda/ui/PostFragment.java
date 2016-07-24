@@ -283,7 +283,6 @@ public class PostFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        ContentDao.cleanup();
         if (mSnackbar != null)
             mSnackbar.dismiss();
         if (mPrePostAsyncTask != null)

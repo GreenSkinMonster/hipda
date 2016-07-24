@@ -61,6 +61,7 @@
     <string name="title_drawer_mypost">我的帖子</string>
     <string name="title_drawer_myreply">我的回复</string>
     <string name="title_drawer_favorites">收藏关注</string>
+    <string name="title_drawer_histories">浏览记录</string>
     <string name="title_drawer_sms">短消息</string>
     <string name="title_drawer_notify">帖子消息</string>
     <string name="title_drawer_newpost">发表新帖</string>
