@@ -37,8 +37,10 @@ import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.ExpandableDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
@@ -210,22 +212,24 @@ public class MainFrameActivity extends AppCompatActivity {
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_assignment_ind));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_assignment));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_histories).withIdentifier(DrawerItem.HISTORIES.id).withIcon(GoogleMaterial.Icon.gmd_history));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_email)
                 .withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.grey)));
         drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications)
                 .withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.grey)));
+        drawerItems.add(
+                new ExpandableDrawerItem().withName(R.string.title_drawer_expandable).withIcon(GoogleMaterial.Icon.gmd_view_list).withIdentifier(Constants.DRAWER_NO_ACTION).withSelectable(false).withSubItems(
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_assignment_ind),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_assignment),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite),
+                        new SecondaryDrawerItem().withName(R.string.title_drawer_histories).withIdentifier(DrawerItem.HISTORIES.id).withIcon(GoogleMaterial.Icon.gmd_history)
+                ));
 
-        ArrayList<IDrawerItem> stickyDrawerItems = new ArrayList<>();
-        stickyDrawerItems.add(new DividerDrawerItem());
-        stickyDrawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_setting)
+        drawerItems.add(new DividerDrawerItem());
+        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_setting)
                 .withIdentifier(DrawerItem.SETTINGS.id)
                 .withIcon(GoogleMaterial.Icon.gmd_settings));
         if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme())) {
-            stickyDrawerItems.add(new SwitchDrawerItem()
+            drawerItems.add(new SwitchDrawerItem()
                     .withName(R.string.title_drawer_night_mode)
                     .withIdentifier(Constants.DRAWER_NIGHT_MODE)
                     .withIcon(GoogleMaterial.Icon.gmd_brightness_medium)
@@ -240,10 +244,10 @@ public class MainFrameActivity extends AppCompatActivity {
                         }
                     }));
         }
-        stickyDrawerItems.add(new DividerDrawerItem());
+        drawerItems.add(new DividerDrawerItem());
         for (int i = 0; i < HiUtils.FORUM_IDS.length; i++) {
             if (HiUtils.isForumEnabled(HiUtils.FORUM_IDS[i]))
-                stickyDrawerItems.add(new PrimaryDrawerItem().withName(HiUtils.FORUM_NAMES[i])
+                drawerItems.add(new PrimaryDrawerItem().withName(HiUtils.FORUM_NAMES[i])
                         .withIdentifier(HiUtils.FORUM_IDS[i])
                         .withIcon(HiUtils.FORUM_ICONS[i]));
         }
@@ -254,13 +258,10 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withAccountHeader(accountHeader)
                 .withTranslucentStatusBar(true)
                 .withDrawerItems(drawerItems)
-                .withStickyDrawerItems(stickyDrawerItems)
                 .withStickyFooterDivider(false)
                 .withStickyFooterShadow(false)
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .build();
-
-        //drawer.getRecyclerView().setVerticalScrollBarEnabled(false);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -454,6 +455,8 @@ public class MainFrameActivity extends AppCompatActivity {
         public boolean onItemClick(View view, int position, IDrawerItem iDrawerItem) {
 
             if (iDrawerItem.getIdentifier() == Constants.DRAWER_NIGHT_MODE)
+                return false;
+            if (iDrawerItem.getIdentifier() == Constants.DRAWER_NO_ACTION)
                 return false;
 
             //clear all backStacks from menu click

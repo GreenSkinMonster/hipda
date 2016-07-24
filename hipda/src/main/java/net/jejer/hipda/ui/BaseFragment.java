@@ -91,9 +91,9 @@ public abstract class BaseFragment extends Fragment {
         if (getActivity() != null) {
             Drawer drawer = ((MainFrameActivity) getActivity()).drawer;
             if (drawer != null && !drawer.isDrawerOpen()) {
-                int position = drawer.getStickyFooterPosition(forumId);
-                if (drawer.getCurrentStickyFooterSelectedPosition() != position)
-                    drawer.setStickyFooterSelectionAtPosition(position, false);
+                int position = drawer.getPosition(forumId);
+                if (drawer.getCurrentSelectedPosition() != position)
+                    drawer.setSelectionAtPosition(position, false);
             }
         }
     }

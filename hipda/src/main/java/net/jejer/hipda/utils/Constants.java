@@ -21,6 +21,7 @@ public class Constants {
     public static final int DRAWER_HISTORIES = 1000 + SimpleListLoader.TYPE_HISTORIES;
     public static final int DRAWER_SETTINGS = 10000;
     public static final int DRAWER_NIGHT_MODE = 10001;
+    public static final int DRAWER_NO_ACTION = 10002;
 
     public static final String FONT_ROBOTO_SLAB = "RobotoSlab";
 
