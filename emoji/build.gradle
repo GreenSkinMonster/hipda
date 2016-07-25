@@ -13,6 +13,6 @@ android {
 }
 
 dependencies {
-    compile rootProject.ext.supportV4 as String
-    compile rootProject.ext.supportAppCompat as String
+    compile "com.android.support:support-v4:$supportLibraryVersion"
+    compile "com.android.support:appcompat-v7:$supportLibraryVersion"
 }

@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle:2.1.2'
     }
 }
 
@@ -25,10 +25,6 @@ ext {
     compileSdkVersion = 24
     targetSdkVersion = 24
 
-    buildToolsVersion = '24.0.0'
-    supportLibraryVersion = '24.0.0'
-
-    supportAppCompat = "com.android.support:appcompat-v7:$supportLibraryVersion"
-    supportV4 = "com.android.support:support-v4:$supportLibraryVersion"
-    supportRecyclerView = "com.android.support:recyclerview-v7:${supportLibraryVersion}"
+    buildToolsVersion = '24.0.1'
+    supportLibraryVersion = '24.1.1'
 }
