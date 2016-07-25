@@ -434,6 +434,23 @@ public class HiSettingsHelper {
         editor.putString(PERF_TAILURL, tailUrl).apply();
     }
 
+    public String getTailStr() {
+        String tailStr = "";
+        String tailText = getTailText();
+        if (!TextUtils.isEmpty(tailText)) {
+            String tailUrl = getTailUrl();
+            if (!TextUtils.isEmpty(tailUrl)) {
+                if ((!tailUrl.startsWith("http")) && (!tailUrl.startsWith("https"))) {
+                    tailUrl = "http://" + tailUrl;
+                }
+                tailStr = "[url=" + tailUrl + "][size=1]" + tailText + "[/size][/url]";
+            } else {
+                tailStr = "[size=1]" + tailText + "[/size]";
+            }
+        }
+        return tailStr;
+    }
+
     public String getTheme() {
         return mTheme;
     }

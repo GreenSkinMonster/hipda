@@ -70,17 +70,10 @@ public class PostHelper {
             mFloor = floor;
 
         if (mMode != MODE_EDIT_POST) {
-            String tail_text = HiSettingsHelper.getInstance().getTailText();
-            if (!tail_text.isEmpty() && HiSettingsHelper.getInstance().isAddTail()) {
-                String tail_url = HiSettingsHelper.getInstance().getTailUrl();
-                if (!tail_url.isEmpty()) {
-                    if ((!tail_url.startsWith("http")) && (!tail_url.startsWith("https"))) {
-                        tail_url = "http://" + tail_url;
-                    }
-                    replyText = replyText + "  [url=" + tail_url + "][size=1]" + tail_text + "[/size][/url]";
-                } else {
-                    replyText = replyText + "  [size=1]" + tail_text + "[/size]";
-                }
+            String tailStr = HiSettingsHelper.getInstance().getTailStr();
+            if (!TextUtils.isEmpty(tailStr) && HiSettingsHelper.getInstance().isAddTail()) {
+                if (!replyText.trim().endsWith(tailStr))
+                    replyText += "  " + tailStr;
             }
         }
 

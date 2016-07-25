@@ -408,12 +408,11 @@ public class PostFragment extends BaseFragment {
 
         if (mUploadImages.size() > 0) {
             boolean needWarn = false;
-            for (UploadImage uploadBtn : mUploadImages.values()) {
-                if (isValidImgId(uploadBtn.getImgId())) {
-                    String attachStr = "[attachimg]" + uploadBtn.getImgId() + "[/attachimg]";
+            for (UploadImage uploadImage : mUploadImages.values()) {
+                if (isValidImgId(uploadImage.getImgId())) {
+                    String attachStr = "[attachimg]" + uploadImage.getImgId() + "[/attachimg]";
                     if (!replyText.contains(attachStr)) {
                         needWarn = true;
-                        //uploadBtn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.orange));
                     }
                 }
             }
@@ -497,9 +496,7 @@ public class PostFragment extends BaseFragment {
 
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View viewlayout = inflater.inflate(R.layout.dialog_restore_content, null);
-
         final ListView listView = (ListView) viewlayout.findViewById(R.id.lv_contents);
-
 
         listView.setAdapter(new SavedContentsAdapter(getActivity(), 0, contents));
 
