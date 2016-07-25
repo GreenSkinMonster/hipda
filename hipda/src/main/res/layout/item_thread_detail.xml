@@ -1,88 +1,76 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingBottom="8dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingTop="4dp">
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:paddingBottom="8dp"
+              android:paddingLeft="8dp"
+              android:paddingRight="8dp"
+              android:paddingTop="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="32dp"
+        android:paddingBottom="4dp">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="@dimen/avatar_size"
+            android:layout_height="@dimen/avatar_size"
+            android:padding="2dp"/>
+
+        <TextView
+            android:id="@+id/tv_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/iv_avatar"
+            android:padding="4dp"
+            android:text=""
+            android:textColor="?attr/colorAccent"
+            android:textSize="@dimen/author_text_size"/>
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/floor"
+            android:padding="4dp"
+            android:text=""
+            android:textColor="?android:textColorSecondary"
+            android:textSize="@dimen/info_text_size"/>
+
+        <TextView
+            android:id="@+id/floor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="2dp"
+            android:padding="2dp"
+            android:text=""
+            android:textColor="?attr/colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/post_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:text=""
+        android:textColor="?android:textColorSecondary"/>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="32dp"
-            android:paddingBottom="4dp">
-
-            <ImageView
-                android:id="@+id/iv_avatar"
-                android:layout_width="@dimen/avatar_size"
-                android:layout_height="@dimen/avatar_size"
-                android:padding="2dp" />
-
-            <TextView
-                android:id="@+id/tv_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/iv_avatar"
-                android:padding="4dp"
-                android:text=""
-                android:textColor="?attr/colorAccent"
-                android:textSize="@dimen/author_text_size"/>
-
-            <TextView
-                android:id="@+id/time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/floor"
-                android:padding="4dp"
-                android:text=""
-                android:textColor="?android:textColorSecondary"
-                android:textSize="@dimen/info_text_size" />
-
-            <TextView
-                android:id="@+id/floor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="2dp"
-                android:padding="2dp"
-                android:text=""
-                android:textColor="?attr/colorAccent"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="4dp">
-
-            <TextView
-                android:id="@+id/post_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:text=""
-                android:textColor="?android:textColorSecondary"/>
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/content_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="4dp" />
-    </LinearLayout>
+        android:orientation="vertical"
+        android:paddingBottom="4dp"/>
 
 </LinearLayout>

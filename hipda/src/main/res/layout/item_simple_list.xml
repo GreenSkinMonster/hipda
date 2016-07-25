@@ -1,73 +1,66 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="4dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingTop="4dp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="4dp">
+
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="6dp"
+        android:padding="2dp"/>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/iv_avatar">
 
-        <ImageView
-            android:id="@+id/iv_avatar"
-            android:layout_width="@dimen/avatar_size"
-            android:layout_height="@dimen/avatar_size"
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="6dp"
-            android:padding="2dp" />
+            android:layout_alignParentTop="true"
+            android:padding="4dp"
+            android:text=""
+            android:textSize="16sp"/>
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/iv_avatar">
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tv_title"
+            android:padding="4dp"
+            android:text=""
+            android:textColor="?android:textColorSecondary"
+            android:textSize="16sp"/>
 
-            <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:padding="4dp"
-                android:text=""
-                android:textSize="16sp" />
+        <TextView
+            android:id="@+id/tv_forum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tv_info"
+            android:padding="4dp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="?android:textColorSecondary"/>
 
-            <TextView
-                android:id="@+id/tv_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/tv_title"
-                android:padding="4dp"
-                android:text=""
-                android:textColor="?android:textColorSecondary"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tv_forum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/tv_info"
-                android:padding="4dp"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="?android:textColorSecondary" />
-
-            <TextView
-                android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/tv_info"
-                android:padding="4dp"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="?android:textColorSecondary" />
-        </RelativeLayout>
-
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/tv_info"
+            android:padding="4dp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="?android:textColorSecondary"/>
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>
