@@ -100,6 +100,7 @@ public class ThreadListFragment extends BaseFragment
     private int mFirstVisibleItem = 0;
 
     private MenuItem mForumTypeMenuItem;
+    private final int[] mFidHolder = new int[1];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,7 @@ public class ThreadListFragment extends BaseFragment
         if (forumIdx == -1) {
             mForumId = HiUtils.FID_DISCOVERY;
         }
+        mFidHolder[0] = mForumId;
 
         HiSettingsHelper.getInstance().setLastForumId(mForumId);
 
@@ -406,7 +408,8 @@ public class ThreadListFragment extends BaseFragment
             String title = thread.getTitle();
             setHasOptionsMenu(false);
             FragmentUtils.showThread(getFragmentManager(), false, tid, title, -1, -1, null, thread.getMaxPage());
-            HistoryDao.saveHistoryInBackground(tid, "", title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
+            HistoryDao.saveHistoryInBackground(tid, mFidHolder[0] + "",
+                    title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
         }
 
     }

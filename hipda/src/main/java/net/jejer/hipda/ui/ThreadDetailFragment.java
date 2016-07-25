@@ -660,9 +660,16 @@ public class ThreadDetailFragment extends BaseFragment {
 
             setPullLoadStatus();
 
-            if (!mHistorySaved) {
+            if (!mHistorySaved || details.getPage() == 1) {
                 mHistorySaved = true;
-                HistoryDao.updateHistoryInBackground(mTid, mFid, mTitle);
+                String uid = null, username = null, postTime = null;
+                if (details.getCount() > 0) {
+                    DetailBean detailBean = details.getAll().get(0);
+                    uid = detailBean.getUid();
+                    username = detailBean.getAuthor();
+                    postTime = detailBean.getTimePost();
+                }
+                HistoryDao.saveHistoryInBackground(mTid, mFid, mTitle, uid, username, postTime);
             }
 
         }

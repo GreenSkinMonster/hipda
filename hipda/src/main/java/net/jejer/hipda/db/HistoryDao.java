@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
@@ -34,60 +35,44 @@ public class HistoryDao {
             String tid, String fid, String title,
             String uid, String username, String postTime) {
 
-        if (TextUtils.isEmpty(tid) || TextUtils.isEmpty(title))
+        if (!HiUtils.isValidId(tid))
             return;
 
         SQLiteDatabase db = null;
+        Cursor cursor = null;
         try {
             db = HistoryDBHelper.getHelper().getWritableDatabase();
             ContentValues contentValues = new ContentValues();
             contentValues.put("tid", tid);
-            contentValues.put("title", title);
 
-            contentValues.put("fid", fid);
-            contentValues.put("uid", uid);
-            contentValues.put("username", username);
-            contentValues.put("post_time", postTime);
+            if (!TextUtils.isEmpty(title))
+                contentValues.put("title", title);
+            if (!TextUtils.isEmpty(fid))
+                contentValues.put("fid", fid);
+            if (!TextUtils.isEmpty(uid))
+                contentValues.put("uid", uid);
+            if (!TextUtils.isEmpty(username))
+                contentValues.put("username", username);
+            if (!TextUtils.isEmpty(postTime))
+                contentValues.put("post_time", postTime);
 
             contentValues.put("visit_time", System.currentTimeMillis());
 
-            db.replace(HistoryDBHelper.TABLE_NAME, null, contentValues);
-        } catch (Exception e) {
-            Logger.e(e);
-        } finally {
-            if (db != null)
-                db.close();
-        }
-    }
+            cursor = db.rawQuery(
+                    "select tid from " + HistoryDBHelper.TABLE_NAME +
+                            " where tid=?", new String[]{tid});
 
-    public synchronized static void updateHistoryInBackground(
-            final String tid, final String fid, final String title) {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                updateHistory(tid, fid, title);
+            if (cursor.getCount() == 0) {
+                db.insert(HistoryDBHelper.TABLE_NAME, null, contentValues);
+            } else {
+                contentValues.remove("tid");
+                db.update(HistoryDBHelper.TABLE_NAME, contentValues, "tid=?", new String[]{tid});
             }
-        });
-    }
-
-    private synchronized static void updateHistory(
-            String tid, String fid, String title) {
-
-        if (TextUtils.isEmpty(tid) || TextUtils.isEmpty(title))
-            return;
-
-        SQLiteDatabase db = null;
-        try {
-            db = HistoryDBHelper.getHelper().getWritableDatabase();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("title", title);
-            contentValues.put("fid", fid);
-            contentValues.put("visit_time", System.currentTimeMillis());
-
-            db.update(HistoryDBHelper.TABLE_NAME, contentValues, "tid=?", new String[]{tid});
         } catch (Exception e) {
             Logger.e(e);
         } finally {
+            if (cursor != null)
+                cursor.close();
             if (db != null)
                 db.close();
         }
@@ -118,6 +103,7 @@ public class HistoryDao {
             db = HistoryDBHelper.getHelper().getReadableDatabase();
             cursor = db.rawQuery(
                     "select * from " + HistoryDBHelper.TABLE_NAME +
+                            " where title is not null and title<>''" +
                             " order by visit_time desc limit " + MAX_SIZE,
                     null);
 
@@ -129,6 +115,10 @@ public class HistoryDao {
                 String username = Utils.nullToText(cursor.getString(cursor.getColumnIndex("username")));
                 String post_time = Utils.nullToText(cursor.getString(cursor.getColumnIndex("post_time")));
                 long visit_time = cursor.getLong(cursor.getColumnIndex("visit_time"));
+
+                //remove time info, only keep date
+                if (post_time.contains("-") && post_time.contains(" "))
+                    post_time = post_time.substring(0, post_time.indexOf(" "));
 
                 History history = new History();
                 history.setTid(tid);
