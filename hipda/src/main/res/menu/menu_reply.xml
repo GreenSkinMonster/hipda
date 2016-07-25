@@ -10,6 +10,13 @@
     <item
         android:id="@+id/action_restore_content"
         android:title="@string/action_restore_content"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_delete_post"
+        android:enabled="false"
+        android:title="@string/action_delete_post"
+        android:visible="false"
+        app:showAsAction="never" />
 
 </menu>

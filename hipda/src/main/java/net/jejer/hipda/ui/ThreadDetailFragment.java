@@ -1059,7 +1059,7 @@ public class ThreadDetailFragment extends BaseFragment {
         PostBean postResult = event.mPostResult;
 
         if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
-            postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
+            postProgressDialog = HiProgressDialog.show(mCtx, "请稍候...");
         } else if (event.mStatus == Constants.STATUS_SUCCESS) {
             //pop post fragment on success
             Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
@@ -1076,19 +1076,31 @@ public class ThreadDetailFragment extends BaseFragment {
                 Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
             }
 
-            if (!mAuthorOnly) {
-                if (event.mMode != PostHelper.MODE_EDIT_POST) {
-                    mCurrentPage = mMaxPage;
-                    mFloorOfPage = LAST_FLOOR;
+            int floor = LAST_FLOOR;
+            if (!TextUtils.isEmpty(postResult.getFloor()) && TextUtils.isDigitsOnly(postResult.getFloor()))
+                floor = Integer.parseInt(postResult.getFloor());
+            if (floor == LAST_FLOOR || floor > 0)
+                mFloorOfPage = floor;
+
+            if (postResult.getDelete() == 1) {
+                //delete post
+                if (floor == 1) {
+                    String fid = postResult.getFid();
+                    FragmentUtils.showForum(getFragmentManager(), HiUtils.isValidId(fid) ? Integer.parseInt(fid) : 0);
                 } else {
-                    int floor = LAST_FLOOR;
-                    if (!TextUtils.isEmpty(postResult.getFloor()) && TextUtils.isDigitsOnly(postResult.getFloor()))
-                        floor = Integer.parseInt(postResult.getFloor());
-                    if (floor == LAST_FLOOR || floor > 0)
-                        mFloorOfPage = floor;
+                    mCache.remove(mCurrentPage);
+                    showOrLoadPage();
                 }
-                mCache.remove(mCurrentPage);
-                showOrLoadPage();
+            } else {
+                //edit post
+                if (!mAuthorOnly) {
+                    if (event.mMode != PostHelper.MODE_EDIT_POST) {
+                        mCurrentPage = mMaxPage;
+                        mFloorOfPage = LAST_FLOOR;
+                    }
+                    mCache.remove(mCurrentPage);
+                    showOrLoadPage();
+                }
             }
         } else {
             if (postProgressDialog != null) {

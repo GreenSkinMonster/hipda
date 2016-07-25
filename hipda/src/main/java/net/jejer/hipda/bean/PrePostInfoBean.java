@@ -23,6 +23,7 @@ public class PrePostInfoBean {
     private List<String> attachdel = new ArrayList<>();
     private List<String> unusedImages = new ArrayList<>();
     private Map<String, String> typeValues = new LinkedHashMap<>();
+    private boolean deleteable;
 
     public List<String> getAttachdel() {
         return attachdel;
@@ -143,5 +144,13 @@ public class PrePostInfoBean {
 
     public void setTypeValues(Map<String, String> typeValues) {
         this.typeValues = typeValues;
+    }
+
+    public boolean isDeleteable() {
+        return deleteable;
+    }
+
+    public void setDeleteable(boolean deleteable) {
+        this.deleteable = deleteable;
     }
 }

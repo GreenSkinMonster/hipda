@@ -177,7 +177,12 @@ public class OkHttpHelper {
         return getResponseBody(response);
     }
 
-    private String getResponseBody(Response response) throws IOException {
+    public Response postAsResponse(String url, Map<String, String> params) throws IOException {
+        Request request = buildPostFormRequest(url, params, null);
+        return client.newCall(request).execute();
+    }
+
+    public static String getResponseBody(Response response) throws IOException {
         if (!response.isSuccessful()) {
             throw new IOException("Unexpected code " + response.code() + ", " + response.message());
         }

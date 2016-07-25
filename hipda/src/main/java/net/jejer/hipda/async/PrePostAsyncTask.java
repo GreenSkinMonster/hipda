@@ -126,6 +126,11 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
             result.setSubject(subjectES.first().attr("value"));
         }
 
+        Elements deleteCheckBox = doc.select("input#delete");
+        if (deleteCheckBox.size() > 0) {
+            result.setDeleteable(true);
+        }
+
         //for replay or quote notify
         if (mMode == PostHelper.MODE_REPLY_POST
                 || mMode == PostHelper.MODE_QUOTE_POST) {

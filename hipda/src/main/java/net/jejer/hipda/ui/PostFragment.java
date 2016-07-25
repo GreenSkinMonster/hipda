@@ -16,6 +16,7 @@ import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.vanniktech.emoji.EmojiEditText;
@@ -114,6 +116,7 @@ public class PostFragment extends BaseFragment {
     private Map<Uri, UploadImage> mUploadImages = new LinkedHashMap<>();
     private Collection<Uri> mHoldedImages = new ArrayList<>();
     private long mLastSavedTime = -1;
+    private int mDeleteMode = 0; // 0 : edit, 1 : delete
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -322,6 +325,18 @@ public class PostFragment extends BaseFragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (mMode != PostHelper.MODE_EDIT_POST)
+            return;
+        MenuItem deleteMenuItem = menu.findItem(R.id.action_delete_post);
+        if (deleteMenuItem == null)
+            return;
+        deleteMenuItem.setVisible(true);
+        deleteMenuItem.setEnabled(mPrePostInfo != null && mPrePostInfo.isDeleteable());
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -332,11 +347,9 @@ public class PostFragment extends BaseFragment {
                     fetchPrePostInfo(false);
                     Toast.makeText(getActivity(), "请等待信息收集结束再选择图片", Toast.LENGTH_LONG).show();
                 } else {
-
                     if (UIUtils.askForPermission(getActivity())) {
                         return true;
                     }
-
                     mContentPosition = mEtContent.getSelectionStart();
                     Intent intent = new Intent();
                     intent.setType("image/*");
@@ -349,6 +362,10 @@ public class PostFragment extends BaseFragment {
                 return true;
             case R.id.action_restore_content:
                 showRestoreContentDialog();
+                return true;
+            case R.id.action_delete_post:
+                showDeletePostDialog();
+                return true;
             default:
                 return false;
         }
@@ -414,6 +431,7 @@ public class PostFragment extends BaseFragment {
         postBean.setTypeid(mTypeId);
         postBean.setSubject(subjectText);
         postBean.setFloor(mFloor);
+        postBean.setDelete(mDeleteMode);
 
         JobMgr.addJob(new PostJob(mParentSessionId, mMode, mPrePostInfo, postBean));
 
@@ -502,6 +520,23 @@ public class PostFragment extends BaseFragment {
             }
         });
 
+    }
+
+    private void showDeletePostDialog() {
+        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
+        popDialog.setTitle("删除本帖？");
+        popDialog.setMessage(Html.fromHtml("确认删除发表的内容吗？<br><br><font color=red>注意：此操作不可恢复。</font>"));
+        popDialog.setPositiveButton("删除",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mDeleteMode = 1;
+                        postReply();
+                    }
+                });
+        popDialog.setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_exclamation_circle).sizeDp(24).color(Color.RED));
+        popDialog.setNegativeButton("取消", null);
+        popDialog.create().show();
     }
 
     private void updateImageInfo() {

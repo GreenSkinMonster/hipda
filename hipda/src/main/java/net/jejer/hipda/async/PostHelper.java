@@ -20,6 +20,8 @@ import org.jsoup.select.Elements;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.Response;
+
 public class PostHelper {
 
     public static final int MODE_REPLY_THREAD = 0;
@@ -87,19 +89,19 @@ public class PostHelper {
         switch (mMode) {
             case MODE_REPLY_THREAD:
             case MODE_QUICK_REPLY:
-                doPost(url, replyText, null, null);
+                doPost(url, replyText, null, null, 0);
                 break;
             case MODE_REPLY_POST:
             case MODE_QUOTE_POST:
-                doPost(url, mInfo.getText() + "\n\n    " + replyText, null, null);
+                doPost(url, mInfo.getText() + "\n\n    " + replyText, null, null, 0);
                 break;
             case MODE_NEW_THREAD:
                 url = HiUtils.NewThreadUrl + fid + "&typeid=" + typeid + "&topicsubmit=yes";
-                doPost(url, replyText, subject, null);
+                doPost(url, replyText, subject, null, 0);
                 break;
             case MODE_EDIT_POST:
                 url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
-                doPost(url, replyText, subject, typeid);
+                doPost(url, replyText, subject, typeid, postBean.getDelete());
                 break;
         }
 
@@ -114,8 +116,7 @@ public class PostHelper {
     }
 
 
-    private void doPost(String url, String replyText, String subject, String typeid) {
-
+    private void doPost(String url, String replyText, String subject, String typeid, int delete) {
         String formhash = mInfo != null ? mInfo.getFormhash() : null;
 
         if (TextUtils.isEmpty(formhash)) {
@@ -130,6 +131,8 @@ public class PostHelper {
         post_param.put("wysiwyg", "0");
         post_param.put("checkbox", "0");
         post_param.put("message", replyText);
+        if (mMode == MODE_EDIT_POST && delete == 1)
+            post_param.put("delete", "1");
         for (String attach : mInfo.getAttaches()) {
             post_param.put("attachnew[" + attach + "][description]", attach);
         }
@@ -165,45 +168,43 @@ public class PostHelper {
             }
         }
 
-        String rsp_str;
         try {
-            rsp_str = OkHttpHelper.getInstance().post(url, post_param);
+            Response response = OkHttpHelper.getInstance().postAsResponse(url, post_param);
+            String rspStr = OkHttpHelper.getResponseBody(response);
+            String requestUrl = response.request().url().toString();
 
-            //when success, okhttp will follow 302 redirect get the page content
-            if (!TextUtils.isEmpty(rsp_str)) {
-                String tid = "";
-                if (rsp_str.contains("tid = parseInt('")) {
-                    tid = HttpUtils.getMiddleString(rsp_str, "tid = parseInt('", "'");
-                }
-                if (!TextUtils.isEmpty(tid)
-                        && TextUtils.isDigitsOnly(tid)
-                        && Integer.parseInt(tid) > 0
-                        && !rsp_str.contains("alert_info")) {
+            if (delete == 1 && requestUrl.contains("forumdisplay.php")) {
+                //delete first post == whole tread, forward to forum url
+                mResult = "发表成功!";
+                mStatus = Constants.STATUS_SUCCESS;
+            } else {
+                //when success, okhttp will follow 302 redirect get the page content
+                String tid = HttpUtils.getMiddleString(requestUrl, "tid=", "&");
+                if (requestUrl.contains("viewthread.php") && HiUtils.isValidId(tid)) {
                     mTid = tid;
                     mResult = "发表成功!";
                     mStatus = Constants.STATUS_SUCCESS;
                 } else {
-                    Logger.e(rsp_str);
+                    Logger.e(rspStr);
                     mResult = "发表失败! ";
                     mStatus = Constants.STATUS_FAIL;
 
-                    Document doc = Jsoup.parse(rsp_str);
+                    Document doc = Jsoup.parse(rspStr);
                     Elements error = doc.select("div.alert_info");
                     if (error != null && error.size() > 0) {
                         mResult += "\n" + error.text();
                     }
                 }
-            } else {
-                mResult = "发表失败，无返回结果! ";
-                mStatus = Constants.STATUS_FAIL;
             }
-
         } catch (Exception e) {
             Logger.e(e);
             mResult = "发表失败 : " + OkHttpHelper.getErrorMessage(e);
             mStatus = Constants.STATUS_FAIL;
         }
 
+        if (delete == 1) {
+            mResult = mResult.replace("发表", "删除");
+        }
     }
 
 }

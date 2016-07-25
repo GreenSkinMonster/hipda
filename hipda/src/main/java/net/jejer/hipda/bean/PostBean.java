@@ -15,7 +15,7 @@ public class PostBean {
     private String typeid;
     private int status;
     private String message;
-
+    private int delete;
 
     public String getTid() {
         return tid;
@@ -88,4 +88,13 @@ public class PostBean {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    public int getDelete() {
+        return delete;
+    }
+
+    public void setDelete(int delete) {
+        this.delete = delete;
+    }
+
 }
