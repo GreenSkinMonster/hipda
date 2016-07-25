@@ -26,7 +26,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -361,6 +360,7 @@ public class PostFragment extends BaseFragment {
                 }
                 return true;
             case R.id.action_restore_content:
+                mEtContent.requestFocus();
                 showRestoreContentDialog();
                 return true;
             case R.id.action_delete_post:
@@ -434,9 +434,7 @@ public class PostFragment extends BaseFragment {
 
         JobMgr.addJob(new PostJob(mParentSessionId, mMode, mPrePostInfo, postBean));
 
-        // Close SoftKeyboard
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mEtContent.getWindowToken(), 0);
+        UIUtils.hideSoftKeyboard(getActivity());
     }
 
     @Override

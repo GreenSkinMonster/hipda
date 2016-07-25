@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -35,6 +34,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.job.BaseEvent;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -247,8 +247,7 @@ public abstract class BaseFragment extends Fragment {
                     return;
                 }
                 new PostSmsAsyncTask(getActivity(), uid, recipient, listener, dialog).execute(content);
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(etSmsContent.getWindowToken(), 0);
+                UIUtils.hideSoftKeyboard(getActivity());
             }
         });
 

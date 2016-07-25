@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -227,10 +226,7 @@ public class SimpleListFragment extends BaseFragment
                         mQuery = query;
                         mSimpleListItemBeans.clear();
                         mSimpleListAdapter.setBeans(mSimpleListItemBeans);
-                        // Close SoftKeyboard
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-                                Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+                        UIUtils.hideSoftKeyboard(getActivity());
                         refresh();
                         return false;
                     }

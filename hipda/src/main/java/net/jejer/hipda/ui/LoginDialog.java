@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -9,7 +10,6 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -20,6 +20,7 @@ import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.UIUtils;
 
 /**
  * dialog for login
@@ -77,9 +78,8 @@ public class LoginDialog extends Dialog {
             @Override
             public void onSingleClick(View v) {
 
-                InputMethodManager imm = (InputMethodManager) mCtx.getSystemService(
-                        Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
+                if (mCtx instanceof Activity)
+                    UIUtils.hideSoftKeyboard((Activity) mCtx);
 
                 HiSettingsHelper.getInstance().setUsername(etUsername.getText().toString());
                 HiSettingsHelper.getInstance().setPassword(etPassword.getText().toString());

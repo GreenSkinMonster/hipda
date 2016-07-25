@@ -29,7 +29,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -286,10 +285,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
                     JobMgr.addJob(new PostJob(mSessionId, PostHelper.MODE_QUICK_REPLY, null, postBean));
 
-                    // Close SoftKeyboard
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-                            Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mEtReply.getWindowToken(), 0);
+                    UIUtils.hideSoftKeyboard(getActivity());
                     mFam.setVisibility(View.VISIBLE);
                 }
             }

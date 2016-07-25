@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -40,6 +39,7 @@ import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
@@ -126,9 +126,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                 String replyText = mEtSms.getText().toString();
                 if (replyText.length() > 0) {
                     new PostSmsAsyncTask(getActivity(), mUid, null, SmsFragment.this, null).execute(replyText);
-                    // Close SoftKeyboard
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mEtSms.getWindowToken(), 0);
+                    UIUtils.hideSoftKeyboard(getActivity());
                 }
             }
         });
