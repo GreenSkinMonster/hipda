@@ -6,8 +6,10 @@
 
 Google Play https://play.google.com/store/apps/details?id=net.jejer.hipda.ng
 
-这是HiPDA简洁论坛客户端的一个分支，曾用名怪兽版   
-因为我做的改动较大，所以另外发布了这个版本   
+本项目是HiPDA论坛的非官方客户端。  
+HiPDA·NG是使用MD风格的版本，即master分支，为目前主要维护版本。  
+怪兽版则是原版风格的版本，即classic分支，已经停止功能更新，仅修复重大问题。
+
 
 多谢原作者 jejer 的分享   
 原项目发布于 http://www.hi-pda.com/forum/viewthread.php?tid=1408844   
@@ -18,14 +20,17 @@ Google Play https://play.google.com/store/apps/details?id=net.jejer.hipda.ng
 
 #Credits
 - HiPDA简洁版 - https://bitbucket.org/jejer/hipda/
-- Glide - https://github.com/bumptech/glide
-- Subsampling Scale Image View - https://github.com/davemorrissey/subsampling-scale-image-view
-- FloatingActionButton - https://github.com/Clans/FloatingActionButton
-- MaterialDrawer - https://github.com/mikepenz/MaterialDrawer
-- ACRA - https://github.com/ACRA/acra
-- OkHttp - https://github.com/square/okhttp
-- EventBus - https://github.com/greenrobot/EventBus
+- Android Iconics - https://github.com/mikepenz/Android-Iconics
 - Android Priority Job Queue - https://github.com/yigit/android-priority-jobqueue
-- Jsoup - http://jsoup.org/
+- BubbleLayout - https://github.com/MasayukiSuda/BubbleLayout
+- Calligraphy - https://github.com/chrisjenx/Calligraphy
+- Crashlytics - https://try.crashlytics.com/
 - Emoji - https://github.com/vanniktech/Emoji
+- EventBus - https://github.com/greenrobot/EventBus
+- FloatingActionButton - https://github.com/Clans/FloatingActionButton
+- Glide - https://github.com/bumptech/glide
+- Jsoup - http://jsoup.org/
+- MaterialDrawer - https://github.com/mikepenz/MaterialDrawer
+- OkHttp - https://github.com/square/okhttp
 - Spectrum - https://github.com/the-blue-alliance/spectrum
+- Subsampling Scale Image View - https://github.com/davemorrissey/subsampling-scale-image-view
