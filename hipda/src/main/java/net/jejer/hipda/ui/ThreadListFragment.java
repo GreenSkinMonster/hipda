@@ -139,8 +139,8 @@ public class ThreadListFragment extends BaseFragment
 
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
-        swipeLayout.setColorSchemeResources(R.color.icon_blue);
-        swipeLayout.setProgressBackgroundColorSchemeColor(ColorUtils.getListBackgroundColor(getActivity()));
+        swipeLayout.setColorSchemeColors(ColorUtils.getSwipeColor(getActivity()));
+        swipeLayout.setProgressBackgroundColorSchemeColor(ColorUtils.getSwipeBackgroundColor(getActivity()));
 
         loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);
 

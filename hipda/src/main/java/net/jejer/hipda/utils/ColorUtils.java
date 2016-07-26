@@ -1,8 +1,6 @@
 package net.jejer.hipda.utils;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 
 import net.jejer.hipda.R;
@@ -25,7 +23,7 @@ public class ColorUtils {
         if (COLOR_IDS.containsKey(attrId))
             return COLOR_IDS.get(attrId);
 
-        int colorId = getColor2(ctx, attrId);
+        int colorId = getColor(ctx, attrId);
 
         COLOR_IDS.put(attrId, colorId);
         return colorId;
@@ -47,24 +45,18 @@ public class ColorUtils {
         return getColorIdByAttr(ctx, R.attr.list_item_background);
     }
 
-    private static int getColor1(Context ctx, int attrId) {
-        TypedValue typedValue = new TypedValue();
-        TypedArray a = ctx.obtainStyledAttributes(typedValue.data, new int[]{attrId});
-        int color = a.getColor(0, 0);
-        a.recycle();
-        return color;
+    public static int getSwipeBackgroundColor(Context ctx) {
+        return getColorIdByAttr(ctx, R.attr.swipe_background);
     }
 
-    private static int getColor2(Context ctx, int attrId) {
+    public static int getSwipeColor(Context ctx) {
+        return getColorIdByAttr(ctx, R.attr.swipe_color);
+    }
+
+    private static int getColor(Context ctx, int attrId) {
         final TypedValue typedValue = new TypedValue();
         ctx.getTheme().resolveAttribute(attrId, typedValue, true);
         return typedValue.data;
-    }
-
-    private static int getColor3(Context ctx, int attrId) {
-        TypedValue typedValue = new TypedValue();
-        ctx.getTheme().resolveAttribute(attrId, typedValue, true);
-        return ContextCompat.getColor(ctx, typedValue.resourceId);
     }
 
 }

@@ -44,6 +44,8 @@
         <item name="list_item_background">@color/day_list_item_background</item>
         <item name="list_item_divider">@color/day_list_item_divider</item>
         <item name="emojiBackground">@color/md_grey_200</item>
+        <item name="swipe_background">@color/white</item>
+        <item name="swipe_color">@color/icon_blue</item>
     </style>
 
     <style name="ThemeLight.Red" parent="ThemeLight">
@@ -180,6 +182,8 @@
         <item name="list_item_background">@color/night_list_item_background</item>
         <item name="list_item_divider">@color/night_list_item_divider</item>
         <item name="emojiBackground">@color/md_grey_900</item>
+        <item name="swipe_background">@color/md_grey_800</item>
+        <item name="swipe_color">@color/white</item>
     </style>
 
     <style name="ThemeBlack" parent="ThemeDark">

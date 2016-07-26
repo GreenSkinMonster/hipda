@@ -3,6 +3,8 @@
 
     <attr name="list_item_background" format="color" />
     <attr name="list_item_divider" format="color" />
+    <attr name="swipe_color" format="color" />
+    <attr name="swipe_background" format="color" />
 
     <attr name="action_mode_text_color" format="color" />
     <attr name="fabColorNormal" format="color" />
