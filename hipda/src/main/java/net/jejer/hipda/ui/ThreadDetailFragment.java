@@ -663,7 +663,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (!mHistorySaved || details.getPage() == 1) {
                 mHistorySaved = true;
                 String uid = null, username = null, postTime = null;
-                if (details.getCount() > 0) {
+                if (details.getPage() == 1 && details.getCount() > 0) {
                     DetailBean detailBean = details.getAll().get(0);
                     uid = detailBean.getUid();
                     username = detailBean.getAuthor();
