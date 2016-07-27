@@ -439,7 +439,7 @@ public class HiSettingsHelper {
 
     public String getTailStr() {
         String tailStr = "";
-        String tailText = getTailText();
+        String tailText = getTailText().trim();
         if (!TextUtils.isEmpty(tailText)) {
             String tailUrl = getTailUrl();
             if (!TextUtils.isEmpty(tailUrl)) {
