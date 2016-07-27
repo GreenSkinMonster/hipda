@@ -286,6 +286,8 @@ public class MainFrameActivity extends AppCompatActivity {
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .build();
 
+        drawer.getRecyclerView().setVerticalScrollBarEnabled(false);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
