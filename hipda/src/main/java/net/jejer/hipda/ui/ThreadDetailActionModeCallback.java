@@ -25,12 +25,14 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
     private ThreadDetailFragment mFragment;
     private String mTid;
     private String mFid;
+    private String mTitle;
     private DetailBean mDetailBean;
 
-    public ThreadDetailActionModeCallback(ThreadDetailFragment fragment, String fid, String tid, DetailBean detailBean) {
+    public ThreadDetailActionModeCallback(ThreadDetailFragment fragment, String fid, String tid, String title, DetailBean detailBean) {
         mFragment = fragment;
         mFid = fid;
         mTid = tid;
+        mTitle = title;
         mDetailBean = detailBean;
     }
 
@@ -119,9 +121,10 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
             case R.id.action_share_post:
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = HiUtils.DetailListUrl + mTid + "\n"
-                        + mDetailBean.getFloor() + "#  作者：" + mDetailBean.getAuthor() + "\n\n"
-                        + mDetailBean.getContents().getCopyText();
+                String shareBody = "帖子 ：" + mTitle + "\n" +
+                        HiUtils.DetailListUrl + mTid + "\n" +
+                        mDetailBean.getFloor() + "#  作者 ：" + mDetailBean.getAuthor() + "\n\n" +
+                        mDetailBean.getContents().getCopyText();
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 mFragment.startActivity(Intent.createChooser(sharingIntent, "分享文字内容"));
                 mode.finish();

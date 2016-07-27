@@ -734,7 +734,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
 
             ThreadDetailActionModeCallback cb = new ThreadDetailActionModeCallback(ThreadDetailFragment.this,
-                    mFid, mTid, mDetailAdapter.getItem(position));
+                    mFid, mTid, mTitle, mDetailAdapter.getItem(position));
             ((AppCompatActivity) getActivity()).startSupportActionMode(cb);
 
             return true;
