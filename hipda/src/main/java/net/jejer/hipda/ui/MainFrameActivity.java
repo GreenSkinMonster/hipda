@@ -39,7 +39,6 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.ExpandableDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
@@ -56,6 +55,7 @@ import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.utils.ColorUtils;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -68,6 +68,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -211,23 +213,44 @@ public class MainFrameActivity extends AppCompatActivity {
                 .build();
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_search).withIdentifier(DrawerItem.SEARCH.id).withIcon(GoogleMaterial.Icon.gmd_search));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_sms).withIdentifier(DrawerItem.SMS.id).withIcon(GoogleMaterial.Icon.gmd_email)
-                .withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.grey)));
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_notify).withIdentifier(DrawerItem.THREAD_NOTIFY.id).withIcon(GoogleMaterial.Icon.gmd_notifications)
-                .withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.grey)));
-        drawerItems.add(
-                new ExpandableDrawerItem().withName(R.string.title_drawer_expandable).withIcon(GoogleMaterial.Icon.gmd_view_list).withIdentifier(Constants.DRAWER_NO_ACTION).withSelectable(false).withSubItems(
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_mypost).withIdentifier(DrawerItem.MY_POST.id).withIcon(GoogleMaterial.Icon.gmd_assignment_ind),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_myreply).withIdentifier(DrawerItem.MY_REPLY.id).withIcon(GoogleMaterial.Icon.gmd_assignment),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_favorites).withIdentifier(DrawerItem.MY_FAVORITES.id).withIcon(GoogleMaterial.Icon.gmd_favorite),
-                        new SecondaryDrawerItem().withName(R.string.title_drawer_histories).withIdentifier(DrawerItem.HISTORIES.id).withIcon(GoogleMaterial.Icon.gmd_history)
-                ));
+        drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SEARCH));
+        drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SMS));
+        drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.THREAD_NOTIFY));
+
+        Set<String> freqMenuIds = HiSettingsHelper.getInstance().getFreqMenus();
+        Collection<IDrawerItem> subItems = new ArrayList<>();
+        if (freqMenuIds.contains("" + DrawerHelper.DrawerItem.MY_POST.id))
+            drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.MY_POST));
+        else
+            subItems.add(DrawerHelper.getSecondaryMenuItem(DrawerHelper.DrawerItem.MY_POST));
+
+        if (freqMenuIds.contains("" + DrawerHelper.DrawerItem.MY_REPLY.id))
+            drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.MY_REPLY));
+        else
+            subItems.add(DrawerHelper.getSecondaryMenuItem(DrawerHelper.DrawerItem.MY_REPLY));
+
+        if (freqMenuIds.contains("" + DrawerHelper.DrawerItem.MY_FAVORITES.id))
+            drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.MY_FAVORITES));
+        else
+            subItems.add(DrawerHelper.getSecondaryMenuItem(DrawerHelper.DrawerItem.MY_FAVORITES));
+
+        if (freqMenuIds.contains("" + DrawerHelper.DrawerItem.HISTORIES.id))
+            drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.HISTORIES));
+        else
+            subItems.add(DrawerHelper.getSecondaryMenuItem(DrawerHelper.DrawerItem.HISTORIES));
+
+        if (subItems.size() > 0)
+            drawerItems.add(
+                    new ExpandableDrawerItem()
+                            .withName(R.string.title_drawer_expandable)
+                            .withIcon(GoogleMaterial.Icon.gmd_more_horiz)
+                            .withIdentifier(Constants.DRAWER_NO_ACTION)
+                            .withSelectable(false)
+                            .withSubItems(subItems.toArray(new IDrawerItem[subItems.size()])
+                            ));
 
         drawerItems.add(new DividerDrawerItem());
-        drawerItems.add(new PrimaryDrawerItem().withName(R.string.title_drawer_setting)
-                .withIdentifier(DrawerItem.SETTINGS.id)
-                .withIcon(GoogleMaterial.Icon.gmd_settings));
+        drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SETTINGS));
         if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme())) {
             drawerItems.add(new SwitchDrawerItem()
                     .withName(R.string.title_drawer_night_mode)
@@ -425,23 +448,6 @@ public class MainFrameActivity extends AppCompatActivity {
             return true;
         }
         return false;
-    }
-
-    public enum DrawerItem {
-        SEARCH(Constants.DRAWER_SEARCH),
-        MY_POST(Constants.DRAWER_MYPOST),
-        MY_REPLY(Constants.DRAWER_MYREPLY),
-        MY_FAVORITES(Constants.DRAWER_FAVORITES),
-        HISTORIES(Constants.DRAWER_HISTORIES),
-        SMS(Constants.DRAWER_SMS),
-        THREAD_NOTIFY(Constants.DRAWER_THREADNOTIFY),
-        SETTINGS(Constants.DRAWER_SETTINGS);
-
-        public final int id;
-
-        DrawerItem(int id) {
-            this.id = id;
-        }
     }
 
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {

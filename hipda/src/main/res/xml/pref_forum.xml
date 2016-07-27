@@ -8,6 +8,13 @@
         android:key="PERF_FORUMS"
         android:title="@string/pref_title_forum" />
 
+    <MultiSelectListPreference
+        android:defaultValue="@array/default_freq_menu_values"
+        android:entries="@array/pref_title_freq_menu_names"
+        android:entryValues="@array/pref_title_freq_menu_values"
+        android:key="PERF_FREQ_MENUS"
+        android:title="@string/pref_title_freq_menus"/>
+
     <PreferenceCategory android:title="@string/pref_category_tail">
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="true"

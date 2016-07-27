@@ -39,6 +39,7 @@ public class SettingMainFragment extends BaseSettingFragment {
     private String mTheme;
     private int mPrimaryColor;
     private Set<String> mForums;
+    private Set<String> mFreqMenus;
     private boolean mNavBarColored;
     private String mFont;
     static boolean mCacheCleared;
@@ -85,6 +86,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         mTheme = HiSettingsHelper.getInstance().getActiveTheme();
         mPrimaryColor = HiSettingsHelper.getInstance().getPrimaryColor();
         mForums = HiSettingsHelper.getInstance().getForums();
+        mFreqMenus = HiSettingsHelper.getInstance().getFreqMenus();
         mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
         mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
         mFont = HiSettingsHelper.getInstance().getFont();
@@ -125,6 +127,7 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || !HiSettingsHelper.getInstance().getActiveTheme().equals(mTheme)
                 || HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
+                || !HiSettingsHelper.getInstance().getFreqMenus().equals(mFreqMenus)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
                 || !HiSettingsHelper.getInstance().getFont().equals(mFont)

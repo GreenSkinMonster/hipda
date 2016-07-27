@@ -46,6 +46,7 @@ public class HiSettingsHelper {
     public static final String PERF_NAVBAR_COLORED = "PERF_NAVBAR_COLORED";
     public static final String PERF_FONT = "PERF_FONT";
     public static final String PERF_FORUMS = "PERF_FORUMS";
+    public static final String PERF_FREQ_MENUS = "PERF_FREQ_MENUS";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
@@ -102,6 +103,7 @@ public class HiSettingsHelper {
     private boolean mNavBarColor = false;
     private String mFont = "";
     private Set<String> mForums = new HashSet<>();
+    private Set<String> mFreqMenus = new HashSet<>();
 
     private boolean mEncodeUtf8 = false;
 
@@ -220,6 +222,7 @@ public class HiSettingsHelper {
         isShowPostTypeFromPref();
         isErrorReportModeFromPref();
         getForumsFromPref();
+        getFreqMenusFromPref();
         isNotiLedLightFromPref();
         isNotiTaskEnabledFromPref();
         getNotiRepeatMinutesFromPref();
@@ -556,6 +559,22 @@ public class HiSettingsHelper {
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.remove(PERF_FORUMS).apply();
         editor.putStringSet(PERF_FORUMS, forums).apply();
+    }
+
+    public Set<String> getFreqMenus() {
+        return mFreqMenus;
+    }
+
+    public Set<String> getFreqMenusFromPref() {
+        mFreqMenus = mSharedPref.getStringSet(PERF_FREQ_MENUS, new HashSet<String>());
+        return mFreqMenus;
+    }
+
+    public void setFreqMenus(Set<String> menus) {
+        mFreqMenus = menus;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.remove(PERF_FREQ_MENUS).apply();
+        editor.putStringSet(PERF_FREQ_MENUS, menus).apply();
     }
 
     public boolean isEncodeUtf8() {

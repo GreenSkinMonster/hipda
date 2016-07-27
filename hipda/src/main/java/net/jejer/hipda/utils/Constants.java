@@ -1,7 +1,5 @@
 package net.jejer.hipda.utils;
 
-import net.jejer.hipda.async.SimpleListLoader;
-
 /**
  * some constants
  * Created by GreenSkinMonster on 2015-03-13.
@@ -12,13 +10,13 @@ public class Constants {
     public static final int STATUS_IN_PROGRESS = 5;
     public static final int STATUS_FAIL_ABORT = 9;
 
-    public static final int DRAWER_SEARCH = 1000 + SimpleListLoader.TYPE_SEARCH;
-    public static final int DRAWER_MYPOST = 1000 + SimpleListLoader.TYPE_MYPOST;
-    public static final int DRAWER_MYREPLY = 1000 + SimpleListLoader.TYPE_MYREPLY;
-    public static final int DRAWER_FAVORITES = 1000 + SimpleListLoader.TYPE_FAVORITES;
-    public static final int DRAWER_SMS = 1000 + SimpleListLoader.TYPE_SMS;
-    public static final int DRAWER_THREADNOTIFY = 1000 + SimpleListLoader.TYPE_THREAD_NOTIFY;
-    public static final int DRAWER_HISTORIES = 1000 + SimpleListLoader.TYPE_HISTORIES;
+    public static final int DRAWER_SEARCH = 1000;
+    public static final int DRAWER_MYPOST = 1001;
+    public static final int DRAWER_MYREPLY = 1002;
+    public static final int DRAWER_FAVORITES = 1003;
+    public static final int DRAWER_SMS = 1004;
+    public static final int DRAWER_THREADNOTIFY = 1005;
+    public static final int DRAWER_HISTORIES = 1006;
     public static final int DRAWER_SETTINGS = 10000;
     public static final int DRAWER_NIGHT_MODE = 10001;
     public static final int DRAWER_NO_ACTION = 10002;

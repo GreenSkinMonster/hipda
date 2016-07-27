@@ -152,6 +152,21 @@
         <item>59</item>
     </string-array>
 
+    <string-array name="pref_title_freq_menu_names">
+        <item>@string/title_drawer_mypost</item>
+        <item>@string/title_drawer_myreply</item>
+        <item>@string/title_drawer_favorites</item>
+        <item>@string/title_drawer_histories</item>
+    </string-array>
+    <string-array name="pref_title_freq_menu_values">
+        <item>1001</item>
+        <item>1002</item>
+        <item>1003</item>
+        <item>1006</item>
+    </string-array>
+    <string-array name="default_freq_menu_values">
+    </string-array>
+
     <!--  value should match ActivityInfo.SCREEN_ORIENTATION_*-->
     <string-array name="pref_screen_orientation">
         <item>@string/screen_auto</item>
@@ -253,6 +268,7 @@
     <string name="pref_title_navbar_colored">导航栏着色</string>
     <string name="pref_title_font">英文字体</string>
     <string name="pref_title_forum">版面选择</string>
+    <string name="pref_title_freq_menus">展开常用菜单</string>
     <string name="pref_title_textsize_adjust_title">标题字号调整</string>
     <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
     <string name="pref_post_line_spacing_title">帖子行距调整</string>
