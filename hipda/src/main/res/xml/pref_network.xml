@@ -28,4 +28,13 @@
         android:singleLine="true"
         android:title="@string/pref_title_save_folder"/>
 
+    <ListPreference
+        android:defaultValue="500"
+        android:entries="@array/pref_cache_size_titles"
+        android:entryValues="@array/pref_cache_size_values"
+        android:key="PERF_CACHE_SIZE_IN_MB"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_cache_size_title"/>
+
 </PreferenceScreen>

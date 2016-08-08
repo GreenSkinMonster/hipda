@@ -227,6 +227,15 @@
         <item>1</item>
     </string-array>
 
+    <string-array name="pref_cache_size_titles">
+        <item>300M</item>
+        <item>500M</item>
+    </string-array>
+    <string-array name="pref_cache_size_values">
+        <item>300</item>
+        <item>500</item>
+    </string-array>
+
     <string-array name="empty_array"/>
 
     <string name="pref_category_forum">论坛选项</string>
@@ -286,6 +295,7 @@
     <string name="pref_noti_silent_end">免打扰结束</string>
     <string name="pref_title_animation_type">动画方式</string>
     <string name="pref_title_save_folder">文件保存目录</string>
+    <string name="pref_cache_size_title">图片缓存大小</string>
 
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
     <string name="pref_summary_primary_color">仅浅色主题有效</string>

@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -57,7 +58,7 @@ import okio.Source;
 
 public class GlideHelper {
 
-    private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(512);
+    private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(1024);
     private static File AVATAR_CACHE_DIR;
     public static File DEFAULT_AVATAR_FILE;
 
@@ -65,12 +66,22 @@ public class GlideHelper {
 
     public final static long AVATAR_CACHE_MILLS = 7 * 24 * 60 * 60 * 1000;
     public final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
+    public final static int MAX_CACHE_SIZE = 500;
+    public final static int MIN_CACHE_SIZE = 300;
 
     public static void init(Context context) {
         if (!Glide.isSetup()) {
             GlideBuilder gb = new GlideBuilder(context);
 
-            gb.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), 150 * 1024 * 1024));
+            String cacheSizeStr = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB, MAX_CACHE_SIZE + "");
+            int cacheSize = MAX_CACHE_SIZE;
+            if (TextUtils.isDigitsOnly(cacheSizeStr)) {
+                cacheSize = Integer.parseInt(cacheSizeStr);
+                if (cacheSize < MIN_CACHE_SIZE) {
+                    cacheSize = MAX_CACHE_SIZE;
+                }
+            }
+            gb.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), cacheSize * 1024 * 1024));
 
             Glide.setup(gb);
 

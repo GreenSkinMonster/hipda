@@ -99,12 +99,12 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_IMAGE_LOAD_TYPE));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_AVATAR_LOAD_TYPE));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SAVE_FOLDER));
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB));
                 break;
 
             case SCREEN_OTHER:
                 setActionBarTitle(R.string.pref_category_other);
                 addPreferencesFromResource(R.xml.pref_other);
-                //bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_ANIMATION_TYPE));
                 Preference clearPreference = findPreference(HiSettingsHelper.PERF_CLEAR_CACHE);
                 clearPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
