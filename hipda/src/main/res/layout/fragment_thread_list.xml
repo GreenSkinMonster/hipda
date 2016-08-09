@@ -15,7 +15,7 @@
         <ListView
             android:id="@+id/lv_threads"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:divider="?list_item_divider"
             android:dividerHeight="1dp"
             android:listSelector="@android:color/transparent"/>

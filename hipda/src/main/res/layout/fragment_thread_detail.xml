@@ -12,7 +12,7 @@
     <net.jejer.hipda.ui.XListView
         android:id="@+id/lv_thread_details"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:clickable="true"
         android:divider="?list_item_divider"

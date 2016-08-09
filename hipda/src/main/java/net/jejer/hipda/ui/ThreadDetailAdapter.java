@@ -77,6 +77,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
             holder.time = (TextView) convertView.findViewById(R.id.time);
             holder.floor = (TextView) convertView.findViewById(R.id.floor);
             holder.postStatus = (TextView) convertView.findViewById(R.id.post_status);
+            holder.contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -110,7 +111,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         holder.author.setTag(R.id.avatar_tag_username, detail.getAuthor());
         holder.author.setOnClickListener(mAvatarListener);
 
-        LinearLayout contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
+        LinearLayout contentView = holder.contentView;
         contentView.removeAllViews();
         contentView.bringToFront();
 
@@ -353,5 +354,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         TextView floor;
         TextView postStatus;
         TextView time;
+        LinearLayout contentView;
     }
 }
