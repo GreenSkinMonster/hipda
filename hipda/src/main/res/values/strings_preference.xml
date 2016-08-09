@@ -230,10 +230,12 @@
     <string-array name="pref_cache_size_titles">
         <item>300M</item>
         <item>500M</item>
+        <item>1G</item>
     </string-array>
     <string-array name="pref_cache_size_values">
         <item>300</item>
         <item>500</item>
+        <item>1024</item>
     </string-array>
 
     <string-array name="empty_array"/>

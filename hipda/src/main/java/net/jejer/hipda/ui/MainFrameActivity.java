@@ -148,6 +148,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 if (!NotificationMgr.isAlarmRuning(this))
                     NotificationMgr.startAlarm(this);
             }
+            UIUtils.askForPermission(this);
         }
     }
 

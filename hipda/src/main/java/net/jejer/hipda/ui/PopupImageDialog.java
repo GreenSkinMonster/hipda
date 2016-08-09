@@ -196,16 +196,16 @@ public class PopupImageDialog extends DialogFragment {
 
                         String url = images.get(viewPager.getCurrentItem()).getContent();
 
-                        //generate a random file name, will be deleted after share
                         ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
                         if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
                             Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        String filename = Utils.getImageFileName(Constants.FILE_SHARE_PREFIX, imageReadyInfo.getMime());
-                        File destFile = new File(HttpUtils.getSaveFolder(), filename);
 
                         try {
+                            String filename = Utils.getImageFileName(Constants.FILE_SHARE_PREFIX, imageReadyInfo.getMime());
+                            File cacheDirectory = HiApplication.getAppContext().getExternalCacheDir();
+                            File destFile = new File(cacheDirectory, filename);
                             Utils.copy(new File(imageReadyInfo.getPath()), destFile);
 
                             Intent shareIntent = new Intent(Intent.ACTION_SEND);

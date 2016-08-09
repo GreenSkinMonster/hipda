@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
+import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
@@ -66,22 +66,22 @@ public class GlideHelper {
 
     public final static long AVATAR_CACHE_MILLS = 7 * 24 * 60 * 60 * 1000;
     public final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
-    public final static int MAX_CACHE_SIZE = 500;
+    public final static int DEFAULT_CACHE_SIZE = 500;
     public final static int MIN_CACHE_SIZE = 300;
 
     public static void init(Context context) {
         if (!Glide.isSetup()) {
             GlideBuilder gb = new GlideBuilder(context);
 
-            String cacheSizeStr = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB, MAX_CACHE_SIZE + "");
-            int cacheSize = MAX_CACHE_SIZE;
+            String cacheSizeStr = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB, DEFAULT_CACHE_SIZE + "");
+            int cacheSize = DEFAULT_CACHE_SIZE;
             if (TextUtils.isDigitsOnly(cacheSizeStr)) {
                 cacheSize = Integer.parseInt(cacheSizeStr);
                 if (cacheSize < MIN_CACHE_SIZE) {
-                    cacheSize = MAX_CACHE_SIZE;
+                    cacheSize = DEFAULT_CACHE_SIZE;
                 }
             }
-            gb.setDiskCache(DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), cacheSize * 1024 * 1024));
+            gb.setDiskCache(new ExternalCacheDiskCacheFactory(context, cacheSize * 1024 * 1024));
 
             Glide.setup(gb);
 
