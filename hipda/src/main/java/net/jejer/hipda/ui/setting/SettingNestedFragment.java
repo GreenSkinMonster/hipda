@@ -3,17 +3,17 @@ package net.jejer.hipda.ui.setting;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.NotificationMgr;
-import net.jejer.hipda.utils.Utils;
 
 /**
  * nested setting fragment
@@ -28,6 +28,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
     public static final int SCREEN_OTHER = 5;
 
     public static final String TAG_KEY = "SCREEN_KEY";
+    private HiProgressDialog mProgressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,15 +111,40 @@ public class SettingNestedFragment extends BaseSettingFragment {
                     public boolean onPreferenceClick(Preference preference) {
                         Dialog dialog = new AlertDialog.Builder(getActivity())
                                 .setTitle("清除缓存？")
-                                .setMessage("继续操作将清除已经下载的缓存资源，需要时重新下载。\n\n在频繁出现网络连接错误情况下，可以使用本功能看问题是否能解决。")
+                                .setMessage("继续操作将清除相关缓存资源。\n\n在频繁出现网络错误情况下，可以尝试本功能看是否可以解决问题。")
                                 .setPositiveButton(getResources().getString(android.R.string.ok),
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                Utils.clearCache(getActivity());
-                                                OkHttpHelper.getInstance().clearCookies();
-                                                SettingMainFragment.mCacheCleared = true;
-                                                Toast.makeText(getActivity(), "缓存已经清除", Toast.LENGTH_SHORT).show();
+                                                new AsyncTask<Void, Void, Exception>() {
+                                                    @Override
+                                                    protected Exception doInBackground(Void... voids) {
+                                                        try {
+                                                            OkHttpHelper.getInstance().clearCookies();
+                                                            SettingMainFragment.mCacheCleared = true;
+                                                        } catch (Exception e) {
+                                                            return e;
+                                                        }
+                                                        return null;
+                                                    }
+
+                                                    @Override
+                                                    protected void onPreExecute() {
+                                                        super.onPreExecute();
+                                                        mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
+                                                    }
+
+                                                    @Override
+                                                    protected void onPostExecute(Exception e) {
+                                                        super.onPostExecute(e);
+                                                        if (mProgressDialog != null) {
+                                                            if (e == null)
+                                                                mProgressDialog.dismiss("缓存已经清除");
+                                                            else
+                                                                mProgressDialog.dismissError("发生错误 : " + e.getMessage());
+                                                        }
+                                                    }
+                                                }.execute();
                                             }
                                         })
                                 .setNegativeButton(getResources().getString(android.R.string.cancel),

@@ -286,9 +286,19 @@ public class Utils {
         return false;
     }
 
-    public static void clearCache(Context context) {
+    public static void clearInternalCache(Context context) {
         try {
             File cache = context.getCacheDir();
+            if (cache != null && cache.isDirectory()) {
+                deleteDir(cache);
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    public static void clearExternalCache(Context context) {
+        try {
+            File cache = context.getExternalCacheDir();
             if (cache != null && cache.isDirectory()) {
                 deleteDir(cache);
             }
