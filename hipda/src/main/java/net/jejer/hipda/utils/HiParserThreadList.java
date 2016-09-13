@@ -14,6 +14,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.net.URL;
+
 public class HiParserThreadList {
 
     private static long HOLD_FETCH_NOTIFY = 0;
@@ -29,6 +31,20 @@ public class HiParserThreadList {
         HiSettingsHelper.updateMobileNetworkStatus(context);
 
         ThreadListBean threads = new ThreadListBean();
+
+        //get cdn image host from image url
+        if (!HiUtils.ImageHostUpdated) {
+            Elements newES = doc.select("#newspecial img");
+            if (newES.size() > 0) {
+                String src = newES.first().attr("src");
+                try {
+                    String host = (new URL(src)).getHost();
+                    HiUtils.updateImageHost(host);
+                    HiUtils.ImageHostUpdated = true;
+                } catch (Exception ignored) {
+                }
+            }
+        }
 
         //parse uid and re-set username if necessary
         if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())) {
