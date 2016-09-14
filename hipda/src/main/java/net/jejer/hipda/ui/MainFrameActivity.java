@@ -126,6 +126,9 @@ public class MainFrameActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             HiApplication.setFirstLoad(true);
+
+            TaskHelper.updateImageServers();
+
             int fid = HiSettingsHelper.getInstance().getLastForumId();
 
             FragmentArgs args = FragmentUtils.parse(getIntent());
