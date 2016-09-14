@@ -990,7 +990,7 @@ public class ThreadDetailFragment extends Fragment implements PostAsyncTask.Post
                             .commit();
                 } else {
                     getFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                            .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, R.animator.slide_in_left, R.animator.slide_out_right)
                             .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
                             .addToBackStack(ThreadDetailFragment.class.getName())
                             .commit();

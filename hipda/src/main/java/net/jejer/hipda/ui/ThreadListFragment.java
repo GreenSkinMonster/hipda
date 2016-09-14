@@ -126,8 +126,8 @@ public class ThreadListFragment extends Fragment
                 return true;
             }
         };
-        mSpinnerAdapter = new ArrayAdapter<>(mCtx, android.R.layout.simple_spinner_dropdown_item);
-        ((ArrayAdapter) mSpinnerAdapter).addAll(HiUtils.FORUMS);
+        mSpinnerAdapter = new ArrayAdapter<String>(mCtx, android.R.layout.simple_spinner_dropdown_item);
+        ((ArrayAdapter<String>) mSpinnerAdapter).addAll(HiUtils.FORUMS);
     }
 
     @Override
@@ -486,7 +486,7 @@ public class ThreadListFragment extends Fragment
                         .commit();
             } else {
                 getFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+                        .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, R.animator.slide_in_left, R.animator.slide_out_right)
                         .add(R.id.main_frame_container, fragment, ThreadDetailFragment.class.getName())
                         .addToBackStack(ThreadDetailFragment.class.getName())
                         .commit();
