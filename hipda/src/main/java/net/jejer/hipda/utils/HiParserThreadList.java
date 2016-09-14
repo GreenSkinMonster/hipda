@@ -19,6 +19,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.net.URL;
+
 public class HiParserThreadList {
 
     public static ThreadListBean parse(Context ctx, Handler handler, Document doc) {
@@ -29,6 +31,21 @@ public class HiParserThreadList {
 
         // Async check notify
         new parseNotifyRunnable(ctx, doc, true).run();
+
+        //get cdn image host from image url
+        if (!HiUtils.ImageHostUpdated) {
+            Elements newES = doc.select("#newspecial img");
+            if (newES.size() > 0) {
+                String src = newES.first().attr("src");
+                try {
+                    String host = (new URL(src)).getHost();
+                    HiUtils.updateImageHost(host);
+                    HiUtils.ImageHostUpdated = true;
+                } catch (Exception ignored) {
+                }
+            }
+        }
+
 
         ThreadListBean threads = new ThreadListBean();
         Elements tbodyES = doc.select("tbody[id]");

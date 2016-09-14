@@ -64,8 +64,8 @@ public class TextViewWithEmoticon extends TextView {
     private Html.ImageGetter imageGetter = new Html.ImageGetter() {
         public Drawable getDrawable(String src) {
             Drawable icon = null;
-            if (!TextUtils.isEmpty(src) && src.startsWith(HiUtils.SMILE_PATH) && src.contains(".")) {
-                src = src.substring((HiUtils.SMILE_PATH).length(), src.lastIndexOf(".")).replace("/", "_");
+            if (!TextUtils.isEmpty(src) && src.startsWith(HiUtils.SmiliesBaseUrl) && src.contains(".")) {
+                src = src.substring((HiUtils.SmiliesBaseUrl).length(), src.lastIndexOf(".")).replace("/", "_");
                 int id = mCtx.getResources().getIdentifier(src, "drawable", mCtx.getPackageName());
                 if (id != 0) {
                     icon = mCtx.getResources().getDrawable(id);

@@ -10,7 +10,6 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 public class HiUtils {
     public static final String UserAgent = "net.jejer.hipda " + HiSettingsHelper.getInstance().getAppVersion();
     public static final String BaseUrl = "http://www.hi-pda.com/forum/";
-    public static final String ImageBaseUrl = "http://img.hi-pda.com/forum/";
     public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
     public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
     public static final String ReplyUrl = BaseUrl + "post.php?action=reply&tid=";
@@ -35,13 +34,14 @@ public class HiUtils {
     public static final String FavoriteAddUrl = BaseUrl + "my.php?item=favorites&inajax=1&ajaxtarget=favorite_msg&tid=";
     public static final String FavoriteRemoveUrl = BaseUrl + "my.php?item=favorites&action=remove&inajax=1&ajaxtarget=favorite_msg&tid=";
     public static final String UserInfoUrl = BaseUrl + "space.php?uid=";
-    public static final String UpdateUrl = BaseUrl + "viewthread.php?tid=1579403";
-    public static final String AvatarBaseUrl = BaseUrl + "uc_server/data/avatar/";
 
     public static final String LoginStep3 = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
     public static final String LoginStep2 = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
 
-    public final static String SMILE_PATH = ImageBaseUrl + "images/smilies/";
+    public static String ImageBaseUrl = "http://img.hi-pda.com/forum/";
+    public static String AvatarBaseUrl = ImageBaseUrl + "uc_server/data/avatar/";
+    public static String SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
+    public static boolean ImageHostUpdated = false;
 
     private static String AVATAR_BASE = "000000000";
     public static int MAX_THREADS_IN_PAGE = 50;
@@ -97,5 +97,12 @@ public class HiUtils {
                 + fullUid.substring(7, 9) + "_avatar_middle.jpg";
         return url;
     }
+
+    public static void updateImageHost(String host) {
+        ImageBaseUrl = "http://" + host + "/forum/";
+        AvatarBaseUrl = ImageBaseUrl + "uc_server/data/avatar/";
+        SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
+    }
+
 
 }
