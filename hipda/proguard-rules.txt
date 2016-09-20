@@ -1,3 +1,6 @@
+-keepattributes EnclosingMethod
+-keepattributes *Annotation*
+
 -dontwarn okio.**
 
 #google stuff
@@ -32,7 +35,6 @@
 
 #ACRA
 -keepattributes SourceFile,LineNumberTable
--keepattributes *Annotation*
 -keep class org.acra.** { *; }
 
 #Android-Iconics
@@ -42,7 +44,6 @@
 }
 
 #EventBus 3.x
--keepattributes *Annotation*
 -keepclassmembers class ** {
     @org.greenrobot.eventbus.Subscribe <methods>;
 }

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
@@ -101,6 +102,18 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_AVATAR_LOAD_TYPE));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SAVE_FOLDER));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB));
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_IMAGE_HOST));
+
+                final Preference imageHostPreference = findPreference(HiSettingsHelper.PERF_IMAGE_HOST);
+                imageHostPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        HiProgressDialog dialog = HiProgressDialog.show(getActivity(), "正在更新...");
+                        TaskHelper.updateImageHost(dialog, preference);
+                        return true;
+                    }
+                });
+
                 break;
 
             case SCREEN_OTHER:

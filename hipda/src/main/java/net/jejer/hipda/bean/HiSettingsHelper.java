@@ -77,6 +77,8 @@ public class HiSettingsHelper {
     public static final String PERF_CIRCLE_AVATAR = "PERF_CIRCLE_AVATAR";
     public static final String PERF_LAST_TASK_TIME = "PERF_LAST_TASK_TIME";
     public static final String PERF_CACHE_SIZE_IN_MB = "PERF_CACHE_SIZE_IN_MB";
+    public static final String PERF_IMAGE_HOST = "PERF_IMAGE_HOST";
+    public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -921,6 +923,15 @@ public class HiSettingsHelper {
     public void setStringValue(String key, String value) {
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(key, value).apply();
+    }
+
+    public long getLongValue(String key, long defaultValue) {
+        return mSharedPref.getLong(key, defaultValue);
+    }
+
+    public void setLongValue(String key, long value) {
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putLong(key, value).apply();
     }
 
     public boolean getBooleanValue(String key, boolean defaultValue) {

@@ -37,4 +37,8 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_cache_size_title"/>
 
+    <Preference
+        android:key="PERF_IMAGE_HOST"
+        android:title="@string/pref_image_host" />
+
 </PreferenceScreen>

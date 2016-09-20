@@ -51,10 +51,10 @@ public class HiUtils {
     public static final String LoginSubmit = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
     public static final String LoginGetFormHash = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
 
-    public static String ImageBaseUrl = "http://img.hi-pda.com/forum/";
+    public static final String ImageHost = "img.hi-pda.com";
+    public static String ImageBaseUrl = "http://" + ImageHost + "/forum/";
     public static String AvatarBaseUrl = ImageBaseUrl + "uc_server/data/avatar/";
     public static String SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
-    public static boolean ImageHostUpdated = false;
 
     private static String userAgent;
 

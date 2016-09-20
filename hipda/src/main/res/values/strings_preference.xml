@@ -298,6 +298,7 @@
     <string name="pref_title_animation_type">动画方式</string>
     <string name="pref_title_save_folder">文件保存目录</string>
     <string name="pref_cache_size_title">图片缓存大小</string>
+    <string name="pref_image_host">图片服务器</string>
 
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
     <string name="pref_summary_primary_color">仅浅色主题有效</string>

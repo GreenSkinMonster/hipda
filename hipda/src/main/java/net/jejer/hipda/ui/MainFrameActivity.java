@@ -127,7 +127,7 @@ public class MainFrameActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             HiApplication.setFirstLoad(true);
 
-            TaskHelper.updateImageServers();
+            TaskHelper.updateImageHost();
 
             int fid = HiSettingsHelper.getInstance().getLastForumId();
 
