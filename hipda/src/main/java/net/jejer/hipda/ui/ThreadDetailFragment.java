@@ -120,6 +120,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private boolean mAuthorOnly = false;
     private ThreadDetailCache mCache = new ThreadDetailCache();
     public static final String LOADER_PAGE_KEY = "LOADER_PAGE_KEY";
+    public static final String LOADER_REFRESH_KEY = "LOADER_REFRESH_KEY";
 
     private HiProgressDialog postProgressDialog;
     private FloatingActionMenu mFam;
@@ -501,6 +502,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private void refresh() {
         Bundle b = new Bundle();
         b.putInt(LOADER_PAGE_KEY, mCurrentPage);
+        b.putBoolean(LOADER_REFRESH_KEY, true);
         mInloading = true;
         getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
     }
@@ -588,7 +590,9 @@ public class ThreadDetailFragment extends BaseFragment {
             mDetailListView.setPullLoadEnable(false, mCurrentPage == mMaxPage);
             mDetailListView.setPullRefreshEnable(false, mCurrentPage == 1 ? mTitle : null);
 
-            return new DetailListLoader(mCtx, mMsgHandler, mTid, mGotoPostId, args.getInt(LOADER_PAGE_KEY, 1));
+            return new DetailListLoader(mCtx, mMsgHandler, mTid, mGotoPostId,
+                    args.getInt(LOADER_PAGE_KEY, 1),
+                    args.getBoolean(LOADER_REFRESH_KEY, false));
         }
 
         @Override
@@ -896,6 +900,10 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private void showOrLoadPage() {
+        showOrLoadPage(false);
+    }
+
+    private void showOrLoadPage(boolean refresh) {
         setActionBarTitle((mCurrentPage > 0 && mMaxPage > 0 ? "(" + mCurrentPage + "/" + mMaxPage + ") " : "")
                 + mTitle);
 
@@ -923,6 +931,8 @@ public class ThreadDetailFragment extends BaseFragment {
             mLoadingProgressBar.show();
             Bundle b = new Bundle();
             b.putInt(LOADER_PAGE_KEY, mCurrentPage);
+            if (refresh || mCurrentPage == mMaxPage || mCurrentPage == LAST_PAGE)
+                b.putBoolean(LOADER_REFRESH_KEY, true);
             mInloading = true;
             getLoaderManager().restartLoader(0, b, mLoaderCallbacks).forceLoad();
         }
@@ -1092,7 +1102,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     FragmentUtils.showForum(getFragmentManager(), HiUtils.isValidId(fid) ? Integer.parseInt(fid) : 0);
                 } else {
                     mCache.remove(mCurrentPage);
-                    showOrLoadPage();
+                    showOrLoadPage(true);
                 }
             } else {
                 //edit post
@@ -1102,7 +1112,7 @@ public class ThreadDetailFragment extends BaseFragment {
                         mFloorOfPage = LAST_FLOOR;
                     }
                     mCache.remove(mCurrentPage);
-                    showOrLoadPage();
+                    showOrLoadPage(true);
                 }
             }
         } else {

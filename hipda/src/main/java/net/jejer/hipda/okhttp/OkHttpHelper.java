@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import com.bumptech.glide.Glide;
+
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,27 +43,29 @@ public class OkHttpHelper {
     public final static int NETWORK_TIMEOUT_SECS = 10;
     public final static int MAX_RETRY_TIMES = 3;
 
-    public final static int DEFAULT = 0;
     public final static int FORCE_NETWORK = 1;
     public final static int FORCE_CACHE = 2;
     public final static int PREFER_CACHE = 3;
-    public final static int PREFER_RECENT_CACHE = 4;
 
     private OkHttpClient client;
     private PersistentCookieStore cookieStore;
     private Handler handler;
 
+    private final static CacheControl PREFER_CACHE_CTL = new CacheControl.Builder()
+            .maxStale(3 * 60, TimeUnit.SECONDS)
+            .build();
+
     private OkHttpHelper() {
 
         cookieStore = new PersistentCookieStore(HiApplication.getAppContext(), HiUtils.CookieDomain);
 
-        //Cache cache = new Cache(Glide.getPhotoCacheDir(HiApplication.getAppContext(), "okhttp"), 20 * 1024 * 1024);
+        Cache cache = new Cache(Glide.getPhotoCacheDir(HiApplication.getAppContext(), "okhttp"), 10 * 1024 * 1024);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
-                //.cache(cache)
+                .cache(cache)
                 .cookieJar(new CookieJar() {
                     @Override
                     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
@@ -86,7 +91,7 @@ public class OkHttpHelper {
     }
 
     private static class SingletonHolder {
-        public static final OkHttpHelper INSTANCE = new OkHttpHelper();
+        static final OkHttpHelper INSTANCE = new OkHttpHelper();
     }
 
     public static OkHttpHelper getInstance() {
@@ -145,14 +150,18 @@ public class OkHttpHelper {
     }
 
     public void asyncGet(String url, ResultCallback callback) {
-        asyncGet(url, callback, null);
+        asyncGet(url, FORCE_NETWORK, callback, null);
     }
 
-    public void asyncGet(String url, ResultCallback callback, Object tag) {
+    public void asyncGet(String url, int cacheType, ResultCallback callback) {
+        asyncGet(url, cacheType, callback, null);
+    }
+
+    public void asyncGet(String url, int cacheType, ResultCallback callback, Object tag) {
         if (callback == null) callback = DEFAULT_CALLBACK;
         final ResultCallback rspCallBack = callback;
 
-        Request request = buildGetRequest(url, tag, null);
+        Request request = buildGetRequest(url, tag, getCacheControl(cacheType));
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -284,11 +293,13 @@ public class OkHttpHelper {
         return null;
     }
 
-    public CacheControl getCacheControl(int cacheType) {
+    private CacheControl getCacheControl(int cacheType) {
         if (cacheType == FORCE_NETWORK) {
             return CacheControl.FORCE_NETWORK;
         } else if (cacheType == FORCE_CACHE) {
             return CacheControl.FORCE_CACHE;
+        } else if (cacheType == PREFER_CACHE) {
+            return PREFER_CACHE_CTL;
         }
         return null;
     }

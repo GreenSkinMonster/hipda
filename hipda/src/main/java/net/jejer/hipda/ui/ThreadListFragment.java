@@ -515,10 +515,6 @@ public class ThreadListFragment extends BaseFragment
             mMsgHandler.sendMessage(msgDone);
 
             mFam.setVisibility(View.VISIBLE);
-
-            if (mPage == 1 && threads.isFromCahce())
-                refresh();
-
         }
 
         @Override

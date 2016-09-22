@@ -125,8 +125,6 @@ public class MainFrameActivity extends AppCompatActivity {
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
 
         if (savedInstanceState == null) {
-            HiApplication.setFirstLoad(true);
-
             TaskHelper.updateImageHost();
 
             int fid = HiSettingsHelper.getInstance().getLastForumId();

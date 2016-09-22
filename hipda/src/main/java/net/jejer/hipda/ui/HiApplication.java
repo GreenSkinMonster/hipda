@@ -21,7 +21,6 @@ public class HiApplication extends Application {
 
     private static Context context;
     private static boolean notified;
-    private static boolean mFirstLoad = true;
 
     @Override
     public void onCreate() {
@@ -77,11 +76,4 @@ public class HiApplication extends Application {
         notified = b;
     }
 
-    public static boolean isFirstLoad() {
-        return mFirstLoad;
-    }
-
-    public static void setFirstLoad(boolean firstLoad) {
-        mFirstLoad = firstLoad;
-    }
 }

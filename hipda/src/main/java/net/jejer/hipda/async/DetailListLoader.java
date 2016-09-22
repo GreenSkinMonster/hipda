@@ -27,15 +27,17 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
     private String mTid;
     private String mGotoPostId;
     private int mPage;
+    private boolean mRefresh;
     private DetailListBean data;
 
-    public DetailListLoader(Context context, Handler handler, String tid, String gotoPostId, int page) {
+    public DetailListLoader(Context context, Handler handler, String tid, String gotoPostId, int page, boolean isRefresh) {
         super(context);
         mCtx = context;
         mHandler = handler;
         mTid = tid;
         mGotoPostId = gotoPostId;
         mPage = page;
+        mRefresh = isRefresh;
     }
 
     @Override
@@ -105,7 +107,7 @@ public class DetailListLoader extends AsyncTaskLoader<DetailListBean> {
             mUrl = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
         }
 
-        return OkHttpHelper.getInstance().get(mUrl);
+        return OkHttpHelper.getInstance().get(mUrl, mRefresh ? OkHttpHelper.FORCE_NETWORK : OkHttpHelper.PREFER_CACHE);
     }
 
 }
