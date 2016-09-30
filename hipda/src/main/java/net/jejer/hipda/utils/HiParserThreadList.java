@@ -67,7 +67,7 @@ public class HiParserThreadList {
             }
             String idType = idSpil[0];
             String idNum = idSpil[1];
-            String idThread = "thread_" + idNum;
+
             thread.setTid(idNum);
             // is stick thread or normal thread
             Boolean isStick = idType.startsWith("stickthread");
@@ -77,12 +77,18 @@ public class HiParserThreadList {
                 continue;
             }
 
-            Elements titleES = tbodyE.select("span#" + idThread);
+            Elements titleES = tbodyE.select("span#thread_" + idNum + " a");
             if (titleES.size() == 0) {
                 continue;
             }
-            String title = titleES.first().text();
+            Element titleLink = titleES.first();
+            String title = titleLink.text();
             thread.setTitle(title);
+
+            String linkStyle = titleLink.attr("style");
+            if (!TextUtils.isEmpty(linkStyle)) {
+                thread.setTitleColor(HttpUtils.getMiddleString(linkStyle, "color:", "").trim());
+            }
 
             Elements typeES = tbodyE.select("th.subject em a");
             if (typeES.size() > 0) {

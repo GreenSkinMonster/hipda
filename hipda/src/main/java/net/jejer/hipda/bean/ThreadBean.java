@@ -4,6 +4,7 @@ package net.jejer.hipda.bean;
 public class ThreadBean {
 
     private String mTitle;
+    private String mTitleColor;
     private String mTid;
     private boolean mIsStick;
 
@@ -38,6 +39,13 @@ public class ThreadBean {
         this.mTitle = mTitle;
     }
 
+    public String getTitleColor() {
+        return mTitleColor;
+    }
+
+    public void setTitleColor(String mTitleColor) {
+        this.mTitleColor = mTitleColor;
+    }
 
     public String getTid() {
         return mTid;

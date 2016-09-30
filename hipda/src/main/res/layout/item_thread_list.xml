@@ -41,11 +41,11 @@
             android:layout_marginRight="2dp"
             android:layout_toLeftOf="@+id/tv_image_indicator"
             android:background="@drawable/rounded_corner"
+            android:maxLines="1"
             android:paddingBottom="1dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:paddingTop="1dp"
-            android:singleLine="true"
             android:text=""
             android:textColor="?android:textColorSecondary"
             android:textSize="12sp"/>
@@ -68,8 +68,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/tv_create_time"
+            android:maxLines="1"
             android:padding="2dp"
-            android:singleLine="true"
             android:text=""
             android:textColor="?android:textColorSecondary"
             android:textSize="@dimen/info_text_size"/>
@@ -80,8 +80,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:maxLines="1"
             android:padding="2dp"
-            android:singleLine="true"
             android:text=""
             android:textColor="?android:textColorSecondary"
             android:textSize="@dimen/info_text_size"/>
