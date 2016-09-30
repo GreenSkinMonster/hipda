@@ -1,12 +1,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingBottom="4dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingTop="4dp">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="4dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="4dp">
 
     <ImageView
         android:id="@+id/iv_friend_avatar"
@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="8dp"
         android:padding="2dp"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 
     <LinearLayout
         android:id="@+id/sms_content_layout"
@@ -31,6 +31,8 @@
             android:id="@+id/bl_bubble"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:layout_marginTop="8dp"
             android:padding="6dp"
             app:bl_arrowDirection="right"
@@ -46,7 +48,7 @@
                 android:clickable="true"
                 android:padding="2dp"
                 android:text=""
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
         </com.daasuu.bl.BubbleLayout>
 
@@ -66,7 +68,7 @@
                 android:text="{gmd-email}"
                 android:textColor="@color/red"
                 android:textSize="20sp"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/tv_time"
@@ -77,7 +79,7 @@
                 android:paddingRight="4dp"
                 android:text=""
                 android:textColor="?android:textColorSecondary"
-                android:textSize="15sp" />
+                android:textSize="15sp"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -91,6 +93,6 @@
         android:layout_gravity="right"
         android:layout_marginTop="8dp"
         android:padding="2dp"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 
 </RelativeLayout>
