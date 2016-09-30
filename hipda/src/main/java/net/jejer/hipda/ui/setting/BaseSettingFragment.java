@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.jejer.hipda.ui.MainFrameActivity;
-import net.jejer.hipda.utils.ColorUtils;
+import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.HashSet;
@@ -32,7 +32,7 @@ public class BaseSettingFragment extends PreferenceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         if (view != null)
-            view.setBackgroundColor(ColorUtils.getListBackgroundColor(getActivity()));
+            view.setBackgroundColor(ColorHelper.getListBackgroundColor(getActivity()));
         return view;
     }
 

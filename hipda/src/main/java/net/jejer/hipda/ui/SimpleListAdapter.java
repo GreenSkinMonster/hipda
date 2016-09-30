@@ -14,7 +14,7 @@ import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.utils.ColorUtils;
+import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Utils;
 
 public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
@@ -52,7 +52,7 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         if (item.isNew()) {
             holder.tv_title.setTextColor(ContextCompat.getColor(mFragment.getActivity(), R.color.red));
         } else {
-            holder.tv_title.setTextColor(ColorUtils.getDefaultTextColor(mFragment.getActivity()));
+            holder.tv_title.setTextColor(ColorHelper.getDefaultTextColor(mFragment.getActivity()));
         }
 
         if (TextUtils.isEmpty(item.getInfo())) {

@@ -39,7 +39,7 @@ import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.job.SimpleListEvent;
-import net.jejer.hipda.utils.ColorUtils;
+import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -115,8 +115,8 @@ public class SimpleListFragment extends BaseFragment
 
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
-        swipeLayout.setColorSchemeColors(ColorUtils.getSwipeColor(getActivity()));
-        swipeLayout.setProgressBackgroundColorSchemeColor(ColorUtils.getSwipeBackgroundColor(getActivity()));
+        swipeLayout.setColorSchemeColors(ColorHelper.getSwipeColor(getActivity()));
+        swipeLayout.setProgressBackgroundColorSchemeColor(ColorHelper.getSwipeBackgroundColor(getActivity()));
         swipeLayout.setEnabled(false);
 
         loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);

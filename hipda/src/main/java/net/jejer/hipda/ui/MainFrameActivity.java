@@ -53,7 +53,7 @@ import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
-import net.jejer.hipda.utils.ColorUtils;
+import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
@@ -99,7 +99,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 HiSettingsHelper.getInstance().getActiveTheme(),
                 HiSettingsHelper.getInstance().getPrimaryColor()));
         if (Build.VERSION.SDK_INT >= 21 && HiSettingsHelper.getInstance().isNavBarColored()) {
-            getWindow().setNavigationBarColor(ColorUtils.getColorPrimary(this));
+            getWindow().setNavigationBarColor(ColorHelper.getColorPrimary(this));
         }
 
         super.onCreate(savedInstanceState);

@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.utils.ColorUtils;
+import net.jejer.hipda.utils.ColorHelper;
 
 /**
  * https://github.com/MarkMjw/PullToRefresh
@@ -68,13 +68,13 @@ public class XFooterView extends LinearLayout {
 
         switch (state) {
             case STATE_NORMAL:
-                mHintView.setTextColor(ColorUtils.getColorAccent(getContext()));
+                mHintView.setTextColor(ColorHelper.getColorAccent(getContext()));
                 mHintView.setText(R.string.footer_hint_load_normal);
                 break;
 
             case STATE_READY:
                 if (mState != STATE_READY) {
-                    mHintView.setTextColor(ColorUtils.getColorAccent(getContext()));
+                    mHintView.setTextColor(ColorHelper.getColorAccent(getContext()));
                     mHintView.setText(R.string.footer_hint_load_ready);
                 }
                 break;

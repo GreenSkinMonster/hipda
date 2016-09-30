@@ -14,7 +14,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.utils.ColorUtils;
+import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Utils;
 
 /**
@@ -58,10 +58,10 @@ public class ThreadItemLayout extends LinearLayout {
             try {
                 mTvTitle.setTextColor(Color.parseColor(titleColor));
             } catch (Exception ignored) {
-                mTvTitle.setTextColor(ColorUtils.getDefaultTextColor(getContext()));
+                mTvTitle.setTextColor(ColorHelper.getDefaultTextColor(getContext()));
             }
         } else
-            mTvTitle.setTextColor(ColorUtils.getDefaultTextColor(getContext()));
+            mTvTitle.setTextColor(ColorHelper.getDefaultTextColor(getContext()));
 
 
         if (HiSettingsHelper.getInstance().isShowPostType() &&

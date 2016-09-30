@@ -230,7 +230,7 @@ public class Utils {
     }
 
     public static void restartActivity(Activity activity) {
-        ColorUtils.clear();
+        ColorHelper.clear();
         activity.finish();
         activity.startActivity(new Intent(activity.getApplicationContext(), activity.getClass()));
         activity.overridePendingTransition(0, 0);

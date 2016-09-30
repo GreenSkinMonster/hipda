@@ -1,9 +1,12 @@
 package net.jejer.hipda.utils;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.graphics.ColorUtils;
 import android.util.TypedValue;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.bean.HiSettingsHelper;
 
 import java.util.HashMap;
 
@@ -11,9 +14,11 @@ import java.util.HashMap;
  * get color id from theme attr id
  * Created by GreenSkinMonster on 2015-05-09.
  */
-public class ColorUtils {
+public class ColorHelper {
 
     private static HashMap<Integer, Integer> COLOR_IDS = new HashMap<>();
+    private final static int DAY_REF_COLOR = Color.parseColor("#ffffff");
+    private final static int NIGHT_REF_COLOR = Color.parseColor("#000000");
 
     public static void clear() {
         COLOR_IDS.clear();
@@ -57,6 +62,13 @@ public class ColorUtils {
         final TypedValue typedValue = new TypedValue();
         ctx.getTheme().resolveAttribute(attrId, typedValue, true);
         return typedValue.data;
+    }
+
+    public static boolean isTextColorReadable(String color) {
+        float[] textHslColor = new float[3], refHslColor = new float[3];
+        ColorUtils.colorToHSL(Color.parseColor(color), textHslColor);
+        ColorUtils.colorToHSL(HiSettingsHelper.getInstance().isNightMode() ? NIGHT_REF_COLOR : DAY_REF_COLOR, refHslColor);
+        return Math.abs(textHslColor[2] - refHslColor[2]) >= 0.1;
     }
 
 }

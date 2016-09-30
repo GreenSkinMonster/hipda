@@ -53,7 +53,7 @@ import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.job.PostEvent;
-import net.jejer.hipda.utils.ColorUtils;
+import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.NotificationMgr;
@@ -139,8 +139,8 @@ public class ThreadListFragment extends BaseFragment
 
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
-        swipeLayout.setColorSchemeColors(ColorUtils.getSwipeColor(getActivity()));
-        swipeLayout.setProgressBackgroundColorSchemeColor(ColorUtils.getSwipeBackgroundColor(getActivity()));
+        swipeLayout.setColorSchemeColors(ColorHelper.getSwipeColor(getActivity()));
+        swipeLayout.setProgressBackgroundColorSchemeColor(ColorHelper.getSwipeBackgroundColor(getActivity()));
 
         loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);
 
@@ -743,11 +743,11 @@ public class ThreadListFragment extends BaseFragment
 
             text.setText(HiUtils.BS_TYPES[position]);
             if (position == HiUtils.getBSTypeIndexByFid(HiSettingsHelper.getInstance().getBSTypeId())) {
-                icon.setImageDrawable(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(ColorUtils.getColorAccent(getActivity())).sizeDp(20));
-                text.setTextColor(ColorUtils.getColorAccent(getActivity()));
+                icon.setImageDrawable(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(ColorHelper.getColorAccent(getActivity())).sizeDp(20));
+                text.setTextColor(ColorHelper.getColorAccent(getActivity()));
             } else {
-                icon.setImageDrawable(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(ColorUtils.getDefaultTextColor(getActivity())).sizeDp(20));
-                text.setTextColor(ColorUtils.getDefaultTextColor(getActivity()));
+                icon.setImageDrawable(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(ColorHelper.getDefaultTextColor(getActivity())).sizeDp(20));
+                text.setTextColor(ColorHelper.getDefaultTextColor(getActivity()));
             }
 
             return row;

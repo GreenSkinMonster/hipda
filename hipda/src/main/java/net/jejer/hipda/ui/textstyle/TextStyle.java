@@ -2,6 +2,8 @@ package net.jejer.hipda.ui.textstyle;
 
 import android.text.TextUtils;
 
+import net.jejer.hipda.utils.ColorHelper;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,17 +34,23 @@ public class TextStyle {
 
     public void setColor(String color) {
         if (!TextUtils.isEmpty(color)) {
-            if (!color.startsWith("#") && COLORS.containsKey(color)) {
-                color = COLORS.get(color.toLowerCase());
-            } else if (color.length() == 5) {
+            color = color.toLowerCase();
+            if (COLORS.containsKey(color)) {
+                color = COLORS.get(color);
+            }
+            if (color.startsWith("#") && color.length() == 5) {
                 //color code is #1234 format
                 color = color + "00";
             }
-            //ignore too light and too dark colors
-            if (!color.equals("#000000")
-                    && !color.equals("#000")
-                    && !color.equals("#ffffff")) {
-                this.color = color;
+
+            //ignore text color similar to background color
+            try {
+                if (color.startsWith("#") && ColorHelper.isTextColorReadable(color)) {
+                    this.color = color;
+                } else if (!color.startsWith("#")) {
+                    this.color = color;
+                }
+            } catch (Exception ignored) {
             }
         }
     }
@@ -137,7 +145,7 @@ public class TextStyle {
 //        COLORS.put("azure", "#f0ffff");
 //        COLORS.put("beige", "#f5f5dc");
 //        COLORS.put("bisque", "#ffe4c4");
-//        COLORS.put("black", "#000000");
+        COLORS.put("black", "#000000");
 //        COLORS.put("blanchedalmond", "#ffebcd");
         COLORS.put("blue", "#0000ff");
 //        COLORS.put("blueviolet", "#8a2be2");
@@ -267,7 +275,7 @@ public class TextStyle {
 //        COLORS.put("turquoise", "#40e0d0");
 //        COLORS.put("violet", "#ee82ee");
         COLORS.put("wheat", "#f5deb3");
-//        COLORS.put("white", "#ffffff");
+        COLORS.put("white", "#ffffff");
 //        COLORS.put("whitesmoke", "#f5f5f5");
         COLORS.put("yellow", "#ffff00");
         COLORS.put("yellowgreen", "#9acd32");
