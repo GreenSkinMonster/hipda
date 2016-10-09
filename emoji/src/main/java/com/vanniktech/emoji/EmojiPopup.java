@@ -139,6 +139,8 @@ public final class EmojiPopup {
                 }
             }
         });
+
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
     }
 
     private void showAtBottom() {
@@ -152,8 +154,6 @@ public final class EmojiPopup {
 
     public void toggle() {
         if (!popupWindow.isShowing()) {
-            rootView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
-
             if (isKeyboardOpen) {
                 // If keyboard is visible, simply show the emoji popup
                 this.showAtBottom();
