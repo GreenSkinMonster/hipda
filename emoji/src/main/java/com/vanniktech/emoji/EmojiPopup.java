@@ -1,5 +1,6 @@
 package com.vanniktech.emoji;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -36,6 +37,7 @@ public final class EmojiPopup {
 
     private int keyBoardHeight;
     private boolean isKeyboardOpen;
+    private boolean isListenerAttached;
 
     @Nullable
     private OnEmojiPopupShownListener onEmojiPopupShownListener;
@@ -140,7 +142,7 @@ public final class EmojiPopup {
             }
         });
 
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
+        setupListener();
     }
 
     private void showAtBottom() {
@@ -154,6 +156,7 @@ public final class EmojiPopup {
 
     public void toggle() {
         if (!popupWindow.isShowing()) {
+            setupListener();
             if (isKeyboardOpen) {
                 // If keyboard is visible, simply show the emoji popup
                 this.showAtBottom();
@@ -181,7 +184,7 @@ public final class EmojiPopup {
     }
 
     public void dismiss() {
-        Utils.removeOnGlobalLayoutListener(rootView, onGlobalLayoutListener);
+        removeListener();
         popupWindow.dismiss();
         recentEmoji.persist();
     }
@@ -285,6 +288,24 @@ public final class EmojiPopup {
 
     private SharedPreferences getPreferences() {
         return context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+    }
+
+    private void setupListener() {
+        if (!isListenerAttached) {
+            rootView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
+            isListenerAttached = true;
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public void removeListener() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            //noinspection deprecation
+            rootView.getViewTreeObserver().removeGlobalOnLayoutListener(onGlobalLayoutListener);
+        } else {
+            rootView.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
+        }
+        isListenerAttached = false;
     }
 
     public void addImage(String imgId, Bitmap bitmap) {
