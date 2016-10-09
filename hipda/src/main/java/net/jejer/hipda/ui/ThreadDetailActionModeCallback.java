@@ -46,8 +46,8 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
 
         switch (item.getItemId()) {
             case R.id.action_edit:
-                if (mDetailBean.getUid().equals(HiSettingsHelper.getInstance().getUid())
-                        || mDetailBean.getAuthor().equalsIgnoreCase(HiSettingsHelper.getInstance().getUsername())) {
+                if (HiSettingsHelper.getInstance().getUsername().equalsIgnoreCase(mDetailBean.getAuthor())
+                        || HiSettingsHelper.getInstance().getUid().equals(mDetailBean.getUid())) {
                     mFragment.setHasOptionsMenu(false);
 
                     arguments.putString(PostFragment.ARG_FID_KEY, mFid);
@@ -149,7 +149,8 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
         menu.findItem(R.id.action_share_post).setIcon(new IconicsDrawable(mFragment.getActivity(), GoogleMaterial.Icon.gmd_share).actionBar().color(Color.WHITE));
         menu.findItem(R.id.action_select_text).setIcon(new IconicsDrawable(mFragment.getActivity(), GoogleMaterial.Icon.gmd_text_format).actionBar().color(Color.WHITE));
 
-        if (!mDetailBean.getAuthor().equalsIgnoreCase(HiSettingsHelper.getInstance().getUsername())) {
+        if (!HiSettingsHelper.getInstance().getUsername().equalsIgnoreCase(mDetailBean.getAuthor())
+                && !HiSettingsHelper.getInstance().getUid().equals(mDetailBean.getUid())) {
             MenuItem item = menu.findItem(R.id.action_edit);
             item.setVisible(false);
         }
