@@ -12,19 +12,31 @@ import java.util.Map;
  */
 public class SmallImages {
 
-    private static Map<String, Integer> IMAGES = new HashMap<>();
+    private static Map<String, Integer> IMAGES = null;
 
-    static {
-        IMAGES.put(HiUtils.ImageBaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
-        IMAGES.put(HiUtils.BaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
+    private static Map<String, Integer> getImages() {
+        if (IMAGES == null) {
+            synchronized (SmallImages.class) {
+                if (IMAGES == null) {
+                    IMAGES = new HashMap<>();
+                    IMAGES.put(HiUtils.ImageBaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
+                    IMAGES.put(HiUtils.BaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
+                }
+            }
+        }
+        return IMAGES;
     }
 
     public static boolean contains(String url) {
-        return IMAGES.containsKey(url);
+        return getImages().containsKey(url);
     }
 
     public static int getDrawable(String url) {
-        return IMAGES.get(url);
+        return getImages().get(url);
+    }
+
+    public static void clear() {
+        IMAGES = null;
     }
 
 }

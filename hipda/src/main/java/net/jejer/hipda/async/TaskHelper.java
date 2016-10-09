@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.db.ContentDao;
 import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -83,6 +84,7 @@ public class TaskHelper {
                             HiUtils.updateImageHost(host);
                             HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_IMAGE_HOST, host);
                             HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, System.currentTimeMillis());
+                            SmallImages.clear();
                         }
                         if (dialog != null)
                             dialog.dismiss("图片服务器已更新 \n" + host);
@@ -97,6 +99,7 @@ public class TaskHelper {
             });
         } else {
             HiUtils.updateImageHost(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_IMAGE_HOST, HiUtils.ImageHost));
+            SmallImages.clear();
         }
     }
 
