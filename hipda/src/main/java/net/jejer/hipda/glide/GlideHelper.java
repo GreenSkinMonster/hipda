@@ -112,7 +112,7 @@ public class GlideHelper {
                     Response originalResponse = chain.proceed(chain.request());
                     String url = chain.request().url().toString();
                     //avatar don't need a progress listener
-                    if (url.startsWith(HiUtils.AvatarBaseUrl)) {
+                    if (url.startsWith(HiSettingsHelper.getInstance().getAvatarBaseUrl())) {
                         return originalResponse;
                     }
                     return originalResponse.newBuilder()
@@ -242,7 +242,10 @@ public class GlideHelper {
     }
 
     public static File getAvatarFile(String url) {
-        return new File(GlideHelper.AVATAR_CACHE_DIR, url.substring(HiUtils.AvatarBaseUrl.length()).replace("/", "_"));
+        if (url.contains(HiUtils.AvatarPath)) {
+            return new File(GlideHelper.AVATAR_CACHE_DIR, url.substring(url.indexOf(HiUtils.AvatarPath) + HiUtils.AvatarPath.length()).replace("/", "_"));
+        }
+        return null;
     }
 
     public static boolean isOkToLoad(Context activity) {

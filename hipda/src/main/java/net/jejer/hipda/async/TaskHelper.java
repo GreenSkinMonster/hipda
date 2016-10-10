@@ -1,5 +1,7 @@
 package net.jejer.hipda.async;
 
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.preference.Preference;
 import android.text.TextUtils;
 
@@ -7,20 +9,20 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.db.ContentDao;
 import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Logger;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.Date;
 import java.util.Map;
-
-import okhttp3.Request;
 
 /**
  * Created by GreenSkinMonster on 2016-07-24.
@@ -58,49 +60,82 @@ public class TaskHelper {
         updateImageHost(null, null);
     }
 
-    public static void updateImageHost(final HiProgressDialog dialog, final Preference preference) {
-        String imageHost = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_IMAGE_HOST, "");
+    public static void updateImageHost(final Activity activity, final Preference preference) {
+        final String imageHostPerf = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_IMAGE_HOST, "");
+        final String avatarHostPerf = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_AVATAR_HOST, "");
+
         long imageHostUpdateTime = HiSettingsHelper.getInstance().getLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, 0);
-        if (dialog != null || TextUtils.isEmpty(imageHost) || System.currentTimeMillis() - imageHostUpdateTime > 30 * 60 * 1000) {
-            OkHttpHelper.getInstance().asyncGet(SERVER_SETTING_URL, new OkHttpHelper.ResultCallback() {
-                @Override
-                public void onError(Request request, Exception e) {
-                    Logger.e(e);
-                    if (dialog != null)
-                        dialog.dismissError("发生错误 : " + OkHttpHelper.getErrorMessage(e));
-                }
+        if (activity != null || TextUtils.isEmpty(imageHostPerf) || TextUtils.isEmpty(avatarHostPerf) || System.currentTimeMillis() - imageHostUpdateTime > 30 * 60 * 1000) {
+            new AsyncTask<Void, Void, Void>() {
+
+                private String imageHost;
+                private String avatarHost;
+                private HiProgressDialog dialog;
 
                 @Override
-                public void onResponse(String response) {
+                protected Void doInBackground(Void... voids) {
                     try {
-                        Gson gson = new Gson();
-                        Type stringStringMap = new TypeToken<Map<String, String>>() {
-                        }.getType();
-                        Map<String, String> map = gson.fromJson(response, stringStringMap);
-
-                        String cdnStr = map.get("CDN");
-                        String host = new URL(cdnStr).getHost();
-                        if (!TextUtils.isEmpty(host)) {
-                            HiUtils.updateImageHost(host);
-                            HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_IMAGE_HOST, host);
-                            HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, System.currentTimeMillis());
-                            SmallImages.clear();
+                        imageHost = getImageHost();
+                        avatarHost = getAvatarHost();
+                        if (TextUtils.isEmpty(avatarHost)) {
+                            avatarHost = imageHost;
                         }
-                        if (dialog != null)
-                            dialog.dismiss("图片服务器已更新 \n" + host);
-                        if (preference != null)
-                            preference.setSummary(host);
+
+                        HiSettingsHelper.getInstance().setImageHost(imageHost);
+                        HiSettingsHelper.getInstance().setAvatarHost(avatarHost);
+                        HiSettingsHelper.getInstance().updateBaseUrls();
+                        HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, System.currentTimeMillis());
                     } catch (Exception e) {
-                        Logger.e(e);
                         if (dialog != null)
                             dialog.dismissError("发生错误 : " + OkHttpHelper.getErrorMessage(e));
                     }
+                    return null;
                 }
-            });
-        } else {
-            HiUtils.updateImageHost(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_IMAGE_HOST, HiUtils.ImageHost));
-            SmallImages.clear();
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    if (dialog != null)
+                        dialog.dismiss("服务器已更新 \n\n" +
+                                "图片 ：" + imageHost + "\n" +
+                                "头像 ：" + avatarHost);
+                    if (preference != null)
+                        preference.setSummary(imageHost);
+                }
+
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    if (activity != null)
+                        dialog = HiProgressDialog.show(activity, "正在更新...");
+                }
+            }.execute();
         }
+
+    }
+
+    private static String getImageHost() throws Exception {
+        String response = OkHttpHelper.getInstance().get(SERVER_SETTING_URL);
+        Gson gson = new Gson();
+        Type stringStringMap = new TypeToken<Map<String, String>>() {
+        }.getType();
+        Map<String, String> map = gson.fromJson(response, stringStringMap);
+
+        String cdnStr = map.get("CDN");
+        return new URL(cdnStr).getHost();
+    }
+
+    private static String getAvatarHost() throws Exception {
+        if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())) {
+            String response = OkHttpHelper.getInstance().get(HiUtils.UserInfoUrl + HiSettingsHelper.getInstance().getUid());
+            Document doc = Jsoup.parse(response);
+            Elements avatarImgs = doc.select("div.avatar > img");
+            if (avatarImgs.size() > 0) {
+                String imageUrl = avatarImgs.first().attr("src");
+                return new URL(imageUrl).getHost();
+            }
+        }
+        return null;
     }
 
 }

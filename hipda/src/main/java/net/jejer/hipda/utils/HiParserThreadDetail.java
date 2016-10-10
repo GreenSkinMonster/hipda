@@ -269,8 +269,8 @@ public class HiParserThreadDetail {
             Elements postimgES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.t_msgfontfix div.postattachlist img");
             for (int j = 0; j < postimgES.size(); j++) {
                 Element imgE = postimgES.get(j);
-                if (imgE.attr("file").startsWith(HiUtils.ImageBaseUrl + "attachments/day_")
-                        || imgE.attr("file").startsWith(HiUtils.ImageBaseUrl + "attachment.php")) {
+                if (imgE.attr("file").startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachments/day_")
+                        || imgE.attr("file").startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachment.php")) {
                     content.addImg(imgE.attr("file"), imgE.attr("id"));
                 }
             }
@@ -398,17 +398,17 @@ public class HiParserThreadDetail {
             String file = e.attr("file");
 
             if (!TextUtils.isEmpty(file)
-                    && (src.equals(HiUtils.ImageBaseUrl + "images/common/none.gif")
-                    || src.startsWith(HiUtils.ImageBaseUrl + "attachments/day_")
-                    || src.startsWith(HiUtils.ImageBaseUrl + "attachment.php"))) {
+                    && (src.equals(HiSettingsHelper.getInstance().getImageBaseUrl() + "images/common/none.gif")
+                    || src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachments/day_")
+                    || src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachment.php"))) {
                 //internal image
                 content.addImg(file, e.attr("id"));
                 return false;
-            } else if (src.startsWith(HiUtils.SmiliesBaseUrl) || SmallImages.contains(src)) {
+            } else if (src.startsWith(HiSettingsHelper.getInstance().getSmiliesBaseUrl()) || SmallImages.contains(src)) {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
                 return false;
-            } else if (src.startsWith(HiUtils.ImageBaseUrl + "images/")) {
+            } else if (src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "images/")) {
                 //skip common/default/attach icons
                 return false;
             } else if (src.startsWith("http://") || src.startsWith("https://")) {

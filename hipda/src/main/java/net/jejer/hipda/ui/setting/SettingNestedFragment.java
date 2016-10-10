@@ -108,8 +108,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 imageHostPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        HiProgressDialog dialog = HiProgressDialog.show(getActivity(), "正在更新...");
-                        TaskHelper.updateImageHost(dialog, preference);
+                        TaskHelper.updateImageHost(getActivity(), preference);
                         return true;
                     }
                 });

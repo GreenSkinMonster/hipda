@@ -20,6 +20,10 @@ public class HiUtils {
     public static final String AvatarSuffix = "_avatar_middle.jpg";
     public static final String NewPMImage = "images/default/notice_newpm.gif";
 
+    public static final String ImageHost = "img.hi-pda.com";
+    public static final String AvatarHost = "www.hi-pda.com";
+    public static final String AvatarPath = "uc_server/data/avatar/";
+
     public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
     public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
     public static final String ReplyUrl = BaseUrl + "post.php?action=reply&tid=";
@@ -50,11 +54,6 @@ public class HiUtils {
 
     public static final String LoginSubmit = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
     public static final String LoginGetFormHash = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
-
-    public static final String ImageHost = "img.hi-pda.com";
-    public static String ImageBaseUrl = "http://" + ImageHost + "/forum/";
-    public static String AvatarBaseUrl = ImageBaseUrl + "uc_server/data/avatar/";
-    public static String SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
 
     private static String userAgent;
 
@@ -172,7 +171,7 @@ public class HiUtils {
             return "";
 
         String fullUid = AVATAR_BASE.substring(0, AVATAR_BASE.length() - uid.length()) + uid;
-        String url = AvatarBaseUrl
+        String url = HiSettingsHelper.getInstance().getAvatarBaseUrl()
                 + fullUid.substring(0, 3) + "/"
                 + fullUid.substring(3, 5) + "/"
                 + fullUid.substring(5, 7) + "/"
@@ -245,11 +244,4 @@ public class HiUtils {
             userAgent = UserAgentPrefix + " " + HiApplication.getAppVersion();
         return userAgent;
     }
-
-    public static void updateImageHost(String host) {
-        ImageBaseUrl = "http://" + host + "/forum/";
-        AvatarBaseUrl = ImageBaseUrl + "uc_server/data/avatar/";
-        SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
-    }
-
 }

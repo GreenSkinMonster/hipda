@@ -43,7 +43,7 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
 
     @Override
     public InputStream loadData(Priority priority) throws Exception {
-        isForumUrl = stringUrl.startsWith(HiUtils.ImageBaseUrl);
+        isForumUrl = url.toURL().getHost().toLowerCase().endsWith(HiUtils.CookieDomain);
         if (isForumUrl && stringUrl.contains(HiUtils.AvatarSuffix)) {
             return getAvatar();
         } else {
@@ -67,6 +67,8 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
 
     private InputStream getAvatar() throws IOException {
         File f = GlideHelper.getAvatarFile(stringUrl);
+        if (f == null)
+            return null;
         if (refetch(f)) {
             if (!f.exists() || f.delete()) {
                 Request request = getRequest();

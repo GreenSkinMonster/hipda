@@ -8,9 +8,11 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
@@ -78,6 +80,7 @@ public class HiSettingsHelper {
     public static final String PERF_LAST_TASK_TIME = "PERF_LAST_TASK_TIME";
     public static final String PERF_CACHE_SIZE_IN_MB = "PERF_CACHE_SIZE_IN_MB";
     public static final String PERF_IMAGE_HOST = "PERF_IMAGE_HOST";
+    public static final String PERF_AVATAR_HOST = "PERF_AVATAR_HOST";
     public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
 
     private Context mCtx;
@@ -126,11 +129,17 @@ public class HiSettingsHelper {
     private boolean mNotiLedLight;
     private String mBSTypeId;
     private String mAnimationType;
+    private String mImageHost;
+    private String mAvatarHost;
 
     // --------------- THIS IS NOT IN PERF -----------
     private int mBasePostTextSize = -1;
     private int mBaseTitleTextSize = -1;
     private boolean mIsLandscape = false;
+
+    private String mImageBaseUrl = "";
+    private String mAvatarBaseUrl = "";
+    private String mSmiliesBaseUrl = "";
 
     public void setIsLandscape(boolean landscape) {
         mIsLandscape = landscape;
@@ -231,8 +240,11 @@ public class HiSettingsHelper {
         getNotiRepeatMinutesFromPref();
         getBSTypeIdFromPref();
         getAnimationTypeFromPref();
+        getImageHostFromPref();
+        getAvatarHostFromPref();
 
         updateMobileNetworkStatus(mCtx);
+        updateBaseUrls();
     }
 
     public boolean isLoginInfoValid() {
@@ -914,6 +926,55 @@ public class HiSettingsHelper {
 
     public boolean isNewAnimationType() {
         return "1".equals(getAnimationType());
+    }
+
+    public String getImageHost() {
+        return mImageHost;
+    }
+
+    public String getImageHostFromPref() {
+        mImageHost = mSharedPref.getString(PERF_IMAGE_HOST, HiUtils.ImageHost);
+        return mImageHost;
+    }
+
+    public void setImageHost(String imageHost) {
+        mImageHost = imageHost;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_IMAGE_HOST, mImageHost).apply();
+    }
+
+    public String getAvatarHost() {
+        return mAvatarHost;
+    }
+
+    public String getAvatarHostFromPref() {
+        mAvatarHost = mSharedPref.getString(PERF_AVATAR_HOST, HiUtils.AvatarHost);
+        return mAvatarHost;
+    }
+
+    public void setAvatarHost(String avatarHost) {
+        mAvatarHost = avatarHost;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_AVATAR_HOST, mAvatarHost).apply();
+    }
+
+    public String getImageBaseUrl() {
+        return mImageBaseUrl;
+    }
+
+    public String getAvatarBaseUrl() {
+        return mAvatarBaseUrl;
+    }
+
+    public String getSmiliesBaseUrl() {
+        return mSmiliesBaseUrl;
+    }
+
+    public void updateBaseUrls() {
+        mImageBaseUrl = "http://" + mImageHost + "/forum/";
+        mAvatarBaseUrl = "http://" + mAvatarHost + "/forum/" + HiUtils.AvatarPath;
+        mSmiliesBaseUrl = mImageBaseUrl + "images/smilies/";
+        SmallImages.clear();
     }
 
     public String getStringValue(String key, String defaultValue) {
