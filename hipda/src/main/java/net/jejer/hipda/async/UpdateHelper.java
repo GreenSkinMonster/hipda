@@ -195,7 +195,7 @@ public class UpdateHelper {
                     forums.add("59");
                 HiSettingsHelper.getInstance().setForums(forums);
 
-                Utils.clearInternalCache(context);
+                Utils.clearInternalCache();
             }
             if (newer("2.0.10", currentVersion)) {
                 if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, ""))) {

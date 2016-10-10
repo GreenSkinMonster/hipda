@@ -68,6 +68,7 @@ public class GlideHelper {
     public final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
     public final static int DEFAULT_CACHE_SIZE = 500;
     public final static int MIN_CACHE_SIZE = 300;
+    public final static String AVATAR_CACHE_DIR_NAME = "avatar";
 
     public static void init(Context context) {
         if (!Glide.isSetup()) {
@@ -125,7 +126,7 @@ public class GlideHelper {
 
             Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
 
-            AVATAR_CACHE_DIR = Glide.getPhotoCacheDir(context, "avatar");
+            AVATAR_CACHE_DIR = Glide.getPhotoCacheDir(context, AVATAR_CACHE_DIR_NAME);
 
             DEFAULT_USER_ICON = new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY).sizeDp(64);
             DEFAULT_AVATAR_FILE = new File(AVATAR_CACHE_DIR, "default.png");

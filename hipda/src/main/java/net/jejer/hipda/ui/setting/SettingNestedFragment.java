@@ -15,6 +15,7 @@ import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.NotificationMgr;
+import net.jejer.hipda.utils.Utils;
 
 /**
  * nested setting fragment
@@ -133,6 +134,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                                                     protected Exception doInBackground(Void... voids) {
                                                         try {
                                                             OkHttpHelper.getInstance().clearCookies();
+                                                            Utils.clearOkhttpCache();
                                                             SettingMainFragment.mCacheCleared = true;
                                                         } catch (Exception e) {
                                                             return e;

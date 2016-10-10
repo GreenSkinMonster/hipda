@@ -47,6 +47,8 @@ public class OkHttpHelper {
     public final static int FORCE_CACHE = 2;
     public final static int PREFER_CACHE = 3;
 
+    public final static String CACHE_DIR_NAME = "okhttp";
+
     private OkHttpClient client;
     private PersistentCookieStore cookieStore;
     private Handler handler;
@@ -59,7 +61,7 @@ public class OkHttpHelper {
 
         cookieStore = new PersistentCookieStore(HiApplication.getAppContext(), HiUtils.CookieDomain);
 
-        Cache cache = new Cache(Glide.getPhotoCacheDir(HiApplication.getAppContext(), "okhttp"), 10 * 1024 * 1024);
+        Cache cache = new Cache(Glide.getPhotoCacheDir(HiApplication.getAppContext(), CACHE_DIR_NAME), 10 * 1024 * 1024);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)

@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import com.bumptech.glide.Glide;
 
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 
 import org.jsoup.Jsoup;
@@ -286,9 +287,9 @@ public class Utils {
         return false;
     }
 
-    public static void clearInternalCache(Context context) {
+    public static void clearInternalCache() {
         try {
-            File cache = context.getCacheDir();
+            File cache = HiApplication.getAppContext().getCacheDir();
             if (cache != null && cache.isDirectory()) {
                 deleteDir(cache);
             }
@@ -296,9 +297,9 @@ public class Utils {
         }
     }
 
-    public static void clearExternalCache(Context context) {
+    public static void clearOkhttpCache() {
         try {
-            File cache = context.getExternalCacheDir();
+            File cache = Glide.getPhotoCacheDir(HiApplication.getAppContext(), OkHttpHelper.CACHE_DIR_NAME);
             if (cache != null && cache.isDirectory()) {
                 deleteDir(cache);
             }
@@ -306,9 +307,19 @@ public class Utils {
         }
     }
 
-    public static void clearOutdatedAvatars(Context context) {
+    public static void clearExternalCache() {
+        try {
+            File cache = HiApplication.getAppContext().getExternalCacheDir();
+            if (cache != null && cache.isDirectory()) {
+                deleteDir(cache);
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    public static void clearOutdatedAvatars() {
         long deadline = System.currentTimeMillis() - GlideHelper.AVATAR_CACHE_MILLS;
-        File cacheDir = Glide.getPhotoCacheDir(context, "avatar");
+        File cacheDir = Glide.getPhotoCacheDir(HiApplication.getAppContext(), GlideHelper.AVATAR_CACHE_DIR_NAME);
         for (File f : cacheDir.listFiles()) {
             if (f.lastModified() < deadline)
                 f.delete();
