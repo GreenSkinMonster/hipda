@@ -24,12 +24,8 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class HiParserThreadDetail {
-
-    private static String URL_REGEX = "[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)";
-    private static Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
 
     public static DetailListBean parse(Context ctx, Handler handler, Document doc, boolean parseTid) {
 
@@ -357,7 +353,7 @@ public class HiParserThreadDetail {
             if (textStyles.getTextStyle(level - 1) != null)
                 ts = textStyles.getTextStyle(level - 1).newInstance();
 
-            Matcher matcher = URL_PATTERN.matcher(text);
+            Matcher matcher = Utils.URL_PATTERN.matcher(text);
 
             int lastPos = 0;
             while (matcher.find()) {

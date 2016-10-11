@@ -69,6 +69,8 @@ public class PostHelper {
         if (!TextUtils.isEmpty(floor) && TextUtils.isDigitsOnly(floor))
             mFloor = floor;
 
+        replyText = Utils.replaceUrlWithTag(replyText);
+
         if (mMode != MODE_EDIT_POST) {
             String tailStr = HiSettingsHelper.getInstance().getTailStr();
             if (!TextUtils.isEmpty(tailStr) && HiSettingsHelper.getInstance().isAddTail()) {
