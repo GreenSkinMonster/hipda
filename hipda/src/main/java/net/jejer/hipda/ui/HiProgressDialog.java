@@ -37,6 +37,11 @@ public class HiProgressDialog extends ProgressDialog {
         dismiss(message, 1000, INFO);
     }
 
+    public void dismiss(String message, int millisToWait) {
+        setCancelable(true);
+        dismiss(message, millisToWait, INFO);
+    }
+
     public void dismissError(String message) {
         setCancelable(true);
         dismiss(message, 3000, ERROR);
