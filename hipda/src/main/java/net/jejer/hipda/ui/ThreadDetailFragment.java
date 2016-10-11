@@ -782,6 +782,14 @@ public class ThreadDetailFragment extends BaseFragment {
                         // User cancelled the dialog
                     }
                 });
+        builder.setNeutralButton("页尾",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        stopScroll();
+                        mDetailListView.setSelection(mDetailListView.getCount() - 1);
+                        prefetchNextPage(1);
+                    }
+                });
         dialog = builder.create();
 
         // Fuck Android SeekBar, always start from 0
