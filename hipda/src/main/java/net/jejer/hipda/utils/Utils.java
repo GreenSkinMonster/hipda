@@ -398,7 +398,7 @@ public class Utils {
     }
 
     public static String replaceUrlWithTag(String content) {
-        if (!TextUtils.isEmpty(content) && !content.contains("[\\")) {
+        if (!TextUtils.isEmpty(content) && !content.contains("[/")) {
             return content.replaceAll(REPLACE_URL_REGEX, "[url]$1[/url]");
         }
         return content;
