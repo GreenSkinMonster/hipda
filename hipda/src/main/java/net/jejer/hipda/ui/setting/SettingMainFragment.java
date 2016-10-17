@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.support.v4.widget.DrawerLayout;
-import android.text.Html;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -23,6 +22,7 @@ import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
@@ -142,9 +142,9 @@ public class SettingMainFragment extends BaseSettingFragment {
 
         final Preference userPreference = findPreference(HiSettingsHelper.PERF_USERNAME);
         if (LoginHelper.isLoggedIn())
-            userPreference.setSummary(Html.fromHtml(HiSettingsHelper.getInstance().getUsername() + "    <font color=grey>(已登录)</font>"));
+            userPreference.setSummary(HtmlCompat.fromHtml(HiSettingsHelper.getInstance().getUsername() + "    <font color=grey>(已登录)</font>"));
         else
-            userPreference.setSummary(Html.fromHtml("<font color=grey>(未登录)</font>"));
+            userPreference.setSummary(HtmlCompat.fromHtml("<font color=grey>(未登录)</font>"));
 
         userPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
@@ -162,7 +162,7 @@ public class SettingMainFragment extends BaseSettingFragment {
                                             HiSettingsHelper.getInstance().setSecAnswer("");
                                             HiSettingsHelper.getInstance().setUid("");
                                             LoginHelper.logout();
-                                            userPreference.setSummary(Html.fromHtml("<font color=grey>(未登录)</font>"));
+                                            userPreference.setSummary(HtmlCompat.fromHtml("<font color=grey>(未登录)</font>"));
                                             ((MainFrameActivity) getActivity()).updateAccountHeader();
                                         }
                                     })

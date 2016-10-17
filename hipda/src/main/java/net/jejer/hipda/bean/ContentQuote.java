@@ -1,8 +1,8 @@
 package net.jejer.hipda.bean;
 
-import android.text.Html;
 import android.text.TextUtils;
 
+import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.Utils;
 
 public class ContentQuote extends ContentAbs {
@@ -19,7 +19,7 @@ public class ContentQuote extends ContentAbs {
         this.tid = tid;
         mQuote = Utils.nullToText(postText) + Utils.nullToText(authorAndTime);
         //replace chinese space and trim
-        text = Html.fromHtml(postText).toString().replace("　", " ").replace(String.valueOf((char) 160), " ").trim();
+        text = HtmlCompat.fromHtml(postText).toString().replace("　", " ").replace(String.valueOf((char) 160), " ").trim();
         if (!TextUtils.isEmpty(authorAndTime) && authorAndTime.contains("发表于")) {
             author = authorAndTime.substring(0, authorAndTime.indexOf("发表于")).trim();
             time = authorAndTime.substring(authorAndTime.indexOf("发表于") + "发表于".length()).trim();

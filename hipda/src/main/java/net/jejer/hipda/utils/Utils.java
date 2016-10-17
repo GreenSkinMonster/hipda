@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
@@ -113,7 +112,7 @@ public class Utils {
     }
 
     public static CharSequence fromHtmlAndStrip(String s) {
-        return Html.fromHtml(s).toString().replace((char) 160, (char) 32).replace((char) 65532, (char) 32);
+        return HtmlCompat.fromHtml(s).toString().replace((char) 160, (char) 32).replace((char) 65532, (char) 32);
     }
 
     public static void copy(File src, File dst) throws IOException {

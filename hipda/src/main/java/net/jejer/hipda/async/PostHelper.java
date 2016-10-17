@@ -3,6 +3,8 @@ package net.jejer.hipda.async;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.vdurmont.emoji.EmojiParser;
+
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
@@ -70,6 +72,9 @@ public class PostHelper {
             mFloor = floor;
 
         replyText = Utils.replaceUrlWithTag(replyText);
+        replyText = EmojiParser.parseToHtmlDecimal(replyText);
+        if (!TextUtils.isEmpty(subject))
+            subject = EmojiParser.parseToHtmlDecimal(subject);
 
         if (mMode != MODE_EDIT_POST) {
             String tailStr = HiSettingsHelper.getInstance().getTailStr();

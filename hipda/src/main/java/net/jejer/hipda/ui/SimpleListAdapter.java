@@ -1,7 +1,6 @@
 package net.jejer.hipda.ui;
 
 import android.support.v4.content.ContextCompat;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.ColorHelper;
+import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.Utils;
 
 public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
@@ -60,7 +60,7 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         } else {
             holder.tv_info.setVisibility(View.VISIBLE);
             if (mType == SimpleListLoader.TYPE_THREAD_NOTIFY)
-                holder.tv_info.setText(Html.fromHtml(item.getInfo()));
+                holder.tv_info.setText(HtmlCompat.fromHtml(item.getInfo()));
             else
                 holder.tv_info.setText(item.getInfo());
             holder.tv_info.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());

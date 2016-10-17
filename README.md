@@ -26,6 +26,7 @@ HiPDA·NG是使用MD风格的版本，即master分支，为目前主要维护版
 - Calligraphy - https://github.com/chrisjenx/Calligraphy
 - Crashlytics - https://try.crashlytics.com/
 - Emoji - https://github.com/vanniktech/Emoji
+- Emoji Java - https://github.com/vdurmont/emoji-java
 - EventBus - https://github.com/greenrobot/EventBus
 - FloatingActionButton - https://github.com/Clans/FloatingActionButton
 - Glide - https://github.com/bumptech/glide

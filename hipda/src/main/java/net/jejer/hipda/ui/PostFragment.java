@@ -16,7 +16,6 @@ import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -39,6 +38,7 @@ import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.vanniktech.emoji.EmojiEditText;
+import com.vdurmont.emoji.EmojiParser;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
@@ -58,6 +58,7 @@ import net.jejer.hipda.ui.adapter.GridImageAdapter;
 import net.jejer.hipda.ui.adapter.ThreadTypeAdapter;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -520,7 +521,7 @@ public class PostFragment extends BaseFragment {
     private void showDeletePostDialog() {
         final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
         popDialog.setTitle("删除本帖？");
-        popDialog.setMessage(Html.fromHtml("确认删除发表的内容吗？<br><br><font color=red>注意：此操作不可恢复。</font>"));
+        popDialog.setMessage(HtmlCompat.fromHtml("确认删除发表的内容吗？<br><br><font color=red>注意：此操作不可恢复。</font>"));
         popDialog.setPositiveButton("删除",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -628,9 +629,9 @@ public class PostFragment extends BaseFragment {
 
         if (!TextUtils.isEmpty(mPrePostInfo.getText())) {
             if (mMode == PostHelper.MODE_EDIT_POST) {
-                mEtContent.setText(mPrePostInfo.getText());
+                mEtContent.setText(EmojiParser.parseToUnicode(mPrePostInfo.getText()));
                 if (!TextUtils.isEmpty(mPrePostInfo.getSubject())) {
-                    mEtSubject.setText(mPrePostInfo.getSubject());
+                    mEtSubject.setText(EmojiParser.parseToUnicode(mPrePostInfo.getSubject()));
                     mEtSubject.setVisibility(View.VISIBLE);
                 }
             } else {

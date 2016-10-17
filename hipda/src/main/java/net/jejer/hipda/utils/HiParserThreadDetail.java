@@ -7,6 +7,8 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.vdurmont.emoji.EmojiParser;
+
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailBean.Contents;
 import net.jejer.hipda.bean.DetailListBean;
@@ -89,7 +91,7 @@ public class HiParserThreadDetail {
             divNavLinkES.remove();
             String title = divNavES.text();
             title = title.replace("»", "").trim();
-            details.setTitle(title);
+            details.setTitle(EmojiParser.parseToUnicode(title));
         }
 
         //Title, only avaliable in first page

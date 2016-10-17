@@ -12,7 +12,6 @@ import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +38,7 @@ import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -183,7 +183,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     private void showClearSmsDialog() {
         final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
         popDialog.setTitle("清空短消息？");
-        popDialog.setMessage(Html.fromHtml("确认清空所有与用户 <b>" + mAuthor + "</b> 的短消息？<br><br><font color=red>注意：此操作不可恢复。</font>"));
+        popDialog.setMessage(HtmlCompat.fromHtml("确认清空所有与用户 <b>" + mAuthor + "</b> 的短消息？<br><br><font color=red>注意：此操作不可恢复。</font>"));
         popDialog.setPositiveButton("清空",
                 new DialogInterface.OnClickListener() {
                     @Override
