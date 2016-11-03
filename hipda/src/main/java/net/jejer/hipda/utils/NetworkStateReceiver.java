@@ -11,18 +11,8 @@ import net.jejer.hipda.bean.HiSettingsHelper;
  * Created by GreenSkinMonster on 2015-08-06.
  */
 public class NetworkStateReceiver extends BroadcastReceiver {
-
     @Override
     public void onReceive(Context context, Intent intent) {
         HiSettingsHelper.updateMobileNetworkStatus(context);
-
-        if (Connectivity.isConnected(context)) {
-            if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-                if (!NotificationMgr.isAlarmRuning(context))
-                    NotificationMgr.startAlarm(context);
-            } else if (NotificationMgr.isAlarmRuning(context)) {
-                NotificationMgr.cancelAlarm(context);
-            }
-        }
     }
 }

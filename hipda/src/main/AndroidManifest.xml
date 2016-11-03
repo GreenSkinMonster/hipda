@@ -73,11 +73,6 @@
             </intent-filter>
         </activity-alias>
 
-        <receiver android:name=".utils.NetworkStateReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-            </intent-filter>
-        </receiver>
         <receiver android:name=".utils.NotificationReceiver"/>
 
         <meta-data

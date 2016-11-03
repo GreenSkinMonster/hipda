@@ -4,10 +4,12 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -59,6 +61,7 @@ import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.NetworkStateReceiver;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
@@ -83,6 +86,8 @@ public class MainFrameActivity extends AppCompatActivity {
     private AccountHeader accountHeader;
     private ActionMode mActionMode;
     private View rootView;
+
+    private NetworkStateReceiver mNetworkReceiver = new NetworkStateReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +155,9 @@ public class MainFrameActivity extends AppCompatActivity {
                     NotificationMgr.startAlarm(this);
             }
             UIUtils.askForPermission(this);
+
+            registerReceiver(mNetworkReceiver,
+                    new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         }
     }
 
@@ -353,6 +361,7 @@ public class MainFrameActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
+        unregisterReceiver(mNetworkReceiver);
         super.onDestroy();
     }
 
