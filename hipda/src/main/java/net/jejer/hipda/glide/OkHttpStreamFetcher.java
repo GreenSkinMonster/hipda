@@ -115,7 +115,7 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
         } else if (f.length() == 0) {
             //with memory cahce, avatar not found, will be re-download after one day
             GlideHelper.markAvatarNotFound(stringUrl);
-            return new FileInputStream(GlideHelper.DEFAULT_AVATAR_FILE);
+            return new FileInputStream(MyGlideModule.DEFAULT_AVATAR_FILE);
         }
         return new FileInputStream(f);
     }

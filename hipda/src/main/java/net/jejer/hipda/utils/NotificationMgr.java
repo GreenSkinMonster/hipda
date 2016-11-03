@@ -156,8 +156,6 @@ public class NotificationMgr {
                 if (mCurrentBean.getSmsCount() == 1 && mCurrentBean.getThreadCount() == 0) {
                     title = mCurrentBean.getUsername() + " 的短消息";
                     content = mCurrentBean.getContent();
-                    if (!GlideHelper.ready())
-                        GlideHelper.init(context);
                     File avatarFile = GlideHelper.getAvatarFile(context, HiUtils.getAvatarUrlByUid(mCurrentBean.getUid()));
                     if (avatarFile != null && avatarFile.exists()) {
                         BitmapFactory.Options options = new BitmapFactory.Options();

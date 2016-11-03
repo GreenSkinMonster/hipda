@@ -3,148 +3,35 @@ package net.jejer.hipda.glide;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.SystemClock;
-import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.LRUCache;
-import net.jejer.hipda.okhttp.LoggingInterceptor;
-import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.ui.HiApplication;
-import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Logger;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.concurrent.TimeUnit;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import okhttp3.Interceptor;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
-import okio.Buffer;
-import okio.BufferedSource;
-import okio.ForwardingSource;
-import okio.Okio;
-import okio.Source;
+
+import static net.jejer.hipda.glide.MyGlideModule.AVATAR_CACHE_DIR;
+import static net.jejer.hipda.glide.MyGlideModule.DEFAULT_AVATAR_FILE;
+import static net.jejer.hipda.glide.MyGlideModule.DEFAULT_USER_ICON;
 
 public class GlideHelper {
 
     private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(1024);
-    private static File AVATAR_CACHE_DIR;
-    public static File DEFAULT_AVATAR_FILE;
-
-    private static Drawable DEFAULT_USER_ICON;
 
     public final static long AVATAR_CACHE_MILLS = 7 * 24 * 60 * 60 * 1000;
     public final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
-    public final static int DEFAULT_CACHE_SIZE = 500;
-    public final static int MIN_CACHE_SIZE = 300;
-    public final static String AVATAR_CACHE_DIR_NAME = "avatar";
-
-    public static void init(Context context) {
-        if (!Glide.isSetup()) {
-            GlideBuilder gb = new GlideBuilder(context);
-
-            String cacheSizeStr = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB, DEFAULT_CACHE_SIZE + "");
-            int cacheSize = DEFAULT_CACHE_SIZE;
-            if (TextUtils.isDigitsOnly(cacheSizeStr)) {
-                cacheSize = Integer.parseInt(cacheSizeStr);
-                if (cacheSize < MIN_CACHE_SIZE) {
-                    cacheSize = DEFAULT_CACHE_SIZE;
-                }
-            }
-            gb.setDiskCache(new ExternalCacheDiskCacheFactory(context, cacheSize * 1024 * 1024));
-
-            Glide.setup(gb);
-
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
-                    .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
-                    .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-
-            if (Logger.isDebug())
-                builder.addInterceptor(new LoggingInterceptor());
-
-            final ProgressListener progressListener = new ProgressListener() {
-                private long progressMark = 0;
-
-                @Override
-                public void update(String url, long bytesRead, long contentLength, boolean done) {
-                    if (SystemClock.uptimeMillis() - progressMark > 50) {
-                        int progress = (int) Math.round((100.0 * bytesRead) / contentLength);
-                        EventBus.getDefault().post(new GlideImageEvent(url, progress, Constants.STATUS_IN_PROGRESS));
-                        progressMark = SystemClock.uptimeMillis();
-                    }
-                }
-            };
-
-            builder.addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    Response originalResponse = chain.proceed(chain.request());
-                    String url = chain.request().url().toString();
-                    //avatar don't need a progress listener
-                    if (url.startsWith(HiSettingsHelper.getInstance().getAvatarBaseUrl())) {
-                        return originalResponse;
-                    }
-                    return originalResponse.newBuilder()
-                            .body(new ProgressResponseBody(url, originalResponse.body(), progressListener))
-                            .build();
-                }
-            });
-
-            OkHttpClient client = builder.build();
-
-            Glide.get(context).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
-
-            AVATAR_CACHE_DIR = Glide.getPhotoCacheDir(context, AVATAR_CACHE_DIR_NAME);
-
-            DEFAULT_USER_ICON = new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY).sizeDp(64);
-            DEFAULT_AVATAR_FILE = new File(AVATAR_CACHE_DIR, "default.png");
-            if (!DEFAULT_AVATAR_FILE.exists()) {
-                try {
-                    Bitmap b = drawableToBitmap(DEFAULT_USER_ICON);
-                    b.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(DEFAULT_AVATAR_FILE));
-                    b.recycle();
-                } catch (Exception e) {
-                    Logger.e(e);
-                }
-            }
-        }
-    }
-
-    public static boolean ready() {
-        return Glide.isSetup();
-    }
 
     public static void loadAvatar(BaseFragment fragment, ImageView view, String avatarUrl) {
         if (isOkToLoad(fragment)) {
@@ -190,61 +77,9 @@ public class GlideHelper {
         NOT_FOUND_AVATARS.put(avatarUrl, "");
     }
 
-    private static class ProgressResponseBody extends ResponseBody {
-
-        private final ResponseBody responseBody;
-        private final ProgressListener progressListener;
-        private BufferedSource bufferedSource;
-        private String url;
-
-        public ProgressResponseBody(String url, ResponseBody responseBody, ProgressListener progressListener) {
-            this.responseBody = responseBody;
-            this.progressListener = progressListener;
-            this.url = url;
-        }
-
-        @Override
-        public MediaType contentType() {
-            return responseBody.contentType();
-        }
-
-        @Override
-        public long contentLength() {
-            return responseBody.contentLength();
-        }
-
-        @Override
-        public BufferedSource source() {
-            if (bufferedSource == null) {
-                bufferedSource = Okio.buffer(source(responseBody.source()));
-            }
-            return bufferedSource;
-        }
-
-        private Source source(final Source source) {
-            return new ForwardingSource(source) {
-                long totalBytesRead = 0L;
-
-                @Override
-                public long read(Buffer sink, long byteCount) throws IOException {
-                    long bytesRead = super.read(sink, byteCount);
-                    // read() returns the number of bytes read, or -1 if this source is exhausted.
-                    totalBytesRead += bytesRead != -1 ? bytesRead : 0;
-                    progressListener.update(url, totalBytesRead, responseBody.contentLength(), bytesRead == -1);
-                    return bytesRead;
-                }
-            };
-        }
-    }
-
-    interface ProgressListener {
-        void update(String url, long bytesRead, long contentLength, boolean done);
-
-    }
-
     public static File getAvatarFile(String url) {
         if (url.contains(HiUtils.AvatarPath)) {
-            return new File(GlideHelper.AVATAR_CACHE_DIR, url.substring(url.indexOf(HiUtils.AvatarPath) + HiUtils.AvatarPath.length()).replace("/", "_"));
+            return new File(AVATAR_CACHE_DIR, url.substring(url.indexOf(HiUtils.AvatarPath) + HiUtils.AvatarPath.length()).replace("/", "_"));
         }
         return null;
     }
@@ -261,27 +96,6 @@ public class GlideHelper {
 
     public static boolean isOkToLoad(Fragment fragment) {
         return fragment != null && fragment.getActivity() != null && !fragment.isDetached();
-    }
-
-
-    private static Bitmap drawableToBitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
-    }
-
-    private static InputStream bitmapToInputStream(Bitmap bitmap) {
-        int size = bitmap.getHeight() * bitmap.getRowBytes();
-        ByteBuffer buffer = ByteBuffer.allocate(size);
-        bitmap.copyPixelsToBuffer(buffer);
-        return new ByteArrayInputStream(buffer.array());
     }
 
 }

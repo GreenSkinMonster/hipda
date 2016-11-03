@@ -8,7 +8,6 @@ import com.crashlytics.android.Crashlytics;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.Constants;
 
 import io.fabric.sdk.android.Fabric;
@@ -30,7 +29,6 @@ public class HiApplication extends Application {
         Fabric.with(this, new Crashlytics());
 
         UpdateHelper.updateApp(context);
-        GlideHelper.init(context);
 
         if (Constants.FONT_ROBOTO_SLAB.equals(HiSettingsHelper.getInstance().getFont())) {
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()

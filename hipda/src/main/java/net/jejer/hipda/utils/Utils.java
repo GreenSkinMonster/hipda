@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
@@ -11,6 +12,7 @@ import android.view.WindowManager;
 import com.bumptech.glide.Glide;
 
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.glide.MyGlideModule;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 
@@ -323,11 +325,19 @@ public class Utils {
 
     public static void clearOutdatedAvatars() {
         long deadline = System.currentTimeMillis() - GlideHelper.AVATAR_CACHE_MILLS;
-        File cacheDir = Glide.getPhotoCacheDir(HiApplication.getAppContext(), GlideHelper.AVATAR_CACHE_DIR_NAME);
+        File cacheDir = Glide.getPhotoCacheDir(HiApplication.getAppContext(), MyGlideModule.AVATAR_CACHE_DIR_NAME);
         for (File f : cacheDir.listFiles()) {
             if (f.lastModified() < deadline)
                 f.delete();
         }
+    }
+
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
     }
 
     public static boolean isFromGooglePlay(Context context) {

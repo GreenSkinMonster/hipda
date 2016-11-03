@@ -80,6 +80,9 @@
         </receiver>
         <receiver android:name=".utils.NotificationReceiver"/>
 
+        <meta-data
+            android:name="net.jejer.hipda.glide.MyGlideModule"
+            android:value="GlideModule"/>
     </application>
 
 </manifest>
