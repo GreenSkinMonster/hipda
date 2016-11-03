@@ -34,6 +34,7 @@ import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
+import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.SimpleListBean;
@@ -555,6 +556,13 @@ public class SimpleListFragment extends BaseFragment
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SimpleListEvent event) {
         UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(NetworkReadyEvent event) {
+        if (!mInloading && mSimpleListItemBeans.size() == 0)
+            refresh();
     }
 
 }

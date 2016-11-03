@@ -44,6 +44,7 @@ import com.mikepenz.iconics.view.IconicsImageView;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
+import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.async.ThreadListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -792,6 +793,13 @@ public class ThreadListFragment extends BaseFragment
             }
         }
         EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(NetworkReadyEvent event) {
+        if (!mInloading && mThreadBeans.size() == 0)
+            refresh();
     }
 
 }

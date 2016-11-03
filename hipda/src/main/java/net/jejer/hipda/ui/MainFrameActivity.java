@@ -2,6 +2,7 @@ package net.jejer.hipda.ui;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -49,6 +50,7 @@ import com.vanniktech.emoji.EmojiPopup;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginEvent;
+import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.async.UpdateHelper;
@@ -61,7 +63,6 @@ import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
-import net.jejer.hipda.utils.NetworkStateReceiver;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
@@ -129,6 +130,9 @@ public class MainFrameActivity extends AppCompatActivity {
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
 
+        registerReceiver(mNetworkReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
         if (savedInstanceState == null) {
             TaskHelper.updateImageHost();
 
@@ -155,9 +159,6 @@ public class MainFrameActivity extends AppCompatActivity {
                     NotificationMgr.startAlarm(this);
             }
             UIUtils.askForPermission(this);
-
-            registerReceiver(mNetworkReceiver,
-                    new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         }
     }
 
@@ -577,6 +578,14 @@ public class MainFrameActivity extends AppCompatActivity {
             Logger.v("getBackStackEntryCount = " + String.valueOf(fm.getBackStackEntryCount()));
         }
 
+    }
+
+    private class NetworkStateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            HiSettingsHelper.updateMobileNetworkStatus(context);
+            EventBus.getDefault().post(new NetworkReadyEvent());
+        }
     }
 
     @Override

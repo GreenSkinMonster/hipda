@@ -52,6 +52,7 @@ import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.DetailListLoader;
 import net.jejer.hipda.async.FavoriteHelper;
+import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailListBean;
@@ -1131,6 +1132,13 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         }
         EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(NetworkReadyEvent event) {
+        if (!mInloading && mDetailBeans.size() == 0)
+            refresh();
     }
 
 }
