@@ -65,10 +65,11 @@ public class ColorHelper {
     }
 
     public static boolean isTextColorReadable(String color) {
+        float delta = HiSettingsHelper.getInstance().isNightMode() ? 0.35f : 0.1f;
         float[] textHslColor = new float[3], refHslColor = new float[3];
         ColorUtils.colorToHSL(Color.parseColor(color), textHslColor);
         ColorUtils.colorToHSL(HiSettingsHelper.getInstance().isNightMode() ? NIGHT_REF_COLOR : DAY_REF_COLOR, refHslColor);
-        return Math.abs(textHslColor[2] - refHslColor[2]) >= 0.1;
+        return Math.abs(textHslColor[2] - refHslColor[2]) >= delta;
     }
 
 }
