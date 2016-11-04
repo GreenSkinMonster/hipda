@@ -100,6 +100,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 setActionBarTitle(R.string.pref_category_network);
                 addPreferencesFromResource(R.xml.pref_network);
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_IMAGE_LOAD_TYPE));
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_IMAGE_AUTO_LOAD_SIZE));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_AVATAR_LOAD_TYPE));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SAVE_FOLDER));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB));

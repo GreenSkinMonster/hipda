@@ -36,6 +36,7 @@ public class HiSettingsHelper {
     public static final String PERF_SHOWSTICKTHREADS = "PERF_SHOWSTICKTHREADS";
     public static final String PERF_SHOW_POST_TYPE = "PERF_SHOW_POST_TYPE";
     public static final String PERF_IMAGE_LOAD_TYPE = "PERF_IMAGE_LOAD_TYPE";
+    public static final String PERF_IMAGE_AUTO_LOAD_SIZE = "PERF_IMAGE_AUTO_LOAD_SIZE";
     public static final String PERF_AVATAR_LOAD_TYPE = "PERF_AVATAR_LOAD_TYPE";
     public static final String PERF_SORTBYPOSTTIME_BY_FORUM = "PERF_SORTBYPOSTTIME_BY_FORUM";
     public static final String PERF_ADDTAIL = "PERF_ADDTAIL";
@@ -95,6 +96,7 @@ public class HiSettingsHelper {
     private boolean mShowStickThreads = false;
     private boolean mShowPostType = false;
     private String mImageLoadType = "0";
+    private long mImageAutoLoadSize = -1;
     private String mAvatarLoadType = "0";
     private Set<String> mSortByPostTimeByForum;
 
@@ -159,9 +161,28 @@ public class HiSettingsHelper {
         return mMobileNetwork;
     }
 
-    public boolean isLoadImage() {
+    public boolean isImageLoadable(long imageSize) {
         return Constants.LOAD_TYPE_ALWAYS.equals(mImageLoadType)
-                || (!isMobileNetwork() && Constants.LOAD_TYPE_ONLY_WIFI.equals(mImageLoadType));
+                || (!isMobileNetwork() && Constants.LOAD_TYPE_ONLY_WIFI.equals(mImageLoadType))
+                || (imageSize > 0 && imageSize <= getImageAutoLoadSize());
+    }
+
+    public long getImageAutoLoadSize() {
+        if (mImageAutoLoadSize == -1) {
+            try {
+                String value = getStringValue(PERF_IMAGE_AUTO_LOAD_SIZE, "0");
+                if (TextUtils.isEmpty(value) || !TextUtils.isDigitsOnly(value))
+                    value = "0";
+                mImageAutoLoadSize = Integer.parseInt(value) * 1024;
+            } catch (Exception ignored) {
+                mImageAutoLoadSize = 0;
+            }
+        }
+        return mImageAutoLoadSize;
+    }
+
+    public void resetImageAutoLoadSize() {
+        mImageAutoLoadSize = -1;
     }
 
     public boolean isLoadAvatar() {
@@ -993,6 +1014,15 @@ public class HiSettingsHelper {
     public void setLongValue(String key, long value) {
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putLong(key, value).apply();
+    }
+
+    public int getIntValue(String key, int defaultValue) {
+        return mSharedPref.getInt(key, defaultValue);
+    }
+
+    public void setIntValue(String key, int value) {
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putInt(key, value).apply();
     }
 
     public boolean getBooleanValue(String key, boolean defaultValue) {

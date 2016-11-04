@@ -173,11 +173,12 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 if (imageReadyInfo != null && imageReadyInfo.isReady()) {
                     loadImage(imageUrl, giv, delay);
                 } else {
-                    if (!HiSettingsHelper.getInstance().isLoadImage()) {
-                        if (contentImg.getFileSize() > 0) {
-                            threadImageLayout.getImageInfoTextView().setVisibility(View.VISIBLE);
-                            threadImageLayout.getImageInfoTextView().setText(Utils.toSizeText(contentImg.getFileSize()));
-                        }
+                    boolean imageLoadable = HiSettingsHelper.getInstance().isImageLoadable(contentImg.getFileSize());
+                    if (contentImg.getFileSize() > 0) {
+                        threadImageLayout.getImageInfoTextView().setVisibility(View.VISIBLE);
+                        threadImageLayout.getImageInfoTextView().setText(Utils.toSizeText(contentImg.getFileSize()));
+                    }
+                    if (!imageLoadable) {
                         giv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -191,7 +192,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                             imageUrl,
                             JobMgr.PRIORITY_LOW,
                             mDetailFragment.mSessionId,
-                            HiSettingsHelper.getInstance().isLoadImage(),
+                            imageLoadable,
                             delay));
                 }
 

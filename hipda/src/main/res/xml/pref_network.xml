@@ -1,44 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListPreference
-        android:defaultValue="2"
-        android:entries="@array/pref_image_load_type"
-        android:entryValues="@array/pref_image_load_type_values"
-        android:key="PERF_IMAGE_LOAD_TYPE"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_image_load_type"/>
+    <PreferenceCategory android:title="@string/pref_category_image">
+        <ListPreference
+            android:defaultValue="2"
+            android:entries="@array/pref_image_load_type"
+            android:entryValues="@array/pref_image_load_type_values"
+            android:key="PERF_IMAGE_LOAD_TYPE"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_image_load_type"/>
 
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/pref_avatar_load_type"
-        android:entryValues="@array/pref_avatar_load_type_values"
-        android:key="PERF_AVATAR_LOAD_TYPE"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_avatar_load_type"/>
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/pref_image_auto_load_size"
+            android:entryValues="@array/pref_image_auto_load_size_values"
+            android:key="PERF_IMAGE_AUTO_LOAD_SIZE"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_image_auto_load_size"/>
 
-    <EditTextPreference
-        android:defaultValue=""
-        android:inputType="text"
-        android:key="PERF_SAVE_FOLDER"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_save_folder"/>
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/pref_avatar_load_type"
+            android:entryValues="@array/pref_avatar_load_type_values"
+            android:key="PERF_AVATAR_LOAD_TYPE"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_avatar_load_type"/>
+    </PreferenceCategory>
 
-    <ListPreference
-        android:defaultValue="500"
-        android:entries="@array/pref_cache_size_titles"
-        android:entryValues="@array/pref_cache_size_values"
-        android:key="PERF_CACHE_SIZE_IN_MB"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_cache_size_title"/>
+    <PreferenceCategory android:title="@string/pref_category_image_more">
+        <EditTextPreference
+            android:defaultValue=""
+            android:inputType="text"
+            android:key="PERF_SAVE_FOLDER"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_save_folder"/>
 
-    <Preference
-        android:key="PERF_IMAGE_HOST"
-        android:title="@string/pref_image_host" />
+        <ListPreference
+            android:defaultValue="500"
+            android:entries="@array/pref_cache_size_titles"
+            android:entryValues="@array/pref_cache_size_values"
+            android:key="PERF_CACHE_SIZE_IN_MB"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_cache_size_title"/>
+
+        <Preference
+            android:key="PERF_IMAGE_HOST"
+            android:title="@string/pref_image_host"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>

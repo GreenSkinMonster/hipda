@@ -122,6 +122,8 @@ public class SettingMainFragment extends BaseSettingFragment {
         if (TextUtils.isDigitsOnly(newIcon) && !mIcon.equals(newIcon))
             setIcon(Integer.parseInt(newIcon));
 
+        HiSettingsHelper.getInstance().resetImageAutoLoadSize();
+
         if (mCacheCleared
                 || HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getActiveTheme().equals(mTheme)
