@@ -20,8 +20,6 @@ import net.jejer.hipda.utils.HiUtils;
 
 import java.io.File;
 
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
-
 import static net.jejer.hipda.glide.MyGlideModule.AVATAR_CACHE_DIR;
 import static net.jejer.hipda.glide.MyGlideModule.DEFAULT_AVATAR_FILE;
 import static net.jejer.hipda.glide.MyGlideModule.DEFAULT_USER_ICON;
