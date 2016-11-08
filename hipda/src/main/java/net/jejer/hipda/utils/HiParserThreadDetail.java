@@ -395,10 +395,14 @@ public class HiParserThreadDetail {
             String src = e.attr("src");
             String file = e.attr("file");
 
-            if (!TextUtils.isEmpty(file)
-                    && (src.equals(HiSettingsHelper.getInstance().getImageBaseUrl() + "images/common/none.gif")
+            if (!TextUtils.isEmpty(src) && !src.startsWith("http"))
+                src = HiSettingsHelper.getInstance().getImageBaseUrl() + src;
+            if (!TextUtils.isEmpty(file) && !file.startsWith("http"))
+                file = HiSettingsHelper.getInstance().getImageBaseUrl() + file;
+
+            if (src.equals(HiSettingsHelper.getInstance().getImageBaseUrl() + "images/common/none.gif")
                     || src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachments/day_")
-                    || src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachment.php"))) {
+                    || src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachment.php")) {
                 //internal image
                 content.addImg(file, e.attr("id"));
                 return false;
