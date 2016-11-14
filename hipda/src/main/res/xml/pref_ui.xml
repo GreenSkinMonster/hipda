@@ -84,14 +84,24 @@
             android:title="@string/pref_screen_orientation"/>
 
         <net.jejer.hipda.ui.CustomSwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="PERF_GESTURE_BACK"
             android:title="@string/pref_title_gesture_back"/>
 
         <net.jejer.hipda.ui.CustomSwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="PERF_CIRCLE_AVATAR"
             android:title="@string/pref_title_circle_avatar"/>
+
+        <net.jejer.hipda.ui.CustomSwitchPreference
+            android:defaultValue="true"
+            android:key="PERF_APP_BAR_COLLAPSIBLE"
+            android:title="@string/pref_title_app_bar_collapsible"/>
+
+        <net.jejer.hipda.ui.CustomSwitchPreference
+            android:defaultValue="false"
+            android:key="PERF_FAB_LEFT_SIDE"
+            android:title="@string/pref_title_fab_left_side"/>
 
         <ListPreference
             android:defaultValue="0"

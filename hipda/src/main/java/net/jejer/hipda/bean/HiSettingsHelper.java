@@ -56,6 +56,8 @@ public class HiSettingsHelper {
     public static final String PERF_TEXTSIZE_TITLE_ADJ = "PERF_TEXTSIZE_TITLE_ADJ";
     public static final String PERF_SCREEN_ORIENTATION = "PERF_SCREEN_ORIENTATION";
     public static final String PERF_GESTURE_BACK = "PERF_GESTURE_BACK";
+    public static final String PERF_APP_BAR_COLLAPSIBLE = "PERF_APP_BAR_COLLAPSIBLE";
+    public static final String PERF_FAB_LEFT_SIDE = "PERF_FAB_LEFT_SIDE";
     public static final String PERF_LAST_UPDATE_CHECK = "PERF_LAST_UPDATE_CHECK";
     public static final String PERF_AUTO_UPDATE_CHECK = "PERF_AUTO_UPDATE_CHECK";
     public static final String PERF_ABOUT = "PERF_ABOUT";
@@ -818,7 +820,7 @@ public class HiSettingsHelper {
     }
 
     public boolean isGestureBackFromPref() {
-        mGestureBack = mSharedPref.getBoolean(PERF_GESTURE_BACK, false);
+        mGestureBack = mSharedPref.getBoolean(PERF_GESTURE_BACK, true);
         return mGestureBack;
     }
 
@@ -1041,6 +1043,14 @@ public class HiSettingsHelper {
             return getNightTheme();
         else
             return getTheme();
+    }
+
+    public boolean isAppBarCollapsible() {
+        return getBooleanValue(HiSettingsHelper.PERF_APP_BAR_COLLAPSIBLE, true);
+    }
+
+    public boolean isFabLeftSide() {
+        return getBooleanValue(HiSettingsHelper.PERF_FAB_LEFT_SIDE, false);
     }
 
 }

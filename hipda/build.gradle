@@ -44,6 +44,7 @@ android {
 dependencies {
     compile "com.android.support:support-v4:$supportLibraryVersion"
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
+    compile "com.android.support:design:$supportLibraryVersion"
 
     compile 'org.jsoup:jsoup:1.9.2'
     compile('com.squareup.okhttp3:okhttp:3.4.1')
@@ -57,7 +58,6 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
 
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.5.0'
-    compile 'com.github.clans:fab:1.6.2'
 
     compile('com.mikepenz:materialdrawer:5.3.6@aar') { transitive = true }
     compile 'com.mikepenz:iconics-core:2.6.7@aar'

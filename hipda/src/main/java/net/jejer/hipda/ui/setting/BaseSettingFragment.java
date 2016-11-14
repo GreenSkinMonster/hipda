@@ -39,8 +39,13 @@ public class BaseSettingFragment extends PreferenceFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null && getActivity() instanceof MainFrameActivity) {
-            ((MainFrameActivity) getActivity()).setDrawerHomeIdicator(true);
+        if (getActivity() != null) {
+            MainFrameActivity mainFrameActivity = (MainFrameActivity) getActivity();
+            mainFrameActivity.setDrawerHomeIdicator(true);
+            mainFrameActivity.getMainFab().hide();
+            mainFrameActivity.getMainFab().setEnabled(false);
+            mainFrameActivity.getNotificationFab().hide();
+            mainFrameActivity.getNotificationFab().setEnabled(false);
         }
     }
 

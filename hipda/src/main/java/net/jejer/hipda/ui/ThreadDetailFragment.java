@@ -37,8 +37,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -122,6 +120,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private ImageButton mIbEmojiSwitch;
     private View quickReply;
     private boolean mAuthorOnly = false;
+    private boolean mDataReceived = false;
 
     public final static int FETCH_NORMAL = 0;
     public final static int FETCH_NEXT = 1;
@@ -130,7 +129,6 @@ public class ThreadDetailFragment extends BaseFragment {
     public final static int FETCH_SILENT = 4;
 
     private HiProgressDialog postProgressDialog;
-    private FloatingActionMenu mFam;
     private ContentLoadingProgressBar mLoadingProgressBar;
 
     private boolean mHistorySaved = false;
@@ -205,51 +203,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
 
-        mFam = (FloatingActionMenu) view.findViewById(R.id.multiple_actions);
-        mFam.setVisibility(View.INVISIBLE);
-
         mLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.detail_loading);
-
-        FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
-        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
-        fabRefresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mFam.close(true);
-                mLoadingProgressBar.showNow();
-                mFloorOfPage = LAST_FLOOR;
-                refresh();
-            }
-        });
-
-        FloatingActionButton fabQuickReply = (FloatingActionButton) view.findViewById(R.id.action_fab_quick_reply);
-        fabQuickReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_reply).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
-        fabQuickReply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mFam.close(false);
-                mFam.setVisibility(View.INVISIBLE);
-                quickReply.setVisibility(View.VISIBLE);
-                quickReply.bringToFront();
-                (new Handler()).postDelayed(new Runnable() {
-                    public void run() {
-                        mEtReply.requestFocus();
-                        mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-                        mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
-                    }
-                }, 100);
-            }
-        });
-
-        FloatingActionButton fabGotoPage = (FloatingActionButton) view.findViewById(R.id.action_fab_goto_page);
-        fabGotoPage.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_swap_horiz).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
-        fabGotoPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mFam.close(true);
-                showGotoPageDialog();
-            }
-        });
 
         quickReply = view.findViewById(R.id.quick_reply);
         mEtReply = (EmojiEditText) quickReply.findViewById(R.id.tv_reply_text);
@@ -271,7 +225,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     JobMgr.addJob(new PostJob(mSessionId, PostHelper.MODE_QUICK_REPLY, null, postBean));
 
                     UIUtils.hideSoftKeyboard(getActivity());
-                    mFam.setVisibility(View.VISIBLE);
+                    ((MainFrameActivity) getActivity()).getMainFab().show();
                 }
             }
         });
@@ -298,7 +252,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
         if (savedInstanceState != null) {
             mCtx = getActivity();
-            mFam.setVisibility(View.VISIBLE);
         }
         showOrLoadPage();
     }
@@ -457,6 +410,29 @@ public class ThreadDetailFragment extends BaseFragment {
         }
     }
 
+    @Override
+    void setupFab() {
+        mMainFab.setImageResource(R.drawable.ic_reply_white_24dp);
+        mMainFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMainFab.hide();
+                quickReply.setVisibility(View.VISIBLE);
+                quickReply.bringToFront();
+                (new Handler()).postDelayed(new Runnable() {
+                    public void run() {
+                        mEtReply.requestFocus();
+                        mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                        mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+                    }
+                }, 100);
+            }
+        });
+
+        mNotificationFab.setEnabled(false);
+        mNotificationFab.hide();
+    }
+
     private void showPost(String text) {
         Bundle arguments = new Bundle();
         arguments.putString(PostFragment.ARG_TID_KEY, mTid);
@@ -491,17 +467,10 @@ public class ThreadDetailFragment extends BaseFragment {
 
         @Override
         public void onItemClick(View view, int position) {
-            if (mFam.isOpened()) {
-                mFam.close(false);
-            }
         }
 
         @Override
         public void onLongItemClick(View view, int position) {
-            if (mFam.isOpened()) {
-                mFam.close(false);
-            }
-
             DetailBean detailBean = mDetailAdapter.getItem(position);
             if (detailBean == null) {
                 return;
@@ -699,7 +668,7 @@ public class ThreadDetailFragment extends BaseFragment {
         if (quickReply != null && quickReply.getVisibility() == View.VISIBLE) {
             mEtReply.setText("");
             quickReply.setVisibility(View.INVISIBLE);
-            mFam.setVisibility(View.VISIBLE);
+            ((MainFrameActivity) getActivity()).getMainFab().show();
             return true;
         }
         return false;
@@ -1038,7 +1007,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
         //success
         mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
-        mFam.setVisibility(View.VISIBLE);
 
         // Set title
         if (details.getTitle() != null && !details.getTitle().isEmpty()) {
@@ -1064,6 +1032,10 @@ public class ThreadDetailFragment extends BaseFragment {
         } else {
             mInloading = false;
             mLoadingProgressBar.hide();
+            if (!mDataReceived) {
+                mDataReceived = true;
+                mMainFab.show();
+            }
             mDetailBeans = details.getAll();
             mDetailAdapter.setDatas(mDetailBeans);
             if (event.mFectchType == FETCH_NORMAL || event.mFectchType == FETCH_REFRESH) {

@@ -6,14 +6,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -43,11 +48,12 @@ import java.util.UUID;
  */
 public abstract class BaseFragment extends Fragment {
 
-    protected static final int FAB_ICON_SIZE_DP = 20;
     public String mSessionId;
     protected EmojiPopup mEmojiPopup;
     protected IconicsDrawable mKeyboardDrawable;
     protected IconicsDrawable mFaceDrawable;
+    protected FloatingActionButton mMainFab;
+    protected FloatingActionButton mNotificationFab;
 
     protected void setActionBarTitle(CharSequence title) {
         if (getActivity() != null) {
@@ -93,6 +99,22 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    void setupFab() {
+        if (getActivity() != null) {
+            mMainFab.hide();
+            mMainFab.setEnabled(false);
+            mNotificationFab.hide();
+            mNotificationFab.setEnabled(false);
+        }
+    }
+
+    public boolean isAppBarCollapsible() {
+        return this instanceof ThreadListFragment
+                || this instanceof ThreadDetailFragment
+                || this instanceof SimpleListFragment
+                || this instanceof SmsFragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +127,15 @@ public abstract class BaseFragment extends Fragment {
         if (mEmojiPopup != null)
             mEmojiPopup.cleanup();
         super.onDestroy();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        MainFrameActivity mainActivity = ((MainFrameActivity) getActivity());
+        mMainFab = mainActivity.getMainFab();
+        mNotificationFab = mainActivity.getNotificationFab();
+        setupFab();
     }
 
     @Override
@@ -121,6 +152,12 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public void stopScroll() {
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override

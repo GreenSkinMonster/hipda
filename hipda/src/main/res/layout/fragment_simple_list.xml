@@ -2,7 +2,6 @@
 <RelativeLayout
     android:id="@+id/fragment_threadlist"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?list_item_background">
@@ -19,48 +18,6 @@
             android:scrollbars="vertical"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-    <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fam_actions"
-        style="@style/FloatingMenuStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
-        android:visibility="invisible"
-        fab:menu_animationDelayPerItem="25"
-        fab:menu_colorNormal="@color/background_silver"
-        fab:menu_colorPressed="@color/background_grey"
-        fab:menu_icon="@drawable/fab_add"
-        fab:menu_shadowColor="@android:color/transparent">
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/action_fab_new_thread"
-            style="@style/FloatingButtonsStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/action_fab_refresh"
-            style="@style/FloatingButtonsStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </com.github.clans.fab.FloatingActionMenu>
-
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/action_fab_notify"
-        style="@style/FloatingMenuStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:visibility="gone"
-        fab:fab_colorNormal="@color/pink"
-        fab:fab_colorPressed="@color/pink_pressed"
-        fab:fab_shadowColor="@android:color/transparent"/>
 
     <net.jejer.hipda.ui.ContentLoadingProgressBar
         android:id="@+id/list_loading"

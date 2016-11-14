@@ -52,7 +52,6 @@
             android:minLines="1"
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
-            android:singleLine="false"
             android:text=""
             app:emojiSize="26sp"/>
 

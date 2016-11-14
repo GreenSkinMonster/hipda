@@ -23,7 +23,6 @@ import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HtmlCompat;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
@@ -102,7 +101,6 @@ public class SettingMainFragment extends BaseSettingFragment {
 
     @Override
     public void onStop() {
-        Logger.v("onStop, reload settings");
         super.onStop();
 
         HiSettingsHelper.getInstance().reload();
@@ -138,6 +136,8 @@ public class SettingMainFragment extends BaseSettingFragment {
             Utils.restartActivity(getActivity());
         }
 
+        ((MainFrameActivity) getActivity()).updateAppBarScrollFlag();
+        ((MainFrameActivity) getActivity()).updateFabGravity();
     }
 
     private void bindPreferenceSummaryToValue() {

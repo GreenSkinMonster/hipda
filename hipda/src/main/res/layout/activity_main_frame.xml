@@ -8,11 +8,12 @@
     tools:context=".ui.MainFrameActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/activity_main_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -29,5 +30,30 @@
         android:layout_marginLeft="@dimen/fragment_side_margin"
         android:layout_marginRight="@dimen/fragment_side_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="gone"
+        app:backgroundTint="?attr/fab_background_tint"
+        app:fabSize="mini"
+        app:layout_anchor="@id/main_frame_container"
+        app:layout_anchorGravity="bottom|right|end"
+        app:layout_behavior="net.jejer.hipda.ui.widget.FABHideOnScrollBehavior"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_action_tick"
+        android:visibility="gone"
+        app:backgroundTint="@color/pink"
+        app:fabSize="mini"
+        app:layout_anchor="@id/main_frame_container"
+        app:layout_anchorGravity="bottom|center|center_horizontal"
+        app:layout_behavior="net.jejer.hipda.ui.widget.FABHideOnScrollBehavior"/>
 
 </android.support.design.widget.CoordinatorLayout>

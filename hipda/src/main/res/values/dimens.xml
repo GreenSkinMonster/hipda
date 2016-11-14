@@ -16,4 +16,5 @@
 
     <dimen name="launch_screen_logo_bottom">16.0dip</dimen>
     <dimen name="post_type_spinner_width">100dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

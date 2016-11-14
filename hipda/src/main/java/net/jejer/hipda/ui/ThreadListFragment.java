@@ -37,9 +37,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.view.IconicsImageView;
 
@@ -100,10 +97,9 @@ public class ThreadListFragment extends BaseFragment
     private Handler mMsgHandler;
     private HiProgressDialog postProgressDialog;
     private SwipeRefreshLayout swipeLayout;
-    private FloatingActionMenu mFam;
-    private FloatingActionButton mFabNotify;
     private ContentLoadingProgressBar loadingProgressBar;
     private int mFirstVisibleItem = 0;
+    private boolean mDataReceived = false;
 
     private MenuItem mForumTypeMenuItem;
     private final int[] mFidHolder = new int[1];
@@ -155,58 +151,6 @@ public class ThreadListFragment extends BaseFragment
 
         loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);
 
-        mFam = (FloatingActionMenu) view.findViewById(R.id.fam_actions);
-        mFam.setVisibility(View.INVISIBLE);
-
-        FloatingActionButton fabRefresh = (FloatingActionButton) view.findViewById(R.id.action_fab_refresh);
-        fabRefresh.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_refresh).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
-        fabRefresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mFam.close(true);
-                loadingProgressBar.showNow();
-                if (swipeLayout.isShown())
-                    swipeLayout.setRefreshing(false);
-                refresh();
-            }
-        });
-
-        FloatingActionButton fabNewThread = (FloatingActionButton) view.findViewById(R.id.action_fab_new_thread);
-        fabNewThread.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_edit).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
-        fabNewThread.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mFam.close(true);
-                newThread();
-            }
-        });
-
-        mFabNotify = (FloatingActionButton) view.findViewById(R.id.action_fab_notify);
-        mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_email).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
-        mFabNotify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NotificationBean bean = NotificationMgr.getCurrentNotification();
-                if (bean.getSmsCount() == 1
-                        && bean.getThreadCount() == 0
-                        && HiUtils.isValidId(bean.getUid())
-                        && !TextUtils.isEmpty(bean.getUsername())) {
-                    FragmentUtils.showSmsDetail(getFragmentManager(), true, bean.getUid(), bean.getUsername());
-                    NotificationMgr.getCurrentNotification().clearSmsCount();
-                    showNotification();
-                } else if (bean.getSmsCount() > 0) {
-                    FragmentUtils.showSmsList(getFragmentManager(), true);
-                } else if (bean.getThreadCount() > 0) {
-                    FragmentUtils.showThreadNotify(getFragmentManager(), true);
-                    NotificationMgr.getCurrentNotification().setThreadCount(0);
-                    showNotification();
-                } else {
-                    Toast.makeText(mCtx, "没有未处理的通知", Toast.LENGTH_SHORT).show();
-                    mFabNotify.setVisibility(View.GONE);
-                }
-            }
-        });
-
         mRecyclerView.scrollToPosition(mFirstVisibleItem);
 
         return view;
@@ -218,15 +162,11 @@ public class ThreadListFragment extends BaseFragment
 
         if (savedInstanceState != null) {
             mCtx = getActivity();
-            mFam.setVisibility(View.VISIBLE);
         }
 
         mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (mFam.isOpened()) {
-                    mFam.close(false);
-                }
                 return false;
             }
         });
@@ -322,6 +262,49 @@ public class ThreadListFragment extends BaseFragment
         }
     }
 
+    @Override
+    void setupFab() {
+        if (mMainFab != null) {
+            mMainFab.setEnabled(true);
+            mMainFab.setImageResource(R.drawable.ic_refresh_white_24dp);
+            mMainFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loadingProgressBar.showNow();
+                    if (swipeLayout.isShown())
+                        swipeLayout.setRefreshing(false);
+                    refresh();
+                }
+            });
+        }
+
+        if (mNotificationFab != null) {
+            mNotificationFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NotificationBean bean = NotificationMgr.getCurrentNotification();
+                    if (bean.getSmsCount() == 1
+                            && bean.getThreadCount() == 0
+                            && HiUtils.isValidId(bean.getUid())
+                            && !TextUtils.isEmpty(bean.getUsername())) {
+                        FragmentUtils.showSmsDetail(getFragmentManager(), true, bean.getUid(), bean.getUsername());
+                        NotificationMgr.getCurrentNotification().clearSmsCount();
+                        showNotification();
+                    } else if (bean.getSmsCount() > 0) {
+                        FragmentUtils.showSmsList(getFragmentManager(), true);
+                    } else if (bean.getThreadCount() > 0) {
+                        FragmentUtils.showThreadNotify(getFragmentManager(), true);
+                        NotificationMgr.getCurrentNotification().setThreadCount(0);
+                        showNotification();
+                    } else {
+                        Toast.makeText(mCtx, "没有未处理的通知", Toast.LENGTH_SHORT).show();
+                        mNotificationFab.hide();
+                    }
+                }
+            });
+        }
+    }
+
     private void newThread() {
         Bundle arguments = new Bundle();
         arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_NEW_THREAD);
@@ -353,6 +336,11 @@ public class ThreadListFragment extends BaseFragment
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
     public void onDestroy() {
         getLoaderManager().destroyLoader(0);
         super.onDestroy();
@@ -368,6 +356,7 @@ public class ThreadListFragment extends BaseFragment
         mRecyclerView.scrollToPosition(0);
         hideListViewFooter();
         mInloading = true;
+        mMainFab.hide();
         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
     }
 
@@ -404,9 +393,6 @@ public class ThreadListFragment extends BaseFragment
 
         @Override
         public void onItemClick(View view, int position) {
-            if (mFam.isOpened()) {
-                mFam.close(false);
-            }
             ThreadBean thread = mThreadListAdapter.getItem(position);
             if (thread != null) {
                 String tid = thread.getTid();
@@ -420,9 +406,6 @@ public class ThreadListFragment extends BaseFragment
 
         @Override
         public void onLongItemClick(View view, int position) {
-            if (mFam.isOpened()) {
-                mFam.close(false);
-            }
             ThreadBean thread = mThreadListAdapter.getItem(position);
             if (thread != null) {
                 String tid = thread.getTid();
@@ -518,13 +501,15 @@ public class ThreadListFragment extends BaseFragment
                 mThreadListAdapter.setDatas(mThreadBeans);
             }
 
+            if (!mDataReceived) {
+                mDataReceived = true;
+                mMainFab.show();
+            }
             showNotification();
 
             Message msgDone = Message.obtain();
             msgDone.what = STAGE_DONE;
             mMsgHandler.sendMessage(msgDone);
-
-            mFam.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -669,25 +654,25 @@ public class ThreadListFragment extends BaseFragment
     }
 
     public void showNotification() {
-        if (mFabNotify == null)
-            return;
-        int smsCount = NotificationMgr.getCurrentNotification().getSmsCount();
-        int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
-        if (smsCount > 0) {
-            mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_email).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
-            mFabNotify.setVisibility(View.VISIBLE);
-        } else if (threadCount > 0) {
-            mFabNotify.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_notifications).color(Color.WHITE).sizeDp(FAB_ICON_SIZE_DP));
-            mFabNotify.setVisibility(View.VISIBLE);
-        } else {
-            if (mFabNotify.getVisibility() == View.VISIBLE)
-                mFabNotify.setVisibility(View.GONE);
-        }
-
-        if (getActivity() != null) {
+        if (mNotificationFab != null) {
+            int smsCount = NotificationMgr.getCurrentNotification().getSmsCount();
+            int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
+            if (smsCount > 0) {
+                mNotificationFab.setImageResource(R.drawable.ic_mail_white_24dp);
+                mNotificationFab.setEnabled(true);
+                mNotificationFab.show();
+            } else if (threadCount > 0) {
+                mNotificationFab.setImageResource(R.drawable.ic_notifications_white_24dp);
+                mNotificationFab.setEnabled(true);
+                mNotificationFab.show();
+            } else {
+                if (mNotificationFab.isEnabled()) {
+                    mNotificationFab.setEnabled(false);
+                    mNotificationFab.hide();
+                }
+            }
             ((MainFrameActivity) getActivity()).updateDrawerBadge();
         }
-
     }
 
     public void scrollToTop() {
@@ -762,7 +747,6 @@ public class ThreadListFragment extends BaseFragment
             return row;
         }
     }
-
 
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)

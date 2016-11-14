@@ -14,11 +14,15 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -62,7 +66,6 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
@@ -87,6 +90,10 @@ public class MainFrameActivity extends AppCompatActivity {
     private AccountHeader accountHeader;
     private ActionMode mActionMode;
     private View rootView;
+    private AppBarLayout mAppBarLayout;
+    private Toolbar mToolbar;
+    private FloatingActionButton mMainFab;
+    private FloatingActionButton mNotiificationFab;
 
     private NetworkStateReceiver mNetworkReceiver = new NetworkStateReceiver();
 
@@ -111,9 +118,18 @@ public class MainFrameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_frame);
         rootView = findViewById(R.id.main_activity_root_view);
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
 
         EventBus.getDefault().register(this);
         setupDrawer();
+        updateAppBarScrollFlag();
+
+        mMainFab = (FloatingActionButton) findViewById(R.id.fab_main);
+        mNotiificationFab = (FloatingActionButton) findViewById(R.id.fab_notification);
+        mMainFab.setEnabled(false);
+        mNotiificationFab.setEnabled(false);
+
+        updateFabGravity();
 
         // Prepare gesture detector
         mSwipeListener = new OnSwipeTouchListener(this) {
@@ -183,14 +199,12 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     private void setupDrawer() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-                //clear tag or glide will throw execption
-                //imageView.setTag(null);
                 Glide.with(MainFrameActivity.this)
                         .load(uri)
                         .placeholder(placeholder)
@@ -288,7 +302,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
         drawer = new DrawerBuilder()
                 .withActivity(this)
-                .withToolbar(toolbar)
+                .withToolbar(mToolbar)
                 .withAccountHeader(accountHeader)
                 .withTranslucentStatusBar(true)
                 .withDrawerItems(drawerItems)
@@ -299,7 +313,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
         drawer.getRecyclerView().setVerticalScrollBarEnabled(false);
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UIUtils.hideSoftKeyboard(MainFrameActivity.this);
@@ -314,7 +328,7 @@ public class MainFrameActivity extends AppCompatActivity {
             }
         });
 
-        toolbar.setOnClickListener(new OnSingleClickListener() {
+        mToolbar.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
                 //get top displaying fragment
@@ -325,7 +339,7 @@ public class MainFrameActivity extends AppCompatActivity {
             }
         });
 
-        toolbar.setOnLongClickListener(new View.OnLongClickListener() {
+        mToolbar.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
@@ -336,6 +350,32 @@ public class MainFrameActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void updateAppBarScrollFlag() {
+        setAppBarCollapsible(HiSettingsHelper.getInstance().isAppBarCollapsible());
+    }
+
+    private void setAppBarCollapsible(boolean collapsible) {
+        AppBarLayout.LayoutParams params =
+                (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
+        if (collapsible) {
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+                    | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+                    | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
+        } else {
+            mAppBarLayout.setExpanded(true);
+            params.setScrollFlags(0);
+        }
+    }
+
+    public void updateFabGravity() {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mMainFab.getLayoutParams();
+        if (HiSettingsHelper.getInstance().isFabLeftSide()) {
+            params.anchorGravity = Gravity.BOTTOM | Gravity.LEFT | Gravity.END;
+        } else {
+            params.anchorGravity = Gravity.BOTTOM | Gravity.RIGHT | Gravity.END;
+        }
     }
 
     public void updateAccountHeader() {
@@ -556,7 +596,6 @@ public class MainFrameActivity extends AppCompatActivity {
 
         @Override
         public void onBackStackChanged() {
-
             if (mActionMode != null) {
                 try {
                     mActionMode.finish();
@@ -568,6 +607,13 @@ public class MainFrameActivity extends AppCompatActivity {
             FragmentManager fm = getFragmentManager();
             setDrawerHomeIdicator(fm.getBackStackEntryCount() > 0);
 
+            if (HiSettingsHelper.getInstance().isAppBarCollapsible()) {
+                Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+                //set flag every time, or setting fragment's last item is not visible
+                setAppBarCollapsible(fg instanceof BaseFragment
+                        && ((BaseFragment) fg).isAppBarCollapsible());
+            }
+
             if (HiSettingsHelper.getInstance().isGestureBack()) {
                 if (fm.getBackStackEntryCount() > 0) {
                     drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -575,9 +621,7 @@ public class MainFrameActivity extends AppCompatActivity {
                     drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                 }
             }
-            Logger.v("getBackStackEntryCount = " + String.valueOf(fm.getBackStackEntryCount()));
         }
-
     }
 
     private class NetworkStateReceiver extends BroadcastReceiver {
@@ -641,6 +685,14 @@ public class MainFrameActivity extends AppCompatActivity {
 
     public EmojiPopup.Builder getEmojiBuilder() {
         return EmojiPopup.Builder.fromRootView(rootView);
+    }
+
+    public FloatingActionButton getMainFab() {
+        return mMainFab;
+    }
+
+    public FloatingActionButton getNotificationFab() {
+        return mNotiificationFab;
     }
 
     @SuppressWarnings("unused")

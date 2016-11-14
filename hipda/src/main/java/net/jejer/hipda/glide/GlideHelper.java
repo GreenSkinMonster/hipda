@@ -41,7 +41,7 @@ public class GlideHelper {
         if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
             avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
         }
-        if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, false)) {
+        if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, true)) {
             glide.load(avatarUrl)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .error(DEFAULT_USER_ICON)
