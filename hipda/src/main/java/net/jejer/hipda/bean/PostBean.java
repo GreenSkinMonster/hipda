@@ -9,7 +9,7 @@ public class PostBean {
     private String tid;
     private String pid;
     private String fid;
-    private String floor;
+    private int floor;
     private String subject;
     private String content;
     private String typeid;
@@ -41,11 +41,11 @@ public class PostBean {
         this.fid = fid;
     }
 
-    public String getFloor() {
+    public int getFloor() {
         return floor;
     }
 
-    public void setFloor(String floor) {
+    public void setFloor(int floor) {
         this.floor = floor;
     }
 

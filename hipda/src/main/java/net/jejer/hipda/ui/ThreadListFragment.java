@@ -13,7 +13,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -24,13 +27,11 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +55,11 @@ import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.job.PostEvent;
+import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
+import net.jejer.hipda.ui.adapter.ThreadListAdapter;
+import net.jejer.hipda.ui.widget.SimpleDivider;
+import net.jejer.hipda.ui.widget.XFooterView;
+import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
@@ -89,8 +95,7 @@ public class ThreadListFragment extends BaseFragment
     private LoaderManager.LoaderCallbacks<ThreadListBean> mCallbacks;
     private ThreadListAdapter mThreadListAdapter;
     private List<ThreadBean> mThreadBeans = new ArrayList<>();
-    private ListView mThreadListView;
-    private ProgressBar mFooterProgressBar;
+    private XRecyclerView mRecyclerView;
     private boolean mInloading = false;
     private Handler mMsgHandler;
     private HiProgressDialog postProgressDialog;
@@ -126,17 +131,22 @@ public class ThreadListFragment extends BaseFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
-        mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_thread_list, parent, false);
+        mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_threads);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mCtx));
+        mRecyclerView.addItemDecoration(new SimpleDivider(
+                HiSettingsHelper.getInstance().isNightMode()
+                        ? ContextCompat.getDrawable(mCtx, R.drawable.line_divider_night)
+                        : ContextCompat.getDrawable(mCtx, R.drawable.line_divider_day)));
 
-        mThreadListAdapter = new ThreadListAdapter(Glide.with(this));
+        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(mCtx, new OnItemClickListener());
 
-        View mFooterView = inflater.inflate(R.layout.vw_thread_list_footer, mThreadListView, false);
-        mFooterProgressBar = (ProgressBar) mFooterView.findViewById(R.id.footer_progressbar);
-        mFooterProgressBar.getIndeterminateDrawable()
-                .setColorFilter(Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
-        mThreadListView.addFooterView(mFooterView);
+        mThreadListAdapter = new ThreadListAdapter(Glide.with(this), itemClickListener);
+
+        mRecyclerView.setAdapter(mThreadListAdapter);
+        mRecyclerView.addOnScrollListener(new OnScrollListener());
 
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
@@ -197,7 +207,7 @@ public class ThreadListFragment extends BaseFragment
             }
         });
 
-        mThreadListView.setSelection(mFirstVisibleItem);
+        mRecyclerView.scrollToPosition(mFirstVisibleItem);
 
         return view;
     }
@@ -211,11 +221,7 @@ public class ThreadListFragment extends BaseFragment
             mFam.setVisibility(View.VISIBLE);
         }
 
-        mThreadListView.setAdapter(mThreadListAdapter);
-        mThreadListView.setOnItemClickListener(new OnItemClickCallback());
-        mThreadListView.setOnItemLongClickListener(new OnItemLongClickCallback());
-        mThreadListView.setOnScrollListener(new OnScrollCallback());
-        mThreadListView.setOnTouchListener(new View.OnTouchListener() {
+        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (mFam.isOpened()) {
@@ -225,7 +231,7 @@ public class ThreadListFragment extends BaseFragment
             }
         });
 
-        if (mThreadListAdapter.getCount() == 0) {
+        if (mThreadListAdapter.getDataCount() == 0) {
             loadingProgressBar.show();
             mInloading = true;
             getLoaderManager().initLoader(0, null, mCallbacks);
@@ -282,7 +288,7 @@ public class ThreadListFragment extends BaseFragment
         } else if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {
             if (mThreadListAdapter != null) {
                 mThreadBeans.clear();
-                mThreadListAdapter.setBeans(mThreadBeans);
+                mThreadListAdapter.setDatas(mThreadBeans);
             }
             showLoginDialog();
         }
@@ -359,7 +365,7 @@ public class ThreadListFragment extends BaseFragment
 
     private void refresh() {
         mPage = 1;
-        mThreadListView.setSelection(0);
+        mRecyclerView.scrollToPosition(0);
         hideListViewFooter();
         mInloading = true;
         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
@@ -371,66 +377,69 @@ public class ThreadListFragment extends BaseFragment
         loadingProgressBar.hide();
     }
 
-    public class OnScrollCallback implements AbsListView.OnScrollListener {
-
-        int mVisibleItemCount = 0;
+    private class OnScrollListener extends RecyclerView.OnScrollListener {
+        int visibleItemCount, totalItemCount;
 
         @Override
-        public void onScroll(AbsListView view, int firstVisibleItem,
-                             int visibleItemCount, int totalItemCount) {
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (dy > 0) {
+                LinearLayoutManager mLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                visibleItemCount = mLayoutManager.getChildCount();
+                totalItemCount = mLayoutManager.getItemCount();
+                mFirstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
-            mFirstVisibleItem = firstVisibleItem;
-            mVisibleItemCount = visibleItemCount;
-
-            if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
-                if (!mInloading) {
-                    mPage++;
-                    showListViewFooter();
-                    mInloading = true;
-                    getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                if ((visibleItemCount + mFirstVisibleItem) >= totalItemCount - 5) {
+                    if (!mInloading) {
+                        mPage++;
+                        showListViewFooter();
+                        mInloading = true;
+                        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                    }
                 }
             }
         }
-
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-        }
-
     }
 
-    private class OnItemClickCallback extends OnViewItemSingleClickListener {
+    private class OnItemClickListener implements RecyclerItemClickListener.OnItemClickListener {
 
         @Override
-        public void onItemSingleClick(AdapterView<?> listView, View itemView, int position, long row) {
-            //avoid footer click event ???
-            if (position >= mThreadListAdapter.getCount())
-                return;
-            ThreadBean thread = mThreadListAdapter.getItem(position);
-            String tid = thread.getTid();
-            String title = thread.getTitle();
-            setHasOptionsMenu(false);
-            FragmentUtils.showThread(getFragmentManager(), false, tid, title, -1, -1, null, thread.getMaxPage());
-            HistoryDao.saveHistoryInBackground(tid, mFidHolder[0] + "",
-                    title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
-        }
-
-    }
-
-    private class OnItemLongClickCallback implements AdapterView.OnItemLongClickListener {
-        @Override
-        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long row) {
-            ThreadBean thread = mThreadListAdapter.getItem(position);
-            String tid = thread.getTid();
-            String title = thread.getTitle();
-            int page = 1;
-            int maxPostsInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
-            if (maxPostsInPage > 0 && TextUtils.isDigitsOnly(thread.getCountCmts())) {
-                page = (int) Math.ceil((Integer.parseInt(thread.getCountCmts()) + 1) * 1.0f / maxPostsInPage);
+        public void onItemClick(View view, int position) {
+            if (mFam.isOpened()) {
+                mFam.close(false);
             }
-            setHasOptionsMenu(false);
-            FragmentUtils.showThread(getFragmentManager(), false, tid, title, page, ThreadDetailFragment.LAST_FLOOR, null, thread.getMaxPage());
-            HistoryDao.saveHistoryInBackground(tid, "", title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
-            return true;
+            ThreadBean thread = mThreadListAdapter.getItem(position);
+            if (thread != null) {
+                String tid = thread.getTid();
+                String title = thread.getTitle();
+                setHasOptionsMenu(false);
+                FragmentUtils.showThread(getFragmentManager(), false, tid, title, -1, -1, null, thread.getMaxPage());
+                HistoryDao.saveHistoryInBackground(tid, mFidHolder[0] + "",
+                        title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
+            }
+        }
+
+        @Override
+        public void onLongItemClick(View view, int position) {
+            if (mFam.isOpened()) {
+                mFam.close(false);
+            }
+            ThreadBean thread = mThreadListAdapter.getItem(position);
+            if (thread != null) {
+                String tid = thread.getTid();
+                String title = thread.getTitle();
+                int page = 1;
+                int maxPostsInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
+                if (maxPostsInPage > 0 && TextUtils.isDigitsOnly(thread.getCountCmts())) {
+                    page = (int) Math.ceil((Integer.parseInt(thread.getCountCmts()) + 1) * 1.0f / maxPostsInPage);
+                }
+                setHasOptionsMenu(false);
+                FragmentUtils.showThread(getFragmentManager(), false, tid, title, page, ThreadDetailFragment.LAST_FLOOR, null, thread.getMaxPage());
+                HistoryDao.saveHistoryInBackground(tid, "", title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
+            }
+        }
+
+        @Override
+        public void onDoubleTap(View view, int position) {
         }
     }
 
@@ -490,14 +499,14 @@ public class ThreadListFragment extends BaseFragment
             if (mPage == 1) {
                 mThreadBeans.clear();
                 mThreadBeans.addAll(threads.threads);
-                mThreadListAdapter.setBeans(mThreadBeans);
-                mThreadListView.setSelection(0);
+                mThreadListAdapter.setDatas(mThreadBeans);
+                mRecyclerView.scrollToPosition(0);
             } else {
                 for (ThreadBean newthread : threads.threads) {
                     boolean duplicate = false;
-                    for (int i = 0; i < mThreadListAdapter.getCount(); i++) {
-                        ThreadBean oldthread = mThreadListAdapter.getItem(i);
-                        if (newthread.getTid().equals(oldthread.getTid())) {
+                    for (int i = 0; i < mThreadBeans.size(); i++) {
+                        ThreadBean oldthread = mThreadBeans.get(i);
+                        if (newthread != null && newthread.getTid().equals(oldthread.getTid())) {
                             duplicate = true;
                             break;
                         }
@@ -506,7 +515,7 @@ public class ThreadListFragment extends BaseFragment
                         mThreadBeans.add(newthread);
                     }
                 }
-                mThreadListAdapter.setBeans(mThreadBeans);
+                mThreadListAdapter.setDatas(mThreadBeans);
             }
 
             showNotification();
@@ -529,11 +538,11 @@ public class ThreadListFragment extends BaseFragment
     }
 
     private void hideListViewFooter() {
-        mFooterProgressBar.setVisibility(View.GONE);
+        mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
     }
 
     private void showListViewFooter() {
-        mFooterProgressBar.setVisibility(View.VISIBLE);
+        mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
     }
 
     private void showThreadListSettingsDialog() {
@@ -682,12 +691,11 @@ public class ThreadListFragment extends BaseFragment
     }
 
     public void scrollToTop() {
-        stopScroll();
-        mThreadListView.setSelection(0);
+        mRecyclerView.scrollToPosition(0);
     }
 
     public void stopScroll() {
-        mThreadListView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
+        mRecyclerView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
     }
 
     private class ThreadListMsgHandler implements Handler.Callback {
@@ -705,7 +713,7 @@ public class ThreadListFragment extends BaseFragment
                     break;
                 case STAGE_NOT_LOGIN:
                     mThreadBeans.clear();
-                    mThreadListAdapter.setBeans(mThreadBeans);
+                    mThreadListAdapter.setDatas(mThreadBeans);
                     showLoginDialog();
                     break;
             }

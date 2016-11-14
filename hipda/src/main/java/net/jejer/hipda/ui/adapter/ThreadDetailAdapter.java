@@ -1,9 +1,10 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -32,30 +33,38 @@ import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
+import net.jejer.hipda.ui.TextViewWithEmoticon;
+import net.jejer.hipda.ui.ThreadDetailFragment;
+import net.jejer.hipda.ui.ThreadImageLayout;
 import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
+/**
+ * Created by GreenSkinMonster on 2016-11-08.
+ */
+
+public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
 
     private Context mCtx;
     private LayoutInflater mInflater;
     private Button.OnClickListener mGoToFloorListener;
     private View.OnClickListener mAvatarListener;
     private ThreadDetailFragment mDetailFragment;
-
     private long delayAnimDeadline = 0;
 
     private Map<String, Map<Integer, ThreadImageLayout>> imageLayoutMap = new HashMap<>();
 
-    public ThreadDetailAdapter(Context context, ThreadDetailFragment detailFragment,
+    public ThreadDetailAdapter(Context context, ThreadDetailFragment detailFragment, RecyclerItemClickListener listener,
                                Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
         mCtx = context;
         mInflater = LayoutInflater.from(context);
+        mListener = listener;
         mGoToFloorListener = gotoFloorListener;
         mAvatarListener = avatarListener;
         mDetailFragment = detailFragment;
@@ -63,25 +72,21 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public ViewHolderImpl onCreateViewHolderImpl(ViewGroup parent, int position) {
+        return new ViewHolderImpl(mInflater.inflate(R.layout.item_thread_detail, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolderImpl(RecyclerView.ViewHolder viewHolder, int position) {
+        ViewHolderImpl holder;
+        if (viewHolder instanceof ViewHolderImpl)
+            holder = (ViewHolderImpl) viewHolder;
+        else return;
+
+        viewHolder.itemView.setTag(position);
+        viewHolder.itemView.setOnTouchListener(mListener);
+
         DetailBean detail = getItem(position);
-
-        ViewHolder holder;
-
-        if (convertView == null || convertView.getTag() == null) {
-            convertView = mInflater.inflate(R.layout.item_thread_detail, parent, false);
-
-            holder = new ViewHolder();
-            holder.avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
-            holder.author = (TextView) convertView.findViewById(R.id.tv_username);
-            holder.time = (TextView) convertView.findViewById(R.id.time);
-            holder.floor = (TextView) convertView.findViewById(R.id.floor);
-            holder.postStatus = (TextView) convertView.findViewById(R.id.post_status);
-            holder.contentView = (LinearLayout) convertView.findViewById(R.id.content_layout);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
 
         holder.author.setText(detail.getAuthor());
         holder.time.setText(Utils.shortyTime(detail.getTimePost()));
@@ -118,7 +123,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         for (int i = 0; i < detail.getContents().getSize(); i++) {
             ContentAbs content = detail.getContents().get(i);
             if (content instanceof ContentText) {
-                TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, parent, false);
+                TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, null, false);
                 tv.setFragment(mDetailFragment);
                 tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                 tv.setPadding(8, 8, 8, 8);
@@ -197,7 +202,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 }
 
             } else if (content instanceof ContentAttach) {
-                TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, parent, false);
+                TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, null, false);
                 tv.setFragment(mDetailFragment);
                 tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                 tv.setText(content.getContent());
@@ -205,7 +210,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 contentView.addView(tv);
             } else if (content instanceof ContentQuote && !((ContentQuote) content).isReplyQuote()) {
 
-                LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text_simple, parent, false);
+                LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text_simple, null, false);
                 TextViewWithEmoticon tv = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
                 tv.setFragment(mDetailFragment);
 
@@ -233,7 +238,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     DetailBean detailBean = mDetailFragment.getCachedPost(goToFloor.getPostId());
                     if (detailBean != null) {
                         text = detailBean.getContents().getContent();
-                        floor = Integer.parseInt(detailBean.getFloor());
+                        floor = detailBean.getFloor();
                     }
                     note = floor + "#";
                 } else {
@@ -245,7 +250,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                     if (detailBean != null) {
                         author = contentQuote.getAuthor();
                         text = detailBean.getContents().getContent();
-                        floor = Integer.parseInt(detailBean.getFloor());
+                        floor = detailBean.getFloor();
                         note = floor + "#";
                     } else {
                         author = ((ContentQuote) content).getAuthor();
@@ -258,7 +263,7 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
 
                 text = Utils.removeLeadingBlank(text);
 
-                LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text, parent, false);
+                LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text, null, false);
 
                 TextView tvAuthor = (TextView) quoteLayout.findViewById(R.id.quote_author);
                 TextView tvNote = (TextView) quoteLayout.findViewById(R.id.quote_note);
@@ -289,8 +294,6 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
                 trimBr = true;
             }
         }
-
-        return convertView;
     }
 
     private void loadImage(final String imageUrl, final GlideImageView giv, long delay) {
@@ -317,6 +320,47 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
             }, delay);
         } else {
             GlideHelper.loadAvatar(mDetailFragment, imageView, avatarUrl);
+        }
+    }
+
+    public int getPositionByFloor(int floor) {
+        List<DetailBean> datas = getDatas();
+        for (int i = 0; i < datas.size(); i++) {
+            DetailBean bean = datas.get(i);
+            if (bean.getFloor() == floor) {
+                return i + getHeaderCount();
+            }
+        }
+        return -1;
+    }
+
+    public int getPositionByPostId(String postId) {
+        List<DetailBean> datas = getDatas();
+        for (int i = 0; i < datas.size(); i++) {
+            DetailBean bean = datas.get(i);
+            if (bean.getPostId().equals(postId)) {
+                return i + getHeaderCount();
+            }
+        }
+        return -1;
+    }
+
+    private static class ViewHolderImpl extends RecyclerView.ViewHolder {
+        ImageView avatar;
+        TextView author;
+        TextView floor;
+        TextView postStatus;
+        TextView time;
+        LinearLayout contentView;
+
+        ViewHolderImpl(View itemView) {
+            super(itemView);
+            avatar = (ImageView) itemView.findViewById(R.id.iv_avatar);
+            author = (TextView) itemView.findViewById(R.id.tv_username);
+            time = (TextView) itemView.findViewById(R.id.time);
+            floor = (TextView) itemView.findViewById(R.id.floor);
+            postStatus = (TextView) itemView.findViewById(R.id.post_status);
+            contentView = (LinearLayout) itemView.findViewById(R.id.content_layout);
         }
     }
 
@@ -349,12 +393,4 @@ public class ThreadDetailAdapter extends HiAdapter<DetailBean> {
         }
     }
 
-    private static class ViewHolder {
-        ImageView avatar;
-        TextView author;
-        TextView floor;
-        TextView postStatus;
-        TextView time;
-        LinearLayout contentView;
-    }
 }

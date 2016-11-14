@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:minHeight="32dp"
-        android:paddingBottom="4dp">
+        android:paddingBottom="2dp">
 
         <ImageView
             android:id="@+id/iv_avatar"
@@ -27,8 +27,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/iv_avatar"
+            android:maxLines="1"
             android:padding="4dp"
-            android:singleLine="true"
             android:text=""
             android:textColor="?attr/colorAccent"
             android:textSize="@dimen/info_text_size"/>
@@ -93,7 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="top"
-        android:padding="4dp"
+        android:padding="2dp"
         android:text=""
         android:textSize="18sp"/>
 

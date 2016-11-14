@@ -1,6 +1,7 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.adapter;
 
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,39 +14,38 @@ import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.Utils;
 
-public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
+/**
+ * Created by GreenSkinMonster on 2016-11-14.
+ */
+
+public class SimpleListAdapter extends BaseRvAdapter<SimpleListItemBean> {
+
     private LayoutInflater mInflater;
     private BaseFragment mFragment;
     private int mType;
 
-    public SimpleListAdapter(BaseFragment fragment, int type) {
+    public SimpleListAdapter(BaseFragment fragment, int type, RecyclerItemClickListener itemClickListener) {
         mInflater = LayoutInflater.from(fragment.getActivity());
         mFragment = fragment;
         mType = type;
+        mListener = itemClickListener;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public RecyclerView.ViewHolder onCreateViewHolderImpl(ViewGroup parent, int viewType) {
+        return new ViewHolderImpl(mInflater.inflate(R.layout.item_simple_list, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolderImpl(RecyclerView.ViewHolder viewHolder, int position) {
+        ViewHolderImpl holder = (ViewHolderImpl) viewHolder;
+
         SimpleListItemBean item = getItem(position);
-
-        ViewHolder holder;
-        if (convertView == null || convertView.getTag() == null) {
-            convertView = mInflater.inflate(R.layout.item_simple_list, parent, false);
-            holder = new ViewHolder();
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-        holder.tv_title = (TextView) convertView.findViewById(R.id.tv_title);
-        holder.tv_info = (TextView) convertView.findViewById(R.id.tv_info);
-        holder.tv_forum = (TextView) convertView.findViewById(R.id.tv_forum);
-        holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
-        holder.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
 
         holder.tv_title.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         holder.tv_title.setText(Utils.trim(item.getTitle()));
@@ -87,15 +87,23 @@ public class SimpleListAdapter extends HiAdapter<SimpleListItemBean> {
         } else {
             holder.iv_avatar.setVisibility(View.GONE);
         }
-
-        return convertView;
     }
 
-    private static class ViewHolder {
+    private static class ViewHolderImpl extends RecyclerView.ViewHolder {
         TextView tv_title;
         TextView tv_forum;
         TextView tv_info;
         TextView tv_time;
         ImageView iv_avatar;
+
+        ViewHolderImpl(View itemView) {
+            super(itemView);
+            tv_title = (TextView) itemView.findViewById(R.id.tv_title);
+            tv_info = (TextView) itemView.findViewById(R.id.tv_info);
+            tv_forum = (TextView) itemView.findViewById(R.id.tv_forum);
+            tv_time = (TextView) itemView.findViewById(R.id.tv_time);
+            iv_avatar = (ImageView) itemView.findViewById(R.id.iv_avatar);
+        }
     }
+
 }

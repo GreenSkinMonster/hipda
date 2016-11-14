@@ -12,9 +12,10 @@ public class DetailBean {
     private String mAvatarUrl;
     private String mPostId;
     private String mTimePost;
-    private String mFloor;
+    private int mFloor;
     private String mPostStatus;
     private Contents mContents;
+    private int mPage;
     private Collection<ContentImg> mImages = new ArrayList<>();
 
     public DetailBean() {
@@ -203,12 +204,12 @@ public class DetailBean {
         this.mTimePost = mTimePost.substring(4);
     }
 
-    public String getFloor() {
+    public int getFloor() {
         return mFloor;
     }
 
-    public void setFloor(String mFloor) {
-        this.mFloor = mFloor;
+    public void setFloor(int floor) {
+        mFloor = floor;
     }
 
     public String getPostStatus() {
@@ -241,6 +242,14 @@ public class DetailBean {
         } else {
             this.mAvatarUrl = avatarUrl;
         }
+    }
+
+    public int getPage() {
+        return mPage;
+    }
+
+    public void setPage(int page) {
+        mPage = page;
     }
 
     private String unEscapeHtml(String str) {

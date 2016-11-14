@@ -5,6 +5,9 @@ import android.app.LoaderManager;
 import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,11 +16,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +33,11 @@ import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.bean.UserInfoBean;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
+import net.jejer.hipda.ui.adapter.SimpleListAdapter;
+import net.jejer.hipda.ui.widget.SimpleDivider;
+import net.jejer.hipda.ui.widget.XFooterView;
+import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
@@ -56,7 +61,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
     private TextView mUsernameView;
     private TextView mOnlineView;
 
-    private ListView mThreadListView;
+    private XRecyclerView mRecyclerView;
     private SimpleListAdapter mSimpleListAdapter;
     private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
     private int mFirstVisibleItem = 0;
@@ -88,7 +93,8 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
             mUid = getArguments().getString(ARG_UID);
         }
 
-        mSimpleListAdapter = new SimpleListAdapter(this, SimpleListLoader.TYPE_SEARCH_USER_THREADS);
+        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(), new OnItemClickListener());
+        mSimpleListAdapter = new SimpleListAdapter(this, SimpleListLoader.TYPE_SEARCH_USER_THREADS, itemClickListener);
         mCallbacks = new SearchThreadByUidLoaderCallbacks();
 
     }
@@ -124,7 +130,14 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
             }
         });
 
-        mThreadListView = (ListView) view.findViewById(R.id.lv_search_threads);
+        mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_search_threads);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new SimpleDivider(
+                HiSettingsHelper.getInstance().isNightMode()
+                        ? ContextCompat.getDrawable(getActivity(), R.drawable.line_divider_night)
+                        : ContextCompat.getDrawable(getActivity(), R.drawable.line_divider_day)));
+
         mButton = (Button) view.findViewById(R.id.btn_search_threads);
         mButton.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -133,14 +146,14 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 if (isShowThreads) {
                     mButton.setText("显示信息");
                     mDetailView.setVisibility(View.GONE);
-                    mThreadListView.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
                     if (!isThreadsLoaded) {
                         mButton.setEnabled(false);
                         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
                     }
                 } else {
                     mButton.setText("搜索帖子");
-                    mThreadListView.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.GONE);
                     mDetailView.setVisibility(View.VISIBLE);
                 }
             }
@@ -156,19 +169,16 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
 
         if (savedInstanceState != null) {
             mDetailView.setVisibility(View.VISIBLE);
-            mThreadListView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.GONE);
         }
         OkHttpHelper.getInstance().asyncGet(HiUtils.UserInfoUrl + mUid, new UserInfoCallback());
 
-        mThreadListView.setAdapter(mSimpleListAdapter);
-        mThreadListView.setOnItemClickListener(new OnItemClickCallback());
-        mThreadListView.setOnScrollListener(new OnScrollCallback());
+        mRecyclerView.setAdapter(mSimpleListAdapter);
+        mRecyclerView.addOnScrollListener(new OnScrollListener());
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Logger.v("onCreateOptionsMenu");
-
         menu.clear();
         inflater.inflate(R.menu.menu_userinfo, menu);
         menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_insert_comment).actionBar().color(Color.WHITE));
@@ -240,37 +250,60 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         }
     }
 
-
-    public class OnScrollCallback implements AbsListView.OnScrollListener {
-
-        int mVisibleItemCount = 0;
+    private class OnScrollListener extends RecyclerView.OnScrollListener {
+        int visibleItemCount, totalItemCount;
 
         @Override
-        public void onScroll(AbsListView view, int firstVisibleItem,
-                             int visibleItemCount, int totalItemCount) {
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (dy > 0) {
+                LinearLayoutManager mLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                visibleItemCount = mLayoutManager.getChildCount();
+                totalItemCount = mLayoutManager.getItemCount();
+                mFirstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
-            mFirstVisibleItem = firstVisibleItem;
-            mVisibleItemCount = visibleItemCount;
-
-            if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
-                if (!mInloading) {
-                    mInloading = true;
-                    if (mPage < mMaxPage) {
-                        mPage++;
-                        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-                    } else {
-                        Toast.makeText(getActivity(), "已经是最后一页，共 " + mMaxPage + " 页", Toast.LENGTH_SHORT).show();
+                if ((visibleItemCount + mFirstVisibleItem) >= totalItemCount - 5) {
+                    if (!mInloading) {
+                        mInloading = true;
+                        if (mPage < mMaxPage) {
+                            mPage++;
+                            mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+                            getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                        } else {
+                            mRecyclerView.setFooterState(XFooterView.STATE_END);
+                            //Toast.makeText(getActivity(), "已经是最后一页，共 " + mMaxPage + " 页", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
         }
+    }
 
+    private class OnItemClickListener implements RecyclerItemClickListener.OnItemClickListener {
         @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
+        public void onItemClick(View view, int position) {
+            if (position < 0 || position >= mSimpleListAdapter.getItemCount()) {
+                return;
+            }
+            setHasOptionsMenu(false);
+            SimpleListItemBean item = mSimpleListAdapter.getItem(position);
+            FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), -1, -1, null, -1);
         }
 
+        @Override
+        public void onLongItemClick(View view, int position) {
+            if (position < 0 || position >= mSimpleListAdapter.getItemCount()) {
+                return;
+            }
+            setHasOptionsMenu(false);
+            SimpleListItemBean item = mSimpleListAdapter.getItem(position);
+            FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), ThreadDetailFragment.LAST_PAGE, ThreadDetailFragment.LAST_FLOOR, null, -1);
+        }
 
+        @Override
+        public void onDoubleTap(View view, int position) {
+        }
     }
+
 
     public class SearchThreadByUidLoaderCallbacks implements LoaderManager.LoaderCallbacks<SimpleListBean> {
 
@@ -289,15 +322,12 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         @Override
         public void onLoadFinished(Loader<SimpleListBean> loader,
                                    SimpleListBean list) {
-            Logger.v("onLoadFinished enter");
-
             mInloading = false;
 
             if (mButton != null)
                 mButton.setEnabled(true);
 
             if (list == null || list.getCount() == 0) {
-                Logger.v("onLoadFinished list == null || list.getCount == 0");
                 Toast.makeText(getActivity(), "帖子加载失败", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -305,28 +335,15 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
             mSearchIdUrl = list.getSearchIdUrl();
             mMaxPage = list.getMaxPage();
             mSimpleListItemBeans.addAll(list.getAll());
-            mSimpleListAdapter.setBeans(mSimpleListItemBeans);
+            mSimpleListAdapter.setDatas(mSimpleListItemBeans);
             isThreadsLoaded = true;
         }
 
         @Override
         public void onLoaderReset(Loader<SimpleListBean> arg0) {
             mInloading = false;
-            Logger.v("onLoaderReset");
         }
 
-    }
-
-    public class OnItemClickCallback implements AdapterView.OnItemClickListener {
-
-        @Override
-        public void onItemClick(AdapterView<?> listView, View itemView, int position,
-                                long row) {
-
-            setHasOptionsMenu(false);
-            SimpleListItemBean item = mSimpleListAdapter.getItem(position);
-            FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), -1, -1, null, -1);
-        }
     }
 
     @Override

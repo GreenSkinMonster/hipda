@@ -93,5 +93,4 @@ public class DetailListBean {
         return result;
     }
 
-
 }

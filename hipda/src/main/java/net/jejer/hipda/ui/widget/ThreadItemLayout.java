@@ -46,7 +46,7 @@ public class ThreadItemLayout extends LinearLayout {
         mGlide = glide;
     }
 
-    public void setData(ThreadBean thread) {
+    public void setData(final ThreadBean thread) {
         mTvAuthor.setText(thread.getAuthor());
 
         mTvTitle.setTextSize(HiSettingsHelper.getInstance().getTitleTextSize());
@@ -62,7 +62,6 @@ public class ThreadItemLayout extends LinearLayout {
             }
         } else
             mTvTitle.setTextColor(ColorHelper.getDefaultTextColor(getContext()));
-
 
         if (HiSettingsHelper.getInstance().isShowPostType() &&
                 !TextUtils.isEmpty(thread.getType())) {
@@ -94,4 +93,5 @@ public class ThreadItemLayout extends LinearLayout {
         mAvatar.setTag(R.id.avatar_tag_uid, thread.getAuthorId());
         mAvatar.setTag(R.id.avatar_tag_username, thread.getAuthor());
     }
+
 }

@@ -85,7 +85,7 @@ public class PostFragment extends BaseFragment {
     private String mFid;
     private String mTid;
     private String mPid;
-    private String mFloor;
+    private int mFloor;
     private String mFloorAuthor;
     private String mText;
     private String mTypeId = "0";
@@ -134,7 +134,7 @@ public class PostFragment extends BaseFragment {
             mPid = getArguments().getString(ARG_PID_KEY);
         }
         if (getArguments().containsKey(ARG_FLOOR_KEY)) {
-            mFloor = getArguments().getString(ARG_FLOOR_KEY);
+            mFloor = getArguments().getInt(ARG_FLOOR_KEY);
         }
         if (getArguments().containsKey(ARG_FLOOR_AUTHOR_KEY)) {
             mFloorAuthor = getArguments().getString(ARG_FLOOR_AUTHOR_KEY);

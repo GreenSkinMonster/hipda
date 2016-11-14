@@ -67,11 +67,10 @@
         </LinearLayout>
     </ScrollView>
 
-    <ListView
-        android:id="@+id/lv_search_threads"
+    <net.jejer.hipda.ui.widget.XRecyclerView
+        android:id="@+id/rv_search_threads"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </ListView>
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"/>
 
 </LinearLayout>

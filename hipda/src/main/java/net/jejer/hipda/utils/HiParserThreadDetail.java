@@ -1,9 +1,6 @@
 package net.jejer.hipda.utils;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -14,8 +11,6 @@ import net.jejer.hipda.bean.DetailBean.Contents;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.SmallImages;
-import net.jejer.hipda.ui.ThreadDetailFragment;
-import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.ui.textstyle.TextStyle;
 import net.jejer.hipda.ui.textstyle.TextStyleHolder;
 
@@ -29,7 +24,7 @@ import java.util.regex.Matcher;
 
 public class HiParserThreadDetail {
 
-    public static DetailListBean parse(Context ctx, Handler handler, Document doc, boolean parseTid) {
+    public static DetailListBean parse(Context ctx, Document doc, boolean parseTid) {
 
         // get last page
         Elements pagesES = doc.select("div#wrap div.forumcontrol div.pages");
@@ -47,14 +42,6 @@ public class HiParserThreadDetail {
                 }
             }
         }
-
-        // Update UI
-        Message msgStartParse = Message.obtain();
-        msgStartParse.what = ThreadListFragment.STAGE_PARSE;
-        Bundle b = new Bundle();
-        b.putInt(ThreadDetailFragment.LOADER_PAGE_KEY, page);
-        msgStartParse.setData(b);
-        handler.sendMessage(msgStartParse);
 
         // Async check notify
         new HiParserThreadList.parseNotifyRunnable(ctx, doc).run();
@@ -112,6 +99,7 @@ public class HiParserThreadDetail {
             Element postE = postsEL.child(i);
 
             DetailBean detail = new DetailBean();
+            detail.setPage(page);
 
             //id
             String id = postE.attr("id");
@@ -135,7 +123,7 @@ public class HiParserThreadDetail {
                 continue;
             }
             String floor = postinfoAES.first().text();
-            detail.setFloor(floor);
+            detail.setFloor(Integer.parseInt(floor));
 
             //update max posts in page, this is controlled by user setting
             if (i == 0) {

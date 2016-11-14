@@ -10,8 +10,11 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,11 +23,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
@@ -37,16 +36,20 @@ import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.job.SimpleListEvent;
+import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
+import net.jejer.hipda.ui.adapter.SimpleListAdapter;
+import net.jejer.hipda.ui.widget.SimpleDivider;
+import net.jejer.hipda.ui.widget.XFooterView;
+import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
-import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -63,8 +66,7 @@ public class SimpleListFragment extends BaseFragment
 
     private int mType;
 
-    private ListView mThreadListView;
-    private View mFooterView;
+    private XRecyclerView mRecyclerView;
     private SimpleListAdapter mSimpleListAdapter;
     private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
     private LoaderManager.LoaderCallbacks<SimpleListBean> mCallbacks;
@@ -77,6 +79,7 @@ public class SimpleListFragment extends BaseFragment
     private int mPage = 1;
     private boolean mInloading = false;
     private int mMaxPage;
+    private int mFirstVisibleItem = 0;
 
     private static String mPrefixSearchFullText;
 
@@ -93,7 +96,9 @@ public class SimpleListFragment extends BaseFragment
             mType = getArguments().getInt(ARG_TYPE);
         }
 
-        mSimpleListAdapter = new SimpleListAdapter(this, mType);
+        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(), new OnItemClickListener());
+        mSimpleListAdapter = new SimpleListAdapter(this, mType, itemClickListener);
+
         mCallbacks = new SimpleThreadListLoaderCallbacks();
     }
 
@@ -105,14 +110,16 @@ public class SimpleListFragment extends BaseFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_thread_list, container, false);
-        mThreadListView = (ListView) view.findViewById(R.id.lv_threads);
+        View view = inflater.inflate(R.layout.fragment_simple_list, container, false);
+        mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_threads);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new SimpleDivider(
+                HiSettingsHelper.getInstance().isNightMode()
+                        ? ContextCompat.getDrawable(getActivity(), R.drawable.line_divider_night)
+                        : ContextCompat.getDrawable(getActivity(), R.drawable.line_divider_day)));
 
-        mFooterView = inflater.inflate(R.layout.vw_thread_list_footer, mThreadListView, false);
-        mThreadListView.addFooterView(mFooterView);
-        ProgressBar progressBar = (ProgressBar) mFooterView.findViewById(R.id.footer_progressbar);
-        progressBar.getIndeterminateDrawable()
-                .setColorFilter(Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
+        mRecyclerView.addOnScrollListener(new OnScrollListener());
 
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
@@ -130,10 +137,7 @@ public class SimpleListFragment extends BaseFragment
         // destroyLoader called here to avoid onLoadFinished called when onResume
         getLoaderManager().destroyLoader(0);
 
-        mThreadListView.setAdapter(mSimpleListAdapter);
-        mThreadListView.setOnItemClickListener(new OnItemClickCallback());
-        mThreadListView.setOnItemLongClickListener(new OnItemLongClickCallback());
-        mThreadListView.setOnScrollListener(new OnScrollCallback());
+        mRecyclerView.setAdapter(mSimpleListAdapter);
 
         switch (mType) {
             case SimpleListLoader.TYPE_MYREPLY:
@@ -143,7 +147,8 @@ public class SimpleListFragment extends BaseFragment
             case SimpleListLoader.TYPE_FAVORITES:
             case SimpleListLoader.TYPE_ATTENTION:
             case SimpleListLoader.TYPE_HISTORIES:
-                if (mSimpleListAdapter.getCount() == 0) {
+                if (mSimpleListItemBeans.size() == 0) {
+                    mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
                     loadingProgressBar.show();
                     getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
                 }
@@ -228,7 +233,7 @@ public class SimpleListFragment extends BaseFragment
                     public boolean onQueryTextSubmit(String query) {
                         mQuery = query;
                         mSimpleListItemBeans.clear();
-                        mSimpleListAdapter.setBeans(mSimpleListItemBeans);
+                        mSimpleListAdapter.setDatas(mSimpleListItemBeans);
                         UIUtils.hideSoftKeyboard(getActivity());
                         refresh();
                         return false;
@@ -250,7 +255,6 @@ public class SimpleListFragment extends BaseFragment
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Logger.v("onOptionsItemSelected");
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Implemented in activity
@@ -270,7 +274,8 @@ public class SimpleListFragment extends BaseFragment
                     setActionBarTitle(R.string.title_my_favorites);
                 }
                 mSimpleListItemBeans.clear();
-                mSimpleListAdapter.setBeans(mSimpleListItemBeans);
+                mSimpleListAdapter.setDatas(mSimpleListItemBeans);
+                mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
                 refresh();
                 return true;
             case R.id.action_send_sms:
@@ -295,52 +300,47 @@ public class SimpleListFragment extends BaseFragment
 
     public void scrollToTop() {
         stopScroll();
-        mThreadListView.setSelection(0);
+        mRecyclerView.scrollToPosition(0);
     }
 
     public void stopScroll() {
-        mThreadListView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
+        mRecyclerView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
     }
 
-    public class OnScrollCallback implements AbsListView.OnScrollListener {
-
-        int mFirstVisibleItem = 0;
-        int mVisibleItemCount = 0;
+    private class OnScrollListener extends RecyclerView.OnScrollListener {
+        int visibleItemCount, totalItemCount;
 
         @Override
-        public void onScroll(AbsListView view, int firstVisibleItem,
-                             int visibleItemCount, int totalItemCount) {
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (dy > 0) {
+                LinearLayoutManager mLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                visibleItemCount = mLayoutManager.getChildCount();
+                totalItemCount = mLayoutManager.getItemCount();
+                mFirstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
-            mFirstVisibleItem = firstVisibleItem;
-            mVisibleItemCount = visibleItemCount;
-
-            if (totalItemCount > 2 && firstVisibleItem + visibleItemCount > totalItemCount - 2) {
-                if (!mInloading) {
-                    mInloading = true;
-                    if (mPage < mMaxPage) {
-                        mPage++;
-                        mFooterView.getLayoutParams().height = Utils.dpToPx(getActivity(), 48);
-                        mFooterView.setVisibility(View.VISIBLE);
-                        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-                    } else {
-                        if (mMaxPage > 0)
-                            Toast.makeText(getActivity(), "已经是最后一页，共 " + mMaxPage + " 页", Toast.LENGTH_SHORT).show();
+                if ((visibleItemCount + mFirstVisibleItem) >= totalItemCount - 5) {
+                    if (!mInloading) {
+                        mInloading = true;
+                        if (mPage < mMaxPage) {
+                            mPage++;
+                            mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+                            getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                        } else {
+                            mRecyclerView.setFooterState(XFooterView.STATE_END);
+//                            if (mMaxPage > 0)
+//                                Toast.makeText(getActivity(), "已经是最后一页，共 " + mMaxPage + " 页", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
         }
-
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-        }
-
     }
 
-    public class OnItemClickCallback implements AdapterView.OnItemClickListener {
+    private class OnItemClickListener implements RecyclerItemClickListener.OnItemClickListener {
 
         @Override
-        public void onItemClick(AdapterView<?> listView, View itemView, int position, long row) {
-            if (position < 0 || position >= mSimpleListAdapter.getCount()) {
+        public void onItemClick(View view, int position) {
+            if (position < 0 || position >= mSimpleListAdapter.getItemCount()) {
                 return;
             }
             setHasOptionsMenu(false);
@@ -356,12 +356,9 @@ public class SimpleListFragment extends BaseFragment
                 FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
             }
         }
-    }
-
-    public class OnItemLongClickCallback implements AdapterView.OnItemLongClickListener {
 
         @Override
-        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long row) {
+        public void onLongItemClick(View view, int position) {
             setHasOptionsMenu(false);
             Fragment listFragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
             if (listFragment != null)
@@ -369,7 +366,6 @@ public class SimpleListFragment extends BaseFragment
 
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
             if (mType == SimpleListLoader.TYPE_SMS) {
-                return true;
             } else {
                 String postId = "";
                 int page = -1;
@@ -382,7 +378,10 @@ public class SimpleListFragment extends BaseFragment
                 }
                 FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), page, floor, postId, -1);
             }
-            return true;
+        }
+
+        @Override
+        public void onDoubleTap(View view, int position) {
         }
     }
 
@@ -390,16 +389,10 @@ public class SimpleListFragment extends BaseFragment
 
         @Override
         public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-            if (!swipeLayout.isRefreshing() && !loadingProgressBar.isShown())
-                loadingProgressBar.show();
-
             if (!swipeLayout.isRefreshing())
                 swipeLayout.setEnabled(false);
 
-            return new SimpleListLoader(getActivity(),
-                    mType,
-                    mPage,
-                    mQuery);
+            return new SimpleListLoader(getActivity(), mType, mPage, mQuery);
         }
 
         @Override
@@ -407,14 +400,13 @@ public class SimpleListFragment extends BaseFragment
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
-            mFooterView.setVisibility(View.GONE);
-            mFooterView.getLayoutParams().height = 1;
+            mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
             mInloading = false;
 
             if (list == null || list.getCount() == 0) {
                 if (mPage == 1) {
                     mSimpleListItemBeans.clear();
-                    mSimpleListAdapter.setBeans(mSimpleListItemBeans);
+                    mSimpleListAdapter.setDatas(mSimpleListItemBeans);
                 }
                 Toast.makeText(SimpleListFragment.this.getActivity(),
                         "没有数据", Toast.LENGTH_LONG).show();
@@ -442,8 +434,7 @@ public class SimpleListFragment extends BaseFragment
             }
             mMaxPage = list.getMaxPage();
             mSimpleListItemBeans.addAll(list.getAll());
-            mSimpleListAdapter.setBeans(mSimpleListItemBeans);
-
+            mSimpleListAdapter.setDatas(mSimpleListItemBeans);
         }
 
         @Override
@@ -451,8 +442,7 @@ public class SimpleListFragment extends BaseFragment
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
-            mFooterView.setVisibility(View.GONE);
-            mFooterView.getLayoutParams().height = 1;
+            mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
             mInloading = false;
         }
 

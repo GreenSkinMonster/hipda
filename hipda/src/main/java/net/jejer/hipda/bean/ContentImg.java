@@ -2,7 +2,7 @@ package net.jejer.hipda.bean;
 
 public class ContentImg extends ContentAbs {
     private String mUrl;
-    private String mFloor;
+    private int mFloor;
     private int mIndexInPage;
     private String mAuthor;
     private long mFileSize;
@@ -23,11 +23,11 @@ public class ContentImg extends ContentAbs {
         return "[图片:" + mUrl + "]";
     }
 
-    public String getFloor() {
+    public int getFloor() {
         return mFloor;
     }
 
-    public void setFloor(String floor) {
+    public void setFloor(int floor) {
         mFloor = floor;
     }
 

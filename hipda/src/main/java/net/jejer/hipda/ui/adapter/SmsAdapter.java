@@ -1,6 +1,7 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.adapter;
 
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,39 +18,37 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.ui.SmsFragment;
+import net.jejer.hipda.ui.TextViewWithEmoticon;
 import net.jejer.hipda.utils.Utils;
 
-public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
+/**
+ * Created by GreenSkinMonster on 2016-11-14.
+ */
+
+public class SmsAdapter extends BaseRvAdapter<SimpleListItemBean> {
+
     private View.OnClickListener mAvatarListener;
     private LayoutInflater mInflater;
     private SmsFragment mFragment;
 
-    public SmsAdapter(SmsFragment fragment, View.OnClickListener avatarListener) {
+    public SmsAdapter(SmsFragment fragment, View.OnClickListener avatarListener, RecyclerItemClickListener itemClickListener) {
         mAvatarListener = avatarListener;
         mInflater = LayoutInflater.from(fragment.getActivity());
         mFragment = fragment;
+        mListener = itemClickListener;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public RecyclerView.ViewHolder onCreateViewHolderImpl(ViewGroup parent, int viewType) {
+        return new ViewHolderImpl(mInflater.inflate(R.layout.item_sms_list, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolderImpl(RecyclerView.ViewHolder viewHolder, int position) {
+        ViewHolderImpl holder = (ViewHolderImpl) viewHolder;
+
         SimpleListItemBean item = getItem(position);
-
-        ViewHolder holder;
-        if (convertView == null || convertView.getTag() == null) {
-            convertView = mInflater.inflate(R.layout.item_sms_list, parent, false);
-            holder = new ViewHolder();
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-        holder.tv_content = (TextViewWithEmoticon) convertView.findViewById(R.id.tv_content);
-        holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
-        holder.tv_isnew = (TextView) convertView.findViewById(R.id.tv_isnew);
-        holder.iv_my_avatar = (ImageView) convertView.findViewById(R.id.iv_my_avatar);
-        holder.iv_friend_avatar = (ImageView) convertView.findViewById(R.id.iv_friend_avatar);
-        holder.info_layout = (LinearLayout) convertView.findViewById(R.id.sms_info_layout);
-        holder.bubble_layout = (BubbleLayout) convertView.findViewById(R.id.bl_bubble);
 
         holder.iv_my_avatar.setVisibility(View.INVISIBLE);
         holder.iv_friend_avatar.setVisibility(View.INVISIBLE);
@@ -65,7 +64,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         if (item.getUid().equals(HiSettingsHelper.getInstance().getUid())) {
             holder.info_layout.setGravity(Gravity.RIGHT);
             holder.bubble_layout.setArrowDirection(ArrowDirection.RIGHT);
-            holder.bubble_layout.setBubbleColor(ContextCompat.getColor(convertView.getContext(), R.color.md_yellow_400));
+            holder.bubble_layout.setBubbleColor(ContextCompat.getColor(mFragment.getActivity(), R.color.md_yellow_400));
 
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.bubble_layout.getLayoutParams();
             params.gravity = Gravity.RIGHT;
@@ -82,7 +81,7 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
             holder.info_layout.setGravity(Gravity.LEFT);
             holder.bubble_layout.setArrowDirection(ArrowDirection.LEFT);
             holder.bubble_layout.setForegroundGravity(Gravity.LEFT);
-            holder.bubble_layout.setBubbleColor(ContextCompat.getColor(convertView.getContext(), R.color.md_grey_300));
+            holder.bubble_layout.setBubbleColor(ContextCompat.getColor(mFragment.getActivity(), R.color.md_grey_300));
 
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.bubble_layout.getLayoutParams();
             params.gravity = Gravity.LEFT;
@@ -117,17 +116,15 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         holder.tv_content.setFocusable(false);
 
         holder.tv_content.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
-        holder.tv_content.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.black));
+        holder.tv_content.setTextColor(ContextCompat.getColor(mFragment.getActivity(), R.color.black));
 
         if (item.isNew())
             holder.tv_isnew.setVisibility(View.VISIBLE);
         else
             holder.tv_isnew.setVisibility(View.GONE);
-
-        return convertView;
     }
 
-    private static class ViewHolder {
+    private static class ViewHolderImpl extends RecyclerView.ViewHolder {
         TextViewWithEmoticon tv_content;
         TextView tv_time;
         TextView tv_isnew;
@@ -135,5 +132,19 @@ public class SmsAdapter extends HiAdapter<SimpleListItemBean> {
         ImageView iv_friend_avatar;
         LinearLayout info_layout;
         BubbleLayout bubble_layout;
+
+        ViewHolderImpl(View itemView) {
+            super(itemView);
+
+            tv_content = (TextViewWithEmoticon) itemView.findViewById(R.id.tv_content);
+            tv_time = (TextView) itemView.findViewById(R.id.tv_time);
+            tv_isnew = (TextView) itemView.findViewById(R.id.tv_isnew);
+            iv_my_avatar = (ImageView) itemView.findViewById(R.id.iv_my_avatar);
+            iv_friend_avatar = (ImageView) itemView.findViewById(R.id.iv_friend_avatar);
+            info_layout = (LinearLayout) itemView.findViewById(R.id.sms_info_layout);
+            bubble_layout = (BubbleLayout) itemView.findViewById(R.id.bl_bubble);
+
+        }
     }
+
 }

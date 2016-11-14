@@ -32,13 +32,8 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
-import net.jejer.hipda.job.BaseEvent;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
-
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.UUID;
 
@@ -49,7 +44,7 @@ import java.util.UUID;
 public abstract class BaseFragment extends Fragment {
 
     protected static final int FAB_ICON_SIZE_DP = 20;
-    protected String mSessionId;
+    public String mSessionId;
     protected EmojiPopup mEmojiPopup;
     protected IconicsDrawable mKeyboardDrawable;
     protected IconicsDrawable mFaceDrawable;
@@ -306,12 +301,6 @@ public abstract class BaseFragment extends Fragment {
                         mEmojiPopup.dismiss();
                     }
                 }).build(mEtContent);
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(BaseEvent event) {
-        Logger.v("BaseEvent : " + event.getClass().getSimpleName() + ", status=" + event.mStatus + ", message=" + event.mMessage);
     }
 
 }

@@ -12,6 +12,8 @@ import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,9 +21,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
@@ -36,6 +36,8 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
+import net.jejer.hipda.ui.adapter.SmsAdapter;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
@@ -57,7 +59,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     private SmsAdapter mSmsAdapter;
     private List<SimpleListItemBean> mSmsBeans = new ArrayList<>();
     private SmsListLoaderCallbacks mLoaderCallbacks;
-    private ListView mListView;
+    private RecyclerView mRecyclerView;
 
     private EmojiEditText mEtSms;
     private ImageButton mIbEmojiSwitch;
@@ -79,38 +81,26 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             mUid = getArguments().getString(ARG_UID);
         }
 
-        mSmsAdapter = new SmsAdapter(this, new AvatarOnClickListener());
+        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(), new OnItemClickListener());
+        mSmsAdapter = new SmsAdapter(this, new AvatarOnClickListener(), itemClickListener);
         mLoaderCallbacks = new SmsListLoaderCallbacks();
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sms, container, false);
-        mListView = (ListView) view.findViewById(R.id.lv_sms);
-        mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.lv_sms);
+        mRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setStackFromEnd(true);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+
         loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.sms_loading);
 
         //to avoid click through this view
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
-
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                CharSequence content = Utils.fromHtmlAndStrip(((SimpleListItemBean) adapterView.getItemAtPosition(i)).getInfo());
-                if (content.length() > 0) {
-                    ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
-                    clipboard.setPrimaryClip(clip);
-                    Toast.makeText(getActivity(), "短消息内容已经复制至粘贴板", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "短消息内容内容为空", Toast.LENGTH_SHORT).show();
-                }
                 return true;
             }
         });
@@ -141,11 +131,11 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mListView.setAdapter(mSmsAdapter);
+        mRecyclerView.setAdapter(mSmsAdapter);
 
         // destroyLoader called here to avoid onLoadFinished called when onResume
         getLoaderManager().destroyLoader(0);
-        if (mSmsAdapter.getCount() == 0) {
+        if (mSmsAdapter.getItemCount() == 0) {
             loadingProgressBar.show();
             getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
         }
@@ -271,7 +261,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
             mSmsBeans.clear();
             mSmsBeans.addAll(list.getAll());
-            mSmsAdapter.setBeans(mSmsBeans);
+            mSmsAdapter.setDatas(mSmsBeans);
         }
 
         @Override
@@ -289,9 +279,36 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         }
     }
 
+    private class OnItemClickListener implements RecyclerItemClickListener.OnItemClickListener {
+
+        @Override
+        public void onItemClick(View view, int position) {
+        }
+
+        @Override
+        public void onLongItemClick(View view, int position) {
+            SimpleListItemBean bean = mSmsAdapter.getItem(position);
+            if (bean != null) {
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                CharSequence content = Utils.fromHtmlAndStrip(bean.getInfo());
+                if (content.length() > 0) {
+                    ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(getActivity(), "短消息内容已经复制至粘贴板", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "短消息内容内容为空", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        @Override
+        public void onDoubleTap(View view, int position) {
+        }
+    }
+
     @Override
     public void scrollToTop() {
-        if (mSmsAdapter != null && mSmsAdapter.getCount() > 0)
-            mListView.setSelection(0);
+        if (mSmsAdapter != null && mSmsAdapter.getItemCount() > 0)
+            mRecyclerView.scrollToPosition(0);
     }
 }

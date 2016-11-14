@@ -42,7 +42,7 @@ public class PostHelper {
 
     private String mTid;
     private String mTitle;
-    private String mFloor;
+    private int mFloor;
 
     public PostHelper(Context ctx, int mode, PrePostInfoBean info, PostBean postArg) {
         mCtx = ctx;
@@ -52,13 +52,12 @@ public class PostHelper {
     }
 
     public PostBean post() {
-
         PostBean postBean = mPostArg;
         String replyText = postBean.getContent();
         String tid = postBean.getTid();
         String pid = postBean.getPid();
         String fid = postBean.getFid();
-        String floor = postBean.getFloor();
+        int floor = postBean.getFloor();
         String subject = postBean.getSubject();
         String typeid = postBean.getTypeid();
 
@@ -68,8 +67,7 @@ public class PostHelper {
             mInfo = new PrePostAsyncTask(mCtx, null, mMode).doInBackground(postBean);
         }
 
-        if (!TextUtils.isEmpty(floor) && TextUtils.isDigitsOnly(floor))
-            mFloor = floor;
+        mFloor = floor;
 
         replyText = Utils.replaceUrlWithTag(replyText);
         replyText = EmojiParser.parseToHtmlDecimal(replyText);
@@ -114,7 +112,6 @@ public class PostHelper {
 
         return postBean;
     }
-
 
     private void doPost(String url, String replyText, String subject, String typeid, int delete) {
         String formhash = mInfo != null ? mInfo.getFormhash() : null;

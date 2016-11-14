@@ -147,8 +147,8 @@ public class TextViewWithEmoticon extends TextView {
                             } else if (!TextUtils.isEmpty(args.getPostId())) {
                                 //get floor if postId is cached
                                 DetailBean detailBean = detailFragment.getCachedPost(args.getPostId());
-                                if (detailBean != null && TextUtils.isDigitsOnly(detailBean.getFloor()))
-                                    floor = Integer.parseInt(detailBean.getFloor());
+                                if (detailBean != null)
+                                    floor = detailBean.getFloor();
                             } else {
                                 floor = 1;
                             }
