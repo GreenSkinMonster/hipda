@@ -454,7 +454,6 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         if (drawer.isDrawerOpen()) {
             drawer.closeDrawer();
             return;
@@ -589,7 +588,6 @@ public class MainFrameActivity extends AppCompatActivity {
                 ((ThreadListFragment) fg).resetActionBarTitle();
             }
         }
-
     }
 
     private class BackStackChangedListener implements FragmentManager.OnBackStackChangedListener {
@@ -698,6 +696,13 @@ public class MainFrameActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginEvent event) {
+        if (event.mManual) {
+            clearBackStacks(true);
+            Fragment fg = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+            if (fg instanceof ThreadListFragment) {
+                ((ThreadListFragment) fg).onRefresh();
+            }
+        }
         updateAccountHeader();
     }
 

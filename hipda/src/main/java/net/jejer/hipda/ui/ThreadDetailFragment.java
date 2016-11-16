@@ -1005,6 +1005,10 @@ public class ThreadDetailFragment extends BaseFragment {
         }
 
         //error
+        if (event.mStatus == Constants.STATUS_FAIL_RELOGIN) {
+            getFragmentManager().popBackStackImmediate();
+            return;
+        }
         if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
             UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
             if (event.mFectchType == FETCH_PREVIOUS) {

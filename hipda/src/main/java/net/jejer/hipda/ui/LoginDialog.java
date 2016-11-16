@@ -5,8 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +30,6 @@ public class LoginDialog extends Dialog {
 
     private Context mCtx;
     private HiProgressDialog progressDialog;
-    private Handler mHandler;
 
     private LoginDialog(Context context) {
         super(context);
@@ -89,13 +86,13 @@ public class LoginDialog extends Dialog {
 
                 progressDialog = HiProgressDialog.show(mCtx, "正在登录...");
 
-                final LoginHelper loginHelper = new LoginHelper(mCtx, null);
+                final LoginHelper loginHelper = new LoginHelper(mCtx);
 
                 new AsyncTask<Void, Void, Integer>() {
 
                     @Override
                     protected Integer doInBackground(Void... voids) {
-                        return loginHelper.login();
+                        return loginHelper.login(true);
                     }
 
                     @Override
@@ -105,11 +102,6 @@ public class LoginDialog extends Dialog {
                             if (LoginDialog.this.isShowing())
                                 dismiss();
                             isShown = false;
-                            if (mHandler != null) {
-                                Message msg = Message.obtain();
-                                msg.what = ThreadListFragment.STAGE_REFRESH;
-                                mHandler.sendMessage(msg);
-                            }
                             TaskHelper.runDailyTask(true);
                         } else {
                             Toast.makeText(mCtx, loginHelper.getErrorMsg(), Toast.LENGTH_SHORT).show();
@@ -117,14 +109,6 @@ public class LoginDialog extends Dialog {
                             HiSettingsHelper.getInstance().setPassword("");
                             HiSettingsHelper.getInstance().setSecQuestion("");
                             HiSettingsHelper.getInstance().setSecAnswer("");
-                            if (mHandler != null) {
-                                Message msg = Message.obtain();
-                                msg.what = ThreadListFragment.STAGE_ERROR;
-                                Bundle b = new Bundle();
-                                b.putString(ThreadListFragment.STAGE_ERROR_KEY, loginHelper.getErrorMsg());
-                                msg.setData(b);
-                                mHandler.sendMessage(msg);
-                            }
                         }
                         progressDialog.dismiss();
                     }
@@ -146,7 +130,4 @@ public class LoginDialog extends Dialog {
         isShown = false;
     }
 
-    public void setHandler(Handler handler) {
-        mHandler = handler;
-    }
 }

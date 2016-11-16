@@ -98,9 +98,9 @@ public class SimpleListJob extends BaseJob {
                 try {
                     String resp = fetchSimpleList(mType);
                     if (!LoginHelper.checkLoggedin(mCtx, resp)) {
-                        int status = new LoginHelper(mCtx, null).login();
+                        int status = new LoginHelper(mCtx).login();
                         if (status == Constants.STATUS_FAIL_ABORT) {
-                            eventStatus = Constants.STATUS_FAIL_ABORT;
+                            eventStatus = Constants.STATUS_FAIL_RELOGIN;
                             eventMessage = "请重新登录";
                             break;
                         }

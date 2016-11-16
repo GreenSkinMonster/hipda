@@ -317,6 +317,10 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         loadingProgressBar.hide();
 
         //error
+        if (event.mStatus == Constants.STATUS_FAIL_RELOGIN) {
+            showLoginDialog();
+            return;
+        }
         if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
             UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
             return;

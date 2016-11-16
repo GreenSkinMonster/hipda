@@ -285,6 +285,16 @@ public abstract class BaseFragment extends Fragment {
         theButton.setEnabled(false);
     }
 
+    protected void showLoginDialog() {
+        if (isAdded()) {
+            LoginDialog dialog = LoginDialog.getInstance(getActivity());
+            if (dialog != null) {
+                dialog.setTitle("用户登录");
+                dialog.show();
+            }
+        }
+    }
+
     public boolean onBackPressed() {
         return false;
     }

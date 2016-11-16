@@ -53,7 +53,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
                 rsp_str = OkHttpHelper.getInstance().get((HiUtils.SMSPreparePostUrl + mUid));
                 if (!TextUtils.isEmpty(rsp_str)) {
                     if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
-                        int status = new LoginHelper(mCtx, null).login();
+                        int status = new LoginHelper(mCtx).login();
                         if (status == Constants.STATUS_FAIL_ABORT) {
                             break;
                         }

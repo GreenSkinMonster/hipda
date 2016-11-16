@@ -1,15 +1,11 @@
 package net.jejer.hipda.async;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
-import net.jejer.hipda.ui.ThreadListFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -27,22 +23,18 @@ import java.util.Map;
 public class LoginHelper {
 
     private Context mCtx;
-    private Handler mHandler;
 
     private String mErrorMsg = "";
 
-    public LoginHelper(Context ctx, Handler handler) {
+    public LoginHelper(Context ctx) {
         mCtx = ctx;
-        mHandler = handler;
     }
 
     public int login() {
-        if (mHandler != null) {
-            Message msg = Message.obtain();
-            msg.what = ThreadListFragment.STAGE_RELOGIN;
-            mHandler.sendMessage(msg);
-        }
+        return login(false);
+    }
 
+    public int login(boolean manual) {
         int status = Constants.STATUS_FAIL_ABORT;
 
         if (HiSettingsHelper.getInstance().isLoginInfoValid()) {
@@ -54,22 +46,11 @@ public class LoginHelper {
             mErrorMsg = "登录信息不完整";
         }
 
-        if (mHandler != null) {
-            Message msg = Message.obtain();
-            if (status == Constants.STATUS_FAIL) {
-                msg.what = ThreadListFragment.STAGE_ERROR;
-            } else if (status == Constants.STATUS_FAIL_ABORT) {
-                msg.what = ThreadListFragment.STAGE_NOT_LOGIN;
-            }
-            Bundle b = new Bundle();
-            b.putString(ThreadListFragment.STAGE_ERROR_KEY, mErrorMsg);
-            msg.setData(b);
-            mHandler.sendMessage(msg);
+        if (status == Constants.STATUS_SUCCESS) {
+            LoginEvent event = new LoginEvent();
+            event.mManual = manual;
+            EventBus.getDefault().post(event);
         }
-
-        if (status == Constants.STATUS_SUCCESS)
-            EventBus.getDefault().post(new LoginEvent());
-
         return status;
     }
 

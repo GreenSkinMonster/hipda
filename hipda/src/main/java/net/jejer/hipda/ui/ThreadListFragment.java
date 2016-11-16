@@ -3,14 +3,11 @@ package net.jejer.hipda.ui;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.LoaderManager;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -77,22 +74,13 @@ public class ThreadListFragment extends BaseFragment
 
     public static final String ARG_FID_KEY = "fid";
 
-    public final static int STAGE_NOT_LOGIN = -2;
-    public final static int STAGE_ERROR = -1;
-    public final static int STAGE_RELOGIN = 1;
-    public final static int STAGE_REFRESH = 6;
-    public final static String STAGE_ERROR_KEY = "ERROR_MSG";
-    public final static String STAGE_DETAIL_KEY = "ERROR_DETAIL";
-
     private Context mCtx;
     private int mForumId = 0;
     private int mPage = 1;
-    private LoaderManager.LoaderCallbacks<ThreadListBean> mCallbacks;
     private ThreadListAdapter mThreadListAdapter;
     private List<ThreadBean> mThreadBeans = new ArrayList<>();
     private XRecyclerView mRecyclerView;
     private boolean mInloading = false;
-    private Handler mMsgHandler;
     private HiProgressDialog postProgressDialog;
     private SwipeRefreshLayout swipeLayout;
     private ContentLoadingProgressBar loadingProgressBar;
@@ -120,7 +108,6 @@ public class ThreadListFragment extends BaseFragment
         HiSettingsHelper.getInstance().setLastForumId(mForumId);
 
         setHasOptionsMenu(true);
-        mMsgHandler = new Handler(new ThreadListMsgHandler());
     }
 
     @Override
@@ -137,6 +124,7 @@ public class ThreadListFragment extends BaseFragment
         RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(mCtx, new OnItemClickListener());
 
         mThreadListAdapter = new ThreadListAdapter(Glide.with(this), itemClickListener);
+        mThreadListAdapter.setDatas(mThreadBeans);
 
         mRecyclerView.setAdapter(mThreadListAdapter);
         mRecyclerView.addOnScrollListener(new OnScrollListener());
@@ -160,13 +148,6 @@ public class ThreadListFragment extends BaseFragment
         if (savedInstanceState != null) {
             mCtx = getActivity();
         }
-
-        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return false;
-            }
-        });
     }
 
     @Override
@@ -216,17 +197,17 @@ public class ThreadListFragment extends BaseFragment
 
         setDrawerSelection(mForumId);
 
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
         if (LoginHelper.isLoggedIn()) {
             showNotification();
         } else if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {
-            if (mThreadListAdapter != null) {
-                mThreadBeans.clear();
-                mThreadListAdapter.setDatas(mThreadBeans);
-            }
             showLoginDialog();
         }
-
-        super.onCreateOptionsMenu(menu, inflater);
+        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -576,40 +557,6 @@ public class ThreadListFragment extends BaseFragment
         mRecyclerView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
     }
 
-    private class ThreadListMsgHandler implements Handler.Callback {
-        @Override
-        public boolean handleMessage(Message msg) {
-            Bundle b = msg.getData();
-            switch (msg.what) {
-                case STAGE_ERROR:
-                    UIUtils.errorSnack(getView(),
-                            b.getString(STAGE_ERROR_KEY),
-                            b.getString(STAGE_DETAIL_KEY));
-                    break;
-                case STAGE_REFRESH:
-                    refresh();
-                    break;
-                case STAGE_NOT_LOGIN:
-                    mThreadBeans.clear();
-                    mThreadListAdapter.setDatas(mThreadBeans);
-                    showLoginDialog();
-                    break;
-            }
-            return false;
-        }
-    }
-
-    private void showLoginDialog() {
-        if (isAdded()) {
-            LoginDialog dialog = LoginDialog.getInstance(getActivity());
-            if (dialog != null) {
-                dialog.setHandler(mMsgHandler);
-                dialog.setTitle("用户登录");
-                dialog.show();
-            }
-        }
-    }
-
     private class ForumTypesAdapter extends ArrayAdapter {
 
         public ForumTypesAdapter(Context context) {
@@ -709,6 +656,10 @@ public class ThreadListFragment extends BaseFragment
         hideFooter();
 
         //error
+        if (event.mStatus == Constants.STATUS_FAIL_RELOGIN) {
+            showLoginDialog();
+            return;
+        }
         if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
             UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
             if (mPage > 1)

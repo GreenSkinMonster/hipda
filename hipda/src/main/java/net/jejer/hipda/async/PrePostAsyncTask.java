@@ -70,7 +70,7 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
                 String resp = OkHttpHelper.getInstance().get(mUrl);
                 if (resp != null) {
                     if (!LoginHelper.checkLoggedin(mCtx, resp)) {
-                        int status = new LoginHelper(mCtx, null).login();
+                        int status = new LoginHelper(mCtx).login();
                         if (status == Constants.STATUS_FAIL_ABORT) {
                             break;
                         }

@@ -64,9 +64,9 @@ public class ThreadDetailJob extends BaseJob {
                 String resp = fetchDetail();
                 if (resp != null) {
                     if (!LoginHelper.checkLoggedin(mCtx, resp)) {
-                        int status = new LoginHelper(mCtx, null).login();
+                        int status = new LoginHelper(mCtx).login();
                         if (status == Constants.STATUS_FAIL_ABORT) {
-                            eventStatus = Constants.STATUS_FAIL_ABORT;
+                            eventStatus = Constants.STATUS_FAIL_RELOGIN;
                             eventMessage = "请重新登录";
                             break;
                         }

@@ -506,6 +506,10 @@ public class SimpleListFragment extends BaseFragment
         mInloading = false;
 
         //error
+        if (event.mStatus == Constants.STATUS_FAIL_RELOGIN) {
+            showLoginDialog();
+            return;
+        }
         if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
             UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
             return;
