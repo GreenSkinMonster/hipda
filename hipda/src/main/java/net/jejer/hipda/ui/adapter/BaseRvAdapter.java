@@ -31,10 +31,6 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
         return mDatas.size() + (hasHeader() ? 1 : 0) + (hasFooter() ? 1 : 0);
     }
 
-    public int getDataCount() {
-        return mDatas.size();
-    }
-
     public void setDatas(List<V> datas) {
         mDatas = datas;
         notifyDataSetChanged();

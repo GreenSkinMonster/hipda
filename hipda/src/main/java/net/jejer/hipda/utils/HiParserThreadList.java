@@ -1,8 +1,6 @@
 package net.jejer.hipda.utils;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 
 import com.vdurmont.emoji.EmojiParser;
@@ -10,7 +8,6 @@ import com.vdurmont.emoji.EmojiParser;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
-import net.jejer.hipda.ui.ThreadListFragment;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,12 +17,7 @@ public class HiParserThreadList {
 
     private static long HOLD_FETCH_NOTIFY = 0;
 
-    public static ThreadListBean parse(Context context, Handler handler, Document doc) {
-        // Update UI
-        Message msgStartParse = Message.obtain();
-        msgStartParse.what = ThreadListFragment.STAGE_PARSE;
-        handler.sendMessage(msgStartParse);
-
+    public static ThreadListBean parse(Context context, Document doc) {
         // Async check notify
         new parseNotifyRunnable(context, doc).run();
         HiSettingsHelper.updateMobileNetworkStatus(context);
@@ -57,7 +49,7 @@ public class HiParserThreadList {
         Elements tbodyES = doc.select("tbody[id]");
         for (int i = 0; i < tbodyES.size(); ++i) {
 
-            threads.parsed = true;
+            threads.setParsed(true);
 
             Element tbodyE = tbodyES.get(i);
             ThreadBean thread = new ThreadBean();

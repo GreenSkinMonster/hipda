@@ -5,26 +5,42 @@ import java.util.List;
 
 public class ThreadListBean {
 
-    public int count;
-    public boolean parsed = false;
-    private String uid;
-    public List<ThreadBean> threads = new ArrayList<>();
+    private boolean mParsed = false;
+    private String mUid;
+    private List<ThreadBean> mThreads = new ArrayList<>();
 
     public ThreadListBean() {
-        count = 0;
     }
 
     public void add(ThreadBean thread) {
-        threads.add(thread);
-        count++;
+        mThreads.add(thread);
     }
 
     public String getUid() {
-        return uid;
+        return mUid;
     }
 
     public void setUid(String uid) {
-        this.uid = uid;
+        this.mUid = uid;
     }
 
+    public int getCount() {
+        return mThreads.size();
+    }
+
+    public boolean isParsed() {
+        return mParsed;
+    }
+
+    public void setParsed(boolean parsed) {
+        mParsed = parsed;
+    }
+
+    public List<ThreadBean> getThreads() {
+        return mThreads;
+    }
+
+    public void setThreads(List<ThreadBean> threads) {
+        mThreads = threads;
+    }
 }

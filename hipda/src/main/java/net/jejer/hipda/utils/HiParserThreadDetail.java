@@ -395,7 +395,7 @@ public class HiParserThreadDetail {
                 content.addImg(file, e.attr("id"));
                 return false;
             } else if (src.startsWith(HiSettingsHelper.getInstance().getSmiliesBaseUrl()) || SmallImages.contains(src)) {
-                //emotion added as img tag, will be parsed in TextViewWithEmoticon later
+                //emotion added as img tag, will be mParsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
                 return false;
             } else if (src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "images/")) {

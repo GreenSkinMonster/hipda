@@ -93,22 +93,32 @@ public class XRecyclerView extends RecyclerView {
         super.setAdapter(mAdapter);
     }
 
-    public void setHeaderState(int state) {
-        mHeaderView.setState(state);
-        if (state == XHeaderView.STATE_HIDDEN) {
-            mAdapter.removeHeaderView();
-        } else {
-            mAdapter.setHeaderView(mHeaderView);
-        }
+    public void setHeaderState(final int state) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                mHeaderView.setState(state);
+                if (state == XHeaderView.STATE_HIDDEN) {
+                    mAdapter.removeHeaderView();
+                } else {
+                    mAdapter.setHeaderView(mHeaderView);
+                }
+            }
+        });
     }
 
-    public void setFooterState(int state) {
-        mFooterView.setState(state);
-        if (state == XFooterView.STATE_HIDDEN) {
-            mAdapter.removeFooterView();
-        } else {
-            mAdapter.setFooterView(mFooterView);
-        }
+    public void setFooterState(final int state) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                mFooterView.setState(state);
+                if (state == XFooterView.STATE_HIDDEN) {
+                    mAdapter.removeFooterView();
+                } else {
+                    mAdapter.setFooterView(mFooterView);
+                }
+            }
+        });
     }
 
     public void setXRecyclerListener(XRecyclerListener listener) {

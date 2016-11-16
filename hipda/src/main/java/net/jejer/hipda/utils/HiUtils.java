@@ -30,7 +30,7 @@ public class HiUtils {
     public static final String EditUrl = BaseUrl + "post.php?action=edit";
     public static final String NewThreadUrl = BaseUrl + "post.php?action=newthread&fid=";
     public static final String MyReplyUrl = BaseUrl + "my.php?item=posts";
-    public static final String MyPostUrl = BaseUrl + "my.php?item=threads";
+    public static final String MyPostUrl = BaseUrl + "my.php?item=mThreads";
     public static final String LastPageUrl = BaseUrl + "redirect.php?goto=lastpost&from=fastpost&tid=";
     public static final String RedirectToPostUrl = BaseUrl + "redirect.php?goto=findpost&pid={pid}&ptid={tid}";
     public static final String GotoPostUrl = BaseUrl + "gotopost.php?pid={pid}";
@@ -39,7 +39,7 @@ public class HiUtils {
     public static final String SMSPreparePostUrl = BaseUrl + "pm.php?daterange=1&uid=";
     public static final String SMSPostByUid = BaseUrl + "pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1&uid={uid}";
     public static final String SMSPostByUsername = BaseUrl + "pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1";
-    public static final String ThreadNotifyUrl = BaseUrl + "notice.php?filter=threads";
+    public static final String ThreadNotifyUrl = BaseUrl + "notice.php?filter=mThreads";
     public static final String CheckSMS = BaseUrl + "pm.php?checknewpm";
     public static final String NewSMS = BaseUrl + "pm.php?filter=newpm";
     public static final String ClearSMS = BaseUrl + "pm.php?action=del&uid={uid}&filter=privatepm";

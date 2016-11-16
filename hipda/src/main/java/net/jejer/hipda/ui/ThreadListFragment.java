@@ -7,7 +7,6 @@ import android.app.LoaderManager;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,14 +43,16 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.PostHelper;
-import net.jejer.hipda.async.ThreadListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.db.HistoryDao;
+import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.PostEvent;
+import net.jejer.hipda.job.ThreadListEvent;
+import net.jejer.hipda.job.ThreadListJob;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadListAdapter;
 import net.jejer.hipda.ui.widget.SimpleDivider;
@@ -79,9 +80,6 @@ public class ThreadListFragment extends BaseFragment
     public final static int STAGE_NOT_LOGIN = -2;
     public final static int STAGE_ERROR = -1;
     public final static int STAGE_RELOGIN = 1;
-    public final static int STAGE_GET_WEBPAGE = 2;
-    public final static int STAGE_PARSE = 3;
-    public final static int STAGE_DONE = 4;
     public final static int STAGE_REFRESH = 6;
     public final static String STAGE_ERROR_KEY = "ERROR_MSG";
     public final static String STAGE_DETAIL_KEY = "ERROR_DETAIL";
@@ -122,7 +120,6 @@ public class ThreadListFragment extends BaseFragment
         HiSettingsHelper.getInstance().setLastForumId(mForumId);
 
         setHasOptionsMenu(true);
-        mCallbacks = new ThreadListLoaderCallbacks();
         mMsgHandler = new Handler(new ThreadListMsgHandler());
     }
 
@@ -170,13 +167,6 @@ public class ThreadListFragment extends BaseFragment
                 return false;
             }
         });
-
-        if (mThreadListAdapter.getDataCount() == 0) {
-            loadingProgressBar.show();
-            mInloading = true;
-            getLoaderManager().initLoader(0, null, mCallbacks);
-            //getLoaderManager().restartLoader(0, bundle, mCallbacks).forceLoad();
-        }
     }
 
     @Override
@@ -186,7 +176,10 @@ public class ThreadListFragment extends BaseFragment
             EventBus.getDefault().register(this);
         if (!mInloading) {
             if (mThreadBeans.size() == 0) {
-                refresh();
+                loadingProgressBar.showNow();
+                mInloading = true;
+                ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
+                JobMgr.addJob(job);
             } else {
                 swipeLayout.setRefreshing(false);
                 loadingProgressBar.hide();
@@ -342,7 +335,6 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public void onDestroy() {
-        getLoaderManager().destroyLoader(0);
         super.onDestroy();
     }
 
@@ -357,7 +349,8 @@ public class ThreadListFragment extends BaseFragment
         hideFooter();
         mInloading = true;
         mMainFab.hide();
-        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+        ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
+        JobMgr.addJob(job);
     }
 
     @Override
@@ -380,9 +373,9 @@ public class ThreadListFragment extends BaseFragment
                 if ((visibleItemCount + mFirstVisibleItem) >= totalItemCount - 5) {
                     if (!mInloading) {
                         mPage++;
-                        showFooter();
                         mInloading = true;
-                        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                        ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
+                        JobMgr.addJob(job);
                     }
                 }
             }
@@ -426,108 +419,8 @@ public class ThreadListFragment extends BaseFragment
         }
     }
 
-    private class ThreadListLoaderCallbacks implements LoaderManager.LoaderCallbacks<ThreadListBean> {
-
-        @Override
-        public Loader<ThreadListBean> onCreateLoader(int arg0, Bundle bundle) {
-            if (mPage == 1 && !swipeLayout.isRefreshing())
-                loadingProgressBar.show();
-            return new ThreadListLoader(mCtx, mMsgHandler, mForumId, mPage);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<ThreadListBean> loader, ThreadListBean threads) {
-            mInloading = false;
-            swipeLayout.setRefreshing(false);
-            loadingProgressBar.hide();
-            hideFooter();
-
-            if (threads == null) {
-                if (mPage > 1) {
-                    mPage--;
-                }
-                return;
-            } else if (threads.count == 0) {
-
-                if (threads.parsed && mPage <= 5 && !HiSettingsHelper.getInstance().isShowStickThreads()) {
-                    mPage++;
-                    mInloading = true;
-                    getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
-                    if (HiSettingsHelper.getInstance().getMaxPostsInPage() < HiUtils.MAX_THREADS_IN_PAGE)
-                        Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                // Page load fail.
-                if (mPage > 1) {
-                    mPage--;
-                }
-
-                Message msgError = Message.obtain();
-                msgError.what = STAGE_ERROR;
-                Bundle b = new Bundle();
-                b.putString(STAGE_ERROR_KEY, "页面加载失败");
-                msgError.setData(b);
-                mMsgHandler.sendMessage(msgError);
-                return;
-            }
-
-            if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())
-                    && !TextUtils.isEmpty(threads.getUid())) {
-                HiSettingsHelper.getInstance().setUid(threads.getUid());
-                if (getActivity() != null)
-                    ((MainFrameActivity) getActivity()).updateAccountHeader();
-            }
-
-            if (mPage == 1) {
-                mThreadBeans.clear();
-                mThreadBeans.addAll(threads.threads);
-                mThreadListAdapter.setDatas(mThreadBeans);
-                mRecyclerView.scrollToPosition(0);
-            } else {
-                for (ThreadBean newthread : threads.threads) {
-                    boolean duplicate = false;
-                    for (int i = 0; i < mThreadBeans.size(); i++) {
-                        ThreadBean oldthread = mThreadBeans.get(i);
-                        if (newthread != null && newthread.getTid().equals(oldthread.getTid())) {
-                            duplicate = true;
-                            break;
-                        }
-                    }
-                    if (!duplicate) {
-                        mThreadBeans.add(newthread);
-                    }
-                }
-                mThreadListAdapter.setDatas(mThreadBeans);
-            }
-
-            if (!mDataReceived) {
-                mDataReceived = true;
-                mMainFab.show();
-            }
-            showNotification();
-
-            Message msgDone = Message.obtain();
-            msgDone.what = STAGE_DONE;
-            mMsgHandler.sendMessage(msgDone);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<ThreadListBean> arg0) {
-            mInloading = false;
-            swipeLayout.setRefreshing(false);
-            loadingProgressBar.hide();
-            hideFooter();
-        }
-
-    }
-
     private void hideFooter() {
         mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
-    }
-
-    private void showFooter() {
-        mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
     }
 
     private void showThreadListSettingsDialog() {
@@ -751,9 +644,10 @@ public class ThreadListFragment extends BaseFragment
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(PostEvent event) {
-
         if (!mSessionId.equals(event.mSessionId))
             return;
+
+        EventBus.getDefault().removeStickyEvent(event);
 
         String message = event.mMessage;
         PostBean postResult = event.mPostResult;
@@ -784,7 +678,6 @@ public class ThreadListFragment extends BaseFragment
                 Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
             }
         }
-        EventBus.getDefault().removeStickyEvent(event);
     }
 
     @SuppressWarnings("unused")
@@ -792,6 +685,83 @@ public class ThreadListFragment extends BaseFragment
     public void onEvent(NetworkReadyEvent event) {
         if (!mInloading && mThreadBeans.size() == 0)
             refresh();
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(ThreadListEvent event) {
+        if (!mSessionId.equals(event.mSessionId))
+            return;
+
+        EventBus.getDefault().removeStickyEvent(event);
+
+        ThreadListBean threads = event.mData;
+        if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
+            if (event.mPage != 1) {
+                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+            }
+            return;
+        }
+
+        mInloading = false;
+        swipeLayout.setRefreshing(false);
+        loadingProgressBar.hide();
+        hideFooter();
+
+        //error
+        if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
+            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
+            if (mPage > 1)
+                mPage--;
+
+            if (threads != null && threads.getCount() == 0) {
+                if (threads.isParsed() && mPage <= 5 && !HiSettingsHelper.getInstance().isShowStickThreads()) {
+                    mPage++;
+                    mInloading = true;
+                    ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
+                    JobMgr.addJob(job);
+                    if (HiSettingsHelper.getInstance().getMaxPostsInPage() < HiUtils.MAX_THREADS_IN_PAGE)
+                        Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
+                }
+            }
+            return;
+        }
+
+        //success
+        if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())
+                && !TextUtils.isEmpty(threads.getUid())) {
+            HiSettingsHelper.getInstance().setUid(threads.getUid());
+            if (getActivity() != null)
+                ((MainFrameActivity) getActivity()).updateAccountHeader();
+        }
+
+        if (mPage == 1) {
+            mThreadBeans.clear();
+            mThreadBeans.addAll(threads.getThreads());
+            mThreadListAdapter.setDatas(mThreadBeans);
+            mRecyclerView.scrollToPosition(0);
+        } else {
+            for (ThreadBean newthread : threads.getThreads()) {
+                boolean duplicate = false;
+                for (int i = 0; i < mThreadBeans.size(); i++) {
+                    ThreadBean oldthread = mThreadBeans.get(i);
+                    if (newthread != null && newthread.getTid().equals(oldthread.getTid())) {
+                        duplicate = true;
+                        break;
+                    }
+                }
+                if (!duplicate) {
+                    mThreadBeans.add(newthread);
+                }
+            }
+            mThreadListAdapter.setDatas(mThreadBeans);
+        }
+
+        if (!mDataReceived) {
+            mDataReceived = true;
+            mMainFab.show();
+        }
+        showNotification();
     }
 
 }
