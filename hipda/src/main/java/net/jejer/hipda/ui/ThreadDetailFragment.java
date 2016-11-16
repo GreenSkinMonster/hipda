@@ -201,6 +201,13 @@ public class ThreadDetailFragment extends BaseFragment {
                 mFloorOfPage = 0;
                 showOrLoadPage();
             }
+
+            @Override
+            public void atEnd() {
+                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+                mFloorOfPage = LAST_FLOOR;
+                refresh();
+            }
         });
 
         mLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.detail_loading);
@@ -249,7 +256,6 @@ public class ThreadDetailFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         if (savedInstanceState != null) {
             mCtx = getActivity();
         }
@@ -375,8 +381,8 @@ public class ThreadDetailFragment extends BaseFragment {
                 showPost("");
                 return true;
             case R.id.action_refresh_detail:
-                refresh();
                 mLoadingProgressBar.showNow();
+                refresh();
                 return true;
             case R.id.action_image_gallery:
                 startImageGallery(0);
@@ -412,13 +418,21 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     void setupFab() {
+        if (!mDataReceived) {
+            mMainFab.hide();
+        } else {
+            mMainFab.setEnabled(true);
+            mMainFab.show();
+        }
+
         mMainFab.setImageResource(R.drawable.ic_reply_white_24dp);
         mMainFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMainFab.hide();
                 quickReply.setVisibility(View.VISIBLE);
                 quickReply.bringToFront();
+                mMainFab.hide();
+                mMainFab.setEnabled(false);
                 (new Handler()).postDelayed(new Runnable() {
                     public void run() {
                         mEtReply.requestFocus();
@@ -668,7 +682,8 @@ public class ThreadDetailFragment extends BaseFragment {
         if (quickReply != null && quickReply.getVisibility() == View.VISIBLE) {
             mEtReply.setText("");
             quickReply.setVisibility(View.INVISIBLE);
-            ((MainFrameActivity) getActivity()).getMainFab().show();
+            mMainFab.setEnabled(true);
+            mMainFab.show();
             return true;
         }
         return false;
@@ -962,8 +977,9 @@ public class ThreadDetailFragment extends BaseFragment {
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(NetworkReadyEvent event) {
-        if (!mInloading && mDetailBeans.size() == 0)
+        if (!mInloading && mDetailBeans.size() == 0) {
             refresh();
+        }
     }
 
     @SuppressWarnings("unused")
@@ -1034,6 +1050,7 @@ public class ThreadDetailFragment extends BaseFragment {
             mLoadingProgressBar.hide();
             if (!mDataReceived) {
                 mDataReceived = true;
+                mMainFab.setEnabled(true);
                 mMainFab.show();
             }
             mDetailBeans = details.getAll();

@@ -22,6 +22,8 @@ import org.jsoup.nodes.Document;
 
 public class ThreadDetailJob extends BaseJob {
 
+    private final static int MIN_JOB_TIME_MS = 300;
+
     private Context mCtx;
     private String mTid;
     private String mGotoPostId;
@@ -52,6 +54,7 @@ public class ThreadDetailJob extends BaseJob {
 
     @Override
     public void onRun() throws Throwable {
+        long start = System.currentTimeMillis();
         DetailListBean data = null;
         int eventStatus = Constants.STATUS_SUCCESS;
         String eventMessage = "";
@@ -82,6 +85,11 @@ public class ThreadDetailJob extends BaseJob {
                 eventStatus = Constants.STATUS_FAIL;
                 eventMessage = networkError.getMessage();
             }
+        }
+
+        long delta = System.currentTimeMillis() - start;
+        if (delta < MIN_JOB_TIME_MS) {
+            Thread.sleep(MIN_JOB_TIME_MS - delta);
         }
 
         mEvent.mData = data;

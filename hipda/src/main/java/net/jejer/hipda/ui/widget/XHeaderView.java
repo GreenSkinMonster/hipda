@@ -43,7 +43,7 @@ public class XHeaderView extends RelativeLayout {
         mTitle = (TextView) findViewById(R.id.header_text);
     }
 
-    public void setState(int state) {
+    protected void setState(int state) {
         mState = state;
         switch (state) {
             case STATE_READY:
@@ -61,18 +61,18 @@ public class XHeaderView extends RelativeLayout {
         }
     }
 
-    public int getState() {
+    protected int getState() {
         return mState;
     }
 
-    public void setTopMargin(int margin) {
+    protected void setTopMargin(int margin) {
         if (margin < 0) return;
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mLayout.getLayoutParams();
         lp.topMargin = margin;
         mLayout.setLayoutParams(lp);
     }
 
-    public int getTopMargin() {
+    protected int getTopMargin() {
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mLayout.getLayoutParams();
         return lp.topMargin;
     }

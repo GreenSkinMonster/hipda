@@ -64,13 +64,19 @@ public class XRecyclerView extends RecyclerView {
         mHeaderView.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                loadPrevious();
+                if (mHeaderView.getState() == XHeaderView.STATE_READY) {
+                    loadPrevious();
+                }
             }
         });
         mFooterView.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                loadNext();
+                if (mFooterView.getState() == XFooterView.STATE_READY) {
+                    loadNext();
+                } else if (mFooterView.getState() == XFooterView.STATE_END) {
+                    atEnd();
+                }
             }
         });
     }
@@ -235,14 +241,20 @@ public class XRecyclerView extends RecyclerView {
     }
 
     private void loadPrevious() {
-        if (XHeaderView.STATE_READY == mHeaderView.getState() && null != mListener) {
+        if (null != mListener) {
             mListener.onLoadPrevious();
         }
     }
 
     private void loadNext() {
-        if (XFooterView.STATE_READY == mFooterView.getState() && null != mListener) {
+        if (null != mListener) {
             mListener.onLoadNext();
+        }
+    }
+
+    private void atEnd() {
+        if (null != mListener) {
+            mListener.atEnd();
         }
     }
 
@@ -254,5 +266,7 @@ public class XRecyclerView extends RecyclerView {
         void onLoadPrevious();
 
         void onLoadNext();
+
+        void atEnd();
     }
 }

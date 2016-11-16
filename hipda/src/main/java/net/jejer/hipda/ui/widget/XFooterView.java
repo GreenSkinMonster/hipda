@@ -45,7 +45,7 @@ public class XFooterView extends RelativeLayout {
         mHintView = (TextView) mLayout.findViewById(R.id.footer_text);
     }
 
-    public void setState(int state) {
+    protected void setState(int state) {
         if (state == mState) return;
         switch (state) {
             case STATE_READY:
@@ -68,18 +68,18 @@ public class XFooterView extends RelativeLayout {
         mState = state;
     }
 
-    public int getState() {
+    protected int getState() {
         return mState;
     }
 
-    public void setBottomMargin(int margin) {
+    protected void setBottomMargin(int margin) {
         if (margin < 0) return;
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mLayout.getLayoutParams();
         lp.bottomMargin = margin;
         mLayout.setLayoutParams(lp);
     }
 
-    public int getBottomMargin() {
+    protected int getBottomMargin() {
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mLayout.getLayoutParams();
         return lp.bottomMargin;
     }

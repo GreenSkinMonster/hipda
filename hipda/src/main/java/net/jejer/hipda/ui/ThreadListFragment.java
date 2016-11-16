@@ -190,7 +190,7 @@ public class ThreadListFragment extends BaseFragment
             } else {
                 swipeLayout.setRefreshing(false);
                 loadingProgressBar.hide();
-                hideListViewFooter();
+                hideFooter();
             }
         }
     }
@@ -354,7 +354,7 @@ public class ThreadListFragment extends BaseFragment
     private void refresh() {
         mPage = 1;
         mRecyclerView.scrollToPosition(0);
-        hideListViewFooter();
+        hideFooter();
         mInloading = true;
         mMainFab.hide();
         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
@@ -380,7 +380,7 @@ public class ThreadListFragment extends BaseFragment
                 if ((visibleItemCount + mFirstVisibleItem) >= totalItemCount - 5) {
                     if (!mInloading) {
                         mPage++;
-                        showListViewFooter();
+                        showFooter();
                         mInloading = true;
                         getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
                     }
@@ -440,7 +440,7 @@ public class ThreadListFragment extends BaseFragment
             mInloading = false;
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
-            hideListViewFooter();
+            hideFooter();
 
             if (threads == null) {
                 if (mPage > 1) {
@@ -517,16 +517,16 @@ public class ThreadListFragment extends BaseFragment
             mInloading = false;
             swipeLayout.setRefreshing(false);
             loadingProgressBar.hide();
-            hideListViewFooter();
+            hideFooter();
         }
 
     }
 
-    private void hideListViewFooter() {
+    private void hideFooter() {
         mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
     }
 
-    private void showListViewFooter() {
+    private void showFooter() {
         mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
     }
 
