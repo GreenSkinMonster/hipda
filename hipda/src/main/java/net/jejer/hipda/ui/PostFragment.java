@@ -82,6 +82,8 @@ public class PostFragment extends BaseFragment {
     public static final String ARG_TEXT_KEY = "text";
     public static final String ARG_MODE_KEY = "mode";
 
+    public static final String BUNDLE_POSISTION_KEY = "content_position";
+
     private String mFid;
     private String mTid;
     private String mPid;
@@ -291,6 +293,20 @@ public class PostFragment extends BaseFragment {
         if (mPrePostAsyncTask != null)
             mPrePostAsyncTask.cancel(true);
         super.onDestroy();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(BUNDLE_POSISTION_KEY, mContentPosition);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mContentPosition = savedInstanceState.getInt(BUNDLE_POSISTION_KEY, -1);
+        }
     }
 
     @Override
