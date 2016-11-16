@@ -3,12 +3,10 @@ package net.jejer.hipda.ui;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.LoaderManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -31,10 +29,12 @@ import com.vanniktech.emoji.EmojiEditText;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
-import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.job.JobMgr;
+import net.jejer.hipda.job.SimpleListEvent;
+import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SmsAdapter;
@@ -43,6 +43,10 @@ import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +62,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     private String mUid;
     private SmsAdapter mSmsAdapter;
     private List<SimpleListItemBean> mSmsBeans = new ArrayList<>();
-    private SmsListLoaderCallbacks mLoaderCallbacks;
     private RecyclerView mRecyclerView;
 
     private EmojiEditText mEtSms;
@@ -83,7 +86,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
         RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(), new OnItemClickListener());
         mSmsAdapter = new SmsAdapter(this, new AvatarOnClickListener(), itemClickListener);
-        mLoaderCallbacks = new SmsListLoaderCallbacks();
     }
 
     @Override
@@ -137,8 +139,22 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         getLoaderManager().destroyLoader(0);
         if (mSmsAdapter.getItemCount() == 0) {
             loadingProgressBar.show();
-            getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
+            SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, SimpleListJob.TYPE_SMS_DETAIL, 1, mUid);
+            JobMgr.addJob(job);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Override
@@ -167,7 +183,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     private void showClearSmsDialog() {
@@ -229,7 +244,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
                 public void onFinish() {
                     try {
-                        getLoaderManager().restartLoader(0, null, mLoaderCallbacks).forceLoad();
+                        SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, SimpleListJob.TYPE_SMS_DETAIL, 1, mUid);
+                        JobMgr.addJob(job);
                     } catch (Exception ignored) {
 
                     }
@@ -239,33 +255,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
         } else {
             postProgressDialog.dismissError(message);
-        }
-    }
-
-    public class SmsListLoaderCallbacks implements LoaderManager.LoaderCallbacks<SimpleListBean> {
-
-        @Override
-        public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-            return new SimpleListLoader(SmsFragment.this.getActivity(), SimpleListLoader.TYPE_SMS_DETAIL, 1, mUid);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<SimpleListBean> loader, SimpleListBean list) {
-            loadingProgressBar.hide();
-
-            if (list == null || list.getCount() == 0) {
-                Toast.makeText(SmsFragment.this.getActivity(),
-                        "没有短消息", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            mSmsBeans.clear();
-            mSmsBeans.addAll(list.getAll());
-            mSmsAdapter.setDatas(mSmsBeans);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<SimpleListBean> arg0) {
         }
     }
 
@@ -310,5 +299,38 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     public void scrollToTop() {
         if (mSmsAdapter != null && mSmsAdapter.getItemCount() > 0)
             mRecyclerView.scrollToPosition(0);
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(SimpleListEvent event) {
+        if (!mSessionId.equals(event.mSessionId))
+            return;
+
+        EventBus.getDefault().removeStickyEvent(event);
+
+        if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
+            return;
+        }
+
+        SimpleListBean list = event.mData;
+        loadingProgressBar.hide();
+
+        //error
+        if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
+            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
+            return;
+        }
+
+        //success
+        if (list == null || list.getCount() == 0) {
+            Toast.makeText(SmsFragment.this.getActivity(),
+                    "没有短消息", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        mSmsBeans.clear();
+        mSmsBeans.addAll(list.getAll());
+        mSmsAdapter.setDatas(mSmsBeans);
     }
 }

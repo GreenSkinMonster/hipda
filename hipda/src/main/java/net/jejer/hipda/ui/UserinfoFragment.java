@@ -1,8 +1,6 @@
 package net.jejer.hipda.ui;
 
 import android.app.AlertDialog;
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -26,12 +24,14 @@ import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
-import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.bean.UserInfoBean;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.job.JobMgr;
+import net.jejer.hipda.job.SimpleListEvent;
+import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SimpleListAdapter;
@@ -42,6 +42,10 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +71,6 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
     private int mFirstVisibleItem = 0;
 
     private Button mButton;
-    private LoaderManager.LoaderCallbacks<SimpleListBean> mCallbacks;
 
     private boolean isShowThreads;
     private boolean isThreadsLoaded;
@@ -94,9 +97,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         }
 
         RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(), new OnItemClickListener());
-        mSimpleListAdapter = new SimpleListAdapter(this, SimpleListLoader.TYPE_SEARCH_USER_THREADS, itemClickListener);
-        mCallbacks = new SearchThreadByUidLoaderCallbacks();
-
+        mSimpleListAdapter = new SimpleListAdapter(this, SimpleListJob.TYPE_SEARCH_USER_THREADS, itemClickListener);
     }
 
     @Override
@@ -149,7 +150,11 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                     mRecyclerView.setVisibility(View.VISIBLE);
                     if (!isThreadsLoaded) {
                         mButton.setEnabled(false);
-                        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                        SimpleListJob job = new SimpleListJob(UserinfoFragment.this.getActivity(), mSessionId,
+                                SimpleListJob.TYPE_SEARCH_USER_THREADS,
+                                mPage,
+                                TextUtils.isEmpty(mSearchIdUrl) ? mUid : mSearchIdUrl);
+                        JobMgr.addJob(job);
                     }
                 } else {
                     mButton.setText("搜索帖子");
@@ -162,6 +167,18 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -267,7 +284,11 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                         if (mPage < mMaxPage) {
                             mPage++;
                             mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
-                            getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                            SimpleListJob job = new SimpleListJob(UserinfoFragment.this.getActivity(), mSessionId,
+                                    SimpleListJob.TYPE_SEARCH_USER_THREADS,
+                                    mPage,
+                                    TextUtils.isEmpty(mSearchIdUrl) ? mUid : mSearchIdUrl);
+                            JobMgr.addJob(job);
                         } else {
                             mRecyclerView.setFooterState(XFooterView.STATE_END);
                             //Toast.makeText(getActivity(), "已经是最后一页，共 " + mMaxPage + " 页", Toast.LENGTH_SHORT).show();
@@ -304,48 +325,6 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         }
     }
 
-
-    public class SearchThreadByUidLoaderCallbacks implements LoaderManager.LoaderCallbacks<SimpleListBean> {
-
-        @Override
-        public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-            Toast.makeText(getActivity(),
-                    "正在加载第 " + mPage + " 页"
-                            + (!TextUtils.isEmpty(mSearchIdUrl) ? "，共 " + mMaxPage + " 页" : ""),
-                    Toast.LENGTH_SHORT).show();
-            return new SimpleListLoader(UserinfoFragment.this.getActivity(),
-                    SimpleListLoader.TYPE_SEARCH_USER_THREADS,
-                    mPage,
-                    TextUtils.isEmpty(mSearchIdUrl) ? mUid : mSearchIdUrl);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<SimpleListBean> loader,
-                                   SimpleListBean list) {
-            mInloading = false;
-
-            if (mButton != null)
-                mButton.setEnabled(true);
-
-            if (list == null || list.getCount() == 0) {
-                Toast.makeText(getActivity(), "帖子加载失败", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            mSearchIdUrl = list.getSearchIdUrl();
-            mMaxPage = list.getMaxPage();
-            mSimpleListItemBeans.addAll(list.getAll());
-            mSimpleListAdapter.setDatas(mSimpleListItemBeans);
-            isThreadsLoaded = true;
-        }
-
-        @Override
-        public void onLoaderReset(Loader<SimpleListBean> arg0) {
-            mInloading = false;
-        }
-
-    }
-
     @Override
     public void onSmsPrePost() {
         smsPostProgressDialog = HiProgressDialog.show(getActivity(), "正在发送...");
@@ -360,6 +339,36 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         } else {
             smsPostProgressDialog.dismissError(message);
         }
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(SimpleListEvent event) {
+        if (!mSessionId.equals(event.mSessionId))
+            return;
+
+        EventBus.getDefault().removeStickyEvent(event);
+
+        if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
+            return;
+        }
+
+        SimpleListBean list = event.mData;
+        mInloading = false;
+
+        if (mButton != null)
+            mButton.setEnabled(true);
+
+        if (list == null || list.getCount() == 0) {
+            Toast.makeText(getActivity(), "帖子加载失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mSearchIdUrl = list.getSearchIdUrl();
+        mMaxPage = list.getMaxPage();
+        mSimpleListItemBeans.addAll(list.getAll());
+        mSimpleListAdapter.setDatas(mSimpleListItemBeans);
+        isThreadsLoaded = true;
     }
 
 }

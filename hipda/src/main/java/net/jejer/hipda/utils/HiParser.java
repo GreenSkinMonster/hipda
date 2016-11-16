@@ -3,10 +3,10 @@ package net.jejer.hipda.utils;
 import android.content.Context;
 import android.text.TextUtils;
 
-import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.bean.UserInfoBean;
+import net.jejer.hipda.job.SimpleListJob;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,23 +22,23 @@ public class HiParser {
         new HiParserThreadList.parseNotifyRunnable(ctx, doc).run();
 
         switch (type) {
-            case SimpleListLoader.TYPE_MYREPLY:
+            case SimpleListJob.TYPE_MYREPLY:
                 return parseReplyList(ctx, doc);
-            case SimpleListLoader.TYPE_MYPOST:
+            case SimpleListJob.TYPE_MYPOST:
                 return parseMyPost(ctx, doc);
-            case SimpleListLoader.TYPE_SMS:
+            case SimpleListJob.TYPE_SMS:
                 return parseSMS(doc);
-            case SimpleListLoader.TYPE_THREAD_NOTIFY:
+            case SimpleListJob.TYPE_THREAD_NOTIFY:
                 return parseNotify(doc);
-            case SimpleListLoader.TYPE_SMS_DETAIL:
+            case SimpleListJob.TYPE_SMS_DETAIL:
                 return parseSmsDetail(doc);
-            case SimpleListLoader.TYPE_SEARCH:
+            case SimpleListJob.TYPE_SEARCH:
                 return parseSearch(doc);
-            case SimpleListLoader.TYPE_SEARCH_USER_THREADS:
+            case SimpleListJob.TYPE_SEARCH_USER_THREADS:
                 return parseSearch(doc);
-            case SimpleListLoader.TYPE_FAVORITES:
+            case SimpleListJob.TYPE_FAVORITES:
                 return parseFavorites(doc);
-            case SimpleListLoader.TYPE_ATTENTION:
+            case SimpleListJob.TYPE_ATTENTION:
                 return parseFavorites(doc);
         }
 
@@ -716,10 +716,7 @@ public class HiParser {
             if (i >= 2)
                 break;
         }
-
-
         info.setDetail(sb.toString());
-
         return info;
     }
 }

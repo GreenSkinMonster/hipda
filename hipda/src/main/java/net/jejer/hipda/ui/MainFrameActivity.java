@@ -55,10 +55,10 @@ import com.vanniktech.emoji.EmojiPopup;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginEvent;
 import net.jejer.hipda.async.NetworkReadyEvent;
-import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.utils.ColorHelper;
@@ -519,35 +519,35 @@ public class MainFrameActivity extends AppCompatActivity {
             switch ((int) iDrawerItem.getIdentifier()) {
                 case Constants.DRAWER_SEARCH:
                     Bundle searchBundle = new Bundle();
-                    searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SEARCH);
+                    searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_SEARCH);
                     SimpleListFragment searchFragment = new SimpleListFragment();
                     searchFragment.setArguments(searchBundle);
                     FragmentUtils.showFragment(getFragmentManager(), searchFragment, true);
                     break;
                 case Constants.DRAWER_MYPOST:
                     Bundle postsBundle = new Bundle();
-                    postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYPOST);
+                    postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_MYPOST);
                     SimpleListFragment postsFragment = new SimpleListFragment();
                     postsFragment.setArguments(postsBundle);
                     FragmentUtils.showFragment(getFragmentManager(), postsFragment, true);
                     break;
                 case Constants.DRAWER_MYREPLY:
                     Bundle replyBundle = new Bundle();
-                    replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_MYREPLY);
+                    replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_MYREPLY);
                     SimpleListFragment replyFragment = new SimpleListFragment();
                     replyFragment.setArguments(replyBundle);
                     FragmentUtils.showFragment(getFragmentManager(), replyFragment, true);
                     break;
                 case Constants.DRAWER_FAVORITES:
                     Bundle favBundle = new Bundle();
-                    favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_FAVORITES);
+                    favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_FAVORITES);
                     SimpleListFragment favFragment = new SimpleListFragment();
                     favFragment.setArguments(favBundle);
                     FragmentUtils.showFragment(getFragmentManager(), favFragment, true);
                     break;
                 case Constants.DRAWER_HISTORIES:
                     Bundle hisBundle = new Bundle();
-                    hisBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_HISTORIES);
+                    hisBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_HISTORIES);
                     SimpleListFragment hisFragment = new SimpleListFragment();
                     hisFragment.setArguments(hisBundle);
                     FragmentUtils.showFragment(getFragmentManager(), hisFragment, true);

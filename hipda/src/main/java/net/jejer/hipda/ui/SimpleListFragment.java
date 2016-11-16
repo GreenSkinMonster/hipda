@@ -2,9 +2,7 @@ package net.jejer.hipda.ui;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Loader;
 import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -35,11 +33,12 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.PostSmsAsyncTask;
-import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.SimpleListEvent;
+import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SimpleListAdapter;
 import net.jejer.hipda.ui.widget.SimpleDivider;
@@ -69,7 +68,6 @@ public class SimpleListFragment extends BaseFragment
     private XRecyclerView mRecyclerView;
     private SimpleListAdapter mSimpleListAdapter;
     private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
-    private LoaderManager.LoaderCallbacks<SimpleListBean> mCallbacks;
     private String mQuery = "";
     private SearchView searchView = null;
     private SwipeRefreshLayout swipeLayout;
@@ -88,8 +86,6 @@ public class SimpleListFragment extends BaseFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
-
         setHasOptionsMenu(true);
 
         if (getArguments().containsKey(ARG_TYPE)) {
@@ -98,14 +94,19 @@ public class SimpleListFragment extends BaseFragment
 
         RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(), new OnItemClickListener());
         mSimpleListAdapter = new SimpleListAdapter(this, mType, itemClickListener);
-
-        mCallbacks = new SimpleThreadListLoaderCallbacks();
     }
 
     @Override
-    public void onDestroy() {
+    public void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
         EventBus.getDefault().unregister(this);
-        super.onDestroy();
+        super.onPause();
     }
 
     @Override
@@ -140,20 +141,21 @@ public class SimpleListFragment extends BaseFragment
         mRecyclerView.setAdapter(mSimpleListAdapter);
 
         switch (mType) {
-            case SimpleListLoader.TYPE_MYREPLY:
-            case SimpleListLoader.TYPE_MYPOST:
-            case SimpleListLoader.TYPE_SMS:
-            case SimpleListLoader.TYPE_THREAD_NOTIFY:
-            case SimpleListLoader.TYPE_FAVORITES:
-            case SimpleListLoader.TYPE_ATTENTION:
-            case SimpleListLoader.TYPE_HISTORIES:
+            case SimpleListJob.TYPE_MYREPLY:
+            case SimpleListJob.TYPE_MYPOST:
+            case SimpleListJob.TYPE_SMS:
+            case SimpleListJob.TYPE_THREAD_NOTIFY:
+            case SimpleListJob.TYPE_FAVORITES:
+            case SimpleListJob.TYPE_ATTENTION:
+            case SimpleListJob.TYPE_HISTORIES:
                 if (mSimpleListItemBeans.size() == 0) {
                     mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
                     loadingProgressBar.show();
-                    getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                    SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mQuery);
+                    JobMgr.addJob(job);
                 }
                 break;
-            case SimpleListLoader.TYPE_SEARCH:
+            case SimpleListJob.TYPE_SEARCH:
                 break;
         }
     }
@@ -164,39 +166,39 @@ public class SimpleListFragment extends BaseFragment
 
         setActionBarDisplayHomeAsUpEnabled(true);
         switch (mType) {
-            case SimpleListLoader.TYPE_MYREPLY:
+            case SimpleListJob.TYPE_MYREPLY:
                 setActionBarTitle(R.string.title_drawer_myreply);
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
-            case SimpleListLoader.TYPE_MYPOST:
+            case SimpleListJob.TYPE_MYPOST:
                 setActionBarTitle(R.string.title_drawer_mypost);
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
-            case SimpleListLoader.TYPE_SMS:
+            case SimpleListJob.TYPE_SMS:
                 setActionBarTitle(R.string.title_drawer_sms);
                 inflater.inflate(R.menu.menu_sms_list, menu);
                 menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_insert_comment).actionBar().color(Color.WHITE));
                 break;
-            case SimpleListLoader.TYPE_THREAD_NOTIFY:
+            case SimpleListJob.TYPE_THREAD_NOTIFY:
                 setActionBarTitle(R.string.title_drawer_notify);
 //                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
-            case SimpleListLoader.TYPE_FAVORITES:
+            case SimpleListJob.TYPE_FAVORITES:
                 setActionBarTitle(R.string.title_my_favorites);
                 inflater.inflate(R.menu.menu_favorites, menu);
                 mFavoritesMenuItem = menu.getItem(0);
                 mFavoritesMenuItem.setTitle(R.string.action_attention);
                 break;
-            case SimpleListLoader.TYPE_HISTORIES:
+            case SimpleListJob.TYPE_HISTORIES:
                 setActionBarTitle(R.string.title_drawer_histories);
                 break;
-            case SimpleListLoader.TYPE_ATTENTION:
+            case SimpleListJob.TYPE_ATTENTION:
                 setActionBarTitle(R.string.title_my_attention);
                 inflater.inflate(R.menu.menu_favorites, menu);
                 mFavoritesMenuItem = menu.getItem(0);
                 mFavoritesMenuItem.setTitle(R.string.action_favorites);
                 break;
-            case SimpleListLoader.TYPE_SEARCH:
+            case SimpleListJob.TYPE_SEARCH:
                 setActionBarTitle(R.string.title_drawer_search);
                 mPrefixSearchFullText = getActivity().getResources().getString(R.string.prefix_search_fulltext);
 
@@ -266,11 +268,11 @@ public class SimpleListFragment extends BaseFragment
                 loadingProgressBar.showNow();
                 if (mFavoritesMenuItem.getTitle().toString().equals(getString(R.string.action_attention))) {
                     mFavoritesMenuItem.setTitle(R.string.action_favorites);
-                    mType = SimpleListLoader.TYPE_ATTENTION;
+                    mType = SimpleListJob.TYPE_ATTENTION;
                     setActionBarTitle(R.string.title_my_attention);
                 } else {
                     mFavoritesMenuItem.setTitle(R.string.action_attention);
-                    mType = SimpleListLoader.TYPE_FAVORITES;
+                    mType = SimpleListJob.TYPE_FAVORITES;
                     setActionBarTitle(R.string.title_my_favorites);
                 }
                 mSimpleListItemBeans.clear();
@@ -290,7 +292,8 @@ public class SimpleListFragment extends BaseFragment
     private void refresh() {
         mMaxPage = 0;
         mPage = 1;
-        getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+        SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mQuery);
+        JobMgr.addJob(job);
     }
 
     @Override
@@ -324,7 +327,8 @@ public class SimpleListFragment extends BaseFragment
                         if (mPage < mMaxPage) {
                             mPage++;
                             mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
-                            getLoaderManager().restartLoader(0, null, mCallbacks).forceLoad();
+                            SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mQuery);
+                            JobMgr.addJob(job);
                         } else {
                             mRecyclerView.setFooterState(XFooterView.STATE_END);
 //                            if (mMaxPage > 0)
@@ -350,7 +354,7 @@ public class SimpleListFragment extends BaseFragment
             if (listFragment != null)
                 listFragment.setHasOptionsMenu(false);
 
-            if (mType == SimpleListLoader.TYPE_SMS) {
+            if (mType == SimpleListJob.TYPE_SMS) {
                 FragmentUtils.showSmsDetail(getFragmentManager(), false, item.getUid(), item.getAuthor());
             } else {
                 FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
@@ -365,7 +369,7 @@ public class SimpleListFragment extends BaseFragment
                 listFragment.setHasOptionsMenu(false);
 
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
-            if (mType == SimpleListLoader.TYPE_SMS) {
+            if (mType == SimpleListJob.TYPE_SMS) {
             } else {
                 String postId = "";
                 int page = -1;
@@ -383,69 +387,6 @@ public class SimpleListFragment extends BaseFragment
         @Override
         public void onDoubleTap(View view, int position) {
         }
-    }
-
-    public class SimpleThreadListLoaderCallbacks implements LoaderManager.LoaderCallbacks<SimpleListBean> {
-
-        @Override
-        public Loader<SimpleListBean> onCreateLoader(int arg0, Bundle arg1) {
-            if (!swipeLayout.isRefreshing())
-                swipeLayout.setEnabled(false);
-
-            return new SimpleListLoader(getActivity(), mType, mPage, mQuery);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<SimpleListBean> loader, SimpleListBean list) {
-            swipeLayout.setEnabled(true);
-            swipeLayout.setRefreshing(false);
-            loadingProgressBar.hide();
-            mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
-            mInloading = false;
-
-            if (list == null || list.getCount() == 0) {
-                if (mPage == 1) {
-                    mSimpleListItemBeans.clear();
-                    mSimpleListAdapter.setDatas(mSimpleListItemBeans);
-                }
-                Toast.makeText(SimpleListFragment.this.getActivity(),
-                        "没有数据", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if (mType == SimpleListLoader.TYPE_FAVORITES
-                    || mType == SimpleListLoader.TYPE_ATTENTION) {
-                String item = mType == SimpleListLoader.TYPE_FAVORITES ? FavoriteHelper.TYPE_FAVORITE : FavoriteHelper.TYPE_ATTENTION;
-                Set<String> tids = new HashSet<>();
-                List<SimpleListItemBean> beans = list.getAll();
-                for (SimpleListItemBean itemBean : beans) {
-                    tids.add(itemBean.getTid());
-                }
-                FavoriteHelper.getInstance().addToCahce(item, tids);
-            }
-
-            if (mType == SimpleListLoader.TYPE_SMS)
-                NotificationMgr.getCurrentNotification().clearSmsCount();
-            if (mType == SimpleListLoader.TYPE_THREAD_NOTIFY)
-                NotificationMgr.getCurrentNotification().setThreadCount(0);
-
-            if (mPage == 1) {
-                mSimpleListItemBeans.clear();
-            }
-            mMaxPage = list.getMaxPage();
-            mSimpleListItemBeans.addAll(list.getAll());
-            mSimpleListAdapter.setDatas(mSimpleListItemBeans);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<SimpleListBean> arg0) {
-            swipeLayout.setEnabled(true);
-            swipeLayout.setRefreshing(false);
-            loadingProgressBar.hide();
-            mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
-            mInloading = false;
-        }
-
     }
 
     public static class SearchSuggestionsAdapter extends SimpleCursorAdapter {
@@ -543,9 +484,66 @@ public class SimpleListFragment extends BaseFragment
     }
 
     @SuppressWarnings("unused")
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(SimpleListEvent event) {
-        UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
+        if (!mSessionId.equals(event.mSessionId))
+            return;
+
+        EventBus.getDefault().removeStickyEvent(event);
+
+        SimpleListBean list = event.mData;
+        if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
+            if (event.mPage != 1) {
+                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+            }
+            return;
+        }
+
+        swipeLayout.setEnabled(true);
+        swipeLayout.setRefreshing(false);
+        loadingProgressBar.hide();
+        mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
+        mInloading = false;
+
+        //error
+        if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
+            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
+            return;
+        }
+
+        if (list == null || list.getCount() == 0) {
+            if (mPage == 1) {
+                mSimpleListItemBeans.clear();
+                mSimpleListAdapter.setDatas(mSimpleListItemBeans);
+            }
+            Toast.makeText(SimpleListFragment.this.getActivity(),
+                    "没有数据", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        //success
+        if (mType == SimpleListJob.TYPE_FAVORITES
+                || mType == SimpleListJob.TYPE_ATTENTION) {
+            String item = mType == SimpleListJob.TYPE_FAVORITES ? FavoriteHelper.TYPE_FAVORITE : FavoriteHelper.TYPE_ATTENTION;
+            Set<String> tids = new HashSet<>();
+            List<SimpleListItemBean> beans = list.getAll();
+            for (SimpleListItemBean itemBean : beans) {
+                tids.add(itemBean.getTid());
+            }
+            FavoriteHelper.getInstance().addToCahce(item, tids);
+        }
+
+        if (mType == SimpleListJob.TYPE_SMS)
+            NotificationMgr.getCurrentNotification().clearSmsCount();
+        if (mType == SimpleListJob.TYPE_THREAD_NOTIFY)
+            NotificationMgr.getCurrentNotification().setThreadCount(0);
+
+        if (mPage == 1) {
+            mSimpleListItemBeans.clear();
+        }
+        mMaxPage = list.getMaxPage();
+        mSimpleListItemBeans.addAll(list.getAll());
+        mSimpleListAdapter.setDatas(mSimpleListItemBeans);
     }
 
     @SuppressWarnings("unused")

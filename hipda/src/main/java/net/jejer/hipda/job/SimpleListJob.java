@@ -1,15 +1,15 @@
-package net.jejer.hipda.async;
+package net.jejer.hipda.job;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.FavoriteHelper;
+import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.db.History;
 import net.jejer.hipda.db.HistoryDao;
-import net.jejer.hipda.job.SimpleListEvent;
 import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
@@ -25,7 +25,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
-public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
+/**
+ * Created by GreenSkinMonster on 2016-11-16.
+ */
+
+public class SimpleListJob extends BaseJob {
+
     public static final int TYPE_MYREPLY = 0;
     public static final int TYPE_MYPOST = 1;
     public static final int TYPE_SEARCH = 2;
@@ -41,29 +46,37 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
     private int mType;
     private int mPage = 1;
     private String mExtra = "";
-    private SimpleListBean data;
 
-    public SimpleListLoader(Context context, int type, int page, String extra) {
-        super(context);
+    private SimpleListEvent mEvent;
+
+    public SimpleListJob(Context context, String sessionId, int type, int page, String extra) {
+        super(sessionId);
         mCtx = context;
         mType = type;
         mPage = page;
         mExtra = extra;
+
+        mEvent = new SimpleListEvent();
+        mEvent.mSessionId = mSessionId;
+        mEvent.mPage = page;
+        mEvent.mType = mType;
+        mEvent.mExtra = mExtra;
     }
 
     @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
-        if (data != null) {
-            deliverResult(data);
-        }
-        if (data == null || takeContentChanged()) {
-            forceLoad();
-        }
+    public void onAdded() {
+        mEvent.mStatus = Constants.STATUS_IN_PROGRESS;
+        EventBus.getDefault().postSticky(mEvent);
     }
 
     @Override
-    public SimpleListBean loadInBackground() {
+    public void onRun() throws Throwable {
+        SimpleListBean data = null;
+
+        int eventStatus = Constants.STATUS_SUCCESS;
+        String eventMessage = "";
+        String eventDetail = "";
+
         if (mType == TYPE_HISTORIES) {
             data = new SimpleListBean();
             List<History> histories = HistoryDao.getHistories();
@@ -80,33 +93,40 @@ public class SimpleListLoader extends AsyncTaskLoader<SimpleListBean> {
                 bean.setForum(history.getUsername());
                 data.add(bean);
             }
-            return data;
-        }
-
-        for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
-            try {
-                String resp = fetchSimpleList(mType);
-                if (resp != null) {
+        } else {
+            for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
+                try {
+                    String resp = fetchSimpleList(mType);
                     if (!LoginHelper.checkLoggedin(mCtx, resp)) {
                         int status = new LoginHelper(mCtx, null).login();
                         if (status == Constants.STATUS_FAIL_ABORT) {
+                            eventStatus = Constants.STATUS_FAIL_ABORT;
+                            eventMessage = "请重新登录";
                             break;
                         }
                     } else {
                         Document doc = Jsoup.parse(resp);
                         data = HiParser.parseSimpleList(mCtx, mType, doc);
-                        return data;
+                        break;
                     }
+                } catch (Exception e) {
+                    NetworkError message = OkHttpHelper.getErrorMessage(e);
+                    eventStatus = Constants.STATUS_FAIL;
+                    eventMessage = message.getMessage();
+                    eventDetail = message.getDetail();
                 }
-            } catch (Exception e) {
-                SimpleListEvent event = new SimpleListEvent();
-                NetworkError message = OkHttpHelper.getErrorMessage(e);
-                event.mMessage = message.getMessage();
-                event.mDetail = message.getDetail();
-                EventBus.getDefault().post(event);
             }
         }
-        return null;
+
+        mEvent.mData = data;
+        mEvent.mStatus = eventStatus;
+        mEvent.mMessage = eventMessage;
+        mEvent.mDetail = eventDetail;
+        EventBus.getDefault().postSticky(mEvent);
+    }
+
+    @Override
+    protected void onCancel() {
     }
 
     private String fetchSimpleList(int type) throws Exception {

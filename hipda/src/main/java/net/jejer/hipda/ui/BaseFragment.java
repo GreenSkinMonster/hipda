@@ -111,8 +111,7 @@ public abstract class BaseFragment extends Fragment {
     public boolean isAppBarCollapsible() {
         return this instanceof ThreadListFragment
                 || this instanceof ThreadDetailFragment
-                || this instanceof SimpleListFragment
-                || this instanceof SmsFragment;
+                || this instanceof SimpleListFragment;
     }
 
     @Override

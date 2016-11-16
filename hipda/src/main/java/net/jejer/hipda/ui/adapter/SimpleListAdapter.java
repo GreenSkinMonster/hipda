@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.SimpleListLoader;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HtmlCompat;
@@ -59,7 +59,7 @@ public class SimpleListAdapter extends BaseRvAdapter<SimpleListItemBean> {
             holder.tv_info.setVisibility(View.GONE);
         } else {
             holder.tv_info.setVisibility(View.VISIBLE);
-            if (mType == SimpleListLoader.TYPE_THREAD_NOTIFY)
+            if (mType == SimpleListJob.TYPE_THREAD_NOTIFY)
                 holder.tv_info.setText(HtmlCompat.fromHtml(item.getInfo()));
             else
                 holder.tv_info.setText(item.getInfo());
@@ -77,11 +77,11 @@ public class SimpleListAdapter extends BaseRvAdapter<SimpleListItemBean> {
         }
 
         if (HiSettingsHelper.getInstance().isLoadAvatar()
-                && mType != SimpleListLoader.TYPE_SEARCH_USER_THREADS
-                && mType != SimpleListLoader.TYPE_FAVORITES
-                && mType != SimpleListLoader.TYPE_ATTENTION
-                && mType != SimpleListLoader.TYPE_MYPOST
-                && mType != SimpleListLoader.TYPE_MYREPLY) {
+                && mType != SimpleListJob.TYPE_SEARCH_USER_THREADS
+                && mType != SimpleListJob.TYPE_FAVORITES
+                && mType != SimpleListJob.TYPE_ATTENTION
+                && mType != SimpleListJob.TYPE_MYPOST
+                && mType != SimpleListJob.TYPE_MYREPLY) {
             holder.iv_avatar.setVisibility(View.VISIBLE);
             GlideHelper.loadAvatar(mFragment, holder.iv_avatar, item.getAvatarUrl());
         } else {

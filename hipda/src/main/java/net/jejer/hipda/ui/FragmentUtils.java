@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HttpUtils;
@@ -185,7 +185,7 @@ public class FragmentUtils {
 
     public static void showThreadNotify(FragmentManager fragmentManager, boolean directOpen) {
         Bundle notifyBundle = new Bundle();
-        notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_THREAD_NOTIFY);
+        notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_THREAD_NOTIFY);
         SimpleListFragment fragment = new SimpleListFragment();
         fragment.setArguments(notifyBundle);
         showFragment(fragmentManager, fragment, directOpen);
@@ -193,7 +193,7 @@ public class FragmentUtils {
 
     public static void showSmsList(FragmentManager fragmentManager, boolean directOpen) {
         Bundle smsBundle = new Bundle();
-        smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListLoader.TYPE_SMS);
+        smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_SMS);
         SimpleListFragment fragment = new SimpleListFragment();
         fragment.setArguments(smsBundle);
         showFragment(fragmentManager, fragment, directOpen);
