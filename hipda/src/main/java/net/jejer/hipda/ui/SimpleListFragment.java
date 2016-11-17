@@ -212,7 +212,7 @@ public class SimpleListFragment extends BaseFragment
                 }
                 searchView.setSuggestionsAdapter(new SearchSuggestionsAdapter(getActivity()));
 
-                AutoCompleteTextView search_text = (AutoCompleteTextView) searchView.findViewById(searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null));
+                AutoCompleteTextView search_text = (AutoCompleteTextView) searchView.findViewById(getActivity().getResources().getIdentifier("android:id/search_src_text", null, null));
                 search_text.setThreshold(1);
 
                 searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {

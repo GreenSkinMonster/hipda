@@ -3,14 +3,13 @@ package net.jejer.hipda.ui.widget;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.utils.Utils;
 
 /**
  * Created by GreenSkinMonster on 2016-11-08.
@@ -32,9 +31,9 @@ public class XHeaderView extends RelativeLayout {
 
     public XHeaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mLayout = LayoutInflater.from(context).inflate(R.layout.vw_header, null);
-        mLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
+        mLayout = inflate(getContext(), R.layout.vw_header, null);
+        mLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                Utils.dpToPx(context, XRecyclerView.HEIGHT_IN_DP)));
         addView(mLayout);
 
         mProgressBar = (ProgressBar) findViewById(R.id.header_progressbar);

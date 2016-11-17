@@ -472,7 +472,6 @@ public class ThreadDetailFragment extends BaseFragment {
         Toast.makeText(mCtx, mTitle, Toast.LENGTH_SHORT).show();
     }
 
-
     public DetailBean getCachedPost(String postId) {
         return mCache.getPostByPostId(postId);
     }
@@ -528,8 +527,8 @@ public class ThreadDetailFragment extends BaseFragment {
 
     public void scrollToTop() {
         stopScroll();
-        mRecyclerView.scrollToPosition(0);
         prefetchPreviousPage();
+        mRecyclerView.scrollToTop();
     }
 
     public void stopScroll() {
@@ -609,7 +608,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         stopScroll();
-                        mRecyclerView.scrollToPosition(mDetailAdapter.getItemCount() - 1);
+                        mRecyclerView.scrollToBottom();
                         prefetchNextPage();
                     }
                 });

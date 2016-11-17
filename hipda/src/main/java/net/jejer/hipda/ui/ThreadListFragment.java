@@ -326,7 +326,7 @@ public class ThreadListFragment extends BaseFragment
 
     private void refresh() {
         mPage = 1;
-        mRecyclerView.scrollToPosition(0);
+        mRecyclerView.scrollToTop();
         hideFooter();
         mInloading = true;
         mMainFab.hide();
@@ -550,7 +550,7 @@ public class ThreadListFragment extends BaseFragment
     }
 
     public void scrollToTop() {
-        mRecyclerView.scrollToPosition(0);
+        mRecyclerView.scrollToTop();
     }
 
     public void stopScroll() {
@@ -690,7 +690,7 @@ public class ThreadListFragment extends BaseFragment
             mThreadBeans.clear();
             mThreadBeans.addAll(threads.getThreads());
             mThreadListAdapter.setDatas(mThreadBeans);
-            mRecyclerView.scrollToPosition(0);
+            mRecyclerView.scrollToTop();
         } else {
             for (ThreadBean newthread : threads.getThreads()) {
                 boolean duplicate = false;

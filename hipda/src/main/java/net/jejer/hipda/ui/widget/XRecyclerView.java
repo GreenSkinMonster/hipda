@@ -25,11 +25,13 @@ public class XRecyclerView extends RecyclerView {
 
     private final static int SCROLL_DURATION = 400;
 
-    private static int PULL_LOAD_MORE_DELTA;
+    protected final static int HEIGHT_IN_DP = 48;
+    private final static int PULL_DELTA_IN_DP = 40;
     private final static float OFFSET_RADIO = 1.8f;
 
     private float mLastY = -1;
     private boolean mDispatchEvent = true;
+    private int mPullDelta = 0;
 
     private Scroller mScroller;
     private int mScrollBack;
@@ -57,7 +59,7 @@ public class XRecyclerView extends RecyclerView {
     }
 
     private void initWithContext(Context context) {
-        PULL_LOAD_MORE_DELTA = Utils.dpToPx(context, 40);
+        mPullDelta = Utils.dpToPx(context, PULL_DELTA_IN_DP);
         mScroller = new Scroller(context, new DecelerateInterpolator());
         mHeaderView = new XHeaderView(context);
         mFooterView = new XFooterView(context);
@@ -128,7 +130,7 @@ public class XRecyclerView extends RecyclerView {
     private void updateHeaderHeight(float delta) {
         int topMagin = mHeaderView.getTopMargin();
 
-        if (mHeaderView.getTopMargin() > PULL_LOAD_MORE_DELTA) {
+        if (mHeaderView.getTopMargin() > mPullDelta) {
             stopScroll();
             mDispatchEvent = false;
             loadPrevious();
@@ -151,7 +153,7 @@ public class XRecyclerView extends RecyclerView {
     private void updateFooterHeight(float delta) {
         int bottomMargin = mFooterView.getBottomMargin();
 
-        if (bottomMargin > PULL_LOAD_MORE_DELTA) {
+        if (bottomMargin > mPullDelta) {
             stopScroll();
             mDispatchEvent = false;
             loadNext();
@@ -270,6 +272,19 @@ public class XRecyclerView extends RecyclerView {
 
     public void stopScroll() {
         dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
+    }
+
+    public void scrollToTop() {
+        mLayoutManager.scrollToPositionWithOffset(0, 0);
+    }
+
+    public void scrollToBottom() {
+        mLayoutManager.scrollToPositionWithOffset(mAdapter.getItemCount() - 1, 0);
+    }
+
+    @Override
+    public void scrollToPosition(int position) {
+        mLayoutManager.scrollToPositionWithOffset(position, 0);
     }
 
     public interface XRecyclerListener {
