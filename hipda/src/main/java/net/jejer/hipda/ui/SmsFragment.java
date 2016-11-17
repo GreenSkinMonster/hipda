@@ -32,6 +32,7 @@ import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.SimpleListEvent;
 import net.jejer.hipda.job.SimpleListJob;
@@ -70,6 +71,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
     private HiProgressDialog postProgressDialog;
     private ContentLoadingProgressBar loadingProgressBar;
+    private SmsEventCallback mEventCallback = new SmsEventCallback();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -301,40 +303,45 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             mRecyclerView.scrollToPosition(0);
     }
 
+    private class SmsEventCallback extends EventCallback<SimpleListEvent> {
+        @Override
+        public void inProgress(SimpleListEvent event) {
+        }
+
+        @Override
+        public void onSuccess(SimpleListEvent event) {
+            loadingProgressBar.hide();
+
+            SimpleListBean list = event.mData;
+            if (list == null || list.getCount() == 0) {
+                Toast.makeText(SmsFragment.this.getActivity(),
+                        "没有短消息", Toast.LENGTH_LONG).show();
+            } else {
+                mSmsBeans.clear();
+                mSmsBeans.addAll(list.getAll());
+                mSmsAdapter.setDatas(mSmsBeans);
+            }
+        }
+
+        @Override
+        public void onFail(SimpleListEvent event) {
+            loadingProgressBar.hide();
+            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
+        }
+
+        @Override
+        public void onFailRelogin(SimpleListEvent event) {
+            loadingProgressBar.hide();
+            showLoginDialog();
+        }
+    }
+
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(SimpleListEvent event) {
         if (!mSessionId.equals(event.mSessionId))
             return;
-
         EventBus.getDefault().removeStickyEvent(event);
-
-        if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
-            return;
-        }
-
-        SimpleListBean list = event.mData;
-        loadingProgressBar.hide();
-
-        //error
-        if (event.mStatus == Constants.STATUS_FAIL_RELOGIN) {
-            showLoginDialog();
-            return;
-        }
-        if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
-            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
-            return;
-        }
-
-        //success
-        if (list == null || list.getCount() == 0) {
-            Toast.makeText(SmsFragment.this.getActivity(),
-                    "没有短消息", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        mSmsBeans.clear();
-        mSmsBeans.addAll(list.getAll());
-        mSmsAdapter.setDatas(mSmsBeans);
+        mEventCallback.process(event);
     }
 }

@@ -36,6 +36,7 @@ import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
+import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.SimpleListEvent;
 import net.jejer.hipda.job.SimpleListJob;
@@ -73,6 +74,7 @@ public class SimpleListFragment extends BaseFragment
     private SwipeRefreshLayout swipeLayout;
     private ContentLoadingProgressBar loadingProgressBar;
     private HiProgressDialog smsPostProgressDialog;
+    private SimpleListEventCallback mEventCallback = new SimpleListEventCallback();
 
     private int mPage = 1;
     private boolean mInloading = false;
@@ -483,71 +485,89 @@ public class SimpleListFragment extends BaseFragment
         }
     }
 
+    private class SimpleListEventCallback extends EventCallback<SimpleListEvent> {
+
+
+        @Override
+        public void onFail(SimpleListEvent event) {
+            swipeLayout.setEnabled(true);
+            swipeLayout.setRefreshing(false);
+            loadingProgressBar.hide();
+            mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
+            mInloading = false;
+
+            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
+        }
+
+        @Override
+        public void onSuccess(SimpleListEvent event) {
+            swipeLayout.setEnabled(true);
+            swipeLayout.setRefreshing(false);
+            loadingProgressBar.hide();
+            mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
+            mInloading = false;
+
+            SimpleListBean list = event.mData;
+            if (list == null || list.getCount() == 0) {
+                if (mPage == 1) {
+                    mSimpleListItemBeans.clear();
+                    mSimpleListAdapter.setDatas(mSimpleListItemBeans);
+                }
+                Toast.makeText(SimpleListFragment.this.getActivity(),
+                        "没有数据", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if (mType == SimpleListJob.TYPE_FAVORITES
+                    || mType == SimpleListJob.TYPE_ATTENTION) {
+                String item = mType == SimpleListJob.TYPE_FAVORITES ? FavoriteHelper.TYPE_FAVORITE : FavoriteHelper.TYPE_ATTENTION;
+                Set<String> tids = new HashSet<>();
+                List<SimpleListItemBean> beans = list.getAll();
+                for (SimpleListItemBean itemBean : beans) {
+                    tids.add(itemBean.getTid());
+                }
+                FavoriteHelper.getInstance().addToCahce(item, tids);
+            }
+
+            if (mType == SimpleListJob.TYPE_SMS)
+                NotificationMgr.getCurrentNotification().clearSmsCount();
+            if (mType == SimpleListJob.TYPE_THREAD_NOTIFY)
+                NotificationMgr.getCurrentNotification().setThreadCount(0);
+
+            if (mPage == 1) {
+                mSimpleListItemBeans.clear();
+            }
+            mMaxPage = list.getMaxPage();
+            mSimpleListItemBeans.addAll(list.getAll());
+            mSimpleListAdapter.setDatas(mSimpleListItemBeans);
+        }
+
+        @Override
+        public void inProgress(SimpleListEvent event) {
+            if (event.mPage != 1) {
+                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+            }
+        }
+
+        @Override
+        public void onFailRelogin(SimpleListEvent event) {
+            swipeLayout.setEnabled(true);
+            swipeLayout.setRefreshing(false);
+            loadingProgressBar.hide();
+            mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
+            mInloading = false;
+
+            showLoginDialog();
+        }
+    }
+
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(SimpleListEvent event) {
         if (!mSessionId.equals(event.mSessionId))
             return;
-
         EventBus.getDefault().removeStickyEvent(event);
-
-        SimpleListBean list = event.mData;
-        if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
-            if (event.mPage != 1) {
-                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
-            }
-            return;
-        }
-
-        swipeLayout.setEnabled(true);
-        swipeLayout.setRefreshing(false);
-        loadingProgressBar.hide();
-        mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
-        mInloading = false;
-
-        //error
-        if (event.mStatus == Constants.STATUS_FAIL_RELOGIN) {
-            showLoginDialog();
-            return;
-        }
-        if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
-            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
-            return;
-        }
-
-        if (list == null || list.getCount() == 0) {
-            if (mPage == 1) {
-                mSimpleListItemBeans.clear();
-                mSimpleListAdapter.setDatas(mSimpleListItemBeans);
-            }
-            Toast.makeText(SimpleListFragment.this.getActivity(),
-                    "没有数据", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        //success
-        if (mType == SimpleListJob.TYPE_FAVORITES
-                || mType == SimpleListJob.TYPE_ATTENTION) {
-            String item = mType == SimpleListJob.TYPE_FAVORITES ? FavoriteHelper.TYPE_FAVORITE : FavoriteHelper.TYPE_ATTENTION;
-            Set<String> tids = new HashSet<>();
-            List<SimpleListItemBean> beans = list.getAll();
-            for (SimpleListItemBean itemBean : beans) {
-                tids.add(itemBean.getTid());
-            }
-            FavoriteHelper.getInstance().addToCahce(item, tids);
-        }
-
-        if (mType == SimpleListJob.TYPE_SMS)
-            NotificationMgr.getCurrentNotification().clearSmsCount();
-        if (mType == SimpleListJob.TYPE_THREAD_NOTIFY)
-            NotificationMgr.getCurrentNotification().setThreadCount(0);
-
-        if (mPage == 1) {
-            mSimpleListItemBeans.clear();
-        }
-        mMaxPage = list.getMaxPage();
-        mSimpleListItemBeans.addAll(list.getAll());
-        mSimpleListAdapter.setDatas(mSimpleListItemBeans);
+        mEventCallback.process(event);
     }
 
     @SuppressWarnings("unused")

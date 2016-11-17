@@ -60,6 +60,7 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.glide.ThreadImageDecoder;
+import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.PostEvent;
 import net.jejer.hipda.job.PostJob;
@@ -130,6 +131,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
     private HiProgressDialog postProgressDialog;
     private ContentLoadingProgressBar mLoadingProgressBar;
+    private ThreadDetailEventCallback mEventCallback = new ThreadDetailEventCallback();
 
     private boolean mHistorySaved = false;
 
@@ -911,6 +913,100 @@ public class ThreadDetailFragment extends BaseFragment {
         return hideQuickReply();
     }
 
+    private class ThreadDetailEventCallback extends EventCallback<ThreadDetailEvent> {
+        @Override
+        public void onFail(ThreadDetailEvent event) {
+            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
+            if (event.mFectchType == FETCH_PREVIOUS) {
+                mPrefetching = false;
+            } else if (event.mFectchType == FETCH_NEXT) {
+                mPrefetching = false;
+            } else {
+                mInloading = false;
+                mLoadingProgressBar.hide();
+            }
+        }
+
+        @Override
+        public void onSuccess(ThreadDetailEvent event) {
+            int status = event.mStatus;
+            DetailListBean details = event.mData;
+
+            mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
+
+            // Set title
+            if (details.getTitle() != null && !details.getTitle().isEmpty()) {
+                mTitle = details.getTitle();
+            }
+
+            mFid = details.getFid();
+            if (TextUtils.isEmpty(mTid))
+                mTid = details.getTid();
+
+            // Set MaxPage earlier than showOrLoadPage()
+            mMaxPage = details.getLastPage();
+            mMaxImageDecodeWidth = ImageSizeUtils.getDecodeSize(details.getImagesCount());
+
+            mCache.put(details.getPage(), details);
+
+            if (event.mFectchType == FETCH_PREVIOUS) {
+                mPrefetching = false;
+                mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
+            } else if (event.mFectchType == FETCH_NEXT) {
+                mPrefetching = false;
+                mRecyclerView.setFooterState(XFooterView.STATE_READY);
+            } else {
+                mInloading = false;
+                mLoadingProgressBar.hide();
+                if (!mDataReceived) {
+                    mDataReceived = true;
+                    mMainFab.setEnabled(true);
+                    mMainFab.show();
+                }
+                mDetailBeans = details.getAll();
+                mDetailAdapter.setDatas(mDetailBeans);
+                if (event.mFectchType == FETCH_NORMAL || event.mFectchType == FETCH_REFRESH) {
+                    mCurrentPage = details.getPage();
+                }
+
+                if (mCurrentPage == LAST_PAGE) {
+                    mCurrentPage = mMaxPage;
+                }
+                showOrLoadPage();
+            }
+
+            if (!mHistorySaved || details.getPage() == 1) {
+                mHistorySaved = true;
+                String uid = null, username = null, postTime = null;
+                if (details.getPage() == 1 && details.getCount() > 0) {
+                    DetailBean detailBean = details.getAll().get(0);
+                    uid = detailBean.getUid();
+                    username = detailBean.getAuthor();
+                    postTime = detailBean.getTimePost();
+                }
+                HistoryDao.saveHistoryInBackground(mTid, mFid, mTitle, uid, username, postTime);
+            }
+        }
+
+        @Override
+        public void inProgress(ThreadDetailEvent event) {
+            if (event.mFectchType == FETCH_NORMAL) {
+                mLoadingProgressBar.show();
+            } else if (event.mFectchType == FETCH_PREVIOUS) {
+                mRecyclerView.setHeaderState(XHeaderView.STATE_LOADING);
+            } else if (event.mFectchType == FETCH_NEXT) {
+                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+            } else if (event.mFectchType == FETCH_REFRESH) {
+                mLoadingProgressBar.show();
+            }
+        }
+
+        @Override
+        public void onFailRelogin(ThreadDetailEvent event) {
+            showLoginDialog();
+        }
+    }
+
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(PostEvent event) {
@@ -986,99 +1082,8 @@ public class ThreadDetailFragment extends BaseFragment {
     public void onEvent(ThreadDetailEvent event) {
         if (!mSessionId.equals(event.mSessionId))
             return;
-
         EventBus.getDefault().removeStickyEvent(event);
-
-        //in progress
-        if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
-            if (event.mFectchType == FETCH_NORMAL) {
-                mLoadingProgressBar.show();
-            } else if (event.mFectchType == FETCH_PREVIOUS) {
-                mRecyclerView.setHeaderState(XHeaderView.STATE_LOADING);
-            } else if (event.mFectchType == FETCH_NEXT) {
-                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
-            } else if (event.mFectchType == FETCH_REFRESH) {
-                mLoadingProgressBar.show();
-            }
-            return;
-        }
-
-        //error
-        if (event.mStatus == Constants.STATUS_FAIL_RELOGIN) {
-            getFragmentManager().popBackStackImmediate();
-            return;
-        }
-        if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
-            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
-            if (event.mFectchType == FETCH_PREVIOUS) {
-                mPrefetching = false;
-            } else if (event.mFectchType == FETCH_NEXT) {
-                mPrefetching = false;
-            } else {
-                mInloading = false;
-                mLoadingProgressBar.hide();
-            }
-            return;
-        }
-
-        int status = event.mStatus;
-        DetailListBean details = event.mData;
-
-        //success
-        mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
-
-        // Set title
-        if (details.getTitle() != null && !details.getTitle().isEmpty()) {
-            mTitle = details.getTitle();
-        }
-
-        mFid = details.getFid();
-        if (TextUtils.isEmpty(mTid))
-            mTid = details.getTid();
-
-        // Set MaxPage earlier than showOrLoadPage()
-        mMaxPage = details.getLastPage();
-        mMaxImageDecodeWidth = ImageSizeUtils.getDecodeSize(details.getImagesCount());
-
-        mCache.put(details.getPage(), details);
-
-        if (event.mFectchType == FETCH_PREVIOUS) {
-            mPrefetching = false;
-            mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
-        } else if (event.mFectchType == FETCH_NEXT) {
-            mPrefetching = false;
-            mRecyclerView.setFooterState(XFooterView.STATE_READY);
-        } else {
-            mInloading = false;
-            mLoadingProgressBar.hide();
-            if (!mDataReceived) {
-                mDataReceived = true;
-                mMainFab.setEnabled(true);
-                mMainFab.show();
-            }
-            mDetailBeans = details.getAll();
-            mDetailAdapter.setDatas(mDetailBeans);
-            if (event.mFectchType == FETCH_NORMAL || event.mFectchType == FETCH_REFRESH) {
-                mCurrentPage = details.getPage();
-            }
-
-            if (mCurrentPage == LAST_PAGE) {
-                mCurrentPage = mMaxPage;
-            }
-            showOrLoadPage();
-        }
-
-        if (!mHistorySaved || details.getPage() == 1) {
-            mHistorySaved = true;
-            String uid = null, username = null, postTime = null;
-            if (details.getPage() == 1 && details.getCount() > 0) {
-                DetailBean detailBean = details.getAll().get(0);
-                uid = detailBean.getUid();
-                username = detailBean.getAuthor();
-                postTime = detailBean.getTimePost();
-            }
-            HistoryDao.saveHistoryInBackground(mTid, mFid, mTitle, uid, username, postTime);
-        }
+        mEventCallback.process(event);
     }
 
 }

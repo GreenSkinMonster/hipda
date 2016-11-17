@@ -46,6 +46,7 @@ import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.db.HistoryDao;
+import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.PostEvent;
 import net.jejer.hipda.job.ThreadListEvent;
@@ -89,6 +90,8 @@ public class ThreadListFragment extends BaseFragment
 
     private MenuItem mForumTypeMenuItem;
     private final int[] mFidHolder = new int[1];
+
+    private ThreadListEventCallback mEventCallback = new ThreadListEventCallback();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -588,6 +591,93 @@ public class ThreadListFragment extends BaseFragment
         }
     }
 
+    private class ThreadListEventCallback extends EventCallback<ThreadListEvent> {
+        @Override
+        public void onSuccess(ThreadListEvent event) {
+            mInloading = false;
+            swipeLayout.setRefreshing(false);
+            loadingProgressBar.hide();
+            hideFooter();
+
+            ThreadListBean threads = event.mData;
+            if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())
+                    && !TextUtils.isEmpty(threads.getUid())) {
+                HiSettingsHelper.getInstance().setUid(threads.getUid());
+                if (getActivity() != null)
+                    ((MainFrameActivity) getActivity()).updateAccountHeader();
+            }
+
+            if (mPage == 1) {
+                mThreadBeans.clear();
+                mThreadBeans.addAll(threads.getThreads());
+                mThreadListAdapter.setDatas(mThreadBeans);
+                mRecyclerView.scrollToTop();
+            } else {
+                for (ThreadBean newthread : threads.getThreads()) {
+                    boolean duplicate = false;
+                    for (int i = 0; i < mThreadBeans.size(); i++) {
+                        ThreadBean oldthread = mThreadBeans.get(i);
+                        if (newthread != null && newthread.getTid().equals(oldthread.getTid())) {
+                            duplicate = true;
+                            break;
+                        }
+                    }
+                    if (!duplicate) {
+                        mThreadBeans.add(newthread);
+                    }
+                }
+                mThreadListAdapter.setDatas(mThreadBeans);
+            }
+
+            if (!mDataReceived) {
+                mDataReceived = true;
+                mMainFab.show();
+            }
+            showNotification();
+        }
+
+        @Override
+        public void onFail(ThreadListEvent event) {
+            mInloading = false;
+            swipeLayout.setRefreshing(false);
+            loadingProgressBar.hide();
+            hideFooter();
+
+            ThreadListBean threads = event.mData;
+            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
+            if (mPage > 1)
+                mPage--;
+
+            if (threads != null && threads.getCount() == 0) {
+                if (threads.isParsed() && mPage <= 5 && !HiSettingsHelper.getInstance().isShowStickThreads()) {
+                    mPage++;
+                    mInloading = true;
+                    ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
+                    JobMgr.addJob(job);
+                    if (HiSettingsHelper.getInstance().getMaxPostsInPage() < HiUtils.MAX_THREADS_IN_PAGE)
+                        Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+
+        @Override
+        public void inProgress(ThreadListEvent event) {
+            if (event.mPage != 1) {
+                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+            }
+        }
+
+        @Override
+        public void onFailRelogin(ThreadListEvent event) {
+            mInloading = false;
+            swipeLayout.setRefreshing(false);
+            loadingProgressBar.hide();
+            hideFooter();
+
+            showLoginDialog();
+        }
+    }
+
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(PostEvent event) {
@@ -639,80 +729,8 @@ public class ThreadListFragment extends BaseFragment
     public void onEvent(ThreadListEvent event) {
         if (!mSessionId.equals(event.mSessionId))
             return;
-
         EventBus.getDefault().removeStickyEvent(event);
-
-        ThreadListBean threads = event.mData;
-        if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
-            if (event.mPage != 1) {
-                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
-            }
-            return;
-        }
-
-        mInloading = false;
-        swipeLayout.setRefreshing(false);
-        loadingProgressBar.hide();
-        hideFooter();
-
-        //error
-        if (event.mStatus == Constants.STATUS_FAIL_RELOGIN) {
-            showLoginDialog();
-            return;
-        }
-        if (event.mStatus == Constants.STATUS_FAIL || event.mStatus == Constants.STATUS_FAIL_ABORT) {
-            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
-            if (mPage > 1)
-                mPage--;
-
-            if (threads != null && threads.getCount() == 0) {
-                if (threads.isParsed() && mPage <= 5 && !HiSettingsHelper.getInstance().isShowStickThreads()) {
-                    mPage++;
-                    mInloading = true;
-                    ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
-                    JobMgr.addJob(job);
-                    if (HiSettingsHelper.getInstance().getMaxPostsInPage() < HiUtils.MAX_THREADS_IN_PAGE)
-                        Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
-                }
-            }
-            return;
-        }
-
-        //success
-        if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())
-                && !TextUtils.isEmpty(threads.getUid())) {
-            HiSettingsHelper.getInstance().setUid(threads.getUid());
-            if (getActivity() != null)
-                ((MainFrameActivity) getActivity()).updateAccountHeader();
-        }
-
-        if (mPage == 1) {
-            mThreadBeans.clear();
-            mThreadBeans.addAll(threads.getThreads());
-            mThreadListAdapter.setDatas(mThreadBeans);
-            mRecyclerView.scrollToTop();
-        } else {
-            for (ThreadBean newthread : threads.getThreads()) {
-                boolean duplicate = false;
-                for (int i = 0; i < mThreadBeans.size(); i++) {
-                    ThreadBean oldthread = mThreadBeans.get(i);
-                    if (newthread != null && newthread.getTid().equals(oldthread.getTid())) {
-                        duplicate = true;
-                        break;
-                    }
-                }
-                if (!duplicate) {
-                    mThreadBeans.add(newthread);
-                }
-            }
-            mThreadListAdapter.setDatas(mThreadBeans);
-        }
-
-        if (!mDataReceived) {
-            mDataReceived = true;
-            mMainFab.show();
-        }
-        showNotification();
+        mEventCallback.process(event);
     }
 
 }
