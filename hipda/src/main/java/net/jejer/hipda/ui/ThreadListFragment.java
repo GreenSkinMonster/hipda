@@ -53,6 +53,7 @@ import net.jejer.hipda.job.ThreadListEvent;
 import net.jejer.hipda.job.ThreadListJob;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadListAdapter;
+import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.SimpleDivider;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XRecyclerView;
@@ -84,7 +85,7 @@ public class ThreadListFragment extends BaseFragment
     private boolean mInloading = false;
     private HiProgressDialog postProgressDialog;
     private SwipeRefreshLayout swipeLayout;
-    private ContentLoadingProgressBar loadingProgressBar;
+    private ContentLoadingView mLoadingView;
     private int mFirstVisibleItem = 0;
     private boolean mDataReceived = false;
 
@@ -137,7 +138,7 @@ public class ThreadListFragment extends BaseFragment
         swipeLayout.setColorSchemeColors(ColorHelper.getSwipeColor(getActivity()));
         swipeLayout.setProgressBackgroundColorSchemeColor(ColorHelper.getSwipeBackgroundColor(getActivity()));
 
-        loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);
+        mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
 
         mRecyclerView.scrollToPosition(mFirstVisibleItem);
 
@@ -160,13 +161,13 @@ public class ThreadListFragment extends BaseFragment
             EventBus.getDefault().register(this);
         if (!mInloading) {
             if (mThreadBeans.size() == 0) {
-                loadingProgressBar.showNow();
+                mLoadingView.setState(ContentLoadingView.LOAD_NOW);
                 mInloading = true;
                 ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
                 JobMgr.addJob(job);
             } else {
                 swipeLayout.setRefreshing(false);
-                loadingProgressBar.hide();
+                mLoadingView.setState(ContentLoadingView.CONTENT);
                 hideFooter();
             }
         }
@@ -247,7 +248,7 @@ public class ThreadListFragment extends BaseFragment
             mMainFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    loadingProgressBar.showNow();
+                    mLoadingView.setState(ContentLoadingView.LOAD_NOW);
                     if (swipeLayout.isShown())
                         swipeLayout.setRefreshing(false);
                     refresh();
@@ -340,7 +341,8 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onRefresh() {
         refresh();
-        loadingProgressBar.hide();
+        if (mThreadBeans.size() > 0)
+            mLoadingView.setState(ContentLoadingView.CONTENT);
     }
 
     private class OnScrollListener extends RecyclerView.OnScrollListener {
@@ -466,7 +468,7 @@ public class ThreadListFragment extends BaseFragment
             public void onItemSingleClick(AdapterView<?> adapterView, View view, int position, long row) {
                 dialog.dismiss();
                 if (!HiUtils.BS_TYPE_IDS[position].equals(currentTypeId)) {
-                    loadingProgressBar.showNow();
+                    mLoadingView.setState(ContentLoadingView.LOAD_NOW);
                     HiSettingsHelper.getInstance().setBSTypeId(HiUtils.BS_TYPE_IDS[position]);
                     if (mForumTypeMenuItem != null) {
                         mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(Color.WHITE).actionBar());
@@ -597,7 +599,7 @@ public class ThreadListFragment extends BaseFragment
         public void onSuccess(ThreadListEvent event) {
             mInloading = false;
             swipeLayout.setRefreshing(false);
-            loadingProgressBar.hide();
+            mLoadingView.setState(ContentLoadingView.CONTENT);
             hideFooter();
 
             ThreadListBean threads = event.mData;
@@ -641,8 +643,13 @@ public class ThreadListFragment extends BaseFragment
         public void onFail(ThreadListEvent event) {
             mInloading = false;
             swipeLayout.setRefreshing(false);
-            loadingProgressBar.hide();
             hideFooter();
+
+            if (mThreadBeans.size() == 0) {
+                mLoadingView.setState(ContentLoadingView.ERROR);
+            } else {
+                mLoadingView.setState(ContentLoadingView.CONTENT);
+            }
 
             ThreadListBean threads = event.mData;
             UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
@@ -665,9 +672,11 @@ public class ThreadListFragment extends BaseFragment
         public void onFailRelogin(ThreadListEvent event) {
             mInloading = false;
             swipeLayout.setRefreshing(false);
-            loadingProgressBar.hide();
+            if (mThreadBeans.size() == 0)
+                mLoadingView.setState(ContentLoadingView.ERROR);
+            else
+                mLoadingView.setState(ContentLoadingView.CONTENT);
             hideFooter();
-
             showLoginDialog();
         }
     }

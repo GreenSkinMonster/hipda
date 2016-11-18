@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -42,6 +41,7 @@ import net.jejer.hipda.job.SimpleListEvent;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SimpleListAdapter;
+import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.SimpleDivider;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XRecyclerView;
@@ -72,7 +72,7 @@ public class SimpleListFragment extends BaseFragment
     private String mQuery = "";
     private SearchView searchView = null;
     private SwipeRefreshLayout swipeLayout;
-    private ContentLoadingProgressBar loadingProgressBar;
+    private ContentLoadingView mLoadingView;
     private HiProgressDialog smsPostProgressDialog;
     private SimpleListEventCallback mEventCallback = new SimpleListEventCallback();
 
@@ -130,15 +130,13 @@ public class SimpleListFragment extends BaseFragment
         swipeLayout.setProgressBackgroundColorSchemeColor(ColorHelper.getSwipeBackgroundColor(getActivity()));
         swipeLayout.setEnabled(false);
 
-        loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.list_loading);
+        mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // destroyLoader called here to avoid onLoadFinished called when onResume
-        getLoaderManager().destroyLoader(0);
 
         mRecyclerView.setAdapter(mSimpleListAdapter);
 
@@ -152,7 +150,7 @@ public class SimpleListFragment extends BaseFragment
             case SimpleListJob.TYPE_HISTORIES:
                 if (mSimpleListItemBeans.size() == 0) {
                     mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
-                    loadingProgressBar.show();
+                    mLoadingView.setState(ContentLoadingView.LOADING);
                     SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mQuery);
                     JobMgr.addJob(job);
                 }
@@ -267,7 +265,7 @@ public class SimpleListFragment extends BaseFragment
                 refresh();
                 return true;
             case R.id.action_favories:
-                loadingProgressBar.showNow();
+                mLoadingView.setState(ContentLoadingView.LOAD_NOW);
                 if (mFavoritesMenuItem.getTitle().toString().equals(getString(R.string.action_attention))) {
                     mFavoritesMenuItem.setTitle(R.string.action_favorites);
                     mType = SimpleListJob.TYPE_ATTENTION;
@@ -492,7 +490,11 @@ public class SimpleListFragment extends BaseFragment
         public void onFail(SimpleListEvent event) {
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
-            loadingProgressBar.hide();
+            if (mSimpleListItemBeans.size() == 0)
+                mLoadingView.setState(ContentLoadingView.ERROR);
+            else
+                mLoadingView.setState(ContentLoadingView.CONTENT);
+
             mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
             mInloading = false;
 
@@ -503,7 +505,6 @@ public class SimpleListFragment extends BaseFragment
         public void onSuccess(SimpleListEvent event) {
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
-            loadingProgressBar.hide();
             mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
             mInloading = false;
 
@@ -513,10 +514,11 @@ public class SimpleListFragment extends BaseFragment
                     mSimpleListItemBeans.clear();
                     mSimpleListAdapter.setDatas(mSimpleListItemBeans);
                 }
-                Toast.makeText(SimpleListFragment.this.getActivity(),
-                        "没有数据", Toast.LENGTH_LONG).show();
+                mLoadingView.setState(ContentLoadingView.NO_DATA);
                 return;
             }
+
+            mLoadingView.setState(ContentLoadingView.CONTENT);
 
             if (mType == SimpleListJob.TYPE_FAVORITES
                     || mType == SimpleListJob.TYPE_ATTENTION) {
@@ -546,7 +548,10 @@ public class SimpleListFragment extends BaseFragment
         public void onFailRelogin(SimpleListEvent event) {
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
-            loadingProgressBar.hide();
+            if (mSimpleListItemBeans.size() == 0)
+                mLoadingView.setState(ContentLoadingView.ERROR);
+            else
+                mLoadingView.setState(ContentLoadingView.CONTENT);
             mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
             mInloading = false;
 

@@ -39,6 +39,7 @@ import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SmsAdapter;
+import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
@@ -70,7 +71,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     private ImageButton mIbSendSms;
 
     private HiProgressDialog postProgressDialog;
-    private ContentLoadingProgressBar loadingProgressBar;
+    private ContentLoadingView mLoadingView;
     private SmsEventCallback mEventCallback = new SmsEventCallback();
 
     @Override
@@ -99,7 +100,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         linearLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        loadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.sms_loading);
+        mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
 
         //to avoid click through this view
         view.setOnTouchListener(new View.OnTouchListener() {
@@ -137,10 +138,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
         mRecyclerView.setAdapter(mSmsAdapter);
 
-        // destroyLoader called here to avoid onLoadFinished called when onResume
-        getLoaderManager().destroyLoader(0);
-        if (mSmsAdapter.getItemCount() == 0) {
-            loadingProgressBar.show();
+        if (mSmsBeans.size() == 0) {
+            mLoadingView.setState(ContentLoadingView.LOADING);
             SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, SimpleListJob.TYPE_SMS_DETAIL, 1, mUid);
             JobMgr.addJob(job);
         }
@@ -306,13 +305,12 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     private class SmsEventCallback extends EventCallback<SimpleListEvent> {
         @Override
         public void onSuccess(SimpleListEvent event) {
-            loadingProgressBar.hide();
 
             SimpleListBean list = event.mData;
             if (list == null || list.getCount() == 0) {
-                Toast.makeText(SmsFragment.this.getActivity(),
-                        "没有短消息", Toast.LENGTH_LONG).show();
+                mLoadingView.setState(ContentLoadingView.NO_DATA);
             } else {
+                mLoadingView.setState(ContentLoadingView.CONTENT);
                 mSmsBeans.clear();
                 mSmsBeans.addAll(list.getAll());
                 mSmsAdapter.setDatas(mSmsBeans);
@@ -321,13 +319,13 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
         @Override
         public void onFail(SimpleListEvent event) {
-            loadingProgressBar.hide();
+            mLoadingView.setState(ContentLoadingView.ERROR);
             UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
         }
 
         @Override
         public void onFailRelogin(SimpleListEvent event) {
-            loadingProgressBar.hide();
+            mLoadingView.setState(ContentLoadingView.ERROR);
             showLoginDialog();
         }
     }

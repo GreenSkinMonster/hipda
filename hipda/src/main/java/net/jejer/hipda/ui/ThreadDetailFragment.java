@@ -68,6 +68,7 @@ import net.jejer.hipda.job.ThreadDetailEvent;
 import net.jejer.hipda.job.ThreadDetailJob;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadDetailAdapter;
+import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.SimpleDivider;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XHeaderView;
@@ -136,7 +137,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private boolean mFooterLoading = false;
 
     private HiProgressDialog postProgressDialog;
-    private ContentLoadingProgressBar mLoadingProgressBar;
+    private ContentLoadingView mLoadingView;
     private ThreadDetailEventCallback mEventCallback = new ThreadDetailEventCallback();
 
     private boolean mHistorySaved = false;
@@ -232,7 +233,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
 
-        mLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.detail_loading);
+        mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
 
         quickReply = view.findViewById(R.id.quick_reply);
         mEtReply = (EmojiEditText) quickReply.findViewById(R.id.tv_reply_text);
@@ -293,7 +294,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (mDetailBeans.size() == 0) {
                 refresh();
             } else {
-                mLoadingProgressBar.hide();
+                mLoadingView.setState(ContentLoadingView.CONTENT);
             }
         }
     }
@@ -403,7 +404,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 showPost("");
                 return true;
             case R.id.action_refresh_detail:
-                mLoadingProgressBar.showNow();
+                mLoadingView.setState(ContentLoadingView.LOADING);
                 refresh();
                 return true;
             case R.id.action_image_gallery:
@@ -486,6 +487,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
     private void refresh() {
         mInloading = true;
+        mLoadingView.setState(ContentLoadingView.LOADING);
         ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, FETCH_REFRESH, POSITION_NORMAL);
         JobMgr.addJob(job);
     }
@@ -795,6 +797,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 fetchType = FETCH_REFRESH;
             }
             mInloading = true;
+            mLoadingView.setState(ContentLoadingView.LOADING);
             ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, fetchType, POSITION_NORMAL);
             JobMgr.addJob(job);
         }
@@ -955,8 +958,10 @@ public class ThreadDetailFragment extends BaseFragment {
                 mRecyclerView.setFooterState(XFooterView.STATE_ERROR);
             } else {
                 mInloading = false;
+                if (mDetailBeans.size() == 0) {
+                    mLoadingView.setState(ContentLoadingView.ERROR);
+                }
                 UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
-                mLoadingProgressBar.hide();
             }
         }
 
@@ -990,7 +995,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     mRecyclerView.setFooterState(XFooterView.STATE_READY);
             } else {
                 mInloading = false;
-                mLoadingProgressBar.hide();
+                mLoadingView.setState(ContentLoadingView.CONTENT);
             }
 
             if (event.mFectchType == FETCH_NORMAL || event.mFectchType == FETCH_REFRESH) {
