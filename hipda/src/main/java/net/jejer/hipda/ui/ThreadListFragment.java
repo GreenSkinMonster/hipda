@@ -358,6 +358,7 @@ public class ThreadListFragment extends BaseFragment
                     if (!mInloading) {
                         mPage++;
                         mInloading = true;
+                        mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
                         ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
                         JobMgr.addJob(job);
                     }
@@ -583,8 +584,8 @@ public class ThreadListFragment extends BaseFragment
                 icon.setImageDrawable(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(ColorHelper.getColorAccent(getActivity())).sizeDp(20));
                 text.setTextColor(ColorHelper.getColorAccent(getActivity()));
             } else {
-                icon.setImageDrawable(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(ColorHelper.getDefaultTextColor(getActivity())).sizeDp(20));
-                text.setTextColor(ColorHelper.getDefaultTextColor(getActivity()));
+                icon.setImageDrawable(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(ColorHelper.getTextColorPrimary(getActivity())).sizeDp(20));
+                text.setTextColor(ColorHelper.getTextColorPrimary(getActivity()));
             }
 
             return row;
@@ -657,13 +658,6 @@ public class ThreadListFragment extends BaseFragment
                     if (HiSettingsHelper.getInstance().getMaxPostsInPage() < HiUtils.MAX_THREADS_IN_PAGE)
                         Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
                 }
-            }
-        }
-
-        @Override
-        public void inProgress(ThreadListEvent event) {
-            if (event.mPage != 1) {
-                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
             }
         }
 

@@ -97,6 +97,16 @@ public class ThreadDetailFragment extends BaseFragment {
     public static final int LAST_FLOOR = Integer.MIN_VALUE;
     public static final int LAST_PAGE = Integer.MIN_VALUE;
 
+    public final static int FETCH_NORMAL = 0;
+    public final static int FETCH_NEXT = 1;
+    public final static int FETCH_PREVIOUS = 2;
+    public final static int FETCH_REFRESH = 3;
+    public final static int FETCH_SILENT = 4;
+
+    public static final int POSITION_NORMAL = 0;
+    public static final int POSITION_HEADER = 1;
+    public static final int POSITION_FOOTER = 2;
+
     private Context mCtx;
     private String mTid;
     private String mGotoPostId;
@@ -115,19 +125,15 @@ public class ThreadDetailFragment extends BaseFragment {
     private int mGoToPage = 1;
     private int mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();    // user can configure max posts per page in forum setting
     private int mFloorOfPage = -1;    // for every page start form 1
-    private boolean mInloading = false;
-    private boolean mPrefetching = false;
     private EmojiEditText mEtReply;
     private ImageButton mIbEmojiSwitch;
     private View quickReply;
     private boolean mAuthorOnly = false;
     private boolean mDataReceived = false;
 
-    public final static int FETCH_NORMAL = 0;
-    public final static int FETCH_NEXT = 1;
-    public final static int FETCH_PREVIOUS = 2;
-    public final static int FETCH_REFRESH = 3;
-    public final static int FETCH_SILENT = 4;
+    private boolean mInloading = false;
+    private boolean mHeaderLoading = false;
+    private boolean mFooterLoading = false;
 
     private HiProgressDialog postProgressDialog;
     private ContentLoadingProgressBar mLoadingProgressBar;
@@ -191,14 +197,14 @@ public class ThreadDetailFragment extends BaseFragment {
 
         mRecyclerView.setXRecyclerListener(new XRecyclerView.XRecyclerListener() {
             @Override
-            public void onLoadPrevious() {
+            public void onHeaderReady() {
                 mCurrentPage--;
                 mFloorOfPage = LAST_FLOOR;
                 showOrLoadPage();
             }
 
             @Override
-            public void onLoadNext() {
+            public void onFooterReady() {
                 mCurrentPage++;
                 mFloorOfPage = 0;
                 showOrLoadPage();
@@ -208,7 +214,21 @@ public class ThreadDetailFragment extends BaseFragment {
             public void atEnd() {
                 mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
                 mFloorOfPage = LAST_FLOOR;
-                refresh();
+                refreshAtEnd();
+            }
+
+            @Override
+            public void onFooterError() {
+                if (mCurrentPage == mMaxPage) {
+                    atEnd();
+                } else {
+                    prefetchNextPage();
+                }
+            }
+
+            @Override
+            public void onHeaderError() {
+                prefetchPreviousPage();
             }
         });
 
@@ -466,7 +486,13 @@ public class ThreadDetailFragment extends BaseFragment {
 
     private void refresh() {
         mInloading = true;
-        ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, FETCH_REFRESH);
+        ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, FETCH_REFRESH, POSITION_NORMAL);
+        JobMgr.addJob(job);
+    }
+
+    private void refreshAtEnd() {
+        mFooterLoading = true;
+        ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, FETCH_REFRESH, POSITION_FOOTER);
         JobMgr.addJob(job);
     }
 
@@ -537,34 +563,39 @@ public class ThreadDetailFragment extends BaseFragment {
         mRecyclerView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
     }
 
-    private void prefetchNextPage() {
+    private synchronized void prefetchNextPage() {
         if (mCurrentPage < mMaxPage) {
             if (mCache.get(mCurrentPage + 1) == null) {
-                prefetchPage(mCurrentPage + 1, FETCH_NEXT);
-                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+                if (!mFooterLoading) {
+                    mFooterLoading = true;
+                    prefetchPage(mCurrentPage + 1, FETCH_NEXT, POSITION_FOOTER);
+                    mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+                }
             } else {
                 mRecyclerView.setFooterState(XFooterView.STATE_READY);
             }
         }
     }
 
-    private void prefetchPreviousPage() {
+    private synchronized void prefetchPreviousPage() {
         if (mCurrentPage > 1) {
             if (mCache.get(mCurrentPage - 1) == null) {
-                prefetchPage(mCurrentPage - 1, FETCH_PREVIOUS);
-                mRecyclerView.setHeaderState(XHeaderView.STATE_LOADING);
+                if (!mHeaderLoading) {
+                    mHeaderLoading = true;
+                    prefetchPage(mCurrentPage - 1, FETCH_PREVIOUS, POSITION_HEADER);
+                    mRecyclerView.setHeaderState(XHeaderView.STATE_LOADING);
+                }
             } else {
                 mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
             }
         }
     }
 
-    private void prefetchPage(int page, int fetchType) {
-        if (!mPrefetching && mCache.get(page) == null) {
-            mPrefetching = true;
+    private void prefetchPage(int page, int fetchType, int loadingPosition) {
+        if (mCache.get(page) == null) {
             if (page < 1 || page > mMaxPage)
                 return;
-            ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, page, fetchType);
+            ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, page, fetchType, loadingPosition);
             JobMgr.addJob(job);
         }
     }
@@ -764,7 +795,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 fetchType = FETCH_REFRESH;
             }
             mInloading = true;
-            ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, fetchType);
+            ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, fetchType, POSITION_NORMAL);
             JobMgr.addJob(job);
         }
     }
@@ -786,7 +817,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         if (mCurrentPage <= mMaxPage) {
             mInloading = true;
-            ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, FETCH_NORMAL);
+            ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, FETCH_NORMAL, POSITION_NORMAL);
             JobMgr.addJob(job);
         }
     }
@@ -867,12 +898,12 @@ public class ThreadDetailFragment extends BaseFragment {
                 visibleItemCount = mLayoutManager.getChildCount();
                 totalItemCount = mLayoutManager.getItemCount();
                 if ((visibleItemCount + firstVisiblesItem) >= totalItemCount - 3) {
-                    if (!mPrefetching && mCurrentPage < mMaxPage) {
+                    if (!mFooterLoading && mCurrentPage < mMaxPage) {
                         prefetchNextPage();
                     }
                 }
             } else if (dy < 0) {
-                if (!mPrefetching && firstVisiblesItem < 3 && mCurrentPage > 1) {
+                if (!mHeaderLoading && firstVisiblesItem < 3 && mCurrentPage > 1) {
                     prefetchPreviousPage();
                 }
             }
@@ -916,20 +947,21 @@ public class ThreadDetailFragment extends BaseFragment {
     private class ThreadDetailEventCallback extends EventCallback<ThreadDetailEvent> {
         @Override
         public void onFail(ThreadDetailEvent event) {
-            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
-            if (event.mFectchType == FETCH_PREVIOUS) {
-                mPrefetching = false;
-            } else if (event.mFectchType == FETCH_NEXT) {
-                mPrefetching = false;
+            if (event.mLoadingPosition == POSITION_HEADER) {
+                mHeaderLoading = false;
+                mRecyclerView.setHeaderState(XHeaderView.STATE_ERROR);
+            } else if (event.mLoadingPosition == POSITION_FOOTER) {
+                mFooterLoading = false;
+                mRecyclerView.setFooterState(XFooterView.STATE_ERROR);
             } else {
                 mInloading = false;
+                UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
                 mLoadingProgressBar.hide();
             }
         }
 
         @Override
         public void onSuccess(ThreadDetailEvent event) {
-            int status = event.mStatus;
             DetailListBean details = event.mData;
 
             mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
@@ -949,15 +981,19 @@ public class ThreadDetailFragment extends BaseFragment {
 
             mCache.put(details.getPage(), details);
 
-            if (event.mFectchType == FETCH_PREVIOUS) {
-                mPrefetching = false;
+            if (event.mLoadingPosition == POSITION_HEADER) {
+                mHeaderLoading = false;
                 mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
-            } else if (event.mFectchType == FETCH_NEXT) {
-                mPrefetching = false;
-                mRecyclerView.setFooterState(XFooterView.STATE_READY);
+            } else if (event.mLoadingPosition == POSITION_FOOTER) {
+                mFooterLoading = false;
+                if (event.mFectchType == FETCH_NEXT)
+                    mRecyclerView.setFooterState(XFooterView.STATE_READY);
             } else {
                 mInloading = false;
                 mLoadingProgressBar.hide();
+            }
+
+            if (event.mFectchType == FETCH_NORMAL || event.mFectchType == FETCH_REFRESH) {
                 if (!mDataReceived) {
                     mDataReceived = true;
                     mMainFab.setEnabled(true);
@@ -965,13 +1001,8 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
                 mDetailBeans = details.getAll();
                 mDetailAdapter.setDatas(mDetailBeans);
-                if (event.mFectchType == FETCH_NORMAL || event.mFectchType == FETCH_REFRESH) {
-                    mCurrentPage = details.getPage();
-                }
+                mCurrentPage = details.getPage();
 
-                if (mCurrentPage == LAST_PAGE) {
-                    mCurrentPage = mMaxPage;
-                }
                 showOrLoadPage();
             }
 
@@ -989,22 +1020,10 @@ public class ThreadDetailFragment extends BaseFragment {
         }
 
         @Override
-        public void inProgress(ThreadDetailEvent event) {
-            if (event.mFectchType == FETCH_NORMAL) {
-                mLoadingProgressBar.show();
-            } else if (event.mFectchType == FETCH_PREVIOUS) {
-                mRecyclerView.setHeaderState(XHeaderView.STATE_LOADING);
-            } else if (event.mFectchType == FETCH_NEXT) {
-                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
-            } else if (event.mFectchType == FETCH_REFRESH) {
-                mLoadingProgressBar.show();
-            }
-        }
-
-        @Override
         public void onFailRelogin(ThreadDetailEvent event) {
             showLoginDialog();
         }
+
     }
 
     @SuppressWarnings("unused")

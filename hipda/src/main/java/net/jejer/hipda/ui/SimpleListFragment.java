@@ -543,13 +543,6 @@ public class SimpleListFragment extends BaseFragment
         }
 
         @Override
-        public void inProgress(SimpleListEvent event) {
-            if (event.mPage != 1) {
-                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
-            }
-        }
-
-        @Override
         public void onFailRelogin(SimpleListEvent event) {
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);

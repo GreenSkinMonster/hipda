@@ -305,10 +305,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
     private class SmsEventCallback extends EventCallback<SimpleListEvent> {
         @Override
-        public void inProgress(SimpleListEvent event) {
-        }
-
-        @Override
         public void onSuccess(SimpleListEvent event) {
             loadingProgressBar.hide();
 

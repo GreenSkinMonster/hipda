@@ -20,13 +20,8 @@ public abstract class EventCallback<T extends BaseEvent> {
         onFail(event);
     }
 
-    public abstract void inProgress(T event);
-
     public void process(T event) {
         switch (event.mStatus) {
-            case Constants.STATUS_IN_PROGRESS:
-                inProgress(event);
-                break;
             case Constants.STATUS_SUCCESS:
                 onSuccess(event);
                 break;

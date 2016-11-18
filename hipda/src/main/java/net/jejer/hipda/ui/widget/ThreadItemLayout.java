@@ -58,10 +58,10 @@ public class ThreadItemLayout extends LinearLayout {
             try {
                 mTvTitle.setTextColor(Color.parseColor(titleColor));
             } catch (Exception ignored) {
-                mTvTitle.setTextColor(ColorHelper.getDefaultTextColor(getContext()));
+                mTvTitle.setTextColor(ColorHelper.getTextColorPrimary(getContext()));
             }
         } else
-            mTvTitle.setTextColor(ColorHelper.getDefaultTextColor(getContext()));
+            mTvTitle.setTextColor(ColorHelper.getTextColorPrimary(getContext()));
 
         if (HiSettingsHelper.getInstance().isShowPostType() &&
                 !TextUtils.isEmpty(thread.getType())) {

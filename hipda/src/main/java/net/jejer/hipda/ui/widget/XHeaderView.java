@@ -2,6 +2,7 @@ package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -9,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Utils;
 
 /**
@@ -19,6 +21,7 @@ public class XHeaderView extends RelativeLayout {
     public final static int STATE_HIDDEN = 0;
     public final static int STATE_LOADING = 1;
     public final static int STATE_READY = 2;
+    public final static int STATE_ERROR = 4;
 
     private int mState = STATE_HIDDEN;
     private View mLayout;
@@ -47,12 +50,20 @@ public class XHeaderView extends RelativeLayout {
         switch (state) {
             case STATE_READY:
                 mProgressBar.setVisibility(GONE);
+                mTitle.setTextColor(ColorHelper.getTextColorSecondary(getContext()));
                 mTitle.setVisibility(VISIBLE);
                 break;
 
             case STATE_LOADING:
                 mTitle.setVisibility(GONE);
                 mProgressBar.setVisibility(VISIBLE);
+                break;
+
+            case STATE_ERROR:
+                mProgressBar.setVisibility(View.GONE);
+                mTitle.setVisibility(View.VISIBLE);
+                mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.md_orange_800));
+                mTitle.setText(R.string.footer_hint_error);
                 break;
 
             default:

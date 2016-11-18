@@ -52,7 +52,7 @@ public class SimpleListAdapter extends BaseRvAdapter<SimpleListItemBean> {
         if (item.isNew()) {
             holder.tv_title.setTextColor(ContextCompat.getColor(mFragment.getActivity(), R.color.red));
         } else {
-            holder.tv_title.setTextColor(ColorHelper.getDefaultTextColor(mFragment.getActivity()));
+            holder.tv_title.setTextColor(ColorHelper.getTextColorPrimary(mFragment.getActivity()));
         }
 
         if (TextUtils.isEmpty(item.getInfo())) {

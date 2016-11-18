@@ -48,7 +48,7 @@ public class TextViewWithEmoticon extends TextView {
     }
 
     private void init() {
-        setTextColor(ColorHelper.getDefaultTextColor(mCtx));
+        setTextColor(ColorHelper.getTextColorPrimary(mCtx));
         setLinkTextColor(ColorHelper.getColorAccent(mCtx));
 
         UIUtils.setLineSpacing(this);

@@ -32,7 +32,7 @@ public class ThreadDetailJob extends BaseJob {
 
     private ThreadDetailEvent mEvent;
 
-    public ThreadDetailJob(Context context, String sessionId, String tid, String gotoPostId, int page, int fetchType) {
+    public ThreadDetailJob(Context context, String sessionId, String tid, String gotoPostId, int page, int fetchType, int loadingPosition) {
         super(sessionId);
         mCtx = context;
         mTid = tid;
@@ -44,6 +44,7 @@ public class ThreadDetailJob extends BaseJob {
         mEvent.mSessionId = mSessionId;
         mEvent.mFectchType = fetchType;
         mEvent.mPage = page;
+        mEvent.mLoadingPosition = loadingPosition;
     }
 
     @Override

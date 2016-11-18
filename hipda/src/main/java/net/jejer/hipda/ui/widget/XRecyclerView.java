@@ -67,7 +67,10 @@ public class XRecyclerView extends RecyclerView {
             @Override
             public void onSingleClick(View v) {
                 if (mHeaderView.getState() == XHeaderView.STATE_READY) {
-                    loadPrevious();
+                    onHeaderReady();
+                }
+                if (mHeaderView.getState() == XHeaderView.STATE_ERROR) {
+                    onHeaderError();
                 }
             }
         });
@@ -75,9 +78,11 @@ public class XRecyclerView extends RecyclerView {
             @Override
             public void onSingleClick(View v) {
                 if (mFooterView.getState() == XFooterView.STATE_READY) {
-                    loadNext();
+                    onFooterReady();
                 } else if (mFooterView.getState() == XFooterView.STATE_END) {
                     atEnd();
+                } else if (mFooterView.getState() == XFooterView.STATE_ERROR) {
+                    onFooterError();
                 }
             }
         });
@@ -133,7 +138,7 @@ public class XRecyclerView extends RecyclerView {
         if (mHeaderView.getTopMargin() > mPullDelta) {
             stopScroll();
             mDispatchEvent = false;
-            loadPrevious();
+            onHeaderReady();
             resetHeaderHeight();
         } else {
             mHeaderView.setTopMargin(topMagin + (int) delta);
@@ -156,7 +161,7 @@ public class XRecyclerView extends RecyclerView {
         if (bottomMargin > mPullDelta) {
             stopScroll();
             mDispatchEvent = false;
-            loadNext();
+            onFooterReady();
             resetFooterHeight();
         } else {
             mFooterView.setBottomMargin(bottomMargin + (int) delta);
@@ -252,21 +257,33 @@ public class XRecyclerView extends RecyclerView {
         super.computeScroll();
     }
 
-    private void loadPrevious() {
+    private void onHeaderReady() {
         if (null != mListener) {
-            mListener.onLoadPrevious();
+            mListener.onHeaderReady();
         }
     }
 
-    private void loadNext() {
+    private void onFooterReady() {
         if (null != mListener) {
-            mListener.onLoadNext();
+            mListener.onFooterReady();
         }
     }
 
     private void atEnd() {
         if (null != mListener) {
             mListener.atEnd();
+        }
+    }
+
+    private void onHeaderError() {
+        if (null != mListener) {
+            mListener.onHeaderError();
+        }
+    }
+
+    private void onFooterError() {
+        if (null != mListener) {
+            mListener.onFooterError();
         }
     }
 
@@ -288,10 +305,14 @@ public class XRecyclerView extends RecyclerView {
     }
 
     public interface XRecyclerListener {
-        void onLoadPrevious();
+        void onHeaderReady();
 
-        void onLoadNext();
+        void onFooterReady();
 
         void atEnd();
+
+        void onHeaderError();
+
+        void onFooterError();
     }
 }

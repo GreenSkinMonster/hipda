@@ -46,6 +46,7 @@
     <!-- Pull to refresh related -->
     <string name="header_hint_load_previous">下拉加载前一页</string>
     <string name="footer_hint_load_next">点击加载下一页</string>
+    <string name="footer_hint_error">发生错误，点击重试</string>
     <string name="footer_hint_end">～ END ～</string>
     <string name="hint_subject">主题</string>
 

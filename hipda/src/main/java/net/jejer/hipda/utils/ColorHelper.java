@@ -34,8 +34,12 @@ public class ColorHelper {
         return colorId;
     }
 
-    public static int getDefaultTextColor(Context ctx) {
+    public static int getTextColorPrimary(Context ctx) {
         return getColorIdByAttr(ctx, android.R.attr.textColorPrimary);
+    }
+
+    public static int getTextColorSecondary(Context ctx) {
+        return getColorIdByAttr(ctx, android.R.attr.textColorSecondary);
     }
 
     public static int getColorAccent(Context ctx) {

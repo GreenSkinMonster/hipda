@@ -10,4 +10,5 @@ public class ThreadDetailEvent extends BaseEvent {
     public DetailListBean mData;
     public int mFectchType;
     public int mPage;
+    public int mLoadingPosition;
 }
