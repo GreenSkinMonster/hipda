@@ -11,11 +11,11 @@
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="12dp"
         android:gravity="center"
         android:textAlignment="center"
         android:textIsSelectable="true"
-        android:textSize="18sp"/>
+        android:textSize="20sp"/>
 
     <View
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
         android:layout_margin="8dp"
         android:gravity="center"
         android:textAlignment="center"
-        android:textSize="16sp"/>
+        android:textSize="18sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

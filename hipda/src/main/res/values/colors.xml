@@ -23,7 +23,7 @@
     <item name="textColorPrimaryLight" type="color">#333333</item>
     <item name="textColorSecondaryLight" type="color">#999999</item>
 
-    <item name="textColorPrimaryDark" type="color">#CCCCCC</item>
+    <item name="textColorPrimaryDark" type="color">#AAAAAA</item>
     <item name="textColorSecondaryDark" type="color">#666666</item>
 
     <item name="hipda" type="color">#33B6EA</item>
@@ -40,7 +40,7 @@
     <item name="night_img_background" type="color">#2B2C2D</item>
     <item name="night_replybarbackground" type="color">#000000</item>
     <item name="night_list_item_divider" type="color">@color/background_grey</item>
-    <item name="quote_text_background" type="color">#33C0C0C0</item>
+    <item name="quote_text_background" type="color">#2AC0C0C0</item>
 
     <color name="pink">#e91e63</color>
     <color name="pink_pressed">#ec407a</color>
