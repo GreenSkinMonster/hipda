@@ -1,12 +1,10 @@
 package net.jejer.hipda.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
@@ -16,6 +14,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.SystemClock;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -609,54 +610,51 @@ public class ThreadDetailFragment extends BaseFragment {
         }
         mGoToPage = mCurrentPage;
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View viewlayout = inflater.inflate(R.layout.dialog_goto_page, null);
-        final ImageButton btnFirstPage = (ImageButton) viewlayout.findViewById(R.id.btn_fisrt_page);
-        final ImageButton btnLastPage = (ImageButton) viewlayout.findViewById(R.id.btn_last_page);
-        final ImageButton btnNextPage = (ImageButton) viewlayout.findViewById(R.id.btn_next_page);
-        final ImageButton btnPreviousPage = (ImageButton) viewlayout.findViewById(R.id.btn_previous_page);
-        final SeekBar sbGotoPage = (SeekBar) viewlayout.findViewById(R.id.sb_page);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final AlertDialog dialog;
+        final View view = inflater.inflate(R.layout.dialog_goto_page, null);
+        TextView tvTitle = (TextView) view.findViewById(R.id.tv_title);
+        final TextView tvPage = (TextView) view.findViewById(R.id.tv_page);
+        final ImageButton btnFirstPage = (ImageButton) view.findViewById(R.id.btn_fisrt_page);
+        final ImageButton btnLastPage = (ImageButton) view.findViewById(R.id.btn_last_page);
+        final ImageButton btnNextPage = (ImageButton) view.findViewById(R.id.btn_next_page);
+        final ImageButton btnPreviousPage = (ImageButton) view.findViewById(R.id.btn_previous_page);
+        final SeekBar sbGotoPage = (SeekBar) view.findViewById(R.id.sb_page);
+        Button btnPageBottom = (Button) view.findViewById(R.id.btn_page_bottom);
+        Button btnGoto = (Button) view.findViewById(R.id.btn_goto_page);
 
+        final BottomSheetDialog dialog = new BottomSheetDialog(getActivity());
+
+        tvTitle.setText(mTitle);
         btnFirstPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_fast_backward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
         btnLastPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_fast_forward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
         btnNextPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_forward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
         btnPreviousPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_backward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
 
-        builder.setTitle("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
-        builder.setView(viewlayout);
+        tvPage.setText("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
 
-        builder.setPositiveButton(getResources().getString(android.R.string.ok),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mCurrentPage = mGoToPage;
-                        showOrLoadPage();
-                    }
-                });
-        builder.setNegativeButton(getResources().getString(android.R.string.cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-        builder.setNeutralButton("页尾",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        stopScroll();
-                        mRecyclerView.scrollToBottom();
-                        prefetchNextPage();
-                    }
-                });
-        dialog = builder.create();
+        btnPageBottom.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                mRecyclerView.scrollToBottom();
+                prefetchNextPage();
+                dialog.dismiss();
+            }
+        });
+        btnGoto.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                mCurrentPage = mGoToPage;
+                showOrLoadPage();
+                dialog.dismiss();
+            }
+        });
 
-        // Fuck Android SeekBar, always start from 0
         sbGotoPage.setMax(mMaxPage - 1);
         sbGotoPage.setProgress(mCurrentPage - 1);
         sbGotoPage.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mGoToPage = progress + 1; //start from 0
-                dialog.setTitle("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
+                tvPage.setText("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
             }
 
             @Override
@@ -709,6 +707,10 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
 
+        dialog.setContentView(view);
+        BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) view.getParent());
+        //set a big value to show dialog fully
+        mBehavior.setPeekHeight(Utils.dpToPx(getActivity(), 512));
         dialog.show();
     }
 

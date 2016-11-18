@@ -1,31 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="?attr/dialog_background"
+              android:gravity="center_horizontal"
+              android:orientation="vertical"
+              android:padding="4dp">
 
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textIsSelectable="true"
+        android:textSize="18sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"/>
+
+    <TextView
+        android:id="@+id/tv_page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="16sp"/>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
         android:padding="4dp">
 
         <SeekBar
             android:id="@+id/sb_page"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="0" />
+            android:layout_weight="0"/>
 
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:padding="4dp">
+        android:layout_margin="4dp">
 
         <ImageButton
             android:id="@+id/btn_fisrt_page"
@@ -33,7 +56,7 @@
             android:layout_height="48dp"
             android:layout_alignParentLeft="true"
             android:layout_margin="4dp"
-            android:background="?android:selectableItemBackground" />
+            android:background="?android:selectableItemBackground"/>
 
         <ImageButton
             android:id="@+id/btn_previous_page"
@@ -41,7 +64,7 @@
             android:layout_height="48dp"
             android:layout_margin="4dp"
             android:layout_toRightOf="@+id/btn_fisrt_page"
-            android:background="?android:selectableItemBackground" />
+            android:background="?android:selectableItemBackground"/>
 
         <ImageButton
             android:id="@+id/btn_next_page"
@@ -49,7 +72,7 @@
             android:layout_height="48dp"
             android:layout_margin="4dp"
             android:layout_toLeftOf="@+id/btn_last_page"
-            android:background="?android:selectableItemBackground" />
+            android:background="?android:selectableItemBackground"/>
 
         <ImageButton
             android:id="@+id/btn_last_page"
@@ -57,7 +80,31 @@
             android:layout_height="48dp"
             android:layout_alignParentRight="true"
             android:layout_margin="4dp"
-            android:background="?android:selectableItemBackground" />
+            android:background="?android:selectableItemBackground"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_page_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="?android:selectableItemBackground"
+            android:text="页尾"
+            android:textColor="?attr/colorAccent"/>
+
+        <Button
+            android:id="@+id/btn_goto_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="?android:selectableItemBackground"
+            android:text="跳转"
+            android:textColor="?attr/colorAccent"/>
 
     </RelativeLayout>
 
