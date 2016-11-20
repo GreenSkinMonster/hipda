@@ -215,7 +215,6 @@ public class ThreadDetailFragment extends BaseFragment {
             @Override
             public void atEnd() {
                 mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
-                mFloorOfPage = LAST_FLOOR;
                 refreshAtEnd();
             }
 
@@ -771,7 +770,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 mRecyclerView.setFooterState(XFooterView.STATE_END);
             }
 
-            int position = 0;
+            int position = -1;
             if (mFloorOfPage == LAST_FLOOR) {
                 position = mDetailAdapter.getItemCount() - 1;
             } else {
@@ -780,10 +779,9 @@ public class ThreadDetailFragment extends BaseFragment {
                 } else if (mFloorOfPage >= 0) {
                     position = mDetailAdapter.getPositionByFloor(mFloorOfPage);
                 }
-                if (position < 0)
-                    position = 0;
             }
-            mRecyclerView.scrollToPosition(position);
+            if (position >= 0)
+                mRecyclerView.scrollToPosition(position);
             mGotoPostId = null;
             mFloorOfPage = -1;
 
@@ -793,6 +791,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (mCurrentPage < mMaxPage && position > mDetailAdapter.getItemCount() - 5) {
                 prefetchNextPage();
             }
+            mMainFab.show();
         } else {
             int fetchType = FETCH_NORMAL;
             if (refresh || mCurrentPage == mMaxPage || mCurrentPage == LAST_PAGE) {
