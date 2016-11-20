@@ -107,23 +107,14 @@ public class DetailBean {
         }
 
         public void addImg(String url) {
-            addImg(url, null);
+            addImg(url, 0);
         }
 
-        public void addImg(String url, String id) {
-            ContentImg contentImg = new ContentImg(url, id);
+        public void addImg(String url, long size) {
+            ContentImg contentImg = new ContentImg(url, size);
             list.add(contentImg);
             mImages.add(contentImg);
             newString = true;
-        }
-
-        public void updateImgSize(String imgId, long size) {
-            for (ContentImg img : mImages) {
-                if (imgId.equals(img.getId())) {
-                    img.setFileSize(size);
-                    break;
-                }
-            }
         }
 
         public void addAttach(String url, String title, String desc) {

@@ -31,8 +31,6 @@ import java.util.Map;
  */
 public class TaskHelper {
 
-    private final static String SERVER_SETTING_URL = "http://www.hi-pda.com/config.php";
-
     public static void runDailyTask(boolean force) {
         String millis = HiSettingsHelper.getInstance()
                 .getStringValue(HiSettingsHelper.PERF_LAST_TASK_TIME, "0");
@@ -120,7 +118,7 @@ public class TaskHelper {
     }
 
     private static String getImageHost() throws Exception {
-        String response = OkHttpHelper.getInstance().get(SERVER_SETTING_URL);
+        String response = OkHttpHelper.getInstance().get(HiUtils.SettingUrl);
         Gson gson = new Gson();
         Type stringStringMap = new TypeToken<Map<String, String>>() {
         }.getType();

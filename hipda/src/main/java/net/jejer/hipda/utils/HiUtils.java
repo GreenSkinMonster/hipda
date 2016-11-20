@@ -16,6 +16,7 @@ public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";
 
     public static final String BaseUrl = "http://www.hi-pda.com/forum/";
+    public static final String SettingUrl = "http://www.hi-pda.com/config.php";
     public static final String CookieDomain = "hi-pda.com";
     public static final String AvatarSuffix = "_avatar_middle.jpg";
     public static final String NewPMImage = "images/default/notice_newpm.gif";

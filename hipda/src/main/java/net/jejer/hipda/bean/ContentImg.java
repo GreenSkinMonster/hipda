@@ -6,11 +6,10 @@ public class ContentImg extends ContentAbs {
     private int mIndexInPage;
     private String mAuthor;
     private long mFileSize;
-    private String mId;
 
-    public ContentImg(String url, String id) {
+    public ContentImg(String url, long fileSize) {
         mUrl = url;
-        mId = id;
+        mFileSize = fileSize;
     }
 
     @Override
@@ -54,10 +53,6 @@ public class ContentImg extends ContentAbs {
 
     public void setFileSize(long fileSize) {
         mFileSize = fileSize;
-    }
-
-    public String getId() {
-        return mId;
     }
 
 }

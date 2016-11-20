@@ -22,6 +22,7 @@ public class SmallImages {
                     IMAGES = new HashMap<>();
                     IMAGES.put(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
                     IMAGES.put(HiUtils.BaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
+                    IMAGES.put("http://www.hi-pda.com/forum/attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
                 }
             }
         }

@@ -36,6 +36,7 @@ import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.ui.TextViewWithEmoticon;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.ThreadImageLayout;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -235,7 +236,8 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                     ContentGoToFloor goToFloor = (ContentGoToFloor) content;
                     author = goToFloor.getAuthor();
                     floor = goToFloor.getFloor();
-                    DetailBean detailBean = mDetailFragment.getCachedPost(goToFloor.getPostId());
+                    String postId = goToFloor.getPostId();
+                    DetailBean detailBean = mDetailFragment.getCachedPost(postId);
                     if (detailBean != null) {
                         text = detailBean.getContents().getContent();
                         floor = detailBean.getFloor();
@@ -244,8 +246,9 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                 } else {
                     ContentQuote contentQuote = (ContentQuote) content;
                     DetailBean detailBean = null;
-                    if (!TextUtils.isEmpty(contentQuote.getPostId()) && TextUtils.isDigitsOnly(contentQuote.getPostId())) {
-                        detailBean = mDetailFragment.getCachedPost(contentQuote.getPostId());
+                    String postId = contentQuote.getPostId();
+                    if (HiUtils.isValidId(postId)) {
+                        detailBean = mDetailFragment.getCachedPost(postId);
                     }
                     if (detailBean != null) {
                         author = contentQuote.getAuthor();
@@ -253,11 +256,11 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                         floor = detailBean.getFloor();
                         note = floor + "#";
                     } else {
-                        author = ((ContentQuote) content).getAuthor();
-                        if (!TextUtils.isEmpty(((ContentQuote) content).getTo()))
-                            note = "to: " + ((ContentQuote) content).getTo();
-                        time = ((ContentQuote) content).getTime();
-                        text = ((ContentQuote) content).getText();
+                        author = contentQuote.getAuthor();
+                        if (!TextUtils.isEmpty(contentQuote.getTo()))
+                            note = "to: " + contentQuote.getTo();
+                        time = contentQuote.getTime();
+                        text = contentQuote.getText();
                     }
                 }
 

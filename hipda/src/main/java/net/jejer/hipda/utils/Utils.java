@@ -352,6 +352,7 @@ public class Utils {
 
 
     public static long parseSizeText(String sizeText) {
+        //708 Bytes
         //100.1 KB
         //2.22 MB
         sizeText = Utils.nullToText(sizeText).trim().toUpperCase();
@@ -360,6 +361,8 @@ public class Utils {
                 return Math.round(Double.parseDouble(sizeText.replace("KB", "").trim()) * 1024);
             } else if (sizeText.endsWith("MB")) {
                 return Math.round(Double.parseDouble(sizeText.replace("MB", "").trim()) * 1024 * 1024);
+            } else if (sizeText.endsWith("BYTES")) {
+                return Long.parseLong(sizeText.replace("BYTES", "").trim());
             }
         } catch (Exception ignored) {
         }

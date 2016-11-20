@@ -252,12 +252,37 @@ public class HiParserThreadDetail {
             }
 
             // IMG attachments
-            Elements postimgES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.t_msgfontfix div.postattachlist img");
-            for (int j = 0; j < postimgES.size(); j++) {
-                Element imgE = postimgES.get(j);
-                if (imgE.attr("file").startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachments/day_")
-                        || imgE.attr("file").startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachment.php")) {
-                    content.addImg(imgE.attr("file"), imgE.attr("id"));
+            Elements dlES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.t_msgfontfix div.postattachlist dl.attachimg");
+            for (int j = 0; j < dlES.size(); j++) {
+                Element dlEl = dlES.get(j);
+                Elements sizeES = dlEl.select("em");
+                Elements imgES = dlEl.select("img");
+
+
+                if (imgES.size() > 0) {
+                    Element e = imgES.first();
+
+                    String file = e.attr("file");
+                    String onclick = e.attr("onclick");
+
+                    if (!TextUtils.isEmpty(file) && !file.startsWith("http"))
+                        file = HiSettingsHelper.getInstance().getImageBaseUrl() + file;
+
+                    if (onclick.startsWith("zoom") && onclick.contains("attachment")) {
+                        onclick = HttpUtils.getMiddleString(onclick, "attachment", "'");
+                        if (!TextUtils.isEmpty(onclick))
+                            onclick = HiSettingsHelper.getInstance().getImageBaseUrl() + "attachment" + onclick;
+                    } else {
+                        onclick = "";
+                    }
+
+                    long size = 0;
+                    if (sizeES.size() > 0) {
+                        String sizeText = HttpUtils.getMiddleString(sizeES.first().text(), "(", ")");
+                        size = Utils.parseSizeText(sizeText);
+                    }
+
+                    content.addImg(TextUtils.isEmpty(onclick) ? file : onclick, size);
                 }
             }
 
@@ -382,33 +407,44 @@ public class HiParserThreadDetail {
             Element e = (Element) contentN;
             String src = e.attr("src");
             String file = e.attr("file");
+            String onclick = e.attr("onclick");
+            String id = e.attr("id");
 
-            if (!TextUtils.isEmpty(src) && !src.startsWith("http"))
+            if (!TextUtils.isEmpty(src) && !src.contains("://"))
                 src = HiSettingsHelper.getInstance().getImageBaseUrl() + src;
-            if (!TextUtils.isEmpty(file) && !file.startsWith("http"))
-                file = HiSettingsHelper.getInstance().getImageBaseUrl() + file;
 
-            if (src.equals(HiSettingsHelper.getInstance().getImageBaseUrl() + "images/common/none.gif")
-                    || src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachments/day_")
-                    || src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachment.php")) {
+            if (id.startsWith("aimg") || src.contains("images/common/none.gif")) {
                 //internal image
-                content.addImg(file, e.attr("id"));
-                return false;
+                if (!TextUtils.isEmpty(file) && !file.startsWith("http"))
+                    file = HiSettingsHelper.getInstance().getImageBaseUrl() + file;
+
+                if (onclick.startsWith("zoom") && onclick.contains("attachment")) {
+                    onclick = HttpUtils.getMiddleString(onclick, "attachment", "'");
+                    if (!TextUtils.isEmpty(onclick))
+                        onclick = HiSettingsHelper.getInstance().getImageBaseUrl() + "attachment" + onclick;
+                } else {
+                    onclick = "";
+                }
+
+                long size = 0;
+                Elements divES = ((Element) contentN.parent().parent()).select("div#" + id + "_menu");
+                if (divES.size() > 0) {
+                    String sizeText = HttpUtils.getMiddleString(divES.first().text(), "(", ")");
+                    size = Utils.parseSizeText(sizeText);
+                }
+                content.addImg(TextUtils.isEmpty(onclick) ? file : onclick, size);
             } else if (src.startsWith(HiSettingsHelper.getInstance().getSmiliesBaseUrl()) || SmallImages.contains(src)) {
-                //emotion added as img tag, will be mParsed in TextViewWithEmoticon later
+                //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
-                return false;
             } else if (src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "images/")) {
                 //skip common/default/attach icons
-                return false;
-            } else if (src.startsWith("http://") || src.startsWith("https://")) {
+            } else if (src.contains("://")) {
                 //external image
                 content.addImg(src);
-                return false;
             } else {
                 content.addNotice("[[ERROR:UNPARSED IMG:" + src + "]]");
-                return false;
             }
+            return false;
         } else if (contentN.nodeName().equals("span")) {    // a section in a document
             Elements attachAES = ((Element) contentN).select("a");
             Boolean isInternalAttach = false;
@@ -436,7 +472,8 @@ public class HiParserThreadDetail {
             String text = aE.text();
             String url = aE.attr("href");
             if (aE.childNodeSize() > 0 && aE.childNode(0).nodeName().equals("img")) {
-                content.addLink(url, url);
+                if (!url.startsWith("javascript:"))
+                    content.addLink(url, url);
                 return true;
             }
 
@@ -447,7 +484,6 @@ public class HiParserThreadDetail {
             }
 
             if (url.startsWith("attachment.php?")) {
-                // is Attachment
                 content.addAttach(url, text, null);
                 return false;
             }
@@ -458,14 +494,6 @@ public class HiParserThreadDetail {
             Element divE = (Element) contentN;
             if (divE.hasClass("t_attach")) {
                 // remove div.t_attach
-                String divId = divE.attr("id");
-                if (!TextUtils.isEmpty(divId) && divId.startsWith("aimg_") && divId.endsWith("_menu")) {
-                    String sizeText = HttpUtils.getMiddleString(divE.text(), "(", ")");
-                    long size = Utils.parseSizeText(sizeText);
-                    if (size > 0) {
-                        content.updateImgSize(divId.substring(0, divId.length() - 5), size);
-                    }
-                }
                 return false;
             } else if (divE.hasClass("quote")) {
                 String tid = "";
