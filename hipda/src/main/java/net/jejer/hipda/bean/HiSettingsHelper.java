@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.Constants;
@@ -82,6 +81,7 @@ public class HiSettingsHelper {
     public static final String PERF_CIRCLE_AVATAR = "PERF_CIRCLE_AVATAR";
     public static final String PERF_LAST_TASK_TIME = "PERF_LAST_TASK_TIME";
     public static final String PERF_CACHE_SIZE_IN_MB = "PERF_CACHE_SIZE_IN_MB";
+    public static final String PERF_FORUM_SERVER = "PERF_FORUM_SERVER";
     public static final String PERF_IMAGE_HOST = "PERF_IMAGE_HOST";
     public static final String PERF_AVATAR_HOST = "PERF_AVATAR_HOST";
     public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
@@ -133,6 +133,8 @@ public class HiSettingsHelper {
     private boolean mNotiLedLight;
     private String mBSTypeId;
     private String mAnimationType;
+
+    private String mForumServer;
     private String mImageHost;
     private String mAvatarHost;
 
@@ -140,10 +142,6 @@ public class HiSettingsHelper {
     private int mBasePostTextSize = -1;
     private int mBaseTitleTextSize = -1;
     private boolean mIsLandscape = false;
-
-    private String mImageBaseUrl = "";
-    private String mAvatarBaseUrl = "";
-    private String mSmiliesBaseUrl = "";
 
     public void setIsLandscape(boolean landscape) {
         mIsLandscape = landscape;
@@ -263,11 +261,11 @@ public class HiSettingsHelper {
         getNotiRepeatMinutesFromPref();
         getBSTypeIdFromPref();
         getAnimationTypeFromPref();
+        getForumServerFromPref();
         getImageHostFromPref();
         getAvatarHostFromPref();
 
         updateMobileNetworkStatus(mCtx);
-        updateBaseUrls();
     }
 
     public boolean isLoginInfoValid() {
@@ -951,6 +949,21 @@ public class HiSettingsHelper {
         return "1".equals(getAnimationType());
     }
 
+    public String getForumServer() {
+        return mForumServer;
+    }
+
+    public String getForumServerFromPref() {
+        mForumServer = mSharedPref.getString(PERF_FORUM_SERVER, HiUtils.ForumServer);
+        return mForumServer;
+    }
+
+    public void setForumServer(String forumServer) {
+        mForumServer = forumServer;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_FORUM_SERVER, mForumServer).apply();
+    }
+
     public String getImageHost() {
         return mImageHost;
     }
@@ -979,25 +992,6 @@ public class HiSettingsHelper {
         mAvatarHost = avatarHost;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_AVATAR_HOST, mAvatarHost).apply();
-    }
-
-    public String getImageBaseUrl() {
-        return mImageBaseUrl;
-    }
-
-    public String getAvatarBaseUrl() {
-        return mAvatarBaseUrl;
-    }
-
-    public String getSmiliesBaseUrl() {
-        return mSmiliesBaseUrl;
-    }
-
-    public void updateBaseUrls() {
-        mImageBaseUrl = "http://" + mImageHost + "/forum/";
-        mAvatarBaseUrl = "http://" + mAvatarHost + "/forum/" + HiUtils.AvatarPath;
-        mSmiliesBaseUrl = mImageBaseUrl + "images/smilies/";
-        SmallImages.clear();
     }
 
     public String getStringValue(String key, String defaultValue) {

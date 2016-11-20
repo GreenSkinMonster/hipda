@@ -44,6 +44,7 @@ public class SettingMainFragment extends BaseSettingFragment {
     static boolean mCacheCleared;
     private boolean mNightSwitchEnabled;
     private String mIcon;
+    private String mForumServer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +91,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
         mFont = HiSettingsHelper.getInstance().getFont();
         mIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
+        mForumServer = HiSettingsHelper.getInstance().getForumServer();
     }
 
     @Override
@@ -131,8 +133,10 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
                 || !HiSettingsHelper.getInstance().getFont().equals(mFont)
+                || !HiSettingsHelper.getInstance().getForumServer().equals(mForumServer)
                 || !mIcon.equals(newIcon)) {
             mCacheCleared = false;
+            HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, 0);
             Utils.restartActivity(getActivity());
         }
 

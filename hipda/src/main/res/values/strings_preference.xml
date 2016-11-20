@@ -224,6 +224,17 @@
         <item>2048</item>
     </string-array>
 
+    <string-array name="pref_forum_server">
+        <item>主力 www.hi-pda.com (http)</item>
+        <item>备用 cnc.hi-pda.com (http)</item>
+        <item>测试 dev.hi-pda.com (https)</item>
+    </string-array>
+    <string-array name="pref_forum_server_values">
+        <item>http://www.hi-pda.com</item>
+        <item>http://cnc.hi-pda.com</item>
+        <item>https://dev.hi-pda.com</item>
+    </string-array>
+
     <string-array name="pref_avatar_load_type">
         <item>始终显示</item>
         <item>始终关闭</item>
@@ -321,6 +332,7 @@
     <string name="pref_title_save_folder">文件保存目录</string>
     <string name="pref_cache_size_title">图片缓存大小</string>
     <string name="pref_image_host">图片服务器</string>
+    <string name="pref_title_forum_server">论坛服务器</string>
 
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
     <string name="pref_summary_primary_color">仅浅色主题有效</string>

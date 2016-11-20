@@ -156,13 +156,14 @@ public class HiParserThreadDetail {
             }
 
             //avatar
-            Elements avatarES = postE.select("table tbody tr td.postauthor div div.avatar a img");
-            if (avatarES.size() == 0) {
-                // avatar display can be closed by user
-                detail.setAvatarUrl("noavatar");
-            } else {
-                detail.setAvatarUrl(avatarES.first().attr("src"));
-            }
+//            Elements avatarES = postE.select("table tbody tr td.postauthor div div.avatar a img");
+//            if (avatarES.size() == 0) {
+//                // avatar display can be closed by user
+//                detail.setAvatarUrl("noavatar");
+//            } else {
+//                detail.setAvatarUrl(avatarES.first().attr("src"));
+//            }
+            detail.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
 
             //content
             Contents content = detail.getContents();
@@ -266,12 +267,12 @@ public class HiParserThreadDetail {
                     String onclick = e.attr("onclick");
 
                     if (!TextUtils.isEmpty(file) && !file.startsWith("http"))
-                        file = HiSettingsHelper.getInstance().getImageBaseUrl() + file;
+                        file = HiUtils.ImageBaseUrl + file;
 
                     if (onclick.startsWith("zoom") && onclick.contains("attachment")) {
                         onclick = HttpUtils.getMiddleString(onclick, "attachment", "'");
                         if (!TextUtils.isEmpty(onclick))
-                            onclick = HiSettingsHelper.getInstance().getImageBaseUrl() + "attachment" + onclick;
+                            onclick = HiUtils.ImageBaseUrl + "attachment" + onclick;
                     } else {
                         onclick = "";
                     }
@@ -411,17 +412,17 @@ public class HiParserThreadDetail {
             String id = e.attr("id");
 
             if (!TextUtils.isEmpty(src) && !src.contains("://"))
-                src = HiSettingsHelper.getInstance().getImageBaseUrl() + src;
+                src = HiUtils.ImageBaseUrl + src;
 
             if (id.startsWith("aimg") || src.contains("images/common/none.gif")) {
                 //internal image
                 if (!TextUtils.isEmpty(file) && !file.startsWith("http"))
-                    file = HiSettingsHelper.getInstance().getImageBaseUrl() + file;
+                    file = HiUtils.ImageBaseUrl + file;
 
                 if (onclick.startsWith("zoom") && onclick.contains("attachment")) {
                     onclick = HttpUtils.getMiddleString(onclick, "attachment", "'");
                     if (!TextUtils.isEmpty(onclick))
-                        onclick = HiSettingsHelper.getInstance().getImageBaseUrl() + "attachment" + onclick;
+                        onclick = HiUtils.ImageBaseUrl + "attachment" + onclick;
                 } else {
                     onclick = "";
                 }
@@ -433,10 +434,10 @@ public class HiParserThreadDetail {
                     size = Utils.parseSizeText(sizeText);
                 }
                 content.addImg(TextUtils.isEmpty(onclick) ? file : onclick, size);
-            } else if (src.startsWith(HiSettingsHelper.getInstance().getSmiliesBaseUrl()) || SmallImages.contains(src)) {
+            } else if (src.contains(HiUtils.SmiliesPattern) || SmallImages.contains(src)) {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
-            } else if (src.startsWith(HiSettingsHelper.getInstance().getImageBaseUrl() + "images/")) {
+            } else if (src.startsWith(HiUtils.ImageBaseUrl + "images/")) {
                 //skip common/default/attach icons
             } else if (src.contains("://")) {
                 //external image

@@ -120,6 +120,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
             case SCREEN_OTHER:
                 setActionBarTitle(R.string.pref_category_other);
                 addPreferencesFromResource(R.xml.pref_other);
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FORUM_SERVER));
                 Preference clearPreference = findPreference(HiSettingsHelper.PERF_CLEAR_CACHE);
                 clearPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {

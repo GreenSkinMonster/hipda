@@ -24,6 +24,7 @@ import net.jejer.hipda.okhttp.ProgressListener;
 import net.jejer.hipda.okhttp.ProgressResponseBody;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -110,7 +111,7 @@ public class MyGlideModule implements GlideModule {
                 Response originalResponse = chain.proceed(chain.request());
                 String url = chain.request().url().toString();
                 //avatar don't need a progress listener
-                if (url.startsWith(HiSettingsHelper.getInstance().getAvatarBaseUrl())) {
+                if (url.startsWith(HiUtils.AvatarBaseUrl)) {
                     return originalResponse;
                 }
                 return originalResponse.newBuilder()

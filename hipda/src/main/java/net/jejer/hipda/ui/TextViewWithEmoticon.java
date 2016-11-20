@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.jejer.hipda.bean.DetailBean;
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
 import net.jejer.hipda.utils.ColorHelper;
@@ -70,16 +69,15 @@ public class TextViewWithEmoticon extends TextView {
 
     private Html.ImageGetter imageGetter = new Html.ImageGetter() {
         public Drawable getDrawable(String src) {
-            String smiliesBaseUrl = HiSettingsHelper.getInstance().getSmiliesBaseUrl();
             Drawable icon = null;
             src = Utils.nullToText(src);
             if (SmallImages.contains(src)) {
                 icon = ContextCompat.getDrawable(mCtx, SmallImages.getDrawable(src));
                 icon.setBounds(0, 0, getLineHeight() / 2, getLineHeight() / 2);
             } else {
-                int idx = src.indexOf(smiliesBaseUrl);
+                int idx = src.indexOf(HiUtils.SmiliesPattern);
                 if (idx != -1 && src.indexOf(".", idx) != -1) {
-                    src = src.substring(src.indexOf(smiliesBaseUrl) + smiliesBaseUrl.length(), src.lastIndexOf(".")).replace("/", "_");
+                    src = src.substring(src.indexOf(HiUtils.SmiliesPattern) + HiUtils.SmiliesPattern.length(), src.lastIndexOf(".")).replace("/", "_");
                     int id = mCtx.getResources().getIdentifier(src, "drawable", mCtx.getPackageName());
                     if (id != 0) {
                         icon = ContextCompat.getDrawable(mCtx, id);

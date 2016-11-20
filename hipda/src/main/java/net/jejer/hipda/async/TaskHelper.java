@@ -82,7 +82,7 @@ public class TaskHelper {
                         }
                         HiSettingsHelper.getInstance().setImageHost(imageHost);
                         HiSettingsHelper.getInstance().setAvatarHost(avatarHost);
-                        HiSettingsHelper.getInstance().updateBaseUrls();
+                        HiUtils.updateBaseUrls();
                         HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, System.currentTimeMillis());
                     } catch (Exception e) {
                         return e;

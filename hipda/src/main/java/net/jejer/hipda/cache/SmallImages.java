@@ -1,7 +1,6 @@
 package net.jejer.hipda.cache;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.HiUtils;
 
 import java.util.HashMap;
@@ -20,7 +19,7 @@ public class SmallImages {
             synchronized (SmallImages.class) {
                 if (IMAGES == null) {
                     IMAGES = new HashMap<>();
-                    IMAGES.put(HiSettingsHelper.getInstance().getImageBaseUrl() + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
+                    IMAGES.put(HiUtils.ImageBaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
                     IMAGES.put(HiUtils.BaseUrl + "attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
                     IMAGES.put("http://www.hi-pda.com/forum/attachments/day_140621/1406211752793e731a4fec8f7b.png", R.drawable.win);
                 }

@@ -9,6 +9,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HiUtils;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -37,6 +38,7 @@ public class HiApplication extends Application {
                     .build()
             );
         }
+        HiUtils.updateBaseUrls();
     }
 
     public static Context getAppContext() {

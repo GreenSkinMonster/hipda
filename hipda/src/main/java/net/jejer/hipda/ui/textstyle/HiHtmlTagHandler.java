@@ -75,7 +75,7 @@ public class HiHtmlTagHandler implements Html.TagHandler {
         }
     }
 
-    final HashMap<String, String> attributes = new HashMap<String, String>();
+    final HashMap<String, String> attributes = new HashMap<>();
 
     private void processAttributes(final XMLReader xmlReader) {
         try {
