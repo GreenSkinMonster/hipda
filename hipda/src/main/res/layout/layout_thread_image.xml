@@ -2,8 +2,11 @@
 
     <net.jejer.hipda.glide.GlideImageView
         android:id="@+id/thread_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:clickable="true"
+        android:focusable="true"/>
 
     <ProgressBar
         android:id="@+id/thread_image_progress"
@@ -14,19 +17,19 @@
         android:layout_gravity="center"
         android:indeterminate="false"
         android:max="100"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/thread_image_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignBottom="@+id/thread_image"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/rounded_corner"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        android:textSize="12sp"
         android:textColor="@color/grey"
-        android:visibility="gone" />
+        android:textSize="12sp"
+        android:visibility="gone"/>
 
 </merge>

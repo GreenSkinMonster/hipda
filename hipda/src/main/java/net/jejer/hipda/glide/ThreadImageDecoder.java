@@ -9,6 +9,7 @@ import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.resource.SimpleResource;
 
+import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
@@ -26,12 +27,12 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
     private int mMaxWidth = -1;
     private int mMaxHeight = -1;
 
-    private ImageReadyInfo mImageInfo;
+    private ImageInfo mImageInfo;
 
-    public ThreadImageDecoder(int maxWidth, ImageReadyInfo imageReadyInfo) {
+    public ThreadImageDecoder(int maxWidth, ImageInfo imageInfo) {
         mMaxWidth = maxWidth;
         mMaxHeight = 2 * Utils.getScreenHeight();
-        mImageInfo = imageReadyInfo;
+        mImageInfo = imageInfo;
     }
 
     @Override

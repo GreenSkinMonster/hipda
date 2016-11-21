@@ -1,12 +1,12 @@
 package net.jejer.hipda.job;
 
-import android.app.Fragment;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.os.SystemClock;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.model.stream.StreamModelLoader;
 import com.bumptech.glide.request.FutureTarget;
@@ -15,9 +15,8 @@ import com.path.android.jobqueue.Params;
 import com.path.android.jobqueue.RetryConstraint;
 
 import net.jejer.hipda.cache.ImageContainer;
+import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.glide.GlideImageEvent;
-import net.jejer.hipda.glide.ImageReadyInfo;
-import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
@@ -35,20 +34,20 @@ import java.io.InputStream;
 public class GlideImageJob extends BaseJob {
 
     private String mUrl;
-    private Fragment mFragment;
+    private RequestManager mRequestManager;
     private boolean mNetworkFetch;
 
-    public GlideImageJob(Fragment fragment, String url, int priority, String tag, boolean networkFetch) {
-        this(fragment, url, priority, tag, networkFetch, 0);
+    public GlideImageJob(RequestManager requestManager, String url, int priority, String tag, boolean networkFetch) {
+        this(requestManager, url, priority, tag, networkFetch, 0);
     }
 
-    public GlideImageJob(Fragment fragment, String url, int priority, String tag, boolean networkFetch, long delay) {
+    public GlideImageJob(RequestManager requestManager, String url, int priority, String tag, boolean networkFetch, long delay) {
         super(new Params(priority)
                 .setPersistent(false)
                 .setRequiresNetwork(false)
                 .addTags(tag)
                 .delayInMs(delay > 0 ? delay : 0));
-        mFragment = fragment;
+        mRequestManager = requestManager;
         mUrl = url;
         mNetworkFetch = networkFetch;
     }
@@ -56,20 +55,21 @@ public class GlideImageJob extends BaseJob {
     @Override
     public void onAdded() {
         if (mNetworkFetch)
-            EventBus.getDefault().post(new GlideImageEvent(mUrl, 0, Constants.STATUS_IN_PROGRESS));
+            EventBus.getDefault().post(new GlideImageEvent(mUrl, 0, ImageInfo.IN_PROGRESS));
     }
 
     @Override
     public void onRun() throws Throwable {
+        ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         try {
             long start = SystemClock.uptimeMillis();
             FutureTarget<File> future;
             if (mNetworkFetch) {
-                future = Glide.with(mFragment)
+                future = mRequestManager
                         .load(mUrl)
                         .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             } else {
-                future = Glide.with(mFragment)
+                future = mRequestManager
                         .using(cacheOnlyStreamLoader)
                         .load(mUrl)
                         .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
@@ -109,17 +109,24 @@ public class GlideImageJob extends BaseJob {
                 height = options.outWidth;
             }
 
-            ImageReadyInfo imageReadyInfo = new ImageReadyInfo(cacheFile.getPath(), width, height, mime, cacheFile.length());
-            imageReadyInfo.setSpeed(speed);
+            imageInfo.setStatus(ImageInfo.SUCCESS);
+            imageInfo.setProgress(100);
+            imageInfo.setPath(cacheFile.getPath());
+            imageInfo.setWidth(width);
+            imageInfo.setHeight(height);
+            imageInfo.setMime(mime);
+            imageInfo.setFileSize(cacheFile.length());
+            imageInfo.setSpeed(speed);
             if (orientation > 0)
-                imageReadyInfo.setOrientation(orientation);
-            ImageContainer.markImageReady(mUrl, imageReadyInfo);
+                imageInfo.setOrientation(orientation);
+            ImageContainer.markImageReady(mUrl, imageInfo);
 
-            EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, Constants.STATUS_SUCCESS));
+            EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, ImageInfo.SUCCESS));
         } catch (Exception e) {
             if (mNetworkFetch) {
                 Logger.e(e);
-                EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, Constants.STATUS_FAIL));
+                imageInfo.setStatus(ImageInfo.FAIL);
+                EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, ImageInfo.FAIL));
             }
         }
     }

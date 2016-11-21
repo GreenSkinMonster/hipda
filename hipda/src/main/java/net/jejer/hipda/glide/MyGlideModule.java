@@ -18,12 +18,12 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.okhttp.LoggingInterceptor;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.okhttp.ProgressListener;
 import net.jejer.hipda.okhttp.ProgressResponseBody;
 import net.jejer.hipda.ui.HiApplication;
-import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
@@ -99,7 +99,7 @@ public class MyGlideModule implements GlideModule {
             public void update(String url, long bytesRead, long contentLength, boolean done) {
                 if (SystemClock.uptimeMillis() - progressMark > 50) {
                     int progress = (int) Math.round((100.0 * bytesRead) / contentLength);
-                    EventBus.getDefault().post(new GlideImageEvent(url, progress, Constants.STATUS_IN_PROGRESS));
+                    EventBus.getDefault().post(new GlideImageEvent(url, progress, ImageInfo.IN_PROGRESS));
                     progressMark = SystemClock.uptimeMillis();
                 }
             }

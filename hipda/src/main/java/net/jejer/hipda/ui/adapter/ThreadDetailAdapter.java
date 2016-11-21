@@ -1,9 +1,6 @@
 package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
-import android.os.Handler;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.util.Linkify;
@@ -13,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
@@ -26,25 +21,14 @@ import net.jejer.hipda.bean.ContentQuote;
 import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.glide.GlideImageEvent;
-import net.jejer.hipda.glide.GlideImageView;
-import net.jejer.hipda.glide.ImageReadyInfo;
-import net.jejer.hipda.job.GlideImageJob;
-import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.ui.TextViewWithEmoticon;
 import net.jejer.hipda.ui.ThreadDetailFragment;
-import net.jejer.hipda.ui.ThreadImageLayout;
+import net.jejer.hipda.ui.widget.ThreadImageLayout;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by GreenSkinMonster on 2016-11-08.
@@ -57,9 +41,6 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
     private Button.OnClickListener mGoToFloorListener;
     private View.OnClickListener mAvatarListener;
     private ThreadDetailFragment mDetailFragment;
-    private long delayAnimDeadline = 0;
-
-    private Map<String, Map<Integer, ThreadImageLayout>> imageLayoutMap = new HashMap<>();
 
     public ThreadDetailAdapter(Context context, ThreadDetailFragment detailFragment, RecyclerItemClickListener listener,
                                Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
@@ -69,7 +50,6 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         mGoToFloorListener = gotoFloorListener;
         mAvatarListener = avatarListener;
         mDetailFragment = detailFragment;
-        delayAnimDeadline = System.currentTimeMillis() + context.getResources().getInteger(R.integer.defaultAnimTime) + 50;
     }
 
     @Override
@@ -140,68 +120,16 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
             } else if (content instanceof ContentImg) {
                 final ContentImg contentImg = ((ContentImg) content);
 
-                final String imageUrl = contentImg.getContent();
+                String imageUrl = contentImg.getContent();
                 int imageIndex = contentImg.getIndexInPage();
 
-                final ThreadImageLayout threadImageLayout = new ThreadImageLayout(mCtx);
-                final GlideImageView giv = threadImageLayout.getImageView();
+                ThreadImageLayout threadImageLayout = new ThreadImageLayout(mCtx, imageUrl);
+                threadImageLayout.setParsedFileSize(contentImg.getFileSize());
+                threadImageLayout.setParentSessionId(mDetailFragment.mSessionId);
+                threadImageLayout.setImageIndex(imageIndex);
+                threadImageLayout.setFragment(mDetailFragment);
 
-                giv.setFragment(mDetailFragment);
-                giv.setFocusable(false);
-                giv.setClickable(true);
-
-                Map<Integer, ThreadImageLayout> subImageMap;
-                if (imageLayoutMap.containsKey(imageUrl)) {
-                    subImageMap = imageLayoutMap.get(imageUrl);
-                } else {
-                    subImageMap = new HashMap<>();
-                }
-                subImageMap.put(imageIndex, threadImageLayout);
-                imageLayoutMap.put(imageUrl, subImageMap);
-
-                ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
-
-                RelativeLayout.LayoutParams params;
-                if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-                    params = new RelativeLayout.LayoutParams(imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight());
-                } else {
-                    params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.dpToPx(mCtx, 150));
-                    giv.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.ic_action_image));
-                }
-                giv.setLayoutParams(params);
                 contentView.addView(threadImageLayout);
-
-                giv.setUrl(imageUrl);
-                giv.setImageIndex(imageIndex);
-
-                //delay images 50ms more than avatar
-                long delay = delayAnimDeadline + 50 - System.currentTimeMillis();
-                if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-                    loadImage(imageUrl, giv, delay);
-                } else {
-                    boolean imageLoadable = HiSettingsHelper.getInstance().isImageLoadable(contentImg.getFileSize());
-                    if (contentImg.getFileSize() > 0) {
-                        threadImageLayout.getImageInfoTextView().setVisibility(View.VISIBLE);
-                        threadImageLayout.getImageInfoTextView().setText(Utils.toSizeText(contentImg.getFileSize()));
-                    }
-                    if (!imageLoadable) {
-                        giv.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                JobMgr.addJob(new GlideImageJob(mDetailFragment, imageUrl, JobMgr.PRIORITY_LOW, mDetailFragment.mSessionId, true));
-                                giv.setOnClickListener(null);
-                            }
-                        });
-                    }
-                    JobMgr.addJob(new GlideImageJob(
-                            mDetailFragment,
-                            imageUrl,
-                            JobMgr.PRIORITY_LOW,
-                            mDetailFragment.mSessionId,
-                            imageLoadable,
-                            delay));
-                }
-
             } else if (content instanceof ContentAttach) {
                 TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, null, false);
                 tv.setFragment(mDetailFragment);
@@ -299,31 +227,8 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         }
     }
 
-    private void loadImage(final String imageUrl, final GlideImageView giv, long delay) {
-        if (delay > 0) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mDetailFragment.loadImage(imageUrl, giv);
-                }
-            }, delay);
-        } else {
-            mDetailFragment.loadImage(imageUrl, giv);
-        }
-    }
-
     private void loadAvatar(final String avatarUrl, final ImageView imageView) {
-        long delay = delayAnimDeadline - System.currentTimeMillis();
-        if (delay > 0) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    GlideHelper.loadAvatar(mDetailFragment, imageView, avatarUrl);
-                }
-            }, delay);
-        } else {
-            GlideHelper.loadAvatar(mDetailFragment, imageView, avatarUrl);
-        }
+        GlideHelper.loadAvatar(mDetailFragment, imageView, avatarUrl);
     }
 
     public int getPositionByFloor(int floor) {
@@ -364,35 +269,6 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
             floor = (TextView) itemView.findViewById(R.id.floor);
             postStatus = (TextView) itemView.findViewById(R.id.post_status);
             contentView = (LinearLayout) itemView.findViewById(R.id.content_layout);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(GlideImageEvent event) {
-        String imageUrl = event.getImageUrl();
-        if (!TextUtils.isEmpty(imageUrl)
-                && imageLayoutMap.containsKey(imageUrl)) {
-            Map<Integer, ThreadImageLayout> subImageMap = imageLayoutMap.get(imageUrl);
-            for (ThreadImageLayout layout : subImageMap.values()) {
-                ProgressBar bar = layout.getProgressBar();
-                if (ViewCompat.isAttachedToWindow(layout)) {
-                    if (event.isInProgress()) {
-                        if (bar.getVisibility() != View.VISIBLE)
-                            bar.setVisibility(View.VISIBLE);
-                        bar.setProgress(event.getProgress());
-                    } else {
-                        if (bar.getVisibility() == View.VISIBLE)
-                            bar.setVisibility(View.GONE);
-                        TextView imageInfo = layout.getImageInfoTextView();
-                        GlideImageView giv = layout.getImageView();
-                        mDetailFragment.loadImage(imageUrl, giv);
-                        if (imageInfo.getVisibility() == View.VISIBLE) {
-                            imageInfo.setVisibility(View.GONE);
-                        }
-                    }
-                }
-            }
         }
     }
 

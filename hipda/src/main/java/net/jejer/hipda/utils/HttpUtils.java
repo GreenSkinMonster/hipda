@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
-import net.jejer.hipda.glide.ImageReadyInfo;
+import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 
 import java.io.File;
@@ -78,15 +78,15 @@ public class HttpUtils {
                 return;
             }
 
-            ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
-            if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
+            ImageInfo imageInfo = ImageContainer.getImageInfo(url);
+            if (imageInfo == null || !imageInfo.isReady()) {
                 Toast.makeText(context, "文件还未下载完成", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            String filename = Utils.getImageFileName("Hi_IMG", imageReadyInfo.getMime());
+            String filename = Utils.getImageFileName("Hi_IMG", imageInfo.getMime());
             File destFile = new File(getSaveFolder(), filename);
-            Utils.copy(new File(imageReadyInfo.getPath()), destFile);
+            Utils.copy(new File(imageInfo.getPath()), destFile);
             Toast.makeText(context, "图片已经保存 <" + filename + ">", Toast.LENGTH_SHORT).show();
             //HttpUtils.download(mCtx, url, filename);
 

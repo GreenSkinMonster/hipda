@@ -25,7 +25,7 @@ import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
-import net.jejer.hipda.glide.ImageReadyInfo;
+import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
@@ -196,20 +196,20 @@ public class PopupImageDialog extends DialogFragment {
 
                         String url = images.get(viewPager.getCurrentItem()).getContent();
 
-                        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
-                        if (imageReadyInfo == null || !imageReadyInfo.isReady()) {
+                        ImageInfo imageInfo = ImageContainer.getImageInfo(url);
+                        if (imageInfo == null || !imageInfo.isReady()) {
                             Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         try {
-                            String filename = Utils.getImageFileName(Constants.FILE_SHARE_PREFIX, imageReadyInfo.getMime());
+                            String filename = Utils.getImageFileName(Constants.FILE_SHARE_PREFIX, imageInfo.getMime());
                             File cacheDirectory = HiApplication.getAppContext().getExternalCacheDir();
                             File destFile = new File(cacheDirectory, filename);
-                            Utils.copy(new File(imageReadyInfo.getPath()), destFile);
+                            Utils.copy(new File(imageInfo.getPath()), destFile);
 
                             Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                            shareIntent.setType(imageReadyInfo.getMime());
+                            shareIntent.setType(imageInfo.getMime());
                             Uri uri = Uri.fromFile(destFile);
                             shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
                             startActivity(Intent.createChooser(shareIntent, "分享图片"));
@@ -270,13 +270,13 @@ public class PopupImageDialog extends DialogFragment {
     }
 
     private void updateImageFileInfo(TextView tvImageFileInfo, String url) {
-        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(url);
-        if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-            String msg = imageReadyInfo.getWidth() + "x" + imageReadyInfo.getHeight()
-                    + " / " + Utils.toSizeText(imageReadyInfo.getFileSize());
+        ImageInfo imageInfo = ImageContainer.getImageInfo(url);
+        if (imageInfo != null && imageInfo.isReady()) {
+            String msg = imageInfo.getWidth() + "x" + imageInfo.getHeight()
+                    + " / " + Utils.toSizeText(imageInfo.getFileSize());
             if (HiSettingsHelper.getInstance().isErrorReportMode()) {
                 DecimalFormat df = new DecimalFormat("#.##");
-                msg += " / " + df.format(imageReadyInfo.getSpeed()) + " K/s";
+                msg += " / " + df.format(imageInfo.getSpeed()) + " K/s";
             }
             tvImageFileInfo.setText(msg);
         } else {

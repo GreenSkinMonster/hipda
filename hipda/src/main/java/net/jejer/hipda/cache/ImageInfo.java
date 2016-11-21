@@ -1,4 +1,4 @@
-package net.jejer.hipda.glide;
+package net.jejer.hipda.cache;
 
 import android.text.TextUtils;
 
@@ -9,69 +9,94 @@ import net.jejer.hipda.utils.Utils;
  * store loaded image's size
  * Created by GreenSkinMonster on 2015-04-24.
  */
-public class ImageReadyInfo {
-    private int width;
-    private int height;
-    private String path;
-    private String mime;
-    private long fileSize;
-    private int orientation;
-    private double speed;
+public class ImageInfo {
+
+    public static final int IDLE = 0;
+    public static final int IN_PROGRESS = 1;
+    public static final int FAIL = 2;
+    public static final int SUCCESS = 3;
+
+    private String mUrl;
+    private int mWidth;
+    private int mHeight;
+    private String mPath;
+    private String mMime;
+    private long mFileSize;
+    private int mOrientation;
+    private double mSpeed;
+    private int mProgress;
+    private int mStatus = IDLE;
 
     int maxViewWidth;
     int displayWidth;
     int displayHeight;
 
-    public ImageReadyInfo(String path, int width, int height, String mime, long fileSize) {
-        this.width = width;
-        this.height = height;
-        this.path = path;
-        this.mime = mime;
-        this.fileSize = fileSize;
+    public ImageInfo(String url) {
+        mUrl = url;
+    }
+
+    public void setFileSize(long fileSize) {
+        mFileSize = fileSize;
+    }
+
+    public void setHeight(int height) {
+        mHeight = height;
+    }
+
+    public void setMime(String mime) {
+        mMime = mime;
+    }
+
+    public void setPath(String path) {
+        mPath = path;
+    }
+
+    public void setWidth(int width) {
+        mWidth = width;
     }
 
     public int getHeight() {
-        return height;
+        return mHeight;
     }
 
     public int getWidth() {
-        return width;
+        return mWidth;
     }
 
     public String getPath() {
-        return path;
+        return mPath;
     }
 
     public String getMime() {
-        return mime;
+        return mMime;
     }
 
     public long getFileSize() {
-        return fileSize;
+        return mFileSize;
     }
 
     public boolean isReady() {
-        return !TextUtils.isEmpty(path) && width > 0 && height > 0;
+        return !TextUtils.isEmpty(mPath) && mWidth > 0 && mHeight > 0;
     }
 
     public boolean isGif() {
-        return mime != null && mime.contains("gif");
+        return mMime != null && mMime.contains("gif");
     }
 
     public int getOrientation() {
-        return orientation;
+        return mOrientation;
     }
 
     public void setOrientation(int orientation) {
-        this.orientation = orientation;
+        mOrientation = orientation;
     }
 
     public double getSpeed() {
-        return speed;
+        return mSpeed;
     }
 
     public void setSpeed(double speed) {
-        this.speed = speed;
+        mSpeed = speed;
     }
 
     public int getDisplayHeight() {
@@ -80,6 +105,22 @@ public class ImageReadyInfo {
 
     public int getDisplayWidth() {
         return getDisplaySize(true);
+    }
+
+    public int getProgress() {
+        return mProgress;
+    }
+
+    public void setProgress(int progress) {
+        mProgress = progress;
+    }
+
+    public int getStatus() {
+        return mStatus;
+    }
+
+    public void setStatus(int status) {
+        mStatus = status;
     }
 
     private int getDisplaySize(boolean isWidth) {
@@ -94,14 +135,14 @@ public class ImageReadyInfo {
             //if image width < half maxViewWidth, scale it up for better view
             int maxScaleWidth = Math.round(maxViewWidth * 0.5f);
 
-            double scaleRate = getScaleRate(width);
-            int scaledWidth = Math.round((int) (width * scaleRate));
-            int scaledHeight = Math.round((int) (height * scaleRate));
+            double scaleRate = getScaleRate(mWidth);
+            int scaledWidth = Math.round((int) (mWidth * scaleRate));
+            int scaledHeight = Math.round((int) (mHeight * scaleRate));
 
             if (scaledWidth >= maxScaleWidth ||
                     (isGif() && scaledWidth >= maxScaleWidth / 2)) {
                 displayWidth = maxViewWidth;
-                displayHeight = Math.round(maxViewWidth * 1.0f * height / width);
+                displayHeight = Math.round(maxViewWidth * 1.0f * mHeight / mWidth);
             } else {
                 displayWidth = scaledWidth;
                 displayHeight = scaledHeight;

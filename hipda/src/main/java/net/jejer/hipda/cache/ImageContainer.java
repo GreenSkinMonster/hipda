@@ -1,22 +1,24 @@
 package net.jejer.hipda.cache;
 
-import net.jejer.hipda.glide.ImageReadyInfo;
-
 /**
  * downloaded image cache
  * Created by GreenSkinMonster on 2015-05-21.
  */
 public class ImageContainer {
 
-    private static LRUCache<String, ImageReadyInfo> IMAGES = new LRUCache<>(1024);
+    private static LRUCache<String, ImageInfo> IMAGES = new LRUCache<>(1024);
 
-    public static void markImageReady(String url, ImageReadyInfo imageReadyInfo) {
-        IMAGES.put(url, imageReadyInfo);
+    public static void markImageReady(String url, ImageInfo imageInfo) {
+        IMAGES.put(url, imageInfo);
     }
 
-    public static ImageReadyInfo getImageInfo(String url) {
-        return IMAGES.get(url);
+    public static ImageInfo getImageInfo(String url) {
+        ImageInfo imageInfo = IMAGES.get(url);
+        if (imageInfo == null) {
+            imageInfo = new ImageInfo(url);
+            IMAGES.put(url, imageInfo);
+        }
+        return imageInfo;
     }
-
 
 }

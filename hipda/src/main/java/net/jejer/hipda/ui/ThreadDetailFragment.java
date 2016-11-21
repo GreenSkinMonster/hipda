@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -30,14 +28,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -52,15 +47,8 @@ import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
-import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ThreadDetailCache;
 import net.jejer.hipda.db.HistoryDao;
-import net.jejer.hipda.glide.GifTransformation;
-import net.jejer.hipda.glide.GlideBitmapTarget;
-import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.glide.GlideImageView;
-import net.jejer.hipda.glide.ImageReadyInfo;
-import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.PostEvent;
@@ -120,7 +108,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private ThreadDetailCache mCache = new ThreadDetailCache();
     private List<DetailBean> mDetailBeans = new ArrayList<>();
 
-    private int mMaxImageDecodeWidth = ImageSizeUtils.NORMAL_IMAGE_DECODE_WIDTH;
+    public static int mMaxImageDecodeWidth = ImageSizeUtils.NORMAL_IMAGE_DECODE_WIDTH;
 
     private int mCurrentPage = 1;
     private int mMaxPage = 0;
@@ -195,7 +183,6 @@ public class ThreadDetailFragment extends BaseFragment {
         mDetailAdapter.setDatas(mDetailBeans);
 
         mRecyclerView.setAdapter(mDetailAdapter);
-        EventBus.getDefault().register(mDetailAdapter);
 
         mRecyclerView.setXRecyclerListener(new XRecyclerView.XRecyclerListener() {
             @Override
@@ -543,7 +530,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        EventBus.getDefault().unregister(mDetailAdapter);
         super.onDestroyView();
     }
 
@@ -823,53 +809,6 @@ public class ThreadDetailFragment extends BaseFragment {
             mInloading = true;
             ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, FETCH_NORMAL, POSITION_NORMAL);
             JobMgr.addJob(job);
-        }
-    }
-
-    public void loadImage(String imageUrl, GlideImageView giv) {
-        if (mCtx == null || giv == null)
-            return;
-        if (Build.VERSION.SDK_INT >= 17
-                && (mCtx instanceof Activity)
-                && ((Activity) mCtx).isDestroyed())
-            return;
-        if (!isAdded() || isDetached())
-            return;
-
-        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
-
-        if (imageReadyInfo != null && imageReadyInfo.isReady()) {
-            RelativeLayout.LayoutParams layoutParams =
-                    (RelativeLayout.LayoutParams) giv.getLayoutParams();
-            layoutParams.width = imageReadyInfo.getDisplayWidth();
-            layoutParams.height = imageReadyInfo.getDisplayHeight();
-            if (imageReadyInfo.getDisplayWidth() > GlideImageView.MIN_SCALE_WIDTH
-                    || imageReadyInfo.isGif()) {
-                layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-                giv.setImageReadyInfo(imageReadyInfo);
-                giv.setClickToViewBigImage();
-            }
-
-            if (GlideHelper.isOkToLoad(ThreadDetailFragment.this)) {
-                if (imageReadyInfo.isGif()) {
-                    Glide.with(ThreadDetailFragment.this)
-                            .load(imageUrl)
-                            .asBitmap()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .transform(new GifTransformation(mCtx))
-                            .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
-                } else {
-                    Glide.with(ThreadDetailFragment.this)
-                            .load(imageUrl)
-                            .asBitmap()
-                            .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo)))
-                            .imageDecoder(new ThreadImageDecoder(mMaxImageDecodeWidth, imageReadyInfo))
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(new GlideBitmapTarget(giv, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
-                }
-            }
-        } else {
-            giv.setImageResource(R.drawable.image_broken);
         }
     }
 

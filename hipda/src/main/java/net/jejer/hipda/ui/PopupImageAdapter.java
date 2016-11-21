@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
@@ -16,12 +17,12 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.cache.ImageContainer;
+import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.glide.GifTransformation;
 import net.jejer.hipda.glide.GlideBitmapTarget;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.glide.GlideImageView;
-import net.jejer.hipda.glide.ImageReadyInfo;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.utils.Logger;
@@ -42,6 +43,7 @@ public class PopupImageAdapter extends PagerAdapter {
 
     private PopupImageDialog mDialog;
     private List<ContentImg> mImages;
+    private RequestManager mRequestManager;
 
     private Map<String, PopupImageLayout> imageViewMap = new HashMap<>();
     private String mSessionId;
@@ -50,6 +52,7 @@ public class PopupImageAdapter extends PagerAdapter {
         mDialog = dialog;
         mImages = images;
         mSessionId = sessionId;
+        mRequestManager = Glide.with(dialog);
     }
 
     @Override
@@ -67,12 +70,12 @@ public class PopupImageAdapter extends PagerAdapter {
 
         final PopupImageLayout imageLayout = new PopupImageLayout(mDialog.getActivity());
         final String imageUrl = mImages.get(position).getContent();
-        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
+        ImageInfo imageInfo = ImageContainer.getImageInfo(imageUrl);
 
-        if (imageReadyInfo == null || !(new File(imageReadyInfo.getPath())).exists()) {
+        if (!imageInfo.isReady() || !(new File(imageInfo.getPath())).exists()) {
             imageLayout.getProgressBar().setVisibility(View.VISIBLE);
             imageLayout.getProgressBar().setIndeterminate(true);
-            JobMgr.addJob(new GlideImageJob(mDialog, imageUrl, JobMgr.PRIORITY_HIGH, mSessionId, true));
+            JobMgr.addJob(new GlideImageJob(mRequestManager, imageUrl, JobMgr.PRIORITY_HIGH, mSessionId, true));
         } else {
             displayImage(imageLayout, imageUrl);
         }
@@ -93,17 +96,17 @@ public class PopupImageAdapter extends PagerAdapter {
         if (scaleImageView == null || gifImageView == null)
             return;
 
-        ImageReadyInfo imageReadyInfo = ImageContainer.getImageInfo(imageUrl);
+        ImageInfo imageInfo = ImageContainer.getImageInfo(imageUrl);
 
         gifImageView.setBackgroundColor(ContextCompat.getColor(mDialog.getActivity(), R.color.night_background));
         scaleImageView.setBackgroundColor(ContextCompat.getColor(mDialog.getActivity(), R.color.night_background));
 
-        if (imageReadyInfo == null) {
+        if (!imageInfo.isReady()) {
             gifImageView.setVisibility(View.VISIBLE);
             scaleImageView.setVisibility(View.GONE);
             gifImageView.setImageDrawable(ContextCompat.getDrawable(mDialog.getActivity(), R.drawable.image_broken));
         } else {
-            if (imageReadyInfo.isGif()) {
+            if (imageInfo.isGif()) {
                 gifImageView.setVisibility(View.VISIBLE);
                 scaleImageView.setVisibility(View.GONE);
 
@@ -115,11 +118,11 @@ public class PopupImageAdapter extends PagerAdapter {
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .transform(new GifTransformation(mDialog.getActivity()))
                             .error(R.drawable.image_broken)
-                            .into(new GlideBitmapTarget(gifImageView, imageReadyInfo.getDisplayWidth(), imageReadyInfo.getDisplayHeight()));
+                            .into(new GlideBitmapTarget(gifImageView, imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight()));
                 }
 
                 gifImageView.setUrl(imageUrl);
-                gifImageView.setImageReadyInfo(imageReadyInfo);
+                gifImageView.setImageInfo(imageInfo);
                 gifImageView.setClickToViewBigImage();
 
             } else {
@@ -129,7 +132,7 @@ public class PopupImageAdapter extends PagerAdapter {
                 scaleImageView.setMinimumDpi(100);
                 scaleImageView.setMinimumTileDpi(160);
                 scaleImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
-                scaleImageView.setImage(ImageSource.uri(imageReadyInfo.getPath()));
+                scaleImageView.setImage(ImageSource.uri(imageInfo.getPath()));
 
                 scaleImageView.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener() {
                     @Override

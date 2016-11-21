@@ -12,17 +12,16 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.ui.OnSingleClickListener;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.utils.HttpUtils;
 
 public class GlideImageView extends ImageView {
 
-    public static int MIN_SCALE_WIDTH = 600;
-
     private Fragment mFragment;
     private String mUrl;
-    private ImageReadyInfo mImageReadyInfo;
+    private ImageInfo mImageInfo;
     private int mImageIndex;
 
     private static ImageView currentImageView;
@@ -40,8 +39,8 @@ public class GlideImageView extends ImageView {
         mUrl = url;
     }
 
-    public void setImageReadyInfo(ImageReadyInfo imageInfo) {
-        mImageReadyInfo = imageInfo;
+    public void setImageInfo(ImageInfo imageInfo) {
+        mImageInfo = imageInfo;
     }
 
     public void setImageIndex(int index) {
@@ -53,7 +52,6 @@ public class GlideImageView extends ImageView {
     }
 
     public void setClickToViewBigImage() {
-        setClickable(true);
         setOnClickListener(new GlideImageViewClickHandler());
         if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_LONG_CLICK_SAVE_IMAGE, false)) {
             setOnLongClickListener(new OnLongClickListener() {
@@ -69,13 +67,13 @@ public class GlideImageView extends ImageView {
     private class GlideImageViewClickHandler extends OnSingleClickListener {
         @Override
         public void onSingleClick(View view) {
-            if (mImageReadyInfo != null && mImageReadyInfo.isReady()) {
+            if (mImageInfo != null && mImageInfo.isReady()) {
                 if (mUrl.equals(currentUrl)) {
                     boolean sameView = view.equals(currentImageView);
                     stopCurrentGif();
                     if (!sameView)
                         loadGif();
-                } else if (mImageReadyInfo.isGif()) {
+                } else if (mImageInfo.isGif()) {
                     stopCurrentGif();
                     loadGif();
                 } else {
@@ -102,7 +100,7 @@ public class GlideImageView extends ImageView {
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .skipMemoryCache(true)
                     .error(R.drawable.image_broken)
-                    .override(mImageReadyInfo.getDisplayWidth(), mImageReadyInfo.getDisplayHeight())
+                    .override(mImageInfo.getDisplayWidth(), mImageInfo.getDisplayHeight())
                     .into(this);
         }
     }
@@ -118,7 +116,7 @@ public class GlideImageView extends ImageView {
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .transform(new GifTransformation(getContext()))
                             .error(R.drawable.image_broken)
-                            .override(mImageReadyInfo.getDisplayWidth(), mImageReadyInfo.getDisplayHeight())
+                            .override(mImageInfo.getDisplayWidth(), mImageInfo.getDisplayHeight())
                             .into(currentImageView);
                 }
             }
