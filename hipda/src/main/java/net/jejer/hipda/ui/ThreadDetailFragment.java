@@ -85,6 +85,7 @@ public class ThreadDetailFragment extends BaseFragment {
     public static final String ARG_MAX_PAGE_KEY = "maxPage";
 
     public static final int LAST_FLOOR = Integer.MIN_VALUE;
+    public static final int FIRST_FLOOR = Integer.MIN_VALUE + 1;
     public static final int LAST_PAGE = Integer.MIN_VALUE;
 
     public final static int FETCH_NORMAL = 0;
@@ -114,7 +115,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private int mMaxPage = 0;
     private int mGoToPage = 1;
     private int mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();    // user can configure max posts per page in forum setting
-    private int mFloorOfPage = -1;    // for every page start form 1
+    private int mGotoFloor = -1;    // actual floor number in thread, start from 1
     private EmojiEditText mEtReply;
     private ImageButton mIbEmojiSwitch;
     private View quickReply;
@@ -157,7 +158,7 @@ public class ThreadDetailFragment extends BaseFragment {
             mMaxPage = getArguments().getInt(ARG_MAX_PAGE_KEY);
         }
         if (getArguments().containsKey(ARG_FLOOR_KEY)) {
-            mFloorOfPage = getArguments().getInt(ARG_FLOOR_KEY);
+            mGotoFloor = getArguments().getInt(ARG_FLOOR_KEY);
         }
     }
 
@@ -188,14 +189,14 @@ public class ThreadDetailFragment extends BaseFragment {
             @Override
             public void onHeaderReady() {
                 mCurrentPage--;
-                mFloorOfPage = LAST_FLOOR;
+                mGotoFloor = LAST_FLOOR;
                 showOrLoadPage();
             }
 
             @Override
             public void onFooterReady() {
                 mCurrentPage++;
-                mFloorOfPage = 0;
+                mGotoFloor = FIRST_FLOOR;
                 showOrLoadPage();
             }
 
@@ -655,6 +656,7 @@ public class ThreadDetailFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 mCurrentPage = 1;
+                mGotoFloor = FIRST_FLOOR;
                 showOrLoadPage();
                 dialog.dismiss();
             }
@@ -664,7 +666,7 @@ public class ThreadDetailFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 mCurrentPage = mMaxPage;
-                mFloorOfPage = LAST_FLOOR;
+                mGotoFloor = LAST_FLOOR;
                 showOrLoadPage();
                 dialog.dismiss();
             }
@@ -675,6 +677,7 @@ public class ThreadDetailFragment extends BaseFragment {
             public void onClick(View view) {
                 if (mCurrentPage < mMaxPage) {
                     mCurrentPage++;
+                    mGotoFloor = FIRST_FLOOR;
                     showOrLoadPage();
                 }
                 dialog.dismiss();
@@ -686,6 +689,7 @@ public class ThreadDetailFragment extends BaseFragment {
             public void onClick(View view) {
                 if (mCurrentPage > 1) {
                     mCurrentPage--;
+                    mGotoFloor = FIRST_FLOOR;
                     showOrLoadPage();
                 }
                 dialog.dismiss();
@@ -722,18 +726,14 @@ public class ThreadDetailFragment extends BaseFragment {
 
     public void gotoFloor(int floor) {
         mGoToPage = (floor - 1) / mMaxPostInPage + 1; // page start from 1
-
-        mFloorOfPage = floor % mMaxPostInPage; // floor start from 1
-        if (mFloorOfPage == 0) {
-            mFloorOfPage = mMaxPostInPage;
-        }
+        mGotoFloor = floor;
 
         if (mGoToPage != mCurrentPage) {
             mCurrentPage = mGoToPage;
             showOrLoadPage();
         } else {
-            mRecyclerView.scrollToPosition(mFloorOfPage + mDetailAdapter.getHeaderCount() - 1);
-            mFloorOfPage = -1;
+            mRecyclerView.scrollToPosition(mDetailAdapter.getPositionByFloor(floor));
+            mGotoFloor = -1;
         }
     }
 
@@ -757,19 +757,21 @@ public class ThreadDetailFragment extends BaseFragment {
             }
 
             int position = -1;
-            if (mFloorOfPage == LAST_FLOOR) {
+            if (mGotoFloor == LAST_FLOOR) {
                 position = mDetailAdapter.getItemCount() - 1;
-            } else {
-                if (!TextUtils.isEmpty(mGotoPostId)) {
-                    position = mDetailAdapter.getPositionByPostId(mGotoPostId);
-                } else if (mFloorOfPage >= 0) {
-                    position = mDetailAdapter.getPositionByFloor(mFloorOfPage);
-                }
+            } else if (mGotoFloor == FIRST_FLOOR) {
+                position = 0;
+            } else if (mGotoFloor > 0) {
+                position = mGotoFloor - 1;
+            } else if (mGotoFloor != -1) {
+                position = mDetailAdapter.getPositionByFloor(mGotoFloor);
+            } else if (HiUtils.isValidId(mGotoPostId)) {
+                position = mDetailAdapter.getPositionByPostId(mGotoPostId);
             }
             if (position >= 0)
                 mRecyclerView.scrollToPosition(position);
             mGotoPostId = null;
-            mFloorOfPage = -1;
+            mGotoFloor = -1;
 
             if (mCurrentPage > 1 && position < 5) {
                 prefetchPreviousPage();
@@ -1000,29 +1002,26 @@ public class ThreadDetailFragment extends BaseFragment {
                 Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
             }
 
-            int floor = postResult.getFloor();
-            if (floor == LAST_FLOOR || floor > 0)
-                mFloorOfPage = floor;
+            mGotoFloor = postResult.getFloor();
 
             if (postResult.getDelete() == 1) {
-                //delete post
-                if (floor == 1) {
+                if (mGotoFloor == 1) {
+                    //first floor is deleted, meaning whole thread is deleted
                     String fid = postResult.getFid();
                     FragmentUtils.showForum(getFragmentManager(), HiUtils.isValidId(fid) ? Integer.parseInt(fid) : 0);
                 } else {
+                    //this floor is deleted, so goto upper floor
+                    mGotoFloor--;
                     mCache.remove(mCurrentPage);
                     showOrLoadPage(true);
                 }
             } else {
-                //edit post
-                if (!mAuthorOnly) {
-                    if (event.mMode != PostHelper.MODE_EDIT_POST) {
-                        mCurrentPage = mMaxPage;
-                        mFloorOfPage = LAST_FLOOR;
-                    }
-                    mCache.remove(mCurrentPage);
-                    showOrLoadPage(true);
+                if (event.mMode != PostHelper.MODE_EDIT_POST) {
+                    mCurrentPage = mMaxPage;
+                    mGotoFloor = LAST_FLOOR;
                 }
+                mCache.remove(mCurrentPage);
+                showOrLoadPage(true);
             }
         } else {
             if (postProgressDialog != null) {

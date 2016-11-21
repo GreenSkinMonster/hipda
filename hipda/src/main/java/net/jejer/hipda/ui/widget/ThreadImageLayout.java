@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui.widget;
 
-import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +19,7 @@ import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.glide.GifTransformation;
 import net.jejer.hipda.glide.GlideBitmapTarget;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ThreadImageDecoder;
@@ -50,21 +50,23 @@ public class ThreadImageLayout extends RelativeLayout {
     private int mImageIndex;
     private ThreadDetailFragment mFragment;
 
-    public ThreadImageLayout(Context context, String url) {
-        super(context, null);
+    public ThreadImageLayout(ThreadDetailFragment fragment, String url) {
+        super(fragment.getActivity(), null);
 
-        LayoutInflater.from(context).inflate(R.layout.layout_thread_image, this, true);
+        LayoutInflater.from(fragment.getActivity()).inflate(R.layout.layout_thread_image, this, true);
 
+        mFragment = fragment;
         mImageView = (GlideImageView) findViewById(R.id.thread_image);
         mProgressBar = (ProgressBar) findViewById(R.id.thread_image_progress);
         mTextView = (TextView) findViewById(R.id.thread_image_info);
-        mRequestManager = Glide.with(context);
+        mRequestManager = Glide.with(mFragment);
         mUrl = url;
 
         ImageInfo imageInfo = ImageContainer.getImageInfo(url);
         if (!imageInfo.isReady()) {
-            mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_image));
+            mImageView.setImageDrawable(ContextCompat.getDrawable(mFragment.getActivity(), R.drawable.ic_action_image));
         }
+        mImageView.setFragment(mFragment);
         mImageView.setVisibility(View.VISIBLE);
         mImageView.setImageIndex(mImageIndex);
         mImageView.setUrl(mUrl);
@@ -81,11 +83,6 @@ public class ThreadImageLayout extends RelativeLayout {
     public void setImageIndex(int imageIndex) {
         mImageIndex = imageIndex;
         mImageView.setImageIndex(mImageIndex);
-    }
-
-    public void setFragment(ThreadDetailFragment fragment) {
-        mFragment = fragment;
-        mImageView.setFragment(mFragment);
     }
 
     private void loadImage() {
@@ -192,7 +189,8 @@ public class ThreadImageLayout extends RelativeLayout {
                 mProgressBar.setVisibility(View.GONE);
             if (mTextView.getVisibility() == View.VISIBLE)
                 mTextView.setVisibility(View.GONE);
-            loadImage();
+            if (GlideHelper.isOkToLoad(mFragment))
+                loadImage();
         } else {
             mProgressBar.setVisibility(GONE);
             mImageView.setImageResource(R.drawable.image_broken);

@@ -123,11 +123,10 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                 String imageUrl = contentImg.getContent();
                 int imageIndex = contentImg.getIndexInPage();
 
-                ThreadImageLayout threadImageLayout = new ThreadImageLayout(mCtx, imageUrl);
+                ThreadImageLayout threadImageLayout = new ThreadImageLayout(mDetailFragment, imageUrl);
                 threadImageLayout.setParsedFileSize(contentImg.getFileSize());
                 threadImageLayout.setParentSessionId(mDetailFragment.mSessionId);
                 threadImageLayout.setImageIndex(imageIndex);
-                threadImageLayout.setFragment(mDetailFragment);
 
                 contentView.addView(threadImageLayout);
             } else if (content instanceof ContentAttach) {
