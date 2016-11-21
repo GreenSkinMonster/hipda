@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="16dp">
 
     <EditText
         android:id="@+id/et_sms_receipient"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/recipient" />
+        android:background="@drawable/edittext_background"
+        android:hint="@string/recipient"
+        android:padding="8dp"/>
 
     <EditText
         android:id="@+id/et_sms_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/edittext_background"
         android:ems="10"
         android:gravity="bottom"
         android:hint="@string/content"
         android:inputType="textMultiLine"
-        android:minLines="3" />
+        android:minLines="3"
+        android:padding="8dp"/>
 
 </LinearLayout>

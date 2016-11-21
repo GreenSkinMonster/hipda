@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@+id/rl_input"
-        android:background="@color/silver"/>
+        android:background="@color/background_grey"/>
 
     <RelativeLayout
         android:id="@+id/rl_input"
@@ -44,12 +44,14 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/ib_send_sms"
             android:layout_toRightOf="@+id/ib_emoji_switch"
+            android:background="@android:color/transparent"
             android:gravity="bottom"
             android:hint="@string/txt_quick_hint"
             android:inputType="textMultiLine"
             android:maxLines="6"
             android:minHeight="48dp"
             android:minLines="1"
+            android:padding="10dp"
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
             android:text=""

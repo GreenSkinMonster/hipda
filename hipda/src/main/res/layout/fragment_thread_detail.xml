@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentTop="true"
-            android:background="@color/silver"/>
+            android:background="@color/background_grey"/>
 
         <ImageButton
             android:id="@+id/ib_goto_post"
@@ -44,12 +44,14 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/ib_reply_post"
             android:layout_toRightOf="@+id/ib_goto_post"
+            android:background="@android:color/transparent"
             android:gravity="bottom"
             android:hint="@string/action_quick_reply"
             android:inputType="textMultiLine"
             android:maxLines="6"
             android:minHeight="48dp"
             android:minLines="1"
+            android:padding="10dp"
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
             android:text=""

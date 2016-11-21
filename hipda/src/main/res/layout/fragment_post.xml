@@ -14,10 +14,12 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="4dp"
+        android:background="@drawable/edittext_background"
         android:gravity="bottom"
         android:hint="@string/hint_subject"
         android:inputType="none"
         android:maxLines="1"
+        android:padding="8dp"
         android:textSize="20sp"
         android:visibility="gone"/>
 
@@ -121,9 +123,11 @@
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/ib_reply"
             android:layout_toRightOf="@+id/ib_emoji_switch"
+            android:background="@drawable/edittext_background"
             android:gravity="bottom"
             android:inputType="textMultiLine"
             android:minLines="6"
+            android:padding="8dp"
             android:scrollbars="vertical"
             android:textSize="16sp"
             app:emojiSize="26sp"/>

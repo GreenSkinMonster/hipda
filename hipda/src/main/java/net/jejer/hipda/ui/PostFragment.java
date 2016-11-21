@@ -56,7 +56,6 @@ import net.jejer.hipda.job.PostJob;
 import net.jejer.hipda.job.UploadImage;
 import net.jejer.hipda.ui.adapter.GridImageAdapter;
 import net.jejer.hipda.ui.adapter.ThreadTypeAdapter;
-import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.UIUtils;
@@ -219,7 +218,7 @@ public class PostFragment extends BaseFragment {
         }
 
         final ImageButton ibReply = (ImageButton) view.findViewById(R.id.ib_reply);
-        ibReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(ColorHelper.getColorAccent(getActivity())));
+        ibReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
         ibReply.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
