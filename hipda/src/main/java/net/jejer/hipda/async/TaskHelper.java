@@ -40,8 +40,8 @@ public class TaskHelper {
                 public void run() {
                     ContentDao.cleanup();
                     HistoryDao.cleanup();
-                    FavoriteHelper.getInstance().fetchMyFavorites();
-                    FavoriteHelper.getInstance().fetchMyAttention();
+                    //FavoriteHelper.getInstance().fetchMyFavorites();
+                    //FavoriteHelper.getInstance().fetchMyAttention();
                 }
             }).start();
             HiSettingsHelper.getInstance()
