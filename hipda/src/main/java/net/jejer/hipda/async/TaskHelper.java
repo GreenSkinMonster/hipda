@@ -14,15 +14,8 @@ import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Logger;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 
@@ -62,26 +55,22 @@ public class TaskHelper {
 
     public static void updateImageHost(final Activity activity, final Preference preference) {
         final String imageHostPerf = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_IMAGE_HOST, "");
-        final String avatarHostPerf = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_AVATAR_HOST, "");
 
         long imageHostUpdateTime = HiSettingsHelper.getInstance().getLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, 0);
-        if (activity != null || TextUtils.isEmpty(imageHostPerf) || TextUtils.isEmpty(avatarHostPerf) || System.currentTimeMillis() - imageHostUpdateTime > 30 * 60 * 1000) {
+        if (activity != null
+                || TextUtils.isEmpty(imageHostPerf)
+                || !imageHostPerf.contains("://")
+                || System.currentTimeMillis() - imageHostUpdateTime > 30 * 60 * 1000) {
             new AsyncTask<Void, Void, Exception>() {
 
                 private String imageHost;
-                private String avatarHost;
                 private HiProgressDialog dialog;
 
                 @Override
                 protected Exception doInBackground(Void... voids) {
                     try {
                         imageHost = getImageHost();
-                        avatarHost = getAvatarHost();
-                        if (TextUtils.isEmpty(avatarHost)) {
-                            avatarHost = imageHost;
-                        }
                         HiSettingsHelper.getInstance().setImageHost(imageHost);
-                        HiSettingsHelper.getInstance().setAvatarHost(avatarHost);
                         HiUtils.updateBaseUrls();
                         HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, System.currentTimeMillis());
                     } catch (Exception e) {
@@ -98,9 +87,8 @@ public class TaskHelper {
                             dialog.dismissError("发生错误 : " + OkHttpHelper.getErrorMessage(e));
                     } else {
                         if (dialog != null)
-                            dialog.dismiss("服务器已更新 \n\n" +
-                                    "图片 ：" + imageHost + "\n" +
-                                    "头像 ：" + avatarHost, 3000);
+                            dialog.dismiss("服务器已更新 \n\n"
+                                    + imageHost, 3000);
                         if (preference != null)
                             preference.setSummary(imageHost);
                     }
@@ -123,26 +111,7 @@ public class TaskHelper {
         Type stringStringMap = new TypeToken<Map<String, String>>() {
         }.getType();
         Map<String, String> map = gson.fromJson(response, stringStringMap);
-
-        String cdnStr = map.get("CDN");
-        return new URL(cdnStr).getHost();
-    }
-
-    private static String getAvatarHost() {
-        if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())) {
-            try {
-                String response = OkHttpHelper.getInstance().get(HiUtils.UserInfoUrl + HiSettingsHelper.getInstance().getUid());
-                Document doc = Jsoup.parse(response);
-                Elements avatarImgs = doc.select("div.avatar > img");
-                if (avatarImgs.size() > 0) {
-                    String imageUrl = avatarImgs.first().attr("src");
-                    return new URL(imageUrl).getHost();
-                }
-            } catch (IOException e) {
-                Logger.e(e);
-            }
-        }
-        return null;
+        return map.get("CDN");
     }
 
 }

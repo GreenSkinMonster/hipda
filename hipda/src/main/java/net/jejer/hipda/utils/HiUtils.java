@@ -17,8 +17,7 @@ public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";
 
     public static final String ForumServer = "http://www.hi-pda.com";
-    public static final String ImageHost = "img.hi-pda.com";
-    public static final String AvatarHost = "www.hi-pda.com";
+    public static final String ImageHost = "http://img.hi-pda.com";
     public static final String AvatarPath = "uc_server/data/avatar/";
     public static final String CookieDomain = "hi-pda.com";
     public static final String AvatarSuffix = "_avatar_middle.jpg";
@@ -112,13 +111,12 @@ public class HiUtils {
     public static void updateBaseUrls() {
         String imageHost = HiSettingsHelper.getInstance().getImageHost();
         String forumServer = HiSettingsHelper.getInstance().getForumServer();
-        String avatarHost = HiSettingsHelper.getInstance().getAvatarHost();
-
-        ImageBaseUrl = "http://" + imageHost + "/forum/";
-        AvatarBaseUrl = "http://" + avatarHost + "/forum/" + HiUtils.AvatarPath;
 
         BaseUrl = forumServer + "/forum/";
         SettingUrl = forumServer + "/config.php";
+
+        ImageBaseUrl = imageHost + "/forum/";
+        AvatarBaseUrl = BaseUrl + AvatarPath;
 
         ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
         DetailListUrl = BaseUrl + "viewthread.php?tid=";

@@ -83,7 +83,6 @@ public class HiSettingsHelper {
     public static final String PERF_CACHE_SIZE_IN_MB = "PERF_CACHE_SIZE_IN_MB";
     public static final String PERF_FORUM_SERVER = "PERF_FORUM_SERVER";
     public static final String PERF_IMAGE_HOST = "PERF_IMAGE_HOST";
-    public static final String PERF_AVATAR_HOST = "PERF_AVATAR_HOST";
     public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
 
     private Context mCtx;
@@ -136,7 +135,6 @@ public class HiSettingsHelper {
 
     private String mForumServer;
     private String mImageHost;
-    private String mAvatarHost;
 
     // --------------- THIS IS NOT IN PERF -----------
     private int mBasePostTextSize = -1;
@@ -263,7 +261,6 @@ public class HiSettingsHelper {
         getAnimationTypeFromPref();
         getForumServerFromPref();
         getImageHostFromPref();
-        getAvatarHostFromPref();
 
         updateMobileNetworkStatus(mCtx);
     }
@@ -977,21 +974,6 @@ public class HiSettingsHelper {
         mImageHost = imageHost;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_IMAGE_HOST, mImageHost).apply();
-    }
-
-    public String getAvatarHost() {
-        return mAvatarHost;
-    }
-
-    public String getAvatarHostFromPref() {
-        mAvatarHost = mSharedPref.getString(PERF_AVATAR_HOST, HiUtils.AvatarHost);
-        return mAvatarHost;
-    }
-
-    public void setAvatarHost(String avatarHost) {
-        mAvatarHost = avatarHost;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_AVATAR_HOST, mAvatarHost).apply();
     }
 
     public String getStringValue(String key, String defaultValue) {
