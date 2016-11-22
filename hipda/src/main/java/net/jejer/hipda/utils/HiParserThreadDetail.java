@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.vdurmont.emoji.EmojiParser;
 
+import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailBean.Contents;
 import net.jejer.hipda.bean.DetailListBean;
@@ -259,31 +260,16 @@ public class HiParserThreadDetail {
                 Elements sizeES = dlEl.select("em");
                 Elements imgES = dlEl.select("img");
 
+                long size = 0;
+                if (sizeES.size() > 0) {
+                    String sizeText = HttpUtils.getMiddleString(sizeES.first().text(), "(", ")");
+                    size = Utils.parseSizeText(sizeText);
+                }
 
                 if (imgES.size() > 0) {
                     Element e = imgES.first();
-
-                    String file = e.attr("file");
-                    String onclick = e.attr("onclick");
-
-                    if (!TextUtils.isEmpty(file) && !file.startsWith("http"))
-                        file = HiUtils.ImageBaseUrl + file;
-
-                    if (onclick.startsWith("zoom") && onclick.contains("attachment")) {
-                        onclick = HttpUtils.getMiddleString(onclick, "attachment", "'");
-                        if (!TextUtils.isEmpty(onclick))
-                            onclick = HiUtils.ImageBaseUrl + "attachment" + onclick;
-                    } else {
-                        onclick = "";
-                    }
-
-                    long size = 0;
-                    if (sizeES.size() > 0) {
-                        String sizeText = HttpUtils.getMiddleString(sizeES.first().text(), "(", ")");
-                        size = Utils.parseSizeText(sizeText);
-                    }
-
-                    content.addImg(TextUtils.isEmpty(onclick) ? file : onclick, size);
+                    ContentImg contentImg = getContentImg(e, size);
+                    content.addImg(contentImg);
                 }
             }
 
@@ -406,34 +392,20 @@ public class HiParserThreadDetail {
             return true;
         } else if (contentN.nodeName().equals("img")) {
             Element e = (Element) contentN;
-            String src = e.attr("src");
-            String file = e.attr("file");
-            String onclick = e.attr("onclick");
+            String src = getAbsoluteUrl(e.attr("src"));
             String id = e.attr("id");
-
-            if (!TextUtils.isEmpty(src) && !src.contains("://"))
-                src = HiUtils.ImageBaseUrl + src;
 
             if (id.startsWith("aimg") || src.contains("images/common/none.gif")) {
                 //internal image
-                if (!TextUtils.isEmpty(file) && !file.startsWith("http"))
-                    file = HiUtils.ImageBaseUrl + file;
-
-                if (onclick.startsWith("zoom") && onclick.contains("attachment")) {
-                    onclick = HttpUtils.getMiddleString(onclick, "attachment", "'");
-                    if (!TextUtils.isEmpty(onclick))
-                        onclick = HiUtils.ImageBaseUrl + "attachment" + onclick;
-                } else {
-                    onclick = "";
-                }
-
                 long size = 0;
                 Elements divES = ((Element) contentN.parent().parent()).select("div#" + id + "_menu");
                 if (divES.size() > 0) {
                     String sizeText = HttpUtils.getMiddleString(divES.first().text(), "(", ")");
                     size = Utils.parseSizeText(sizeText);
                 }
-                content.addImg(TextUtils.isEmpty(onclick) ? file : onclick, size);
+
+                ContentImg contentImg = getContentImg(e, size);
+                content.addImg(contentImg);
             } else if (src.contains(HiUtils.SmiliesPattern) || SmallImages.contains(src)) {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
@@ -567,6 +539,36 @@ public class HiParserThreadDetail {
             }
             return false;
         }
+    }
+
+    @NonNull
+    private static ContentImg getContentImg(Element e, long size) {
+        String src = getAbsoluteUrl(e.attr("src"));
+        String file = getAbsoluteUrl(e.attr("file"));
+        String onclick = e.attr("onclick");
+
+        if (onclick.startsWith("zoom") && onclick.contains("attachment")) {
+            onclick = "attachment" + HttpUtils.getMiddleString(onclick, "attachment", "'");
+        } else {
+            onclick = "";
+        }
+        onclick = getAbsoluteUrl(onclick);
+
+        String thumbUrl = "";
+        if (!TextUtils.isEmpty(src) && src.contains("thumb.")) {
+            thumbUrl = src;
+        }
+        String fullUrl = TextUtils.isEmpty(onclick) ? file : onclick;
+        if (TextUtils.isEmpty(fullUrl))
+            fullUrl = thumbUrl;
+        return new ContentImg(fullUrl, size, thumbUrl);
+    }
+
+    @NonNull
+    private static String getAbsoluteUrl(String url) {
+        if (TextUtils.isEmpty(url) || url.contains("://"))
+            return url;
+        return HiUtils.ImageBaseUrl + url;
     }
 
 }

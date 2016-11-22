@@ -107,11 +107,10 @@ public class DetailBean {
         }
 
         public void addImg(String url) {
-            addImg(url, 0);
+            addImg(new ContentImg(url, 0, ""));
         }
 
-        public void addImg(String url, long size) {
-            ContentImg contentImg = new ContentImg(url, size);
+        public void addImg(ContentImg contentImg) {
             list.add(contentImg);
             mImages.add(contentImg);
             newString = true;

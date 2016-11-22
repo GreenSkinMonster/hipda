@@ -226,12 +226,10 @@
 
     <string-array name="pref_forum_server">
         <item>主力 www.hi-pda.com (http)</item>
-        <item>备用 cnc.hi-pda.com (http)</item>
         <item>测试 dev.hi-pda.com (https)</item>
     </string-array>
     <string-array name="pref_forum_server_values">
         <item>http://www.hi-pda.com</item>
-        <item>http://cnc.hi-pda.com</item>
         <item>https://dev.hi-pda.com</item>
     </string-array>
 

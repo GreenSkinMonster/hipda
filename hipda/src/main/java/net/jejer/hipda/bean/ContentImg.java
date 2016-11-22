@@ -2,14 +2,16 @@ package net.jejer.hipda.bean;
 
 public class ContentImg extends ContentAbs {
     private String mUrl;
+    private String mThumbUrl;
     private int mFloor;
     private int mIndexInPage;
     private String mAuthor;
     private long mFileSize;
 
-    public ContentImg(String url, long fileSize) {
+    public ContentImg(String url, long fileSize, String thumbUrl) {
         mUrl = url;
         mFileSize = fileSize;
+        mThumbUrl = thumbUrl;
     }
 
     @Override
@@ -51,8 +53,7 @@ public class ContentImg extends ContentAbs {
         return mFileSize;
     }
 
-    public void setFileSize(long fileSize) {
-        mFileSize = fileSize;
+    public String getThumbUrl() {
+        return mThumbUrl;
     }
-
 }

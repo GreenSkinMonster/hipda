@@ -120,7 +120,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
             } else if (content instanceof ContentImg) {
                 final ContentImg contentImg = ((ContentImg) content);
 
-                String imageUrl = contentImg.getContent();
+                String imageUrl = TextUtils.isEmpty(contentImg.getThumbUrl()) ? contentImg.getContent() : contentImg.getThumbUrl();
                 int imageIndex = contentImg.getIndexInPage();
 
                 ThreadImageLayout threadImageLayout = new ThreadImageLayout(mDetailFragment, imageUrl);
