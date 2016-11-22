@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_edit"
         android:title="@string/action_edit"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_reply"
         android:title="@string/action_reply"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_quote"
         android:title="@string/action_quote"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_copy"
         android:title="@string/action_copy"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_share_post"
         android:title="@string/action_share"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_select_text"
         android:title="@string/action_select_text"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_author_only_mode"
+        android:title="@string/action_author_only_mode"
+        app:showAsAction="ifRoom"/>
 
 </menu>

@@ -6,11 +6,13 @@
     <string name="action_refresh">刷新</string>
     <string name="action_image_gallery">图片浏览</string>
     <string name="action_reply">回复</string>
+    <string name="action_show_all">显示全部帖子</string>
     <string name="action_edit">编辑</string>
     <string name="action_search">搜索帖子</string>
     <string name="action_goto_page">页面跳转</string>
     <string name="action_quote">引用</string>
     <string name="action_copy">复制</string>
+    <string name="action_author_only_mode">只看该作者</string>
     <string name="action_select_text">文字选择</string>
     <string name="action_share">分享</string>
     <string name="action_close">关闭</string>

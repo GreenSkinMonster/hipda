@@ -79,6 +79,7 @@ import java.util.List;
 public class ThreadDetailFragment extends BaseFragment {
     public static final String ARG_TID_KEY = "tid";
     public static final String ARG_PID_KEY = "pid";
+    public static final String ARG_AUTHOR_ID_KEY = "author_id";
     public static final String ARG_TITLE_KEY = "title";
     public static final String ARG_FLOOR_KEY = "floor";
     public static final String ARG_PAGE_KEY = "page";
@@ -101,6 +102,8 @@ public class ThreadDetailFragment extends BaseFragment {
     private Context mCtx;
     private String mTid;
     private String mGotoPostId;
+    private String mAuthorId;
+    private String mAuthor;
     private String mTitle;
     private String mFid;
     private XRecyclerView mRecyclerView;
@@ -119,7 +122,6 @@ public class ThreadDetailFragment extends BaseFragment {
     private EmojiEditText mEtReply;
     private ImageButton mIbEmojiSwitch;
     private View quickReply;
-    private boolean mAuthorOnly = false;
     private boolean mDataReceived = false;
 
     private boolean mInloading = false;
@@ -129,6 +131,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private HiProgressDialog postProgressDialog;
     private ContentLoadingView mLoadingView;
     private ThreadDetailEventCallback mEventCallback = new ThreadDetailEventCallback();
+    private MenuItem mShowAllMenuItem;
 
     private boolean mHistorySaved = false;
 
@@ -145,6 +148,9 @@ public class ThreadDetailFragment extends BaseFragment {
         }
         if (getArguments().containsKey(ARG_PID_KEY)) {
             mGotoPostId = getArguments().getString(ARG_PID_KEY);
+        }
+        if (getArguments().containsKey(ARG_AUTHOR_ID_KEY)) {
+            mAuthorId = getArguments().getString(ARG_AUTHOR_ID_KEY);
         }
         if (getArguments().containsKey(ARG_TITLE_KEY)) {
             mTitle = getArguments().getString(ARG_TITLE_KEY);
@@ -302,6 +308,8 @@ public class ThreadDetailFragment extends BaseFragment {
                 + mTitle);
         setActionBarDisplayHomeAsUpEnabled(true);
 
+        mShowAllMenuItem = menu.findItem(R.id.action_show_all);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -309,8 +317,6 @@ public class ThreadDetailFragment extends BaseFragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         MenuItem favoritesMenuItem = menu.findItem(R.id.action_add_favorite);
-        if (favoritesMenuItem == null)
-            return;
         if (FavoriteHelper.getInstance().isInFavortie(mTid)) {
             favoritesMenuItem.setTitle(R.string.action_remove_favorite);
         } else {
@@ -322,6 +328,12 @@ public class ThreadDetailFragment extends BaseFragment {
             attentionMenuItem.setTitle(R.string.action_remove_attention);
         } else {
             attentionMenuItem.setTitle(R.string.action_add_attention);
+        }
+
+        if (TextUtils.isEmpty(mAuthorId)) {
+            mShowAllMenuItem.setVisible(false);
+        } else {
+            mShowAllMenuItem.setVisible(true);
         }
     }
 
@@ -398,18 +410,6 @@ public class ThreadDetailFragment extends BaseFragment {
             case R.id.action_image_gallery:
                 startImageGallery(0);
                 return true;
-            case R.id.action_only_author:
-                mAuthorOnly = !mAuthorOnly;
-                mDetailBeans.clear();
-                mDetailAdapter.setDatas(mDetailBeans);
-                mCurrentPage = 1;
-                if (mAuthorOnly) {
-                    setActionBarTitle("(只看楼主) " + mTitle);
-                    showAndLoadAuthorOnly();
-                } else {
-                    showOrLoadPage();
-                }
-                return true;
             case R.id.action_add_favorite:
                 if (FavoriteHelper.getInstance().isInFavortie(mTid))
                     FavoriteHelper.getInstance().removeFavorite(mCtx, FavoriteHelper.TYPE_FAVORITE, mTid);
@@ -421,6 +421,9 @@ public class ThreadDetailFragment extends BaseFragment {
                     FavoriteHelper.getInstance().removeFavorite(mCtx, FavoriteHelper.TYPE_ATTENTION, mTid);
                 else
                     FavoriteHelper.getInstance().addFavorite(mCtx, FavoriteHelper.TYPE_ATTENTION, mTid);
+                return true;
+            case R.id.action_show_all:
+                cancelAuthorOnlyMode();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -476,18 +479,43 @@ public class ThreadDetailFragment extends BaseFragment {
     private void refresh() {
         mInloading = true;
         mLoadingView.setState(ContentLoadingView.LOADING);
-        ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, FETCH_REFRESH, POSITION_NORMAL);
-        JobMgr.addJob(job);
+        startJob(mCurrentPage, FETCH_REFRESH, POSITION_NORMAL);
     }
 
     private void refreshAtEnd() {
         mFooterLoading = true;
-        ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, FETCH_REFRESH, POSITION_FOOTER);
-        JobMgr.addJob(job);
+        startJob(mCurrentPage, FETCH_REFRESH, POSITION_FOOTER);
     }
 
     public void showTheadTitle() {
         Toast.makeText(mCtx, mTitle, Toast.LENGTH_SHORT).show();
+    }
+
+    private void startJob(int page, int fetchType, int loadingPosition) {
+        ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mAuthorId, mGotoPostId, page, fetchType, loadingPosition);
+        JobMgr.addJob(job);
+    }
+
+    public boolean isInAuthorOnlyMode() {
+        return !TextUtils.isEmpty(mAuthorId);
+    }
+
+    public void enterAuthorOnlyMode(String authorId, String author) {
+        mAuthorId = authorId;
+        mAuthor = author;
+        mCurrentPage = 1;
+        mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+        mShowAllMenuItem.setVisible(true);
+        startJob(mCurrentPage, FETCH_NORMAL, POSITION_NORMAL);
+    }
+
+    public void cancelAuthorOnlyMode() {
+        mAuthorId = "";
+        mAuthor = "";
+        mCurrentPage = 1;
+        mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+        mShowAllMenuItem.setVisible(false);
+        startJob(mCurrentPage, FETCH_NORMAL, POSITION_NORMAL);
     }
 
     public DetailBean getCachedPost(String postId) {
@@ -584,16 +612,11 @@ public class ThreadDetailFragment extends BaseFragment {
         if (mCache.get(page) == null) {
             if (page < 1 || page > mMaxPage)
                 return;
-            ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, page, fetchType, loadingPosition);
-            JobMgr.addJob(job);
+            startJob(page, fetchType, loadingPosition);
         }
     }
 
     private void showGotoPageDialog() {
-        if (mAuthorOnly) {
-            Toast.makeText(getActivity(), "请先退出只看楼主模式", Toast.LENGTH_LONG).show();
-            return;
-        }
         mGoToPage = mCurrentPage;
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_goto_page, null);
@@ -717,8 +740,10 @@ public class ThreadDetailFragment extends BaseFragment {
     public class GoToFloorOnClickListener implements Button.OnClickListener {
         @Override
         public void onClick(View view) {
-            mAuthorOnly = false;
-
+            if (!TextUtils.isEmpty(mAuthorId)) {
+                Toast.makeText(getActivity(), "请先退出只查看该作者模式", Toast.LENGTH_SHORT).show();
+                return;
+            }
             int floor = (Integer) view.getTag();
             gotoFloor(floor);
         }
@@ -787,30 +812,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
             mInloading = true;
             mLoadingView.setState(ContentLoadingView.LOADING);
-            ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, fetchType, POSITION_NORMAL);
-            JobMgr.addJob(job);
-        }
-    }
-
-    private void addAuthorPosts(DetailListBean details) {
-        for (DetailBean detail : details.getAll()) {
-            if (detail.getAuthor().equals(mCache.get(1).getAll().get(0).getAuthor())) {
-                mDetailBeans.add(detail);
-            }
-        }
-        mDetailAdapter.setDatas(mDetailBeans);
-    }
-
-    private void showAndLoadAuthorOnly() {
-        while (mCache.get(mCurrentPage) != null && mCurrentPage <= mMaxPage) {
-            addAuthorPosts(mCache.get(mCurrentPage));
-            mCurrentPage++;
-        }
-
-        if (mCurrentPage <= mMaxPage) {
-            mInloading = true;
-            ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mGotoPostId, mCurrentPage, FETCH_NORMAL, POSITION_NORMAL);
-            JobMgr.addJob(job);
+            startJob(mCurrentPage, fetchType, POSITION_NORMAL);
         }
     }
 
@@ -857,10 +859,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
     public void startImageGallery(int imageIndex) {
         if (!HiApplication.isActivityVisible()) {
-            return;
-        }
-        if (mAuthorOnly) {
-            Toast.makeText(getActivity(), "请先退出只看楼主模式", Toast.LENGTH_LONG).show();
             return;
         }
         DetailListBean detailListBean = mCache.get(mCurrentPage);

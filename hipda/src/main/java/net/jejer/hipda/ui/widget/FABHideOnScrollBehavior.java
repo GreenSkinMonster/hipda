@@ -10,7 +10,7 @@ import android.view.View;
 /**
  * Created by GreenSkinMonster on 2016-11-14.
  */
-
+@SuppressWarnings("unused")
 public class FABHideOnScrollBehavior extends FloatingActionButton.Behavior {
 
     public FABHideOnScrollBehavior(Context context, AttributeSet attrs) {

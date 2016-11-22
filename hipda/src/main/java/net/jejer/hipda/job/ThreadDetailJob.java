@@ -26,16 +26,18 @@ public class ThreadDetailJob extends BaseJob {
 
     private Context mCtx;
     private String mTid;
+    private String mAuthorId;
     private String mGotoPostId;
     private int mPage;
     private int mFetchType;
 
     private ThreadDetailEvent mEvent;
 
-    public ThreadDetailJob(Context context, String sessionId, String tid, String gotoPostId, int page, int fetchType, int loadingPosition) {
+    public ThreadDetailJob(Context context, String sessionId, String tid, String authorId, String gotoPostId, int page, int fetchType, int loadingPosition) {
         super(sessionId);
         mCtx = context;
         mTid = tid;
+        mAuthorId = authorId;
         mGotoPostId = gotoPostId;
         mPage = page;
         mFetchType = fetchType;
@@ -114,6 +116,9 @@ public class ThreadDetailJob extends BaseJob {
             mUrl = HiUtils.LastPageUrl + mTid;
         } else {
             mUrl = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
+            if (HiUtils.isValidId(mAuthorId))
+                mUrl += "&authorid=" + mAuthorId;
+
         }
         return OkHttpHelper.getInstance().get(mUrl,
                 mFetchType == ThreadDetailFragment.FETCH_REFRESH ? OkHttpHelper.FORCE_NETWORK : OkHttpHelper.PREFER_CACHE);

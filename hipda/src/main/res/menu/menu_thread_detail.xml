@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!--
     <item
@@ -9,31 +10,34 @@
         app:showAsAction="ifRoom" />
      -->
     <item
+        android:id="@+id/action_show_all"
+        android:icon="@drawable/ic_eject_white_24dp"
+        android:title="@string/action_show_all"
+        android:visible="false"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/action_reply"
-        android:title="@string/action_reply" />
+        android:title="@string/action_reply"/>
     <item
         android:id="@+id/action_refresh_detail"
-        android:title="@string/action_refresh" />
+        android:title="@string/action_refresh"/>
     <item
         android:id="@+id/action_image_gallery"
-        android:title="@string/action_image_gallery" />
+        android:title="@string/action_image_gallery"/>
     <item
         android:id="@+id/action_add_favorite"
-        android:title="@string/action_add_favorite" />
+        android:title="@string/action_add_favorite"/>
     <item
         android:id="@+id/action_add_attention"
-        android:title="@string/action_add_attention" />
-    <item
-        android:id="@+id/action_only_author"
-        android:title="@string/action_only_author" />
+        android:title="@string/action_add_attention"/>
     <item
         android:id="@+id/action_open_url"
-        android:title="@string/action_open_url" />
+        android:title="@string/action_open_url"/>
     <item
         android:id="@+id/action_copy_url"
-        android:title="@string/action_copy_url" />
+        android:title="@string/action_copy_url"/>
     <item
         android:id="@+id/action_share_thread"
-        android:title="@string/action_share" />
+        android:title="@string/action_share"/>
 
 </menu>

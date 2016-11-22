@@ -110,6 +110,14 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 }
                 mode.finish();
                 return true;
+            case R.id.action_author_only_mode:
+                if (mFragment.isInAuthorOnlyMode()) {
+                    mFragment.cancelAuthorOnlyMode();
+                } else {
+                    mFragment.enterAuthorOnlyMode(mDetailBean.getUid(), mDetailBean.getAuthor());
+                }
+                mode.finish();
+                return true;
             case R.id.action_select_text:
                 if (mFragment.getActivity() != null) {
                     UIUtils.showMessageDialog(mFragment.getActivity(),
@@ -153,6 +161,13 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 && !HiSettingsHelper.getInstance().getUid().equals(mDetailBean.getUid())) {
             MenuItem item = menu.findItem(R.id.action_edit);
             item.setVisible(false);
+        }
+
+        MenuItem menuItemAuthor = menu.findItem(R.id.action_author_only_mode);
+        if (mFragment.isInAuthorOnlyMode()) {
+            menuItemAuthor.setTitle(R.string.action_show_all);
+        } else {
+            menuItemAuthor.setTitle(R.string.action_author_only_mode);
         }
 
         mode.setTitle(mDetailBean.getFloor() + "# " + mDetailBean.getAuthor());
