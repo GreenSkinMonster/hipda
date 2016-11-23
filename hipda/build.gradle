@@ -38,6 +38,9 @@ android {
                 }
             }
         }
+        debug {
+            ext.enableCrashlytics = false
+        }
     }
 }
 

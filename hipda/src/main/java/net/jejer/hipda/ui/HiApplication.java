@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
 
+import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -27,7 +28,8 @@ public class HiApplication extends Application {
         super.onCreate();
         HiApplication.context = getApplicationContext();
 
-        Fabric.with(this, new Crashlytics());
+        if (!BuildConfig.DEBUG)
+            Fabric.with(this, new Crashlytics());
 
         UpdateHelper.updateApp(context);
 
