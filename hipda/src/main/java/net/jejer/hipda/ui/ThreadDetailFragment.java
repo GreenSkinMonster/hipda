@@ -9,6 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.SystemClock;
@@ -119,11 +120,15 @@ public class ThreadDetailFragment extends BaseFragment {
     private int mGoToPage = 1;
     private int mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();    // user can configure max posts per page in forum setting
     private int mGotoFloor = -1;    // actual floor number in thread, start from 1
+
+    private View mQuickReply;
     private EmojiEditText mEtReply;
     private ImageButton mIbEmojiSwitch;
-    private View quickReply;
-    private boolean mDataReceived = false;
+    private TextView mTvCountdown;
+    private ImageButton mIbPostReply;
+    private CountDownTimer mCountDownTimer;
 
+    private boolean mDataReceived = false;
     private boolean mInloading = false;
     private boolean mHeaderLoading = false;
     private boolean mFooterLoading = false;
@@ -229,13 +234,15 @@ public class ThreadDetailFragment extends BaseFragment {
 
         mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
 
-        quickReply = view.findViewById(R.id.quick_reply);
-        mEtReply = (EmojiEditText) quickReply.findViewById(R.id.tv_reply_text);
+        mQuickReply = view.findViewById(R.id.quick_reply);
+        mEtReply = (EmojiEditText) mQuickReply.findViewById(R.id.tv_reply_text);
         mEtReply.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
 
-        ImageButton mPostReplyIb = (ImageButton) quickReply.findViewById(R.id.ib_reply_post);
-        mPostReplyIb.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
-        mPostReplyIb.setOnClickListener(new View.OnClickListener() {
+        mTvCountdown = (TextView) mQuickReply.findViewById(R.id.tv_countdown);
+
+        mIbPostReply = (ImageButton) mQuickReply.findViewById(R.id.ib_reply_post);
+        mIbPostReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
+        mIbPostReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String replyText = mEtReply.getText().toString();
@@ -253,7 +260,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
             }
         });
-        mPostReplyIb.setOnLongClickListener(new View.OnLongClickListener() {
+        mIbPostReply.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 setHasOptionsMenu(false);
@@ -264,7 +271,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
 
-        mIbEmojiSwitch = (ImageButton) quickReply.findViewById(R.id.ib_goto_post);
+        mIbEmojiSwitch = (ImageButton) mQuickReply.findViewById(R.id.ib_goto_post);
         setUpEmojiPopup(mEtReply, mIbEmojiSwitch);
 
         return view;
@@ -443,10 +450,7 @@ public class ThreadDetailFragment extends BaseFragment {
         mMainFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                quickReply.setVisibility(View.VISIBLE);
-                quickReply.bringToFront();
-                mMainFab.hide();
-                mMainFab.setEnabled(false);
+                showQuickReply();
                 (new Handler()).postDelayed(new Runnable() {
                     public void run() {
                         mEtReply.requestFocus();
@@ -726,10 +730,41 @@ public class ThreadDetailFragment extends BaseFragment {
         dialog.show();
     }
 
+    private void showQuickReply() {
+        int timeToWait = PostHelper.getWaitTimeToPost();
+        if (timeToWait > 0) {
+            mIbPostReply.setVisibility(View.INVISIBLE);
+            mTvCountdown.setText(timeToWait + "");
+            mTvCountdown.setVisibility(View.VISIBLE);
+            mCountDownTimer = new CountDownTimer(timeToWait * 1000, 500) {
+
+                public void onTick(long millisUntilFinished) {
+                    mTvCountdown.setText((millisUntilFinished / 1000) + "");
+                }
+
+                public void onFinish() {
+                    mTvCountdown.setVisibility(View.INVISIBLE);
+                    mIbPostReply.setVisibility(View.VISIBLE);
+                }
+            }.start();
+        } else {
+            mIbPostReply.setVisibility(View.VISIBLE);
+            mTvCountdown.setVisibility(View.INVISIBLE);
+        }
+        mQuickReply.setVisibility(View.VISIBLE);
+        mQuickReply.bringToFront();
+        mMainFab.hide();
+        mMainFab.setEnabled(false);
+    }
+
     public boolean hideQuickReply() {
-        if (quickReply != null && quickReply.getVisibility() == View.VISIBLE) {
+        if (mCountDownTimer != null) {
+            mCountDownTimer.cancel();
+            mCountDownTimer = null;
+        }
+        if (mQuickReply != null && mQuickReply.getVisibility() == View.VISIBLE) {
             mEtReply.setText("");
-            quickReply.setVisibility(View.INVISIBLE);
+            mQuickReply.setVisibility(View.INVISIBLE);
             mMainFab.setEnabled(true);
             mMainFab.show();
             return true;
@@ -989,9 +1024,9 @@ public class ThreadDetailFragment extends BaseFragment {
             Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
             if (fg instanceof PostFragment) {
                 ((BaseFragment) fg).popFragment();
-            } else if (quickReply.getVisibility() == View.VISIBLE) {
+            } else if (mQuickReply.getVisibility() == View.VISIBLE) {
                 mEtReply.setText("");
-                quickReply.setVisibility(View.INVISIBLE);
+                hideQuickReply();
             }
 
             if (postProgressDialog != null) {

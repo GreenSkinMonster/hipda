@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
@@ -225,6 +226,29 @@ public class PostFragment extends BaseFragment {
                 postReply();
             }
         });
+
+        final TextView tvCountdown = (TextView) view.findViewById(R.id.tv_countdown);
+
+        int timeToWait = PostHelper.getWaitTimeToPost();
+        if (timeToWait > 0) {
+            ibReply.setVisibility(View.INVISIBLE);
+            tvCountdown.setText(timeToWait + "");
+            tvCountdown.setVisibility(View.VISIBLE);
+            new CountDownTimer(timeToWait * 1000, 500) {
+
+                public void onTick(long millisUntilFinished) {
+                    tvCountdown.setText((millisUntilFinished / 1000) + "");
+                }
+
+                public void onFinish() {
+                    tvCountdown.setVisibility(View.INVISIBLE);
+                    ibReply.setVisibility(View.VISIBLE);
+                }
+            }.start();
+        } else {
+            ibReply.setVisibility(View.VISIBLE);
+            tvCountdown.setVisibility(View.INVISIBLE);
+        }
 
         mIbEmojiSwitch = (ImageButton) view.findViewById(R.id.ib_emoji_switch);
         setUpEmojiPopup(mEtContent, mIbEmojiSwitch);

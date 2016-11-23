@@ -33,6 +33,9 @@ public class PostHelper {
     public static final int MODE_QUICK_REPLY = 4;
     public static final int MODE_EDIT_POST = 5;
 
+    private static long LAST_POST_TIME = 0;
+    private static final long POST_DELAY_IN_SECS = 30;
+
     private int mMode;
     private String mResult;
     private int mStatus = Constants.STATUS_FAIL;
@@ -202,6 +205,17 @@ public class PostHelper {
         if (delete == 1) {
             mResult = mResult.replace("发表", "删除");
         }
+
+        if (mMode != MODE_EDIT_POST)
+            LAST_POST_TIME = System.currentTimeMillis();
+    }
+
+    public static int getWaitTimeToPost() {
+        long delta = (System.currentTimeMillis() - LAST_POST_TIME) / 1000;
+        if (POST_DELAY_IN_SECS > delta) {
+            return (int) (POST_DELAY_IN_SECS - delta);
+        }
+        return 0;
     }
 
 }

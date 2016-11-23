@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:background="?list_item_background"
     android:clickable="true"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="2dp">
 
     <EditText
         android:id="@+id/et_subject"
@@ -95,7 +96,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:clickable="true">
 
         <ImageButton
@@ -103,8 +104,6 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="4dp"
             android:background="?android:selectableItemBackground"/>
 
         <ImageButton
@@ -113,8 +112,22 @@
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="4dp"
             android:background="?android:selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/tv_countdown"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/circle_background"
+            android:clickable="true"
+            android:gravity="center"
+            android:textColor="@color/hipda"
+            android:textSize="17sp"
+            android:visibility="invisible"/>
 
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/et_reply"
