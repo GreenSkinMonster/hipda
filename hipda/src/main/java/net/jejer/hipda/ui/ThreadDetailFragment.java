@@ -726,8 +726,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         dialog.setContentView(view);
         BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) view.getParent());
-        //set a big value to show dialog fully
-        mBehavior.setPeekHeight(Utils.dpToPx(getActivity(), 512));
+        mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         dialog.show();
     }
 

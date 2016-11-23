@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -53,6 +55,7 @@ import net.jejer.hipda.job.ThreadListEvent;
 import net.jejer.hipda.job.ThreadListJob;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadListAdapter;
+import net.jejer.hipda.ui.widget.BottomDialog;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.SimpleDivider;
 import net.jejer.hipda.ui.widget.XFooterView;
@@ -412,11 +415,13 @@ public class ThreadListFragment extends BaseFragment
 
     private void showThreadListSettingsDialog() {
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View viewlayout = inflater.inflate(R.layout.dialog_thread_list_settings, null);
+        final View view = inflater.inflate(R.layout.dialog_thread_list_settings, null);
 
-        final Switch sShowStickThreads = (Switch) viewlayout.findViewById(R.id.sw_show_stick_threads);
-        final Switch sSortByPostTime = (Switch) viewlayout.findViewById(R.id.sw_sort_by_post_time);
-        final Switch sShowPostType = (Switch) viewlayout.findViewById(R.id.sw_show_post_type);
+        final Switch sShowStickThreads = (Switch) view.findViewById(R.id.sw_show_stick_threads);
+        final Switch sSortByPostTime = (Switch) view.findViewById(R.id.sw_sort_by_post_time);
+        final Switch sShowPostType = (Switch) view.findViewById(R.id.sw_show_post_type);
+
+        final BottomSheetDialog dialog = new BottomDialog(getActivity());
 
         sShowStickThreads.setChecked(HiSettingsHelper.getInstance().isShowStickThreads());
         sShowStickThreads.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
@@ -441,12 +446,10 @@ public class ThreadListFragment extends BaseFragment
             }
         });
 
-        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
-        popDialog.setTitle(mCtx.getResources().getString(R.string.action_thread_list_settings));
-        popDialog.setView(viewlayout);
-        // Add the buttons
-        popDialog.setPositiveButton(getResources().getString(android.R.string.ok), null);
-        popDialog.create().show();
+        dialog.setContentView(view);
+        BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) view.getParent());
+        mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        dialog.show();
     }
 
     private void showForumTypesDialog() {
@@ -477,7 +480,6 @@ public class ThreadListFragment extends BaseFragment
                 }
             }
         });
-
     }
 
     private void showOpenUrlDialog() {
