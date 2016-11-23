@@ -325,23 +325,29 @@ public class ThreadDetailFragment extends BaseFragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         MenuItem favoritesMenuItem = menu.findItem(R.id.action_add_favorite);
-        if (FavoriteHelper.getInstance().isInFavortie(mTid)) {
-            favoritesMenuItem.setTitle(R.string.action_remove_favorite);
-        } else {
-            favoritesMenuItem.setTitle(R.string.action_add_favorite);
+        if (favoritesMenuItem != null) {
+            if (FavoriteHelper.getInstance().isInFavortie(mTid)) {
+                favoritesMenuItem.setTitle(R.string.action_remove_favorite);
+            } else {
+                favoritesMenuItem.setTitle(R.string.action_add_favorite);
+            }
         }
 
         MenuItem attentionMenuItem = menu.findItem(R.id.action_add_attention);
-        if (FavoriteHelper.getInstance().isInAttention(mTid)) {
-            attentionMenuItem.setTitle(R.string.action_remove_attention);
-        } else {
-            attentionMenuItem.setTitle(R.string.action_add_attention);
+        if (attentionMenuItem != null) {
+            if (FavoriteHelper.getInstance().isInAttention(mTid)) {
+                attentionMenuItem.setTitle(R.string.action_remove_attention);
+            } else {
+                attentionMenuItem.setTitle(R.string.action_add_attention);
+            }
         }
 
-        if (TextUtils.isEmpty(mAuthorId)) {
-            mShowAllMenuItem.setVisible(false);
-        } else {
-            mShowAllMenuItem.setVisible(true);
+        if (mShowAllMenuItem != null) {
+            if (TextUtils.isEmpty(mAuthorId)) {
+                mShowAllMenuItem.setVisible(false);
+            } else {
+                mShowAllMenuItem.setVisible(true);
+            }
         }
     }
 
