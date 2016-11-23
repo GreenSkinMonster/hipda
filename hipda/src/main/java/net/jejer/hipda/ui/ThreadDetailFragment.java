@@ -58,6 +58,7 @@ import net.jejer.hipda.job.ThreadDetailEvent;
 import net.jejer.hipda.job.ThreadDetailJob;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadDetailAdapter;
+import net.jejer.hipda.ui.widget.BottomDialog;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.SimpleDivider;
 import net.jejer.hipda.ui.widget.XFooterView;
@@ -634,7 +635,7 @@ public class ThreadDetailFragment extends BaseFragment {
         Button btnPageBottom = (Button) view.findViewById(R.id.btn_page_bottom);
         Button btnGoto = (Button) view.findViewById(R.id.btn_goto_page);
 
-        final BottomSheetDialog dialog = new BottomSheetDialog(getActivity());
+        final BottomSheetDialog dialog = new BottomDialog(getActivity());
 
         tvTitle.setText(mTitle);
         btnFirstPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_fast_backward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
