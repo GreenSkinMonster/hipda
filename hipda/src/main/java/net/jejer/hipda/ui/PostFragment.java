@@ -171,10 +171,11 @@ public class PostFragment extends BaseFragment {
         });
         updateImageInfo();
 
-        if (mFid != null && TextUtils.isDigitsOnly(mFid)) {
+        if (HiUtils.isValidId(mFid)) {
             int fid = Integer.parseInt(mFid);
-            if (fid >= 0 && fid < HiUtils.FORUM_NAMES.length)
-                mForumName = HiUtils.FORUM_NAMES[HiUtils.getForumIndexByFid(fid)];
+            int index = HiUtils.getForumIndexByFid(fid);
+            if (index >= 0 && index < HiUtils.FORUM_NAMES.length)
+                mForumName = HiUtils.FORUM_NAMES[index];
         }
 
         mEtSubject = (EditText) view.findViewById(R.id.et_subject);
