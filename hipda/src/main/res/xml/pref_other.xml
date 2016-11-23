@@ -34,11 +34,6 @@
             android:title="@string/pref_title_animation_type"/>
             -->
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
-            android:defaultValue="false"
-            android:key="PERF_LONG_CLICK_SAVE_IMAGE"
-            android:title="@string/pref_title_long_click_save_image"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_cache">

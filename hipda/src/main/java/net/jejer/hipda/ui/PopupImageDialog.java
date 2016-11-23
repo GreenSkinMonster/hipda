@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -26,15 +25,12 @@ import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
-import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HttpUtils;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -189,34 +185,8 @@ public class PopupImageDialog extends DialogFragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
-
-                        if (UIUtils.askForPermission(getActivity())) {
-                            return;
-                        }
-
                         String url = images.get(viewPager.getCurrentItem()).getContent();
-
-                        ImageInfo imageInfo = ImageContainer.getImageInfo(url);
-                        if (imageInfo == null || !imageInfo.isReady()) {
-                            Toast.makeText(mCtx, "文件还未下载完成", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        try {
-                            String filename = Utils.getImageFileName(Constants.FILE_SHARE_PREFIX, imageInfo.getMime());
-                            File cacheDirectory = HiApplication.getAppContext().getExternalCacheDir();
-                            File destFile = new File(cacheDirectory, filename);
-                            Utils.copy(new File(imageInfo.getPath()), destFile);
-
-                            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                            shareIntent.setType(imageInfo.getMime());
-                            Uri uri = Uri.fromFile(destFile);
-                            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                            startActivity(Intent.createChooser(shareIntent, "分享图片"));
-                        } catch (Exception e) {
-                            Logger.e(e);
-                            Toast.makeText(mCtx, "分享时发生错误", Toast.LENGTH_LONG).show();
-                        }
+                        UIUtils.shareImage(getContext(), url);
                     }
                 }
         );

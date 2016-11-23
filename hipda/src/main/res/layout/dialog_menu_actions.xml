@@ -7,7 +7,7 @@
               android:padding="4dp">
 
     <ListView
-        android:id="@+id/lv_forum_types"
+        android:id="@+id/lv_menu_actions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

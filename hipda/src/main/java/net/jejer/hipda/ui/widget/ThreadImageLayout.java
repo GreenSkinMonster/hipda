@@ -3,6 +3,7 @@ package net.jejer.hipda.ui.widget;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -14,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
@@ -26,6 +28,8 @@ import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.ui.ThreadDetailFragment;
+import net.jejer.hipda.utils.HttpUtils;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -49,6 +53,7 @@ public class ThreadImageLayout extends RelativeLayout {
     private String mParentSessionId;
     private int mImageIndex;
     private ThreadDetailFragment mFragment;
+    private ContentImg mContentImg;
 
     public ThreadImageLayout(ThreadDetailFragment fragment, String url) {
         super(fragment.getActivity(), null);
@@ -85,6 +90,10 @@ public class ThreadImageLayout extends RelativeLayout {
         mImageView.setImageIndex(mImageIndex);
     }
 
+    public void setContentImg(ContentImg contentImg) {
+        mContentImg = contentImg;
+    }
+
     private void loadImage() {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
@@ -95,6 +104,13 @@ public class ThreadImageLayout extends RelativeLayout {
             if (imageInfo.getWidth() >= MIN_WIDTH || imageInfo.isGif()) {
                 mImageView.setImageInfo(imageInfo);
                 mImageView.setClickToViewBigImage();
+                mImageView.setOnLongClickListener(new OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        showImageActionDialog();
+                        return true;
+                    }
+                });
             }
 
             if (imageInfo.isGif()) {
@@ -164,6 +180,29 @@ public class ThreadImageLayout extends RelativeLayout {
                     imageLoadable));
         }
     }
+
+    private void showImageActionDialog() {
+        final String[] actions = {"保存", "分享", "查看大图"};
+        AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
+                String action = actions[position];
+                if (action.equals("保存")) {
+                    HttpUtils.saveImage(getContext(), mContentImg.getContent());
+                } else if (action.equals("分享")) {
+                    UIUtils.shareImage(getContext(), mUrl);
+                } else if (action.equals("查看大图")) {
+                    mFragment.startImageGallery(mImageIndex);
+                }
+            }
+        };
+
+        SimplePopupMenu popupMenu = new SimplePopupMenu(getContext());
+        popupMenu.setDatas(actions);
+        popupMenu.setListener(listener);
+        popupMenu.show();
+    }
+
 
     @Override
     protected void onDetachedFromWindow() {

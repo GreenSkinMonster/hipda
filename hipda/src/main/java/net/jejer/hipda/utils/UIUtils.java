@@ -4,8 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,8 +21,12 @@ import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.cache.ImageContainer;
+import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
+
+import java.io.File;
 
 /**
  * Created by GreenSkinMonster on 2016-04-05.
@@ -127,6 +133,34 @@ public class UIUtils {
             if (imm != null) {
                 imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
+        }
+    }
+
+    public static void shareImage(Context context, String url) {
+        if (UIUtils.askForPermission(context)) {
+            return;
+        }
+
+        ImageInfo imageInfo = ImageContainer.getImageInfo(url);
+        if (imageInfo == null || !imageInfo.isReady()) {
+            Toast.makeText(context, "文件还未下载完成", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            String filename = Utils.getImageFileName(Constants.FILE_SHARE_PREFIX, imageInfo.getMime());
+            File cacheDirectory = HiApplication.getAppContext().getExternalCacheDir();
+            File destFile = new File(cacheDirectory, filename);
+            Utils.copy(new File(imageInfo.getPath()), destFile);
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType(imageInfo.getMime());
+            Uri uri = Uri.fromFile(destFile);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            context.startActivity(Intent.createChooser(shareIntent, "分享图片"));
+        } catch (Exception e) {
+            Logger.e(e);
+            Toast.makeText(context, "分享时发生错误", Toast.LENGTH_LONG).show();
         }
     }
 

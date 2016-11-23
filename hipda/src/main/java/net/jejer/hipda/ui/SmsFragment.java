@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SmsAdapter;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
+import net.jejer.hipda.ui.widget.SimplePopupMenu;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
@@ -277,17 +279,28 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
         @Override
         public void onLongItemClick(View view, int position) {
-            SimpleListItemBean bean = mSmsAdapter.getItem(position);
+            final SimpleListItemBean bean = mSmsAdapter.getItem(position);
             if (bean != null) {
-                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                CharSequence content = Utils.fromHtmlAndStrip(bean.getInfo());
-                if (content.length() > 0) {
-                    ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
-                    clipboard.setPrimaryClip(clip);
-                    Toast.makeText(getActivity(), "短消息内容已经复制至粘贴板", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "短消息内容内容为空", Toast.LENGTH_SHORT).show();
-                }
+                final String[] actions = {"复制内容"};
+                AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
+                        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                        CharSequence content = Utils.fromHtmlAndStrip(bean.getInfo());
+                        if (content.length() > 0) {
+                            ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(getActivity(), "短消息内容已复制", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), "短消息内容内容为空", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                };
+
+                SimplePopupMenu popupMenu = new SimplePopupMenu(getContext());
+                popupMenu.setDatas(actions);
+                popupMenu.setListener(listener);
+                popupMenu.show();
             }
         }
 

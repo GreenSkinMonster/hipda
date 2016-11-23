@@ -77,20 +77,25 @@ public class HttpUtils {
             if (UIUtils.askForPermission(context)) {
                 return;
             }
-
+            url = url.trim();
             ImageInfo imageInfo = ImageContainer.getImageInfo(url);
-            if (imageInfo == null || !imageInfo.isReady()) {
-                Toast.makeText(context, "文件还未下载完成", Toast.LENGTH_SHORT).show();
-                return;
+            if (!imageInfo.isReady() || !new File(imageInfo.getPath()).exists()) {
+                String suffix = "jpg";
+                int dotIndex = url.lastIndexOf(".");
+                int endIndex = url.lastIndexOf("?");
+                if (endIndex == -1)
+                    endIndex = url.length();
+                if (endIndex > dotIndex)
+                    suffix = url.substring(dotIndex + 1, endIndex);
+                String filename = Utils.getImageFileName("Hi_IMG", suffix);
+                HttpUtils.download(context, url, filename);
+            } else {
+                String filename = Utils.getImageFileName("Hi_IMG", imageInfo.getMime());
+                File destFile = new File(getSaveFolder(), filename);
+                Utils.copy(new File(imageInfo.getPath()), destFile);
+                Toast.makeText(context, "图片已经保存 <" + filename + ">", Toast.LENGTH_SHORT).show();
+                MediaScannerConnection.scanFile(context, new String[]{destFile.getPath()}, null, null);
             }
-
-            String filename = Utils.getImageFileName("Hi_IMG", imageInfo.getMime());
-            File destFile = new File(getSaveFolder(), filename);
-            Utils.copy(new File(imageInfo.getPath()), destFile);
-            Toast.makeText(context, "图片已经保存 <" + filename + ">", Toast.LENGTH_SHORT).show();
-            //HttpUtils.download(mCtx, url, filename);
-
-            MediaScannerConnection.scanFile(context, new String[]{destFile.getPath()}, null, null);
         } catch (Exception e) {
             Logger.e(e);
             Toast.makeText(context, "保存图片文件时发生错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();

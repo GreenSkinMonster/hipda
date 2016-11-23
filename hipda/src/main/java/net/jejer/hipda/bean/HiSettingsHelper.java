@@ -77,7 +77,6 @@ public class HiSettingsHelper {
     public static final String PERF_ANIMATION_TYPE = "PERF_ANIMATION_TYPE";
     public static final String PERF_ICON = "PERF_ICON";
     public static final String PERF_SAVE_FOLDER = "PERF_SAVE_FOLDER";
-    public static final String PERF_LONG_CLICK_SAVE_IMAGE = "PERF_LONG_CLICK_SAVE_IMAGE";
     public static final String PERF_CIRCLE_AVATAR = "PERF_CIRCLE_AVATAR";
     public static final String PERF_LAST_TASK_TIME = "PERF_LAST_TASK_TIME";
     public static final String PERF_CACHE_SIZE_IN_MB = "PERF_CACHE_SIZE_IN_MB";
