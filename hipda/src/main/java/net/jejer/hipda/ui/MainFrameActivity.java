@@ -14,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -364,7 +365,6 @@ public class MainFrameActivity extends AppCompatActivity {
                     | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
                     | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
         } else {
-            mAppBarLayout.setExpanded(true);
             params.setScrollFlags(0);
         }
     }
@@ -474,14 +474,14 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     @Override
-    public ActionMode startSupportActionMode(ActionMode.Callback callback) {
+    public ActionMode startSupportActionMode(@NonNull ActionMode.Callback callback) {
         ActionMode actionMode = super.startSupportActionMode(callback);
         mActionMode = actionMode;
         return actionMode;
     }
 
     @Override
-    public void onSupportActionModeFinished(ActionMode mode) {
+    public void onSupportActionModeFinished(@NonNull ActionMode mode) {
         super.onSupportActionModeFinished(mode);
         mActionMode = null;
     }
@@ -708,7 +708,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty.

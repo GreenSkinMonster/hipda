@@ -76,7 +76,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         boolean trimBr = false;
         String postStaus = detail.getPostStatus();
         if (postStaus != null && postStaus.length() > 0) {
-            holder.postStatus.setText(postStaus);
+            holder.postStatus.setText(Utils.shortyTime(postStaus));
             holder.postStatus.setVisibility(View.VISIBLE);
             trimBr = true;
         } else {

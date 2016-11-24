@@ -134,6 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="2dp"
             android:layout_toLeftOf="@+id/ib_reply"
             android:layout_toRightOf="@+id/ib_emoji_switch"
             android:background="@drawable/edittext_background"
