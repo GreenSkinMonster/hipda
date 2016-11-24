@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
@@ -572,7 +573,7 @@ public class ThreadListFragment extends BaseFragment
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             View row;
             if (convertView == null) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();

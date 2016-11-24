@@ -50,6 +50,7 @@ public class GlideImageJob extends BaseJob {
         mRequestManager = requestManager;
         mUrl = url;
         mNetworkFetch = networkFetch;
+        mSessionId = tag;
     }
 
     @Override
@@ -129,11 +130,6 @@ public class GlideImageJob extends BaseJob {
                 EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, ImageInfo.FAIL));
             }
         }
-    }
-
-    @Override
-    protected void onCancel() {
-
     }
 
     @Override

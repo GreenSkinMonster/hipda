@@ -49,8 +49,4 @@ public class PostJob extends BaseJob {
         EventBus.getDefault().postSticky(mEvent);
     }
 
-    @Override
-    protected void onCancel() {
-
-    }
 }

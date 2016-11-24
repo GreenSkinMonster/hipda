@@ -28,6 +28,10 @@ public abstract class BaseJob extends Job {
     }
 
     @Override
+    protected void onCancel() {
+    }
+
+    @Override
     protected RetryConstraint shouldReRunOnThrowable(Throwable throwable,
                                                      int runCount,
                                                      int maxRunCount) {

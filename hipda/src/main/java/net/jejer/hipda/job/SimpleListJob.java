@@ -125,10 +125,6 @@ public class SimpleListJob extends BaseJob {
         EventBus.getDefault().postSticky(mEvent);
     }
 
-    @Override
-    protected void onCancel() {
-    }
-
     private String fetchSimpleList(int type) throws Exception {
         String url = null;
         switch (type) {

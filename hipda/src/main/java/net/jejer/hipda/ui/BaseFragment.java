@@ -37,6 +37,8 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
+import net.jejer.hipda.job.JobMgr;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -125,6 +127,10 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroy() {
         if (mEmojiPopup != null)
             mEmojiPopup.cleanup();
+        if (mSessionId != null) {
+            JobMgr.cancelJobs(mSessionId);
+            OkHttpHelper.getInstance().cancel(mSessionId);
+        }
         super.onDestroy();
     }
 

@@ -61,6 +61,7 @@ public class ThreadDetailJob extends BaseJob {
         DetailListBean data = null;
         int eventStatus = Constants.STATUS_SUCCESS;
         String eventMessage = "";
+        String eventDetail = "";
 
         for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
             try {
@@ -87,6 +88,7 @@ public class ThreadDetailJob extends BaseJob {
                 NetworkError networkError = OkHttpHelper.getErrorMessage(e);
                 eventStatus = Constants.STATUS_FAIL;
                 eventMessage = networkError.getMessage();
+                eventDetail = networkError.getDetail();
             }
         }
 
@@ -98,11 +100,8 @@ public class ThreadDetailJob extends BaseJob {
         mEvent.mData = data;
         mEvent.mStatus = eventStatus;
         mEvent.mMessage = eventMessage;
+        mEvent.mDetail = eventDetail;
         EventBus.getDefault().postSticky(mEvent);
-    }
-
-    @Override
-    protected void onCancel() {
     }
 
     private String fetchDetail() throws Exception {

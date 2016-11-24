@@ -65,7 +65,6 @@ public class MyGlideModule implements GlideModule {
         }
         gb.setDiskCache(new ExternalCacheDiskCacheFactory(context, cacheSize * 1024 * 1024));
 
-
         AVATAR_CACHE_DIR = Glide.getPhotoCacheDir(context, AVATAR_CACHE_DIR_NAME);
 
         DEFAULT_USER_ICON = new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY).sizeDp(64);
@@ -79,7 +78,6 @@ public class MyGlideModule implements GlideModule {
                 Logger.e(e);
             }
         }
-
     }
 
     @Override

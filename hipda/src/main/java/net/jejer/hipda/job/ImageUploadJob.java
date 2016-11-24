@@ -45,11 +45,6 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
     }
 
     @Override
-    protected void onCancel() {
-
-    }
-
-    @Override
     public void updateProgress(int total, int current, int percentage) {
         ImageUploadEvent event = new ImageUploadEvent();
         event.mSessionId = mSessionId;
