@@ -16,15 +16,6 @@
     public *;
 }
 
--keep class com.android.volley.** {*;}
--keep class com.android.volley.toolbox.** {*;}
--keep class com.android.volley.Response$* { *; }
--keep class com.android.volley.Request$* { *; }
--keep class com.android.volley.RequestQueue$* { *; }
--keep class com.android.volley.toolbox.HurlStack$* { *; }
--keep class com.android.volley.toolbox.ImageLoader$* { *; }
-
--keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
     **[] $VALUES;
@@ -32,10 +23,6 @@
 }
 
 -keep class net.jejer.hipda.** { *; }
-
-#ACRA
--keepattributes SourceFile,LineNumberTable
--keep class org.acra.** { *; }
 
 #Android-Iconics
 -keep class .R
@@ -54,5 +41,6 @@
     <init>(java.lang.Throwable);
 }
 
+-keepattributes SourceFile,LineNumberTable
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
