@@ -1,7 +1,6 @@
 package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -9,7 +8,6 @@ import android.widget.TextView;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.ui.ContentLoadingProgressBar;
-import net.jejer.hipda.utils.ColorHelper;
 
 /**
  * Created by GreenSkinMonster on 2016-11-18.
@@ -25,6 +23,8 @@ public class ContentLoadingView extends LinearLayout {
 
     private ContentLoadingProgressBar mProgressBar;
     private TextView mContentInfo;
+    private OnClickListener mListener;
+    private int mState;
 
     public ContentLoadingView(Context context) {
         super(context);
@@ -45,23 +45,32 @@ public class ContentLoadingView extends LinearLayout {
         inflate(getContext(), R.layout.vw_content_loading, this);
         mProgressBar = (ContentLoadingProgressBar) findViewById(R.id.content_progressbar);
         mContentInfo = (TextView) findViewById(R.id.content_info);
+        mContentInfo.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mState == ERROR && mListener != null) {
+                    mListener.onClick(view);
+                }
+            }
+        });
     }
 
     public void setState(int state) {
+        if (mState == state)
+            return;
+        mState = state;
         if (state == LOADING) {
+            mContentInfo.setVisibility(View.GONE);
             mProgressBar.show();
-            mContentInfo.setVisibility(View.GONE);
         } else if (state == LOAD_NOW) {
-            mProgressBar.showNow();
             mContentInfo.setVisibility(View.GONE);
+            mProgressBar.showNow();
         } else if (state == ERROR) {
             mProgressBar.hide();
-            mContentInfo.setTextColor(ContextCompat.getColor(getContext(), R.color.md_orange_800));
             mContentInfo.setText(R.string.content_hint_error);
             mContentInfo.setVisibility(View.VISIBLE);
         } else if (state == NO_DATA) {
             mProgressBar.hide();
-            mContentInfo.setTextColor(ColorHelper.getTextColorSecondary(getContext()));
             mContentInfo.setText(R.string.content_hint_nodata);
             mContentInfo.setVisibility(View.VISIBLE);
         } else {
@@ -70,4 +79,7 @@ public class ContentLoadingView extends LinearLayout {
         }
     }
 
+    public void setErrorStateListener(OnClickListener listener) {
+        mListener = listener;
+    }
 }

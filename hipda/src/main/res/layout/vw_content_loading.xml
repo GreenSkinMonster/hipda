@@ -16,8 +16,10 @@
         android:id="@+id/content_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:clickable="true"
         android:padding="16dp"
         android:text=""
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="17sp"
         android:visibility="gone"/>
 </merge>

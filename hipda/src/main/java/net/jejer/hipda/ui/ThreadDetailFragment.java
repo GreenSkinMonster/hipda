@@ -234,6 +234,15 @@ public class ThreadDetailFragment extends BaseFragment {
         });
 
         mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
+        mLoadingView.setErrorStateListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!mInloading) {
+                    mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+                    refresh();
+                }
+            }
+        });
 
         mQuickReply = view.findViewById(R.id.quick_reply);
         mEtReply = (EmojiEditText) mQuickReply.findViewById(R.id.tv_reply_text);

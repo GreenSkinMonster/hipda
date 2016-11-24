@@ -131,6 +131,16 @@ public class SimpleListFragment extends BaseFragment
         swipeLayout.setEnabled(false);
 
         mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
+        mLoadingView.setErrorStateListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!mInloading) {
+                    mInloading = true;
+                    mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+                    refresh();
+                }
+            }
+        });
         return view;
     }
 

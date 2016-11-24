@@ -143,6 +143,16 @@ public class ThreadListFragment extends BaseFragment
         swipeLayout.setProgressBackgroundColorSchemeColor(ColorHelper.getSwipeBackgroundColor(getActivity()));
 
         mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
+        mLoadingView.setErrorStateListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!mInloading) {
+                    mInloading = true;
+                    mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+                    refresh();
+                }
+            }
+        });
 
         mRecyclerView.scrollToPosition(mFirstVisibleItem);
 

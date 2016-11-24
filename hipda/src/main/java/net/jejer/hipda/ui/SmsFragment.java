@@ -103,6 +103,14 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
+        mLoadingView.setErrorStateListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+                SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, SimpleListJob.TYPE_SMS_DETAIL, 1, mUid);
+                JobMgr.addJob(job);
+            }
+        });
 
         //to avoid click through this view
         view.setOnTouchListener(new View.OnTouchListener() {
