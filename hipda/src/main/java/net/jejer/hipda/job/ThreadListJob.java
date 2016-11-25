@@ -77,6 +77,8 @@ public class ThreadListJob extends BaseJob {
                 eventStatus = Constants.STATUS_FAIL;
                 eventMessage = networkError.getMessage();
                 eventDetail = networkError.getDetail();
+                if (isCancelled())
+                    break;
             }
         }
 
@@ -95,6 +97,6 @@ public class ThreadListJob extends BaseJob {
         if (HiSettingsHelper.getInstance().isSortByPostTime(mForumId)) {
             mUrl += "&orderby=dateline";
         }
-        return OkHttpHelper.getInstance().get(mUrl);
+        return OkHttpHelper.getInstance().get(mUrl, mSessionId);
     }
 }

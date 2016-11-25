@@ -139,11 +139,15 @@ public class OkHttpHelper {
     }
 
     public String get(String url) throws IOException {
-        return get(url, FORCE_NETWORK);
+        return get(url, null);
     }
 
-    public String get(String url, int cacheType) throws IOException {
-        Request request = buildGetRequest(url, null, getCacheControl(cacheType));
+    public String get(String url, String tag) throws IOException {
+        return get(url, tag, FORCE_NETWORK);
+    }
+
+    public String get(String url, String tag, int cacheType) throws IOException {
+        Request request = buildGetRequest(url, tag, getCacheControl(cacheType));
 
         Call call = client.newCall(request);
         Response response = call.execute();

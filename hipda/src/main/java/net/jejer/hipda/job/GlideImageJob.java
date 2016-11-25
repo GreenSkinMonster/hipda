@@ -12,7 +12,6 @@ import com.bumptech.glide.load.model.stream.StreamModelLoader;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.path.android.jobqueue.Params;
-import com.path.android.jobqueue.RetryConstraint;
 
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
@@ -25,6 +24,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -76,7 +76,7 @@ public class GlideImageJob extends BaseJob {
                         .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             }
 
-            File cacheFile = future.get();
+            File cacheFile = future.get(240, TimeUnit.SECONDS);
             Glide.clear(future);
 
             double speed = -1;
@@ -133,10 +133,8 @@ public class GlideImageJob extends BaseJob {
     }
 
     @Override
-    protected RetryConstraint shouldReRunOnThrowable(Throwable throwable,
-                                                     int runCount,
-                                                     int maxRunCount) {
-        return RetryConstraint.CANCEL;
+    protected void onCancel() {
+        ImageContainer.markImageIdle(mUrl);
     }
 
     private static final StreamModelLoader<String> cacheOnlyStreamLoader = new StreamModelLoader<String>() {

@@ -38,4 +38,8 @@ public abstract class BaseJob extends Job {
         return RetryConstraint.CANCEL;
     }
 
+    @Override
+    protected int getRetryLimit() {
+        return 0;
+    }
 }

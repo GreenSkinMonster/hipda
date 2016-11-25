@@ -89,6 +89,8 @@ public class ThreadDetailJob extends BaseJob {
                 eventStatus = Constants.STATUS_FAIL;
                 eventMessage = networkError.getMessage();
                 eventDetail = networkError.getDetail();
+                if (isCancelled())
+                    break;
             }
         }
 
@@ -119,7 +121,7 @@ public class ThreadDetailJob extends BaseJob {
                 mUrl += "&authorid=" + mAuthorId;
 
         }
-        return OkHttpHelper.getInstance().get(mUrl,
+        return OkHttpHelper.getInstance().get(mUrl, mSessionId,
                 mFetchType == ThreadDetailFragment.FETCH_REFRESH ? OkHttpHelper.FORCE_NETWORK : OkHttpHelper.PREFER_CACHE);
     }
 

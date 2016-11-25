@@ -293,7 +293,6 @@ public class ThreadDetailFragment extends BaseFragment {
         if (savedInstanceState != null) {
             mCtx = getActivity();
         }
-        showOrLoadPage();
     }
 
     @Override

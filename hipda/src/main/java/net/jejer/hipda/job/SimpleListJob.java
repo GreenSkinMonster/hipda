@@ -114,6 +114,8 @@ public class SimpleListJob extends BaseJob {
                     eventStatus = Constants.STATUS_FAIL;
                     eventMessage = message.getMessage();
                     eventDetail = message.getDetail();
+                    if (isCancelled())
+                        break;
                 }
             }
         }
@@ -191,6 +193,6 @@ public class SimpleListJob extends BaseJob {
             default:
                 break;
         }
-        return OkHttpHelper.getInstance().get(url);
+        return OkHttpHelper.getInstance().get(url, mSessionId);
     }
 }

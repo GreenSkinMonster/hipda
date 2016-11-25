@@ -24,7 +24,7 @@ public class ContentLoadingView extends LinearLayout {
     private ContentLoadingProgressBar mProgressBar;
     private TextView mContentInfo;
     private OnClickListener mListener;
-    private int mState;
+    private int mState = -1;
 
     public ContentLoadingView(Context context) {
         super(context);
