@@ -38,15 +38,10 @@ public class GlideImageJob extends BaseJob {
     private boolean mNetworkFetch;
 
     public GlideImageJob(RequestManager requestManager, String url, int priority, String tag, boolean networkFetch) {
-        this(requestManager, url, priority, tag, networkFetch, 0);
-    }
-
-    public GlideImageJob(RequestManager requestManager, String url, int priority, String tag, boolean networkFetch, long delay) {
         super(new Params(priority)
                 .setPersistent(false)
                 .setRequiresNetwork(false)
-                .addTags(tag)
-                .delayInMs(delay > 0 ? delay : 0));
+                .addTags(tag));
         mRequestManager = requestManager;
         mUrl = url;
         mNetworkFetch = networkFetch;

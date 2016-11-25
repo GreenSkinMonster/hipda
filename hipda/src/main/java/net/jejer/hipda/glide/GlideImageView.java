@@ -11,18 +11,22 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
+import net.jejer.hipda.job.GlideImageJob;
+import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.ui.OnSingleClickListener;
 import net.jejer.hipda.ui.ThreadDetailFragment;
+
+import java.lang.ref.WeakReference;
 
 public class GlideImageView extends ImageView {
 
     private Fragment mFragment;
     private String mUrl;
-    private ImageInfo mImageInfo;
     private int mImageIndex;
 
-    private static ImageView currentImageView;
+    private static WeakReference<ImageView> currentImageView;
     private static String currentUrl;
 
     public GlideImageView(Context context) {
@@ -37,10 +41,6 @@ public class GlideImageView extends ImageView {
         mUrl = url;
     }
 
-    public void setImageInfo(ImageInfo imageInfo) {
-        mImageInfo = imageInfo;
-    }
-
     public void setImageIndex(int index) {
         mImageIndex = index;
     }
@@ -49,26 +49,30 @@ public class GlideImageView extends ImageView {
         mFragment = fragment;
     }
 
-    public void setClickToViewBigImage() {
+    public void setSingleClickListener() {
         setOnClickListener(new GlideImageViewClickHandler());
     }
 
     private class GlideImageViewClickHandler extends OnSingleClickListener {
         @Override
         public void onSingleClick(View view) {
-            if (mImageInfo != null && mImageInfo.isReady()) {
+            ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+            if (imageInfo.isReady()) {
                 if (mUrl.equals(currentUrl)) {
                     boolean sameView = view.equals(currentImageView);
                     stopCurrentGif();
                     if (!sameView)
                         loadGif();
-                } else if (mImageInfo.isGif()) {
+                } else if (imageInfo.isGif()) {
                     stopCurrentGif();
                     loadGif();
                 } else {
                     stopCurrentGif();
                     startImageGallery();
                 }
+            } else if (imageInfo.getStatus() == ImageInfo.FAIL || imageInfo.getStatus() == ImageInfo.IDLE) {
+                if (mFragment instanceof ThreadDetailFragment)
+                    JobMgr.addJob(new GlideImageJob(Glide.with(mFragment), mUrl, JobMgr.PRIORITY_LOW, ((ThreadDetailFragment) mFragment).mSessionId, true));
             }
         }
     }
@@ -80,33 +84,36 @@ public class GlideImageView extends ImageView {
 
     private void loadGif() {
         currentUrl = mUrl;
-        currentImageView = this;
+        currentImageView = new WeakReference<ImageView>(this);
         Glide.clear(this);
         if (GlideHelper.isOkToLoad(getContext())) {
+            ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
             Glide.with(getContext())
                     .load(mUrl)
                     .priority(Priority.IMMEDIATE)
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .skipMemoryCache(true)
                     .error(R.drawable.image_broken)
-                    .override(mImageInfo.getDisplayWidth(), mImageInfo.getDisplayHeight())
+                    .override(imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight())
                     .into(this);
         }
     }
 
     private void stopCurrentGif() {
         try {
-            if (currentImageView != null) {
-                Glide.clear(currentImageView);
+            if (currentImageView != null && currentImageView.get() != null) {
+                ImageView lastView = currentImageView.get();
+                Glide.clear(currentImageView.get());
                 if (GlideHelper.isOkToLoad(getContext())) {
+                    ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
                     Glide.with(getContext())
                             .load(currentUrl)
                             .asBitmap()
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .transform(new GifTransformation(getContext()))
                             .error(R.drawable.image_broken)
-                            .override(mImageInfo.getDisplayWidth(), mImageInfo.getDisplayHeight())
-                            .into(currentImageView);
+                            .override(imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight())
+                            .into(lastView);
                 }
             }
         } catch (Exception ignored) {

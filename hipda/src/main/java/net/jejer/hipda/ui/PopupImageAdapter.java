@@ -122,8 +122,7 @@ public class PopupImageAdapter extends PagerAdapter {
                 }
 
                 gifImageView.setUrl(imageUrl);
-                gifImageView.setImageInfo(imageInfo);
-                gifImageView.setClickToViewBigImage();
+                gifImageView.setSingleClickListener();
 
             } else {
                 gifImageView.setVisibility(View.GONE);

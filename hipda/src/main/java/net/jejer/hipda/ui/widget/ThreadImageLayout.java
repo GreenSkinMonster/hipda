@@ -77,6 +77,7 @@ public class ThreadImageLayout extends RelativeLayout {
         mImageView.setVisibility(View.VISIBLE);
         mImageView.setImageIndex(mImageIndex);
         mImageView.setUrl(mUrl);
+        mImageView.setSingleClickListener();
     }
 
     public void setParsedFileSize(long parsedFileSize) {
@@ -104,8 +105,6 @@ public class ThreadImageLayout extends RelativeLayout {
                 setLayoutParams(params);
             }
             if (imageInfo.getWidth() >= MIN_WIDTH || imageInfo.isGif()) {
-                mImageView.setImageInfo(imageInfo);
-                mImageView.setClickToViewBigImage();
                 mImageView.setOnLongClickListener(new OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
@@ -160,26 +159,17 @@ public class ThreadImageLayout extends RelativeLayout {
                 mProgressBar.setVisibility(View.VISIBLE);
             mProgressBar.setProgress(imageInfo.getProgress());
         } else {
-            boolean imageLoadable = HiSettingsHelper.getInstance().isImageLoadable(mParsedFileSize);
+            boolean autoload = HiSettingsHelper.getInstance().isImageLoadable(mParsedFileSize);
             if (mParsedFileSize > 0) {
                 mTextView.setVisibility(View.VISIBLE);
                 mTextView.setText(Utils.toSizeText(mParsedFileSize));
-            }
-            if (!imageLoadable) {
-                mImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        JobMgr.addJob(new GlideImageJob(mRequestManager, mUrl, JobMgr.PRIORITY_LOW, mParentSessionId, true));
-                        mImageView.setOnClickListener(null);
-                    }
-                });
             }
             JobMgr.addJob(new GlideImageJob(
                     mRequestManager,
                     mUrl,
                     JobMgr.PRIORITY_LOW,
                     mParentSessionId,
-                    imageLoadable));
+                    autoload));
         }
     }
 
