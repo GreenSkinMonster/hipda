@@ -12,6 +12,10 @@ import android.widget.TextView;
 
 import net.jejer.hipda.R;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 /**
  * Created by GreenSkinMonster on 2016-11-23.
  */
@@ -20,16 +24,20 @@ public class SimplePopupMenu {
 
     private Context mContext;
     LayoutInflater mInflater;
-    private String[] mDatas;
     private AdapterView.OnItemClickListener mListener;
+
+    private LinkedHashMap<String, String> mActions;
+    private List<String> mActionKeys;
 
     public SimplePopupMenu(Context context) {
         mContext = context;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setDatas(String[] datas) {
-        mDatas = datas;
+    public void setActions(LinkedHashMap<String, String> actions) {
+        mActions = actions;
+        mActionKeys = new ArrayList<>();
+        mActionKeys.addAll(actions.keySet());
     }
 
     public void setListener(AdapterView.OnItemClickListener listener) {
@@ -56,9 +64,9 @@ public class SimplePopupMenu {
         });
     }
 
-    private class MenuActionAdapter extends ArrayAdapter {
-        public MenuActionAdapter(Context context) {
-            super(context, 0, mDatas);
+    private class MenuActionAdapter extends ArrayAdapter<String> {
+        MenuActionAdapter(Context context) {
+            super(context, 0, mActionKeys);
         }
 
         @Override
@@ -69,8 +77,10 @@ public class SimplePopupMenu {
             } else {
                 row = convertView;
             }
+            String actionKey = mActionKeys.get(position);
+            row.setTag(actionKey);
             TextView text = (TextView) row.findViewById(R.id.action_text);
-            text.setText(mDatas[position]);
+            text.setText(mActions.get(actionKey));
             return row;
         }
     }

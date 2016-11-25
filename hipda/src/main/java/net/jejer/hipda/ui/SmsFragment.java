@@ -53,6 +53,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import okhttp3.Request;
@@ -289,7 +290,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         public void onLongItemClick(View view, int position) {
             final SimpleListItemBean bean = mSmsAdapter.getItem(position);
             if (bean != null) {
-                final String[] actions = {"复制内容"};
                 AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
@@ -298,15 +298,17 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                         if (content.length() > 0) {
                             ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
                             clipboard.setPrimaryClip(clip);
-                            Toast.makeText(getActivity(), "短消息内容已复制", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "内容已复制", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(getActivity(), "短消息内容内容为空", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "内容为空", Toast.LENGTH_SHORT).show();
                         }
                     }
                 };
 
-                SimplePopupMenu popupMenu = new SimplePopupMenu(getContext());
-                popupMenu.setDatas(actions);
+                SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
+                LinkedHashMap<String, String> actions = new LinkedHashMap<>();
+                actions.put("copy", "复制内容");
+                popupMenu.setActions(actions);
                 popupMenu.setListener(listener);
                 popupMenu.show();
             }

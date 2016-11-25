@@ -36,6 +36,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.LinkedHashMap;
+
 /**
  * Layout contains thread image
  * Created by GreenSkinMonster on 2015-11-07.
@@ -182,23 +184,27 @@ public class ThreadImageLayout extends RelativeLayout {
     }
 
     private void showImageActionDialog() {
-        final String[] actions = {"保存", "分享", "查看大图"};
+        LinkedHashMap<String, String> actions = new LinkedHashMap<>();
+        actions.put("save", "保存");
+        actions.put("share", "分享");
+        actions.put("gallery", "查看大图");
+
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
-                String action = actions[position];
-                if (action.equals("保存")) {
+                String action = (String) view.getTag();
+                if ("save".equals(action)) {
                     HttpUtils.saveImage(getContext(), mContentImg.getContent());
-                } else if (action.equals("分享")) {
+                } else if ("share".equals(action)) {
                     UIUtils.shareImage(getContext(), mUrl);
-                } else if (action.equals("查看大图")) {
+                } else if ("gallery".equals(action)) {
                     mFragment.startImageGallery(mImageIndex);
                 }
             }
         };
 
         SimplePopupMenu popupMenu = new SimplePopupMenu(getContext());
-        popupMenu.setDatas(actions);
+        popupMenu.setActions(actions);
         popupMenu.setListener(listener);
         popupMenu.show();
     }
