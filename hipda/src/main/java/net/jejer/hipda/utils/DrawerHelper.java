@@ -62,7 +62,7 @@ public class DrawerHelper {
     }
 
     public static IDrawerItem getSecondaryMenuItem(DrawerItem drawerItem) {
-        PrimaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem()
+        SecondaryDrawerItem secondaryDrawerItem = new SecondaryDrawerItem()
                 .withName(drawerItem.name)
                 .withIdentifier(drawerItem.id)
                 .withIcon(drawerItem.icon);
