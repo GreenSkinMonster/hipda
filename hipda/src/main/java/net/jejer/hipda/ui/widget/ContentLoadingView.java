@@ -3,7 +3,7 @@ package net.jejer.hipda.ui.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
@@ -13,7 +13,7 @@ import net.jejer.hipda.ui.ContentLoadingProgressBar;
  * Created by GreenSkinMonster on 2016-11-18.
  */
 
-public class ContentLoadingView extends LinearLayout {
+public class ContentLoadingView extends RelativeLayout {
 
     public static final int LOADING = 0;
     public static final int LOAD_NOW = 1;
