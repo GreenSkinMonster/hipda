@@ -36,7 +36,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/edittext_background"
             android:hint="@string/pref_title_login_question"
             android:padding="8dp"/>
 
