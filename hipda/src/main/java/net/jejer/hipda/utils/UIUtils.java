@@ -16,7 +16,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,17 +84,14 @@ public class UIUtils {
         tvTitle.setText(message);
         tvTitle.setTextSize(HiSettingsHelper.getInstance().getTitleTextSize());
 
-        final EditText etText = (EditText) viewlayout.findViewById(R.id.et_select_text);
-        etText.setText(detail);
-        etText.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
-        UIUtils.setLineSpacing(etText);
+        final TextView textView = (TextView) viewlayout.findViewById(R.id.tv_select_text);
+        textView.setText(detail);
+        textView.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+        UIUtils.setLineSpacing(textView);
 
         alertDialog.setView(viewlayout);
         alertDialog.setNegativeButton(context.getResources().getString(R.string.action_close), null);
         alertDialog.show();
-        etText.requestFocus();
-        if (detail.length() > 0)
-            etText.setSelection(0);
     }
 
     public static boolean askForPermission(Context ctx) {

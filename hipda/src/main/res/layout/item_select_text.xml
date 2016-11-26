@@ -14,17 +14,21 @@
         android:textAlignment="center"
         android:textColor="@color/hipda"/>
 
-    <EditText
-        android:id="@+id/et_select_text"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:background="@drawable/rounded_corner"
-        android:gravity="bottom"
-        android:inputType="none"
-        android:minLines="4"
-        android:padding="6dp"
-        android:scrollbars="vertical"
-        android:text=""
-        android:textIsSelectable="true"/>
+        android:scrollbars="vertical">
+
+        <TextView
+            android:id="@+id/tv_select_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@drawable/rounded_corner"
+            android:inputType="none"
+            android:minLines="4"
+            android:padding="6dp"
+            android:text=""
+            android:textIsSelectable="true"/>
+    </ScrollView>
 </LinearLayout>
