@@ -304,20 +304,10 @@ public class ThreadListFragment extends BaseFragment
 
         PostFragment fragment = new PostFragment();
         fragment.setParentSessionId(mSessionId);
-
         fragment.setArguments(arguments);
+        setHasOptionsMenu(false);
 
-        if (HiSettingsHelper.getInstance().getIsLandscape()) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-                    .addToBackStack(PostFragment.class.getName())
-                    .commitAllowingStateLoss();
-        } else {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-                    .addToBackStack(PostFragment.class.getName())
-                    .commitAllowingStateLoss();
-        }
+        FragmentUtils.showFragment(getFragmentManager(), fragment);
     }
 
     public void resetActionBarTitle() {

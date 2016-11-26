@@ -485,14 +485,13 @@ public class ThreadDetailFragment extends BaseFragment {
         arguments.putString(PostFragment.ARG_TID_KEY, mTid);
         arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_REPLY_THREAD);
         arguments.putString(PostFragment.ARG_TEXT_KEY, text);
+
         PostFragment fragment = new PostFragment();
         fragment.setParentSessionId(mSessionId);
-
         fragment.setArguments(arguments);
-        getFragmentManager().beginTransaction()
-                .add(R.id.main_frame_container, fragment, fragment.getClass().getName())
-                .addToBackStack(fragment.getClass().getName())
-                .commit();
+        setHasOptionsMenu(false);
+
+        FragmentUtils.showFragment(getFragmentManager(), fragment);
     }
 
     private void refresh() {
