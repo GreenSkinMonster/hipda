@@ -130,6 +130,11 @@ public class MainFrameActivity extends AppCompatActivity {
         mMainFab.setEnabled(false);
         mNotiificationFab.setEnabled(false);
 
+        if (UIUtils.isTablet(this)) {
+            mMainFab.setSize(FloatingActionButton.SIZE_NORMAL);
+            mNotiificationFab.setSize(FloatingActionButton.SIZE_NORMAL);
+        }
+
         updateFabGravity();
 
         // Prepare gesture detector

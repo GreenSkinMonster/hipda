@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
@@ -162,6 +163,11 @@ public class UIUtils {
             Logger.e(e);
             Toast.makeText(context, "分享时发生错误", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public static Boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
 }
