@@ -13,8 +13,8 @@ import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiProgressDialog;
-import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.NotificationMgr;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 /**
@@ -42,7 +42,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
     public void onStop() {
         super.onStop();
         setActionBarTitle("设置");
-        HttpUtils.getSaveFolder();
+        UIUtils.getSaveFolder();
     }
 
     private void checkPreferenceResource() {

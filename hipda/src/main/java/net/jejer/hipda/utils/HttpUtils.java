@@ -2,18 +2,12 @@ package net.jejer.hipda.utils;
 
 import android.app.DownloadManager;
 import android.content.Context;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.cache.ImageContainer;
-import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.okhttp.OkHttpHelper;
-
-import java.io.File;
 
 public class HttpUtils {
 
@@ -70,47 +64,6 @@ public class HttpUtils {
                 req.setMimeType("application/vnd.android.package-archive");
             dm.enqueue(req);
         }
-    }
-
-    public static void saveImage(Context context, String url) {
-        try {
-            if (UIUtils.askForPermission(context)) {
-                return;
-            }
-            url = url.trim();
-            ImageInfo imageInfo = ImageContainer.getImageInfo(url);
-            if (!imageInfo.isReady() || !new File(imageInfo.getPath()).exists()) {
-                String suffix = "jpg";
-                int dotIndex = url.lastIndexOf(".");
-                int endIndex = url.lastIndexOf("?");
-                if (endIndex == -1)
-                    endIndex = url.length();
-                if (endIndex > dotIndex)
-                    suffix = url.substring(dotIndex + 1, endIndex);
-                String filename = Utils.getImageFileName("Hi_IMG", suffix);
-                HttpUtils.download(context, url, filename);
-            } else {
-                String filename = Utils.getImageFileName("Hi_IMG", imageInfo.getMime());
-                File destFile = new File(getSaveFolder(), filename);
-                Utils.copy(new File(imageInfo.getPath()), destFile);
-                Toast.makeText(context, "图片已经保存 <" + filename + ">", Toast.LENGTH_SHORT).show();
-                MediaScannerConnection.scanFile(context, new String[]{destFile.getPath()}, null, null);
-            }
-        } catch (Exception e) {
-            Logger.e(e);
-            Toast.makeText(context, "保存图片文件时发生错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public static File getSaveFolder() {
-        String saveFolder = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_SAVE_FOLDER, "");
-        File dir = new File(saveFolder);
-        if (saveFolder.startsWith("/") && dir.exists() && dir.isDirectory() && dir.canWrite()) {
-            return dir;
-        }
-        dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_SAVE_FOLDER, dir.getAbsolutePath());
-        return dir;
     }
 
 }

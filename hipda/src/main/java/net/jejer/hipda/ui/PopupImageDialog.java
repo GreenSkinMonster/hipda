@@ -25,7 +25,6 @@ import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
-import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -48,6 +47,7 @@ public class PopupImageDialog extends DialogFragment {
 
     private LayoutInflater mInflater;
     private PagerAdapter mPagerAdapter;
+    private View mRootView;
 
     private boolean lastClicked = false;
     private boolean firstClicked = false;
@@ -80,16 +80,16 @@ public class PopupImageDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        final View layout = mInflater.inflate(R.layout.popup_image, null);
+        mRootView = mInflater.inflate(R.layout.popup_image, null);
 
         final Dialog dialog = new Dialog(mCtx, android.R.style.Theme_Black_NoTitleBar);
-        dialog.setContentView(layout);
+        dialog.setContentView(mRootView);
 
-        final ImageViewPager viewPager = (ImageViewPager) layout.findViewById(R.id.view_pager);
-        final TextView tvImageInfo = (TextView) layout.findViewById(R.id.tv_image_info);
-        final TextView tvImageFileInfo = (TextView) layout.findViewById(R.id.tv_image_file_info);
-        final TextView tvFloorInfo = (TextView) layout.findViewById(R.id.tv_floor_info);
-        final Button btnBack = (Button) layout.findViewById(R.id.btn_back);
+        final ImageViewPager viewPager = (ImageViewPager) mRootView.findViewById(R.id.view_pager);
+        final TextView tvImageInfo = (TextView) mRootView.findViewById(R.id.tv_image_info);
+        final TextView tvImageFileInfo = (TextView) mRootView.findViewById(R.id.tv_image_file_info);
+        final TextView tvFloorInfo = (TextView) mRootView.findViewById(R.id.tv_floor_info);
+        final Button btnBack = (Button) mRootView.findViewById(R.id.btn_back);
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +163,7 @@ public class PopupImageDialog extends DialogFragment {
                 }
         );
 
-        ImageButton btnDownload = (ImageButton) layout.findViewById(R.id.btn_download_image);
+        ImageButton btnDownload = (ImageButton) mRootView.findViewById(R.id.btn_download_image);
         btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_file_download)
                 .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
         btnDownload.setOnClickListener(
@@ -171,13 +171,13 @@ public class PopupImageDialog extends DialogFragment {
                     @Override
                     public void onClick(View arg0) {
                         String url = images.get(viewPager.getCurrentItem()).getContent();
-                        HttpUtils.saveImage(getActivity(), url);
+                        UIUtils.saveImage(getActivity(), mRootView, url);
                     }
                 }
 
         );
 
-        ImageButton btnShare = (ImageButton) layout.findViewById(R.id.btn_share_image);
+        ImageButton btnShare = (ImageButton) mRootView.findViewById(R.id.btn_share_image);
         btnShare.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_share)
                 .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
 
@@ -186,12 +186,12 @@ public class PopupImageDialog extends DialogFragment {
                     @Override
                     public void onClick(View arg0) {
                         String url = images.get(viewPager.getCurrentItem()).getContent();
-                        UIUtils.shareImage(getContext(), url);
+                        UIUtils.shareImage(getActivity(), mRootView, url);
                     }
                 }
         );
 
-        ImageButton btnNext = (ImageButton) layout.findViewById(R.id.btn_next_image);
+        ImageButton btnNext = (ImageButton) mRootView.findViewById(R.id.btn_next_image);
         btnNext.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_chevron_right)
                 .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
         btnNext.setOnClickListener(
@@ -214,7 +214,7 @@ public class PopupImageDialog extends DialogFragment {
 
         );
 
-        ImageButton btnPrev = (ImageButton) layout.findViewById(R.id.btn_previous_image);
+        ImageButton btnPrev = (ImageButton) mRootView.findViewById(R.id.btn_previous_image);
         btnPrev.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_chevron_left)
                 .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
         btnPrev.setOnClickListener(

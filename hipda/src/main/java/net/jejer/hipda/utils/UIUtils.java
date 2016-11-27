@@ -8,10 +8,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.FileDownTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
@@ -133,17 +138,29 @@ public class UIUtils {
         }
     }
 
-    public static void shareImage(Context context, String url) {
-        if (UIUtils.askForPermission(context)) {
+    public static void shareImage(final Activity activity, final View view, String url) {
+        if (askForPermission(activity))
             return;
-        }
 
-        ImageInfo imageInfo = ImageContainer.getImageInfo(url);
-        if (imageInfo == null || !imageInfo.isReady()) {
-            Toast.makeText(context, "文件还未下载完成", Toast.LENGTH_SHORT).show();
-            return;
+        final ImageInfo imageInfo = ImageContainer.getImageInfo(url);
+        if (!imageInfo.isReady()) {
+            FileDownTask fileDownTask = new FileDownTask(activity) {
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    if (imageInfo.isReady())
+                        shareImage(activity, view, imageInfo);
+                    else
+                        errorSnack(view, "分享时发生错误", mException != null ? mException.getMessage() : "");
+                }
+            };
+            fileDownTask.execute(url);
+        } else {
+            shareImage(activity, view, imageInfo);
         }
+    }
 
+    private static void shareImage(Activity activity, final View view, ImageInfo imageInfo) {
         try {
             String filename = Utils.getImageFileName(Constants.FILE_SHARE_PREFIX, imageInfo.getMime());
             File cacheDirectory = HiApplication.getAppContext().getExternalCacheDir();
@@ -154,16 +171,88 @@ public class UIUtils {
             shareIntent.setType(imageInfo.getMime());
             Uri uri = Uri.fromFile(destFile);
             shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            context.startActivity(Intent.createChooser(shareIntent, "分享图片"));
+            activity.startActivity(Intent.createChooser(shareIntent, "分享图片"));
         } catch (Exception e) {
             Logger.e(e);
-            Toast.makeText(context, "分享时发生错误", Toast.LENGTH_LONG).show();
+            errorSnack(view, "分享时发生错误", e.getMessage());
         }
+    }
+
+    public static void saveImage(final Activity activity, final View view, String url) {
+        if (askForPermission(activity))
+            return;
+
+        final ImageInfo imageInfo = ImageContainer.getImageInfo(url);
+        if (!imageInfo.isReady()) {
+            FileDownTask fileDownTask = new FileDownTask(activity) {
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    if (imageInfo.isReady())
+                        saveImage(activity, view, imageInfo);
+                    else
+                        errorSnack(view, "分享时发生错误", mException.getMessage());
+                }
+            };
+            fileDownTask.execute(url);
+        } else {
+            saveImage(activity, view, imageInfo);
+        }
+    }
+
+    private static void saveImage(final Activity activity, final View view, final ImageInfo imageInfo) {
+        try {
+            String filename = Utils.getImageFileName("Hi_IMG", imageInfo.getMime());
+            final File destFile = new File(getSaveFolder(), filename);
+            Utils.copy(new File(imageInfo.getPath()), destFile);
+            MediaScannerConnection.scanFile(activity, new String[]{destFile.getPath()}, null, null);
+
+            Snackbar snackbar = Snackbar.make(view, "文件已保存", Snackbar.LENGTH_LONG);
+            View snackbarView = snackbar.getView();
+            ((TextView) snackbarView.findViewById(R.id.snackbar_text)).setTextColor(Color.WHITE);
+            //popup dialog need to set background color
+            snackbarView.findViewById(R.id.snackbar_action).setBackgroundColor(Color.TRANSPARENT);
+
+            snackbar.setAction("查看", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        Uri contentUri = FileProvider.getUriForFile(activity, "net.jejer.hipda.ng.provider", destFile);
+                        intent.setDataAndType(contentUri, imageInfo.getMime());
+                    } else {
+                        intent.setDataAndType(Uri.fromFile(destFile), imageInfo.getMime());
+                    }
+                    activity.startActivity(intent);
+                }
+            });
+            snackbar.show();
+        } catch (Exception e) {
+            Logger.e(e);
+            errorSnack(view, "保存图片文件时发生错误", e.getMessage());
+        }
+    }
+
+    public static File getSaveFolder() {
+        String saveFolder = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_SAVE_FOLDER, "");
+        File dir = new File(saveFolder);
+        if (saveFolder.startsWith("/") && dir.exists() && dir.isDirectory() && dir.canWrite()) {
+            return dir;
+        }
+        dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_SAVE_FOLDER, dir.getAbsolutePath());
+        return dir;
     }
 
     public static Boolean isTablet(Context context) {
         return (context.getResources().getConfiguration().screenLayout &
                 Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
+
+    public static View getSnackView(Activity activity) {
+        return activity.getWindow().getDecorView().getRootView().findViewById(R.id.main_frame_container);
     }
 
 }

@@ -21,6 +21,7 @@ public class HiProgressDialog extends ProgressDialog {
     public final static int INFO = 0;
     public final static int ERROR = 9;
     private boolean mAttachedToWindow = false;
+    private boolean mDismissed = false;
 
     public HiProgressDialog(Context context) {
         super(context);
@@ -48,6 +49,7 @@ public class HiProgressDialog extends ProgressDialog {
     }
 
     private void dismiss(String message, int millisToWait, int status) {
+        mDismissed = true;
         setCancelable(true);
         if (message != null)
             setMessage(message);
@@ -70,6 +72,12 @@ public class HiProgressDialog extends ProgressDialog {
                     dismiss();
             }
         }.start();
+    }
+
+    @Override
+    public void show() {
+        if (!mDismissed)
+            super.show();
     }
 
     @Override

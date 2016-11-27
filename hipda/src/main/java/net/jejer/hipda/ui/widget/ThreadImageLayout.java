@@ -28,7 +28,6 @@ import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.ui.ThreadDetailFragment;
-import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -187,9 +186,9 @@ public class ThreadImageLayout extends RelativeLayout {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
                 String action = (String) view.getTag();
                 if ("save".equals(action)) {
-                    HttpUtils.saveImage(getContext(), mContentImg.getContent());
+                    UIUtils.saveImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mContentImg.getContent());
                 } else if ("share".equals(action)) {
-                    UIUtils.shareImage(getContext(), mUrl);
+                    UIUtils.shareImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mUrl);
                 } else if ("gallery".equals(action)) {
                     mFragment.startImageGallery(mImageIndex);
                 }
