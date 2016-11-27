@@ -299,6 +299,10 @@ public class XRecyclerView extends RecyclerView {
         mLayoutManager.scrollToPositionWithOffset(mAdapter.getItemCount() - 1, 0);
     }
 
+    public boolean isNearBottom() {
+        return mLayoutManager.findLastVisibleItemPosition() >= mAdapter.getItemCount() - 2;
+    }
+
     @Override
     public void scrollToPosition(int position) {
         mLayoutManager.scrollToPositionWithOffset(position, 0);

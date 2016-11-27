@@ -887,6 +887,15 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
             }
         }
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (newState == RecyclerView.SCROLL_STATE_IDLE && mRecyclerView.isNearBottom()) {
+                if (mMainFab.isEnabled() && mMainFab.getVisibility() != View.VISIBLE)
+                    mMainFab.show();
+            }
+        }
     }
 
     public void startImageGallery(int imageIndex) {
