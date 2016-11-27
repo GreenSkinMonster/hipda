@@ -26,8 +26,8 @@ public class GlideImageView extends ImageView {
     private String mUrl;
     private int mImageIndex;
 
-    private static WeakReference<ImageView> currentImageView;
-    private static String currentUrl;
+    private static WeakReference<ImageView> mCurrentViewHolder;
+    private static String mCurrentUrl;
 
     public GlideImageView(Context context) {
         super(context);
@@ -58,8 +58,8 @@ public class GlideImageView extends ImageView {
         public void onSingleClick(View view) {
             ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
             if (imageInfo.isReady()) {
-                if (mUrl.equals(currentUrl)) {
-                    boolean sameView = view.equals(currentImageView);
+                if (mUrl.equals(mCurrentUrl) && mCurrentViewHolder != null) {
+                    boolean sameView = view.equals(mCurrentViewHolder.get());
                     stopCurrentGif();
                     if (!sameView)
                         loadGif();
@@ -83,8 +83,8 @@ public class GlideImageView extends ImageView {
     }
 
     private void loadGif() {
-        currentUrl = mUrl;
-        currentImageView = new WeakReference<ImageView>(this);
+        mCurrentUrl = mUrl;
+        mCurrentViewHolder = new WeakReference<ImageView>(this);
         Glide.clear(this);
         if (GlideHelper.isOkToLoad(getContext())) {
             ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
@@ -101,13 +101,13 @@ public class GlideImageView extends ImageView {
 
     private void stopCurrentGif() {
         try {
-            if (currentImageView != null && currentImageView.get() != null) {
-                ImageView lastView = currentImageView.get();
-                Glide.clear(currentImageView.get());
+            if (mCurrentViewHolder != null && mCurrentViewHolder.get() != null) {
+                ImageView lastView = mCurrentViewHolder.get();
+                Glide.clear(mCurrentViewHolder.get());
                 if (GlideHelper.isOkToLoad(getContext())) {
                     ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
                     Glide.with(getContext())
-                            .load(currentUrl)
+                            .load(mCurrentUrl)
                             .asBitmap()
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .transform(new GifTransformation(getContext()))
@@ -118,8 +118,8 @@ public class GlideImageView extends ImageView {
             }
         } catch (Exception ignored) {
         }
-        currentUrl = null;
-        currentImageView = null;
+        mCurrentUrl = null;
+        mCurrentViewHolder = null;
     }
 
 }

@@ -99,7 +99,9 @@ public class ThreadImageLayout extends RelativeLayout {
 
     private void loadImage() {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+        mProgressBar.setVisibility(View.GONE);
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
+            mTextView.setVisibility(GONE);
             if (getLayoutParams().height != imageInfo.getDisplayHeight()) {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getDisplayHeight());
                 setLayoutParams(params);
@@ -139,31 +141,32 @@ public class ThreadImageLayout extends RelativeLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
 
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getHeight());
+            LinearLayout.LayoutParams params
+                    = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getHeight());
             setLayoutParams(params);
         } else {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.dpToPx(getContext(), 150));
+            LinearLayout.LayoutParams params
+                    = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.dpToPx(getContext(), 150));
             setLayoutParams(params);
+            if (mParsedFileSize > 0 && mTextView.getVisibility() != VISIBLE) {
+                mTextView.setVisibility(View.VISIBLE);
+                mTextView.setText(Utils.toSizeText(mParsedFileSize));
+            }
         }
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
             loadImage();
         } else if (imageInfo.getStatus() == ImageInfo.FAIL) {
             mImageView.setImageResource(R.drawable.image_broken);
+            mProgressBar.setVisibility(View.GONE);
         } else if (imageInfo.getStatus() == ImageInfo.IN_PROGRESS) {
-            if (mProgressBar.getVisibility() != View.VISIBLE)
-                mProgressBar.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.VISIBLE);
             mProgressBar.setProgress(imageInfo.getProgress());
         } else {
             boolean autoload = HiSettingsHelper.getInstance().isImageLoadable(mParsedFileSize);
-            if (mParsedFileSize > 0) {
-                mTextView.setVisibility(View.VISIBLE);
-                mTextView.setText(Utils.toSizeText(mParsedFileSize));
-            }
             JobMgr.addJob(new GlideImageJob(
                     mRequestManager,
                     mUrl,
@@ -202,8 +205,7 @@ public class ThreadImageLayout extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
         super.onDetachedFromWindow();
     }
 
