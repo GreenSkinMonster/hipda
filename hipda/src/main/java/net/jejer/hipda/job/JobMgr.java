@@ -58,7 +58,7 @@ public class JobMgr {
         glideJobManager = new JobManager(HiApplication.getAppContext(), new Configuration.Builder(HiApplication.getAppContext())
                 .customLogger(logger)
                 .maxConsumerCount(5)
-                .loadFactor(2)
+                .loadFactor(1)
                 .build());
     }
 

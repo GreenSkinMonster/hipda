@@ -33,6 +33,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class GlideImageJob extends BaseJob {
 
+    private final static int MAX_TIME_SECS = 180;
+
     private String mUrl;
     private RequestManager mRequestManager;
     private boolean mNetworkFetch;
@@ -57,9 +59,9 @@ public class GlideImageJob extends BaseJob {
     @Override
     public void onRun() throws Throwable {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+        FutureTarget<File> future = null;
         try {
             long start = SystemClock.uptimeMillis();
-            FutureTarget<File> future;
             if (mNetworkFetch) {
                 future = mRequestManager
                         .load(mUrl)
@@ -71,8 +73,7 @@ public class GlideImageJob extends BaseJob {
                         .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             }
 
-            File cacheFile = future.get(240, TimeUnit.SECONDS);
-            Glide.clear(future);
+            File cacheFile = future.get(MAX_TIME_SECS, TimeUnit.SECONDS);
 
             double speed = -1;
             if (mNetworkFetch)
@@ -123,6 +124,12 @@ public class GlideImageJob extends BaseJob {
                 Logger.e(e);
                 imageInfo.setStatus(ImageInfo.FAIL);
                 EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, ImageInfo.FAIL));
+            }
+        } finally {
+            try {
+                if (future != null)
+                    Glide.clear(future);
+            } catch (Exception ignored) {
             }
         }
     }
