@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -110,14 +109,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                 mLoadingView.setState(ContentLoadingView.LOAD_NOW);
                 SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, SimpleListJob.TYPE_SMS_DETAIL, 1, mUid);
                 JobMgr.addJob(job);
-            }
-        });
-
-        //to avoid click through this view
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
             }
         });
 

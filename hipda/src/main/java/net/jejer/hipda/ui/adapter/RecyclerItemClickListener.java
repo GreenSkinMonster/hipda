@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -59,6 +60,23 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
     public boolean onTouch(View view, MotionEvent event) {
         mChildView = view;
         mGestureDetector.onTouchEvent(event);
+
+        float x = event.getX();
+        float y = event.getY();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            view.drawableHotspotChanged(x, y);
+        }
+
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                view.setPressed(true);
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                view.setPressed(false);
+                break;
+        }
         return true;
     }
 }

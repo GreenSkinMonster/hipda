@@ -41,7 +41,7 @@
 
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/tv_reply_text"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/ib_reply_post"
             android:layout_toRightOf="@+id/ib_goto_post"

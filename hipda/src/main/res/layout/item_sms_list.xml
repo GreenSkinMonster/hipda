@@ -1,7 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="horizontal"
                 android:paddingBottom="4dp"
                 android:paddingLeft="8dp"
@@ -20,7 +23,7 @@
 
     <LinearLayout
         android:id="@+id/sms_content_layout"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/iv_my_avatar"
@@ -54,7 +57,7 @@
 
         <LinearLayout
             android:id="@+id/sms_info_layout"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingLeft="4dp"

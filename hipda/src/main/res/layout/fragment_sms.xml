@@ -24,7 +24,7 @@
 
     <RelativeLayout
         android:id="@+id/rl_input"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="?list_item_background"
@@ -40,7 +40,7 @@
 
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/et_sms"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/ib_send_sms"
             android:layout_toRightOf="@+id/ib_emoji_switch"
