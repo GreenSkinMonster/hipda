@@ -25,7 +25,7 @@ public class FileDownTask extends AsyncTask<String, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        mDialog.hide();
+        mDialog.dismiss();
     }
 
     @Override

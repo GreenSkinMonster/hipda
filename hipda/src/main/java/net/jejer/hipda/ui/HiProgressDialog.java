@@ -18,12 +18,15 @@ import net.jejer.hipda.R;
  */
 public class HiProgressDialog extends ProgressDialog {
 
-    public final static int INFO = 0;
-    public final static int ERROR = 9;
+    private final static int INFO = 0;
+    private final static int ERROR = 9;
+    private final static int MIN_SHOW_TIME = 300;
+
     private boolean mAttachedToWindow = false;
     private boolean mDismissed = false;
+    private long mMillisToWait = -1;
 
-    public HiProgressDialog(Context context) {
+    private HiProgressDialog(Context context) {
         super(context);
     }
 
@@ -49,7 +52,6 @@ public class HiProgressDialog extends ProgressDialog {
     }
 
     private void dismiss(String message, int millisToWait, int status) {
-        mDismissed = true;
         setCancelable(true);
         if (message != null)
             setMessage(message);
@@ -63,21 +65,29 @@ public class HiProgressDialog extends ProgressDialog {
                     .color(ContextCompat.getColor(getContext(), R.color.md_green_500)));
         }
         setIndeterminate(true);
-        new CountDownTimer(millisToWait, millisToWait) {
-            public void onTick(long millisUntilFinished) {
-            }
-
-            public void onFinish() {
-                if (mAttachedToWindow && HiProgressDialog.this.isShowing())
-                    dismiss();
-            }
-        }.start();
+        mMillisToWait = Math.max(millisToWait, MIN_SHOW_TIME);
+        dismiss();
     }
 
     @Override
     public void show() {
         if (!mDismissed)
             super.show();
+    }
+
+    @Override
+    public void dismiss() {
+        mDismissed = true;
+        mMillisToWait = Math.max(mMillisToWait, MIN_SHOW_TIME);
+        new CountDownTimer(mMillisToWait, mMillisToWait) {
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                if (mAttachedToWindow && HiProgressDialog.this.isShowing())
+                    HiProgressDialog.super.dismiss();
+            }
+        }.start();
     }
 
     @Override
