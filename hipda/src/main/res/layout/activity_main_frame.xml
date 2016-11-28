@@ -29,7 +29,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/fragment_side_margin"
         android:layout_marginRight="@dimen/fragment_side_margin"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="net.jejer.hipda.ui.widget.FixScrollingFooterBehavior"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_main"

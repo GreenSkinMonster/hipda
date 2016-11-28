@@ -91,6 +91,7 @@ public class MainFrameActivity extends AppCompatActivity {
     private AccountHeader accountHeader;
     private ActionMode mActionMode;
     private View rootView;
+    private View mMainFrameContainer;
     private AppBarLayout mAppBarLayout;
     private Toolbar mToolbar;
     private FloatingActionButton mMainFab;
@@ -119,6 +120,7 @@ public class MainFrameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_frame);
         rootView = findViewById(R.id.main_activity_root_view);
+        mMainFrameContainer = findViewById(R.id.main_frame_container);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
 
         EventBus.getDefault().register(this);
@@ -147,7 +149,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 }
             }
         };
-        findViewById(R.id.main_frame_container).setOnTouchListener(mSwipeListener);
+        mMainFrameContainer.setOnTouchListener(mSwipeListener);
 
         // Prepare Fragments
         getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
@@ -369,8 +371,18 @@ public class MainFrameActivity extends AppCompatActivity {
             params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                     | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
                     | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
+            mAppBarLayout.setTag("1");
         } else {
             params.setScrollFlags(0);
+            mAppBarLayout.setTag("0");
+            if (mMainFrameContainer.getPaddingBottom() != 0) {
+                mMainFrameContainer.setPadding(
+                        mMainFrameContainer.getPaddingLeft(),
+                        mMainFrameContainer.getPaddingTop(),
+                        mMainFrameContainer.getPaddingRight(),
+                        0);
+                mMainFrameContainer.requestLayout();
+            }
         }
     }
 
