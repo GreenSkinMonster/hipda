@@ -22,7 +22,8 @@ public class HiUtils {
     public static final String CookieDomain = "hi-pda.com";
     public static final String AvatarSuffix = "_avatar_middle.jpg";
     public static final String NewPMImage = "images/default/notice_newpm.gif";
-    public static final String SmiliesPattern = "images/smilies/";
+    public static final String SmiliesPattern = CookieDomain + "/forum/images/smilies/";
+    public static final String ForumImagePattern = CookieDomain + "/forum/images/";
 
     public static String BaseUrl;
     public static String SettingUrl;

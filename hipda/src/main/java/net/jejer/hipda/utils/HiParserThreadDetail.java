@@ -409,7 +409,7 @@ public class HiParserThreadDetail {
             } else if (src.contains(HiUtils.SmiliesPattern) || SmallImages.contains(src)) {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
-            } else if (src.startsWith(HiUtils.ImageBaseUrl + "images/")) {
+            } else if (src.contains(HiUtils.ForumImagePattern)) {
                 //skip common/default/attach icons
             } else if (src.contains("://")) {
                 //external image
