@@ -3,7 +3,10 @@ package net.jejer.hipda.utils;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -78,12 +81,12 @@ public class UIUtils {
         ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(color);
     }
 
-    public static void showMessageDialog(Context context, String message, String detail) {
+    public static void showMessageDialog(final Context context, String message, final String detail) {
 
         final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View viewlayout = inflater.inflate(R.layout.item_select_text, null);
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         final TextView tvTitle = (TextView) viewlayout.findViewById(R.id.tv_select_text_title);
         tvTitle.setText(message);
@@ -94,9 +97,20 @@ public class UIUtils {
         textView.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         UIUtils.setLineSpacing(textView);
 
-        alertDialog.setView(viewlayout);
-        alertDialog.setNegativeButton(context.getResources().getString(R.string.action_close), null);
-        alertDialog.show();
+        builder.setView(viewlayout);
+        builder.setPositiveButton(context.getResources().getString(R.string.action_close), null);
+        builder.setNeutralButton(context.getResources().getString(R.string.action_copy),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", detail);
+                        clipboard.setPrimaryClip(clip);
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public static boolean askForPermission(Context ctx) {
