@@ -16,6 +16,7 @@ import android.os.SystemClock;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -129,6 +132,9 @@ public class ThreadDetailFragment extends BaseFragment {
     private ImageButton mIbPostReply;
     private CountDownTimer mCountDownTimer;
 
+    private String mBlinkPostId;
+    private Animation mBlinkAnim;
+
     private boolean mDataReceived = false;
     private boolean mInloading = false;
     private boolean mHeaderLoading = false;
@@ -172,6 +178,8 @@ public class ThreadDetailFragment extends BaseFragment {
         if (getArguments().containsKey(ARG_FLOOR_KEY)) {
             mGotoFloor = getArguments().getInt(ARG_FLOOR_KEY);
         }
+
+        mBlinkAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.blink);
     }
 
     @Override
@@ -789,8 +797,28 @@ public class ThreadDetailFragment extends BaseFragment {
             mCurrentPage = mGoToPage;
             showOrLoadPage();
         } else {
-            mRecyclerView.scrollToPosition(mDetailAdapter.getPositionByFloor(floor));
+            int position = mDetailAdapter.getPositionByFloor(floor);
+            mRecyclerView.scrollToPosition(position);
+            blinkItemView(position);
             mGotoFloor = -1;
+        }
+    }
+
+    private void blinkItemView(int position) {
+        DetailBean detailBean = mDetailAdapter.getItem(position);
+        if (detailBean != null) {
+            mBlinkPostId = detailBean.getPostId();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    int pos = mDetailAdapter.getPositionByPostId(mBlinkPostId);
+                    mBlinkPostId = null;
+                    View view = mLayoutManager.findViewByPosition(pos);
+                    if (view != null && ViewCompat.isAttachedToWindow(view)) {
+                        view.findViewById(R.id.floor).startAnimation(mBlinkAnim);
+                    }
+                }
+            }, 150);
         }
     }
 
@@ -818,15 +846,16 @@ public class ThreadDetailFragment extends BaseFragment {
                 position = mDetailAdapter.getItemCount() - 1;
             } else if (mGotoFloor == FIRST_FLOOR) {
                 position = 0;
-            } else if (mGotoFloor > 0) {
-                position = mGotoFloor - 1;
             } else if (mGotoFloor != -1) {
                 position = mDetailAdapter.getPositionByFloor(mGotoFloor);
             } else if (HiUtils.isValidId(mGotoPostId)) {
                 position = mDetailAdapter.getPositionByPostId(mGotoPostId);
             }
-            if (position >= 0)
+            if (position >= 0) {
                 mRecyclerView.scrollToPosition(position);
+                if (position > 0)
+                    blinkItemView(position);
+            }
             mGotoPostId = null;
             mGotoFloor = -1;
 
