@@ -71,7 +71,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
 
         holder.author.setText(detail.getAuthor());
         holder.time.setText(Utils.shortyTime(detail.getTimePost()));
-        holder.floor.setText(detail.getFloor() + "#");
+        holder.floor.setText(detail.getFloor() + "");
 
         boolean trimBr = false;
         String postStaus = detail.getPostStatus();

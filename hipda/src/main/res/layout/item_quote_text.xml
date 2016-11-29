@@ -1,5 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/quote_text_layout"
+<LinearLayout android:id="@+id/quote_text_layout"
+              xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@drawable/rounded_corner"
@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:padding="6dp" />
+            android:padding="6dp"/>
 
         <TextView
             android:id="@+id/quote_post_time"
@@ -25,26 +25,28 @@
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@+id/quote_author"
             android:padding="6dp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/quote_note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:padding="6dp" />
+            android:textColor="?android:textColorSecondary"
+            android:padding="6dp"
+            android:textSize="14sp"/>
 
     </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="?attr/list_item_divider" />
+        android:background="?attr/list_item_divider"/>
 
     <net.jejer.hipda.ui.TextViewWithEmoticon
         android:id="@+id/quote_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp" />
+        android:padding="8dp"/>
 
 </LinearLayout>
