@@ -217,14 +217,14 @@ public class FragmentUtils {
 //            slideOutAnim = R.anim.slide_out_right;
 //        } else {
         if (Utils.getScreenWidth() <= 720) {
-            slideInAnim = R.anim.slide_720_in_left;
-            slideOutAnim = R.anim.slide_720_out_right;
+            slideInAnim = R.animator.slide_720_in_left;
+            slideOutAnim = R.animator.slide_720_out_right;
         } else if (Utils.getScreenWidth() >= 1440) {
-            slideInAnim = R.anim.slide_1440_in_left;
-            slideOutAnim = R.anim.slide_1440_out_right;
+            slideInAnim = R.animator.slide_1440_in_left;
+            slideOutAnim = R.animator.slide_1440_out_right;
         } else {
-            slideInAnim = R.anim.slide_1080_in_left;
-            slideOutAnim = R.anim.slide_1080_out_right;
+            slideInAnim = R.animator.slide_1080_in_left;
+            slideOutAnim = R.animator.slide_1080_out_right;
         }
 //        }
 
