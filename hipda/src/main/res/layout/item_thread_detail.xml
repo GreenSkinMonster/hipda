@@ -47,18 +47,18 @@
         <TextView
             android:id="@+id/floor"
             android:layout_width="wrap_content"
-            android:layout_height="22dp"
+            android:layout_height="24dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="2dp"
             android:background="@drawable/round_textview"
             android:gravity="center"
-            android:minWidth="30dp"
+            android:minWidth="32dp"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
             android:text=""
             android:textColor="?android:textColorSecondary"
-            android:textSize="14sp"/>
+            android:textSize="15sp"/>
 
     </RelativeLayout>
 
