@@ -31,8 +31,10 @@ public class TextViewWithEmoticon extends TextView {
     private BaseFragment mFragment;
 
     private static int TRIM_LENGTH = 80;
+    private static final long MIN_CLICK_INTERVAL = 600;
 
     private boolean mTrim;
+    private long mLastClickTime;
 
     public TextViewWithEmoticon(Context context) {
         super(context);
@@ -223,10 +225,16 @@ public class TextViewWithEmoticon extends TextView {
 
             if (link.length != 0) {
                 if (action == MotionEvent.ACTION_UP) {
-                    try {
-                        link[0].onClick(this);
-                    } catch (Exception e) {
-                        Toast.makeText(mCtx, "发生错误 : " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    long currentClickTime = System.currentTimeMillis();
+                    long elapsedTime = currentClickTime - mLastClickTime;
+                    mLastClickTime = currentClickTime;
+
+                    if (elapsedTime > MIN_CLICK_INTERVAL) {
+                        try {
+                            link[0].onClick(this);
+                        } catch (Exception e) {
+                            Toast.makeText(mCtx, "发生错误 : " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
                 ret = true;
