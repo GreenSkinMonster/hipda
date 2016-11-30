@@ -4,6 +4,6 @@
           android:layout_height="36dp"
           android:ellipsize="none"
           android:gravity="left|center_vertical"
+          android:maxLines="1"
           android:paddingLeft="4dp"
-          android:singleLine="true"
           android:textSize="18sp"/>

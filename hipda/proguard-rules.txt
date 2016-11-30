@@ -44,3 +44,7 @@
 -keepattributes SourceFile,LineNumberTable
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
+
+-keepclassmembers class * implements android.os.Parcelable {
+    static ** CREATOR;
+}

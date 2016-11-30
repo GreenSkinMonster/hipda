@@ -103,6 +103,10 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
+        <activity
+            android:name=".ui.ImageViewerActivity"
+            android:theme="@style/ThemeBlack"/>
+
     </application>
 
 </manifest>

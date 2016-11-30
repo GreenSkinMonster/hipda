@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/popup_image"
+<LinearLayout android:id="@+id/image_viewer"
               xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black_semi_transparent"
+        android:background="@android:color/transparent"
         android:paddingRight="8dp">
 
         <com.mikepenz.iconics.view.IconicsButton
@@ -30,7 +30,7 @@
             android:layout_toRightOf="@+id/btn_back"
             android:paddingLeft="4dp"
             android:textColor="@color/silver"
-            android:textSize="22sp"/>
+            android:textSize="18sp"/>
 
         <ImageButton
             android:id="@+id/btn_download_image"
@@ -39,8 +39,8 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackground"
-            android:minHeight="48dp"
-            android:minWidth="48dp"
+            android:minHeight="36dp"
+            android:minWidth="36dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
         <ImageButton
@@ -52,21 +52,20 @@
             android:layout_marginRight="6dp"
             android:layout_toLeftOf="@+id/btn_download_image"
             android:background="?attr/selectableItemBackground"
-            android:minHeight="48dp"
-            android:minWidth="48dp"
+            android:minHeight="36dp"
+            android:minWidth="36dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
     </RelativeLayout>
 
-    <net.jejer.hipda.ui.ImageViewPager
+    <net.jejer.hipda.ui.widget.ImageViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.0"/>
+        android:layout_weight="1"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black_semi_transparent"
         android:paddingLeft="8dp"
         android:paddingRight="8dp">
 
@@ -76,8 +75,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:background="?attr/selectableItemBackground"
-            android:minHeight="48dp"
-            android:minWidth="48dp"
+            android:minHeight="36dp"
+            android:minWidth="36dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
         <LinearLayout
@@ -94,7 +93,7 @@
                 android:layout_gravity="center_horizontal"
                 android:padding="0dp"
                 android:textColor="@color/silver"
-                android:textSize="22sp"/>
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/tv_image_file_info"
@@ -112,8 +111,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:background="?attr/selectableItemBackground"
-            android:minHeight="48dp"
-            android:minWidth="48dp"
+            android:minHeight="36dp"
+            android:minWidth="36dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
     </RelativeLayout>
 

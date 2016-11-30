@@ -22,9 +22,6 @@
         android:id="@+id/action_refresh_detail"
         android:title="@string/action_refresh"/>
     <item
-        android:id="@+id/action_image_gallery"
-        android:title="@string/action_image_gallery"/>
-    <item
         android:id="@+id/action_add_favorite"
         android:title="@string/action_add_favorite"/>
     <item

@@ -247,11 +247,6 @@
         <item name="android:textColor">@color/textColorPrimaryDark</item>
     </style>
 
-    <style name="DialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/dialog_in_left</item>
-        <item name="android:windowExitAnimation">@anim/dialong_out_right</item>
-    </style>
-
     <style name="AppTheme.Launcher" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
         <item name="colorPrimaryDark">@color/splash_background</item>

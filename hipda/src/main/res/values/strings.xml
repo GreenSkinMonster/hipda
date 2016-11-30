@@ -15,6 +15,7 @@
     <string name="action_author_only_mode">只看该作者</string>
     <string name="action_select_text">文字选择</string>
     <string name="action_share">分享</string>
+    <string name="action_save">保存</string>
     <string name="action_close">关闭</string>
     <string name="action_only_author">只看楼主</string>
     <string name="action_open_url">浏览器打开</string>

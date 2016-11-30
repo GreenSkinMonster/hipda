@@ -1,6 +1,5 @@
 package net.jejer.hipda.glide;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -22,7 +21,7 @@ import java.lang.ref.WeakReference;
 
 public class GlideImageView extends ImageView {
 
-    private Fragment mFragment;
+    private ThreadDetailFragment mFragment;
     private String mUrl;
     private int mImageIndex;
 
@@ -45,7 +44,7 @@ public class GlideImageView extends ImageView {
         mImageIndex = index;
     }
 
-    public void setFragment(Fragment fragment) {
+    public void setFragment(ThreadDetailFragment fragment) {
         mFragment = fragment;
     }
 
@@ -71,15 +70,15 @@ public class GlideImageView extends ImageView {
                     startImageGallery();
                 }
             } else if (imageInfo.getStatus() == ImageInfo.FAIL || imageInfo.getStatus() == ImageInfo.IDLE) {
-                if (mFragment instanceof ThreadDetailFragment)
-                    JobMgr.addJob(new GlideImageJob(Glide.with(mFragment), mUrl, JobMgr.PRIORITY_LOW, ((ThreadDetailFragment) mFragment).mSessionId, true));
+                if (mFragment != null)
+                    JobMgr.addJob(new GlideImageJob(Glide.with(mFragment), mUrl, JobMgr.PRIORITY_LOW, mFragment.mSessionId, true));
             }
         }
     }
 
     private void startImageGallery() {
-        if (mFragment != null && mFragment instanceof ThreadDetailFragment)
-            ((ThreadDetailFragment) mFragment).startImageGallery(mImageIndex);
+        if (mFragment != null)
+            mFragment.startImageGallery(mImageIndex, this);
     }
 
     private void loadGif() {
@@ -99,7 +98,7 @@ public class GlideImageView extends ImageView {
         }
     }
 
-    private void stopCurrentGif() {
+    public void stopCurrentGif() {
         try {
             if (mCurrentViewHolder != null && mCurrentViewHolder.get() != null) {
                 ImageView lastView = mCurrentViewHolder.get();

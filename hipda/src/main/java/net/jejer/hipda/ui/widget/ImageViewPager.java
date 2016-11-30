@@ -1,4 +1,4 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;

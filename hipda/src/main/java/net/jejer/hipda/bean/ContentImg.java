@@ -1,17 +1,31 @@
 package net.jejer.hipda.bean;
 
-public class ContentImg extends ContentAbs {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import net.jejer.hipda.utils.Utils;
+
+public class ContentImg extends ContentAbs implements Parcelable {
     private String mUrl;
     private String mThumbUrl;
+    private String mAuthor;
     private int mFloor;
     private int mIndexInPage;
-    private String mAuthor;
     private long mFileSize;
 
     public ContentImg(String url, long fileSize, String thumbUrl) {
         mUrl = url;
         mFileSize = fileSize;
         mThumbUrl = thumbUrl;
+    }
+
+    protected ContentImg(Parcel in) {
+        mUrl = in.readString();
+        mThumbUrl = in.readString();
+        mAuthor = in.readString();
+        mFloor = in.readInt();
+        mIndexInPage = in.readInt();
+        mFileSize = in.readLong();
     }
 
     @Override
@@ -55,5 +69,32 @@ public class ContentImg extends ContentAbs {
 
     public String getThumbUrl() {
         return mThumbUrl;
+    }
+
+    public static final Creator<ContentImg> CREATOR = new Creator<ContentImg>() {
+        @Override
+        public ContentImg createFromParcel(Parcel in) {
+            return new ContentImg(in);
+        }
+
+        @Override
+        public ContentImg[] newArray(int size) {
+            return new ContentImg[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return this.hashCode();
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(Utils.nullToText(mUrl));
+        parcel.writeString(Utils.nullToText(mThumbUrl));
+        parcel.writeString(Utils.nullToText(mAuthor));
+        parcel.writeInt(mFloor);
+        parcel.writeInt(mIndexInPage);
+        parcel.writeLong(mFileSize);
     }
 }

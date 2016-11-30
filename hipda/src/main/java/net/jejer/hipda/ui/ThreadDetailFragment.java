@@ -15,6 +15,8 @@ import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -53,6 +55,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.cache.ThreadDetailCache;
 import net.jejer.hipda.db.HistoryDao;
+import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.PostEvent;
@@ -436,9 +439,6 @@ public class ThreadDetailFragment extends BaseFragment {
             case R.id.action_refresh_detail:
                 mLoadingView.setState(ContentLoadingView.LOADING);
                 refresh();
-                return true;
-            case R.id.action_image_gallery:
-                startImageGallery(0);
                 return true;
             case R.id.action_add_favorite:
                 if (FavoriteHelper.getInstance().isInFavortie(mTid))
@@ -853,8 +853,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
             if (position >= 0) {
                 mRecyclerView.scrollToPosition(position);
-                if (position > 0)
-                    blinkItemView(position);
+                blinkItemView(position);
             }
             mGotoPostId = null;
             mGotoFloor = -1;
@@ -927,19 +926,25 @@ public class ThreadDetailFragment extends BaseFragment {
         }
     }
 
-    public void startImageGallery(int imageIndex) {
+    public void startImageGallery(int imageIndex, GlideImageView imageView) {
         if (!HiApplication.isActivityVisible()) {
             return;
         }
+
         DetailListBean detailListBean = mCache.get(mCurrentPage);
         if (detailListBean == null) {
             Toast.makeText(getActivity(), "帖子还未加载完成", Toast.LENGTH_LONG).show();
             return;
         }
+
+        imageView.stopCurrentGif();
         if (detailListBean.getContentImages().size() > 0) {
-            PopupImageDialog popupImageDialog = new PopupImageDialog();
-            popupImageDialog.init(detailListBean, imageIndex, mSessionId);
-            popupImageDialog.show(getFragmentManager(), PopupImageDialog.class.getName());
+            Intent intent = new Intent(getActivity(), ImageViewerActivity.class);
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeScaleUpAnimation(imageView, 0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+            intent.putExtra(ImageViewerActivity.KEY_IMAGE_INDEX, imageIndex);
+            intent.putParcelableArrayListExtra(ImageViewerActivity.KEY_IMAGES, mCache.get(mCurrentPage).getContentImages());
+            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
         } else {
             Toast.makeText(mCtx, "本页没有图片", Toast.LENGTH_SHORT).show();
         }

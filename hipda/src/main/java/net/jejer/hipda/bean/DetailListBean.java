@@ -85,8 +85,8 @@ public class DetailListBean {
         return mImagesCount;
     }
 
-    public List<ContentImg> getContentImages() {
-        List<ContentImg> result = new ArrayList<>();
+    public ArrayList<ContentImg> getContentImages() {
+        ArrayList<ContentImg> result = new ArrayList<>();
         for (DetailBean detail : mDetailBeans) {
             result.addAll(detail.getImages());
         }

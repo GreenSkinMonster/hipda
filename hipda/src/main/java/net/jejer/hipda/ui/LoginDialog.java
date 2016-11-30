@@ -17,6 +17,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.ui.adapter.KeyValueArrayAdapter;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.UIUtils;
 

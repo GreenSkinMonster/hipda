@@ -123,6 +123,10 @@ public class ImageInfo {
         mStatus = status;
     }
 
+    public String getUrl() {
+        return mUrl;
+    }
+
     private int getDisplaySize(boolean isWidth) {
         //calculate ImageView size for image to display
 
@@ -140,7 +144,7 @@ public class ImageInfo {
             int scaledHeight = Math.round((int) (mHeight * scaleRate));
 
             if (scaledWidth >= maxScaleWidth ||
-                    (isGif() && scaledWidth >= maxScaleWidth / 2)) {
+                    (isGif() && scaledWidth >= maxScaleWidth / 3)) {
                 displayWidth = maxViewWidth;
                 displayHeight = Math.round(maxViewWidth * 1.0f * mHeight / mWidth);
             } else {

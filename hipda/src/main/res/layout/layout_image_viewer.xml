@@ -3,12 +3,12 @@
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/scale_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <net.jejer.hipda.glide.GlideImageView
         android:id="@+id/glide_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -19,6 +19,6 @@
         android:layout_gravity="center"
         android:indeterminate="false"
         android:max="100"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 </merge>

@@ -1,15 +1,12 @@
 package net.jejer.hipda.ui;
 
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -21,91 +18,66 @@ import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
-import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
+import net.jejer.hipda.job.JobMgr;
+import net.jejer.hipda.ui.adapter.ImageViewerAdapter;
+import net.jejer.hipda.ui.widget.ImageViewPager;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
- * image gallery
- * Created by GreenSkinMonster on 2015-05-20.
+ * Created by GreenSkinMonster on 2016-11-30.
  */
-public class PopupImageDialog extends DialogFragment {
 
-    private final static int IMAGE_SHARE_ACTION = 1;
+public class ImageViewerActivity extends AppCompatActivity {
 
-    private Context mCtx;
-    private DetailListBean mDetailListBean;
-    private int mImageIndex;
+    public static final String KEY_IMAGES = "images";
+    public static final String KEY_IMAGE_INDEX = "imageIndex";
 
-    private LayoutInflater mInflater;
     private PagerAdapter mPagerAdapter;
-    private View mRootView;
 
     private boolean lastClicked = false;
     private boolean firstClicked = false;
 
     private String mSessionId;
 
-    public PopupImageDialog() {
-    }
-
-    public void init(DetailListBean detailListBean, int imageIndex, String sessionId) {
-        mDetailListBean = detailListBean;
-        mImageIndex = imageIndex;
-        mSessionId = sessionId;
-    }
-
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        mCtx = getActivity();
-        mInflater = (LayoutInflater) mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
+        setContentView(R.layout.activity_image_viewer);
 
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        mSessionId = UUID.randomUUID().toString();
 
-        mRootView = mInflater.inflate(R.layout.popup_image, null);
+        Intent intent = getIntent();
+        int imageIndex = intent.getExtras().getInt(KEY_IMAGE_INDEX);
+        final ArrayList<ContentImg> images = intent.getExtras().getParcelableArrayList(KEY_IMAGES);
 
-        final Dialog dialog = new Dialog(mCtx, android.R.style.Theme_Black_NoTitleBar);
-        dialog.setContentView(mRootView);
-
-        final ImageViewPager viewPager = (ImageViewPager) mRootView.findViewById(R.id.view_pager);
-        final TextView tvImageInfo = (TextView) mRootView.findViewById(R.id.tv_image_info);
-        final TextView tvImageFileInfo = (TextView) mRootView.findViewById(R.id.tv_image_file_info);
-        final TextView tvFloorInfo = (TextView) mRootView.findViewById(R.id.tv_floor_info);
-        final Button btnBack = (Button) mRootView.findViewById(R.id.btn_back);
+        final ImageViewPager viewPager = (ImageViewPager) findViewById(R.id.view_pager);
+        final TextView tvImageInfo = (TextView) findViewById(R.id.tv_image_info);
+        final TextView tvImageFileInfo = (TextView) findViewById(R.id.tv_image_file_info);
+        final TextView tvFloorInfo = (TextView) findViewById(R.id.tv_floor_info);
+        final Button btnBack = (Button) findViewById(R.id.btn_back);
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();
+                finish();
             }
         });
 
-        //mDetailListBean could be null if resumed
-        if (mDetailListBean == null) {
-            dismiss();
-            return dialog;
+        if (images == null || images.size() == 0) {
+            finish();
         }
 
-        final List<ContentImg> images = mDetailListBean.getContentImages();
-        mPagerAdapter = new PopupImageAdapter(this, images, mSessionId);
+        mPagerAdapter = new ImageViewerAdapter(this, images, mSessionId);
         viewPager.setAdapter(mPagerAdapter);
 
         EventBus.getDefault().register(mPagerAdapter);
@@ -133,19 +105,19 @@ public class PopupImageDialog extends DialogFragment {
 
             @Override
             public void onSwipeOutAtStart() {
-                dismiss();
+                finishRight();
             }
 
             @Override
             public void onSwipeOutAtEnd() {
-                dismiss();
+                finishLeft();
             }
         });
 
-        viewPager.setCurrentItem(mImageIndex);
-        ContentImg contentImg = images.get(mImageIndex);
+        viewPager.setCurrentItem(imageIndex);
+        ContentImg contentImg = images.get(imageIndex);
         tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
-        tvImageInfo.setText((mImageIndex + 1) + " / " + images.size());
+        tvImageInfo.setText((imageIndex + 1) + " / " + images.size());
 
         String url = images.get(viewPager.getCurrentItem()).getContent();
         updateImageFileInfo(tvImageFileInfo, url);
@@ -163,37 +135,37 @@ public class PopupImageDialog extends DialogFragment {
                 }
         );
 
-        ImageButton btnDownload = (ImageButton) mRootView.findViewById(R.id.btn_download_image);
-        btnDownload.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_file_download)
-                .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
+        ImageButton btnDownload = (ImageButton) findViewById(R.id.btn_download_image);
+        btnDownload.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_file_download)
+                .sizeDp(24).color(ContextCompat.getColor(this, R.color.silver)));
         btnDownload.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
                         String url = images.get(viewPager.getCurrentItem()).getContent();
-                        UIUtils.saveImage(getActivity(), mRootView, url);
+                        UIUtils.saveImage(ImageViewerActivity.this, findViewById(R.id.image_viewer), url);
                     }
                 }
 
         );
 
-        ImageButton btnShare = (ImageButton) mRootView.findViewById(R.id.btn_share_image);
-        btnShare.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_share)
-                .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
+        ImageButton btnShare = (ImageButton) findViewById(R.id.btn_share_image);
+        btnShare.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_share)
+                .sizeDp(24).color(ContextCompat.getColor(this, R.color.silver)));
 
         btnShare.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
                         String url = images.get(viewPager.getCurrentItem()).getContent();
-                        UIUtils.shareImage(getActivity(), mRootView, url);
+                        UIUtils.shareImage(ImageViewerActivity.this, findViewById(R.id.image_viewer), url);
                     }
                 }
         );
 
-        ImageButton btnNext = (ImageButton) mRootView.findViewById(R.id.btn_next_image);
-        btnNext.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_chevron_right)
-                .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
+        ImageButton btnNext = (ImageButton) findViewById(R.id.btn_next_image);
+//        btnNext.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_chevron_right)
+//                .sizeDp(24).color(ContextCompat.getColor(this, R.color.silver)));
         btnNext.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -203,20 +175,19 @@ public class PopupImageDialog extends DialogFragment {
                             firstClicked = false;
                         } else {
                             if (!lastClicked) {
-                                Toast.makeText(mCtx, "已经是最后一张，再次点击关闭.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ImageViewerActivity.this, "已经是最后一张，再次点击关闭.", Toast.LENGTH_SHORT).show();
                                 lastClicked = true;
                             } else {
-                                dismiss();
+                                finish();
                             }
                         }
                     }
                 }
-
         );
 
-        ImageButton btnPrev = (ImageButton) mRootView.findViewById(R.id.btn_previous_image);
-        btnPrev.setImageDrawable(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_chevron_left)
-                .sizeDp(24).color(ContextCompat.getColor(mCtx, R.color.silver)));
+        ImageButton btnPrev = (ImageButton) findViewById(R.id.btn_previous_image);
+//        btnPrev.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_chevron_left)
+//                .sizeDp(24).color(ContextCompat.getColor(this, R.color.silver)));
         btnPrev.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -226,17 +197,15 @@ public class PopupImageDialog extends DialogFragment {
                             lastClicked = false;
                         } else {
                             if (!firstClicked) {
-                                Toast.makeText(mCtx, "已经是第一张，再次点击关闭.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ImageViewerActivity.this, "已经是第一张，再次点击关闭.", Toast.LENGTH_SHORT).show();
                                 firstClicked = true;
                             } else {
-                                dismiss();
+                                finish();
                             }
                         }
                     }
                 }
-
         );
-        return dialog;
     }
 
     private void updateImageFileInfo(TextView tvImageFileInfo, String url) {
@@ -255,25 +224,34 @@ public class PopupImageDialog extends DialogFragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.fade_out);
+    }
 
-        if (requestCode == IMAGE_SHARE_ACTION) {
-        }
+    public void finishLeft() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_left);
+    }
 
+    public void finishRight() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_right);
     }
 
     @Override
     public void onDestroy() {
         if (mPagerAdapter != null) {
+            EventBus.getDefault().unregister(mPagerAdapter);
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
                     Utils.cleanShareTempFiles();
                 }
             });
-            EventBus.getDefault().unregister(mPagerAdapter);
         }
+        JobMgr.cancelJobs(mSessionId);
         super.onDestroy();
     }
+
 }

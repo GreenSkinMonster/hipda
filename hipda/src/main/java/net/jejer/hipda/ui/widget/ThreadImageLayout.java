@@ -38,7 +38,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.LinkedHashMap;
 
 /**
- * Layout contains thread image
  * Created by GreenSkinMonster on 2015-11-07.
  */
 public class ThreadImageLayout extends RelativeLayout {
@@ -177,9 +176,9 @@ public class ThreadImageLayout extends RelativeLayout {
 
     private void showImageActionDialog() {
         LinkedHashMap<String, String> actions = new LinkedHashMap<>();
-        actions.put("save", "保存");
-        actions.put("share", "分享");
-        actions.put("gallery", "查看大图");
+        actions.put("save", getResources().getString(R.string.action_save));
+        actions.put("share", getResources().getString(R.string.action_share));
+        actions.put("gallery", getResources().getString(R.string.action_image_gallery));
 
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
             @Override
@@ -190,7 +189,7 @@ public class ThreadImageLayout extends RelativeLayout {
                 } else if ("share".equals(action)) {
                     UIUtils.shareImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mUrl);
                 } else if ("gallery".equals(action)) {
-                    mFragment.startImageGallery(mImageIndex);
+                    mFragment.startImageGallery(mImageIndex, mImageView);
                 }
             }
         };

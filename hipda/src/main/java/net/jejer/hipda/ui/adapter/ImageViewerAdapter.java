@@ -1,5 +1,6 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.adapter;
 
+import android.app.Activity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewCompat;
@@ -11,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
@@ -23,9 +25,11 @@ import net.jejer.hipda.glide.GlideBitmapTarget;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.glide.GlideImageView;
+import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
-import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.ui.ThreadDetailFragment;
+import net.jejer.hipda.ui.widget.ImageViewerLayout;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -39,20 +43,21 @@ import java.util.Map;
  * adapter for image gallery
  * Created by GreenSkinMonster on 2015-05-20.
  */
-public class PopupImageAdapter extends PagerAdapter {
+public class ImageViewerAdapter extends PagerAdapter {
 
-    private PopupImageDialog mDialog;
     private List<ContentImg> mImages;
     private RequestManager mRequestManager;
+    private Activity mActivity;
 
-    private Map<String, PopupImageLayout> imageViewMap = new HashMap<>();
+    private Map<String, ImageViewerLayout> imageViewMap = new HashMap<>();
     private String mSessionId;
+    private boolean mFirstShow = true;
 
-    public PopupImageAdapter(PopupImageDialog dialog, List<ContentImg> images, String sessionId) {
-        mDialog = dialog;
+    public ImageViewerAdapter(Activity activity, List<ContentImg> images, String sessionId) {
+        mActivity = activity;
         mImages = images;
         mSessionId = sessionId;
-        mRequestManager = Glide.with(dialog);
+        mRequestManager = Glide.with(activity);
     }
 
     @Override
@@ -68,9 +73,29 @@ public class PopupImageAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        final PopupImageLayout imageLayout = new PopupImageLayout(mDialog.getActivity());
-        final String imageUrl = mImages.get(position).getContent();
+        final ImageViewerLayout imageLayout = new ImageViewerLayout(mActivity);
+        final ContentImg contentImg = mImages.get(position);
+        final String imageUrl = contentImg.getContent();
         ImageInfo imageInfo = ImageContainer.getImageInfo(imageUrl);
+
+        //ScaleImageView has about 100ms delay, so show image with normal ImageView first
+        if (mFirstShow) {
+            mFirstShow = false;
+            if (!imageInfo.isGif() && GlideHelper.isOkToLoad(mActivity)) {
+                ImageInfo thumbInfo = ImageContainer.getImageInfo(contentImg.getThumbUrl());
+                ImageInfo info = thumbInfo.isReady() ? thumbInfo : imageInfo;
+                //load argument must match ThreadDetailFragment to hit memory cache
+                if (info.isReady()) {
+                    Glide.with(mActivity)
+                            .load(info.getUrl())
+                            .asBitmap()
+                            .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(ThreadDetailFragment.mMaxImageDecodeWidth, imageInfo)))
+                            .imageDecoder(new ThreadImageDecoder(ThreadDetailFragment.mMaxImageDecodeWidth, imageInfo))
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(new GlideBitmapTarget(imageLayout.getGlideImageView(), info.getDisplayWidth(), info.getDisplayHeight()));
+                }
+            }
+        }
 
         if (!imageInfo.isReady() || !(new File(imageInfo.getPath())).exists()) {
             imageLayout.getProgressBar().setVisibility(View.VISIBLE);
@@ -85,49 +110,41 @@ public class PopupImageAdapter extends PagerAdapter {
         return imageLayout;
     }
 
-    private void displayImage(final PopupImageLayout imageLayout, String imageUrl) {
-
+    private void displayImage(final ImageViewerLayout imageLayout, String imageUrl) {
         imageLayout.getProgressBar().setVisibility(View.GONE);
 
         final SubsamplingScaleImageView scaleImageView = imageLayout.getScaleImageView();
-        final GlideImageView gifImageView = imageLayout.getGlideImageView();
+        final GlideImageView glideImageView = imageLayout.getGlideImageView();
 
         //imageView could be null if display image on GlideImageEvent
-        if (scaleImageView == null || gifImageView == null)
+        if (scaleImageView == null || glideImageView == null)
             return;
 
         ImageInfo imageInfo = ImageContainer.getImageInfo(imageUrl);
 
-        gifImageView.setBackgroundColor(ContextCompat.getColor(mDialog.getActivity(), R.color.night_background));
-        scaleImageView.setBackgroundColor(ContextCompat.getColor(mDialog.getActivity(), R.color.night_background));
-
         if (!imageInfo.isReady()) {
-            gifImageView.setVisibility(View.VISIBLE);
+            glideImageView.setVisibility(View.VISIBLE);
             scaleImageView.setVisibility(View.GONE);
-            gifImageView.setImageDrawable(ContextCompat.getDrawable(mDialog.getActivity(), R.drawable.image_broken));
+            glideImageView.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.image_broken));
         } else {
             if (imageInfo.isGif()) {
-                gifImageView.setVisibility(View.VISIBLE);
+                glideImageView.setVisibility(View.VISIBLE);
                 scaleImageView.setVisibility(View.GONE);
 
-                if (GlideHelper.isOkToLoad(mDialog)) {
-                    Glide.with(mDialog)
+                if (GlideHelper.isOkToLoad(mActivity)) {
+                    Glide.with(mActivity)
                             .load(imageUrl)
                             .asBitmap()
                             .priority(Priority.IMMEDIATE)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .transform(new GifTransformation(mDialog.getActivity()))
+                            .transform(new GifTransformation(mActivity))
                             .error(R.drawable.image_broken)
-                            .into(new GlideBitmapTarget(gifImageView, imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight()));
+                            .into(new GlideBitmapTarget(glideImageView, imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight()));
                 }
 
-                gifImageView.setUrl(imageUrl);
-                gifImageView.setSingleClickListener();
-
+                glideImageView.setUrl(imageUrl);
+                glideImageView.setSingleClickListener();
             } else {
-                gifImageView.setVisibility(View.GONE);
-                scaleImageView.setVisibility(View.VISIBLE);
-
                 scaleImageView.setMinimumDpi(100);
                 scaleImageView.setMinimumTileDpi(160);
                 scaleImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
@@ -136,12 +153,16 @@ public class PopupImageAdapter extends PagerAdapter {
                 scaleImageView.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener() {
                     @Override
                     public void onImageLoaded() {
+                        Glide.clear(glideImageView);
+                        glideImageView.setVisibility(View.GONE);
+                        scaleImageView.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onImageLoadError(Exception e) {
+                        Glide.clear(glideImageView);
+                        glideImageView.setVisibility(View.GONE);
                         scaleImageView.setImage(ImageSource.resource(R.drawable.image_broken));
-                        Logger.e("loading error", e);
                     }
                 });
             }
@@ -150,7 +171,7 @@ public class PopupImageAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        PopupImageLayout imageLayout = (PopupImageLayout) object;
+        ImageViewerLayout imageLayout = (ImageViewerLayout) object;
         container.removeView(imageLayout);
         imageViewMap.remove(imageLayout.getUrl());
         imageLayout.recycle();
@@ -160,7 +181,7 @@ public class PopupImageAdapter extends PagerAdapter {
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GlideImageEvent event) {
-        PopupImageLayout imageLayout = imageViewMap.get(event.getImageUrl());
+        ImageViewerLayout imageLayout = imageViewMap.get(event.getImageUrl());
         if (imageLayout != null
                 && ViewCompat.isAttachedToWindow(imageLayout)) {
             ProgressBar bar = imageLayout.getProgressBar();

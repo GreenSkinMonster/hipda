@@ -1,4 +1,4 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -13,10 +13,9 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.glide.GlideImageView;
 
 /**
- * Layout contains thread image
  * Created by GreenSkinMonster on 2015-11-07.
  */
-public class PopupImageLayout extends RelativeLayout {
+public class ImageViewerLayout extends RelativeLayout {
 
     private final SubsamplingScaleImageView scaleImageView;
     private final GlideImageView glideImageView;
@@ -24,18 +23,18 @@ public class PopupImageLayout extends RelativeLayout {
 
     private String url;
 
-    public PopupImageLayout(Context context) {
+    public ImageViewerLayout(Context context) {
         this(context, null);
     }
 
-    public PopupImageLayout(Context context, AttributeSet attrs) {
+    public ImageViewerLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PopupImageLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ImageViewerLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        LayoutInflater.from(context).inflate(R.layout.layout_popup_image, this, true);
+        LayoutInflater.from(context).inflate(R.layout.layout_image_viewer, this, true);
 
         scaleImageView = (SubsamplingScaleImageView) findViewById(R.id.scale_image);
         glideImageView = (GlideImageView) findViewById(R.id.glide_image);
@@ -53,7 +52,6 @@ public class PopupImageLayout extends RelativeLayout {
     public ProgressBar getProgressBar() {
         return progressBar;
     }
-
 
     public String getUrl() {
         return url;

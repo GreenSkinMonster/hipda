@@ -224,8 +224,6 @@ public class UIUtils {
             Snackbar snackbar = Snackbar.make(view, "文件已保存", Snackbar.LENGTH_LONG);
             View snackbarView = snackbar.getView();
             ((TextView) snackbarView.findViewById(R.id.snackbar_text)).setTextColor(Color.WHITE);
-            //popup dialog need to set background color
-            snackbarView.findViewById(R.id.snackbar_action).setBackgroundColor(Color.TRANSPARENT);
 
             snackbar.setAction("查看", new View.OnClickListener() {
                 @Override
