@@ -7,6 +7,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
+
 /**
  * Created by GreenSkinMonster on 2016-11-10.
  */
@@ -64,18 +66,20 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
         float x = event.getX();
         float y = event.getY();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            view.drawableHotspotChanged(x, y);
-        }
+        if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_CLICK_EFFECT, true)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                view.drawableHotspotChanged(x, y);
+            }
 
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                view.setPressed(true);
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                view.setPressed(false);
-                break;
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    view.setPressed(true);
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    view.setPressed(false);
+                    break;
+            }
         }
         return true;
     }

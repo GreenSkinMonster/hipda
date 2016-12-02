@@ -103,6 +103,11 @@
             android:key="PERF_FAB_LEFT_SIDE"
             android:title="@string/pref_title_fab_left_side"/>
 
+        <net.jejer.hipda.ui.CustomSwitchPreference
+            android:defaultValue="true"
+            android:key="PERF_CLICK_EFFECT"
+            android:title="@string/pref_title_click_effect"/>
+
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/pref_icon"
