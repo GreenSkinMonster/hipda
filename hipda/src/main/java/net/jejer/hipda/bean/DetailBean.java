@@ -107,6 +107,11 @@ public class DetailBean {
             newString = true;
         }
 
+        public void addImg(ContentImg contentImg) {
+            list.add(contentImg);
+            newString = true;
+        }
+
         public void addAttach(String url, String title, String desc) {
             list.add(new ContentAttach(url, unEscapeHtml(title), desc));
             newString = true;

@@ -9,7 +9,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 
 public class HiUtils {
     public static final String UserAgent = "net.jejer.hipda " + HiSettingsHelper.getInstance().getAppVersion();
-    public static final String BaseUrl = "http://www.hi-pda.com/forum/";
+    public static final String BaseUrl = "https://dev.hi-pda.com/forum/";
     public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
     public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
     public static final String ReplyUrl = BaseUrl + "post.php?action=reply&tid=";
@@ -42,6 +42,10 @@ public class HiUtils {
     public static String AvatarBaseUrl = ImageBaseUrl + "uc_server/data/avatar/";
     public static String SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
     public static boolean ImageHostUpdated = false;
+
+    public static final String CookieDomain = "hi-pda.com";
+    public static final String SmiliesPattern = CookieDomain + "/forum/images/smilies/";
+    public static final String ForumImagePattern = CookieDomain + "/forum/images/";
 
     private static String AVATAR_BASE = "000000000";
     public static int MAX_THREADS_IN_PAGE = 50;

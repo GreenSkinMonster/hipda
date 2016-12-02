@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailBean.Contents;
 import net.jejer.hipda.bean.DetailListBean;
@@ -247,12 +248,15 @@ public class HiParserThreadDetail {
             }
 
             // IMG attachments
-            Elements postimgES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.t_msgfontfix div.postattachlist img");
-            for (int j = 0; j < postimgES.size(); j++) {
-                Element imgE = postimgES.get(j);
-                if (imgE.attr("file").startsWith(HiUtils.ImageBaseUrl + "attachments/day_")
-                        || imgE.attr("file").startsWith(HiUtils.ImageBaseUrl + "attachment.php")) {
-                    content.addImg(imgE.attr("file"));
+            Elements dlES = postE.select("table tbody tr td.postcontent div.defaultpost div.postmessage div.t_msgfontfix div.postattachlist dl.attachimg");
+            for (int j = 0; j < dlES.size(); j++) {
+                Element dlEl = dlES.get(j);
+                Elements imgES = dlEl.select("img");
+
+                if (imgES.size() > 0) {
+                    Element e = imgES.first();
+                    ContentImg contentImg = getContentImg(e);
+                    content.addImg(contentImg);
                 }
             }
 
@@ -371,31 +375,25 @@ public class HiParserThreadDetail {
             return true;
         } else if (contentN.nodeName().equals("img")) {
             Element e = (Element) contentN;
-            String src = e.attr("src");
+            String src = getAbsoluteUrl(e.attr("src"));
+            String id = e.attr("id");
 
-            if (src.startsWith(HiUtils.SmiliesBaseUrl)) {
+            if (id.startsWith("aimg") || src.contains("images/common/none.gif")) {
+                //internal image
+                ContentImg contentImg = getContentImg(e);
+                content.addImg(contentImg);
+            } else if (src.contains(HiUtils.SmiliesPattern)) {
                 //emotion added as img tag, will be parsed in TextViewWithEmoticon later
                 content.addText("<img src=\"" + src + "\"/>");
-                return false;
-            } else if (src.equals(HiUtils.ImageBaseUrl + "images/common/none.gif")
-                    || src.startsWith(HiUtils.ImageBaseUrl + "attachments/day_")
-                    || src.startsWith(HiUtils.ImageBaseUrl + "attachment.php")) {
-                //internal image
-                content.addImg(e.attr("file"));
-                return false;
-            } else if (src.startsWith(HiUtils.ImageBaseUrl + "images/default/")
-                    || src.startsWith(HiUtils.ImageBaseUrl + "images/attachicons/")
-                    || src.startsWith(HiUtils.ImageBaseUrl + "images/common/")) {
-                //skip common icons
-                return false;
-            } else if (src.startsWith("http://") || src.startsWith("https://")) {
+            } else if (src.contains(HiUtils.ForumImagePattern)) {
+                //skip common/default/attach icons
+            } else if (src.contains("://")) {
                 //external image
                 content.addImg(src);
-                return false;
             } else {
                 content.addNotice("[[ERROR:UNPARSED IMG:" + src + "]]");
-                return false;
             }
+            return false;
         } else if (contentN.nodeName().equals("span")) {    // a section in a document
             Elements attachAES = ((Element) contentN).select("a");
             Boolean isInternalAttach = false;
@@ -514,6 +512,36 @@ public class HiParserThreadDetail {
             //Logger.e("[[ERROR:UNPARSED TAG:" + contentN.nodeName() + "]]");
             return false;
         }
+    }
+
+    @NonNull
+    private static ContentImg getContentImg(Element e) {
+        String src = getAbsoluteUrl(e.attr("src"));
+        String file = getAbsoluteUrl(e.attr("file"));
+        String onclick = e.attr("onclick");
+
+        if (onclick.startsWith("zoom") && onclick.contains("attachment")) {
+            onclick = "attachment" + HttpUtils.getMiddleString(onclick, "attachment", "'");
+        } else {
+            onclick = "";
+        }
+        onclick = getAbsoluteUrl(onclick);
+
+        String thumbUrl = "";
+        if (!TextUtils.isEmpty(src) && src.contains("thumb.")) {
+            thumbUrl = src;
+        }
+        String fullUrl = TextUtils.isEmpty(onclick) ? file : onclick;
+        if (TextUtils.isEmpty(fullUrl))
+            fullUrl = thumbUrl;
+        return new ContentImg(fullUrl);
+    }
+
+    @NonNull
+    private static String getAbsoluteUrl(String url) {
+        if (TextUtils.isEmpty(url) || url.contains("://"))
+            return url;
+        return HiUtils.ImageBaseUrl + url;
     }
 
 }
