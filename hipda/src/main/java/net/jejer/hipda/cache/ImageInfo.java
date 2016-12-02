@@ -27,9 +27,9 @@ public class ImageInfo {
     private int mProgress;
     private int mStatus = IDLE;
 
-    int maxViewWidth;
-    int displayWidth;
-    int displayHeight;
+    private int maxViewWidth;
+    private int displayWidth;
+    private int displayHeight;
 
     public ImageInfo(String url) {
         mUrl = url;

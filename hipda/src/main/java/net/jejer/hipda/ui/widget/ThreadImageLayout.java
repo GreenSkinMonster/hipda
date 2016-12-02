@@ -213,10 +213,12 @@ public class ThreadImageLayout extends RelativeLayout {
         if (!event.getImageUrl().equals(mUrl))
             return;
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        if (event.getStatus() == ImageInfo.IN_PROGRESS) {
+        if (event.getStatus() == ImageInfo.IN_PROGRESS
+                && imageInfo.getStatus() != ImageInfo.SUCCESS) {
             if (mProgressBar.getVisibility() != View.VISIBLE)
                 mProgressBar.setVisibility(View.VISIBLE);
             mProgressBar.setProgress(event.getProgress());
+
             imageInfo.setProgress(event.getProgress());
             imageInfo.setStatus(ImageInfo.IN_PROGRESS);
         } else if (event.getStatus() == ImageInfo.SUCCESS) {
