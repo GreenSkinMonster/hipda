@@ -391,32 +391,7 @@ public class HiParserThreadDetail {
             }
             return true;
         } else if (contentN.nodeName().equals("img")) {
-            Element e = (Element) contentN;
-            String src = getAbsoluteUrl(e.attr("src"));
-            String id = e.attr("id");
-
-            if (id.startsWith("aimg") || src.contains("images/common/none.gif")) {
-                //internal image
-                long size = 0;
-                Elements divES = ((Element) contentN.parent().parent()).select("div#" + id + "_menu");
-                if (divES.size() > 0) {
-                    String sizeText = HttpUtils.getMiddleString(divES.first().text(), "(", ")");
-                    size = Utils.parseSizeText(sizeText);
-                }
-
-                ContentImg contentImg = getContentImg(e, size);
-                content.addImg(contentImg);
-            } else if (src.contains(HiUtils.SmiliesPattern) || SmallImages.contains(src)) {
-                //emotion added as img tag, will be parsed in TextViewWithEmoticon later
-                content.addText("<img src=\"" + src + "\"/>");
-            } else if (src.contains(HiUtils.ForumImagePattern)) {
-                //skip common/default/attach icons
-            } else if (src.contains("://")) {
-                //external image
-                content.addImg(src);
-            } else {
-                content.addNotice("[[ERROR:UNPARSED IMG:" + src + "]]");
-            }
+            parseImageElement((Element) contentN, content);
             return false;
         } else if (contentN.nodeName().equals("span")) {    // a section in a document
             Elements attachAES = ((Element) contentN).select("a");
@@ -462,6 +437,13 @@ public class HiParserThreadDetail {
             }
 
             content.addLink(text, url);
+            //rare case, link tag contains images
+            Elements imgEs = aE.select("img");
+            if (imgEs.size() > 0) {
+                for (int i = 0; i < imgEs.size(); i++) {
+                    parseImageElement(imgEs.get(i), content);
+                }
+            }
             return false;
         } else if (contentN.nodeName().equals("div")) {    // a section in a document
             Element divE = (Element) contentN;
@@ -538,6 +520,34 @@ public class HiParserThreadDetail {
                 Logger.e("[[ERROR:UNPARSED TAG:" + contentN.nodeName() + "]]");
             }
             return false;
+        }
+    }
+
+    private static void parseImageElement(Element e, Contents content) {
+        String src = getAbsoluteUrl(e.attr("src"));
+        String id = e.attr("id");
+
+        if (id.startsWith("aimg") || src.contains("images/common/none.gif")) {
+            //internal image
+            long size = 0;
+            Elements divES = (e.parent().parent()).select("div#" + id + "_menu");
+            if (divES.size() > 0) {
+                String sizeText = HttpUtils.getMiddleString(divES.first().text(), "(", ")");
+                size = Utils.parseSizeText(sizeText);
+            }
+
+            ContentImg contentImg = getContentImg(e, size);
+            content.addImg(contentImg);
+        } else if (src.contains(HiUtils.SmiliesPattern) || SmallImages.contains(src)) {
+            //emotion added as img tag, will be parsed in TextViewWithEmoticon later
+            content.addText("<img src=\"" + src + "\"/>");
+        } else if (src.contains(HiUtils.ForumImagePattern)) {
+            //skip common/default/attach icons
+        } else if (src.contains("://")) {
+            //external image
+            content.addImg(src);
+        } else {
+            content.addNotice("[[ERROR:UNPARSED IMG:" + src + "]]");
         }
     }
 
