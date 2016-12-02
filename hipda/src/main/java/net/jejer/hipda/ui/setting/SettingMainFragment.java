@@ -136,7 +136,6 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || !HiSettingsHelper.getInstance().getForumServer().equals(mForumServer)
                 || !mIcon.equals(newIcon)) {
             mCacheCleared = false;
-            HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, 0);
             Utils.restartActivity(getActivity());
         }
 

@@ -3,6 +3,7 @@
 
     <PreferenceCategory android:title="@string/pref_category_debug">
 
+        <!--
         <ListPreference
             android:defaultValue="http://www.hi-pda.com"
             android:entries="@array/pref_forum_server"
@@ -10,6 +11,11 @@
             android:key="PERF_FORUM_SERVER"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
+            android:title="@string/pref_title_forum_server"/>
+            -->
+
+        <Preference
+            android:key="PERF_FORUM_SERVER"
             android:title="@string/pref_title_forum_server"/>
 
         <net.jejer.hipda.ui.CustomSwitchPreference

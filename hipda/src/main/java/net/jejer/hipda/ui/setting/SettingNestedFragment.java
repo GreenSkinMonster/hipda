@@ -104,10 +104,15 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_AVATAR_LOAD_TYPE));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SAVE_FOLDER));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB));
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_IMAGE_HOST));
+                break;
 
-                final Preference imageHostPreference = findPreference(HiSettingsHelper.PERF_IMAGE_HOST);
-                imageHostPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            case SCREEN_OTHER:
+                setActionBarTitle(R.string.pref_category_other);
+                addPreferencesFromResource(R.xml.pref_other);
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FORUM_SERVER));
+
+                final Preference forumServerPreference = findPreference(HiSettingsHelper.PERF_FORUM_SERVER);
+                forumServerPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
                         TaskHelper.updateImageHost(getActivity(), preference);
@@ -115,12 +120,6 @@ public class SettingNestedFragment extends BaseSettingFragment {
                     }
                 });
 
-                break;
-
-            case SCREEN_OTHER:
-                setActionBarTitle(R.string.pref_category_other);
-                addPreferencesFromResource(R.xml.pref_other);
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FORUM_SERVER));
                 Preference clearPreference = findPreference(HiSettingsHelper.PERF_CLEAR_CACHE);
                 clearPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {

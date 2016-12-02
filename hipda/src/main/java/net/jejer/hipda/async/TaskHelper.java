@@ -24,6 +24,8 @@ import java.util.Map;
  */
 public class TaskHelper {
 
+    private static final String SETTING_URL = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda.json";
+
     public static void runDailyTask(boolean force) {
         String millis = HiSettingsHelper.getInstance()
                 .getStringValue(HiSettingsHelper.PERF_LAST_TASK_TIME, "0");
@@ -60,19 +62,15 @@ public class TaskHelper {
         if (activity != null
                 || TextUtils.isEmpty(imageHostPerf)
                 || !imageHostPerf.contains("://")
-                || System.currentTimeMillis() - imageHostUpdateTime > 30 * 60 * 1000) {
+                || System.currentTimeMillis() - imageHostUpdateTime > 5 * 60 * 1000) {
             new AsyncTask<Void, Void, Exception>() {
 
-                private String imageHost;
                 private HiProgressDialog dialog;
 
                 @Override
                 protected Exception doInBackground(Void... voids) {
                     try {
-                        imageHost = getImageHost();
-                        HiSettingsHelper.getInstance().setImageHost(imageHost);
-                        HiUtils.updateBaseUrls();
-                        HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, System.currentTimeMillis());
+                        updateCustSetting();
                     } catch (Exception e) {
                         return e;
                     }
@@ -88,9 +86,11 @@ public class TaskHelper {
                     } else {
                         if (dialog != null)
                             dialog.dismiss("服务器已更新 \n\n"
-                                    + imageHost, 3000);
+                                            + "论坛 : " + HiSettingsHelper.getInstance().getForumServer() + "\n"
+                                            + "图片 : " + HiSettingsHelper.getInstance().getImageHost(),
+                                    2000);
                         if (preference != null)
-                            preference.setSummary(imageHost);
+                            preference.setSummary(HiSettingsHelper.getInstance().getForumServer());
                     }
                 }
 
@@ -112,6 +112,27 @@ public class TaskHelper {
         }.getType();
         Map<String, String> map = gson.fromJson(response, stringStringMap);
         return map.get("CDN");
+    }
+
+    private static void updateCustSetting() throws Exception {
+        String response = OkHttpHelper.getInstance().get(SETTING_URL);
+        Gson gson = new Gson();
+        Type stringStringMap = new TypeToken<Map<String, String>>() {
+        }.getType();
+        Map<String, String> map = gson.fromJson(response, stringStringMap);
+        String protocol = map.get("protocol");
+        String imageHost = map.get("image_host");
+
+        if (!TextUtils.isEmpty(protocol) && !TextUtils.isEmpty(imageHost)) {
+            if ("https".equals(protocol)) {
+                HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServerSsl);
+            } else {
+                HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServer);
+            }
+            HiSettingsHelper.getInstance().setImageHost(imageHost);
+            HiUtils.updateBaseUrls();
+        }
+        HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, System.currentTimeMillis());
     }
 
 }

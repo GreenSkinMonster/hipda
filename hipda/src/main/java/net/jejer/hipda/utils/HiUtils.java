@@ -17,6 +17,7 @@ public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";
 
     public static final String ForumServer = "http://www.hi-pda.com";
+    public static final String ForumServerSsl = "https://www.hi-pda.com";
     public static final String ImageHost = "http://img.hi-pda.com";
     public static final String AvatarPath = "uc_server/data/avatar/";
     public static final String CookieDomain = "hi-pda.com";
