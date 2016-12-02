@@ -25,6 +25,7 @@ public class HiUtils {
     public static final String NewPMImage = "images/default/notice_newpm.gif";
     public static final String SmiliesPattern = CookieDomain + "/forum/images/smilies/";
     public static final String ForumImagePattern = CookieDomain + "/forum/images/";
+    public static final String ForumUrlPattern = "." + CookieDomain + "/forum/";
 
     public static String BaseUrl;
     public static String SettingUrl;

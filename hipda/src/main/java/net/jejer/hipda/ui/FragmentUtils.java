@@ -61,7 +61,7 @@ public class FragmentUtils {
     }
 
     public static FragmentArgs parseUrl(String url) {
-        if (url.startsWith(HiUtils.BaseUrl + "forumdisplay.php")) {
+        if (url.contains(HiUtils.ForumUrlPattern + "forumdisplay.php")) {
             if (url.contains("fid")) {
                 String fid = HttpUtils.getMiddleString(url, "fid=", "&");
                 if (HiUtils.isValidId(fid) && HiUtils.isForumValid(Integer.parseInt(fid))) {
@@ -71,7 +71,7 @@ public class FragmentUtils {
                     return args;
                 }
             }
-        } else if (url.startsWith(HiUtils.BaseUrl + "viewthread.php")) {
+        } else if (url.contains(HiUtils.ForumUrlPattern + "viewthread.php")) {
             if (url.contains("tid")) {
                 String tid = HttpUtils.getMiddleString(url, "tid=", "&");
                 if (HiUtils.isValidId(tid)) {
@@ -86,7 +86,7 @@ public class FragmentUtils {
                     return args;
                 }
             }
-        } else if (url.startsWith(HiUtils.BaseUrl + "redirect.php")) {
+        } else if (url.contains(HiUtils.ForumUrlPattern + "redirect.php")) {
             String gotoStr = HttpUtils.getMiddleString(url, "goto=", "&");
             if (!TextUtils.isEmpty(gotoStr)) {
                 if ("lastpost".equals(gotoStr)) {
@@ -118,7 +118,7 @@ public class FragmentUtils {
                     }
                 }
             }
-        } else if (url.startsWith(HiUtils.BaseUrl + "gotopost.php")) {
+        } else if (url.contains(HiUtils.ForumUrlPattern + "gotopost.php")) {
             //goto post by post id
             String postId = HttpUtils.getMiddleString(url, "pid=", "&");
 
@@ -130,7 +130,7 @@ public class FragmentUtils {
 
                 return args;
             }
-        } else if (url.startsWith(HiUtils.BaseUrl + "space.php")) {
+        } else if (url.contains(HiUtils.ForumUrlPattern + "space.php")) {
             //goto post by post id
             String uid = HttpUtils.getMiddleString(url, "uid=", "&");
 

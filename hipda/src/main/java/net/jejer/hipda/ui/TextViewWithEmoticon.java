@@ -110,7 +110,7 @@ public class TextViewWithEmoticon extends TextView {
         }
         for (URLSpan s : b.getSpans(0, b.length(), URLSpan.class)) {
             String s_url = s.getURL();
-            if (s_url.startsWith(HiUtils.BaseUrl + "attachment.php")) {
+            if (s_url.contains(HiUtils.ForumUrlPattern + "attachment.php")) {
                 URLSpan newSpan = getDownloadUrlSpan(s_url);
                 b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                 b.removeSpan(s);

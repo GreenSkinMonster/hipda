@@ -42,7 +42,7 @@ public class HttpUtils {
         String authCookie = OkHttpHelper.getInstance().getAuthCookie();
 
         if (TextUtils.isEmpty(url) || TextUtils.isEmpty(filename)
-                || (url.startsWith(HiUtils.BaseUrl) && TextUtils.isEmpty(authCookie))) {
+                || (url.contains(HiUtils.ForumUrlPattern) && TextUtils.isEmpty(authCookie))) {
             Toast.makeText(ctx, "下载信息不完整，无法进行下载", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -55,7 +55,7 @@ public class HttpUtils {
             DownloadManager dm = (DownloadManager) ctx.getSystemService(Context.DOWNLOAD_SERVICE);
             DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
             req.addRequestHeader("User-agent", HiUtils.getUserAgent());
-            if (url.startsWith(HiUtils.BaseUrl)) {
+            if (url.contains(HiUtils.ForumUrlPattern)) {
                 req.addRequestHeader("Cookie", "cdb_auth=" + authCookie);
             }
             req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
