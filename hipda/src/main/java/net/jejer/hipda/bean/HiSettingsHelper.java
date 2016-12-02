@@ -349,7 +349,7 @@ public class HiSettingsHelper {
     }
 
     public boolean isShowPostTypeFromPref() {
-        mShowPostType = mSharedPref.getBoolean(PERF_SHOW_POST_TYPE, false);
+        mShowPostType = mSharedPref.getBoolean(PERF_SHOW_POST_TYPE, true);
         return mShowPostType;
     }
 

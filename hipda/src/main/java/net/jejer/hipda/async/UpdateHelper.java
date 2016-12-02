@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.ContextCompat;
@@ -239,6 +240,11 @@ public class UpdateHelper {
 
             if (newer(installedVersion, "4.0.00")) {
                 HiSettingsHelper.getInstance().setBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, true);
+            }
+            if (newer(installedVersion, "4.0.02")) {
+                HiSettingsHelper.getInstance().setBooleanValue(HiSettingsHelper.PERF_CLICK_EFFECT,
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+                HiSettingsHelper.getInstance().setShowPostType(true);
             }
 
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
