@@ -919,8 +919,10 @@ public class ThreadDetailFragment extends BaseFragment {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            if (newState == RecyclerView.SCROLL_STATE_IDLE && mRecyclerView.isNearBottom()) {
-                if (mMainFab.isEnabled() && mMainFab.getVisibility() != View.VISIBLE)
+            if (newState == RecyclerView.SCROLL_STATE_IDLE
+                    && HiSettingsHelper.getInstance().isFabAutoHide()
+                    && mRecyclerView.isNearBottom()) {
+                if (mMainFab != null && mMainFab.isEnabled() && mMainFab.getVisibility() != View.VISIBLE)
                     mMainFab.show();
             }
         }

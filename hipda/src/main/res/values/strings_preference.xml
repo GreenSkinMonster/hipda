@@ -299,7 +299,8 @@
     <string name="pref_title_encode_utf8">使用UTF8编码</string>
     <string name="pref_title_long_click_save_image">长按保存图片</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
-    <string name="pref_title_app_bar_collapsible">动态隐藏标题栏</string>
+    <string name="pref_title_app_bar_collapsible">标题栏动态隐藏</string>
+    <string name="pref_title_fab_auto_hide">浮动按钮动态隐藏</string>
     <string name="pref_title_fab_left_side">浮动按钮放在左侧</string>
     <string name="pref_title_click_effect">列表点击效果</string>
     <string name="pref_title_circle_avatar">圆形头像</string>

@@ -57,6 +57,7 @@ public class HiSettingsHelper {
     public static final String PERF_GESTURE_BACK = "PERF_GESTURE_BACK";
     public static final String PERF_APP_BAR_COLLAPSIBLE = "PERF_APP_BAR_COLLAPSIBLE";
     public static final String PERF_FAB_LEFT_SIDE = "PERF_FAB_LEFT_SIDE";
+    public static final String PERF_FAB_AUTO_HIDE = "PERF_FAB_AUTO_HIDE";
     public static final String PERF_CLICK_EFFECT = "PERF_CLICK_EFFECT";
     public static final String PERF_LAST_UPDATE_CHECK = "PERF_LAST_UPDATE_CHECK";
     public static final String PERF_AUTO_UPDATE_CHECK = "PERF_AUTO_UPDATE_CHECK";
@@ -1032,6 +1033,10 @@ public class HiSettingsHelper {
 
     public boolean isFabLeftSide() {
         return getBooleanValue(HiSettingsHelper.PERF_FAB_LEFT_SIDE, false);
+    }
+
+    public boolean isFabAutoHide() {
+        return getBooleanValue(HiSettingsHelper.PERF_FAB_AUTO_HIDE, true);
     }
 
 }

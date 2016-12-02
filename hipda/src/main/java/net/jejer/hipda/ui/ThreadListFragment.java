@@ -337,7 +337,8 @@ public class ThreadListFragment extends BaseFragment
         mRecyclerView.scrollToTop();
         hideFooter();
         mInloading = true;
-        mMainFab.hide();
+        if (HiSettingsHelper.getInstance().isFabAutoHide())
+            mMainFab.hide();
         ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
         JobMgr.addJob(job);
     }

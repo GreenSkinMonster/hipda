@@ -62,6 +62,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
+import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
@@ -387,11 +388,22 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     public void updateFabGravity() {
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mMainFab.getLayoutParams();
+        CoordinatorLayout.LayoutParams mainFabParams = (CoordinatorLayout.LayoutParams) mMainFab.getLayoutParams();
+        CoordinatorLayout.LayoutParams notiFabParams = (CoordinatorLayout.LayoutParams) mNotiificationFab.getLayoutParams();
         if (HiSettingsHelper.getInstance().isFabLeftSide()) {
-            params.anchorGravity = Gravity.BOTTOM | Gravity.LEFT | Gravity.END;
+            mainFabParams.anchorGravity = Gravity.BOTTOM | Gravity.LEFT | Gravity.END;
         } else {
-            params.anchorGravity = Gravity.BOTTOM | Gravity.RIGHT | Gravity.END;
+            mainFabParams.anchorGravity = Gravity.BOTTOM | Gravity.RIGHT | Gravity.END;
+        }
+        if (HiSettingsHelper.getInstance().isFabAutoHide()) {
+            mainFabParams.setBehavior(new FABHideOnScrollBehavior());
+            notiFabParams.setBehavior(new FABHideOnScrollBehavior());
+        } else {
+            mainFabParams.setBehavior(null);
+            notiFabParams.setBehavior(null);
+            mMainFab.setEnabled(true);
+            mNotiificationFab.setEnabled(true);
+            mMainFab.show();
         }
     }
 
