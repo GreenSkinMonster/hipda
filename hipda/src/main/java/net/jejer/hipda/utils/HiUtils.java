@@ -9,38 +9,42 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 
 public class HiUtils {
     public static final String UserAgent = "net.jejer.hipda " + HiSettingsHelper.getInstance().getAppVersion();
-    public static final String BaseUrl = "https://dev.hi-pda.com/forum/";
-    public static final String ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
-    public static final String DetailListUrl = BaseUrl + "viewthread.php?tid=";
-    public static final String ReplyUrl = BaseUrl + "post.php?action=reply&tid=";
-    public static final String EditUrl = BaseUrl + "post.php?action=edit";
-    public static final String NewThreadUrl = BaseUrl + "post.php?action=newthread&fid=";
-    public static final String MyReplyUrl = BaseUrl + "my.php?item=posts";
-    public static final String MyPostUrl = BaseUrl + "my.php?item=threads";
-    public static final String LastPageUrl = BaseUrl + "/redirect.php?goto=lastpost&from=fastpost&tid=";
-    public static final String RedirectToPostUrl = BaseUrl + "/redirect.php?goto=findpost&pid={pid}&ptid={tid}";
-    public static final String GotoPostUrl = BaseUrl + "/gotopost.php?pid={pid}";
-    public static final String SMSUrl = BaseUrl + "pm.php?filter=privatepm";
-    public static final String SMSDetailUrl = BaseUrl + "pm.php?daterange=5&uid=";
-    public static final String SMSPreparePostUrl = BaseUrl + "pm.php?daterange=1&uid=";
-    public static final String SMSPostUrl = BaseUrl + "pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1&uid=";
-    public static final String ThreadNotifyUrl = BaseUrl + "notice.php?filter=threads";
-    public static final String CheckSMS = BaseUrl + "pm.php?checknewpm";
-    public static final String UploadImgUrl = BaseUrl + "misc.php?action=swfupload&operation=upload&simple=1&type=image";
-    public static final String SearchTitle = BaseUrl + "search.php?srchtype=title&searchsubmit=true&st=on&srchuname=&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D=all&srchtxt=";
-    public static final String SearchFullText = BaseUrl + "search.php?srchtype=fulltext&searchsubmit=true&st=on&srchuname=&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D=all&srchtxt=";
-    public static final String SearchUserThreads = BaseUrl + "search.php?srchfid=all&srchfrom=0&searchsubmit=yes&srchuid=";
-    public static final String FavoritesUrl = BaseUrl + "my.php?item=favorites&type=thread";
-    public static final String FavoriteAddUrl = BaseUrl + "my.php?item=favorites&inajax=1&ajaxtarget=favorite_msg&tid=";
-    public static final String FavoriteRemoveUrl = BaseUrl + "my.php?item=favorites&action=remove&inajax=1&ajaxtarget=favorite_msg&tid=";
-    public static final String UserInfoUrl = BaseUrl + "space.php?uid=";
+    public static final String ForumServer = "http://www.hi-pda.com";
+    public static final String ForumServerSsl = "https://www.hi-pda.com";
+    public static final String ImageHost = "http://img.hi-pda.com";
 
-    public static final String LoginStep3 = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
-    public static final String LoginStep2 = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
+    public static String BaseUrl;
+    public static String ThreadListUrl;
+    public static String DetailListUrl;
+    public static String ReplyUrl;
+    public static String EditUrl;
+    public static String NewThreadUrl;
+    public static String MyReplyUrl;
+    public static String MyPostUrl;
+    public static String LastPageUrl;
+    public static String RedirectToPostUrl;
+    public static String GotoPostUrl;
+    public static String SMSUrl;
+    public static String SMSDetailUrl;
+    public static String SMSPreparePostUrl;
+    public static String SMSPostUrl;
+    public static String ThreadNotifyUrl;
+    public static String CheckSMS;
+    public static String UploadImgUrl;
+    public static String SearchTitle;
+    public static String SearchFullText;
+    public static String SearchUserThreads;
+    public static String FavoritesUrl;
+    public static String FavoriteAddUrl;
+    public static String FavoriteRemoveUrl;
+    public static String UserInfoUrl;
 
-    public static String ImageBaseUrl = "http://img.hi-pda.com/forum/";
-    public static String AvatarBaseUrl = ImageBaseUrl + "uc_server/data/avatar/";
-    public static String SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
+    public static String LoginStep3;
+    public static String LoginStep2;
+
+    public static String ImageBaseUrl;
+    public static String AvatarBaseUrl;
+    public static String SmiliesBaseUrl;
     public static boolean ImageHostUpdated = false;
 
     public static final String CookieDomain = "hi-pda.com";
@@ -108,5 +112,42 @@ public class HiUtils {
         SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
     }
 
+    public static void updateBaseUrls() {
+        String imageHost = HiSettingsHelper.getInstance().getImageHost();
+        String forumServer = HiSettingsHelper.getInstance().getForumServer();
+
+        BaseUrl = forumServer + "/forum/";
+        ImageBaseUrl = imageHost + "/forum/";
+        AvatarBaseUrl = ImageBaseUrl + "uc_server/data/avatar/";
+        SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
+
+        ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
+        DetailListUrl = BaseUrl + "viewthread.php?tid=";
+        ReplyUrl = BaseUrl + "post.php?action=reply&tid=";
+        EditUrl = BaseUrl + "post.php?action=edit";
+        NewThreadUrl = BaseUrl + "post.php?action=newthread&fid=";
+        MyReplyUrl = BaseUrl + "my.php?item=posts";
+        MyPostUrl = BaseUrl + "my.php?item=threads";
+        LastPageUrl = BaseUrl + "/redirect.php?goto=lastpost&from=fastpost&tid=";
+        RedirectToPostUrl = BaseUrl + "/redirect.php?goto=findpost&pid={pid}&ptid={tid}";
+        GotoPostUrl = BaseUrl + "/gotopost.php?pid={pid}";
+        SMSUrl = BaseUrl + "pm.php?filter=privatepm";
+        SMSDetailUrl = BaseUrl + "pm.php?daterange=5&uid=";
+        SMSPreparePostUrl = BaseUrl + "pm.php?daterange=1&uid=";
+        SMSPostUrl = BaseUrl + "pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1&uid=";
+        ThreadNotifyUrl = BaseUrl + "notice.php?filter=threads";
+        CheckSMS = BaseUrl + "pm.php?checknewpm";
+        UploadImgUrl = BaseUrl + "misc.php?action=swfupload&operation=upload&simple=1&type=image";
+        SearchTitle = BaseUrl + "search.php?srchtype=title&searchsubmit=true&st=on&srchuname=&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D=all&srchtxt=";
+        SearchFullText = BaseUrl + "search.php?srchtype=fulltext&searchsubmit=true&st=on&srchuname=&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D=all&srchtxt=";
+        SearchUserThreads = BaseUrl + "search.php?srchfid=all&srchfrom=0&searchsubmit=yes&srchuid=";
+        FavoritesUrl = BaseUrl + "my.php?item=favorites&type=thread";
+        FavoriteAddUrl = BaseUrl + "my.php?item=favorites&inajax=1&ajaxtarget=favorite_msg&tid=";
+        FavoriteRemoveUrl = BaseUrl + "my.php?item=favorites&action=remove&inajax=1&ajaxtarget=favorite_msg&tid=";
+        UserInfoUrl = BaseUrl + "space.php?uid=";
+
+        LoginStep3 = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
+        LoginStep2 = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
+    }
 
 }

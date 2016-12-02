@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.utils.HiUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +55,9 @@ public class HiSettingsHelper {
     public static final String PERF_MAX_POSTS_IN_PAGE = "PERF_MAX_POSTS_IN_PAGE";
     public static final String PERF_POST_LINE_SPACING = "PERF_POST_LINE_SPACING";
     public static final String PERF_LAST_FORUM_ID = "PERF_LAST_FORUM_ID";
+    public static final String PERF_FORUM_SERVER = "PERF_FORUM_SERVER";
+    public static final String PERF_IMAGE_HOST = "PERF_IMAGE_HOST";
+    public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -91,6 +95,8 @@ public class HiSettingsHelper {
     private int mMaxPostsInPage;
     private int mLastForumId = 0;
     private boolean mErrorReportMode;
+    private String mForumServer;
+    private String mImageHost;
 
     private String mHiPdaColorValue;
 
@@ -151,6 +157,8 @@ public class HiSettingsHelper {
         getPostLineSpacingFromPref();
         getLastForumIdFromPerf();
         isShowPostTypeFromPref();
+        getForumServerFromPref();
+        getImageHostFromPref();
     }
 
     public boolean isLoginInfoValid() {
@@ -653,6 +661,36 @@ public class HiSettingsHelper {
 
     public boolean isEinkModeVolumeKeyEnabled() {
         return getEinkMode().contains("3");
+    }
+
+    public String getForumServer() {
+        return mForumServer;
+    }
+
+    public String getForumServerFromPref() {
+        mForumServer = mSharedPref.getString(PERF_FORUM_SERVER, HiUtils.ForumServer);
+        return mForumServer;
+    }
+
+    public void setForumServer(String forumServer) {
+        mForumServer = forumServer;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_FORUM_SERVER, mForumServer).apply();
+    }
+
+    public String getImageHost() {
+        return mImageHost;
+    }
+
+    public String getImageHostFromPref() {
+        mImageHost = mSharedPref.getString(PERF_IMAGE_HOST, HiUtils.ImageHost);
+        return mImageHost;
+    }
+
+    public void setImageHost(String imageHost) {
+        mImageHost = imageHost;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_IMAGE_HOST, mImageHost).apply();
     }
 
     @SuppressWarnings("ResourceType")

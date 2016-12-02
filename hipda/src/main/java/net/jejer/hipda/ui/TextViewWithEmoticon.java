@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
@@ -64,11 +65,12 @@ public class TextViewWithEmoticon extends TextView {
     private Html.ImageGetter imageGetter = new Html.ImageGetter() {
         public Drawable getDrawable(String src) {
             Drawable icon = null;
-            if (!TextUtils.isEmpty(src) && src.startsWith(HiUtils.SmiliesBaseUrl) && src.contains(".")) {
-                src = src.substring((HiUtils.SmiliesBaseUrl).length(), src.lastIndexOf(".")).replace("/", "_");
+            int idx = src.indexOf(HiUtils.SmiliesPattern);
+            if (idx != -1 && src.indexOf(".", idx) != -1) {
+                src = src.substring(src.indexOf(HiUtils.SmiliesPattern) + HiUtils.SmiliesPattern.length(), src.lastIndexOf(".")).replace("/", "_");
                 int id = mCtx.getResources().getIdentifier(src, "drawable", mCtx.getPackageName());
                 if (id != 0) {
-                    icon = mCtx.getResources().getDrawable(id);
+                    icon = ContextCompat.getDrawable(mCtx, id);
                     if (icon != null)
                         icon.setBounds(0, 0, getLineHeight(), getLineHeight());
                 }

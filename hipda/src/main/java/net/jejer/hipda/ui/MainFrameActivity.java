@@ -26,11 +26,13 @@ import android.widget.Toast;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.SimpleListLoader;
+import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.ACRAUtils;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
 import java.util.Set;
@@ -65,6 +67,7 @@ public class MainFrameActivity extends Activity {
         // Init Volley
         VolleyHelper.getInstance().init(this);
         NotifyHelper.getInstance().init(this);
+        HiUtils.updateBaseUrls();
 
         super.onCreate(savedInstanceState);
 
@@ -141,6 +144,7 @@ public class MainFrameActivity extends Activity {
             if (HiSettingsHelper.getInstance().isUpdateCheckable()) {
                 new UpdateHelper(this, true).check();
             }
+            TaskHelper.updateImageHost();
         }
 
     }
