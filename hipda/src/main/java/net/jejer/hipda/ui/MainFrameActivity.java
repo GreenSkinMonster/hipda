@@ -31,7 +31,6 @@ import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.async.VolleyHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.utils.ACRAUtils;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
@@ -51,8 +50,6 @@ public class MainFrameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.v("onCreate");
-
-        ACRAUtils.init(this);
 
         // Init Settings
         HiSettingsHelper.getInstance().init(this);
