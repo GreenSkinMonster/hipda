@@ -5,7 +5,9 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
+import com.crashlytics.android.Crashlytics;
 
+import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
@@ -20,6 +22,8 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLHandshakeException;
 
 import okhttp3.Cache;
 import okhttp3.CacheControl;
@@ -271,6 +275,8 @@ public class OkHttpHelper {
         }
         if (longVersion)
             msg = "加载失败 : " + msg;
+        if (!BuildConfig.DEBUG && e instanceof SSLHandshakeException)
+            Crashlytics.logException(e);
         return new NetworkError(msg, e.getClass().getName() + "\n" + e.getMessage());
     }
 
