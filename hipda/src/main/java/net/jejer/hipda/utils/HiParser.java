@@ -92,7 +92,7 @@ public class HiParser {
                     continue;
                 }
                 String tid = linkES.first().attr("href");
-                if (!tid.startsWith("redirect.php?goto=")) {
+                if (!tid.contains("redirect.php?goto=")) {
                     continue;
                 }
                 item.setTid(HttpUtils.getMiddleString(tid, "ptid=", "&"));
@@ -173,7 +173,7 @@ public class HiParser {
                 continue;
             }
             String tid = linkES.first().attr("href");
-            if (!tid.startsWith("viewthread.php?tid=")) {
+            if (!tid.contains("viewthread.php?tid=")) {
                 continue;
             }
             tid = HttpUtils.getMiddleString(tid, "viewthread.php?tid=", "&");
@@ -315,7 +315,7 @@ public class HiParser {
             if (href.contains("space.php")) {
                 // get replied usernames
                 info += a.text() + " ";
-            } else if (href.startsWith(HiUtils.BaseUrl + "redirect.php?from=notice&goto=findpost")) {
+            } else if (href.contains("redirect.php?")) {
                 // Thread Name and TID and PID
                 item.setTitle(a.text());
                 item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", "&"));
@@ -344,18 +344,17 @@ public class HiParser {
     public static SimpleListItemBean parseNotifyQuoteAndReply(Element root) {
         SimpleListItemBean item = new SimpleListItemBean();
 
-
         Elements aES = root.select("a");
         for (Element a : aES) {
             String href = a.attr("href");
-            if (href.startsWith(HiUtils.BaseUrl + "space.php")) {
+            if (href.contains("space.php")) {
                 String uid = HttpUtils.getMiddleString(a.attr("href"), "uid=", "&");
                 item.setAuthor(a.text());
                 item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
-            } else if (href.startsWith(HiUtils.BaseUrl + "viewthread.php")) {
+            } else if (href.contains("viewthread.php")) {
                 item.setTitle(a.text());
                 item.setTid(HttpUtils.getMiddleString(a.attr("href"), "tid=", "&"));
-            } else if (href.startsWith(HiUtils.BaseUrl + "redirect.php?from=notice&goto=findpost")) {
+            } else if (href.contains("redirect.php")) {
                 item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", "&"));
                 item.setPid(HttpUtils.getMiddleString(a.attr("href"), "pid=", "&"));
             }

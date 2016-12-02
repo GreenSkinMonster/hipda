@@ -424,7 +424,7 @@ public class HiParserThreadDetail {
             for (int attIdx = 0; attIdx < attachAES.size(); attIdx++) {
                 Element attachAE = attachAES.get(attIdx);
                 //it is an attachment and not an image attachment
-                if (attachAE.attr("href").startsWith("attachment.php?")
+                if (attachAE.attr("href").contains("attachment.php?")
                         && !attachAE.attr("href").contains("nothumb=")) {
                     String desc = "";
                     Node sibNode = contentN.nextSibling();
