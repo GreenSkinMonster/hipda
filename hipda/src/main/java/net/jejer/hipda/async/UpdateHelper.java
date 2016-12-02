@@ -46,16 +46,9 @@ public class UpdateHelper {
         mCtx = ctx;
         mSilent = isSilent;
 
-//        Random random = new Random();
-//        if (random.nextBoolean()) {
-//            checkSite = "gitcafe";
-//            checkUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/hipda-ng.md";
-//            downloadUrl = "https://gitcafe.com/GreenSkinMonster/hipda/raw/master/releases/hipda-ng-release-{version}.apk";
-//        } else {
         checkSite = "coding";
         checkUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda-ng.md";
         downloadUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/releases/hipda-ng-release-{version}.apk";
-//        }
     }
 
     public void check() {
@@ -242,6 +235,10 @@ public class UpdateHelper {
                     HiSettingsHelper.getInstance().setTheme(theme);
                     HiSettingsHelper.getInstance().setPrimaryColor(primaryColor);
                 }
+            }
+
+            if (newer(installedVersion, "4.0.00")) {
+                HiSettingsHelper.getInstance().setBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, true);
             }
 
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);

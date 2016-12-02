@@ -1006,6 +1006,11 @@ public class HiSettingsHelper {
         return mSharedPref.getBoolean(key, defaultValue);
     }
 
+    public void setBooleanValue(String key, boolean value) {
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(key, value).apply();
+    }
+
     public boolean isInSilentMode() {
         return mSharedPref.getBoolean(PERF_NOTI_SILENT_MODE, false)
                 && Utils.isInTimeRange(
