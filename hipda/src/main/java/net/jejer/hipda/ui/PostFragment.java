@@ -231,7 +231,7 @@ public class PostFragment extends BaseFragment {
         final TextView tvCountdown = (TextView) view.findViewById(R.id.tv_countdown);
 
         int timeToWait = PostHelper.getWaitTimeToPost();
-        if (timeToWait > 0 || mMode != PostHelper.MODE_EDIT_POST) {
+        if (timeToWait > 0 && mMode != PostHelper.MODE_EDIT_POST) {
             ibReply.setVisibility(View.INVISIBLE);
             tvCountdown.setText(timeToWait + "");
             tvCountdown.setVisibility(View.VISIBLE);
