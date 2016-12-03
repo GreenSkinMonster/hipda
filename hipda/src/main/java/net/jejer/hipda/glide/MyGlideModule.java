@@ -87,6 +87,10 @@ public class MyGlideModule implements GlideModule {
                 .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
 
+        if (HiSettingsHelper.getInstance().isTrustAllCerts()) {
+            OkHttpHelper.setupTrustAllCerts(builder);
+        }
+
         if (Logger.isDebug())
             builder.addInterceptor(new LoggingInterceptor());
 

@@ -85,6 +85,7 @@ public class HiSettingsHelper {
     public static final String PERF_FORUM_SERVER = "PERF_FORUM_SERVER";
     public static final String PERF_IMAGE_HOST = "PERF_IMAGE_HOST";
     public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
+    public static final String PERF_TRUST_ALL_CERTS = "PERF_TRUST_ALL_CERTS";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -1037,6 +1038,10 @@ public class HiSettingsHelper {
 
     public boolean isFabAutoHide() {
         return getBooleanValue(HiSettingsHelper.PERF_FAB_AUTO_HIDE, true);
+    }
+
+    public boolean isTrustAllCerts() {
+        return getBooleanValue(HiSettingsHelper.PERF_TRUST_ALL_CERTS, false);
     }
 
 }

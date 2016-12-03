@@ -45,6 +45,7 @@ public class SettingMainFragment extends BaseSettingFragment {
     private boolean mNightSwitchEnabled;
     private String mIcon;
     private String mForumServer;
+    private boolean mTrustAllCerts;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,6 @@ public class SettingMainFragment extends BaseSettingFragment {
 
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-
                     //avoid double click
                     long currentClickTime = System.currentTimeMillis();
                     long elapsedTime = currentClickTime - mLastClickTime;
@@ -92,6 +92,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         mFont = HiSettingsHelper.getInstance().getFont();
         mIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
         mForumServer = HiSettingsHelper.getInstance().getForumServer();
+        mTrustAllCerts = HiSettingsHelper.getInstance().isTrustAllCerts();
     }
 
     @Override
@@ -134,6 +135,7 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
                 || !HiSettingsHelper.getInstance().getFont().equals(mFont)
                 || !HiSettingsHelper.getInstance().getForumServer().equals(mForumServer)
+                || HiSettingsHelper.getInstance().isTrustAllCerts() != mTrustAllCerts
                 || !mIcon.equals(newIcon)) {
             mCacheCleared = false;
             Utils.restartActivity(getActivity());

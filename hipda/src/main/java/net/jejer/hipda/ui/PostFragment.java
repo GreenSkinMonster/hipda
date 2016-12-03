@@ -479,7 +479,7 @@ public class PostFragment extends BaseFragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         //avoid double click select button
         if (mImageUploading) {
             return;
@@ -495,7 +495,7 @@ public class PostFragment extends BaseFragment {
             boolean findData = false;
             Collection<Uri> uris = new ArrayList<>();
             if (Build.VERSION.SDK_INT >= 18) {
-                ClipData clipData = data.getClipData();
+                ClipData clipData = intent.getClipData();
                 if (clipData != null && clipData.getItemCount() > 0) {
                     for (int i = 0; i < clipData.getItemCount(); i++) {
                         Uri tmp = clipData.getItemAt(i).getUri();
@@ -505,9 +505,9 @@ public class PostFragment extends BaseFragment {
                     findData = true;
                 }
             }
-            if (!findData && data.getData() != null) {
-                if (!mUploadImages.containsKey(data.getData()))
-                    uris.add(data.getData());
+            if (!findData && intent.getData() != null) {
+                if (!mUploadImages.containsKey(intent.getData()))
+                    uris.add(intent.getData());
             }
 
             if (uris.size() == 0) {
