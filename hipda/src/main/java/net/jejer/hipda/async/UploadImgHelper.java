@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
@@ -40,7 +41,6 @@ public class UploadImgHelper {
 
     private final static int MAX_PIXELS = 1200 * 1200; //file with this resolution, it's size should match to MAX_IMAGE_FILE_SIZE
     public final static int MAX_IMAGE_FILE_SIZE = 400 * 1024; // max file size 400K
-    public final static int MAX_SPECIAL_FILE_SIZE = 8 * 1024 * 1024; // max upload file size : 8M
 
     private UploadImgListener mListener;
 
@@ -149,8 +149,8 @@ public class UploadImgHelper {
 
     private ByteArrayOutputStream compressImage(Uri uri, ImageFileInfo imageFileInfo) {
         if (imageFileInfo.isGif()
-                && imageFileInfo.getFileSize() > MAX_SPECIAL_FILE_SIZE) {
-            mMessage = "GIF图片大小不能超过" + Utils.toSizeText(MAX_SPECIAL_FILE_SIZE);
+                && imageFileInfo.getFileSize() > HiSettingsHelper.getInstance().getMaxUploadFileSize()) {
+            mMessage = "GIF图片大小不能超过" + Utils.toSizeText(HiSettingsHelper.getInstance().getMaxUploadFileSize());
             return null;
         }
 
@@ -259,11 +259,11 @@ public class UploadImgHelper {
             return false;
 
         //gif image
-        if (imageFileInfo.isGif() && fileSize <= MAX_SPECIAL_FILE_SIZE)
+        if (imageFileInfo.isGif() && fileSize <= HiSettingsHelper.getInstance().getMaxUploadFileSize())
             return true;
 
         //very long or wide image
-        if (w > 0 && h > 0 && fileSize <= MAX_SPECIAL_FILE_SIZE) {
+        if (w > 0 && h > 0 && fileSize <= HiSettingsHelper.getInstance().getMaxUploadFileSize()) {
             if (Math.max(w, h) * 1.0 / Math.min(w, h) >= 3)
                 return true;
         }

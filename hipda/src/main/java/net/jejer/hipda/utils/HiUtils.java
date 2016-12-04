@@ -67,7 +67,8 @@ public class HiUtils {
     public static String AvatarBaseUrl;
 
     private final static String AVATAR_BASE = "000000000";
-    public static int MAX_THREADS_IN_PAGE = 50;
+    // max upload file size : 8M
+    public final static int DEFAULT_MAX_UPLOAD_FILE_SIZE = 8 * 1024 * 1024;
 
     public final static int FID_BS = 6;
     public final static int FID_DISCOVERY = 2;

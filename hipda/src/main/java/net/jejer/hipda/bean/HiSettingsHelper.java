@@ -86,6 +86,7 @@ public class HiSettingsHelper {
     public static final String PERF_IMAGE_HOST = "PERF_IMAGE_HOST";
     public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
     public static final String PERF_TRUST_ALL_CERTS = "PERF_TRUST_ALL_CERTS";
+    public static final String PERF_MAX_UPLOAD_FILE_SIZE = "PERF_MAX_UPLOAD_FILE_SIZE";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -1042,6 +1043,14 @@ public class HiSettingsHelper {
 
     public boolean isTrustAllCerts() {
         return getBooleanValue(HiSettingsHelper.PERF_TRUST_ALL_CERTS, false);
+    }
+
+    public int getMaxUploadFileSize() {
+        return getIntValue(PERF_MAX_UPLOAD_FILE_SIZE, HiUtils.DEFAULT_MAX_UPLOAD_FILE_SIZE);
+    }
+
+    public void setMaxUploadFileSize(int fileSize) {
+        setIntValue(PERF_MAX_UPLOAD_FILE_SIZE, fileSize);
     }
 
 }

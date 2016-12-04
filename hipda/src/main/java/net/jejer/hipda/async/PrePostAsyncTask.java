@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.okhttp.NetworkError;
@@ -128,6 +129,30 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
         Elements deleteCheckBox = doc.select("input#delete");
         if (deleteCheckBox.size() > 0) {
             result.setDeleteable(true);
+        }
+
+        Elements uploadInfoES = doc.select("div.uploadinfo");
+        if (uploadInfoES.size() > 0) {
+            String uploadInfo = uploadInfoES.first().text();
+            if (uploadInfo.contains("文件尺寸")) {
+                String sizeText = Utils.getMiddleString(uploadInfo.toUpperCase(), "小于", "B").trim();
+                //sizeText : 100KB 8MB
+                try {
+                    float size = Float.parseFloat(sizeText.substring(0, sizeText.length() - 1));
+                    String unit = sizeText.substring(sizeText.length() - 1, sizeText.length());
+                    if (size > 0) {
+                        int maxFileSize = 0;
+                        if ("K".equals(unit)) {
+                            maxFileSize = (int) (size * 1024);
+                        } else if ("M".equals(unit)) {
+                            maxFileSize = (int) (size * 1024 * 1024);
+                        }
+                        if (maxFileSize > 1024 * 1024)
+                            HiSettingsHelper.getInstance().setMaxUploadFileSize(maxFileSize);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
         }
 
         //for replay or quote notify
