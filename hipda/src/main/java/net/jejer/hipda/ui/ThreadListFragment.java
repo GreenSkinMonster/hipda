@@ -270,6 +270,8 @@ public class ThreadListFragment extends BaseFragment
                 }
             });
         }
+        if (mThreadBeans.size() > 0)
+            mMainFab.show();
 
         if (mNotificationFab != null) {
             mNotificationFab.setOnClickListener(new View.OnClickListener() {
