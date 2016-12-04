@@ -7,11 +7,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.CursorUtils;
 import net.jejer.hipda.utils.HiUtils;
@@ -19,41 +17,30 @@ import net.jejer.hipda.utils.ImageFileInfo;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class UploadImgHelper {
 
-    public final static int STAGE_UPLOADING = -1;
     public final static int MAX_QUALITY = 90;
     private static final int THUMB_SIZE = 192;
 
     private final static int MAX_PIXELS = 1200 * 1200; //file with this resolution, it's size should match to MAX_IMAGE_FILE_SIZE
     public final static int MAX_IMAGE_FILE_SIZE = 400 * 1024; // max file size 400K
     public final static int MAX_SPECIAL_FILE_SIZE = 8 * 1024 * 1024; // max upload file size : 8M
-
-    private static final int UPLOAD_CONNECT_TIMEOUT = 15 * 1000;
-    private static final int UPLOAD_READ_TIMEOUT = 5 * 60 * 1000;
 
     private UploadImgListener mListener;
 
@@ -68,33 +55,6 @@ public class UploadImgHelper {
     private int mTotal;
     private int mCurrent;
     private String mCurrentFileName = "";
-
-    static {
-        if (HiSettingsHelper.getInstance().isTrustAllCerts()) {
-            TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            return null;
-                        }
-
-                        public void checkClientTrusted(
-                                java.security.cert.X509Certificate[] certs, String authType) {
-                        }
-
-                        public void checkServerTrusted(
-                                java.security.cert.X509Certificate[] certs, String authType) {
-                        }
-                    }
-            };
-
-            try {
-                SSLContext sc = SSLContext.getInstance("SSL");
-                sc.init(null, trustAllCerts, new java.security.SecureRandom());
-                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            } catch (Exception e) {
-            }
-        }
-    }
 
     public UploadImgHelper(Context ctx, UploadImgListener v, String uid, String hash, Uri[] uris) {
         mCtx = ctx;
@@ -111,7 +71,6 @@ public class UploadImgHelper {
     }
 
     public void upload() {
-
         Map<String, String> post_param = new HashMap<>();
 
         post_param.put("uid", mUid);
@@ -122,202 +81,73 @@ public class UploadImgHelper {
         int i = 0;
         for (Uri uri : mUris) {
             mCurrent = i++;
-            String imgId = doUploadFile(HiUtils.UploadImgUrl, post_param, uri);
-            if (mListener != null)
-                mListener.itemComplete(uri, mTotal, mCurrent, mCurrentFileName, mMessage, imgId, mThumb);
+            mListener.updateProgress(mTotal, mCurrent, -1);
+            String imgId = uploadImage(HiUtils.UploadImgUrl, post_param, uri);
+            mListener.itemComplete(uri, mTotal, mCurrent, mCurrentFileName, mMessage, imgId, mThumb);
         }
-
     }
 
-    protected void updateProgress(int progress) {
-        if (mListener != null)
-            mListener.updateProgress(mTotal, mCurrent, progress);
-    }
-
-
-    private static String getBoundry() {
-        StringBuilder sb = new StringBuilder();
-        for (int t = 1; t < 12; t++) {
-            long time = System.currentTimeMillis() + t;
-            if (time % 3 == 0) {
-                sb.append((char) time % 9);
-            } else if (time % 3 == 1) {
-                sb.append((char) (65 + time % 26));
-            } else {
-                sb.append((char) (97 + time % 26));
-            }
-        }
-        return sb.toString();
-    }
-
-    private String getBoundaryMessage(String boundary, Map<String, String> params, String fileField, String fileName, String fileType) {
-        StringBuilder res = new StringBuilder("--").append(boundary).append("\r\n");
-
-        for (String key : params.keySet()) {
-            String value = params.get(key);
-            res.append("Content-Disposition: form-data; name=\"")
-                    .append(key).append("\"\r\n").append("\r\n")
-                    .append(value).append("\r\n").append("--")
-                    .append(boundary).append("\r\n");
-        }
-        res.append("Content-Disposition: form-data; name=\"").append(fileField)
-                .append("\"; filename=\"").append(fileName)
-                .append("\"\r\n").append("Content-Type: ")
-                .append(fileType).append("\r\n\r\n");
-
-        return res.toString();
-    }
-
-    private String doUploadFile(String urlStr, Map<String, String> param, Uri uri) {
-
+    private String uploadImage(String urlStr, Map<String, String> param, Uri uri) {
         mCurrentUri = uri;
         mThumb = null;
         mMessage = "";
         mCurrentFileName = "";
-
-        // update progress for start compress
-        updateProgress(STAGE_UPLOADING);
 
         ImageFileInfo imageFileInfo = CursorUtils.getImageFileInfo(mCtx, uri);
         mCurrentFileName = imageFileInfo.getFileName();
 
         ByteArrayOutputStream baos = compressImage(uri, imageFileInfo);
         if (baos == null) {
+            mMessage = "处理图片发生错误";
             return null;
         }
 
-        String fileType = imageFileInfo.getMime();
-        String imageParamName = "Filedata";
-
-        updateProgress(0);
-
-        String BOUNDARYSTR = getBoundry();
-
-        byte[] barry = null;
-        int contentLength = 0;
-        String sendStr = "";
-        try {
-            barry = ("--" + BOUNDARYSTR + "--\r\n").getBytes("UTF-8");
-            SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd_HHmm", Locale.US);
-            String fileName = "Hi_" + formatter.format(new Date()) + "." + Utils.getImageFileSuffix(imageFileInfo.getMime());
-            sendStr = getBoundaryMessage(BOUNDARYSTR, param, imageParamName, fileName, fileType);
-            contentLength = sendStr.getBytes("UTF-8").length + baos.size() + 2 * barry.length;
-        } catch (UnsupportedEncodingException ignored) {
-
+        MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        for (String key : param.keySet()) {
+            builder.addFormDataPart(key, param.get(key));
         }
-        String lenstr = Integer.toString(contentLength);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd_HHmm", Locale.US);
+        String fileName = "Hi_" + formatter.format(new Date()) + "." + Utils.getImageFileSuffix(imageFileInfo.getMime());
+        RequestBody requestBody = RequestBody.create(MediaType.parse(imageFileInfo.getMime()), baos.toByteArray());
+        builder.addFormDataPart("Filedata", fileName, requestBody);
 
-        String imgId = "";
-        HttpURLConnection urlConnection = null;
-        BufferedOutputStream out = null;
+        Request request = new Request.Builder()
+                .url(urlStr)
+                .post(builder.build())
+                .build();
+
+        String imgId = null;
         try {
-            URL url = new URL(urlStr);
+            Response response = OkHttpHelper.getInstance().getClient().newCall(request).execute();
+            if (!response.isSuccessful())
+                throw new IOException(OkHttpHelper.ERROR_CODE_PREFIX + response.networkResponse().code());
 
-            urlConnection = (HttpURLConnection) url.openConnection();
-
-            urlConnection.setRequestProperty("User-Agent", HiUtils.getUserAgent());
-            urlConnection.setRequestProperty("Cookie", "cdb_auth=" + OkHttpHelper.getInstance().getAuthCookie());
-
-            urlConnection.setConnectTimeout(UPLOAD_CONNECT_TIMEOUT);
-            urlConnection.setReadTimeout(UPLOAD_READ_TIMEOUT);
-            urlConnection.setDoInput(true);
-            urlConnection.setDoOutput(true);
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setUseCaches(false);
-            urlConnection.setRequestProperty("Connection", "Keep-Alive");
-            urlConnection.setRequestProperty("Content-type", "multipart/form-data;boundary=" + BOUNDARYSTR);
-            urlConnection.setRequestProperty("Content-Length", lenstr);
-            urlConnection.setFixedLengthStreamingMode(contentLength);
-            urlConnection.connect();
-
-            out = new BufferedOutputStream(urlConnection.getOutputStream());
-            out.write(sendStr.getBytes("UTF-8"));
-
-            int bytesLeft;
-            int transferred = 0;
-            int postSize;
-            int maxPostSize = 4096;
-
-            bytesLeft = baos.size();
-            postSize = Math.min(bytesLeft, maxPostSize);
-            final Thread thread = Thread.currentThread();
-            long mark = SystemClock.uptimeMillis();
-            int lastProgress = 0;
-
-            while (bytesLeft > 0) {
-                if (thread.isInterrupted()) {
-                    throw new InterruptedIOException();
+            String responseText = response.body().string();
+            // DISCUZUPLOAD|0|1721652|1
+            if (responseText.contains("DISCUZUPLOAD")) {
+                String[] s = responseText.split("\\|");
+                if (s.length < 3 || s[2].equals("0")) {
+                    mMessage = "无法获取图片ID";
+                } else {
+                    imgId = s[2];
                 }
-                out.write(baos.toByteArray(), transferred, postSize);
-                transferred += postSize;
-                bytesLeft -= postSize;
-                postSize = Math.min(bytesLeft, maxPostSize);
-                if (SystemClock.uptimeMillis() - mark > 250) {
-                    mark = SystemClock.uptimeMillis();
-                    out.flush();
-                }
-                int progress = (transferred * 100) / baos.size();
-                if (progress >= 95 || progress - lastProgress >= 5)
-                    updateProgress(progress);
+            } else {
+                mMessage = "无法获取图片ID";
             }
-
-            //yes, write twice
-            out.write(barry);
-            out.write(barry);
-            out.flush();
-            int status = urlConnection.getResponseCode();
-
-            if (status != HttpURLConnection.HTTP_OK) {
-                mMessage = "上传错误代码 : " + status;
-                return null;
-            }
-            InputStream in = urlConnection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String inputLine = "";
-            while ((inputLine = br.readLine()) != null) {
-                imgId += inputLine;
-            }
-
         } catch (Exception e) {
-            Logger.e("Error uploading image", e);
-            mMessage = "上传发生网络错误 : " + e.getMessage();
-            return null;
+            Logger.e(e);
+            mMessage = OkHttpHelper.getErrorMessage(e, false).getMessage();
         } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ignored) {
-
-                }
-            }
             try {
                 baos.close();
             } catch (IOException ignored) {
-
-            }
-            if (urlConnection != null)
-                urlConnection.disconnect();
-        }
-
-        // DISCUZUPLOAD|0|1721652|1
-        if (!imgId.startsWith("DISCUZUPLOAD")) {
-            mMessage = "错误的图片ID : " + imgId;
-            return null;
-        } else {
-            String[] s = imgId.split("\\|");
-            if (s.length < 3 || s[2].equals("0")) {
-                mMessage = "错误的图片ID : " + imgId;
-                return null;
-            } else {
-                imgId = s[2];
             }
         }
-
         return imgId;
     }
 
     private ByteArrayOutputStream compressImage(Uri uri, ImageFileInfo imageFileInfo) {
-
         if (imageFileInfo.isGif()
                 && imageFileInfo.getFileSize() > MAX_SPECIAL_FILE_SIZE) {
             mMessage = "GIF图片大小不能超过" + Utils.toSizeText(MAX_SPECIAL_FILE_SIZE);
@@ -328,7 +158,6 @@ public class UploadImgHelper {
         try {
             bitmap = MediaStore.Images.Media.getBitmap(mCtx.getContentResolver(), uri);
         } catch (Exception e) {
-            Logger.v("Exception", e);
             mMessage = "无法获取图片 : " + e.getMessage();
             return null;
         }
@@ -465,4 +294,5 @@ public class UploadImgHelper {
             }
         }
     }
+
 }

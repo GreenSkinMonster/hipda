@@ -34,7 +34,7 @@ public class HiParserThreadDetail {
         int page = 1;
         if (pagesES.size() != 0) {
             for (Node n : pagesES.first().childNodes()) {
-                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                int tmp = Utils.getIntFromString(((Element) n).text());
                 if (tmp > last_page) {
                     last_page = tmp;
                 }
@@ -55,7 +55,7 @@ public class HiParserThreadDetail {
         if (parseTid) {
             Elements printES = doc.select("div.posterinfo div.pagecontrol a.print");
             if (printES.size() > 0) {
-                String tid = HttpUtils.getMiddleString(printES.first().attr("href"), "tid=", "&");
+                String tid = Utils.getMiddleString(printES.first().attr("href"), "tid=", "&");
                 if (!TextUtils.isEmpty(tid) && TextUtils.isDigitsOnly(tid))
                     details.setTid(tid);
             }
@@ -70,7 +70,7 @@ public class HiParserThreadDetail {
                     Element forumLink = divNavLinkES.get(i);
                     String forumUrl = Utils.nullToText(forumLink.attr("href"));
                     if (forumUrl.indexOf("fid=") > 0) {
-                        details.setFid(HttpUtils.getMiddleString(forumUrl, "fid=", "&"));
+                        details.setFid(Utils.getMiddleString(forumUrl, "fid=", "&"));
                         break;
                     }
                 }
@@ -142,7 +142,7 @@ public class HiParserThreadDetail {
                 continue;
             }
             String uidUrl = postauthorAES.first().attr("href");
-            String uid = HttpUtils.getMiddleString(uidUrl, "uid=", "&");
+            String uid = Utils.getMiddleString(uidUrl, "uid=", "&");
             if (!TextUtils.isEmpty(uid)) {
                 detail.setUid(uid);
             } else {
@@ -262,7 +262,7 @@ public class HiParserThreadDetail {
 
                 long size = 0;
                 if (sizeES.size() > 0) {
-                    String sizeText = HttpUtils.getMiddleString(sizeES.first().text(), "(", ")");
+                    String sizeText = Utils.getMiddleString(sizeES.first().text(), "(", ")");
                     size = Utils.parseSizeText(sizeText);
                 }
 
@@ -332,11 +332,11 @@ public class HiParserThreadDetail {
             String tid = "";
             Elements floorLink = ((Element) contentN).select("a[href]");
             if (floorLink.size() > 0) {
-                postId = HttpUtils.getMiddleString(floorLink.first().attr("href"), "pid=", "&");
-                tid = HttpUtils.getMiddleString(floorLink.first().attr("href"), "ptid=", "&");
+                postId = Utils.getMiddleString(floorLink.first().attr("href"), "pid=", "&");
+                tid = Utils.getMiddleString(floorLink.first().attr("href"), "ptid=", "&");
             }
             if (tmp.startsWith("回复 ") && tmp.length() < (3 + 6 + 15) && tmp.contains("#")) {
-                int floor = HttpUtils.getIntFromString(tmp.substring(0, tmp.indexOf("#")));
+                int floor = Utils.getIntFromString(tmp.substring(0, tmp.indexOf("#")));
                 String author = tmp.substring(tmp.lastIndexOf("#") + 1).trim();
                 if (!TextUtils.isEmpty(postId) && floor > 0) {
                     content.addGoToFloor(tmp, tid, postId, floor, author);
@@ -457,8 +457,8 @@ public class HiParserThreadDetail {
                 for (Element element : redirectES) {
                     String href = Utils.nullToText(element.attr("href"));
                     if (href.contains("redirect.php?goto=findpost")) {
-                        postId = HttpUtils.getMiddleString(href, "pid=", "&");
-                        tid = HttpUtils.getMiddleString(href, "ptid=", "&");
+                        postId = Utils.getMiddleString(href, "pid=", "&");
+                        tid = Utils.getMiddleString(href, "ptid=", "&");
                         break;
                     }
                 }
@@ -499,11 +499,11 @@ public class HiParserThreadDetail {
         } else if (contentN.nodeName().equals("script") || contentN.nodeName().equals("#data")) {
             // video
             String html = contentN.toString();
-            String url = HttpUtils.getMiddleString(html, "'src', '", "'");
+            String url = Utils.getMiddleString(html, "'src', '", "'");
             if (url.startsWith("http://player.youku.com/player.php")) {
                 //http://player.youku.com/player.php/sid/XNzIyMTUxMzEy.html/v.swf
                 //http://v.youku.com/v_show/id_XNzIyMTUxMzEy.html
-                url = HttpUtils.getMiddleString(url, "sid/", "/v.swf");
+                url = Utils.getMiddleString(url, "sid/", "/v.swf");
                 url = "http://v.youku.com/v_show/id_" + url;
                 if (!url.endsWith(".html")) {
                     url = url + ".html";
@@ -532,7 +532,7 @@ public class HiParserThreadDetail {
             long size = 0;
             Elements divES = (e.parent().parent()).select("div#" + id + "_menu");
             if (divES.size() > 0) {
-                String sizeText = HttpUtils.getMiddleString(divES.first().text(), "(", ")");
+                String sizeText = Utils.getMiddleString(divES.first().text(), "(", ")");
                 size = Utils.parseSizeText(sizeText);
             }
 
@@ -558,7 +558,7 @@ public class HiParserThreadDetail {
         String onclick = e.attr("onclick");
 
         if (onclick.startsWith("zoom") && onclick.contains("attachment")) {
-            onclick = "attachment" + HttpUtils.getMiddleString(onclick, "attachment", "'");
+            onclick = "attachment" + Utils.getMiddleString(onclick, "attachment", "'");
         } else {
             onclick = "";
         }

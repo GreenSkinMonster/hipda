@@ -21,7 +21,6 @@ import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
@@ -187,7 +186,7 @@ public class TextViewWithEmoticon extends TextView {
                             fileName = fileName.substring(0, fileName.lastIndexOf(" (")).trim();
                     }
                     Toast.makeText(mCtx, "开始下载 " + fileName + " ...", Toast.LENGTH_SHORT).show();
-                    HttpUtils.download(mCtx, getURL(), fileName);
+                    Utils.download(mCtx, getURL(), fileName);
                 } catch (Exception e) {
                     Logger.e(e);
                     Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();

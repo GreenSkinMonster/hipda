@@ -10,7 +10,6 @@ import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.jsoup.Jsoup;
@@ -110,7 +109,7 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
         if (scriptES.size() < 1) {
             return result;
         } else {
-            result.setUid(HttpUtils.getMiddleString(scriptES.first().data(), "discuz_uid = ", ","));
+            result.setUid(Utils.getMiddleString(scriptES.first().data(), "discuz_uid = ", ","));
         }
 
         Elements hashES = doc.select("input[name=hash]");

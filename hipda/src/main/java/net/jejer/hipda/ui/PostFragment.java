@@ -44,7 +44,6 @@ import com.vdurmont.emoji.EmojiParser;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.async.PrePostAsyncTask;
-import net.jejer.hipda.async.UploadImgHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
@@ -515,7 +514,7 @@ public class PostFragment extends BaseFragment {
                 return;
             }
 
-            mProgressDialog = HiProgressDialog.show(getActivity(), "处理中...");
+            mProgressDialog = HiProgressDialog.show(getActivity(), "正在上传...");
             if (mPrePostInfo != null) {
                 JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), uris.toArray(new Uri[uris.size()])));
             } else {
@@ -781,18 +780,7 @@ public class PostFragment extends BaseFragment {
     }
 
     private void imageProcess(int total, int current, int percentage) {
-        StringBuilder sb = new StringBuilder();
-        if (total > 1)
-            sb.append("(" + (current + 1) + "/" + total + ")");
-
-        if (percentage == UploadImgHelper.STAGE_UPLOADING) {
-            sb.append("正在压缩(~" + Utils.toSizeText(UploadImgHelper.MAX_IMAGE_FILE_SIZE) + ")...");
-        } else if (percentage == 100) {
-            sb.append("服务器处理中...");
-        } else {
-            sb.append("正在上传 " + percentage + "%");
-        }
-        mProgressDialog.setMessage(sb.toString());
+        mProgressDialog.setMessage("正在上传... (" + (current + 1) + "/" + total + ")");
     }
 
     private void imageDone(ImageUploadEvent event) {

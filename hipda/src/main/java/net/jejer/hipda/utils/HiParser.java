@@ -63,7 +63,7 @@ public class HiParser {
         pagesES.addAll(doc.select("div.pages_btns div.pages strong"));
         if (pagesES.size() > 0) {
             for (Node n : pagesES) {
-                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                int tmp = Utils.getIntFromString(((Element) n).text());
                 if (tmp > last_page) {
                     last_page = tmp;
                 }
@@ -95,8 +95,8 @@ public class HiParser {
                 if (!tid.contains("redirect.php?goto=")) {
                     continue;
                 }
-                item.setTid(HttpUtils.getMiddleString(tid, "ptid=", "&"));
-                item.setPid(HttpUtils.getMiddleString(tid, "pid=", "&"));
+                item.setTid(Utils.getMiddleString(tid, "ptid=", "&"));
+                item.setPid(Utils.getMiddleString(tid, "pid=", "&"));
                 String title = linkES.first().text();
 
                 // time
@@ -145,7 +145,7 @@ public class HiParser {
         pagesES.addAll(doc.select("div.pages_btns div.pages strong"));
         if (pagesES.size() > 0) {
             for (Node n : pagesES) {
-                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                int tmp = Utils.getIntFromString(((Element) n).text());
                 if (tmp > last_page) {
                     last_page = tmp;
                 }
@@ -176,7 +176,7 @@ public class HiParser {
             if (!tid.contains("viewthread.php?tid=")) {
                 continue;
             }
-            tid = HttpUtils.getMiddleString(tid, "viewthread.php?tid=", "&");
+            tid = Utils.getMiddleString(tid, "viewthread.php?tid=", "&");
             String title = linkES.first().text();
 
             // time
@@ -241,7 +241,7 @@ public class HiParser {
                 continue;
             }
             String uid = uidAES.first().attr("href");
-            item.setUid(HttpUtils.getMiddleString(uid, "uid=", "&"));
+            item.setUid(Utils.getMiddleString(uid, "uid=", "&"));
 
             // time
             item.setTime(pciteES.first().ownText());
@@ -318,8 +318,8 @@ public class HiParser {
             } else if (href.contains("redirect.php?")) {
                 // Thread Name and TID and PID
                 item.setTitle(a.text());
-                item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", "&"));
-                item.setPid(HttpUtils.getMiddleString(a.attr("href"), "pid=", "&"));
+                item.setTid(Utils.getMiddleString(a.attr("href"), "ptid=", "&"));
+                item.setPid(Utils.getMiddleString(a.attr("href"), "pid=", "&"));
                 break;
             }
         }
@@ -348,15 +348,15 @@ public class HiParser {
         for (Element a : aES) {
             String href = a.attr("href");
             if (href.contains("space.php")) {
-                String uid = HttpUtils.getMiddleString(a.attr("href"), "uid=", "&");
+                String uid = Utils.getMiddleString(a.attr("href"), "uid=", "&");
                 item.setAuthor(a.text());
                 item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
             } else if (href.contains("viewthread.php")) {
                 item.setTitle(a.text());
-                item.setTid(HttpUtils.getMiddleString(a.attr("href"), "tid=", "&"));
+                item.setTid(Utils.getMiddleString(a.attr("href"), "tid=", "&"));
             } else if (href.contains("redirect.php")) {
-                item.setTid(HttpUtils.getMiddleString(a.attr("href"), "ptid=", "&"));
-                item.setPid(HttpUtils.getMiddleString(a.attr("href"), "pid=", "&"));
+                item.setTid(Utils.getMiddleString(a.attr("href"), "ptid=", "&"));
+                item.setPid(Utils.getMiddleString(a.attr("href"), "pid=", "&"));
             }
         }
 
@@ -403,7 +403,7 @@ public class HiParser {
             return null;
         }
         String mySpaceUrl = Utils.nullToText(uidMenuES.first().attr("href"));
-        String myUid = HttpUtils.getMiddleString(mySpaceUrl, "uid=", "&");
+        String myUid = Utils.getMiddleString(mySpaceUrl, "uid=", "&");
         String myUsername = uidMenuES.first().text();
 
         Elements smslistES = doc.select("li.s_clear");
@@ -434,7 +434,7 @@ public class HiParser {
                     item.setUid(myUid);
                 } else {
                     String spaceUrl = Utils.nullToText(avatarES.first().attr("href"));
-                    item.setUid(HttpUtils.getMiddleString(spaceUrl, "uid=", "&"));
+                    item.setUid(Utils.getMiddleString(spaceUrl, "uid=", "&"));
                 }
                 item.setAvatarUrl(HiUtils.getAvatarUrlByUid(item.getUid()));
             }
@@ -482,7 +482,7 @@ public class HiParser {
             }
             list.setSearchIdUrl(searchIdUrl);
             for (Node n : pagesES) {
-                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                int tmp = Utils.getIntFromString(((Element) n).text());
                 if (tmp > last_page) {
                     last_page = tmp;
                 }
@@ -506,7 +506,7 @@ public class HiParser {
                 continue;
             }
             String href = subjectAES.first().attr("href");
-            item.setTid(HttpUtils.getMiddleString(href, "tid=", "&"));
+            item.setTid(Utils.getMiddleString(href, "tid=", "&"));
 
             Elements authorAES = tbodyE.select("tr td.author cite a");
             if (authorAES.size() == 0) {
@@ -516,7 +516,7 @@ public class HiParser {
 
             String spaceUrl = authorAES.first().attr("href");
             if (!TextUtils.isEmpty(spaceUrl)) {
-                String uid = HttpUtils.getMiddleString(spaceUrl, "uid=", "&");
+                String uid = Utils.getMiddleString(spaceUrl, "uid=", "&");
                 item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
             }
 
@@ -552,7 +552,7 @@ public class HiParser {
             searchIdUrl = pagesES.first().attr("href");
             list.setSearchIdUrl(searchIdUrl);
             for (Node n : pagesES) {
-                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                int tmp = Utils.getIntFromString(((Element) n).text());
                 if (tmp > last_page) {
                     last_page = tmp;
                 }
@@ -572,7 +572,7 @@ public class HiParser {
             item.setTitle(subjectES.first().text());
             //gotopost.php?pid=12345
             String postUrl = Utils.nullToText(subjectES.first().attr("href"));
-            item.setPid(HttpUtils.getMiddleString(postUrl, "pid=", "&"));
+            item.setPid(Utils.getMiddleString(postUrl, "pid=", "&"));
             if (TextUtils.isEmpty(item.getPid())) {
                 continue;
             }
@@ -598,12 +598,12 @@ public class HiParser {
                 item.setAuthor(authorES.first().text());
                 String spaceUrl = authorES.first().attr("href");
                 if (!TextUtils.isEmpty(spaceUrl)) {
-                    String uid = HttpUtils.getMiddleString(spaceUrl, "uid=", "&");
+                    String uid = Utils.getMiddleString(spaceUrl, "uid=", "&");
                     item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
                 }
             }
 
-            item.setTime(item.getAuthor() + " " + HttpUtils.getMiddleString(postInfoES.get(4).text(), ":", "&"));
+            item.setTime(item.getAuthor() + " " + Utils.getMiddleString(postInfoES.get(4).text(), ":", "&"));
 
             Elements forumES = postInfoES.get(0).select("a");
             if (forumES.size() > 0)
@@ -628,7 +628,7 @@ public class HiParser {
         pagesES.addAll(doc.select("div.pages strong"));
         if (pagesES.size() > 0) {
             for (Node n : pagesES) {
-                int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                int tmp = Utils.getIntFromString(((Element) n).text());
                 if (tmp > last_page) {
                     last_page = tmp;
                 }
@@ -652,7 +652,7 @@ public class HiParser {
                 continue;
             }
             String href = subjectAES.first().attr("href");
-            item.setTid(HttpUtils.getMiddleString(href, "tid=", "&"));
+            item.setTid(Utils.getMiddleString(href, "tid=", "&"));
 
             Elements timeES = trE.select("td.lastpost");
             if (timeES.size() > 0) {
@@ -690,7 +690,7 @@ public class HiParser {
 
         Elements uidES = doc.select("div#profilecontent div.itemtitle ul li");
         if (uidES.size() > 0) {
-            info.setUid(HttpUtils.getMiddleString(uidES.first().text(), "(UID:", ")").trim());
+            info.setUid(Utils.getMiddleString(uidES.first().text(), "(UID:", ")").trim());
         }
 
         Elements avatarES = doc.select("div.side div.profile_side div.avatar img");

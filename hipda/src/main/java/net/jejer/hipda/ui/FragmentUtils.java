@@ -12,7 +12,6 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Utils;
 
 /**
@@ -63,7 +62,7 @@ public class FragmentUtils {
     public static FragmentArgs parseUrl(String url) {
         if (url.contains(HiUtils.ForumUrlPattern + "forumdisplay.php")) {
             if (url.contains("fid")) {
-                String fid = HttpUtils.getMiddleString(url, "fid=", "&");
+                String fid = Utils.getMiddleString(url, "fid=", "&");
                 if (HiUtils.isValidId(fid) && HiUtils.isForumValid(Integer.parseInt(fid))) {
                     FragmentArgs args = new FragmentArgs();
                     args.setType(FragmentArgs.TYPE_FORUM);
@@ -73,13 +72,13 @@ public class FragmentUtils {
             }
         } else if (url.contains(HiUtils.ForumUrlPattern + "viewthread.php")) {
             if (url.contains("tid")) {
-                String tid = HttpUtils.getMiddleString(url, "tid=", "&");
+                String tid = Utils.getMiddleString(url, "tid=", "&");
                 if (HiUtils.isValidId(tid)) {
                     FragmentArgs args = new FragmentArgs();
                     args.setType(FragmentArgs.TYPE_THREAD);
                     args.setTid(tid);
 
-                    String page = HttpUtils.getMiddleString(url, "page=", "&");
+                    String page = Utils.getMiddleString(url, "page=", "&");
                     if (!TextUtils.isEmpty(page) && TextUtils.isDigitsOnly(page))
                         args.setPage(Integer.parseInt(page));
 
@@ -87,11 +86,11 @@ public class FragmentUtils {
                 }
             }
         } else if (url.contains(HiUtils.ForumUrlPattern + "redirect.php")) {
-            String gotoStr = HttpUtils.getMiddleString(url, "goto=", "&");
+            String gotoStr = Utils.getMiddleString(url, "goto=", "&");
             if (!TextUtils.isEmpty(gotoStr)) {
                 if ("lastpost".equals(gotoStr)) {
                     //goto last post
-                    String tid = HttpUtils.getMiddleString(url, "tid=", "&");
+                    String tid = Utils.getMiddleString(url, "tid=", "&");
                     if (HiUtils.isValidId(tid)) {
                         FragmentArgs args = new FragmentArgs();
                         args.setType(FragmentArgs.TYPE_THREAD);
@@ -104,8 +103,8 @@ public class FragmentUtils {
                     }
                 } else if ("findpost".equals(gotoStr)) {
                     //goto specific post by post id
-                    String tid = HttpUtils.getMiddleString(url, "ptid=", "&");
-                    String postId = HttpUtils.getMiddleString(url, "pid=", "&");
+                    String tid = Utils.getMiddleString(url, "ptid=", "&");
+                    String postId = Utils.getMiddleString(url, "pid=", "&");
 
                     if (HiUtils.isValidId(tid) && HiUtils.isValidId(postId)) {
                         FragmentArgs args = new FragmentArgs();
@@ -120,7 +119,7 @@ public class FragmentUtils {
             }
         } else if (url.contains(HiUtils.ForumUrlPattern + "gotopost.php")) {
             //goto post by post id
-            String postId = HttpUtils.getMiddleString(url, "pid=", "&");
+            String postId = Utils.getMiddleString(url, "pid=", "&");
 
             if (HiUtils.isValidId(postId)) {
                 FragmentArgs args = new FragmentArgs();
@@ -132,7 +131,7 @@ public class FragmentUtils {
             }
         } else if (url.contains(HiUtils.ForumUrlPattern + "space.php")) {
             //goto post by post id
-            String uid = HttpUtils.getMiddleString(url, "uid=", "&");
+            String uid = Utils.getMiddleString(url, "uid=", "&");
 
             if (HiUtils.isValidId(uid)) {
                 FragmentArgs args = new FragmentArgs();

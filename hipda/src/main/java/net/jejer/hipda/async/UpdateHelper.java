@@ -17,7 +17,6 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.HiProgressDialog;
-import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
@@ -130,7 +129,7 @@ public class UpdateHelper {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 try {
-                                                    HttpUtils.download(mCtx, url, filename);
+                                                    Utils.download(mCtx, url, filename);
                                                 } catch (Exception e) {
                                                     Logger.e(e);
                                                     Toast.makeText(mCtx, "下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage(), Toast.LENGTH_SHORT).show();

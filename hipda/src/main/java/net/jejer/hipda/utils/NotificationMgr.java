@@ -110,7 +110,7 @@ public class NotificationMgr {
             Elements promptThreadES = doc.select("div.promptcontent a#prompt_threads");
             if (promptThreadES.size() > 0) {
                 String notifyStr = promptThreadES.first().text();
-                String tcount = HttpUtils.getMiddleString(notifyStr, "(", ")");
+                String tcount = Utils.getMiddleString(notifyStr, "(", ")");
                 if (!TextUtils.isEmpty(tcount) && TextUtils.isDigitsOnly(tcount)) {
                     threadCount = Integer.parseInt(tcount);
                 }

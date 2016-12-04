@@ -30,7 +30,7 @@ public class HiParserThreadList {
             if (spaceES.size() == 1) {
                 String spaceUrl = spaceES.first().attr("href");
                 if (!TextUtils.isEmpty(spaceUrl)) {
-                    String uid = HttpUtils.getMiddleString(spaceUrl, "space.php?uid=", "&");
+                    String uid = Utils.getMiddleString(spaceUrl, "space.php?uid=", "&");
                     String username = Utils.nullToText(spaceES.first().text()).trim();
                     if (!TextUtils.isEmpty(uid)
                             && TextUtils.isDigitsOnly(uid)
@@ -81,7 +81,7 @@ public class HiParserThreadList {
 
             String linkStyle = titleLink.attr("style");
             if (!TextUtils.isEmpty(linkStyle)) {
-                thread.setTitleColor(HttpUtils.getMiddleString(linkStyle, "color:", "").trim());
+                thread.setTitleColor(Utils.getMiddleString(linkStyle, "color:", "").trim());
             }
 
             Elements typeES = tbodyE.select("th.subject em a");
@@ -114,7 +114,7 @@ public class HiParserThreadList {
             if (userLink.length() < "space.php?uid=".length()) {
                 continue;
             }
-            String authorId = HttpUtils.getMiddleString(userLink, "uid=", "&");
+            String authorId = Utils.getMiddleString(userLink, "uid=", "&");
             thread.setAuthorId(authorId);
 
             thread.setAvatarUrl(HiUtils.getAvatarUrlByUid(authorId));
@@ -181,7 +181,7 @@ public class HiParserThreadList {
             if (pages.size() > 0) {
                 Element pageLink = pages.get(pages.size() - 1);
                 if (!TextUtils.isEmpty(pageLink.attr("href"))) {
-                    String lastPage = HttpUtils.getMiddleString(pageLink.attr("href"), "page=", "&");
+                    String lastPage = Utils.getMiddleString(pageLink.attr("href"), "page=", "&");
                     if (!TextUtils.isEmpty(lastPage) && TextUtils.isDigitsOnly(lastPage))
                         maxPage = Integer.parseInt(lastPage);
                 }

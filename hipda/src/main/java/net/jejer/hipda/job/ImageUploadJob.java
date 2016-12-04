@@ -52,7 +52,7 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
         event.total = total;
         event.current = current;
         event.percentage = percentage;
-        EventBus.getDefault().post(event);
+        EventBus.getDefault().postSticky(event);
     }
 
     @Override

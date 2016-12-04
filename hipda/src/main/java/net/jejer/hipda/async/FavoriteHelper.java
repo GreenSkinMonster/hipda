@@ -8,8 +8,8 @@ import android.widget.Toast;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -110,7 +110,7 @@ public class FavoriteHelper {
                 pagesES.addAll(divPage.select("div.pages strong"));
                 if (pagesES.size() > 0) {
                     for (Node n : pagesES) {
-                        int tmp = HttpUtils.getIntFromString(((Element) n).text());
+                        int tmp = Utils.getIntFromString(((Element) n).text());
                         if (tmp > last_page) {
                             last_page = tmp;
                         }

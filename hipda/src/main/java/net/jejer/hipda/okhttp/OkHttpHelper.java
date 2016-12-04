@@ -13,6 +13,7 @@ import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -58,8 +59,12 @@ public class OkHttpHelper {
 
     public final static String CACHE_DIR_NAME = "okhttp";
 
-    private OkHttpClient client;
-    private PersistentCookieStore cookieStore;
+    public static final String ERROR_CODE_PREFIX = "Unexpected code ";
+
+    private OkHttpClient mClient;
+    private PersistentCookieStore mCookiestore;
+    private CookieJar mCookieJar;
+
     private Handler handler;
 
     private final static CacheControl PREFER_CACHE_CTL = new CacheControl.Builder()
@@ -67,9 +72,22 @@ public class OkHttpHelper {
             .build();
 
     private OkHttpHelper() {
+        mCookiestore = new PersistentCookieStore(HiApplication.getAppContext(), HiUtils.CookieDomain);
+        mCookieJar = new CookieJar() {
+            @Override
+            public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                if (cookies != null && cookies.size() > 0) {
+                    for (Cookie item : cookies) {
+                        mCookiestore.add(url, item);
+                    }
+                }
+            }
 
-        cookieStore = new PersistentCookieStore(HiApplication.getAppContext(), HiUtils.CookieDomain);
-
+            @Override
+            public List<Cookie> loadForRequest(HttpUrl url) {
+                return mCookiestore.get(url);
+            }
+        };
         Cache cache = new Cache(Glide.getPhotoCacheDir(HiApplication.getAppContext(), CACHE_DIR_NAME), 10 * 1024 * 1024);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -77,21 +95,7 @@ public class OkHttpHelper {
                 .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .cache(cache)
-                .cookieJar(new CookieJar() {
-                    @Override
-                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                        if (cookies != null && cookies.size() > 0) {
-                            for (Cookie item : cookies) {
-                                cookieStore.add(url, item);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public List<Cookie> loadForRequest(HttpUrl url) {
-                        return cookieStore.get(url);
-                    }
-                });
+                .cookieJar(mCookieJar);
 
         if (HiSettingsHelper.getInstance().isTrustAllCerts()) {
             setupTrustAllCerts(builder);
@@ -100,9 +104,12 @@ public class OkHttpHelper {
         if (Logger.isDebug())
             builder.addInterceptor(new LoggingInterceptor());
 
-        client = builder.build();
-
+        mClient = builder.build();
         handler = new Handler(Looper.getMainLooper());
+    }
+
+    public OkHttpClient getClient() {
+        return mClient;
     }
 
     public static void setupTrustAllCerts(OkHttpClient.Builder builder) {
@@ -194,7 +201,7 @@ public class OkHttpHelper {
     public String get(String url, String tag, int cacheType) throws IOException {
         Request request = buildGetRequest(url, tag, getCacheControl(cacheType));
 
-        Call call = client.newCall(request);
+        Call call = mClient.newCall(request);
         Response response = call.execute();
 
         return getResponseBody(response);
@@ -213,7 +220,7 @@ public class OkHttpHelper {
         final ResultCallback rspCallBack = callback;
 
         Request request = buildGetRequest(url, tag, getCacheControl(cacheType));
-        client.newCall(request).enqueue(new Callback() {
+        mClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 handleFailureCallback(call.request(), e, rspCallBack);
@@ -233,18 +240,18 @@ public class OkHttpHelper {
 
     public String post(String url, Map<String, String> params) throws IOException {
         Request request = buildPostFormRequest(url, params, null);
-        Response response = client.newCall(request).execute();
+        Response response = mClient.newCall(request).execute();
         return getResponseBody(response);
     }
 
     public Response postAsResponse(String url, Map<String, String> params) throws IOException {
         Request request = buildPostFormRequest(url, params, null);
-        return client.newCall(request).execute();
+        return mClient.newCall(request).execute();
     }
 
     public static String getResponseBody(Response response) throws IOException {
         if (!response.isSuccessful()) {
-            throw new IOException("Unexpected code " + response.code() + ", " + response.message());
+            throw new IOException(ERROR_CODE_PREFIX + response.code() + ", " + response.message());
         }
 
         String encoding = HiSettingsHelper.getInstance().getEncode();
@@ -283,6 +290,7 @@ public class OkHttpHelper {
         void onError(Request request, Exception e);
 
         void onResponse(String response);
+
     }
 
     private final ResultCallback DEFAULT_CALLBACK = new ResultCallback() {
@@ -310,8 +318,8 @@ public class OkHttpHelper {
             msg = "请求超时";
         } else if (e instanceof IOException) {
             String emsg = e.getMessage();
-            if (emsg != null && emsg.startsWith("Unexpected code ") && emsg.contains(",")) {
-                msg = "错误代码 (" + emsg.substring("Unexpected code ".length(), emsg.indexOf(",")) + ")";
+            if (emsg != null && emsg.contains(ERROR_CODE_PREFIX)) {
+                msg = "错误代码 (" + Utils.getMiddleString(emsg, ERROR_CODE_PREFIX, ",").trim() + ")";
             }
         }
         if (longVersion)
@@ -320,12 +328,12 @@ public class OkHttpHelper {
     }
 
     public void clearCookies() {
-        if (cookieStore != null)
-            cookieStore.removeAll();
+        if (mCookiestore != null)
+            mCookiestore.removeAll();
     }
 
     public boolean isLoggedIn() {
-        List<Cookie> cookies = cookieStore.getCookies();
+        List<Cookie> cookies = mCookiestore.getCookies();
         for (Cookie cookie : cookies) {
             if ("cdb_auth".equals(cookie.name())) {
                 return true;
@@ -335,7 +343,7 @@ public class OkHttpHelper {
     }
 
     public String getAuthCookie() {
-        List<Cookie> cookies = cookieStore.getCookies();
+        List<Cookie> cookies = mCookiestore.getCookies();
         for (Cookie cookie : cookies) {
             if ("cdb_auth".equals(cookie.name())) {
                 return cookie.value();
@@ -356,10 +364,10 @@ public class OkHttpHelper {
     }
 
     public void cancel(Object tag) {
-        for (Call call : client.dispatcher().queuedCalls()) {
+        for (Call call : mClient.dispatcher().queuedCalls()) {
             if (tag.equals(call.request().tag())) call.cancel();
         }
-        for (Call call : client.dispatcher().runningCalls()) {
+        for (Call call : mClient.dispatcher().runningCalls()) {
             if (tag.equals(call.request().tag())) call.cancel();
         }
     }

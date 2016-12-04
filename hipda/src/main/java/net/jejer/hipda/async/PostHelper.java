@@ -11,7 +11,6 @@ import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.HttpUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
@@ -179,7 +178,7 @@ public class PostHelper {
                 mStatus = Constants.STATUS_SUCCESS;
             } else {
                 //when success, okhttp will follow 302 redirect get the page content
-                String tid = HttpUtils.getMiddleString(requestUrl, "tid=", "&");
+                String tid = Utils.getMiddleString(requestUrl, "tid=", "&");
                 if (requestUrl.contains("viewthread.php") && HiUtils.isValidId(tid)) {
                     mTid = tid;
                     mResult = "发表成功!";
