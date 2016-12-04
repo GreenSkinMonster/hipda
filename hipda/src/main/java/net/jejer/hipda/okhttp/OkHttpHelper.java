@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -317,8 +316,6 @@ public class OkHttpHelper {
         }
         if (longVersion)
             msg = "加载失败 : " + msg;
-        if (!BuildConfig.DEBUG && e instanceof SSLHandshakeException)
-            Crashlytics.logException(e);
         return new NetworkError(msg, e.getClass().getName() + "\n" + e.getMessage());
     }
 
