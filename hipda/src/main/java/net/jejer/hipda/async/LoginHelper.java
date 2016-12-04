@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -15,9 +16,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class LoginHelper {
@@ -83,19 +81,19 @@ public class LoginHelper {
     }
 
     private int doLogin(String formhash) {
-        Map<String, String> post_param = new HashMap<>();
-        post_param.put("m_formhash", formhash);
-        post_param.put("referer", HiUtils.BaseUrl + "index.php");
-        post_param.put("loginfield", "username");
-        post_param.put("username", HiSettingsHelper.getInstance().getUsername());
-        post_param.put("password", HiSettingsHelper.getInstance().getPassword());
-        post_param.put("questionid", HiSettingsHelper.getInstance().getSecQuestion());
-        post_param.put("answer", HiSettingsHelper.getInstance().getSecAnswer());
-        post_param.put("cookietime", "2592000");
+        ParamsMap params = new ParamsMap();
+        params.put("m_formhash", formhash);
+        params.put("referer", HiUtils.BaseUrl + "index.php");
+        params.put("loginfield", "username");
+        params.put("username", HiSettingsHelper.getInstance().getUsername());
+        params.put("password", HiSettingsHelper.getInstance().getPassword());
+        params.put("questionid", HiSettingsHelper.getInstance().getSecQuestion());
+        params.put("answer", HiSettingsHelper.getInstance().getSecAnswer());
+        params.put("cookietime", "2592000");
 
         String rspStr;
         try {
-            rspStr = OkHttpHelper.getInstance().post(HiUtils.LoginSubmit, post_param);
+            rspStr = OkHttpHelper.getInstance().post(HiUtils.LoginSubmit, params);
             Logger.v(rspStr);
 
             // response is in XML format

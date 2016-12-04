@@ -89,46 +89,46 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
     }
 
     private PrePostInfoBean parseRsp(Document doc) {
-        PrePostInfoBean result = new PrePostInfoBean();
+        PrePostInfoBean prePostInfo = new PrePostInfoBean();
 
         Elements formhashES = doc.select("input[name=formhash]");
         if (formhashES.size() < 1) {
             mMessage = "页面解析错误";
-            return result;
+            return prePostInfo;
         } else {
-            result.setFormhash(formhashES.first().attr("value"));
+            prePostInfo.setFormhash(formhashES.first().attr("value"));
         }
 
         Elements addtextES = doc.select("textarea");
         if (addtextES.size() < 1) {
-            return result;
+            return prePostInfo;
         } else {
-            result.setText(addtextES.first().text());
+            prePostInfo.setText(addtextES.first().text());
         }
 
         Elements scriptES = doc.select("script");
         if (scriptES.size() < 1) {
-            return result;
+            return prePostInfo;
         } else {
-            result.setUid(Utils.getMiddleString(scriptES.first().data(), "discuz_uid = ", ","));
+            prePostInfo.setUid(Utils.getMiddleString(scriptES.first().data(), "discuz_uid = ", ","));
         }
 
         Elements hashES = doc.select("input[name=hash]");
         if (hashES.size() < 1) {
-            return result;
+            return prePostInfo;
         } else {
-            result.setHash(hashES.first().attr("value"));
+            prePostInfo.setHash(hashES.first().attr("value"));
         }
 
         //for edit post
         Elements subjectES = doc.select("input[name=subject]");
         if (subjectES.size() > 0) {
-            result.setSubject(subjectES.first().attr("value"));
+            prePostInfo.setSubject(subjectES.first().attr("value"));
         }
 
         Elements deleteCheckBox = doc.select("input#delete");
         if (deleteCheckBox.size() > 0) {
-            result.setDeleteable(true);
+            prePostInfo.setDeleteable(true);
         }
 
         Elements uploadInfoES = doc.select("div.uploadinfo");
@@ -160,13 +160,13 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
                 || mMode == PostHelper.MODE_QUOTE_POST) {
             Elements authorES = doc.select("input[name=noticeauthor]");
             if (authorES.size() > 0)
-                result.setNoticeauthor(authorES.first().attr("value"));
+                prePostInfo.setNoticeauthor(authorES.first().attr("value"));
             Elements authorMsgES = doc.select("input[name=noticeauthormsg]");
             if (authorMsgES.size() > 0)
-                result.setNoticeauthormsg(authorMsgES.first().attr("value"));
+                prePostInfo.setNoticeauthormsg(authorMsgES.first().attr("value"));
             Elements noticeTrimES = doc.select("input[name=noticetrimstr]");
             if (noticeTrimES.size() > 0)
-                result.setNoticetrimstr(noticeTrimES.first().attr("value"));
+                prePostInfo.setNoticetrimstr(noticeTrimES.first().attr("value"));
         }
 
         Elements unusedImagesES = doc.select("div#unusedimgattachlist table.imglist img");
@@ -174,10 +174,10 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
             Element imgE = unusedImagesES.get(i);
             String href = Utils.nullToText(imgE.attr("src"));
             String imgId = Utils.nullToText(imgE.attr("id"));
-            if (href.startsWith("attachments/") && imgId.contains("_")) {
+            if (href.contains("attachments/") && imgId.contains("_")) {
                 imgId = imgId.substring(imgId.lastIndexOf("_") + 1);
                 if (imgId.length() > 0 && TextUtils.isDigitsOnly(imgId)) {
-                    result.addUnusedImage(imgId);
+                    prePostInfo.addUnusedImage(imgId);
                 }
             }
         }
@@ -188,10 +188,10 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
             Element typeidEl = typeidES.get(i);
             values.put(typeidEl.val(), typeidEl.text());
             if (i == 0 || "selected".equals(typeidEl.attr("selected")))
-                result.setTypeid(typeidEl.val());
+                prePostInfo.setTypeid(typeidEl.val());
         }
-        result.setTypeValues(values);
-        return result;
+        prePostInfo.setTypeValues(values);
+        return prePostInfo;
     }
 
     @Override

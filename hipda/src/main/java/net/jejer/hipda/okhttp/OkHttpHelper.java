@@ -166,14 +166,16 @@ public class OkHttpHelper {
         return builder.build();
     }
 
-    private Request buildPostFormRequest(String url, Map<String, String> params, Object tag)
+    private Request buildPostFormRequest(String url, ParamsMap params, Object tag)
             throws UnsupportedEncodingException {
 
         FormBody.Builder builder = new FormBody.Builder();
         if (params != null) {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                builder.addEncoded(entry.getKey(),
-                        URLEncoder.encode(entry.getValue(), HiSettingsHelper.getInstance().getEncode()));
+            for (Map.Entry<String, List<String>> entry : params.entrySet()) {
+                for (String value : entry.getValue()) {
+                    builder.addEncoded(entry.getKey(),
+                            URLEncoder.encode(value, HiSettingsHelper.getInstance().getEncode()));
+                }
             }
         }
 
@@ -238,13 +240,13 @@ public class OkHttpHelper {
         });
     }
 
-    public String post(String url, Map<String, String> params) throws IOException {
+    public String post(String url, ParamsMap params) throws IOException {
         Request request = buildPostFormRequest(url, params, null);
         Response response = mClient.newCall(request).execute();
         return getResponseBody(response);
     }
 
-    public Response postAsResponse(String url, Map<String, String> params) throws IOException {
+    public Response postAsResponse(String url, ParamsMap params) throws IOException {
         Request request = buildPostFormRequest(url, params, null);
         return mClient.newCall(request).execute();
     }

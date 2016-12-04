@@ -9,6 +9,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -17,9 +18,6 @@ import net.jejer.hipda.utils.Utils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.Response;
 
@@ -124,33 +122,33 @@ public class PostHelper {
             return;
         }
 
-        Map<String, String> post_param = new HashMap<>();
-        post_param.put("formhash", formhash);
-        post_param.put("posttime", String.valueOf(System.currentTimeMillis()));
-        post_param.put("wysiwyg", "0");
-        post_param.put("checkbox", "0");
-        post_param.put("message", replyText);
+        ParamsMap params = new ParamsMap();
+        params.put("formhash", formhash);
+        params.put("posttime", String.valueOf(System.currentTimeMillis()));
+        params.put("wysiwyg", "0");
+        params.put("checkbox", "0");
+        params.put("message", replyText);
         if (mMode == MODE_EDIT_POST && delete == 1)
-            post_param.put("delete", "1");
+            params.put("delete", "1");
         for (String attach : mInfo.getAttaches()) {
-            post_param.put("attachnew[" + attach + "][description]", attach);
+            params.put("attachnew[][description]", attach);
         }
         for (String attach : mInfo.getAttachdel()) {
-            post_param.put("attachdel[" + attach + "]", attach);
+            params.put("attachdel[]", attach);
         }
         for (String attach : mInfo.getUnusedImages()) {
-            post_param.put("attachdel[" + attach + "]", attach);
+            params.put("attachdel[]", attach);
         }
         if (mMode == MODE_NEW_THREAD) {
-            post_param.put("subject", subject);
-            post_param.put("attention_add", "1");
+            params.put("subject", subject);
+            params.put("attention_add", "1");
             mTitle = subject;
         } else if (mMode == MODE_EDIT_POST) {
             if (!TextUtils.isEmpty(subject)) {
-                post_param.put("subject", subject);
+                params.put("subject", subject);
                 mTitle = subject;
                 if (!TextUtils.isEmpty(typeid)) {
-                    post_param.put("typeid", typeid);
+                    params.put("typeid", typeid);
                 }
             }
         }
@@ -161,14 +159,14 @@ public class PostHelper {
             String noticeauthormsg = mInfo.getNoticeauthormsg();
             String noticetrimstr = mInfo.getNoticetrimstr();
             if (!TextUtils.isEmpty(noticeauthor)) {
-                post_param.put("noticeauthor", noticeauthor);
-                post_param.put("noticeauthormsg", Utils.nullToText(noticeauthormsg));
-                post_param.put("noticetrimstr", Utils.nullToText(noticetrimstr));
+                params.put("noticeauthor", noticeauthor);
+                params.put("noticeauthormsg", Utils.nullToText(noticeauthormsg));
+                params.put("noticetrimstr", Utils.nullToText(noticetrimstr));
             }
         }
 
         try {
-            Response response = OkHttpHelper.getInstance().postAsResponse(url, post_param);
+            Response response = OkHttpHelper.getInstance().postAsResponse(url, params);
             String rspStr = OkHttpHelper.getResponseBody(response);
             String requestUrl = response.request().url().toString();
 

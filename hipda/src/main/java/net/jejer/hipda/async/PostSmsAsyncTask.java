@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -17,8 +17,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
-import java.util.HashMap;
-import java.util.Map;
+import static net.jejer.hipda.okhttp.OkHttpHelper.getErrorMessage;
+import static net.jejer.hipda.okhttp.OkHttpHelper.getInstance;
 
 public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 
@@ -50,7 +50,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
         int retry = 0;
         do {
             try {
-                rsp_str = OkHttpHelper.getInstance().get((HiUtils.SMSPreparePostUrl + mUid));
+                rsp_str = getInstance().get((HiUtils.SMSPreparePostUrl + mUid));
                 if (!TextUtils.isEmpty(rsp_str)) {
                     if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
                         int status = new LoginHelper(mCtx).login();
@@ -62,7 +62,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
                     }
                 }
             } catch (Exception e) {
-                mResult = OkHttpHelper.getErrorMessage(e).getMessage();
+                mResult = getErrorMessage(e).getMessage();
             }
             retry++;
         } while (!done && retry < 3);
@@ -91,17 +91,17 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
         else
             url = HiUtils.SMSPostByUsername.replace("{username}", mUsername);
 
-        Map<String, String> post_param = new HashMap<>();
-        post_param.put("formhash", mFormhash);
-        post_param.put("lastdaterange", String.valueOf(System.currentTimeMillis()));
-        post_param.put("handlekey", "pmreply");
-        post_param.put("message", content);
+        ParamsMap params = new ParamsMap();
+        params.put("formhash", mFormhash);
+        params.put("lastdaterange", String.valueOf(System.currentTimeMillis()));
+        params.put("handlekey", "pmreply");
+        params.put("message", content);
         if (TextUtils.isEmpty(mUid))
-            post_param.put("msgto", mUsername);
+            params.put("msgto", mUsername);
 
         String response = null;
         try {
-            response = OkHttpHelper.getInstance().post(url, post_param);
+            response = getInstance().post(url, params);
 
             //response is in xml format
             if (TextUtils.isEmpty(response)) {
@@ -124,7 +124,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
             }
         } catch (Exception e) {
             Logger.e(e);
-            mResult = "短消息发送失败 :  " + OkHttpHelper.getErrorMessage(e);
+            mResult = "短消息发送失败 :  " + getErrorMessage(e);
         }
         return response;
     }
