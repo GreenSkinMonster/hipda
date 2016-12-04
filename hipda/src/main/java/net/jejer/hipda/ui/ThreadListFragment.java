@@ -78,6 +78,7 @@ import java.util.List;
 public class ThreadListFragment extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener {
 
+    private final static int MIN_TREADS_IN_PAGE = 10;
     public static final String ARG_FID_KEY = "fid";
 
     private Context mCtx;
@@ -641,6 +642,14 @@ public class ThreadListFragment extends BaseFragment
                 mMainFab.show();
             }
             showNotification();
+
+            if (mPage <= 3 && mThreadBeans.size() <= MIN_TREADS_IN_PAGE) {
+                mPage++;
+                mInloading = true;
+                ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
+                JobMgr.addJob(job);
+                Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
+            }
         }
 
         @Override
@@ -649,25 +658,25 @@ public class ThreadListFragment extends BaseFragment
             swipeLayout.setRefreshing(false);
             hideFooter();
 
-            if (mThreadBeans.size() == 0) {
-                mLoadingView.setState(ContentLoadingView.ERROR);
-            } else {
-                mLoadingView.setState(ContentLoadingView.CONTENT);
-            }
-
             ThreadListBean threads = event.mData;
-            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
             if (mPage > 1)
                 mPage--;
 
-            if (threads != null && threads.getCount() == 0) {
-                if (threads.isParsed() && mPage <= 5 && !HiSettingsHelper.getInstance().isShowStickThreads()) {
-                    mPage++;
-                    mInloading = true;
-                    ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
-                    JobMgr.addJob(job);
-                    if (HiSettingsHelper.getInstance().getMaxPostsInPage() < HiUtils.MAX_THREADS_IN_PAGE)
-                        Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
+            boolean fetchNext = false;
+            if (mPage <= 3 && threads.isParsed() && mThreadBeans.size() <= MIN_TREADS_IN_PAGE && !HiSettingsHelper.getInstance().isShowStickThreads()) {
+                mPage++;
+                mInloading = true;
+                ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
+                JobMgr.addJob(job);
+                fetchNext = true;
+                Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
+            }
+            if (!fetchNext) {
+                if (mThreadBeans.size() > 0) {
+                    mLoadingView.setState(ContentLoadingView.CONTENT);
+                } else {
+                    mLoadingView.setState(ContentLoadingView.ERROR);
+                    UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
                 }
             }
         }
