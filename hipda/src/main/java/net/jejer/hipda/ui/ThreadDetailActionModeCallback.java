@@ -130,7 +130,7 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
                 String shareBody = "帖子 ：" + mTitle + "\n" +
-                        HiUtils.DetailListUrl + mTid + "\n" +
+                        HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", mDetailBean.getPostId()) + "\n" +
                         mDetailBean.getFloor() + "#  作者 ：" + mDetailBean.getAuthor() + "\n\n" +
                         mDetailBean.getContents().getCopyText();
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
