@@ -202,10 +202,11 @@ public class UIUtils {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     super.onPostExecute(aVoid);
-                    if (imageInfo.isReady())
+                    if (imageInfo.isReady()) {
                         saveImage(activity, view, imageInfo);
-                    else
-                        errorSnack(view, "分享时发生错误", mException.getMessage());
+                    } else {
+                        errorSnack(view, "分享时发生错误", mException != null ? mException.getMessage() : "");
+                    }
                 }
             };
             fileDownTask.execute(url);
