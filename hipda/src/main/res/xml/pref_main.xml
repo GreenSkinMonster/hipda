@@ -11,7 +11,8 @@
 
     <Preference
         android:key="PERF_ABOUT"
-        android:title="@string/pref_title_about" />
+        android:title="@string/pref_title_about"
+        android:widgetLayout="@layout/layout_preference" />
 
     <Preference
         android:enabled="true"
@@ -25,27 +26,32 @@
         <Preference
             android:key="nested_1"
             android:persistent="false"
-            android:title="@string/pref_category_forum" />
+            android:title="@string/pref_category_forum"
+            android:widgetLayout="@layout/layout_preference" />
 
         <Preference
             android:key="nested_2"
             android:persistent="false"
-            android:title="@string/pref_category_ui" />
+            android:title="@string/pref_category_ui"
+            android:widgetLayout="@layout/layout_preference" />
 
         <Preference
             android:key="nested_3"
             android:persistent="false"
-            android:title="@string/pref_category_notification" />
+            android:title="@string/pref_category_notification"
+            android:widgetLayout="@layout/layout_preference" />
 
         <Preference
             android:key="nested_4"
             android:persistent="false"
-            android:title="@string/pref_category_network" />
+            android:title="@string/pref_category_network"
+            android:widgetLayout="@layout/layout_preference" />
 
         <Preference
             android:key="nested_5"
             android:persistent="false"
-            android:title="@string/pref_category_other" />
+            android:title="@string/pref_category_other"
+            android:widgetLayout="@layout/layout_preference" />
 
     </PreferenceCategory>
 </PreferenceScreen>
