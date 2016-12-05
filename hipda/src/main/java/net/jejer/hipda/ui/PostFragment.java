@@ -275,6 +275,11 @@ public class PostFragment extends BaseFragment {
                 break;
         }
 
+        if (mMainFab != null)
+            mMainFab.hide();
+        if (mNotificationFab != null)
+            mNotificationFab.hide();
+
         return view;
     }
 
@@ -597,6 +602,7 @@ public class PostFragment extends BaseFragment {
                 imgTxt = "\n" + imgTxt;
             mEtContent.getText().insert(selectionStart, imgTxt);
             mEtContent.setSelection(selectionStart + imgTxt.length());
+            mContentPosition = selectionStart + imgTxt.length();
             mEtContent.requestFocus();
             mPrePostInfo.addAttach(imgId);
         }
