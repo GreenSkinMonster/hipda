@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,6 +40,7 @@ import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SmsAdapter;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.SimplePopupMenu;
+import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
@@ -66,7 +66,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     private String mUid;
     private SmsAdapter mSmsAdapter;
     private List<SimpleListItemBean> mSmsBeans = new ArrayList<>();
-    private RecyclerView mRecyclerView;
+    private XRecyclerView mRecyclerView;
 
     private EmojiEditText mEtSms;
     private ImageButton mIbEmojiSwitch;
@@ -96,7 +96,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sms, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.lv_sms);
+        mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_sms);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setStackFromEnd(true);
@@ -328,6 +328,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                 mSmsBeans.clear();
                 mSmsBeans.addAll(list.getAll());
                 mSmsAdapter.setDatas(mSmsBeans);
+                mRecyclerView.scrollToBottom();
             }
         }
 

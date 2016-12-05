@@ -7,8 +7,8 @@
     android:background="?list_item_background"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/lv_sms"
+    <net.jejer.hipda.ui.widget.XRecyclerView
+        android:id="@+id/rv_sms"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/border_line"
