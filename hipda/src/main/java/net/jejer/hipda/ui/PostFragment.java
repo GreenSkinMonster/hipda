@@ -123,7 +123,7 @@ public class PostFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
 
         if (getArguments().containsKey(ARG_FID_KEY)) {
             mFid = getArguments().getString(ARG_FID_KEY);
@@ -253,6 +253,28 @@ public class PostFragment extends BaseFragment {
         mIbEmojiSwitch = (ImageButton) view.findViewById(R.id.ib_emoji_switch);
         setUpEmojiPopup(mEtContent, mIbEmojiSwitch);
 
+        setActionBarTitle(R.string.action_reply);
+        setActionBarDisplayHomeAsUpEnabled(true);
+
+        switch (mMode) {
+            case PostHelper.MODE_REPLY_THREAD:
+                setActionBarTitle("回复帖子");
+                break;
+            case PostHelper.MODE_REPLY_POST:
+                setActionBarTitle("回复 " + mFloor + "# " + mFloorAuthor);
+                break;
+            case PostHelper.MODE_QUOTE_POST:
+                setActionBarTitle("引用 " + mFloor + "# " + mFloorAuthor);
+                break;
+            case PostHelper.MODE_NEW_THREAD:
+                setActionBarTitle(mForumName);
+                mEtSubject.setVisibility(View.VISIBLE);
+                break;
+            case PostHelper.MODE_EDIT_POST:
+                setActionBarTitle(getActivity().getResources().getString(R.string.action_edit));
+                break;
+        }
+
         return view;
     }
 
@@ -339,27 +361,6 @@ public class PostFragment extends BaseFragment {
 
         menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_add_a_photo).actionBar().color(Color.WHITE));
 
-        setActionBarTitle(R.string.action_reply);
-        setActionBarDisplayHomeAsUpEnabled(true);
-
-        switch (mMode) {
-            case PostHelper.MODE_REPLY_THREAD:
-                setActionBarTitle("回复帖子");
-                break;
-            case PostHelper.MODE_REPLY_POST:
-                setActionBarTitle("回复 " + mFloor + "# " + mFloorAuthor);
-                break;
-            case PostHelper.MODE_QUOTE_POST:
-                setActionBarTitle("引用 " + mFloor + "# " + mFloorAuthor);
-                break;
-            case PostHelper.MODE_NEW_THREAD:
-                setActionBarTitle(mForumName);
-                mEtSubject.setVisibility(View.VISIBLE);
-                break;
-            case PostHelper.MODE_EDIT_POST:
-                setActionBarTitle(getActivity().getResources().getString(R.string.action_edit));
-                break;
-        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -649,6 +650,7 @@ public class PostFragment extends BaseFragment {
         if (mPrePostInfo == null)
             return;
 
+        setHasOptionsMenu(true);
         getActivity().invalidateOptionsMenu();
 
         mTypeValues = mPrePostInfo.getTypeValues();
