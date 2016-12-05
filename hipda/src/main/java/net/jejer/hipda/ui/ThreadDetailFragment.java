@@ -437,7 +437,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 showPost("");
                 return true;
             case R.id.action_refresh_detail:
-                mLoadingView.setState(ContentLoadingView.LOADING);
+                mLoadingView.setState(ContentLoadingView.LOAD_NOW);
                 refresh();
                 return true;
             case R.id.action_add_favorite:

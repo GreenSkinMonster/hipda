@@ -56,7 +56,8 @@ public class ContentLoadingView extends RelativeLayout {
     }
 
     public void setState(int state) {
-        if (mState == state)
+        if (mState == state ||
+                (mState == LOAD_NOW && state == LOADING))
             return;
         mState = state;
         if (state == LOADING) {
