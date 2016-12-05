@@ -136,9 +136,6 @@ public class PostHelper {
         for (String attach : mInfo.getAttachdel()) {
             params.put("attachdel[]", attach);
         }
-        for (String attach : mInfo.getUnusedImages()) {
-            params.put("attachdel[]", attach);
-        }
         if (mMode == MODE_NEW_THREAD) {
             params.put("subject", subject);
             params.put("attention_add", "1");

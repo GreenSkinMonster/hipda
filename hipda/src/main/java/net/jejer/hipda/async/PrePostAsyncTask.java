@@ -177,7 +177,33 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
             if (href.contains("attachments/") && imgId.contains("_")) {
                 imgId = imgId.substring(imgId.lastIndexOf("_") + 1);
                 if (imgId.length() > 0 && TextUtils.isDigitsOnly(imgId)) {
-                    prePostInfo.addUnusedImage(imgId);
+                    prePostInfo.addImage(imgId);
+                }
+            }
+        }
+
+        //uploaded image list
+        Elements uploadedImagesES = doc.select("div.upfilelist img[id^=image_]");
+        for (int i = 0; i < uploadedImagesES.size(); i++) {
+            Element imgE = uploadedImagesES.get(i);
+            String imgId = Utils.nullToText(imgE.attr("id"));
+            imgId = imgId.substring("image_".length());
+            if (imgId.length() > 0 && TextUtils.isDigitsOnly(imgId)) {
+                prePostInfo.addImage(imgId);
+            }
+        }
+
+        //image as attachments
+        Elements attachmentImages = doc.select("div.upfilelist span a");
+        for (int i = 0; i < attachmentImages.size(); i++) {
+            Element aTag = attachmentImages.get(i);
+            String href = Utils.nullToText(aTag.attr("href"));
+            String onclick = Utils.nullToText(aTag.attr("onclick"));
+            if (href.startsWith("javascript") && onclick.startsWith("insertAttachimgTag")) {
+                //<a href="javascript:;" class="lighttxt" onclick="insertAttachimgTag('2810014')" title="...">Hi_160723_2240.jpg</a>
+                String imgId = Utils.getMiddleString(onclick, "insertAttachimgTag('", "'");
+                if (imgId.length() > 0 && TextUtils.isDigitsOnly(imgId)) {
+                    prePostInfo.addImage(imgId);
                 }
             }
         }

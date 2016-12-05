@@ -21,7 +21,7 @@ public class PrePostInfoBean {
     private String noticetrimstr;
     private List<String> attaches = new ArrayList<>();
     private List<String> attachdel = new ArrayList<>();
-    private List<String> unusedImages = new ArrayList<>();
+    private List<String> allImages = new ArrayList<>();
     private Map<String, String> typeValues = new LinkedHashMap<>();
     private boolean deleteable;
 
@@ -29,16 +29,13 @@ public class PrePostInfoBean {
         return attachdel;
     }
 
-    public void setAttachdel(List<String> attachdel) {
-        this.attachdel = attachdel;
+    public void addAttachdel(String attach) {
+        if (!attachdel.contains(attach))
+            attachdel.add(attach);
     }
 
     public List<String> getAttaches() {
         return attaches;
-    }
-
-    public void setAttaches(List<String> attaches) {
-        this.attaches = attaches;
     }
 
     public String getFormhash() {
@@ -94,24 +91,13 @@ public class PrePostInfoBean {
             attaches.add(attach);
     }
 
-    public void removeAttach(String attach) {
-        attaches.remove(attach);
+    public List<String> getAllImages() {
+        return allImages;
     }
 
-    public void addAttachdel(String attach) {
-        attachdel.add(attach);
-    }
-
-    public List<String> getUnusedImages() {
-        return unusedImages;
-    }
-
-    public void setUnusedImages(List<String> unusedImages) {
-        this.unusedImages = unusedImages;
-    }
-
-    public void addUnusedImage(String imgId) {
-        unusedImages.add(imgId);
+    public void addImage(String imgId) {
+        if (!allImages.contains(imgId))
+            allImages.add(imgId);
     }
 
     public String getNoticeauthor() {

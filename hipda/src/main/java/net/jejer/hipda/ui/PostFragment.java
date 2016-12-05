@@ -68,6 +68,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PostFragment extends BaseFragment {
@@ -434,7 +435,7 @@ public class PostFragment extends BaseFragment {
             return;
         }
 
-        String subjectText = mEtSubject.getText().toString();
+        final String subjectText = mEtSubject.getText().toString();
         if (mEtSubject.getVisibility() == View.VISIBLE) {
             if (Utils.getWordCount(subjectText) < 5) {
                 Toast.makeText(getActivity(), "主题字数必须大于 5", Toast.LENGTH_LONG).show();
@@ -446,28 +447,53 @@ public class PostFragment extends BaseFragment {
             }
         }
 
-        String replyText = mEtContent.getText().toString();
+        final String replyText = mEtContent.getText().toString();
         if (Utils.getWordCount(replyText) < 5) {
             Toast.makeText(getActivity(), "帖子内容字数必须大于 5", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if (mUploadImages.size() > 0) {
-            boolean needWarn = false;
-            for (UploadImage uploadImage : mUploadImages.values()) {
-                if (isValidImgId(uploadImage.getImgId())) {
-                    String attachStr = "[attachimg]" + uploadImage.getImgId() + "[/attachimg]";
-                    if (!replyText.contains(attachStr)) {
-                        needWarn = true;
-                    }
+        UIUtils.hideSoftKeyboard(getActivity());
+
+        final List<String> extraImgs = new ArrayList<>();
+        if (mPrePostInfo.getAllImages().size() > 0) {
+            for (String imgId : mPrePostInfo.getAllImages()) {
+                String attachStr = "[attachimg]" + imgId + "[/attachimg]";
+                if (!replyText.contains(attachStr)) {
+                    extraImgs.add(imgId);
                 }
             }
-            if (needWarn) {
-                Toast.makeText(getActivity(), "橙色边框图片未添加到帖子中", Toast.LENGTH_LONG).show();
+            if (extraImgs.size() > 0) {
+                Dialog dialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("未使用的图片")
+                        .setMessage(HtmlCompat.fromHtml("有 " + extraImgs.size() + " 张图片未以图片标签[attachimg]形式显示在正文中<br>"
+                                + "<br>如果您希望其他用户看到这些图片，请选择 <b>保留图片</b>"
+                                + "<br>否则请选择 <b>丢弃图片</b>"))
+                        .setPositiveButton("保留图片",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        startPostJob(subjectText, replyText);
+                                    }
+                                })
+                        .setNeutralButton("丢弃图片",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        for (String imgId : extraImgs) {
+                                            mPrePostInfo.addAttachdel(imgId);
+                                        }
+                                        startPostJob(subjectText, replyText);
+                                    }
+                                }).create();
+                dialog.show();
                 return;
             }
         }
+        startPostJob(subjectText, replyText);
+    }
 
+    private void startPostJob(String subjectText, String replyText) {
         PostBean postBean = new PostBean();
         postBean.setContent(replyText);
         postBean.setTid(mTid);
@@ -479,8 +505,6 @@ public class PostFragment extends BaseFragment {
         postBean.setDelete(mDeleteMode);
 
         JobMgr.addJob(new PostJob(mParentSessionId, mMode, mPrePostInfo, postBean));
-
-        UIUtils.hideSoftKeyboard(getActivity());
     }
 
     @Override
@@ -605,6 +629,7 @@ public class PostFragment extends BaseFragment {
             mContentPosition = selectionStart + imgTxt.length();
             mEtContent.requestFocus();
             mPrePostInfo.addAttach(imgId);
+            mPrePostInfo.addImage(imgId);
         }
     }
 
