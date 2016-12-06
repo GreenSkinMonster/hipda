@@ -66,7 +66,7 @@ public class ThreadListJob extends BaseJob {
                 } else {
                     Document doc = Jsoup.parse(resp);
                     data = HiParserThreadList.parse(mCtx, doc);
-                    if (data == null || data.getCount() == 0) {
+                    if (data == null || !data.isParsed()) {
                         eventStatus = Constants.STATUS_FAIL_ABORT;
                         eventMessage = "页面加载失败";
                     }

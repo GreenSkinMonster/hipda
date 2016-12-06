@@ -645,12 +645,13 @@ public class ThreadListFragment extends BaseFragment
             }
             showNotification();
 
-            if (mPage <= 3 && mThreadBeans.size() <= MIN_TREADS_IN_PAGE) {
+            if (mPage <= 5 && mThreadBeans.size() < MIN_TREADS_IN_PAGE) {
+                if (mPage == 1 && mThreadBeans.size() == 0)
+                    Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
                 mPage++;
                 mInloading = true;
                 ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
                 JobMgr.addJob(job);
-                Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -660,27 +661,15 @@ public class ThreadListFragment extends BaseFragment
             swipeLayout.setRefreshing(false);
             hideFooter();
 
-            ThreadListBean threads = event.mData;
             if (mPage > 1)
                 mPage--;
 
-            boolean fetchNext = false;
-            if (mPage <= 3 && threads.isParsed() && mThreadBeans.size() <= MIN_TREADS_IN_PAGE && !HiSettingsHelper.getInstance().isShowStickThreads()) {
-                mPage++;
-                mInloading = true;
-                ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
-                JobMgr.addJob(job);
-                fetchNext = true;
-                Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
+            if (mThreadBeans.size() > 0) {
+                mLoadingView.setState(ContentLoadingView.CONTENT);
+            } else {
+                mLoadingView.setState(ContentLoadingView.ERROR);
             }
-            if (!fetchNext) {
-                if (mThreadBeans.size() > 0) {
-                    mLoadingView.setState(ContentLoadingView.CONTENT);
-                } else {
-                    mLoadingView.setState(ContentLoadingView.ERROR);
-                    UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
-                }
-            }
+            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
         }
 
         @Override
