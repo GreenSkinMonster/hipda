@@ -439,7 +439,7 @@ public class Utils {
 
     public static int getIntFromString(String s) {
         String tmp = s.replaceAll("[^\\d]", "");
-        if (!tmp.isEmpty()) {
+        if (!TextUtils.isEmpty(tmp) && TextUtils.isDigitsOnly(tmp)) {
             return Integer.parseInt(tmp);
         } else {
             return 0;

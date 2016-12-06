@@ -335,10 +335,10 @@ public class HiParserThreadDetail {
                 postId = Utils.getMiddleString(floorLink.first().attr("href"), "pid=", "&");
                 tid = Utils.getMiddleString(floorLink.first().attr("href"), "ptid=", "&");
             }
-            if (tmp.startsWith("回复 ") && tmp.length() < (3 + 6 + 15) && tmp.contains("#")) {
+            if (tmp.startsWith("回复 ") && tmp.contains("#")) {
                 int floor = Utils.getIntFromString(tmp.substring(0, tmp.indexOf("#")));
                 String author = tmp.substring(tmp.lastIndexOf("#") + 1).trim();
-                if (!TextUtils.isEmpty(postId) && floor > 0) {
+                if (!TextUtils.isEmpty(author) && HiUtils.isValidId(postId) && floor > 0) {
                     content.addGoToFloor(tmp, tid, postId, floor, author);
                     return false;
                 }
