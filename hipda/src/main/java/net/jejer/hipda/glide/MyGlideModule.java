@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
@@ -95,14 +94,13 @@ public class MyGlideModule implements GlideModule {
             builder.addInterceptor(new LoggingInterceptor());
 
         final ProgressListener progressListener = new ProgressListener() {
-            private long progressMark = 0;
-
             @Override
             public void update(String url, long bytesRead, long contentLength, boolean done) {
-                if (SystemClock.uptimeMillis() - progressMark > 50) {
+                if (done) {
+                    EventBus.getDefault().post(new GlideImageEvent(url, 100, ImageInfo.IN_PROGRESS));
+                } else {
                     int progress = (int) Math.round((100.0 * bytesRead) / contentLength);
                     EventBus.getDefault().post(new GlideImageEvent(url, progress, ImageInfo.IN_PROGRESS));
-                    progressMark = SystemClock.uptimeMillis();
                 }
             }
         };

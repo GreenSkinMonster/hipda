@@ -8,7 +8,10 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 
+import net.jejer.hipda.utils.HiUtils;
+
 import java.io.InputStream;
+import java.net.URL;
 
 import okhttp3.OkHttpClient;
 
@@ -69,6 +72,16 @@ public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
 
     @Override
     public DataFetcher<InputStream> getResourceFetcher(GlideUrl model, int width, int height) {
-        return new OkHttpStreamFetcher(client, model);
+        boolean forumUrl = false;
+        try {
+            URL url = model.toURL();
+            forumUrl = url.getHost().endsWith(HiUtils.CookieDomain);
+        } catch (Exception ignored) {
+        }
+        if (forumUrl && model.toStringUrl().contains(HiUtils.AvatarPath)) {
+            return new AvatarStreamFetcher(client, model);
+        } else {
+            return new ImageStreamFetcher(client, model, forumUrl);
+        }
     }
 }
