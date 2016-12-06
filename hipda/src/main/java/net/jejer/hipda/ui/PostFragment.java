@@ -473,7 +473,24 @@ public class PostFragment extends BaseFragment {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        startPostJob(subjectText, replyText);
+                                        StringBuilder sb = new StringBuilder();
+                                        String tail = HiSettingsHelper.getInstance().getTailStr();
+                                        String content;
+                                        boolean appendTail = false;
+                                        if (replyText.trim().endsWith(tail)) {
+                                            content = replyText.substring(0, replyText.lastIndexOf(tail));
+                                            appendTail = true;
+                                        } else {
+                                            content = replyText;
+                                        }
+                                        sb.append(content).append("\n");
+                                        for (String imgId : extraImgs) {
+                                            sb.append("[attachimg]").append(imgId).append("[/attachimg]").append("\n");
+                                            mPrePostInfo.addAttach(imgId);
+                                        }
+                                        if (appendTail)
+                                            sb.append(tail);
+                                        startPostJob(subjectText, sb.toString());
                                     }
                                 })
                         .setNeutralButton("丢弃图片",
