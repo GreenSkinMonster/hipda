@@ -2,6 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/pref_category_image">
+        <Preference android:summary="注：图片满足以下任意一个条件就会自动加载"/>
         <ListPreference
             android:defaultValue="2"
             android:entries="@array/pref_image_load_type"
@@ -20,14 +21,12 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_image_auto_load_size"/>
 
-        <ListPreference
-            android:defaultValue="0"
-            android:entries="@array/pref_avatar_load_type"
-            android:entryValues="@array/pref_avatar_load_type_values"
-            android:key="PERF_AVATAR_LOAD_TYPE"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/pref_title_avatar_load_type"/>
+        <net.jejer.hipda.ui.CustomSwitchPreference
+            android:defaultValue="false"
+            android:key="PERF_AUTO_LOAD_THUMB"
+            android:summary="@string/pref_summary_auto_load_thumb"
+            android:title="@string/pref_title_auto_load_thumb"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_image_more">

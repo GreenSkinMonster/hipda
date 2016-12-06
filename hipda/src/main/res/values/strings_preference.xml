@@ -197,18 +197,19 @@
     </string-array>
 
     <string-array name="pref_image_load_type">
-        <item>自动加载</item>
-        <item>手动点击加载</item>
-        <item>WiFi环境自动加载</item>
+        <item>不自动加载</item>
+        <item>仅WiFi时</item>
+        <item>所有网络类型</item>
     </string-array>
     <string-array name="pref_image_load_type_values">
-        <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>0</item>
     </string-array>
 
     <string-array name="pref_image_auto_load_size">
         <item>不自动加载</item>
+        <item>小于 50K 时</item>
         <item>小于 100K 时</item>
         <item>小于 200K 时</item>
         <item>小于 500K 时</item>
@@ -217,6 +218,7 @@
     </string-array>
     <string-array name="pref_image_auto_load_size_values">
         <item>0</item>
+        <item>50</item>
         <item>100</item>
         <item>200</item>
         <item>500</item>
@@ -273,6 +275,7 @@
     <string name="pref_category_ui">用户界面</string>
     <string name="pref_category_theme">主题</string>
     <string name="pref_category_font">字体</string>
+    <string name="pref_category_avatar">头像</string>
 
     <string name="pref_category_notification">消息通知</string>
     <string name="pref_category_notification_style">通知方式</string>
@@ -284,11 +287,12 @@
     <string name="pref_category_other">其它</string>
     <string name="pref_category_debug">调试功能</string>
     <string name="pref_category_cache">缓存管理</string>
-    <string name="pref_category_image">流量相关</string>
+    <string name="pref_category_image">图片加载策略</string>
     <string name="pref_category_image_more">文件相关</string>
 
-    <string name="pref_title_image_load_type">图片加载</string>
-    <string name="pref_title_image_auto_load_size">自动加载小图片</string>
+    <string name="pref_title_image_load_type">以下网络类型自动加载</string>
+    <string name="pref_title_image_auto_load_size">图片小于以下尺寸自动加载</string>
+    <string name="pref_title_auto_load_thumb">图片为缩略图则自动加载</string>
     <string name="pref_title_avatar_load_type">头像显示</string>
     <string name="pref_title_show_stick_threads">显示置顶帖</string>
     <string name="pref_title_sort_by_post_time">本版按发帖排序</string>
@@ -335,7 +339,7 @@
     <string name="pref_title_forum_server">论坛服务器</string>
     <string name="pref_title_trust_all_certs">信任所有证书</string>
     <string name="pref_summary_trust_all_certs">启用此项可能导致中间人攻击，详情请自行搜索</string>
-
+    <string name="pref_summary_auto_load_thumb">缩略图为论坛自动生成，一般为200KB以下，点击缩略图或者保存、分享时会加载原图</string>
 
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
     <string name="pref_summary_primary_color">仅浅色主题有效</string>

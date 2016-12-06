@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui.widget;
 
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -141,6 +142,9 @@ public class ThreadImageLayout extends RelativeLayout {
 
         EventBus.getDefault().register(this);
 
+        boolean isThumb = !TextUtils.isEmpty(mContentImg.getThumbUrl())
+                && !mContentImg.getThumbUrl().equals(mContentImg.getContent());
+
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
             LinearLayout.LayoutParams params
@@ -152,7 +156,10 @@ public class ThreadImageLayout extends RelativeLayout {
             setLayoutParams(params);
             if (mParsedFileSize > 0 && mTextView.getVisibility() != VISIBLE) {
                 mTextView.setVisibility(View.VISIBLE);
-                mTextView.setText(Utils.toSizeText(mParsedFileSize));
+                if (isThumb)
+                    mTextView.setText(Utils.toSizeText(mParsedFileSize) + "↑");
+                else
+                    mTextView.setText(Utils.toSizeText(mParsedFileSize));
             }
         }
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
@@ -164,7 +171,7 @@ public class ThreadImageLayout extends RelativeLayout {
             mProgressBar.setVisibility(View.VISIBLE);
             mProgressBar.setProgress(imageInfo.getProgress());
         } else {
-            boolean autoload = HiSettingsHelper.getInstance().isImageLoadable(mParsedFileSize);
+            boolean autoload = HiSettingsHelper.getInstance().isImageLoadable(mParsedFileSize, isThumb);
             JobMgr.addJob(new GlideImageJob(
                     mRequestManager,
                     mUrl,

@@ -35,6 +35,22 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_category_avatar">
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/pref_avatar_load_type"
+            android:entryValues="@array/pref_avatar_load_type_values"
+            android:key="PERF_AVATAR_LOAD_TYPE"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_avatar_load_type"/>
+
+        <net.jejer.hipda.ui.CustomSwitchPreference
+            android:defaultValue="true"
+            android:key="PERF_CIRCLE_AVATAR"
+            android:title="@string/pref_title_circle_avatar"/>
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_category_font">
         <ListPreference
             android:defaultValue=""
@@ -87,11 +103,6 @@
             android:defaultValue="true"
             android:key="PERF_GESTURE_BACK"
             android:title="@string/pref_title_gesture_back"/>
-
-        <net.jejer.hipda.ui.CustomSwitchPreference
-            android:defaultValue="true"
-            android:key="PERF_CIRCLE_AVATAR"
-            android:title="@string/pref_title_circle_avatar"/>
 
         <net.jejer.hipda.ui.CustomSwitchPreference
             android:defaultValue="true"

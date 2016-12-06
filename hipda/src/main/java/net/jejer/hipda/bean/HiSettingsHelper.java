@@ -36,6 +36,7 @@ public class HiSettingsHelper {
     public static final String PERF_SHOW_POST_TYPE = "PERF_SHOW_POST_TYPE";
     public static final String PERF_IMAGE_LOAD_TYPE = "PERF_IMAGE_LOAD_TYPE";
     public static final String PERF_IMAGE_AUTO_LOAD_SIZE = "PERF_IMAGE_AUTO_LOAD_SIZE";
+    public static final String PERF_AUTO_LOAD_THUMB = "PERF_AUTO_LOAD_THUMB";
     public static final String PERF_AVATAR_LOAD_TYPE = "PERF_AVATAR_LOAD_TYPE";
     public static final String PERF_SORTBYPOSTTIME_BY_FORUM = "PERF_SORTBYPOSTTIME_BY_FORUM";
     public static final String PERF_ADDTAIL = "PERF_ADDTAIL";
@@ -101,6 +102,7 @@ public class HiSettingsHelper {
     private boolean mShowPostType = false;
     private String mImageLoadType = "0";
     private long mImageAutoLoadSize = -1;
+    private boolean mAutoLoadThumb = false;
     private String mAvatarLoadType = "0";
     private Set<String> mSortByPostTimeByForum;
 
@@ -162,10 +164,11 @@ public class HiSettingsHelper {
         return mMobileNetwork;
     }
 
-    public boolean isImageLoadable(long imageSize) {
+    public boolean isImageLoadable(long imageSize, boolean isThumb) {
         return Constants.LOAD_TYPE_ALWAYS.equals(mImageLoadType)
                 || (!isMobileNetwork() && Constants.LOAD_TYPE_ONLY_WIFI.equals(mImageLoadType))
-                || (imageSize > 0 && imageSize <= getImageAutoLoadSize());
+                || (imageSize > 0 && imageSize <= getImageAutoLoadSize())
+                || (mAutoLoadThumb && isThumb);
     }
 
     public long getImageAutoLoadSize() {
@@ -235,6 +238,7 @@ public class HiSettingsHelper {
         isShowStickThreadsFromPref();
         getAvatarLoadTypeFromPref();
         getImageLoadTypeFromPref();
+        isAutoLoadThumbFromPref();
         isSortByPostTimeByForumFromPref();
         isAddTailFromPref();
         getTailTextFromPref();
@@ -405,6 +409,21 @@ public class HiSettingsHelper {
         this.mImageLoadType = imageLoadType;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_IMAGE_LOAD_TYPE, imageLoadType).apply();
+    }
+
+    public boolean isAutoLoadThumbFromPref() {
+        mAutoLoadThumb = mSharedPref.getBoolean(PERF_AUTO_LOAD_THUMB, false);
+        return mAutoLoadThumb;
+    }
+
+    public boolean isAutoLoadThumb() {
+        return mAutoLoadThumb;
+    }
+
+    public void setAutoLoadThumb(boolean autoLoadThumb) {
+        mAutoLoadThumb = autoLoadThumb;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean(PERF_AUTO_LOAD_THUMB, mAutoLoadThumb).apply();
     }
 
     public boolean isSortByPostTime(int fid) {
