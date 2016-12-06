@@ -277,7 +277,6 @@ public class ThreadDetailFragment extends BaseFragment {
                     JobMgr.addJob(new PostJob(mSessionId, PostHelper.MODE_QUICK_REPLY, null, postBean));
 
                     UIUtils.hideSoftKeyboard(getActivity());
-                    ((MainFrameActivity) getActivity()).getMainFab().show();
                 }
             }
         });
