@@ -145,7 +145,7 @@ public class ImageViewerAdapter extends PagerAdapter {
                 glideImageView.setUrl(imageUrl);
                 glideImageView.setSingleClickListener();
             } else {
-                scaleImageView.setMinimumDpi(100);
+                scaleImageView.setMinimumDpi(36);
                 scaleImageView.setMinimumTileDpi(160);
                 scaleImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
                 scaleImageView.setImage(ImageSource.uri(imageInfo.getPath()));
