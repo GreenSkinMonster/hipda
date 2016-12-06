@@ -120,6 +120,16 @@ public abstract class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mSessionId = UUID.randomUUID().toString();
         setRetainInstance(true);
+
+        MainFrameActivity mainActivity = ((MainFrameActivity) getActivity());
+        mMainFab = mainActivity.getMainFab();
+        mNotificationFab = mainActivity.getNotificationFab();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setupFab();
     }
 
     @Override
@@ -134,9 +144,6 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        MainFrameActivity mainActivity = ((MainFrameActivity) getActivity());
-        mMainFab = mainActivity.getMainFab();
-        mNotificationFab = mainActivity.getNotificationFab();
         setupFab();
     }
 

@@ -276,11 +276,6 @@ public class PostFragment extends BaseFragment {
                 break;
         }
 
-        if (mMainFab != null)
-            mMainFab.hide();
-        if (mNotificationFab != null)
-            mNotificationFab.hide();
-
         return view;
     }
 
