@@ -113,6 +113,34 @@ public class UIUtils {
         dialog.show();
     }
 
+    public static void showReleaseNotesDialog(final Activity activity) {
+        final LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View viewlayout = inflater.inflate(R.layout.item_select_text, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+        final TextView tvTitle = (TextView) viewlayout.findViewById(R.id.tv_select_text_title);
+        tvTitle.setText("更新记录");
+        tvTitle.setTextSize(HiSettingsHelper.getInstance().getTitleTextSize());
+
+        String releaseNotes;
+        try {
+            releaseNotes = Utils.readFromAssets(activity, "release-notes.txt");
+        } catch (Exception e) {
+            releaseNotes = e.getMessage();
+        }
+        final TextView textView = (TextView) viewlayout.findViewById(R.id.tv_select_text);
+        textView.setText(releaseNotes);
+        textView.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+        UIUtils.setLineSpacing(textView);
+
+        builder.setView(viewlayout);
+        builder.setPositiveButton(activity.getResources().getString(R.string.action_close), null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     public static boolean askForPermission(Context ctx) {
         if (ContextCompat.checkSelfPermission(ctx,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)

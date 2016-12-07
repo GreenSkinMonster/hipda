@@ -22,6 +22,7 @@ public class HiApplication extends Application {
 
     private static Context context;
     private static boolean notified;
+    private static boolean updated;
 
     @Override
     public void onCreate() {
@@ -31,7 +32,7 @@ public class HiApplication extends Application {
         if (!BuildConfig.DEBUG)
             Fabric.with(this, new Crashlytics());
 
-        UpdateHelper.updateApp(context);
+        updated = UpdateHelper.updateApp(context);
 
         if (Constants.FONT_ROBOTO_SLAB.equals(HiSettingsHelper.getInstance().getFont())) {
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
@@ -78,4 +79,11 @@ public class HiApplication extends Application {
         notified = b;
     }
 
+    public static boolean isUpdated() {
+        return updated;
+    }
+
+    public static void setUpdated(boolean updated) {
+        HiApplication.updated = updated;
+    }
 }

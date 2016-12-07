@@ -8,22 +8,17 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.HiProgressDialog;
 import net.jejer.hipda.utils.Logger;
-import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
 
 import okhttp3.Request;
 
@@ -170,73 +165,11 @@ public class UpdateHelper {
         return false;
     }
 
-    public static void updateApp(Context context) {
+    public static boolean updateApp(Context context) {
         String installedVersion = HiSettingsHelper.getInstance().getInstalledVersion();
         String currentVersion = HiApplication.getAppVersion();
 
         if (!currentVersion.equals(installedVersion)) {
-            if (TextUtils.isEmpty(installedVersion)) {
-                // <= v2.0.02
-
-                //add default forums, BS/Eink/Geek
-                Set<String> forums = HiSettingsHelper.getInstance().getForums();
-                if (!forums.contains("6"))
-                    forums.add("6");
-                if (!forums.contains("7"))
-                    forums.add("7");
-                if (!forums.contains("59"))
-                    forums.add("59");
-                HiSettingsHelper.getInstance().setForums(forums);
-
-                Utils.clearInternalCache();
-            }
-            if (newer("2.0.10", currentVersion)) {
-                if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, ""))) {
-                    HiSettingsHelper.getInstance()
-                            .setStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, NotificationMgr.DEFAUL_SLIENT_BEGIN);
-                }
-                if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SILENT_END, ""))) {
-                    HiSettingsHelper.getInstance()
-                            .setStringValue(HiSettingsHelper.PERF_NOTI_SILENT_END, NotificationMgr.DEFAUL_SLIENT_END);
-                }
-            }
-
-            if (newer(installedVersion, "2.2.01")) {
-                String blacklist = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_BLANKLIST_USERNAMES, "");
-                if (blacklist.length() > 0 && blacklist.contains(" ") && !blacklist.contains("\n")) {
-                    String[] usernames = blacklist.split(" ");
-                    ArrayList<String> names = new ArrayList<>();
-                    for (String username : usernames) {
-                        if (!TextUtils.isEmpty(username) && !names.contains(username))
-                            names.add(username);
-                    }
-                    HiSettingsHelper.getInstance().setBlanklistUsernames(names);
-                }
-            }
-
-            if (newer(installedVersion, "2.2.10")) {
-                String theme = HiSettingsHelper.getInstance().getTheme();
-                int primaryColor = 0;
-                if ("light-deep_orange".equals(theme)) {
-                    theme = "light";
-                    primaryColor = ContextCompat.getColor(context, R.color.md_orange_700);
-                } else if ("light-blue_grey".equals(theme)) {
-                    theme = "light";
-                    primaryColor = ContextCompat.getColor(context, R.color.md_blue_grey_700);
-                } else if ("light-teal".equals(theme)) {
-                    theme = "light";
-                    primaryColor = ContextCompat.getColor(context, R.color.md_teal_700);
-                } else if ("light-indigo".equals(theme)) {
-                    theme = "light";
-                    primaryColor = ContextCompat.getColor(context, R.color.md_indigo_700);
-                }
-
-                if (primaryColor != 0) {
-                    HiSettingsHelper.getInstance().setTheme(theme);
-                    HiSettingsHelper.getInstance().setPrimaryColor(primaryColor);
-                }
-            }
-
             if (newer(installedVersion, "4.0.00")) {
                 HiSettingsHelper.getInstance().setBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, true);
             }
@@ -248,6 +181,7 @@ public class UpdateHelper {
 
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
         }
+        return newer(installedVersion, currentVersion);
     }
 
 }

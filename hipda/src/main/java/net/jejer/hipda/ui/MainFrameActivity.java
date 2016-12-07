@@ -173,10 +173,6 @@ public class MainFrameActivity extends AppCompatActivity {
             if (args != null)
                 FragmentUtils.show(getFragmentManager(), args);
 
-            if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
-                new UpdateHelper(this, true).check();
-            }
-
             TaskHelper.runDailyTask(false);
 
             if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
@@ -184,6 +180,14 @@ public class MainFrameActivity extends AppCompatActivity {
                     NotificationMgr.startAlarm(this);
             }
             UIUtils.askForPermission(this);
+            if (HiApplication.isUpdated()) {
+                HiApplication.setUpdated(false);
+                UIUtils.showReleaseNotesDialog(this);
+            } else {
+                if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
+                    new UpdateHelper(this, true).check();
+                }
+            }
         }
     }
 
