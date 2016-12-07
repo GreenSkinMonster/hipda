@@ -30,8 +30,8 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_author_only_mode"
-        android:title="@string/action_author_only_mode"
+        android:id="@+id/action_only_floor_author"
+        android:title="@string/action_only_floor_author"
         app:showAsAction="ifRoom"/>
 
 </menu>

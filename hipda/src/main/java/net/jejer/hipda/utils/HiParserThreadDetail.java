@@ -25,6 +25,15 @@ import java.util.regex.Matcher;
 
 public class HiParserThreadDetail {
 
+    public static String getThreadAuthorId(Document doc) {
+        Elements authorLinksEs = doc.select("td.postauthor div.postinfo a");
+        if (authorLinksEs.size() > 0) {
+            String uidUrl = authorLinksEs.first().attr("href");
+            return Utils.getMiddleString(uidUrl, "uid=", "&");
+        }
+        return "";
+    }
+
     public static DetailListBean parse(Context ctx, Document doc, boolean parseTid) {
 
         // get last page

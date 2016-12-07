@@ -111,7 +111,6 @@ public class ThreadDetailFragment extends BaseFragment {
     private String mTid;
     private String mGotoPostId;
     private String mAuthorId;
-    private String mAuthor;
     private String mTitle;
     private String mFid;
     private XRecyclerView mRecyclerView;
@@ -360,6 +359,15 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         }
 
+        MenuItem authorMenuItem = menu.findItem(R.id.action_only_author);
+        if (authorMenuItem != null) {
+            if (isInAuthorOnlyMode()) {
+                authorMenuItem.setTitle(R.string.action_show_all);
+            } else {
+                authorMenuItem.setTitle(R.string.action_only_author);
+            }
+        }
+
         if (mShowAllMenuItem != null) {
             if (TextUtils.isEmpty(mAuthorId)) {
                 mShowAllMenuItem.setVisible(false);
@@ -375,6 +383,18 @@ public class ThreadDetailFragment extends BaseFragment {
             case android.R.id.home:
                 // Implemented in activity
                 return false;
+            case R.id.action_only_author:
+                if (isInAuthorOnlyMode()) {
+                    cancelAuthorOnlyMode();
+                } else {
+                    if (mCache.get(1) != null) {
+                        DetailBean detailBean = mCache.get(1).getAll().get(0);
+                        enterAuthorOnlyMode(detailBean.getUid());
+                    } else {
+                        enterAuthorOnlyMode(ThreadDetailJob.FIND_AUTHOR_ID);
+                    }
+                }
+                return true;
             case R.id.action_open_url:
                 String url = HiUtils.DetailListUrl + mTid;
                 if (mCurrentPage > 1)
@@ -525,10 +545,10 @@ public class ThreadDetailFragment extends BaseFragment {
         return !TextUtils.isEmpty(mAuthorId);
     }
 
-    public void enterAuthorOnlyMode(String authorId, String author) {
+    public void enterAuthorOnlyMode(String authorId) {
         mAuthorId = authorId;
-        mAuthor = author;
         mCurrentPage = 1;
+        mGotoFloor = FIRST_FLOOR;
         mLoadingView.setState(ContentLoadingView.LOAD_NOW);
         mShowAllMenuItem.setVisible(true);
         startJob(mCurrentPage, FETCH_NORMAL, POSITION_NORMAL);
@@ -536,8 +556,8 @@ public class ThreadDetailFragment extends BaseFragment {
 
     public void cancelAuthorOnlyMode() {
         mAuthorId = "";
-        mAuthor = "";
         mCurrentPage = 1;
+        mGotoFloor = FIRST_FLOOR;
         mLoadingView.setState(ContentLoadingView.LOAD_NOW);
         mShowAllMenuItem.setVisible(false);
         startJob(mCurrentPage, FETCH_NORMAL, POSITION_NORMAL);
@@ -986,6 +1006,8 @@ public class ThreadDetailFragment extends BaseFragment {
             DetailListBean details = event.mData;
 
             mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();
+            if (ThreadDetailJob.FIND_AUTHOR_ID.equals(mAuthorId))
+                mAuthorId = event.mAuthorId;
 
             // Set title
             if (details.getTitle() != null && !details.getTitle().isEmpty()) {

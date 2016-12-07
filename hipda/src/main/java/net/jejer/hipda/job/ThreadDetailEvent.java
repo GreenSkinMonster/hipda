@@ -11,4 +11,5 @@ public class ThreadDetailEvent extends BaseEvent {
     public int mFectchType;
     public int mPage;
     public int mLoadingPosition;
+    public String mAuthorId;
 }

@@ -12,7 +12,7 @@
     <string name="action_goto_page">页面跳转</string>
     <string name="action_quote">引用</string>
     <string name="action_copy">复制</string>
-    <string name="action_author_only_mode">只看该作者</string>
+    <string name="action_only_floor_author">只看该作者</string>
     <string name="action_select_text">文字选择</string>
     <string name="action_share">分享</string>
     <string name="action_save">保存</string>

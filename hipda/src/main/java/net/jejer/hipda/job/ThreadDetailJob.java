@@ -22,6 +22,7 @@ import org.jsoup.nodes.Document;
 
 public class ThreadDetailJob extends BaseJob {
 
+    public final static String FIND_AUTHOR_ID = "-1";
     private final static int MIN_JOB_TIME_MS = 300;
 
     private Context mCtx;
@@ -103,6 +104,7 @@ public class ThreadDetailJob extends BaseJob {
         mEvent.mStatus = eventStatus;
         mEvent.mMessage = eventMessage;
         mEvent.mDetail = eventDetail;
+        mEvent.mAuthorId = mAuthorId;
         EventBus.getDefault().postSticky(mEvent);
     }
 
@@ -117,12 +119,26 @@ public class ThreadDetailJob extends BaseJob {
             mUrl = HiUtils.LastPageUrl + mTid;
         } else {
             mUrl = HiUtils.DetailListUrl + mTid + "&page=" + mPage;
+            if (FIND_AUTHOR_ID.equals(mAuthorId)) {
+                mAuthorId = getThreadAuthorId();
+            }
             if (HiUtils.isValidId(mAuthorId))
                 mUrl += "&authorid=" + mAuthorId;
 
         }
         return OkHttpHelper.getInstance().get(mUrl, mSessionId,
                 mFetchType == ThreadDetailFragment.FETCH_REFRESH ? OkHttpHelper.FORCE_NETWORK : OkHttpHelper.PREFER_CACHE);
+    }
+
+    private String getThreadAuthorId() {
+        try {
+            String url = HiUtils.DetailListUrl + mTid + "&page=1";
+            String response = OkHttpHelper.getInstance().get(url, mSessionId, OkHttpHelper.PREFER_CACHE);
+            Document doc = Jsoup.parse(response);
+            return HiParserThreadDetail.getThreadAuthorId(doc);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
 }

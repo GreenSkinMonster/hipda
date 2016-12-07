@@ -110,11 +110,11 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 }
                 mode.finish();
                 return true;
-            case R.id.action_author_only_mode:
+            case R.id.action_only_floor_author:
                 if (mFragment.isInAuthorOnlyMode()) {
                     mFragment.cancelAuthorOnlyMode();
                 } else {
-                    mFragment.enterAuthorOnlyMode(mDetailBean.getUid(), mDetailBean.getAuthor());
+                    mFragment.enterAuthorOnlyMode(mDetailBean.getUid());
                 }
                 mode.finish();
                 return true;
@@ -164,11 +164,11 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
             item.setVisible(false);
         }
 
-        MenuItem menuItemAuthor = menu.findItem(R.id.action_author_only_mode);
+        MenuItem menuItemAuthor = menu.findItem(R.id.action_only_floor_author);
         if (mFragment.isInAuthorOnlyMode()) {
             menuItemAuthor.setTitle(R.string.action_show_all);
         } else {
-            menuItemAuthor.setTitle(R.string.action_author_only_mode);
+            menuItemAuthor.setTitle(R.string.action_only_floor_author);
         }
 
         mode.setTitle(mDetailBean.getFloor() + "# " + mDetailBean.getAuthor());
