@@ -200,7 +200,7 @@ public class PostHelper {
             mResult = mResult.replace("发表", "删除");
         }
 
-        if (mMode != MODE_EDIT_POST)
+        if (mStatus == Constants.STATUS_SUCCESS && mMode != MODE_EDIT_POST)
             LAST_POST_TIME = System.currentTimeMillis();
     }
 
