@@ -40,6 +40,8 @@
     <string name="action_new_thread">发表新帖</string>
     <string name="action_quick_reply">快速回复</string>
     <string name="action_filter_by_type">分类</string>
+    <string name="action_bug_report">问题反馈</string>
+    <string name="action_jejer">简洁版帖子</string>
 
     <string name="recipient">收件人</string>
     <string name="content">内容</string>
@@ -81,6 +83,11 @@
     <string name="user_online">目前在线</string>
     <string name="site_url">站内地址</string>
 
-    <string name="crash_toast_text">HiPDA·NG 发生了意外，请协助通过邮件反馈错误信息</string>
+    <string name="report_reminder">
+        问题将反馈到客户端专贴
+        \n反馈前请先看 1楼 的要求以及常见问题
+        \n提供必要信息，避免重复提问，以提高效率
+        \n\n谢谢
+    </string>
 
 </resources>

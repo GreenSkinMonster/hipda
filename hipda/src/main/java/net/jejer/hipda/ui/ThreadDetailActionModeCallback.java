@@ -122,7 +122,8 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                 if (mFragment.getActivity() != null) {
                     UIUtils.showMessageDialog(mFragment.getActivity(),
                             mDetailBean.getFloor() + "# " + mDetailBean.getAuthor(),
-                            mDetailBean.getContents().getCopyText().trim());
+                            mDetailBean.getContents().getCopyText().trim(),
+                            true);
                 }
                 mode.finish();
                 return true;

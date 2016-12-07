@@ -1,21 +1,16 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:background="@drawable/rounded_corner"
+    android:padding="6dp">
 
-    <RelativeLayout
+    <net.jejer.hipda.ui.TextViewWithEmoticon
+        android:id="@+id/about_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="@drawable/rounded_corner"
-        android:padding="6dp">
+        android:layout_centerInParent="true"
+        android:padding="6dp"/>
 
-        <net.jejer.hipda.ui.TextViewWithEmoticon
-            android:id="@+id/about_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:padding="6dp" />
-
-    </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>

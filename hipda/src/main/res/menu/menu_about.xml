@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_bug_report"
+        android:title="@string/action_bug_report"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_jejer"
+        android:title="@string/action_jejer"
+        app:showAsAction="never"/>
+
+</menu>

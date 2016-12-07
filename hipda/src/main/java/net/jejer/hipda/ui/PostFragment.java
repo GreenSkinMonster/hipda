@@ -726,7 +726,7 @@ public class PostFragment extends BaseFragment {
                 mTvQuoteText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        UIUtils.showMessageDialog(getActivity(), mFloor + "# " + mFloorAuthor, mText);
+                        UIUtils.showMessageDialog(getActivity(), mFloor + "# " + mFloorAuthor, mText, true);
                     }
                 });
             }

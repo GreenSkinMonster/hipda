@@ -1,34 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+
+<LinearLayout
+    android:id="@+id/about_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:background="?list_item_background"
+    android:clickable="true"
+    android:orientation="vertical"
+    android:padding="8dp">
 
-    <LinearLayout
-        android:id="@+id/about_layout"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp"
+        android:src="@mipmap/ic_launcher"/>
+
+    <TextView
+        android:id="@+id/app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="6dp"
+        android:lineSpacingExtra="1dp"
+        android:lineSpacingMultiplier="1.2"
+        android:padding="4dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textSize="15sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/background_grey"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?list_item_background"
-        android:orientation="vertical"
-        android:padding="8dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="12dp"
-            android:src="@mipmap/ic_launcher"/>
+        android:clickable="true">
 
         <TextView
-            android:id="@+id/app_version"
-            android:layout_width="wrap_content"
+            android:id="@+id/tab_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="6dp"
-            android:padding="4dp"
-            android:text="0.0.00"
-            android:textAlignment="center"
+            android:layout_margin="8dp"
+            android:lineSpacingExtra="1dp"
+            android:lineSpacingMultiplier="1.2"
+            android:textIsSelectable="true"
             android:textSize="16sp"/>
 
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+
+</LinearLayout>

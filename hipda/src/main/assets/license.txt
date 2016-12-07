@@ -1,0 +1,30 @@
+
+HiPDA简洁版 - https://bitbucket.org/jejer/hipda/
+
+Android Iconics - https://github.com/mikepenz/Android-Iconics
+
+Android Priority Job Queue - https://github.com/yigit/android-priority-jobqueue
+
+BubbleLayout - https://github.com/MasayukiSuda/BubbleLayout
+
+Calligraphy - https://github.com/chrisjenx/Calligraphy
+
+Crashlytics - https://try.crashlytics.com/
+
+Emoji - https://github.com/vanniktech/Emoji
+
+Emoji Java - https://github.com/vdurmont/emoji-java
+
+EventBus - https://github.com/greenrobot/EventBus
+
+Glide - https://github.com/bumptech/glide
+
+Jsoup - http://jsoup.org/
+
+MaterialDrawer - https://github.com/mikepenz/MaterialDrawer
+
+OkHttp - https://github.com/square/okhttp
+
+Spectrum - https://github.com/the-blue-alliance/spectrum
+
+Subsampling Scale Image View - https://github.com/davemorrissey/subsampling-scale-image-view

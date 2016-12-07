@@ -67,7 +67,7 @@ public class UIUtils {
                 public void onClick(View v) {
                     UIUtils.showMessageDialog(view.getContext(),
                             "详细信息",
-                            message + "\n" + detail);
+                            message + "\n" + detail, true);
                     snackbar.dismiss();
 
                 }
@@ -81,64 +81,52 @@ public class UIUtils {
         ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(color);
     }
 
-    public static void showMessageDialog(final Context context, String message, final String detail) {
-
+    public static AlertDialog.Builder getMessageDialogBuilder(final Context context, String message, final String detail) {
         final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View viewlayout = inflater.inflate(R.layout.item_select_text, null);
+        final View viewlayout = inflater.inflate(R.layout.item_simple_dialog, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-        final TextView tvTitle = (TextView) viewlayout.findViewById(R.id.tv_select_text_title);
+        final TextView tvTitle = (TextView) viewlayout.findViewById(R.id.tv_dialog_title);
         tvTitle.setText(message);
         tvTitle.setTextSize(HiSettingsHelper.getInstance().getTitleTextSize());
 
-        final TextView textView = (TextView) viewlayout.findViewById(R.id.tv_select_text);
+        final TextView textView = (TextView) viewlayout.findViewById(R.id.tv_dialog_content);
         textView.setText(detail);
         textView.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         UIUtils.setLineSpacing(textView);
 
         builder.setView(viewlayout);
-        builder.setPositiveButton(context.getResources().getString(R.string.action_close), null);
-        builder.setNeutralButton(context.getResources().getString(R.string.action_copy),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", detail);
-                        clipboard.setPrimaryClip(clip);
-                    }
-                });
+        return builder;
+    }
 
+    public static void showMessageDialog(final Context context, String message, final String detail, boolean copyable) {
+        AlertDialog.Builder builder = getMessageDialogBuilder(context, message, detail);
+        builder.setPositiveButton(context.getResources().getString(R.string.action_close), null);
+        if (copyable) {
+            builder.setNeutralButton(context.getResources().getString(R.string.action_copy),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", detail);
+                            clipboard.setPrimaryClip(clip);
+                        }
+                    });
+        }
         AlertDialog dialog = builder.create();
         dialog.show();
     }
 
     public static void showReleaseNotesDialog(final Activity activity) {
-        final LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View viewlayout = inflater.inflate(R.layout.item_select_text, null);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
-        final TextView tvTitle = (TextView) viewlayout.findViewById(R.id.tv_select_text_title);
-        tvTitle.setText("更新记录");
-        tvTitle.setTextSize(HiSettingsHelper.getInstance().getTitleTextSize());
-
         String releaseNotes;
         try {
             releaseNotes = Utils.readFromAssets(activity, "release-notes.txt");
         } catch (Exception e) {
             releaseNotes = e.getMessage();
         }
-        final TextView textView = (TextView) viewlayout.findViewById(R.id.tv_select_text);
-        textView.setText(releaseNotes);
-        textView.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
-        UIUtils.setLineSpacing(textView);
 
-        builder.setView(viewlayout);
-        builder.setPositiveButton(activity.getResources().getString(R.string.action_close), null);
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        showMessageDialog(activity, "更新记录", releaseNotes, false);
     }
 
     public static boolean askForPermission(Context ctx) {
