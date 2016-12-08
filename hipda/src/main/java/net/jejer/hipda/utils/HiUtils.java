@@ -28,7 +28,6 @@ public class HiUtils {
     public static final String ForumUrlPattern = "." + CookieDomain + "/forum/";
 
     public static String BaseUrl;
-    public static String SettingUrl;
 
     public static String ThreadListUrl;
     public static String DetailListUrl;
@@ -117,7 +116,6 @@ public class HiUtils {
         String forumServer = HiSettingsHelper.getInstance().getForumServer();
 
         BaseUrl = forumServer + "/forum/";
-        SettingUrl = forumServer + "/config.php";
 
         ImageBaseUrl = imageHost + "/forum/";
         AvatarBaseUrl = BaseUrl + AvatarPath;

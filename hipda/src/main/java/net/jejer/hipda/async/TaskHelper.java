@@ -62,7 +62,7 @@ public class TaskHelper {
         if (activity != null
                 || TextUtils.isEmpty(imageHostPerf)
                 || !imageHostPerf.contains("://")
-                || System.currentTimeMillis() - imageHostUpdateTime > 5 * 60 * 1000) {
+                || System.currentTimeMillis() - imageHostUpdateTime > 60 * 60 * 1000) {
             new AsyncTask<Void, Void, Exception>() {
 
                 private HiProgressDialog dialog;
@@ -70,7 +70,7 @@ public class TaskHelper {
                 @Override
                 protected Exception doInBackground(Void... voids) {
                     try {
-                        updateCustSetting();
+                        updateSetting();
                     } catch (Exception e) {
                         return e;
                     }
@@ -86,8 +86,8 @@ public class TaskHelper {
                     } else {
                         if (dialog != null)
                             dialog.dismiss("服务器已更新 \n\n"
-                                            + "论坛 : " + HiSettingsHelper.getInstance().getForumServer() + "\n"
-                                            + "图片 : " + HiSettingsHelper.getInstance().getImageHost(),
+                                            + "论坛:" + HiSettingsHelper.getInstance().getForumServer() + "\n"
+                                            + "图片:" + HiSettingsHelper.getInstance().getImageHost(),
                                     2000);
                         if (preference != null)
                             preference.setSummary(HiSettingsHelper.getInstance().getForumServer());
@@ -105,13 +105,17 @@ public class TaskHelper {
 
     }
 
-    private static String getImageHost() throws Exception {
-        String response = OkHttpHelper.getInstance().get(HiUtils.SettingUrl);
+    private static void updateSetting() throws Exception {
+        HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServerSsl);
+        String response = OkHttpHelper.getInstance().get(HiUtils.ForumServerSsl + "/config.php");
         Gson gson = new Gson();
         Type stringStringMap = new TypeToken<Map<String, String>>() {
         }.getType();
         Map<String, String> map = gson.fromJson(response, stringStringMap);
-        return map.get("CDN");
+        String imageHost = map.get("CDN");
+        HiSettingsHelper.getInstance().setImageHost(imageHost);
+        HiUtils.updateBaseUrls();
+        HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, System.currentTimeMillis());
     }
 
     private static void updateCustSetting() throws Exception {
