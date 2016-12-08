@@ -534,25 +534,47 @@ public class PostFragment extends BaseFragment {
 
         if (resultCode == Activity.RESULT_OK && requestCode == SELECT_PICTURE) {
             boolean findData = false;
+            boolean duplicate = false;
+            StringBuilder sb = new StringBuilder();
+            sb.append("Device: ").append(Utils.getDeviceName()).append("\n");
+            sb.append("Version: ").append(Build.VERSION.SDK_INT).append("\n");
             Collection<Uri> uris = new ArrayList<>();
-            if (Build.VERSION.SDK_INT >= 18) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 ClipData clipData = intent.getClipData();
+                sb.append("ClipData: ").append(clipData == null ? "null" : clipData.getItemCount()).append("\n");
                 if (clipData != null && clipData.getItemCount() > 0) {
                     for (int i = 0; i < clipData.getItemCount(); i++) {
-                        Uri tmp = clipData.getItemAt(i).getUri();
-                        if (!mUploadImages.containsKey(tmp))
-                            uris.add(tmp);
+                        Uri uri = clipData.getItemAt(i).getUri();
+                        if (!mUploadImages.containsKey(uri)) {
+                            uris.add(uri);
+                            sb.append("ClipData: item ").append(i).append(" added").append("\n");
+                        } else {
+                            duplicate = true;
+                            sb.append("ClipData: item ").append(i).append(" dup").append("\n");
+                        }
                     }
                     findData = true;
                 }
             }
             if (!findData && intent.getData() != null) {
-                if (!mUploadImages.containsKey(intent.getData()))
+                if (!mUploadImages.containsKey(intent.getData())) {
                     uris.add(intent.getData());
+                    sb.append("Data: ").append(" added").append("\n");
+                } else {
+                    duplicate = true;
+                    sb.append("Data: ").append(" dup").append("\n");
+                }
             }
 
+            if (intent.getData() == null)
+                sb.append("Data: null").append("\n");
+
             if (uris.size() == 0) {
-                Toast.makeText(getActivity(), "选择的图片重复", Toast.LENGTH_SHORT).show();
+                if (duplicate) {
+                    Toast.makeText(getActivity(), "选择的图片重复", Toast.LENGTH_SHORT).show();
+                } else {
+                    UIUtils.errorSnack(getView(), "无法获取图片信息", sb.toString());
+                }
                 return;
             }
 
