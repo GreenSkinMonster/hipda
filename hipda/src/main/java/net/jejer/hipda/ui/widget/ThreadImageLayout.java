@@ -173,7 +173,6 @@ public class ThreadImageLayout extends RelativeLayout {
         } else {
             boolean autoload = HiSettingsHelper.getInstance().isImageLoadable(mParsedFileSize, isThumb);
             JobMgr.addJob(new GlideImageJob(
-                    mRequestManager,
                     mUrl,
                     JobMgr.PRIORITY_LOW,
                     mParentSessionId,

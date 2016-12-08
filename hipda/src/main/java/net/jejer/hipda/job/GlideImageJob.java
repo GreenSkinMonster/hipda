@@ -16,6 +16,7 @@ import com.path.android.jobqueue.Params;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.glide.GlideImageEvent;
+import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
@@ -39,12 +40,12 @@ public class GlideImageJob extends BaseJob {
     private RequestManager mRequestManager;
     private boolean mNetworkFetch;
 
-    public GlideImageJob(RequestManager requestManager, String url, int priority, String tag, boolean networkFetch) {
+    public GlideImageJob(String url, int priority, String tag, boolean networkFetch) {
         super(new Params(priority)
                 .setPersistent(false)
                 .setRequiresNetwork(false)
                 .addTags(tag));
-        mRequestManager = requestManager;
+        mRequestManager = Glide.with(HiApplication.getAppContext());
         mUrl = url;
         mNetworkFetch = networkFetch;
         mSessionId = tag;

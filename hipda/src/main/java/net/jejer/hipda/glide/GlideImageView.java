@@ -71,7 +71,7 @@ public class GlideImageView extends ImageView {
                 }
             } else if (imageInfo.getStatus() == ImageInfo.FAIL || imageInfo.getStatus() == ImageInfo.IDLE) {
                 if (mFragment != null)
-                    JobMgr.addJob(new GlideImageJob(Glide.with(mFragment), mUrl, JobMgr.PRIORITY_LOW, mFragment.mSessionId, true));
+                    JobMgr.addJob(new GlideImageJob(mUrl, JobMgr.PRIORITY_LOW, mFragment.mSessionId, true));
             }
         }
     }

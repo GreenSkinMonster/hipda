@@ -21,7 +21,6 @@ import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
-import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.ui.adapter.ImageViewerAdapter;
 import net.jejer.hipda.ui.widget.ImageViewPager;
 import net.jejer.hipda.utils.UIUtils;
@@ -250,7 +249,6 @@ public class ImageViewerActivity extends AppCompatActivity {
                 }
             });
         }
-        JobMgr.cancelJobs(mSessionId);
         super.onDestroy();
     }
 

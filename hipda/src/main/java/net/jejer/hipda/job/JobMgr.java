@@ -3,11 +3,9 @@ package net.jejer.hipda.job;
 import android.util.Log;
 
 import com.path.android.jobqueue.JobManager;
-import com.path.android.jobqueue.TagConstraint;
 import com.path.android.jobqueue.config.Configuration;
 import com.path.android.jobqueue.log.CustomLogger;
 
-import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Logger;
 
@@ -78,18 +76,7 @@ public class JobMgr {
         }
     }
 
-    private void cancelJobsImpl(String tag) {
-        jobManager.cancelJobsInBackground(null, TagConstraint.ANY, tag);
-        glideJobManager.cancelJobsInBackground(null, TagConstraint.ANY, tag);
-        OkHttpHelper.getInstance().cancel(tag);
-    }
-
     public static void addJob(BaseJob job) {
         getInstance().addJobImpl(job);
     }
-
-    public static void cancelJobs(final String tag) {
-        getInstance().cancelJobsImpl(tag);
-    }
-
 }
