@@ -834,7 +834,9 @@ public class ThreadDetailFragment extends BaseFragment {
                     mBlinkPostId = null;
                     View view = mLayoutManager.findViewByPosition(pos);
                     if (view != null && ViewCompat.isAttachedToWindow(view)) {
-                        view.findViewById(R.id.floor).startAnimation(mBlinkAnim);
+                        View floorView = view.findViewById(R.id.floor);
+                        if (floorView != null)
+                            floorView.startAnimation(mBlinkAnim);
                     }
                 }
             }, 150);
@@ -948,7 +950,7 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     public void startImageGallery(int imageIndex, GlideImageView imageView) {
-        if (!HiApplication.isActivityVisible()) {
+        if (!HiApplication.isActivityVisible() || getActivity() == null) {
             return;
         }
 
