@@ -757,7 +757,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private void showQuickReply() {
         int timeToWait = PostHelper.getWaitTimeToPost();
         if (timeToWait > 0) {
-            mIbPostReply.setVisibility(View.INVISIBLE);
+            mIbPostReply.setVisibility(View.GONE);
             mTvCountdown.setText(timeToWait + "");
             mTvCountdown.setVisibility(View.VISIBLE);
             mCountDownTimer = new CountDownTimer(timeToWait * 1000, 500) {
@@ -767,13 +767,13 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
 
                 public void onFinish() {
-                    mTvCountdown.setVisibility(View.INVISIBLE);
+                    mTvCountdown.setVisibility(View.GONE);
                     mIbPostReply.setVisibility(View.VISIBLE);
                 }
             }.start();
         } else {
             mIbPostReply.setVisibility(View.VISIBLE);
-            mTvCountdown.setVisibility(View.INVISIBLE);
+            mTvCountdown.setVisibility(View.GONE);
         }
         mQuickReply.setVisibility(View.VISIBLE);
         mQuickReply.bringToFront();

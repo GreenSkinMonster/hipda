@@ -242,13 +242,13 @@ public class PostFragment extends BaseFragment {
                 }
 
                 public void onFinish() {
-                    tvCountdown.setVisibility(View.INVISIBLE);
+                    tvCountdown.setVisibility(View.GONE);
                     ibReply.setVisibility(View.VISIBLE);
                 }
             }.start();
         } else {
             ibReply.setVisibility(View.VISIBLE);
-            tvCountdown.setVisibility(View.INVISIBLE);
+            tvCountdown.setVisibility(View.GONE);
         }
 
         mIbEmojiSwitch = (ImageButton) view.findViewById(R.id.ib_emoji_switch);

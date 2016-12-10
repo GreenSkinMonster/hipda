@@ -127,7 +127,7 @@
             android:gravity="center"
             android:textColor="@color/hipda"
             android:textSize="17sp"
-            android:visibility="invisible"/>
+            android:visibility="gone"/>
 
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/et_reply"
