@@ -269,9 +269,9 @@ public class ThreadListFragment extends BaseFragment
                     refresh();
                 }
             });
+            if (mThreadBeans.size() > 0)
+                mMainFab.show();
         }
-        if (mThreadBeans.size() > 0)
-            mMainFab.show();
 
         if (mNotificationFab != null) {
             mNotificationFab.setOnClickListener(new View.OnClickListener() {
@@ -340,7 +340,7 @@ public class ThreadListFragment extends BaseFragment
         mRecyclerView.scrollToTop();
         hideFooter();
         mInloading = true;
-        if (HiSettingsHelper.getInstance().isFabAutoHide())
+        if (HiSettingsHelper.getInstance().isFabAutoHide() && mMainFab != null)
             mMainFab.hide();
         ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
         JobMgr.addJob(job);

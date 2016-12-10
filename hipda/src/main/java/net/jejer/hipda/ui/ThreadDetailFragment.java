@@ -481,30 +481,33 @@ public class ThreadDetailFragment extends BaseFragment {
 
     @Override
     void setupFab() {
-        if (!mDataReceived) {
-            mMainFab.hide();
-        } else {
-            mMainFab.setEnabled(true);
-            mMainFab.show();
-        }
-
-        mMainFab.setImageResource(R.drawable.ic_reply_white_24dp);
-        mMainFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showQuickReply();
-                (new Handler()).postDelayed(new Runnable() {
-                    public void run() {
-                        mEtReply.requestFocus();
-                        mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-                        mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
-                    }
-                }, 100);
+        if (mMainFab != null) {
+            if (!mDataReceived) {
+                mMainFab.hide();
+            } else {
+                mMainFab.setEnabled(true);
+                mMainFab.show();
             }
-        });
 
-        mNotificationFab.setEnabled(false);
-        mNotificationFab.hide();
+            mMainFab.setImageResource(R.drawable.ic_reply_white_24dp);
+            mMainFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showQuickReply();
+                    (new Handler()).postDelayed(new Runnable() {
+                        public void run() {
+                            mEtReply.requestFocus();
+                            mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                            mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+                        }
+                    }, 100);
+                }
+            });
+        }
+        if (mNotificationFab != null) {
+            mNotificationFab.setEnabled(false);
+            mNotificationFab.hide();
+        }
     }
 
     private void showPost(String text) {
