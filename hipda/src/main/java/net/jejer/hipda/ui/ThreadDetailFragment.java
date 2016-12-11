@@ -578,7 +578,16 @@ public class ThreadDetailFragment extends BaseFragment {
 
         @Override
         public void onLongItemClick(View view, int position) {
-            DetailBean detailBean = mDetailAdapter.getItem(position);
+//            DetailBean detailBean = mDetailAdapter.getItem(position);
+            DetailBean detailBean = null;
+            TextView floorView = (TextView) view.findViewById(R.id.floor);
+            if (floorView != null) {
+                String floor = floorView.getText().toString();
+                if (!TextUtils.isEmpty(floor) && TextUtils.isDigitsOnly(floor)) {
+                    int pos = mDetailAdapter.getPositionByFloor(Integer.parseInt(floor));
+                    detailBean = mDetailAdapter.getItem(pos);
+                }
+            }
             if (detailBean == null) {
                 return;
             }
