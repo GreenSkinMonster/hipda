@@ -132,7 +132,12 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setupFab();
+        MainFrameActivity mainActivity = ((MainFrameActivity) getActivity());
+        if (mainActivity != null) {
+            mMainFab = mainActivity.getMainFab();
+            mNotificationFab = mainActivity.getNotificationFab();
+            setupFab();
+        }
     }
 
     @Override
