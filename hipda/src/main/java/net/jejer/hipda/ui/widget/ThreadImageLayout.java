@@ -190,12 +190,14 @@ public class ThreadImageLayout extends RelativeLayout {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
                 String action = (String) view.getTag();
-                if ("save".equals(action)) {
-                    UIUtils.saveImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mContentImg.getContent());
-                } else if ("share".equals(action)) {
-                    UIUtils.shareImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mUrl);
-                } else if ("gallery".equals(action)) {
-                    mFragment.startImageGallery(mImageIndex, mImageView);
+                if (mFragment != null && mFragment.getActivity() != null) {
+                    if ("save".equals(action)) {
+                        UIUtils.saveImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mContentImg.getContent());
+                    } else if ("share".equals(action)) {
+                        UIUtils.shareImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mUrl);
+                    } else if ("gallery".equals(action)) {
+                        mFragment.startImageGallery(mImageIndex, mImageView);
+                    }
                 }
             }
         };

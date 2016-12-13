@@ -897,7 +897,8 @@ public class ThreadDetailFragment extends BaseFragment {
             if (mCurrentPage < mMaxPage && position > mDetailAdapter.getItemCount() - 5) {
                 prefetchNextPage();
             }
-            mMainFab.show();
+            if (mMainFab != null && mMainFab.isEnabled() && mMainFab.getVisibility() != View.VISIBLE)
+                mMainFab.show();
         } else {
             int fetchType = FETCH_NORMAL;
             if (refresh || mCurrentPage == mMaxPage || mCurrentPage == LAST_PAGE) {

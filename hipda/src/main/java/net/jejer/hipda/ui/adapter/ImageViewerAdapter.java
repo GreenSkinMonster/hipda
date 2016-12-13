@@ -10,7 +10,6 @@ import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
-import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -46,7 +45,6 @@ import java.util.Map;
 public class ImageViewerAdapter extends PagerAdapter {
 
     private List<ContentImg> mImages;
-    private RequestManager mRequestManager;
     private Activity mActivity;
 
     private Map<String, ImageViewerLayout> imageViewMap = new HashMap<>();
@@ -57,12 +55,11 @@ public class ImageViewerAdapter extends PagerAdapter {
         mActivity = activity;
         mImages = images;
         mSessionId = sessionId;
-        mRequestManager = Glide.with(activity);
     }
 
     @Override
     public int getCount() {
-        return mImages.size();
+        return mImages != null ? mImages.size() : 0;
     }
 
     @Override

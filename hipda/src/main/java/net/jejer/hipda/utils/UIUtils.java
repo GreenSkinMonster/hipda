@@ -169,6 +169,8 @@ public class UIUtils {
     }
 
     public static void shareImage(final Activity activity, final View view, String url) {
+        if (activity == null || view == null)
+            return;
         if (askForPermission(activity))
             return;
 
@@ -209,6 +211,8 @@ public class UIUtils {
     }
 
     public static void saveImage(final Activity activity, final View view, String url) {
+        if (activity == null || view == null)
+            return;
         if (askForPermission(activity))
             return;
 
@@ -281,7 +285,9 @@ public class UIUtils {
     }
 
     public static View getSnackView(Activity activity) {
-        return activity.getWindow().getDecorView().getRootView().findViewById(R.id.main_frame_container);
+        if (activity != null)
+            return activity.getWindow().getDecorView().getRootView().findViewById(R.id.main_frame_container);
+        return null;
     }
 
 }
