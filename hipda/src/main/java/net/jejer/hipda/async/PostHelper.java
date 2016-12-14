@@ -69,7 +69,7 @@ public class PostHelper {
 
         mFloor = floor;
 
-        replyText = Utils.replaceUrlWithTag(replyText);
+        replyText = replaceToTags(replyText);
         replyText = EmojiParser.parseToHtmlDecimal(replyText);
         if (!TextUtils.isEmpty(subject))
             subject = EmojiParser.parseToHtmlDecimal(subject);
@@ -210,6 +210,44 @@ public class PostHelper {
             return (int) (POST_DELAY_IN_SECS - delta);
         }
         return 0;
+    }
+
+    private String replaceToTags(final String replyText) {
+        String text = replyText;
+        StringBuilder sb = new StringBuilder();
+        try {
+            while (!TextUtils.isEmpty(text)) {
+                int tagStart = text.indexOf("[");
+                if (tagStart == -1) {
+                    sb.append(Utils.replaceUrlWithTag(text));
+                    break;
+                }
+                int tagEnd = text.indexOf("]", tagStart);
+                if (tagEnd == -1) {
+                    sb.append(Utils.replaceUrlWithTag(text));
+                    break;
+                }
+                String tag = text.substring(tagStart + 1, tagEnd);
+                if (tag.contains("=")) {
+                    tag = tag.substring(0, tag.indexOf("="));
+                }
+                String tagE = "[/" + tag + "]";
+                int tagEIndex = text.indexOf(tagE);
+                if (tagEIndex != -1) {
+                    tagEIndex = tagEIndex + tagE.length();
+                } else {
+                    sb.append(Utils.replaceUrlWithTag(text));
+                    break;
+                }
+                sb.append(Utils.replaceUrlWithTag(text.substring(0, tagStart)));
+                sb.append(text.substring(tagStart, tagEIndex));
+                text = text.substring(tagEIndex);
+            }
+        } catch (Exception e) {
+            Logger.e(e);
+            return replyText;
+        }
+        return sb.toString();
     }
 
 }
