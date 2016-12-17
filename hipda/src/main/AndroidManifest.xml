@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="net.jejer.hipda"
           xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="105"
-          android:versionName="4.0.05">
+          android:versionCode="106"
+          android:versionName="4.0.06">
 
     <uses-feature
         android:name="android.hardware.touchscreen"
