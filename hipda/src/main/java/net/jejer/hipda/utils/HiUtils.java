@@ -9,9 +9,8 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 
 public class HiUtils {
     public static final String UserAgent = "net.jejer.hipda " + HiSettingsHelper.getInstance().getAppVersion();
-    public static final String ForumServer = "http://www.hi-pda.com";
-    public static final String ForumServerSsl = "https://www.hi-pda.com";
-    public static final String ImageHost = "http://img.hi-pda.com";
+    public static final String ForumServer = "https://www.hi-pda.com";
+    public static final String ImageHost = "https://img02.hi-pda.com";
 
     public static String BaseUrl;
     public static String ThreadListUrl;
@@ -45,11 +44,11 @@ public class HiUtils {
     public static String ImageBaseUrl;
     public static String AvatarBaseUrl;
     public static String SmiliesBaseUrl;
-    public static boolean ImageHostUpdated = false;
 
     public static final String CookieDomain = "hi-pda.com";
     public static final String SmiliesPattern = CookieDomain + "/forum/images/smilies/";
     public static final String ForumImagePattern = CookieDomain + "/forum/images/";
+    public static final String ForumUrlPattern = "." + CookieDomain + "/forum/";
 
     private static String AVATAR_BASE = "000000000";
     public static int MAX_THREADS_IN_PAGE = 50;
@@ -104,12 +103,6 @@ public class HiUtils {
                 + fullUid.substring(5, 7) + "/"
                 + fullUid.substring(7, 9) + "_avatar_middle.jpg";
         return url;
-    }
-
-    public static void updateImageHost(String host) {
-        ImageBaseUrl = "http://" + host + "/forum/";
-        AvatarBaseUrl = ImageBaseUrl + "uc_server/data/avatar/";
-        SmiliesBaseUrl = ImageBaseUrl + "images/smilies/";
     }
 
     public static void updateBaseUrls() {

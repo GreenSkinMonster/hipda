@@ -1,7 +1,6 @@
 package net.jejer.hipda.async;
 
 import android.os.AsyncTask;
-import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,14 +16,12 @@ import java.util.Map;
  */
 public class TaskHelper {
 
-    private static final String SETTING_URL = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda.json";
-
     public static void updateImageHost() {
         new AsyncTask<Void, Void, Exception>() {
             @Override
             protected Exception doInBackground(Void... voids) {
                 try {
-                    updateCustSetting();
+                    updateSetting();
                 } catch (Exception e) {
                     return e;
                 }
@@ -33,24 +30,16 @@ public class TaskHelper {
         }.execute();
     }
 
-    private static void updateCustSetting() throws Exception {
-        String response = VolleyHelper.getInstance().synchronousGet(SETTING_URL, null);
+    private static void updateSetting() throws Exception {
+        HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServer);
+        String response = VolleyHelper.getInstance().synchronousGet(HiUtils.ForumServer + "/config.php", null);
         Gson gson = new Gson();
         Type stringStringMap = new TypeToken<Map<String, String>>() {
         }.getType();
         Map<String, String> map = gson.fromJson(response, stringStringMap);
-        String protocol = map.get("protocol");
-        String imageHost = map.get("image_host");
-
-        if (!TextUtils.isEmpty(protocol) && !TextUtils.isEmpty(imageHost)) {
-            if ("https".equals(protocol)) {
-                HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServerSsl);
-            } else {
-                HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServer);
-            }
-            HiSettingsHelper.getInstance().setImageHost(imageHost);
-            HiUtils.updateBaseUrls();
-        }
+        String imageHost = map.get("CDN");
+        HiSettingsHelper.getInstance().setImageHost(imageHost);
+        HiUtils.updateBaseUrls();
     }
 
 }

@@ -30,7 +30,6 @@ public class TextViewWithEmoticon extends TextView {
     private static FragmentManager mFragmentManager;
 
     private static int TRIM_LENGTH = 80;
-    private static final Spannable.Factory spannableFactory = Spannable.Factory.getInstance();
 
     private boolean mTrim;
 
@@ -97,18 +96,18 @@ public class TextViewWithEmoticon extends TextView {
         }
         for (URLSpan s : b.getSpans(0, b.length(), URLSpan.class)) {
             String s_url = s.getURL();
-            if (s_url.startsWith("http://www.hi-pda.com/forum/attachment.php")) {
+            if (s_url.contains(HiUtils.ForumUrlPattern + "attachment.php")) {
                 URLSpan newSpan = getDownloadUrlSpan(s_url);
                 b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                 b.removeSpan(s);
-            } else if (s_url.startsWith("http://www.hi-pda.com/forum/viewthread.php")) {
+            } else if (s_url.contains(HiUtils.ForumUrlPattern + "viewthread.php")) {
                 String tid = HttpUtils.getMiddleString(s_url, "tid=", "&");
                 if (tid != null) {
                     URLSpan newSpan = getThreadUrlSpan(s_url);
                     b.setSpan(newSpan, b.getSpanStart(s), b.getSpanEnd(s), b.getSpanFlags(s));
                     b.removeSpan(s);
                 }
-            } else if (s_url.startsWith("http://www.hi-pda.com/forum/space.php")) {
+            } else if (s_url.contains(HiUtils.ForumUrlPattern + "space.php")) {
                 String uid = HttpUtils.getMiddleString(s_url, "uid=", "&");
                 if (uid != null) {
                     URLSpan newSpan = getUserInfoUrlSpan(s_url);
