@@ -1,6 +1,8 @@
 package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
@@ -42,5 +44,12 @@ public class FABHideOnScrollBehavior extends FloatingActionButton.Behavior {
         return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
                 || super.onStartNestedScroll(coordinatorLayout,
                 child, directTargetChild, target, nestedScrollAxes);
+    }
+
+    // http://stackoverflow.com/a/39875070
+    @Override
+    public boolean getInsetDodgeRect(@NonNull CoordinatorLayout parent, @NonNull FloatingActionButton child, @NonNull Rect rect) {
+        super.getInsetDodgeRect(parent, child, rect);
+        return false;
     }
 }
