@@ -459,6 +459,9 @@ public class ThreadDetailFragment extends BaseFragment {
                 mLoadingView.setState(ContentLoadingView.LOAD_NOW);
                 refresh();
                 return true;
+            case R.id.action_goto:
+                showGotoPageDialog();
+                return true;
             case R.id.action_add_favorite:
                 if (FavoriteHelper.getInstance().isInFavortie(mTid))
                     FavoriteHelper.getInstance().removeFavorite(mCtx, FavoriteHelper.TYPE_FAVORITE, mTid);
