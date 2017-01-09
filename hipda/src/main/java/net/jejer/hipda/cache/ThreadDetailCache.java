@@ -27,6 +27,10 @@ public class ThreadDetailCache {
         mCache.remove(page);
     }
 
+    public void clear() {
+        mCache.clear();
+    }
+
     public DetailListBean get(int page) {
         return mCache.get(page);
     }

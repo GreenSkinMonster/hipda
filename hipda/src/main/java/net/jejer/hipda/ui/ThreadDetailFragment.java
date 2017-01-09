@@ -549,21 +549,23 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     public void enterAuthorOnlyMode(String authorId) {
+        mCache.clear();
         mAuthorId = authorId;
         mCurrentPage = 1;
         mGotoFloor = FIRST_FLOOR;
         mLoadingView.setState(ContentLoadingView.LOAD_NOW);
         mShowAllMenuItem.setVisible(true);
-        startJob(mCurrentPage, FETCH_NORMAL, POSITION_NORMAL);
+        startJob(mCurrentPage, FETCH_REFRESH, POSITION_NORMAL);
     }
 
     public void cancelAuthorOnlyMode() {
+        mCache.clear();
         mAuthorId = "";
         mCurrentPage = 1;
         mGotoFloor = FIRST_FLOOR;
         mLoadingView.setState(ContentLoadingView.LOAD_NOW);
         mShowAllMenuItem.setVisible(false);
-        startJob(mCurrentPage, FETCH_NORMAL, POSITION_NORMAL);
+        startJob(mCurrentPage, FETCH_REFRESH, POSITION_NORMAL);
     }
 
     public DetailBean getCachedPost(String postId) {
@@ -1126,6 +1128,14 @@ public class ThreadDetailFragment extends BaseFragment {
                     mCache.remove(mCurrentPage);
                     showOrLoadPage(true);
                 }
+            } else if (isInAuthorOnlyMode()
+                    && event.mMode != PostHelper.MODE_EDIT_POST) {
+                mCache.clear();
+                mCurrentPage = LAST_PAGE;
+                mGotoFloor = LAST_FLOOR;
+                mAuthorId = "";
+                mShowAllMenuItem.setVisible(false);
+                showOrLoadPage(true);
             } else {
                 if (event.mMode != PostHelper.MODE_EDIT_POST) {
                     mCurrentPage = mMaxPage;
