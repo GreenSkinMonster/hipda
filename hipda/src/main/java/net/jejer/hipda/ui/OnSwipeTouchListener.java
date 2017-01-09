@@ -8,8 +8,12 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 public class OnSwipeTouchListener implements OnTouchListener {
+
+    private static final int SWIPE_THRESHOLD = Utils.dpToPx(HiApplication.getAppContext(), 40);
+    private static final int SWIPE_VELOCITY_THRESHOLD = Utils.dpToPx(HiApplication.getAppContext(), 40);
 
     private final GestureDetector gestureDetector;
 
@@ -19,8 +23,6 @@ public class OnSwipeTouchListener implements OnTouchListener {
 
     private final class GestureListener extends SimpleOnGestureListener {
 
-        private static final int SWIPE_THRESHOLD = 100;
-        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -33,7 +35,7 @@ public class OnSwipeTouchListener implements OnTouchListener {
             try {
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();
-                if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > 2 * Math.abs(diffY)) {
                     if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                         if (diffX > 0) {
                             onSwipeRight();
@@ -41,7 +43,7 @@ public class OnSwipeTouchListener implements OnTouchListener {
                             onSwipeLeft();
                         }
                     }
-                } else {
+                } else if (Math.abs(diffY) > 2 * Math.abs(diffX)) {
                     if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
                         if (diffY > 0) {
                             onSwipeBottom();
