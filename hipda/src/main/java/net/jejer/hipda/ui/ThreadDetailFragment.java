@@ -872,13 +872,6 @@ public class ThreadDetailFragment extends BaseFragment {
             mDetailBeans = mCache.get(mCurrentPage).getAll();
             mDetailAdapter.setDatas(mDetailBeans);
 
-            if (mCurrentPage == 1) {
-                mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
-            }
-            if (mCurrentPage == mMaxPage) {
-                mRecyclerView.setFooterState(XFooterView.STATE_END);
-            }
-
             int position = -1;
             if (mGotoFloor == LAST_FLOOR) {
                 position = mDetailAdapter.getItemCount() - 1;
@@ -896,12 +889,22 @@ public class ThreadDetailFragment extends BaseFragment {
             mGotoPostId = null;
             mGotoFloor = -1;
 
-            if (mCurrentPage > 1 && position < 5) {
+            if (mCurrentPage == 1) {
+                mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
+            } else if (position < 8) {
                 prefetchPreviousPage();
+            } else {
+                mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
             }
-            if (mCurrentPage < mMaxPage && position > mDetailAdapter.getItemCount() - 5) {
+
+            if (mCurrentPage == mMaxPage) {
+                mRecyclerView.setFooterState(XFooterView.STATE_END);
+            } else if (position > mDetailAdapter.getItemCount() - 8) {
                 prefetchNextPage();
+            } else {
+                mRecyclerView.setFooterState(XFooterView.STATE_READY);
             }
+
             if (mMainFab != null && mMainFab.isEnabled() && mMainFab.getVisibility() != View.VISIBLE)
                 mMainFab.show();
         } else {
