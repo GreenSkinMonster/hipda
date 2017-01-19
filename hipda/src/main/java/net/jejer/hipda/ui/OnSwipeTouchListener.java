@@ -12,8 +12,8 @@ import net.jejer.hipda.utils.Utils;
 
 public class OnSwipeTouchListener implements OnTouchListener {
 
-    private static final int SWIPE_THRESHOLD = Utils.dpToPx(HiApplication.getAppContext(), 40);
-    private static final int SWIPE_VELOCITY_THRESHOLD = Utils.dpToPx(HiApplication.getAppContext(), 40);
+    private static final int SWIPE_THRESHOLD = Utils.dpToPx(HiApplication.getAppContext(), 36);
+    private static final int SWIPE_VELOCITY_THRESHOLD = Utils.dpToPx(HiApplication.getAppContext(), 36);
 
     private final GestureDetector gestureDetector;
 
