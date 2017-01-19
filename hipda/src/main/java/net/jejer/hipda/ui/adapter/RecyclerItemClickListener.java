@@ -14,8 +14,12 @@ import net.jejer.hipda.bean.HiSettingsHelper;
  */
 
 public class RecyclerItemClickListener implements View.OnTouchListener {
+
+    private static final long MIN_CLICK_INTERVAL = 600;
+
     private OnItemClickListener mListener;
     private View mChildView;
+    private long mLastClickTime;
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
@@ -34,6 +38,13 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
                 if (mChildView != null && mListener != null) {
+                    long currentClickTime = System.currentTimeMillis();
+                    long elapsedTime = currentClickTime - mLastClickTime;
+                    mLastClickTime = currentClickTime;
+
+                    if (elapsedTime <= MIN_CLICK_INTERVAL)
+                        return true;
+
                     mListener.onItemClick(mChildView, (int) mChildView.getTag());
                 }
                 return true;

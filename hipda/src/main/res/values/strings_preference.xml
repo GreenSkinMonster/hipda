@@ -306,7 +306,7 @@
     <string name="pref_title_app_bar_collapsible">标题栏动态隐藏</string>
     <string name="pref_title_fab_auto_hide">浮动按钮动态隐藏</string>
     <string name="pref_title_fab_left_side">浮动按钮放在左侧</string>
-    <string name="pref_title_click_effect">列表点击效果</string>
+    <string name="pref_title_click_effect">列表触摸效果</string>
     <string name="pref_title_circle_avatar">圆形头像</string>
     <string name="pref_title_blacklist">黑名单, 每行一个用户名</string>
     <string name="pref_title_theme">界面主题</string>
