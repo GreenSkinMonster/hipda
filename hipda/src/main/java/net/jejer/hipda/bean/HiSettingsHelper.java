@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
@@ -1053,19 +1054,23 @@ public class HiSettingsHelper {
     }
 
     public boolean isAppBarCollapsible() {
-        return getBooleanValue(HiSettingsHelper.PERF_APP_BAR_COLLAPSIBLE, true);
+        return getBooleanValue(PERF_APP_BAR_COLLAPSIBLE, true);
     }
 
     public boolean isFabLeftSide() {
-        return getBooleanValue(HiSettingsHelper.PERF_FAB_LEFT_SIDE, false);
+        return getBooleanValue(PERF_FAB_LEFT_SIDE, false);
     }
 
     public boolean isFabAutoHide() {
-        return getBooleanValue(HiSettingsHelper.PERF_FAB_AUTO_HIDE, true);
+        return getBooleanValue(PERF_FAB_AUTO_HIDE, true);
     }
 
     public boolean isTrustAllCerts() {
-        return getBooleanValue(HiSettingsHelper.PERF_TRUST_ALL_CERTS, false);
+        return getBooleanValue(PERF_TRUST_ALL_CERTS, false);
+    }
+
+    public boolean isClickEffect() {
+        return getBooleanValue(PERF_CLICK_EFFECT, Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
     }
 
     public int getMaxUploadFileSize() {

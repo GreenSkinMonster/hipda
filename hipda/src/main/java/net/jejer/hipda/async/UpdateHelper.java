@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -191,15 +190,6 @@ public class UpdateHelper {
         String currentVersion = HiApplication.getAppVersion();
 
         if (!currentVersion.equals(installedVersion)) {
-            if (newer(installedVersion, "4.0.00")) {
-                HiSettingsHelper.getInstance().setBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, true);
-            }
-            if (newer(installedVersion, "4.0.02")) {
-                HiSettingsHelper.getInstance().setBooleanValue(HiSettingsHelper.PERF_CLICK_EFFECT,
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
-                HiSettingsHelper.getInstance().setShowPostType(true);
-            }
-
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
         }
         return newer(installedVersion, currentVersion);

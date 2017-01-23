@@ -77,7 +77,7 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
         float x = event.getX();
         float y = event.getY();
 
-        if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_CLICK_EFFECT, true)) {
+        if (HiSettingsHelper.getInstance().isClickEffect()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 view.drawableHotspotChanged(x, y);
             }
