@@ -32,7 +32,7 @@ public class HiApplication extends Application {
         if (!BuildConfig.DEBUG)
             Fabric.with(this, new Crashlytics());
 
-        updated = UpdateHelper.updateApp(context);
+        updated = UpdateHelper.updateApp();
 
         if (Constants.FONT_ROBOTO_SLAB.equals(HiSettingsHelper.getInstance().getFont())) {
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()

@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -80,7 +82,7 @@ public class UpdateHelper {
         public void onError(Request request, Exception e) {
             Logger.e(e);
             if (!mSilent) {
-                pd.dismissError("检查新版本时发生错误 (" + checkSite + ") : " + OkHttpHelper.getErrorMessage(e));
+                pd.dismissError("检查新版本时发生错误 : " + OkHttpHelper.getErrorMessage(e));
             }
         }
 
@@ -144,13 +146,32 @@ public class UpdateHelper {
                 if (!mCtx.isFinishing())
                     dialog.show();
             } else {
-                Toast.makeText(mCtx, "发现新版本 : " + newVersion + "，请在应用商店中更新", Toast.LENGTH_SHORT).show();
-            }
+                Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
+                        .setMessage(updateNotes).
+                                setPositiveButton("前往Google Play",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                openGooglePlay(mCtx);
+                                            }
+                                        }).create();
 
+                if (!mCtx.isFinishing())
+                    dialog.show();
+            }
         } else {
             if (!mSilent) {
                 pd.dismiss("没有发现新版本");
             }
+        }
+    }
+
+    private static void openGooglePlay(Context context) {
+        final String appPackageName = HiApplication.getAppContext().getPackageName();
+        try {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
         }
     }
 
@@ -165,7 +186,7 @@ public class UpdateHelper {
         return false;
     }
 
-    public static boolean updateApp(Context context) {
+    public static boolean updateApp() {
         String installedVersion = HiSettingsHelper.getInstance().getInstalledVersion();
         String currentVersion = HiApplication.getAppVersion();
 
