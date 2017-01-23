@@ -16,6 +16,7 @@ import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -605,7 +606,10 @@ public class HiSettingsHelper {
     }
 
     public Set<String> getForumsFromPref() {
-        mForums = mSharedPref.getStringSet(PERF_FORUMS, new HashSet<String>());
+        String[] defaultForums = mCtx.getResources().getStringArray(R.array.default_forum_values);
+        Set<String> forums = new HashSet<>();
+        Collections.addAll(forums, defaultForums);
+        mForums = mSharedPref.getStringSet(PERF_FORUMS, forums);
         return mForums;
     }
 
