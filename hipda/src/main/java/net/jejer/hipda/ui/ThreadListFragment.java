@@ -639,11 +639,13 @@ public class ThreadListFragment extends BaseFragment
                 mThreadListAdapter.setDatas(mThreadBeans);
             }
 
-            if (!mDataReceived) {
-                mDataReceived = true;
-                mMainFab.show();
+            if (getFragmentManager().findFragmentById(R.id.main_frame_container).equals(ThreadListFragment.this)) {
+                if (!mDataReceived) {
+                    mDataReceived = true;
+                    mMainFab.show();
+                }
+                showNotification();
             }
-            showNotification();
 
             if (mPage <= 5 && mThreadBeans.size() < MIN_TREADS_IN_PAGE) {
                 if (mPage == 1 && mThreadBeans.size() == 0)
