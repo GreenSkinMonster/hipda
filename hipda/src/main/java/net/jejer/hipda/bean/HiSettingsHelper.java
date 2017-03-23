@@ -90,6 +90,7 @@ public class HiSettingsHelper {
     public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
     public static final String PERF_TRUST_ALL_CERTS = "PERF_TRUST_ALL_CERTS";
     public static final String PERF_MAX_UPLOAD_FILE_SIZE = "PERF_MAX_UPLOAD_FILE_SIZE";
+    public static final String PERF_SHOW_TAIL = "PERF_SHOW_TAIL";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -107,6 +108,7 @@ public class HiSettingsHelper {
     private boolean mAutoLoadThumb = false;
     private String mAvatarLoadType = "0";
     private Set<String> mSortByPostTimeByForum;
+    private boolean mHideAppMark = true;
 
     private boolean mAddTail = true;
     private String mTailText = "";
@@ -454,7 +456,7 @@ public class HiSettingsHelper {
     }
 
     public boolean isAddTailFromPref() {
-        mAddTail = mSharedPref.getBoolean(PERF_ADDTAIL, true);
+        mAddTail = mSharedPref.getBoolean(PERF_ADDTAIL, false);
         return mAddTail;
     }
 
@@ -1071,6 +1073,10 @@ public class HiSettingsHelper {
 
     public boolean isClickEffect() {
         return getBooleanValue(PERF_CLICK_EFFECT, Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+    }
+
+    public boolean isShowTail() {
+        return getBooleanValue(PERF_SHOW_TAIL, false);
     }
 
     public int getMaxUploadFileSize() {

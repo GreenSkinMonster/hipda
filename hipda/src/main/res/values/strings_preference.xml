@@ -297,7 +297,8 @@
     <string name="pref_title_show_stick_threads">显示置顶帖</string>
     <string name="pref_title_sort_by_post_time">本版按发帖排序</string>
     <string name="pref_title_show_post_type">显示帖子分类</string>
-    <string name="pref_title_add_tail">添加小尾巴</string>
+    <string name="pref_title_show_tail">显示帖子中小尾巴</string>
+    <string name="pref_title_add_tail">发帖添加小尾巴</string>
     <string name="pref_title_tail_text">尾巴文字</string>
     <string name="pref_title_tail_url">尾巴链接</string>
     <string name="pref_title_encode_utf8">使用UTF8编码</string>

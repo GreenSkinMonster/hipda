@@ -59,6 +59,9 @@ public class DetailBean {
         }
 
         public void addAppMark(String text, String url) {
+            if (!HiSettingsHelper.getInstance().isShowTail()
+                    && !HiSettingsHelper.getInstance().getUid().equals(mUid))
+                return;
             String mark;
             if (url != null && url.length() > 0) {
                 mark = "<appmark><a href=\"" + url + "\">" + text + "</a></appmark>";
