@@ -168,8 +168,8 @@
         <!-- change searchView suggestion background color-->
         <item name="android:autoCompleteTextViewStyle">@style/MyAutoCompleteTextView</item>
 
-        <item name="colorPrimary">@color/md_grey_900</item>
-        <item name="colorPrimaryDark">@color/md_black_1000</item>
+        <item name="colorPrimary">#2A2A2A</item>
+        <item name="colorPrimaryDark">@color/md_grey_900</item>
         <item name="colorAccent">@color/hipda</item>
 
         <item name="android:textColor">@color/textColorPrimaryDark</item>
