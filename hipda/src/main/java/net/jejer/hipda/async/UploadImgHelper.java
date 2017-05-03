@@ -39,8 +39,8 @@ public class UploadImgHelper {
     public final static int MAX_QUALITY = 90;
     private static final int THUMB_SIZE = 192;
 
-    private final static int MAX_PIXELS = 1200 * 1200; //file with this resolution, it's size should match to MAX_IMAGE_FILE_SIZE
-    public final static int MAX_IMAGE_FILE_SIZE = 400 * 1024; // max file size 400K
+    private final static int MAX_PIXELS = 1600 * 900;
+    public final static int MAX_IMAGE_FILE_SIZE = 400 * 1024;
 
     private UploadImgListener mListener;
 
@@ -162,7 +162,7 @@ public class UploadImgHelper {
             return null;
         }
 
-        //gif or very long image or small images etc
+        //gif or very long/wide image or small image or filePath is null
         if (isDirectUploadable(imageFileInfo)) {
             mThumb = ThumbnailUtils.extractThumbnail(bitmap, THUMB_SIZE, THUMB_SIZE);
             bitmap.recycle();
@@ -171,13 +171,6 @@ public class UploadImgHelper {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(CompressFormat.JPEG, MAX_QUALITY, baos);
-
-        if (baos.size() <= MAX_IMAGE_FILE_SIZE) {
-            mThumb = ThumbnailUtils.extractThumbnail(bitmap, THUMB_SIZE, THUMB_SIZE);
-            bitmap.recycle();
-            bitmap = null;
-            return baos;
-        }
         bitmap.recycle();
         bitmap = null;
 
@@ -205,8 +198,7 @@ public class UploadImgHelper {
 
         //scale bitmap so later compress could run less times, once is the best result
         //rotate if needed
-        if ((baos.size() > MAX_IMAGE_FILE_SIZE
-                && width * height > MAX_PIXELS)
+        if (width * height > MAX_PIXELS
                 || imageFileInfo.getOrientation() > 0) {
 
             float scale = 1.0f;
@@ -269,7 +261,7 @@ public class UploadImgHelper {
         }
 
         //normal image
-        return fileSize <= MAX_IMAGE_FILE_SIZE;
+        return fileSize <= MAX_IMAGE_FILE_SIZE && w * h <= MAX_PIXELS;
     }
 
     private static ByteArrayOutputStream readFileToStream(String file) {
