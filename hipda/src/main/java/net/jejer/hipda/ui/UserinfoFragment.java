@@ -59,6 +59,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
 
     private String mUid;
     private String mUsername;
+    private String mAvatarUrl;
 
     private ImageView mAvatarView;
     private TextView mDetailView;
@@ -68,7 +69,6 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
     private XRecyclerView mRecyclerView;
     private SimpleListAdapter mSimpleListAdapter;
     private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
-    private int mFirstVisibleItem = 0;
 
     private Button mButton;
 
@@ -108,6 +108,18 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         mAvatarView = (ImageView) view.findViewById(R.id.userinfo_avatar);
         if (HiSettingsHelper.getInstance().isLoadAvatar()) {
             mAvatarView.setVisibility(View.VISIBLE);
+            mAvatarView.setOnClickListener(new OnSingleClickListener() {
+                @Override
+                public void onSingleClick(View v) {
+                    if (!TextUtils.isEmpty(mAvatarUrl)) {
+                        GlideHelper.clearAvatarCache(mAvatarUrl);
+                        GlideHelper.loadAvatar(UserinfoFragment.this, mAvatarView, mAvatarUrl);
+                        Toast.makeText(getActivity(), "头像已经刷新", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "用户未设置头像", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         } else {
             mAvatarView.setVisibility(View.GONE);
         }
@@ -233,7 +245,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         }
     }
 
-    class UserInfoCallback implements OkHttpHelper.ResultCallback {
+    private class UserInfoCallback implements OkHttpHelper.ResultCallback {
         @Override
         public void onError(Request request, Exception e) {
             Logger.e(e);
@@ -247,6 +259,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 if (HiSettingsHelper.getInstance().isLoadAvatar()) {
                     mAvatarView.setVisibility(View.VISIBLE);
                     GlideHelper.loadAvatar(UserinfoFragment.this, mAvatarView, info.getAvatarUrl());
+                    mAvatarUrl = info.getAvatarUrl();
                 } else {
                     mAvatarView.setVisibility(View.GONE);
                 }
@@ -276,9 +289,9 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 LinearLayoutManager mLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 visibleItemCount = mLayoutManager.getChildCount();
                 totalItemCount = mLayoutManager.getItemCount();
-                mFirstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+                int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
-                if ((visibleItemCount + mFirstVisibleItem) >= totalItemCount - 5) {
+                if ((visibleItemCount + firstVisibleItem) >= totalItemCount - 5) {
                     if (!mInloading) {
                         mInloading = true;
                         if (mPage < mMaxPage) {

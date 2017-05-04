@@ -11,6 +11,7 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.StringSignature;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.LRUCache;
@@ -19,6 +20,8 @@ import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import static net.jejer.hipda.glide.MyGlideModule.AVATAR_CACHE_DIR;
 import static net.jejer.hipda.glide.MyGlideModule.DEFAULT_AVATAR_FILE;
@@ -27,8 +30,9 @@ import static net.jejer.hipda.glide.MyGlideModule.DEFAULT_USER_ICON;
 public class GlideHelper {
 
     private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(1024);
+    private static Map<String, Long> AVATAR_CACHE_KEYS = new HashMap<>();
 
-    public final static long AVATAR_CACHE_MILLS = 7 * 24 * 60 * 60 * 1000;
+    public final static long AVATAR_CACHE_MILLS = 3 * 24 * 60 * 60 * 1000;
     public final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
 
     public static void loadAvatar(BaseFragment fragment, ImageView view, String avatarUrl) {
@@ -41,9 +45,11 @@ public class GlideHelper {
         if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
             avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
         }
+        String cacheKey = AVATAR_CACHE_KEYS.containsKey(avatarUrl) ? AVATAR_CACHE_KEYS.get(avatarUrl).toString() : avatarUrl;
         if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, true)) {
             glide.load(avatarUrl)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .signature(new StringSignature(cacheKey))
                     .error(DEFAULT_USER_ICON)
                     .crossFade()
                     .bitmapTransform(new CropCircleTransformation(HiApplication.getAppContext()))
@@ -51,6 +57,7 @@ public class GlideHelper {
         } else {
             glide.load(avatarUrl)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .signature(new StringSignature(cacheKey))
                     .centerCrop()
                     .error(DEFAULT_USER_ICON)
                     .crossFade()
@@ -80,6 +87,14 @@ public class GlideHelper {
             return new File(AVATAR_CACHE_DIR, url.substring(url.indexOf(HiUtils.AvatarPath) + HiUtils.AvatarPath.length()).replace("/", "_"));
         }
         return null;
+    }
+
+    public static void clearAvatarCache(String url) {
+        File f = getAvatarFile(url);
+        if (f != null && f.exists()) {
+            f.delete();
+        }
+        AVATAR_CACHE_KEYS.put(url, System.currentTimeMillis());
     }
 
     public static boolean isOkToLoad(Context activity) {
