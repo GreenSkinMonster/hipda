@@ -90,6 +90,9 @@
         <receiver android:name=".utils.NotificationReceiver"/>
 
         <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1"/>
+        <meta-data
             android:name="net.jejer.hipda.glide.MyGlideModule"
             android:value="GlideModule"/>
 
