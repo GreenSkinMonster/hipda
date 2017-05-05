@@ -68,7 +68,6 @@ dependencies {
     compile 'com.mikepenz:google-material-typeface:2.2.0.2.original@aar'
     compile 'com.mikepenz:fontawesome-typeface:4.6.0.2@aar'
 
-    compile 'uk.co.chrisjenx:calligraphy:2.2.0'
 //    compile('com.thebluealliance:spectrum:0.7.1') {
 //        exclude group: 'org.greenrobot'
 //    }

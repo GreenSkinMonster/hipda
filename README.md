@@ -18,7 +18,7 @@ HiPDA·NG是使用MD风格的版本，即master分支，为目前主要维护版
 
 请把 hipad/fabric.properties.example 复制为 fabric.properties ，否则编译可能失败
 
-#Credits
+# Credits
 - HiPDA简洁版 - https://bitbucket.org/jejer/hipda/
 - Android Iconics - https://github.com/mikepenz/Android-Iconics
 - Android Priority Job Queue - https://github.com/yigit/android-priority-jobqueue

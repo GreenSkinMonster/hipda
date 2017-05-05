@@ -6,14 +6,10 @@ import android.content.Context;
 import com.crashlytics.android.Crashlytics;
 
 import net.jejer.hipda.BuildConfig;
-import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
-import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 
 import io.fabric.sdk.android.Fabric;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
  * Created by GreenSkinMonster on 2015-03-28.
@@ -34,13 +30,6 @@ public class HiApplication extends Application {
 
         updated = UpdateHelper.updateApp();
 
-        if (Constants.FONT_ROBOTO_SLAB.equals(HiSettingsHelper.getInstance().getFont())) {
-            CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                    .setDefaultFontPath("fonts/RobotoSlab-Regular.ttf")
-                    .setFontAttrId(R.attr.fontPath)
-                    .build()
-            );
-        }
         HiUtils.updateBaseUrls();
     }
 

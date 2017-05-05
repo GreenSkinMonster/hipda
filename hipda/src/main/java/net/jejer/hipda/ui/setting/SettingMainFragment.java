@@ -40,7 +40,6 @@ public class SettingMainFragment extends BaseSettingFragment {
     private Set<String> mForums;
     private Set<String> mFreqMenus;
     private boolean mNavBarColored;
-    private String mFont;
     static boolean mCacheCleared;
     private boolean mNightSwitchEnabled;
     private String mIcon;
@@ -89,7 +88,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         mFreqMenus = HiSettingsHelper.getInstance().getFreqMenus();
         mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
         mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
-        mFont = HiSettingsHelper.getInstance().getFont();
         mIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
         mForumServer = HiSettingsHelper.getInstance().getForumServer();
         mTrustAllCerts = HiSettingsHelper.getInstance().isTrustAllCerts();
@@ -133,7 +131,6 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || !HiSettingsHelper.getInstance().getFreqMenus().equals(mFreqMenus)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
-                || !HiSettingsHelper.getInstance().getFont().equals(mFont)
                 || !HiSettingsHelper.getInstance().getForumServer().equals(mForumServer)
                 || HiSettingsHelper.getInstance().isTrustAllCerts() != mTrustAllCerts
                 || !mIcon.equals(newIcon)) {

@@ -22,8 +22,6 @@ public class Constants {
     public static final int DRAWER_NIGHT_MODE = 10001;
     public static final int DRAWER_NO_ACTION = 10002;
 
-    public static final String FONT_ROBOTO_SLAB = "RobotoSlab";
-
     public static final String INTENT_NOTIFICATION = "notification";
 
     public static final String EXTRA_SMS_COUNT = "sms_count";

@@ -80,8 +80,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
-
 public class MainFrameActivity extends AppCompatActivity {
 
     public final static int PERMISSIONS_REQUEST_CODE = 200;
@@ -205,10 +203,7 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getFont()))
-            super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-        else
-            super.attachBaseContext(newBase);
+        super.attachBaseContext(newBase);
     }
 
     private void setupDrawer() {
