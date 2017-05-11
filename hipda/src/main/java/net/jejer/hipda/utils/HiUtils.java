@@ -55,6 +55,7 @@ public class HiUtils {
     public static String FavoritesUrl;
     public static String FavoriteAddUrl;
     public static String FavoriteRemoveUrl;
+    public static String FavoriteDeleteUrl;
     public static String UserInfoUrl;
 
     public static String LoginSubmit;
@@ -146,6 +147,7 @@ public class HiUtils {
         FavoritesUrl = BaseUrl + "my.php?item={item}&type=thread";
         FavoriteAddUrl = BaseUrl + "my.php?item={item}&action=add&inajax=1&ajaxtarget=favorite_msg&tid={tid}";
         FavoriteRemoveUrl = BaseUrl + "my.php?item={item}&action=remove&inajax=1&ajaxtarget=favorite_msg&tid={tid}";
+        FavoriteDeleteUrl = BaseUrl + "my.php?item={item}&type=thread";
         UserInfoUrl = BaseUrl + "space.php?uid=";
 
         LoginSubmit = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";

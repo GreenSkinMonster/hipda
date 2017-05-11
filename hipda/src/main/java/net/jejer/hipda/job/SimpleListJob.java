@@ -76,6 +76,7 @@ public class SimpleListJob extends BaseJob {
         int eventStatus = Constants.STATUS_SUCCESS;
         String eventMessage = "";
         String eventDetail = "";
+        String formhash = "";
 
         if (mType == TYPE_HISTORIES) {
             data = new SimpleListBean();
@@ -107,6 +108,7 @@ public class SimpleListJob extends BaseJob {
                     } else {
                         Document doc = Jsoup.parse(resp);
                         data = HiParser.parseSimpleList(mCtx, mType, doc);
+                        formhash = HiParser.parseFormhash(doc);
                         break;
                     }
                 } catch (Exception e) {
@@ -124,6 +126,7 @@ public class SimpleListJob extends BaseJob {
         mEvent.mStatus = eventStatus;
         mEvent.mMessage = eventMessage;
         mEvent.mDetail = eventDetail;
+        mEvent.mFormhash = formhash;
         EventBus.getDefault().postSticky(mEvent);
     }
 

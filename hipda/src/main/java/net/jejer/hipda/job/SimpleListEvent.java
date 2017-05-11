@@ -10,4 +10,5 @@ public class SimpleListEvent extends BaseEvent {
     public int mType;
     public String mExtra;
     public int mPage;
+    public String mFormhash;
 }

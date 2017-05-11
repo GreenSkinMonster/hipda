@@ -23,9 +23,9 @@ public class HiParser {
 
         switch (type) {
             case SimpleListJob.TYPE_MYREPLY:
-                return parseReplyList(ctx, doc);
+                return parseReplyList(doc);
             case SimpleListJob.TYPE_MYPOST:
-                return parseMyPost(ctx, doc);
+                return parseMyPost(doc);
             case SimpleListJob.TYPE_SMS:
                 return parseSMS(doc);
             case SimpleListJob.TYPE_THREAD_NOTIFY:
@@ -45,7 +45,7 @@ public class HiParser {
         return null;
     }
 
-    private static SimpleListBean parseReplyList(Context ctx, Document doc) {
+    private static SimpleListBean parseReplyList(Document doc) {
         if (doc == null) {
             return null;
         }
@@ -127,7 +127,7 @@ public class HiParser {
         return list;
     }
 
-    private static SimpleListBean parseMyPost(Context ctx, Document doc) {
+    private static SimpleListBean parseMyPost(Document doc) {
         if (doc == null) {
             return null;
         }
@@ -717,5 +717,15 @@ public class HiParser {
         }
         info.setDetail(sb.toString());
         return info;
+    }
+
+    public static String parseFormhash(Document doc) {
+        if (doc == null) {
+            return null;
+        }
+        Elements inputs = doc.select("input[name=formhash]");
+        if (inputs.size() > 0)
+            return inputs.get(0).val();
+        return null;
     }
 }

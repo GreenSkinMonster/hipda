@@ -251,6 +251,31 @@ public class OkHttpHelper {
         return mClient.newCall(request).execute();
     }
 
+    public void asyncPost(String url, ParamsMap params, ResultCallback callback)
+            throws UnsupportedEncodingException {
+        if (callback == null) callback = DEFAULT_CALLBACK;
+        final ResultCallback rspCallBack = callback;
+
+        Request request = buildPostFormRequest(url, params, null);
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                handleFailureCallback(call.request(), e, rspCallBack);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                try {
+                    String body = getResponseBody(response);
+                    handleSuccessCallback(body, rspCallBack);
+                } catch (IOException e) {
+                    handleFailureCallback(response.request(), e, rspCallBack);
+                }
+            }
+        });
+    }
+
+
     public static String getResponseBody(Response response) throws IOException {
         if (!response.isSuccessful()) {
             throw new IOException(ERROR_CODE_PREFIX + response.code() + ", " + response.message());

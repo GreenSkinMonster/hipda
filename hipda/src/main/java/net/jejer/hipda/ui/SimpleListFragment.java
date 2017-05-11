@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -43,6 +44,7 @@ import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SimpleListAdapter;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.SimpleDivider;
+import net.jejer.hipda.ui.widget.SimplePopupMenu;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.ColorHelper;
@@ -57,6 +59,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -80,6 +83,7 @@ public class SimpleListFragment extends BaseFragment
     private boolean mInloading = false;
     private int mMaxPage;
     private int mFirstVisibleItem = 0;
+    private String mFormhash;
 
     private static String mPrefixSearchFullText;
 
@@ -373,30 +377,92 @@ public class SimpleListFragment extends BaseFragment
 
         @Override
         public void onLongItemClick(View view, int position) {
-            setHasOptionsMenu(false);
             Fragment listFragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
             if (listFragment != null)
                 listFragment.setHasOptionsMenu(false);
 
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
             if (mType == SimpleListJob.TYPE_SMS) {
+            } else if (mType == SimpleListJob.TYPE_FAVORITES) {
+                showFavoriteActionDialog(position, item);
+            } else if (mType == SimpleListJob.TYPE_ATTENTION) {
+                showAttentionActionDialog(position, item);
             } else {
-                String postId = "";
-                int page = -1;
-                int floor = -1;
-                if (HiUtils.isValidId(item.getPid())) {
-                    postId = item.getPid();
-                } else {
-                    page = ThreadDetailFragment.LAST_PAGE;
-                    floor = ThreadDetailFragment.LAST_FLOOR;
-                }
-                FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), page, floor, postId, -1);
+                showLastPage(item);
             }
         }
 
         @Override
         public void onDoubleTap(View view, int position) {
         }
+    }
+
+    private void showFavoriteActionDialog(final int itemPosition, final SimpleListItemBean item) {
+        LinkedHashMap<String, String> actions = new LinkedHashMap<>();
+        actions.put("cancel", "取消收藏");
+        actions.put("last_page", "转到最新回复");
+
+        AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
+                String action = (String) view.getTag();
+                if ("cancel".equals(action)) {
+                    mSimpleListAdapter.getDatas().remove(itemPosition);
+                    mSimpleListAdapter.notifyItemRemoved(itemPosition);
+                    if (mSimpleListAdapter.getItemCount() - itemPosition - 1 > 0)
+                        mSimpleListAdapter.notifyItemRangeChanged(itemPosition, mSimpleListAdapter.getItemCount() - itemPosition - 1);
+                    FavoriteHelper.getInstance().deleteFavorite(getActivity(), mFormhash, FavoriteHelper.TYPE_FAVORITE, item.getTid());
+                } else {
+                    showLastPage(item);
+                }
+            }
+        };
+
+        SimplePopupMenu popupMenu = new SimplePopupMenu(getContext());
+        popupMenu.setActions(actions);
+        popupMenu.setListener(listener);
+        popupMenu.show();
+    }
+
+    private void showAttentionActionDialog(final int itemPosition, final SimpleListItemBean item) {
+        LinkedHashMap<String, String> actions = new LinkedHashMap<>();
+        actions.put("cancel", "取消关注");
+        actions.put("last_page", "转到最新回复");
+
+        AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
+                String action = (String) view.getTag();
+                if ("cancel".equals(action)) {
+                    mSimpleListAdapter.getDatas().remove(itemPosition);
+                    mSimpleListAdapter.notifyItemRemoved(itemPosition);
+                    if (mSimpleListAdapter.getItemCount() - itemPosition - 1 > 0)
+                        mSimpleListAdapter.notifyItemRangeChanged(itemPosition, mSimpleListAdapter.getItemCount() - itemPosition - 1);
+                    FavoriteHelper.getInstance().deleteFavorite(getActivity(), mFormhash, FavoriteHelper.TYPE_ATTENTION, item.getTid());
+                } else {
+                    showLastPage(item);
+                }
+            }
+        };
+
+        SimplePopupMenu popupMenu = new SimplePopupMenu(getContext());
+        popupMenu.setActions(actions);
+        popupMenu.setListener(listener);
+        popupMenu.show();
+    }
+
+    private void showLastPage(SimpleListItemBean item) {
+        String postId = "";
+        int page = -1;
+        int floor = -1;
+        if (HiUtils.isValidId(item.getPid())) {
+            postId = item.getPid();
+        } else {
+            page = ThreadDetailFragment.LAST_PAGE;
+            floor = ThreadDetailFragment.LAST_FLOOR;
+        }
+        setHasOptionsMenu(false);
+        FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), page, floor, postId, -1);
     }
 
     public static class SearchSuggestionsAdapter extends SimpleCursorAdapter {
@@ -495,7 +561,6 @@ public class SimpleListFragment extends BaseFragment
 
     private class SimpleListEventCallback extends EventCallback<SimpleListEvent> {
 
-
         @Override
         public void onFail(SimpleListEvent event) {
             swipeLayout.setEnabled(true);
@@ -517,6 +582,7 @@ public class SimpleListFragment extends BaseFragment
             swipeLayout.setRefreshing(false);
             mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
             mInloading = false;
+            mFormhash = event.mFormhash;
 
             SimpleListBean list = event.mData;
             if (list == null || list.getCount() == 0) {

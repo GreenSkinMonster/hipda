@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -255,6 +256,42 @@ public class FavoriteHelper {
                 Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void deleteFavorite(final Context ctx, final String formhash, final String item, final String tid) {
+        if (TextUtils.isEmpty(item) || TextUtils.isEmpty(tid) || TextUtils.isEmpty(formhash)) {
+            Toast.makeText(ctx, "参数错误", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String url = HiUtils.FavoriteDeleteUrl.replace("{item}", item);
+
+        ParamsMap params = new ParamsMap();
+        if (FavoriteHelper.TYPE_FAVORITE.equals(item)) {
+            params.put("favsubmit", "true");
+        } else {
+            params.put("attentionsubmit", "true");
+        }
+
+        params.put("delete[]", tid);
+        params.put("formhash", formhash);
+        try {
+            OkHttpHelper.getInstance().asyncPost(url, params, new OkHttpHelper.ResultCallback() {
+                @Override
+                public void onError(Request request, Exception e) {
+                    Toast.makeText(ctx, "移除失败 : " + OkHttpHelper.getErrorMessage(e), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onResponse(String response) {
+                    String result = "已取消" + (FavoriteHelper.TYPE_FAVORITE.equals(item) ? "收藏" : "关注");
+                    removeFromCahce(item, tid);
+                    Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(ctx, "移除失败 : " + OkHttpHelper.getErrorMessage(e), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private class ParseResult {
