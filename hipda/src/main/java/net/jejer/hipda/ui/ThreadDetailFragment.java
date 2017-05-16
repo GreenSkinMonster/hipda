@@ -343,7 +343,7 @@ public class ThreadDetailFragment extends BaseFragment {
         super.onPrepareOptionsMenu(menu);
         MenuItem favoritesMenuItem = menu.findItem(R.id.action_add_favorite);
         if (favoritesMenuItem != null) {
-            if (FavoriteHelper.getInstance().isInFavortie(mTid)) {
+            if (FavoriteHelper.getInstance().isInFavorite(mTid)) {
                 favoritesMenuItem.setTitle(R.string.action_remove_favorite);
             } else {
                 favoritesMenuItem.setTitle(R.string.action_add_favorite);
@@ -463,7 +463,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 showGotoPageDialog();
                 return true;
             case R.id.action_add_favorite:
-                if (FavoriteHelper.getInstance().isInFavortie(mTid))
+                if (FavoriteHelper.getInstance().isInFavorite(mTid))
                     FavoriteHelper.getInstance().removeFavorite(mCtx, FavoriteHelper.TYPE_FAVORITE, mTid);
                 else
                     FavoriteHelper.getInstance().addFavorite(mCtx, FavoriteHelper.TYPE_FAVORITE, mTid);

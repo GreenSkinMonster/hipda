@@ -192,7 +192,7 @@ public class FavoriteHelper {
         mCachePref.edit().clear().apply();
     }
 
-    public boolean isInFavortie(String tid) {
+    public boolean isInFavorite(String tid) {
         return mFavoritesCache.contains(tid);
     }
 
