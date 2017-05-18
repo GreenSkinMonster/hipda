@@ -169,7 +169,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                 .setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_trash).actionBar().color(Color.WHITE));
 
         setActionBarDisplayHomeAsUpEnabled(true);
-        setActionBarTitle("短消息 > " + mAuthor);
+        setActionBarTitle(mAuthor);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
