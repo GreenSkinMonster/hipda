@@ -443,8 +443,16 @@ public class Utils {
     public static int getIntFromString(String s) {
         String tmp = s.replaceAll("[^\\d]", "");
         if (!TextUtils.isEmpty(tmp) && TextUtils.isDigitsOnly(tmp)) {
-            return Integer.parseInt(tmp);
+            return parseInt(tmp);
         } else {
+            return 0;
+        }
+    }
+
+    public static int parseInt(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
             return 0;
         }
     }

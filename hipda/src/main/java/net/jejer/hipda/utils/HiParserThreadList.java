@@ -183,7 +183,7 @@ public class HiParserThreadList {
                 if (!TextUtils.isEmpty(pageLink.attr("href"))) {
                     String lastPage = Utils.getMiddleString(pageLink.attr("href"), "page=", "&");
                     if (!TextUtils.isEmpty(lastPage) && TextUtils.isDigitsOnly(lastPage))
-                        maxPage = Integer.parseInt(lastPage);
+                        maxPage = Utils.parseInt(lastPage);
                 }
             }
             thread.setMaxPage(maxPage);

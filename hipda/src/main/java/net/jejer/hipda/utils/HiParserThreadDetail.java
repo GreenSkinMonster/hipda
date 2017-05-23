@@ -133,14 +133,14 @@ public class HiParserThreadDetail {
                 continue;
             }
             String floor = postinfoAES.first().text();
-            detail.setFloor(Integer.parseInt(floor));
+            detail.setFloor(Utils.parseInt(floor));
 
             //update max posts in page, this is controlled by user setting
             if (i == 0) {
                 if (page == 1 && last_page > 1) {
                     HiSettingsHelper.getInstance().setMaxPostsInPage(postsEL.childNodeSize());
                 } else if (page > 1) {
-                    int maxPostsInPage = (Integer.parseInt(floor) - 1) / (page - 1);
+                    int maxPostsInPage = (Utils.parseInt(floor) - 1) / (page - 1);
                     HiSettingsHelper.getInstance().setMaxPostsInPage(maxPostsInPage);
                 }
             }
