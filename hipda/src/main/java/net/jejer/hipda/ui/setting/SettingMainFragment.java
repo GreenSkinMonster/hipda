@@ -17,6 +17,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.glide.MyGlideModule;
 import net.jejer.hipda.ui.AboutFragment;
 import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
@@ -46,6 +47,7 @@ public class SettingMainFragment extends BaseSettingFragment {
     private String mIcon;
     private String mForumServer;
     private boolean mTrustAllCerts;
+    private boolean mCircleAvatar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,6 +95,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         mIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
         mForumServer = HiSettingsHelper.getInstance().getForumServer();
         mTrustAllCerts = HiSettingsHelper.getInstance().isTrustAllCerts();
+        mCircleAvatar = HiSettingsHelper.getInstance().isCircleAvatar();
     }
 
     @Override
@@ -124,6 +127,10 @@ public class SettingMainFragment extends BaseSettingFragment {
             setIcon(Integer.parseInt(newIcon));
 
         HiSettingsHelper.getInstance().resetImageAutoLoadSize();
+
+        if (HiSettingsHelper.getInstance().isCircleAvatar() != mCircleAvatar) {
+            MyGlideModule.setupDefaultAvatar();
+        }
 
         if (mCacheCleared
                 || HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation

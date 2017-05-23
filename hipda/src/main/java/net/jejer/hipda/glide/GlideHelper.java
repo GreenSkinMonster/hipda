@@ -46,7 +46,7 @@ public class GlideHelper {
             avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
         }
         String cacheKey = AVATAR_CACHE_KEYS.containsKey(avatarUrl) ? AVATAR_CACHE_KEYS.get(avatarUrl).toString() : avatarUrl;
-        if (HiSettingsHelper.getInstance().getBooleanValue(HiSettingsHelper.PERF_CIRCLE_AVATAR, true)) {
+        if (HiSettingsHelper.getInstance().isCircleAvatar()) {
             glide.load(avatarUrl)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .signature(new StringSignature(cacheKey))

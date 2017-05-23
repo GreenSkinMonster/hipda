@@ -1087,4 +1087,8 @@ public class HiSettingsHelper {
         setIntValue(PERF_MAX_UPLOAD_FILE_SIZE, fileSize);
     }
 
+    public boolean isCircleAvatar() {
+        return getBooleanValue(PERF_CIRCLE_AVATAR, true);
+    }
+
 }

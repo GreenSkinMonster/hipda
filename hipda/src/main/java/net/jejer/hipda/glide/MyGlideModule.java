@@ -66,8 +66,17 @@ public class MyGlideModule implements GlideModule {
 
         AVATAR_CACHE_DIR = Glide.getPhotoCacheDir(context, AVATAR_CACHE_DIR_NAME);
 
-        DEFAULT_USER_ICON = new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY).sizeDp(64);
-        DEFAULT_AVATAR_FILE = new File(AVATAR_CACHE_DIR, "default.png");
+        setupDefaultAvatar();
+    }
+
+    public static void setupDefaultAvatar() {
+        if (HiSettingsHelper.getInstance().isCircleAvatar()) {
+            DEFAULT_USER_ICON = new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_circle).color(Color.LTGRAY).sizeDp(64);
+            DEFAULT_AVATAR_FILE = new File(AVATAR_CACHE_DIR, "circle.png");
+        } else {
+            DEFAULT_USER_ICON = new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY).sizeDp(64);
+            DEFAULT_AVATAR_FILE = new File(AVATAR_CACHE_DIR, "default.png");
+        }
         if (!DEFAULT_AVATAR_FILE.exists()) {
             try {
                 Bitmap b = drawableToBitmap(DEFAULT_USER_ICON);
