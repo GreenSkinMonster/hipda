@@ -52,6 +52,17 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_font">
+
+        <com.github.angads25.filepicker.view.FilePickerPreference
+            android:defaultValue=""
+            android:key="PERF_FONT"
+            android:title="@string/pref_title_font"
+            app:enable_clear_button="true"
+            app:extensions="ttf:otf"
+            app:selection_mode="single_mode"
+            app:selection_type="file_select"
+            app:title_text="@string/title_choose_font"/>
+
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/pref_title_textsize_adjust_titles"

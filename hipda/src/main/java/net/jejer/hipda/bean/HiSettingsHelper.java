@@ -49,6 +49,7 @@ public class HiSettingsHelper {
     public static final String PERF_NIGHT_THEME = "PERF_NIGHT_THEME";
     public static final String PERF_NIGHT_MODE = "PERF_NIGHT_MODE";
     public static final String PERF_NAVBAR_COLORED = "PERF_NAVBAR_COLORED";
+    public static final String PERF_FONT = "PERF_FONT";
     public static final String PERF_FORUMS = "PERF_FORUMS";
     public static final String PERF_FREQ_MENUS = "PERF_FREQ_MENUS";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
@@ -251,6 +252,7 @@ public class HiSettingsHelper {
         getNightThemeFromPref();
         isNightModeFromPref();
         isNavBarColoredFromPref();
+        getFontFromPref();
         isEncodeUtf8FromPref();
         getBlanklistUsernamesFromPref();
         getPostTextsizeAdjFromPref();
@@ -570,6 +572,21 @@ public class HiSettingsHelper {
         mNightMode = nightMode;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putBoolean(PERF_NIGHT_MODE, nightMode).commit();
+    }
+
+    public String getFont() {
+        return mFont;
+    }
+
+    public String getFontFromPref() {
+        mFont = mSharedPref.getString(PERF_FONT, "");
+        return mFont;
+    }
+
+    public void setFont(String font) {
+        mFont = font;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_FONT, font).apply();
     }
 
     public boolean isNavBarColored() {

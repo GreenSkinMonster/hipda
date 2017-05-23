@@ -6,10 +6,15 @@ import android.content.Context;
 import com.crashlytics.android.Crashlytics;
 
 import net.jejer.hipda.BuildConfig;
+import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.HiUtils;
 
+import java.io.File;
+
 import io.fabric.sdk.android.Fabric;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
  * Created by GreenSkinMonster on 2015-03-28.
@@ -19,6 +24,7 @@ public class HiApplication extends Application {
     private static Context context;
     private static boolean notified;
     private static boolean updated;
+    private static boolean fontSet;
 
     @Override
     public void onCreate() {
@@ -30,6 +36,17 @@ public class HiApplication extends Application {
 
         updated = UpdateHelper.updateApp();
 
+        String font = HiSettingsHelper.getInstance().getFont();
+        if (new File(font).exists()) {
+            fontSet = true;
+            CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                    .setDefaultFontPath(font)
+                    .setFontAttrId(R.attr.fontPath)
+                    .build()
+            );
+        } else {
+            HiSettingsHelper.getInstance().setFont("");
+        }
         HiUtils.updateBaseUrls();
     }
 
@@ -74,5 +91,9 @@ public class HiApplication extends Application {
 
     public static void setUpdated(boolean updated) {
         HiApplication.updated = updated;
+    }
+
+    public static boolean isFontSet() {
+        return fontSet;
     }
 }

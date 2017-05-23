@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -79,6 +80,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainFrameActivity extends AppCompatActivity {
 
@@ -177,7 +180,6 @@ public class MainFrameActivity extends AppCompatActivity {
                 if (!NotificationMgr.isAlarmRuning(this))
                     NotificationMgr.startAlarm(this);
             }
-            UIUtils.askForPermission(this);
             if (HiApplication.isUpdated()) {
                 HiApplication.setUpdated(false);
                 UIUtils.showReleaseNotesDialog(this);
@@ -203,7 +205,10 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(newBase);
+        if (HiApplication.isFontSet())
+            super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+        else
+            super.attachBaseContext(newBase);
     }
 
     private void setupDrawer() {
@@ -744,6 +749,14 @@ public class MainFrameActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "授权成功", Toast.LENGTH_LONG).show();
                 }
+                break;
+            }
+            case FilePickerDialog.EXTERNAL_READ_PERMISSION_GRANT: {
+                if (grantResults.length == 0
+                        || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    UIUtils.askForPermission(this);
+                }
+                break;
             }
         }
     }
