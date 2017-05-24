@@ -18,6 +18,7 @@ import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ import static net.jejer.hipda.glide.MyGlideModule.DEFAULT_USER_ICON;
 public class GlideHelper {
 
     private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(1024);
-    private static Map<String, Long> AVATAR_CACHE_KEYS = new HashMap<>();
+    private static Map<String, String> AVATAR_CACHE_KEYS = new HashMap<>();
 
     public final static long AVATAR_CACHE_MILLS = 3 * 24 * 60 * 60 * 1000;
     public final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
@@ -45,7 +46,9 @@ public class GlideHelper {
         if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
             avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
         }
-        String cacheKey = AVATAR_CACHE_KEYS.containsKey(avatarUrl) ? AVATAR_CACHE_KEYS.get(avatarUrl).toString() : avatarUrl;
+        String cacheKey = AVATAR_CACHE_KEYS.get(avatarUrl);
+        if (cacheKey == null)
+            cacheKey = Utils.nullToText(avatarUrl);
         if (HiSettingsHelper.getInstance().isCircleAvatar()) {
             glide.load(avatarUrl)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -94,7 +97,7 @@ public class GlideHelper {
         if (f != null && f.exists()) {
             f.delete();
         }
-        AVATAR_CACHE_KEYS.put(url, System.currentTimeMillis());
+        AVATAR_CACHE_KEYS.put(url, System.currentTimeMillis() + "");
     }
 
     public static boolean isOkToLoad(Context activity) {
