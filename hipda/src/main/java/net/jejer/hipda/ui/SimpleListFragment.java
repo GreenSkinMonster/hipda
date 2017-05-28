@@ -418,7 +418,7 @@ public class SimpleListFragment extends BaseFragment
             }
         };
 
-        SimplePopupMenu popupMenu = new SimplePopupMenu(getContext());
+        SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
         popupMenu.setActions(actions);
         popupMenu.setListener(listener);
         popupMenu.show();
@@ -445,7 +445,7 @@ public class SimpleListFragment extends BaseFragment
             }
         };
 
-        SimplePopupMenu popupMenu = new SimplePopupMenu(getContext());
+        SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
         popupMenu.setActions(actions);
         popupMenu.setListener(listener);
         popupMenu.show();
