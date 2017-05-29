@@ -16,6 +16,7 @@ public class DetailBean {
     private String mPostStatus;
     private Contents mContents;
     private int mPage;
+    private boolean mWarned;
     private Collection<ContentImg> mImages = new ArrayList<>();
 
     public DetailBean() {
@@ -243,6 +244,14 @@ public class DetailBean {
 
     public void setPage(int page) {
         mPage = page;
+    }
+
+    public boolean isWarned() {
+        return mWarned;
+    }
+
+    public void setWarned(boolean warned) {
+        mWarned = warned;
     }
 
     private String unEscapeHtml(String str) {

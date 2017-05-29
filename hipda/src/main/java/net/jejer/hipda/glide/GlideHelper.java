@@ -3,6 +3,11 @@ package net.jejer.hipda.glide;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.widget.ImageView;
 
@@ -12,29 +17,36 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import static net.jejer.hipda.glide.MyGlideModule.AVATAR_CACHE_DIR;
-import static net.jejer.hipda.glide.MyGlideModule.DEFAULT_AVATAR_FILE;
-import static net.jejer.hipda.glide.MyGlideModule.DEFAULT_USER_ICON;
 
 public class GlideHelper {
 
     private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(1024);
-    private static Map<String, String> AVATAR_CACHE_KEYS = new HashMap<>();
 
-    public final static long AVATAR_CACHE_MILLS = 3 * 24 * 60 * 60 * 1000;
-    public final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
+    private static File AVATAR_CACHE_DIR;
+
+    private static Drawable DEFAULT_USER_ICON;
+    public static File SYSTEM_AVATAR_FILE;
+    static File DEFAULT_AVATAR_FILE;
+
+    final static long AVATAR_CACHE_MILLS = 3 * 24 * 60 * 60 * 1000;
+    final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
+
+    private static Map<String, String> AVATAR_CACHE_KEYS = new HashMap<>();
 
     public static void loadAvatar(BaseFragment fragment, ImageView view, String avatarUrl) {
         if (isOkToLoad(fragment)) {
@@ -112,6 +124,52 @@ public class GlideHelper {
 
     public static boolean isOkToLoad(Fragment fragment) {
         return fragment != null && fragment.getActivity() != null && !fragment.isDetached();
+    }
+
+    public static void initDefaultFiles() {
+
+        AVATAR_CACHE_DIR = Glide.getPhotoCacheDir(HiApplication.getAppContext(), "avatar");
+
+        HashMap<String, Drawable> avatars = new HashMap<>();
+        avatars.put("circle", new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_circle).color(Color.LTGRAY).sizeDp(64));
+        avatars.put("default", new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_account_box).color(Color.LTGRAY).sizeDp(64));
+        avatars.put("system", new IconicsDrawable(HiApplication.getAppContext(), GoogleMaterial.Icon.gmd_info_outline).color(Color.LTGRAY).sizeDp(64));
+
+        for (String key : avatars.keySet()) {
+            Drawable drawable = avatars.get(key);
+            File file = new File(AVATAR_CACHE_DIR, key + ".png");
+            if (!file.exists()) {
+                try {
+                    Bitmap b = drawableToBitmap(drawable);
+                    b.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
+                    b.recycle();
+                } catch (Exception e) {
+                    Logger.e(e);
+                }
+            }
+        }
+
+        if (HiSettingsHelper.getInstance().isCircleAvatar()) {
+            DEFAULT_USER_ICON = avatars.get("circle");
+            DEFAULT_AVATAR_FILE = new File(AVATAR_CACHE_DIR, "circle.png");
+        } else {
+            DEFAULT_USER_ICON = avatars.get("default");
+            DEFAULT_AVATAR_FILE = new File(AVATAR_CACHE_DIR, "default.png");
+        }
+        SYSTEM_AVATAR_FILE = new File(AVATAR_CACHE_DIR, "system.png");
+    }
+
+    private static Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 
 }

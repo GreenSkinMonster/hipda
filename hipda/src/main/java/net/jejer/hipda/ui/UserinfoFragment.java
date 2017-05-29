@@ -261,11 +261,9 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                     mAvatarView.setVisibility(View.GONE);
                 }
                 mDetailView.setText(info.getDetail());
-                if (TextUtils.isEmpty(mUsername)) {
-                    mUsername = info.getUsername();
-                    mUsernameView.setText(mUsername);
-                    setActionBarTitle(mUsername);
-                }
+                mUsername = info.getUsername();
+                mUsernameView.setText(mUsername);
+                setActionBarTitle(mUsername);
                 if (info.isOnline()) {
                     mOnlineView.setVisibility(View.VISIBLE);
                 } else {

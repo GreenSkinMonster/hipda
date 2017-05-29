@@ -105,14 +105,14 @@ public class NotificationMgr {
                 Logger.e(e);
             }
         }
-        //check new thread notify
+
         if (doc != null) {
-            Elements promptThreadES = doc.select("div.promptcontent a#prompt_threads");
-            if (promptThreadES.size() > 0) {
-                String notifyStr = promptThreadES.first().text();
-                String tcount = Utils.getMiddleString(notifyStr, "(", ")");
-                if (!TextUtils.isEmpty(tcount) && TextUtils.isDigitsOnly(tcount)) {
-                    threadCount = Integer.parseInt(tcount);
+            threadCount = 0;
+            String[] prompts = {"prompt_threads", "prompt_systempm", "prompt_friend"};
+            for (String prompt : prompts) {
+                Elements promptES = doc.select("div.promptcontent a#" + prompt);
+                if (promptES.size() > 0) {
+                    threadCount += Utils.parseInt(Utils.getMiddleString(promptES.first().text(), "(", ")"));
                 }
             }
         }

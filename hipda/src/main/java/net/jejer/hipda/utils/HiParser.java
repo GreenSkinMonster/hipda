@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.bean.UserInfoBean;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.job.SimpleListJob;
 
 import org.jsoup.Jsoup;
@@ -286,15 +287,22 @@ public class HiParser {
                 continue;
             }
             SimpleListItemBean item = null;
-            if (divES.first().hasClass("f_thread")) {
+            Element el = divES.first();
+            if (el.hasClass("f_thread")) {
                 // user reply your thread
-                item = parseNotifyThread(divES.first());
-            } else if (divES.first().hasClass("f_quote")) {
+                item = parseNotifyThread(el);
+            } else if (el.hasClass("f_quote")) {
                 // user quote your post
-                item = parseNotifyQuoteAndReply(divES.first());
-            } else if (divES.first().hasClass("f_reply")) {
+                item = parseNotifyQuoteAndReply(el);
+            } else if (el.hasClass("f_reply")) {
                 // user reply your post
-                item = parseNotifyQuoteAndReply(divES.first());
+                item = parseNotifyQuoteAndReply(el);
+            } else if (el.hasClass("f_manage")) {
+                //system info
+                item = parseSystemInfo(el);
+            } else if (el.hasClass("f_buddy")) {
+                //system info
+                item = parseFriendInfo(el);
             }
 
             if (item != null) {
@@ -305,7 +313,51 @@ public class HiParser {
         return list;
     }
 
-    public static SimpleListItemBean parseNotifyThread(Element root) {
+    private static SimpleListItemBean parseFriendInfo(Element root) {
+        SimpleListItemBean item = new SimpleListItemBean();
+        item.setTitle("好友信息");
+        Elements aES = root.select("a");
+        if (aES.size() > 0) {
+            String uid = Utils.getMiddleString(aES.first().attr("href"), "uid=", "&");
+            item.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
+            item.setUid(uid);
+            item.setAuthor(aES.first().text());
+        }
+        // new
+        Elements imgES = root.select("img");
+        if (imgES.size() > 0) {
+            if (imgES.first().attr("src").contains(HiUtils.NewPMImage)) {
+                item.setNew(true);
+            }
+        }
+        //remove add friend link/text
+        if (aES.size() > 1) {
+            aES.get(1).remove();
+        }
+        item.setInfo(root.text());
+        return item;
+    }
+
+    private static SimpleListItemBean parseSystemInfo(Element root) {
+        SimpleListItemBean item = new SimpleListItemBean();
+        item.setTitle("系统信息");
+        item.setInfo(root.text());
+        Elements aES = root.select("a");
+        if (aES.size() > 0) {
+            item.setTid(Utils.getMiddleString(aES.first().attr("href"), "tid=", "&"));
+        }
+        // new
+        Elements imgES = root.select("img");
+        if (imgES.size() > 0) {
+            if (imgES.first().attr("src").contains(HiUtils.NewPMImage)) {
+                item.setNew(true);
+            }
+        }
+        item.setAvatarUrl(GlideHelper.SYSTEM_AVATAR_FILE.getAbsolutePath());
+        return item;
+    }
+
+    private static SimpleListItemBean parseNotifyThread(Element root) {
         SimpleListItemBean item = new SimpleListItemBean();
         String info = "";
 
@@ -341,7 +393,7 @@ public class HiParser {
         return item;
     }
 
-    public static SimpleListItemBean parseNotifyQuoteAndReply(Element root) {
+    private static SimpleListItemBean parseNotifyQuoteAndReply(Element root) {
         SimpleListItemBean item = new SimpleListItemBean();
 
         Elements aES = root.select("a");

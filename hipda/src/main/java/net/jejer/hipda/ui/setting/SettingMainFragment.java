@@ -17,7 +17,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.glide.MyGlideModule;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.ui.AboutFragment;
 import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
@@ -129,7 +129,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         HiSettingsHelper.getInstance().resetImageAutoLoadSize();
 
         if (HiSettingsHelper.getInstance().isCircleAvatar() != mCircleAvatar) {
-            MyGlideModule.setupDefaultAvatar();
+            GlideHelper.initDefaultFiles();
         }
 
         if (mCacheCleared

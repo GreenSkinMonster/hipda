@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.util.Linkify;
@@ -25,6 +26,7 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.ui.TextViewWithEmoticon;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.widget.ThreadImageLayout;
+import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -40,15 +42,21 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
     private LayoutInflater mInflater;
     private Button.OnClickListener mGoToFloorListener;
     private View.OnClickListener mAvatarListener;
+    private View.OnClickListener mWarningListener;
     private ThreadDetailFragment mDetailFragment;
 
-    public ThreadDetailAdapter(Context context, ThreadDetailFragment detailFragment, RecyclerItemClickListener listener,
-                               Button.OnClickListener gotoFloorListener, View.OnClickListener avatarListener) {
+    public ThreadDetailAdapter(Context context,
+                               ThreadDetailFragment detailFragment,
+                               RecyclerItemClickListener listener,
+                               Button.OnClickListener gotoFloorListener,
+                               View.OnClickListener avatarListener,
+                               View.OnClickListener warningListener) {
         mCtx = context;
         mInflater = LayoutInflater.from(context);
         mListener = listener;
         mGoToFloorListener = gotoFloorListener;
         mAvatarListener = avatarListener;
+        mWarningListener = warningListener;
         mDetailFragment = detailFragment;
     }
 
@@ -67,11 +75,23 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         viewHolder.itemView.setTag(position);
         viewHolder.itemView.setOnTouchListener(mListener);
 
-        DetailBean detail = getItem(position);
+        final DetailBean detail = getItem(position);
 
         holder.author.setText(detail.getAuthor());
         holder.time.setText(Utils.shortyTime(detail.getTimePost()));
         holder.floor.setText(detail.getFloor() + "");
+
+        if (detail.isWarned()) {
+            holder.floor.setTag(detail.getUid());
+            holder.floor.setTextColor(ContextCompat.getColor(mCtx, R.color.md_amber_900));
+            holder.floor.setClickable(true);
+            holder.floor.setOnClickListener(mWarningListener);
+        } else {
+            holder.floor.setTag(null);
+            holder.floor.setTextColor(ColorHelper.getTextColorSecondary(mCtx));
+            holder.floor.setClickable(false);
+            holder.floor.setOnClickListener(null);
+        }
 
         boolean trimBr = false;
         String postStaus = detail.getPostStatus();

@@ -135,6 +135,12 @@ public class HiParserThreadDetail {
             String floor = postinfoAES.first().text();
             detail.setFloor(Utils.parseInt(floor));
 
+            //warning
+            Elements warningES = postE.select("table tbody tr td.postcontent span.postratings a");
+            if (warningES.size() > 0 && warningES.first().attr("href").contains("viewwarning")) {
+                detail.setWarned(true);
+            }
+
             //update max posts in page, this is controlled by user setting
             if (i == 0) {
                 if (page == 1 && last_page > 1) {

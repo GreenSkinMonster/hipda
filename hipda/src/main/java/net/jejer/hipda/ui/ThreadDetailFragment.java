@@ -62,6 +62,7 @@ import net.jejer.hipda.job.PostEvent;
 import net.jejer.hipda.job.PostJob;
 import net.jejer.hipda.job.ThreadDetailEvent;
 import net.jejer.hipda.job.ThreadDetailJob;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadDetailAdapter;
 import net.jejer.hipda.ui.widget.BottomDialog;
@@ -80,9 +81,15 @@ import net.jejer.hipda.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Request;
 
 public class ThreadDetailFragment extends BaseFragment {
     public static final String ARG_TID_KEY = "tid";
@@ -199,7 +206,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(mCtx, new OnItemClickListener());
         mDetailAdapter = new ThreadDetailAdapter(mCtx, this, itemClickListener,
-                new GoToFloorOnClickListener(), new AvatarOnClickListener());
+                new GoToFloorOnClickListener(), new AvatarOnClickListener(), new WarningOnClickListener());
         mDetailAdapter.setDatas(mDetailBeans);
 
         mRecyclerView.setAdapter(mDetailAdapter);
@@ -915,7 +922,7 @@ public class ThreadDetailFragment extends BaseFragment {
         }
     }
 
-    class AvatarOnClickListener extends OnSingleClickListener {
+    private class AvatarOnClickListener extends OnSingleClickListener {
         @Override
         public void onSingleClick(View view) {
             String uid = (String) view.getTag(R.id.avatar_tag_uid);
@@ -930,6 +937,41 @@ public class ThreadDetailFragment extends BaseFragment {
             setHasOptionsMenu(false);
 
             FragmentUtils.showFragment(getFragmentManager(), fragment);
+        }
+    }
+
+    private class WarningOnClickListener extends OnSingleClickListener {
+        @Override
+        public void onSingleClick(View view) {
+            if (view.getTag() != null && HiUtils.isValidId(view.getTag().toString())) {
+                OkHttpHelper.getInstance().asyncGet(
+                        HiUtils.UserWarningUrl.replace("{tid}", mTid).replace("{uid}", view.getTag().toString()),
+                        new OkHttpHelper.ResultCallback() {
+                            @Override
+                            public void onError(Request request, Exception e) {
+                                Toast.makeText(mCtx, OkHttpHelper.getErrorMessage(e).getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    Document doc = Jsoup.parse(response);
+                                    String title = doc.select("h3.float_ctrl").text();
+                                    StringBuilder sb = new StringBuilder();
+                                    Elements trES = doc.select("div.floatwrap table.list tbody tr");
+                                    for (int i = 0; i < trES.size(); i++) {
+                                        Element tr = trES.get(i);
+                                        sb.append(tr.text()).append("\n");
+                                    }
+                                    sb.append("\n\n");
+                                    sb.append(doc.select("div.moreconf").text());
+                                    UIUtils.showMessageDialog(mCtx, title, sb.toString(), false);
+                                } catch (Exception e) {
+                                    Toast.makeText(mCtx, OkHttpHelper.getErrorMessage(e).getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
         }
     }
 

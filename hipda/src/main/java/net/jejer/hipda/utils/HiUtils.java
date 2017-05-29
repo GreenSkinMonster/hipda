@@ -57,6 +57,7 @@ public class HiUtils {
     public static String FavoriteRemoveUrl;
     public static String FavoriteDeleteUrl;
     public static String UserInfoUrl;
+    public static String UserWarningUrl;
 
     public static String LoginSubmit;
     public static String LoginGetFormHash;
@@ -136,7 +137,7 @@ public class HiUtils {
         SMSPreparePostUrl = BaseUrl + "pm.php?daterange=1&uid=";
         SMSPostByUid = BaseUrl + "pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1&uid={uid}";
         SMSPostByUsername = BaseUrl + "pm.php?action=send&pmsubmit=yes&infloat=yes&inajax=1";
-        ThreadNotifyUrl = BaseUrl + "notice.php?filter=threads";
+        ThreadNotifyUrl = BaseUrl + "notice.php";
         CheckSMS = BaseUrl + "pm.php?checknewpm";
         NewSMS = BaseUrl + "pm.php?filter=newpm";
         ClearSMS = BaseUrl + "pm.php?action=del&uid={uid}&filter=privatepm";
@@ -149,6 +150,7 @@ public class HiUtils {
         FavoriteRemoveUrl = BaseUrl + "my.php?item={item}&action=remove&inajax=1&ajaxtarget=favorite_msg&tid={tid}";
         FavoriteDeleteUrl = BaseUrl + "my.php?item={item}&type=thread";
         UserInfoUrl = BaseUrl + "space.php?uid=";
+        UserWarningUrl = BaseUrl + "misc.php?action=viewwarning&tid={tid}&uid={uid}";
 
         LoginSubmit = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
         LoginGetFormHash = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
