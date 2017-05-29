@@ -2,7 +2,7 @@
 
 **HiPDA论坛非官方客户端**
 
-论坛帖子地址 http://www.hi-pda.com/forum/viewthread.php?tid=1579403 
+论坛帖子地址 https://www.hi-pda.com/forum/viewthread.php?tid=1579403
 
 Google Play https://play.google.com/store/apps/details?id=net.jejer.hipda.ng
 
