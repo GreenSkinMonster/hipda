@@ -146,10 +146,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_search_threads);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new SimpleDivider(
-                HiSettingsHelper.getInstance().isNightMode()
-                        ? ContextCompat.getDrawable(getActivity(), R.drawable.line_divider_night)
-                        : ContextCompat.getDrawable(getActivity(), R.drawable.line_divider_day)));
+        mRecyclerView.addItemDecoration(new SimpleDivider(ContextCompat.getDrawable(getActivity(), R.drawable.line_divider)));
 
         mButton = (Button) view.findViewById(R.id.btn_search_threads);
         mButton.setOnClickListener(new OnSingleClickListener() {

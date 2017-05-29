@@ -193,10 +193,7 @@ public class ThreadDetailFragment extends BaseFragment {
         mRecyclerView.setItemAnimator(null);
         mLayoutManager = new LinearLayoutManager(mCtx);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new SimpleDivider(
-                HiSettingsHelper.getInstance().isNightMode()
-                        ? ContextCompat.getDrawable(mCtx, R.drawable.line_divider_night)
-                        : ContextCompat.getDrawable(mCtx, R.drawable.line_divider_day)));
+        mRecyclerView.addItemDecoration(new SimpleDivider(ContextCompat.getDrawable(getActivity(), R.drawable.line_divider)));
 
         mRecyclerView.addOnScrollListener(new OnScrollListener());
 

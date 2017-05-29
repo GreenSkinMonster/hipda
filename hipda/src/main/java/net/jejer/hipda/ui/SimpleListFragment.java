@@ -33,7 +33,6 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.PostSmsAsyncTask;
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.job.EventCallback;
@@ -121,10 +120,7 @@ public class SimpleListFragment extends BaseFragment
         mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_threads);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new SimpleDivider(
-                HiSettingsHelper.getInstance().isNightMode()
-                        ? ContextCompat.getDrawable(getActivity(), R.drawable.line_divider_night)
-                        : ContextCompat.getDrawable(getActivity(), R.drawable.line_divider_day)));
+        mRecyclerView.addItemDecoration(new SimpleDivider(ContextCompat.getDrawable(getActivity(), R.drawable.line_divider)));
 
         mRecyclerView.addOnScrollListener(new OnScrollListener());
 
