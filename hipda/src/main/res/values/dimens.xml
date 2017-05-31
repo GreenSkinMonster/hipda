@@ -4,8 +4,6 @@
     <dimen name="footer_height">90dp</dimen>
     <dimen name="footer_padding">10dp</dimen>
 
-    <dimen name="fragment_side_margin">0dp</dimen>
-
     <integer name="post_text_size">18</integer>
     <integer name="title_text_size">18</integer>
     <dimen name="author_text_size">15sp</dimen>

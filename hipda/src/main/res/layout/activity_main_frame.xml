@@ -27,8 +27,6 @@
         android:id="@+id/main_frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/fragment_side_margin"
-        android:layout_marginRight="@dimen/fragment_side_margin"
         app:layout_behavior="net.jejer.hipda.ui.widget.FixScrollingFooterBehavior"/>
 
     <android.support.design.widget.FloatingActionButton
