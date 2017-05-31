@@ -12,7 +12,6 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -125,7 +124,7 @@ public class ThreadListFragment extends BaseFragment
         mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_threads);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mCtx));
-        mRecyclerView.addItemDecoration(new SimpleDivider(ContextCompat.getDrawable(getActivity(), R.drawable.line_divider)));
+        mRecyclerView.addItemDecoration(new SimpleDivider(getActivity()));
 
         RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(mCtx, new OnItemClickListener());
 

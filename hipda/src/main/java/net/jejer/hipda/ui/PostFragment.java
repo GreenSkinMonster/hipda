@@ -395,7 +395,7 @@ public class PostFragment extends BaseFragment {
                     Intent intent = new Intent();
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
-                    if (Build.VERSION.SDK_INT >= 18)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
                         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                     startActivityForResult(Intent.createChooser(intent,
                             "Select Picture"), SELECT_PICTURE);

@@ -182,7 +182,7 @@ public class NotificationMgr {
                     notif.setSound(Uri.parse(sound));
                 if (HiSettingsHelper.getInstance().isNotiLedLight())
                     notif.setLights(color, 1000, 3000);
-                if (Build.VERSION.SDK_INT >= 16)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                     notif.setPriority(Notification.PRIORITY_HIGH)
                             .setVibrate(new long[0]);
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

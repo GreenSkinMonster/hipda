@@ -3,7 +3,6 @@ package net.jejer.hipda.ui;
 import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -146,7 +145,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_search_threads);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new SimpleDivider(ContextCompat.getDrawable(getActivity(), R.drawable.line_divider)));
+        mRecyclerView.addItemDecoration(new SimpleDivider(getActivity()));
 
         mButton = (Button) view.findViewById(R.id.btn_search_threads);
         mButton.setOnClickListener(new OnSingleClickListener() {

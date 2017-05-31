@@ -21,9 +21,9 @@ public class CursorUtils {
 
     public static ImageFileInfo getImageFileInfo(Context context, Uri uri) {
         ImageFileInfo result;
-        if (Build.VERSION.SDK_INT < 19 || uri.toString().startsWith("content://media")) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT || uri.toString().startsWith("content://media")) {
             result = getImageInfo_API11to18(context, uri);
-            if (result == null && Build.VERSION.SDK_INT >= 19) {
+            if (result == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 result = getImageInfo_API19(context, uri);
             }
         } else {

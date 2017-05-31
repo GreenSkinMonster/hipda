@@ -17,7 +17,6 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -200,7 +199,7 @@ public class ThreadDetailFragment extends BaseFragment {
         mRecyclerView.setItemAnimator(null);
         mLayoutManager = new LinearLayoutManager(mCtx);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new SimpleDivider(ContextCompat.getDrawable(getActivity(), R.drawable.line_divider)));
+        mRecyclerView.addItemDecoration(new SimpleDivider(getActivity()));
 
         mRecyclerView.addOnScrollListener(new OnScrollListener());
 

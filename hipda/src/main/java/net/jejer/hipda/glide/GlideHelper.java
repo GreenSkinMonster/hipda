@@ -114,7 +114,7 @@ public class GlideHelper {
 
     public static boolean isOkToLoad(Context activity) {
         if (activity != null
-                && Build.VERSION.SDK_INT >= 17
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
                 && activity instanceof Activity) {
             if (((Activity) activity).isDestroyed())
                 return false;
