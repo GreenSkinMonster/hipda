@@ -366,7 +366,7 @@ public class SimpleListFragment extends BaseFragment
             if (mType == SimpleListJob.TYPE_SMS) {
                 FragmentUtils.showSmsDetail(getFragmentManager(), false, item.getUid(), item.getAuthor());
             } else {
-                if (HiUtils.isValidId(item.getTid())) {
+                if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
                     FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
                 } else if (HiUtils.isValidId(item.getUid())) {
                     FragmentUtils.showSpace(getFragmentManager(), false, item.getUid(), item.getAuthor());
@@ -387,7 +387,7 @@ public class SimpleListFragment extends BaseFragment
             } else if (mType == SimpleListJob.TYPE_ATTENTION) {
                 showAttentionActionDialog(position, item);
             } else {
-                if (HiUtils.isValidId(item.getTid())) {
+                if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
                     showLastPage(item);
                 } else if (HiUtils.isValidId(item.getUid())) {
                     FragmentUtils.showSpace(getFragmentManager(), false, item.getUid(), item.getAuthor());
