@@ -19,7 +19,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.ui.SmsFragment;
-import net.jejer.hipda.ui.TextViewWithEmoticon;
+import net.jejer.hipda.ui.widget.TextViewWithEmoticon;
 import net.jejer.hipda.utils.Utils;
 
 /**

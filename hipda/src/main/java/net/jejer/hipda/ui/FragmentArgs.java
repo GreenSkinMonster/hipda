@@ -21,7 +21,7 @@ public class FragmentArgs {
     private int floor;
     private String uid;
     private String username;
-    private boolean directOpen;
+    private boolean skipEnterAnimation;
 
     public int getFid() {
         return fid;
@@ -87,11 +87,11 @@ public class FragmentArgs {
         this.username = username;
     }
 
-    public boolean isDirectOpen() {
-        return directOpen;
+    public boolean isSkipEnterAnimation() {
+        return skipEnterAnimation;
     }
 
-    public void setDirectOpen(boolean directOpen) {
-        this.directOpen = directOpen;
+    public void setSkipEnterAnimation(boolean skipEnterAnimation) {
+        this.skipEnterAnimation = skipEnterAnimation;
     }
 }

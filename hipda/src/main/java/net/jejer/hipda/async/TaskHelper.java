@@ -2,7 +2,7 @@ package net.jejer.hipda.async;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -12,7 +12,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.db.ContentDao;
 import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.okhttp.OkHttpHelper;
-import net.jejer.hipda.ui.HiProgressDialog;
+import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
 
 import java.lang.reflect.Type;

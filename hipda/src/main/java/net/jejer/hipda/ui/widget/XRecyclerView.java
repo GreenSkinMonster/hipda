@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
-import net.jejer.hipda.ui.OnSingleClickListener;
 import net.jejer.hipda.ui.adapter.BaseRvAdapter;
 import net.jejer.hipda.utils.Utils;
 

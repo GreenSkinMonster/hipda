@@ -1,4 +1,4 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.widget;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -18,6 +18,8 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.ui.PostFragment;
+import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.UIUtils;
 

@@ -1,4 +1,4 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.widget;
 
 import android.view.View;
 import android.widget.AdapterView;

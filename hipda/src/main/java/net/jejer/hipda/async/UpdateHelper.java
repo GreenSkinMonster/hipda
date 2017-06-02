@@ -15,7 +15,7 @@ import android.widget.Toast;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
-import net.jejer.hipda.ui.HiProgressDialog;
+import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 

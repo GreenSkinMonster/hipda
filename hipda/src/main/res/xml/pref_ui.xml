@@ -12,7 +12,7 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_theme"/>
 
-        <com.thebluealliance.spectrum.SpectrumPreference
+        <com.thebluealliance.spectrum.SpectrumPreferenceCompat
             android:defaultValue="@color/md_blue_grey_700"
             android:key="PERF_PRIMARY_COLOR"
             android:summary="@string/pref_summary_primary_color"
@@ -28,7 +28,7 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_night_theme"/>
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="PERF_NAVBAR_COLORED"
             android:title="@string/pref_title_navbar_colored"/>
@@ -45,7 +45,7 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_avatar_load_type"/>
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="PERF_CIRCLE_AVATAR"
             android:title="@string/pref_title_circle_avatar"/>
@@ -53,15 +53,10 @@
 
     <PreferenceCategory android:title="@string/pref_category_font">
 
-        <com.github.angads25.filepicker.view.FilePickerPreference
+        <Preference
             android:defaultValue=""
             android:key="PERF_FONT"
-            android:title="@string/pref_title_font"
-            app:enable_clear_button="true"
-            app:extensions="ttf:otf"
-            app:selection_mode="single_mode"
-            app:selection_type="file_select"
-            app:title_text="@string/title_choose_font"/>
+            android:title="@string/pref_title_font"/>
 
         <ListPreference
             android:defaultValue="0"
@@ -101,27 +96,27 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_screen_orientation"/>
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="PERF_GESTURE_BACK"
             android:title="@string/pref_title_gesture_back"/>
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="PERF_APP_BAR_COLLAPSIBLE"
             android:title="@string/pref_title_app_bar_collapsible"/>
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="PERF_FAB_AUTO_HIDE"
             android:title="@string/pref_title_fab_auto_hide"/>
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="PERF_FAB_LEFT_SIDE"
             android:title="@string/pref_title_fab_left_side"/>
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="PERF_CLICK_EFFECT"
             android:title="@string/pref_title_click_effect"/>

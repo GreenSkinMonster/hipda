@@ -1,13 +1,13 @@
 package net.jejer.hipda.ui;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,6 +41,7 @@ import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SimpleListAdapter;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
+import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.SimpleDivider;
 import net.jejer.hipda.ui.widget.SimplePopupMenu;
 import net.jejer.hipda.ui.widget.XFooterView;

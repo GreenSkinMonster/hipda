@@ -1,7 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +16,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -64,6 +64,8 @@ import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
+import net.jejer.hipda.ui.widget.OnSingleClickListener;
+import net.jejer.hipda.ui.widget.OnSwipeTouchListener;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
@@ -146,7 +148,7 @@ public class MainFrameActivity extends AppCompatActivity {
             public void onSwipeRight() {
                 if (HiSettingsHelper.getInstance().isGestureBack()
                         && !HiSettingsHelper.getInstance().getIsLandscape()
-                        && !(getFragmentManager().findFragmentByTag(PostFragment.class.getName()) instanceof PostFragment)) {
+                        && !(getSupportFragmentManager().findFragmentByTag(PostFragment.class.getName()) instanceof PostFragment)) {
                     popFragment();
                 }
             }
@@ -154,7 +156,7 @@ public class MainFrameActivity extends AppCompatActivity {
         mMainFrameContainer.setOnTouchListener(mSwipeListener);
 
         // Prepare Fragments
-        getFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
+        getSupportFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
 
         registerReceiver(mNetworkReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -169,10 +171,10 @@ public class MainFrameActivity extends AppCompatActivity {
                 fid = args.getFid();
 
             clearBackStacks(false);
-            FragmentUtils.showForum(getFragmentManager(), fid);
+            FragmentUtils.showForum(getSupportFragmentManager(), fid);
 
             if (args != null)
-                FragmentUtils.show(getFragmentManager(), args);
+                FragmentUtils.show(getSupportFragmentManager(), args);
 
             TaskHelper.runDailyTask(false);
 
@@ -198,8 +200,8 @@ public class MainFrameActivity extends AppCompatActivity {
         if (args != null) {
             HiParserThreadList.holdFetchNotify();
             clearBackStacks(false);
-            args.setDirectOpen(true);
-            FragmentUtils.show(getFragmentManager(), args);
+            args.setSkipEnterAnimation(true);
+            FragmentUtils.show(getSupportFragmentManager(), args);
         }
     }
 
@@ -330,7 +332,7 @@ public class MainFrameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 UIUtils.hideSoftKeyboard(MainFrameActivity.this);
-                if (getFragmentManager().getBackStackEntryCount() == 0) {
+                if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
                     if (drawer.isDrawerOpen())
                         drawer.closeDrawer();
                     else
@@ -345,7 +347,7 @@ public class MainFrameActivity extends AppCompatActivity {
             @Override
             public void onSingleClick(View v) {
                 //get top displaying fragment
-                Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+                Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
                 if (fg instanceof BaseFragment) {
                     ((BaseFragment) fg).scrollToTop();
                 }
@@ -355,7 +357,7 @@ public class MainFrameActivity extends AppCompatActivity {
         mToolbar.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+                Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
                 if (fg instanceof ThreadDetailFragment) {
                     ((ThreadDetailFragment) fg).showTheadTitle();
                 }
@@ -443,7 +445,7 @@ public class MainFrameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         HiApplication.activityResumed();
-        Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+        Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
         if (fg instanceof ThreadListFragment) {
             clearBackStacks(true);
         }
@@ -492,7 +494,7 @@ public class MainFrameActivity extends AppCompatActivity {
             return;
         }
 
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.main_frame_container);
 
         if (fragment instanceof BaseFragment) {
@@ -520,7 +522,7 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     public boolean popFragment() {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         int count = fm.getBackStackEntryCount();
         if (count > 0) {
             try {
@@ -554,45 +556,45 @@ public class MainFrameActivity extends AppCompatActivity {
                     searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_SEARCH);
                     SimpleListFragment searchFragment = new SimpleListFragment();
                     searchFragment.setArguments(searchBundle);
-                    FragmentUtils.showFragment(getFragmentManager(), searchFragment, true);
+                    FragmentUtils.showFragment(getSupportFragmentManager(), searchFragment, true);
                     break;
                 case Constants.DRAWER_MYPOST:
                     Bundle postsBundle = new Bundle();
                     postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_MYPOST);
                     SimpleListFragment postsFragment = new SimpleListFragment();
                     postsFragment.setArguments(postsBundle);
-                    FragmentUtils.showFragment(getFragmentManager(), postsFragment, true);
+                    FragmentUtils.showFragment(getSupportFragmentManager(), postsFragment, true);
                     break;
                 case Constants.DRAWER_MYREPLY:
                     Bundle replyBundle = new Bundle();
                     replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_MYREPLY);
                     SimpleListFragment replyFragment = new SimpleListFragment();
                     replyFragment.setArguments(replyBundle);
-                    FragmentUtils.showFragment(getFragmentManager(), replyFragment, true);
+                    FragmentUtils.showFragment(getSupportFragmentManager(), replyFragment, true);
                     break;
                 case Constants.DRAWER_FAVORITES:
                     Bundle favBundle = new Bundle();
                     favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_FAVORITES);
                     SimpleListFragment favFragment = new SimpleListFragment();
                     favFragment.setArguments(favBundle);
-                    FragmentUtils.showFragment(getFragmentManager(), favFragment, true);
+                    FragmentUtils.showFragment(getSupportFragmentManager(), favFragment, true);
                     break;
                 case Constants.DRAWER_HISTORIES:
                     Bundle hisBundle = new Bundle();
                     hisBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_HISTORIES);
                     SimpleListFragment hisFragment = new SimpleListFragment();
                     hisFragment.setArguments(hisBundle);
-                    FragmentUtils.showFragment(getFragmentManager(), hisFragment, true);
+                    FragmentUtils.showFragment(getSupportFragmentManager(), hisFragment, true);
                     break;
                 case Constants.DRAWER_SMS:
-                    FragmentUtils.showSmsList(getFragmentManager(), true);
+                    FragmentUtils.showSmsList(getSupportFragmentManager(), true);
                     break;
                 case Constants.DRAWER_THREADNOTIFY:
-                    FragmentUtils.showThreadNotify(getFragmentManager(), true);
+                    FragmentUtils.showThreadNotify(getSupportFragmentManager(), true);
                     break;
                 case Constants.DRAWER_SETTINGS:
                     Fragment fragment = new SettingMainFragment();
-                    getFragmentManager().beginTransaction()
+                    getSupportFragmentManager().beginTransaction()
                             .replace(R.id.main_frame_container, fragment, fragment.getClass().getName())
                             .addToBackStack(fragment.getClass().getName())
                             .commit();
@@ -600,7 +602,7 @@ public class MainFrameActivity extends AppCompatActivity {
                 default:
                     //for forums
                     int forumId = (int) iDrawerItem.getIdentifier();
-                    FragmentUtils.showForum(getFragmentManager(), forumId);
+                    FragmentUtils.showForum(getSupportFragmentManager(), forumId);
                     break;
             }
 
@@ -610,13 +612,13 @@ public class MainFrameActivity extends AppCompatActivity {
     }
 
     private void clearBackStacks(boolean resetActionBarTitle) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         while (fm.getBackStackEntryCount() > 0) {
             fm.popBackStackImmediate();
         }
 
         if (resetActionBarTitle) {
-            Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+            Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
             if (fg instanceof ThreadListFragment) {
                 ((ThreadListFragment) fg).resetActionBarTitle();
             }
@@ -635,11 +637,11 @@ public class MainFrameActivity extends AppCompatActivity {
                 }
             }
 
-            FragmentManager fm = getFragmentManager();
+            FragmentManager fm = getSupportFragmentManager();
             setDrawerHomeIdicator(fm.getBackStackEntryCount() > 0);
 
             if (HiSettingsHelper.getInstance().isAppBarCollapsible()) {
-                Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
+                Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
                 //set flag every time, or setting fragment's last item is not visible
                 setAppBarCollapsible(fg instanceof BaseFragment
                         && ((BaseFragment) fg).isAppBarCollapsible());
@@ -731,7 +733,7 @@ public class MainFrameActivity extends AppCompatActivity {
     public void onEvent(LoginEvent event) {
         if (event.mManual) {
             clearBackStacks(true);
-            Fragment fg = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+            Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
             if (fg instanceof ThreadListFragment) {
                 ((ThreadListFragment) fg).onRefresh();
             }

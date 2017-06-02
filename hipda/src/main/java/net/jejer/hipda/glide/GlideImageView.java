@@ -14,8 +14,8 @@ import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
-import net.jejer.hipda.ui.OnSingleClickListener;
 import net.jejer.hipda.ui.ThreadDetailFragment;
+import net.jejer.hipda.ui.widget.OnSingleClickListener;
 
 import java.lang.ref.WeakReference;
 

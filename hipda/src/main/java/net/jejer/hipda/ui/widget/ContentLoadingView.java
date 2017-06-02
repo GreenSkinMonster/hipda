@@ -7,7 +7,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.ui.ContentLoadingProgressBar;
 
 /**
  * Created by GreenSkinMonster on 2016-11-18.

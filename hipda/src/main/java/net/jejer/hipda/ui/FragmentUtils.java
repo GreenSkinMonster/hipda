@@ -1,11 +1,11 @@
 package net.jejer.hipda.ui;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
@@ -182,57 +182,38 @@ public class FragmentUtils {
         showFragment(fragmentManager, fragment, directOpen);
     }
 
-    public static void showThreadNotify(FragmentManager fragmentManager, boolean directOpen) {
+    public static void showThreadNotify(FragmentManager fragmentManager, boolean skipEnterAnimation) {
         Bundle notifyBundle = new Bundle();
         notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_THREAD_NOTIFY);
         SimpleListFragment fragment = new SimpleListFragment();
         fragment.setArguments(notifyBundle);
-        showFragment(fragmentManager, fragment, directOpen);
+        showFragment(fragmentManager, fragment, skipEnterAnimation);
     }
 
-    public static void showSmsList(FragmentManager fragmentManager, boolean directOpen) {
+    public static void showSmsList(FragmentManager fragmentManager, boolean skipEnterAnimation) {
         Bundle smsBundle = new Bundle();
         smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_SMS);
         SimpleListFragment fragment = new SimpleListFragment();
         fragment.setArguments(smsBundle);
-        showFragment(fragmentManager, fragment, directOpen);
+        showFragment(fragmentManager, fragment, skipEnterAnimation);
     }
 
-    public static void showSmsDetail(FragmentManager fragmentManager, boolean directOpen, String uid, String author) {
+    public static void showSmsDetail(FragmentManager fragmentManager, boolean skipEnterAnimation, String uid, String author) {
         Bundle smsBundle = new Bundle();
         smsBundle.putString(SmsFragment.ARG_AUTHOR, author);
         smsBundle.putString(SmsFragment.ARG_UID, uid);
         SmsFragment fragment = new SmsFragment();
         fragment.setArguments(smsBundle);
-        showFragment(fragmentManager, fragment, directOpen);
+        showFragment(fragmentManager, fragment, skipEnterAnimation);
     }
 
     public static void showFragment(FragmentManager fragmentManager, Fragment fragment, boolean skipEnterAnimation) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        int slideInAnim, slideOutAnim;
-//        if (HiSettingsHelper.getInstance().isNewAnimationType()) {
-//            slideInAnim = R.anim.slide_in_left;
-//            slideOutAnim = R.anim.slide_out_right;
-//        } else {
-        if (Utils.getScreenWidth() <= 720) {
-            slideInAnim = R.animator.slide_720_in_left;
-            slideOutAnim = R.animator.slide_720_out_right;
-        } else if (Utils.getScreenWidth() >= 1440) {
-            slideInAnim = R.animator.slide_1440_in_left;
-            slideOutAnim = R.animator.slide_1440_out_right;
-        } else {
-            slideInAnim = R.animator.slide_1080_in_left;
-            slideOutAnim = R.animator.slide_1080_out_right;
-        }
-//        }
-
         if (skipEnterAnimation) {
-            //noinspection ResourceType
-            transaction.setCustomAnimations(0, 0, 0, slideOutAnim);
+            transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
         } else {
-            //noinspection ResourceType
-            transaction.setCustomAnimations(slideInAnim, slideOutAnim, slideInAnim, slideOutAnim);
+            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right);
         }
 
         transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
@@ -248,15 +229,15 @@ public class FragmentUtils {
         if (args == null)
             return;
         if (args.getType() == FragmentArgs.TYPE_THREAD)
-            showThread(fragmentManager, args.isDirectOpen(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
+            showThread(fragmentManager, args.isSkipEnterAnimation(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
         else if (args.getType() == FragmentArgs.TYPE_SPACE)
-            showSpace(fragmentManager, args.isDirectOpen(), args.getUid(), args.getUsername());
+            showSpace(fragmentManager, args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
         else if (args.getType() == FragmentArgs.TYPE_SMS)
-            showSmsList(fragmentManager, args.isDirectOpen());
+            showSmsList(fragmentManager, args.isSkipEnterAnimation());
         else if (args.getType() == FragmentArgs.TYPE_SMS_DETAIL)
-            showSmsDetail(fragmentManager, args.isDirectOpen(), args.getUid(), args.getUsername());
+            showSmsDetail(fragmentManager, args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
         else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY)
-            showThreadNotify(fragmentManager, args.isDirectOpen());
+            showThreadNotify(fragmentManager, args.isSkipEnterAnimation());
         else if (args.getType() == FragmentArgs.TYPE_FORUM)
             showForum(fragmentManager, args.getFid());
     }

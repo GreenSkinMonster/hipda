@@ -3,16 +3,20 @@ package net.jejer.hipda.ui.setting;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
+import android.provider.Settings;
+import android.support.v7.preference.Preference;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
-import net.jejer.hipda.ui.HiProgressDialog;
+import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
@@ -28,6 +32,8 @@ public class SettingNestedFragment extends BaseSettingFragment {
     public static final int SCREEN_NOTIFICATION = 3;
     public static final int SCREEN_NETWORK = 4;
     public static final int SCREEN_OTHER = 5;
+
+    private static final int REQUEST_CODE_ALERT_RINGTONE = 1;
 
     public static final String TAG_KEY = "SCREEN_KEY";
     private HiProgressDialog mProgressDialog;
@@ -72,6 +78,10 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 Preference navBarColoredPreference = findPreference(HiSettingsHelper.PERF_NAVBAR_COLORED);
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && navBarColoredPreference != null)
                     navBarColoredPreference.setEnabled(false);
+
+                Preference fontPreference = findPreference(HiSettingsHelper.PERF_FONT);
+                fontPreference.setOnPreferenceClickListener(new FilePickerListener(FilePickerListener.FONT_FILE));
+
                 break;
 
             case SCREEN_NOTIFICATION:
@@ -94,6 +104,43 @@ public class SettingNestedFragment extends BaseSettingFragment {
                     }
                 });
 
+                final Preference ringtonePreference = findPreference(HiSettingsHelper.PERF_NOTI_SOUND);
+                ringtonePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Settings.System.DEFAULT_NOTIFICATION_URI);
+
+                        String existingValue = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SOUND, "");
+                        if (existingValue != null) {
+                            if (existingValue.length() == 0) {
+                                // Select "Silent"
+                                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
+                            } else {
+                                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(existingValue));
+                            }
+                        } else {
+                            // No ringtone has been selected, set to the default
+                            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Settings.System.DEFAULT_NOTIFICATION_URI);
+                        }
+
+                        startActivityForResult(intent, REQUEST_CODE_ALERT_RINGTONE);
+                        return true;
+                    }
+                });
+
+                final Preference silentBeginPreference = findPreference(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN);
+                final Preference silentEndPreference = findPreference(HiSettingsHelper.PERF_NOTI_SILENT_END);
+
+                silentBeginPreference.setOnPreferenceClickListener(
+                        new TimePickerListener(NotificationMgr.DEFAUL_SLIENT_BEGIN));
+
+                silentEndPreference.setOnPreferenceClickListener(
+                        new TimePickerListener(NotificationMgr.DEFAUL_SLIENT_END));
+
                 enableNotiItems(HiSettingsHelper.getInstance().isNotiTaskEnabled());
                 break;
 
@@ -104,6 +151,10 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_IMAGE_AUTO_LOAD_SIZE));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SAVE_FOLDER));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB));
+
+                Preference saveFolderPreference = findPreference(HiSettingsHelper.PERF_SAVE_FOLDER);
+                saveFolderPreference.setOnPreferenceClickListener(new FilePickerListener(FilePickerListener.SAVE_DIR));
+
                 break;
 
             case SCREEN_OTHER:
@@ -185,6 +236,16 @@ public class SettingNestedFragment extends BaseSettingFragment {
         findPreference(HiSettingsHelper.PERF_NOTI_SILENT_MODE).setEnabled(isNotiTaskEnabled);
         findPreference(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN).setEnabled(isNotiTaskEnabled);
         findPreference(HiSettingsHelper.PERF_NOTI_SILENT_END).setEnabled(isNotiTaskEnabled);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_ALERT_RINGTONE && data != null) {
+            Uri ringtone = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_NOTI_SOUND, ringtone.toString());
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
 }

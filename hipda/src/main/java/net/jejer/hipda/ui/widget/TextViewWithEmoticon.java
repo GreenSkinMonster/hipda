@@ -1,4 +1,4 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -18,6 +18,10 @@ import android.widget.Toast;
 
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.cache.SmallImages;
+import net.jejer.hipda.ui.BaseFragment;
+import net.jejer.hipda.ui.FragmentArgs;
+import net.jejer.hipda.ui.FragmentUtils;
+import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.textstyle.HiHtmlTagHandler;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HiUtils;

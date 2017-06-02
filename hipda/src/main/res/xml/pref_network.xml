@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:app="http://schemas.android.com/apk/res-auto">
+    >
 
     <PreferenceCategory android:title="@string/pref_category_image">
         <Preference android:summary="注：图片满足以下任意一个条件就会自动加载"/>
@@ -22,7 +22,7 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_image_auto_load_size"/>
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="PERF_AUTO_LOAD_THUMB"
             android:summary="@string/pref_summary_auto_load_thumb"
@@ -31,13 +31,10 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_image_more">
-        <com.github.angads25.filepicker.view.FilePickerPreference
+        <Preference
             android:defaultValue=""
             android:key="PERF_SAVE_FOLDER"
-            android:title="@string/pref_title_save_folder"
-            app:selection_mode="single_mode"
-            app:selection_type="dir_select"
-            app:title_text="@string/pref_title_save_folder"/>
+            android:title="@string/pref_title_save_folder"/>
 
         <ListPreference
             android:defaultValue="500"

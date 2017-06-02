@@ -16,12 +16,12 @@
         android:title="@string/pref_title_freq_menus"/>
 
     <PreferenceCategory android:title="@string/pref_category_tail">
-        <net.jejer.hipda.ui.CustomSwitchPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="PERF_SHOW_TAIL"
             android:title="@string/pref_title_show_tail"/>
 
-        <net.jejer.hipda.ui.CustomSwitchPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="PERF_ADDTAIL"
             android:title="@string/pref_title_add_tail" />

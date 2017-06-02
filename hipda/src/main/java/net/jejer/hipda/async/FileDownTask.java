@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
-import net.jejer.hipda.ui.HiProgressDialog;
+import net.jejer.hipda.ui.widget.HiProgressDialog;
 
 /**
  * Created by GreenSkinMonster on 2016-11-27.

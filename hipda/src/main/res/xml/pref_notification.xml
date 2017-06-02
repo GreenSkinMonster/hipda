@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <net.jejer.hipda.ui.CustomSwitchPreference
+    <SwitchPreference
         android:defaultValue="false"
         android:key="PERF_NOTI_TASK_ENABLED"
-        android:title="@string/pref_noti_task_enabled" />
+        android:title="@string/pref_noti_task_enabled"/>
 
     <ListPreference
         android:defaultValue="10"
@@ -13,36 +13,36 @@
         android:key="PERF_NOTI_REPEAT_MINUETS"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
-        android:title="@string/pref_noti_repeat_minuets" />
+        android:title="@string/pref_noti_repeat_minuets"/>
 
     <PreferenceCategory android:title="@string/pref_category_notification_style">
-    <net.jejer.hipda.ui.CustomSwitchPreference
-        android:defaultValue="true"
-        android:key="PERF_NOTI_LED_LIGHT"
-        android:title="@string/pref_noti_led_light" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="PERF_NOTI_LED_LIGHT"
+            android:title="@string/pref_noti_led_light"/>
 
-    <RingtonePreference
-        android:key="PERF_NOTI_SOUND"
-        android:ringtoneType="notification"
-        android:showDefault="true"
-        android:title="@string/pref_noti_sound" />
+        <Preference
+            android:key="PERF_NOTI_SOUND"
+            android:ringtoneType="notification"
+            android:showDefault="true"
+            android:title="@string/pref_noti_sound"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_silent_mode">
-    <net.jejer.hipda.ui.CustomSwitchPreference
-        android:defaultValue="false"
-        android:key="PERF_NOTI_SILENT_MODE"
-        android:title="@string/pref_noti_silent_mode" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="PERF_NOTI_SILENT_MODE"
+            android:title="@string/pref_noti_silent_mode"/>
 
-    <net.jejer.hipda.ui.TimePreference
-        android:defaultValue="22:00"
-        android:key="PERF_NOTI_SILENT_BEGIN"
-        android:title="@string/pref_noti_silent_begin" />
+        <Preference
+            android:defaultValue="22:00"
+            android:key="PERF_NOTI_SILENT_BEGIN"
+            android:title="@string/pref_noti_silent_begin"/>
 
-    <net.jejer.hipda.ui.TimePreference
-        android:defaultValue="08:00"
-        android:key="PERF_NOTI_SILENT_END"
-        android:title="@string/pref_noti_silent_end" />
+        <Preference
+            android:defaultValue="08:00"
+            android:key="PERF_NOTI_SILENT_END"
+            android:title="@string/pref_noti_silent_end"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

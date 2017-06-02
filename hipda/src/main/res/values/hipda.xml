@@ -5,11 +5,11 @@
     <string name="login_fail">"登录失败"</string>
     <string name="not_login">"您还未登录"</string>
     <string name="default_tail_text">"HiPDA·NG"</string>
-    <string name="default_tail_url">"http://www.hi-pda.com/forum/viewthread.php?tid=1579403"</string>
+    <string name="default_tail_url">"https://www.hi-pda.com/forum/viewthread.php?tid=1579403"</string>
 
     <item name="avatar_tag_uid" type="id" />
     <item name="avatar_tag_username" type="id" />
 
-    <integer name="defaultAnimTime">250</integer>
+    <integer name="defaultAnimTime">200</integer>
 
 </resources>

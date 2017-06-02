@@ -2,10 +2,12 @@
 
     <style name="ThemeLightBase" parent="MaterialDrawerTheme.Light">
         <item name="actionBarMargin">0dp</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
     <style name="ThemeDarkBase" parent="MaterialDrawerTheme">
         <item name="actionBarMargin">0dp</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
     <style name="ThemeLight" parent="ThemeLightBase">
@@ -254,6 +256,15 @@
 
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- fix ugly Preference Category with android version < 4.4 -->
+    <style name="Preference.Category.Material">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
     </style>
 
 </resources>

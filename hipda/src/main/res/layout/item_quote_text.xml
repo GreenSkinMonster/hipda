@@ -43,7 +43,7 @@
         android:layout_height="1dp"
         android:background="?attr/list_item_divider"/>
 
-    <net.jejer.hipda.ui.TextViewWithEmoticon
+    <net.jejer.hipda.ui.widget.TextViewWithEmoticon
         android:id="@+id/quote_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

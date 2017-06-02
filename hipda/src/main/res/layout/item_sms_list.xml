@@ -44,7 +44,7 @@
             app:bl_arrowWidth="8dp"
             app:bl_cornersRadius="6dp">
 
-            <net.jejer.hipda.ui.TextViewWithEmoticon
+            <net.jejer.hipda.ui.widget.TextViewWithEmoticon
                 android:id="@+id/tv_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

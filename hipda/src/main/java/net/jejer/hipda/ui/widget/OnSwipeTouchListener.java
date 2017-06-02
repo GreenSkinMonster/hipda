@@ -1,4 +1,4 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
 import android.view.GestureDetector;
@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 

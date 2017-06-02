@@ -45,10 +45,10 @@ android {
 }
 
 dependencies {
-    compile "com.android.support:support-v4:$supportLibraryVersion"
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
     compile "com.android.support:design:$supportLibraryVersion"
     compile "com.android.support:preference-v7:$supportLibraryVersion"
+    compile "com.android.support:preference-v14:$supportLibraryVersion"
 
     compile 'org.jsoup:jsoup:1.10.2'
     compile('com.squareup.okhttp3:okhttp:3.7.0')

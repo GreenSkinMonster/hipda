@@ -1,19 +1,21 @@
 package net.jejer.hipda.ui.setting;
 
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.preference.MultiSelectListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.SwitchPreference;
 import android.support.annotation.StringRes;
+import android.support.v14.preference.MultiSelectListPreference;
+import android.support.v14.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.CheckBoxPreference;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.thebluealliance.spectrum.SpectrumPreferenceCompat;
 
 import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.utils.ColorHelper;
@@ -26,7 +28,12 @@ import java.util.Set;
  * base setting fragment
  * Created by GreenSkinMonster on 2015-09-11.
  */
-public class BaseSettingFragment extends PreferenceFragment {
+public class BaseSettingFragment extends PreferenceFragmentCompat {
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -110,6 +117,8 @@ public class BaseSettingFragment extends PreferenceFragment {
 
     protected static void bindPreferenceSummaryToValue(Preference preference) {
         // Set the listener to watch for value changes.
+        if (preference == null)
+            return;
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
         // Trigger the listener immediately with the preference's
@@ -138,6 +147,13 @@ public class BaseSettingFragment extends PreferenceFragment {
                     PreferenceManager.getDefaultSharedPreferences(
                             preference.getContext()).getString(preference.getKey(),
                             ""));
+        }
+    }
+
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        if (!SpectrumPreferenceCompat.onDisplayPreferenceDialog(preference, this)) {
+            super.onDisplayPreferenceDialog(preference);
         }
     }
 

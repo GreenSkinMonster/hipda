@@ -1,8 +1,6 @@
 package net.jejer.hipda.ui;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -10,6 +8,8 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +39,8 @@ import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SmsAdapter;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
+import net.jejer.hipda.ui.widget.HiProgressDialog;
+import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.SimplePopupMenu;
 import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.Constants;
@@ -205,7 +207,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                             public void onError(Request request, Exception e) {
                                 progress.dismissError("操作时发生错误 : " + OkHttpHelper.getErrorMessage(e));
                                 popFragment();
-                                FragmentManager fm = getActivity().getFragmentManager();
+                                FragmentManager fm = getActivity().getSupportFragmentManager();
                                 Fragment fragment = fm.findFragmentByTag(SimpleListFragment.class.getName());
                                 if (fragment != null && fragment instanceof SimpleListFragment) {
                                     ((SimpleListFragment) fragment).onRefresh();
@@ -216,7 +218,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                             public void onResponse(String response) {
                                 progress.dismiss("操作完成");
                                 popFragment();
-                                FragmentManager fm = getActivity().getFragmentManager();
+                                FragmentManager fm = getActivity().getSupportFragmentManager();
                                 Fragment fragment = fm.findFragmentByTag(SimpleListFragment.class.getName());
                                 if (fragment != null && fragment instanceof SimpleListFragment) {
                                     ((SimpleListFragment) fragment).onRefresh();

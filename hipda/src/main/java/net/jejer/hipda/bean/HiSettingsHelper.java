@@ -79,7 +79,6 @@ public class HiSettingsHelper {
     public static final String PERF_NOTI_SILENT_BEGIN = "PERF_NOTI_SILENT_BEGIN";
     public static final String PERF_NOTI_SILENT_END = "PERF_NOTI_SILENT_END";
     public static final String PERF_BS_TYPE_ID = "PERF_BS_TYPE_ID";
-    public static final String PERF_ANIMATION_TYPE = "PERF_ANIMATION_TYPE";
     public static final String PERF_ICON = "PERF_ICON";
     public static final String PERF_SAVE_FOLDER = "PERF_SAVE_FOLDER";
     public static final String PERF_CIRCLE_AVATAR = "PERF_CIRCLE_AVATAR";
@@ -269,7 +268,6 @@ public class HiSettingsHelper {
         isNotiTaskEnabledFromPref();
         getNotiRepeatMinutesFromPref();
         getBSTypeIdFromPref();
-        getAnimationTypeFromPref();
         getForumServerFromPref();
         getImageHostFromPref();
 
@@ -955,25 +953,6 @@ public class HiSettingsHelper {
         return mBaseTitleTextSize + getInstance().getTitleTextsizeAdj();
     }
 
-
-    public String getAnimationType() {
-        return mAnimationType;
-    }
-
-    public String getAnimationTypeFromPref() {
-        mAnimationType = mSharedPref.getString(PERF_ANIMATION_TYPE, "0");
-        return mAnimationType;
-    }
-
-    public void setAnimationType(String animationType) {
-        mAnimationType = animationType;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_ANIMATION_TYPE, animationType).apply();
-    }
-
-    public boolean isNewAnimationType() {
-        return "1".equals(getAnimationType());
-    }
 
     public String getForumServer() {
         return mForumServer;
