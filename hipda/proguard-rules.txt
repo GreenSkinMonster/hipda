@@ -2,6 +2,8 @@
 -keepattributes *Annotation*
 
 -dontwarn okio.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
 
 #google stuff
 -dontwarn android.support.**

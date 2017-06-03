@@ -51,7 +51,7 @@ dependencies {
     compile "com.android.support:preference-v14:$supportLibraryVersion"
 
     compile 'org.jsoup:jsoup:1.10.2'
-    compile('com.squareup.okhttp3:okhttp:3.7.0')
+    compile('com.squareup.okhttp3:okhttp:3.8.0')
 
     compile 'com.google.code.gson:gson:2.8.0'
 
