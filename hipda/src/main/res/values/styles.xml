@@ -267,4 +267,9 @@
         <item name="android:layout_marginBottom">16dp</item>
     </style>
 
+    <style name="Matisse.Light" parent="Matisse.Zhihu">
+        <item name="colorPrimary">@color/md_blue_grey_700</item>
+        <item name="colorPrimaryDark">@color/md_blue_grey_800</item>
+    </style>
+
 </resources>

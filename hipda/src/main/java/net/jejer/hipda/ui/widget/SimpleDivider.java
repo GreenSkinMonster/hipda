@@ -21,7 +21,7 @@ public class SimpleDivider extends RecyclerView.ItemDecoration {
     public SimpleDivider(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             String theme = HiSettingsHelper.getInstance().getActiveTheme();
-            if ("light".equals(theme)) {
+            if (HiSettingsHelper.THEME_LIGHT.equals(theme)) {
                 mDivider = ContextCompat.getDrawable(context, R.drawable.line_divider_light);
             } else {
                 mDivider = ContextCompat.getDrawable(context, R.drawable.line_divider_dark);

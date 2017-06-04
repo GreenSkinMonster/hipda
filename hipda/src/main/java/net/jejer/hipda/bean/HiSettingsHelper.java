@@ -90,6 +90,11 @@ public class HiSettingsHelper {
     public static final String PERF_TRUST_ALL_CERTS = "PERF_TRUST_ALL_CERTS";
     public static final String PERF_MAX_UPLOAD_FILE_SIZE = "PERF_MAX_UPLOAD_FILE_SIZE";
     public static final String PERF_SHOW_TAIL = "PERF_SHOW_TAIL";
+    public static final String PERF_OLD_IMAGE_SELECTOR = "PERF_OLD_IMAGE_SELECTOR";
+
+    public static final String THEME_LIGHT = "light";
+    public static final String THEME_DARK = "dark";
+    public static final String THEME_BLACK = "black";
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -139,7 +144,6 @@ public class HiSettingsHelper {
     private int mNotiRepeatMinutes;
     private boolean mNotiLedLight;
     private String mBSTypeId;
-    private String mAnimationType;
 
     private String mForumServer;
     private String mImageHost;
@@ -516,7 +520,7 @@ public class HiSettingsHelper {
     }
 
     public String getThemeFromPref() {
-        mTheme = mSharedPref.getString(PERF_THEME, "light");
+        mTheme = mSharedPref.getString(PERF_THEME, THEME_LIGHT);
         return mTheme;
     }
 
@@ -1068,6 +1072,10 @@ public class HiSettingsHelper {
 
     public boolean isCircleAvatar() {
         return getBooleanValue(PERF_CIRCLE_AVATAR, true);
+    }
+
+    public boolean isOldImageSelector() {
+        return getBooleanValue(PERF_OLD_IMAGE_SELECTOR, false);
     }
 
 }

@@ -87,7 +87,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainFrameActivity extends AppCompatActivity {
 
-    public final static int PERMISSIONS_REQUEST_CODE = 200;
+    public final static int PERMISSIONS_REQUEST_CODE_STORAGE = 200;
+    public final static int PERMISSIONS_REQUEST_CODE_CAMERA = 201;
 
     private OnSwipeTouchListener mSwipeListener;
 
@@ -745,7 +746,7 @@ public class MainFrameActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case PERMISSIONS_REQUEST_CODE: {
+            case PERMISSIONS_REQUEST_CODE_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -756,7 +757,7 @@ public class MainFrameActivity extends AppCompatActivity {
             case FilePickerDialog.EXTERNAL_READ_PERMISSION_GRANT: {
                 if (grantResults.length == 0
                         || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    UIUtils.askForPermission(this);
+                    UIUtils.askForStoragePermission(this);
                 }
                 break;
             }

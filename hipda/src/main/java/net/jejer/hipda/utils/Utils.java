@@ -455,7 +455,7 @@ public class Utils {
             return;
         }
 
-        if (UIUtils.askForPermission(ctx)) {
+        if (UIUtils.askForStoragePermission(ctx)) {
             return;
         }
 

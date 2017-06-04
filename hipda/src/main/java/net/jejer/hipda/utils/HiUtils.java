@@ -236,11 +236,11 @@ public class HiUtils {
     }
 
     public static int getThemeValue(Context context, String theme, int primaryColor) {
-        if ("dark".equals(theme)) {
+        if (HiSettingsHelper.THEME_DARK.equals(theme)) {
             return R.style.ThemeDark;
-        } else if ("black".equals(theme)) {
+        } else if (HiSettingsHelper.THEME_BLACK.equals(theme)) {
             return R.style.ThemeBlack;
-        } else if ("light".equals(theme)) {
+        } else if (HiSettingsHelper.THEME_LIGHT.equals(theme)) {
             if (primaryColor == ContextCompat.getColor(context, R.color.md_red_700))
                 return R.style.ThemeLight_Red;
             if (primaryColor == ContextCompat.getColor(context, R.color.md_pink_700))
@@ -282,7 +282,7 @@ public class HiUtils {
             if (primaryColor == ContextCompat.getColor(context, R.color.md_black_1000))
                 return R.style.ThemeLight_Black;
         }
-        HiSettingsHelper.getInstance().setTheme("light");
+        HiSettingsHelper.getInstance().setTheme(HiSettingsHelper.THEME_LIGHT);
         HiSettingsHelper.getInstance().setPrimaryColor(ContextCompat.getColor(context, R.color.md_blue_grey_700));
         return R.style.ThemeLight_BlueGrey;
     }

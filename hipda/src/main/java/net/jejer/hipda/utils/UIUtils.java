@@ -129,15 +129,26 @@ public class UIUtils {
         showMessageDialog(activity, "更新记录", releaseNotes, false);
     }
 
-    public static boolean askForPermission(Context ctx) {
-        if (ContextCompat.checkSelfPermission(ctx,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    public static boolean askForStoragePermission(Context ctx) {
+        if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(ctx, "需要授予 \"存储空间\" 权限", Toast.LENGTH_SHORT).show();
             if (ctx instanceof Activity)
                 ActivityCompat.requestPermissions((Activity) ctx,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        MainFrameActivity.PERMISSIONS_REQUEST_CODE);
+                        MainFrameActivity.PERMISSIONS_REQUEST_CODE_STORAGE);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean askForCameraPermission(Context ctx) {
+        if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ctx instanceof Activity)
+                ActivityCompat.requestPermissions((Activity) ctx,
+                        new String[]{Manifest.permission.CAMERA},
+                        MainFrameActivity.PERMISSIONS_REQUEST_CODE_CAMERA);
             return true;
         }
         return false;
@@ -171,7 +182,7 @@ public class UIUtils {
     public static void shareImage(final Activity activity, final View view, String url) {
         if (activity == null || view == null)
             return;
-        if (askForPermission(activity))
+        if (askForStoragePermission(activity))
             return;
 
         final ImageInfo imageInfo = ImageContainer.getImageInfo(url);
@@ -213,7 +224,7 @@ public class UIUtils {
     public static void saveImage(final Activity activity, final View view, String url) {
         if (activity == null || view == null)
             return;
-        if (askForPermission(activity))
+        if (askForStoragePermission(activity))
             return;
 
         final ImageInfo imageInfo = ImageContainer.getImageInfo(url);

@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -7,6 +8,8 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -40,7 +43,12 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vdurmont.emoji.EmojiParser;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
+import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
+import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.async.PrePostAsyncTask;
@@ -280,6 +288,7 @@ public class PostFragment extends BaseFragment {
                 break;
         }
 
+        UIUtils.askForCameraPermission(getActivity());
         return view;
     }
 
@@ -392,17 +401,34 @@ public class PostFragment extends BaseFragment {
                     fetchPrePostInfo(false);
                     Toast.makeText(getActivity(), "请等待信息收集结束再选择图片", Toast.LENGTH_LONG).show();
                 } else {
-                    if (UIUtils.askForPermission(getActivity())) {
+                    if (UIUtils.askForStoragePermission(getActivity())) {
                         return true;
                     }
+
                     mContentPosition = mEtContent.getSelectionStart();
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-                        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                    startActivityForResult(Intent.createChooser(intent,
-                            "Select Picture"), SELECT_PICTURE);
+
+                    if (HiSettingsHelper.getInstance().isOldImageSelector()) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+                            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                        startActivityForResult(Intent.createChooser(intent,
+                                "Select Picture"), SELECT_PICTURE);
+                    } else {
+                        Matisse.from(PostFragment.this)
+                                .choose(MimeType.ofImage())
+                                .countable(true)
+                                .maxSelectable(9)
+                                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                                .thumbnailScale(0.85f)
+                                .imageEngine(new GlideEngine())
+                                .theme(HiSettingsHelper.getInstance().getActiveTheme().equals(HiSettingsHelper.THEME_LIGHT)
+                                        ? R.style.Matisse_Light : R.style.Matisse_Dracula)
+                                .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+                                .captureStrategy(new CaptureStrategy(false, BuildConfig.APPLICATION_ID + ".provider"))
+                                .forResult(SELECT_PICTURE);
+                    }
                 }
                 return true;
             case R.id.action_restore_content:
@@ -537,47 +563,49 @@ public class PostFragment extends BaseFragment {
         }, 2000);
 
         if (resultCode == Activity.RESULT_OK && requestCode == SELECT_PICTURE) {
-            boolean findData = false;
             boolean duplicate = false;
-            StringBuilder sb = new StringBuilder();
-            sb.append("Device: ").append(Utils.getDeviceName()).append("\n");
-            sb.append("Version: ").append(Build.VERSION.SDK_INT).append("\n");
             Collection<Uri> uris = new ArrayList<>();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                ClipData clipData = intent.getClipData();
-                sb.append("ClipData: ").append(clipData == null ? "null" : clipData.getItemCount()).append("\n");
-                if (clipData != null && clipData.getItemCount() > 0) {
-                    for (int i = 0; i < clipData.getItemCount(); i++) {
-                        Uri uri = clipData.getItemAt(i).getUri();
-                        if (!mUploadImages.containsKey(uri)) {
-                            uris.add(uri);
-                            sb.append("ClipData: item ").append(i).append(" added").append("\n");
-                        } else {
-                            duplicate = true;
-                            sb.append("ClipData: item ").append(i).append(" dup").append("\n");
-                        }
-                    }
-                    findData = true;
-                }
-            }
-            if (!findData && intent.getData() != null) {
-                if (!mUploadImages.containsKey(intent.getData())) {
-                    uris.add(intent.getData());
-                    sb.append("Data: ").append(" added").append("\n");
-                } else {
-                    duplicate = true;
-                    sb.append("Data: ").append(" dup").append("\n");
-                }
-            }
 
-            if (intent.getData() == null)
-                sb.append("Data: null").append("\n");
+            if (HiSettingsHelper.getInstance().isOldImageSelector()) {
+                boolean findData = false;
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    ClipData clipData = intent.getClipData();
+                    if (clipData != null && clipData.getItemCount() > 0) {
+                        for (int i = 0; i < clipData.getItemCount(); i++) {
+                            Uri uri = clipData.getItemAt(i).getUri();
+                            if (!mUploadImages.containsKey(uri)) {
+                                uris.add(uri);
+                            } else {
+                                duplicate = true;
+                            }
+                        }
+                        findData = true;
+                    }
+                }
+                if (!findData && intent.getData() != null) {
+                    if (!mUploadImages.containsKey(intent.getData())) {
+                        uris.add(intent.getData());
+                    } else {
+                        duplicate = true;
+                    }
+                }
+            } else {
+                List<Uri> selects = Matisse.obtainResult(intent);
+                for (Uri uri : selects) {
+                    if (!mUploadImages.containsKey(uri)) {
+                        uris.add(uri);
+                    } else {
+                        duplicate = true;
+                    }
+                }
+            }
 
             if (uris.size() == 0) {
                 if (duplicate) {
                     Toast.makeText(getActivity(), "选择的图片重复", Toast.LENGTH_SHORT).show();
                 } else {
-                    UIUtils.errorSnack(getView(), "无法获取图片信息", sb.toString());
+                    Toast.makeText(getActivity(), "无法获取图片信息", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }

@@ -50,3 +50,6 @@
 -keepclassmembers class * implements android.os.Parcelable {
     static ** CREATOR;
 }
+
+#Matisse
+-dontwarn com.squareup.picasso.**
