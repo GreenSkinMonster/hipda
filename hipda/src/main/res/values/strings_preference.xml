@@ -123,15 +123,6 @@
         <item>1</item>
     </string-array>
 
-    <string-array name="pref_font_titles">
-        <item>默认</item>
-        <item>Roboto Slab</item>
-    </string-array>
-    <string-array name="pref_font_values">
-        <item></item>
-        <item>RobotoSlab</item>
-    </string-array>
-
     <string-array name="pref_title_forum_names">
         <item>Buy &amp; Sell</item>
         <item>Geek Talks</item>
@@ -320,9 +311,6 @@
     <string name="title_choose_font">选择字体 (*ttf, *.otf)</string>
     <string name="pref_title_forum">版面选择</string>
     <string name="pref_title_freq_menus">展开常用菜单</string>
-    <string name="pref_title_textsize_adjust_title">标题字号调整</string>
-    <string name="pref_post_textsize_adjust_title">帖子字号调整</string>
-    <string name="pref_post_line_spacing_title">帖子行距调整</string>
     <string name="pref_screen_orientation">屏幕方向</string>
     <string name="pref_error_report_mode">显示详细错误信息</string>
     <string name="pref_title_about">关于HiPDA·NG</string>

@@ -70,6 +70,7 @@ import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.SimpleDivider;
 import net.jejer.hipda.ui.widget.ThreadDetailActionModeCallback;
+import net.jejer.hipda.ui.widget.ValueChagerView;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XHeaderView;
 import net.jejer.hipda.ui.widget.XRecyclerView;
@@ -483,6 +484,9 @@ public class ThreadDetailFragment extends BaseFragment {
             case R.id.action_show_all:
                 cancelAuthorOnlyMode();
                 return true;
+            case R.id.action_font_size:
+                showFontSizeDialog();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -817,6 +821,50 @@ public class ThreadDetailFragment extends BaseFragment {
             return true;
         }
         return false;
+    }
+
+    private void showFontSizeDialog() {
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View view = inflater.inflate(R.layout.dialog_thread_font_size, null);
+
+        final ValueChagerView valueChangerSize = (ValueChagerView) view.findViewById(R.id.value_changer_size);
+        final ValueChagerView valueChangerLs = (ValueChagerView) view.findViewById(R.id.value_changer_ls);
+
+        valueChangerSize.setTitle(R.string.title_post_text_size_adjust);
+        valueChangerSize.setValues(
+                HiSettingsHelper.getInstance().getPostTextSizeAdj(),
+                HiSettingsHelper.MIN_FONT_ADJ_SIZE,
+                HiSettingsHelper.MAX_FONT_ADJ_SIZE
+        );
+        valueChangerSize.setOnChangeListener(new ValueChagerView.OnChangeListener() {
+            @Override
+            public void onChange(int currentValue) {
+                HiSettingsHelper.getInstance().setPostTextSizeAdj(currentValue);
+                if (mDetailAdapter != null)
+                    mDetailAdapter.notifyDataSetChanged();
+            }
+        });
+
+        valueChangerLs.setTitle(R.string.title_post_line_spacing);
+        valueChangerLs.setValues(
+                HiSettingsHelper.getInstance().getPostTextSizeAdj(),
+                HiSettingsHelper.MIN_LS_ADJ_SIZE,
+                HiSettingsHelper.MAX_LS_ADJ_SIZE
+        );
+        valueChangerLs.setOnChangeListener(new ValueChagerView.OnChangeListener() {
+            @Override
+            public void onChange(int currentValue) {
+                HiSettingsHelper.getInstance().setPostLineSpacing(currentValue);
+                if (mDetailAdapter != null)
+                    mDetailAdapter.notifyDataSetChanged();
+            }
+        });
+
+        final BottomSheetDialog dialog = new BottomDialog(getActivity());
+        dialog.setContentView(view);
+        BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) view.getParent());
+        mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        dialog.show();
     }
 
     public class GoToFloorOnClickListener implements Button.OnClickListener {

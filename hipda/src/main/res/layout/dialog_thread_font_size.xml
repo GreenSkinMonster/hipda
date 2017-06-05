@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="?attr/dialog_background"
+              android:gravity="center_horizontal"
+              android:orientation="vertical"
+              android:padding="16dp">
+
+    <net.jejer.hipda.ui.widget.ValueChagerView
+        android:id="@+id/value_changer_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <net.jejer.hipda.ui.widget.ValueChagerView
+        android:id="@+id/value_changer_ls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

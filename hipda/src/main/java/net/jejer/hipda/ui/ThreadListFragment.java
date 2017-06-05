@@ -60,6 +60,7 @@ import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.OnViewItemSingleClickListener;
 import net.jejer.hipda.ui.widget.SimpleDivider;
+import net.jejer.hipda.ui.widget.ValueChagerView;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.ColorHelper;
@@ -423,6 +424,13 @@ public class ThreadListFragment extends BaseFragment
         final Switch sShowStickThreads = (Switch) view.findViewById(R.id.sw_show_stick_threads);
         final Switch sSortByPostTime = (Switch) view.findViewById(R.id.sw_sort_by_post_time);
         final Switch sShowPostType = (Switch) view.findViewById(R.id.sw_show_post_type);
+        final ValueChagerView valueChagerView = (ValueChagerView) view.findViewById(R.id.value_changer);
+
+        valueChagerView.setTitle(R.string.title_text_size_adjust);
+        valueChagerView.setValues(
+                HiSettingsHelper.getInstance().getTitleTextSizeAdj(),
+                HiSettingsHelper.MIN_FONT_ADJ_SIZE,
+                HiSettingsHelper.MAX_FONT_ADJ_SIZE);
 
         final BottomSheetDialog dialog = new BottomDialog(getActivity());
 
@@ -446,6 +454,15 @@ public class ThreadListFragment extends BaseFragment
             @Override
             public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
                 HiSettingsHelper.getInstance().setSortByPostTime(mForumId, arg0.isChecked());
+            }
+        });
+
+        valueChagerView.setOnChangeListener(new ValueChagerView.OnChangeListener() {
+            @Override
+            public void onChange(int currentValue) {
+                HiSettingsHelper.getInstance().setTitleTextSizeAdj(currentValue);
+                if (mThreadListAdapter != null)
+                    mThreadListAdapter.notifyDataSetChanged();
             }
         });
 

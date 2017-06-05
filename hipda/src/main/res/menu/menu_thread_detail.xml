@@ -24,6 +24,9 @@
         android:id="@+id/action_add_attention"
         android:title="@string/action_add_attention"/>
     <item
+        android:id="@+id/action_font_size"
+        android:title="@string/action_text_size"/>
+    <item
         android:id="@+id/action_only_author"
         android:title="@string/action_only_author"/>
     <item

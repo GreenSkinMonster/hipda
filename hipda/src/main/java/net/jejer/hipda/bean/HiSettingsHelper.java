@@ -96,6 +96,11 @@ public class HiSettingsHelper {
     public static final String THEME_DARK = "dark";
     public static final String THEME_BLACK = "black";
 
+    public static final int MAX_FONT_ADJ_SIZE = 8;
+    public static final int MIN_FONT_ADJ_SIZE = -3;
+    public static final int MAX_LS_ADJ_SIZE = 3;
+    public static final int MIN_LS_ADJ_SIZE = 0;
+
     private Context mCtx;
     private SharedPreferences mSharedPref;
 
@@ -112,7 +117,6 @@ public class HiSettingsHelper {
     private boolean mAutoLoadThumb = false;
     private String mAvatarLoadType = "0";
     private Set<String> mSortByPostTimeByForum;
-    private boolean mHideAppMark = true;
 
     private boolean mAddTail = true;
     private String mTailText = "";
@@ -131,9 +135,9 @@ public class HiSettingsHelper {
 
     private ArrayList<String> mBlanklistUsernames;
 
-    private String mPostTextSizeAdj = "";
+    private int mPostTextSizeAdj = 0;
     private int mPostLineSpacing = 0;
-    private String mTitleTextSizeAdj = "";
+    private int mTitleTextSizeAdj = 0;
     private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
     private boolean mGestureBack = true;
     private int mMaxPostsInPage;
@@ -258,8 +262,8 @@ public class HiSettingsHelper {
         getFontFromPref();
         isEncodeUtf8FromPref();
         getBlanklistUsernamesFromPref();
-        getPostTextsizeAdjFromPref();
-        getTitleTextsizeAdjFromPref();
+        getPostTextSizeAdjFromPref();
+        getTitleTextSizeAdjFromPref();
         getScreenOrietationFromPref();
         isGestureBackFromPref();
         getPostLineSpacingFromPref();
@@ -286,7 +290,7 @@ public class HiSettingsHelper {
         return mUsername;
     }
 
-    public String getUsernameFromPref() {
+    private String getUsernameFromPref() {
         mUsername = mSharedPref.getString(PERF_USERNAME, "");
         return mUsername;
     }
@@ -301,7 +305,7 @@ public class HiSettingsHelper {
         return mPassword;
     }
 
-    public String getPasswordFromPref() {
+    private String getPasswordFromPref() {
         mPassword = mSharedPref.getString(PERF_PASSWORD, "");
         return mPassword;
     }
@@ -316,7 +320,7 @@ public class HiSettingsHelper {
         return mUid;
     }
 
-    public String getUidFromPref() {
+    private String getUidFromPref() {
         mUid = mSharedPref.getString(PERF_UID, "");
         return mUid;
     }
@@ -331,7 +335,7 @@ public class HiSettingsHelper {
         return mSecQuestion;
     }
 
-    public String getSecQuestionFromPref() {
+    private String getSecQuestionFromPref() {
         mSecQuestion = mSharedPref.getString(PERF_SECQUESTION, "");
         return mSecQuestion;
     }
@@ -346,7 +350,7 @@ public class HiSettingsHelper {
         return mSecAnswer;
     }
 
-    public String getSecAnswerFromPref() {
+    private String getSecAnswerFromPref() {
         mSecAnswer = mSharedPref.getString(PERF_SECANSWER, "");
         return mSecAnswer;
     }
@@ -361,7 +365,7 @@ public class HiSettingsHelper {
         return mShowPostType;
     }
 
-    public boolean isShowPostTypeFromPref() {
+    private boolean isShowPostTypeFromPref() {
         mShowPostType = mSharedPref.getBoolean(PERF_SHOW_POST_TYPE, true);
         return mShowPostType;
     }
@@ -376,7 +380,7 @@ public class HiSettingsHelper {
         return mShowStickThreads;
     }
 
-    public boolean isShowStickThreadsFromPref() {
+    private boolean isShowStickThreadsFromPref() {
         mShowStickThreads = mSharedPref.getBoolean(PERF_SHOWSTICKTHREADS, false);
         return mShowStickThreads;
     }
@@ -387,7 +391,7 @@ public class HiSettingsHelper {
         editor.putBoolean(PERF_SHOWSTICKTHREADS, showStickThreads).apply();
     }
 
-    public String getAvatarLoadTypeFromPref() {
+    private String getAvatarLoadTypeFromPref() {
         mAvatarLoadType = mSharedPref.getString(PERF_AVATAR_LOAD_TYPE, Constants.LOAD_TYPE_ALWAYS);
         return mAvatarLoadType;
     }
@@ -402,7 +406,7 @@ public class HiSettingsHelper {
         editor.putString(PERF_AVATAR_LOAD_TYPE, avatarLoadType).apply();
     }
 
-    public String getImageLoadTypeFromPref() {
+    private String getImageLoadTypeFromPref() {
         mImageLoadType = mSharedPref.getString(PERF_IMAGE_LOAD_TYPE, Constants.LOAD_TYPE_ONLY_WIFI);
         return mImageLoadType;
     }
@@ -417,7 +421,7 @@ public class HiSettingsHelper {
         editor.putString(PERF_IMAGE_LOAD_TYPE, imageLoadType).apply();
     }
 
-    public boolean isAutoLoadThumbFromPref() {
+    private boolean isAutoLoadThumbFromPref() {
         mAutoLoadThumb = mSharedPref.getBoolean(PERF_AUTO_LOAD_THUMB, false);
         return mAutoLoadThumb;
     }
@@ -448,7 +452,7 @@ public class HiSettingsHelper {
         editor.putStringSet(PERF_SORTBYPOSTTIME_BY_FORUM, mSortByPostTimeByForum).apply();
     }
 
-    public Set<String> isSortByPostTimeByForumFromPref() {
+    private Set<String> isSortByPostTimeByForumFromPref() {
         mSortByPostTimeByForum = mSharedPref.getStringSet(PERF_SORTBYPOSTTIME_BY_FORUM, new HashSet<String>());
         return mSortByPostTimeByForum;
     }
@@ -472,7 +476,7 @@ public class HiSettingsHelper {
         return mTailText;
     }
 
-    public String getTailTextFromPref() {
+    private String getTailTextFromPref() {
         mTailText = mSharedPref.getString(PERF_TAILTEXT, "");
         return mTailText;
     }
@@ -487,7 +491,7 @@ public class HiSettingsHelper {
         return mTailUrl;
     }
 
-    public String getTailUrlFromPref() {
+    private String getTailUrlFromPref() {
         mTailUrl = mSharedPref.getString(PERF_TAILURL, "");
         return mTailUrl;
     }
@@ -519,7 +523,7 @@ public class HiSettingsHelper {
         return mTheme;
     }
 
-    public String getThemeFromPref() {
+    private String getThemeFromPref() {
         mTheme = mSharedPref.getString(PERF_THEME, THEME_LIGHT);
         return mTheme;
     }
@@ -534,7 +538,7 @@ public class HiSettingsHelper {
         return mPrimaryColor;
     }
 
-    public int getPrimaryColorFromPref() {
+    private int getPrimaryColorFromPref() {
         mPrimaryColor = mSharedPref.getInt(PERF_PRIMARY_COLOR, 0);
         return mPrimaryColor;
     }
@@ -549,7 +553,7 @@ public class HiSettingsHelper {
         return mNightTheme;
     }
 
-    public String getNightThemeFromPref() {
+    private String getNightThemeFromPref() {
         mNightTheme = mSharedPref.getString(PERF_NIGHT_THEME, "");
         return mNightTheme;
     }
@@ -564,7 +568,7 @@ public class HiSettingsHelper {
         return mNightMode;
     }
 
-    public boolean isNightModeFromPref() {
+    private boolean isNightModeFromPref() {
         mNightMode = mSharedPref.getBoolean(PERF_NIGHT_MODE, false);
         return mNightMode;
     }
@@ -580,7 +584,7 @@ public class HiSettingsHelper {
         return mFont;
     }
 
-    public String getFontFromPref() {
+    private String getFontFromPref() {
         mFont = mSharedPref.getString(PERF_FONT, "");
         return mFont;
     }
@@ -595,7 +599,7 @@ public class HiSettingsHelper {
         return mNavBarColor;
     }
 
-    public boolean isNavBarColoredFromPref() {
+    private boolean isNavBarColoredFromPref() {
         mNavBarColor = mSharedPref.getBoolean(PERF_NAVBAR_COLORED, false);
         return mNavBarColor;
     }
@@ -610,7 +614,7 @@ public class HiSettingsHelper {
         return mForums;
     }
 
-    public Set<String> getForumsFromPref() {
+    private Set<String> getForumsFromPref() {
         String[] defaultForums = mCtx.getResources().getStringArray(R.array.default_forum_values);
         Set<String> forums = new HashSet<>();
         Collections.addAll(forums, defaultForums);
@@ -629,7 +633,7 @@ public class HiSettingsHelper {
         return mFreqMenus;
     }
 
-    public Set<String> getFreqMenusFromPref() {
+    private Set<String> getFreqMenusFromPref() {
         mFreqMenus = mSharedPref.getStringSet(PERF_FREQ_MENUS, new HashSet<String>());
         return mFreqMenus;
     }
@@ -645,7 +649,7 @@ public class HiSettingsHelper {
         return mEncodeUtf8;
     }
 
-    public boolean isEncodeUtf8FromPref() {
+    private boolean isEncodeUtf8FromPref() {
         mEncodeUtf8 = mSharedPref.getBoolean(PERF_ENCODEUTF8, false);
         return mEncodeUtf8;
     }
@@ -674,7 +678,7 @@ public class HiSettingsHelper {
         editor.putBoolean(PERF_ERROR_REPORT_MODE, errorReportMode).apply();
     }
 
-    public boolean isErrorReportModeFromPref() {
+    private boolean isErrorReportModeFromPref() {
         mErrorReportMode = mSharedPref.getBoolean(PERF_ERROR_REPORT_MODE, false);
         return mErrorReportMode;
     }
@@ -689,7 +693,7 @@ public class HiSettingsHelper {
         editor.putBoolean(PERF_NOTI_TASK_ENABLED, mNotiTaskEnabled).apply();
     }
 
-    public boolean isNotiTaskEnabledFromPref() {
+    private boolean isNotiTaskEnabledFromPref() {
         mNotiTaskEnabled = mSharedPref.getBoolean(PERF_NOTI_TASK_ENABLED, false);
         return mNotiTaskEnabled;
     }
@@ -704,7 +708,7 @@ public class HiSettingsHelper {
         editor.putBoolean(PERF_NOTI_LED_LIGHT, mNotiLedLight).apply();
     }
 
-    public boolean isNotiLedLightFromPref() {
+    private boolean isNotiLedLightFromPref() {
         mNotiLedLight = mSharedPref.getBoolean(PERF_NOTI_LED_LIGHT, true);
         return mNotiLedLight;
     }
@@ -720,7 +724,7 @@ public class HiSettingsHelper {
         editor.putString(PERF_NOTI_REPEAT_MINUETS, mNotiRepeatMinutes + "").apply();
     }
 
-    public int getNotiRepeatMinutesFromPref() {
+    private int getNotiRepeatMinutesFromPref() {
         try {
             mNotiRepeatMinutes = Integer.parseInt(mSharedPref.getString(PERF_NOTI_REPEAT_MINUETS, NotificationMgr.MIN_REPEAT_MINUTTES + ""));
         } catch (Exception ignored) {
@@ -738,7 +742,7 @@ public class HiSettingsHelper {
         return mBlanklistUsernames;
     }
 
-    public List<String> getBlanklistUsernamesFromPref() {
+    private List<String> getBlanklistUsernamesFromPref() {
         String[] usernames = mSharedPref.getString(PERF_BLANKLIST_USERNAMES, "").split("\n");
         mBlanklistUsernames = new ArrayList<>();
         for (String username : usernames) {
@@ -773,19 +777,19 @@ public class HiSettingsHelper {
         setBlanklistUsernames(mBlanklistUsernames);
     }
 
-    public int getPostTextsizeAdj() {
-        return Integer.parseInt(mPostTextSizeAdj);
-    }
-
-    public String getPostTextsizeAdjFromPref() {
-        mPostTextSizeAdj = mSharedPref.getString(PERF_TEXTSIZE_POST_ADJ, "0");
+    public int getPostTextSizeAdj() {
         return mPostTextSizeAdj;
     }
 
-    public void setPostTextsizeAdj(String adj) {
+    private int getPostTextSizeAdjFromPref() {
+        mPostTextSizeAdj = Utils.parseInt(mSharedPref.getString(PERF_TEXTSIZE_POST_ADJ, "0"));
+        return mPostTextSizeAdj;
+    }
+
+    public void setPostTextSizeAdj(int adj) {
         mPostTextSizeAdj = adj;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_TEXTSIZE_POST_ADJ, adj).apply();
+        editor.putString(PERF_TEXTSIZE_POST_ADJ, String.valueOf(adj)).apply();
     }
 
 
@@ -799,7 +803,7 @@ public class HiSettingsHelper {
         return mPostLineSpacing;
     }
 
-    public int getPostLineSpacingFromPref() {
+    private int getPostLineSpacingFromPref() {
         String value = mSharedPref.getString(PERF_POST_LINE_SPACING, "0");
         if (TextUtils.isDigitsOnly(value)) {
             mPostLineSpacing = Integer.parseInt(value);
@@ -807,26 +811,26 @@ public class HiSettingsHelper {
         return mPostLineSpacing;
     }
 
-    public int getTitleTextsizeAdj() {
-        return Integer.parseInt(mTitleTextSizeAdj);
-    }
-
-    public String getTitleTextsizeAdjFromPref() {
-        mTitleTextSizeAdj = mSharedPref.getString(PERF_TEXTSIZE_TITLE_ADJ, "0");
+    public int getTitleTextSizeAdj() {
         return mTitleTextSizeAdj;
     }
 
-    public void setTitleTextsizeAdj(String adj) {
-        mPostTextSizeAdj = adj;
+    private int getTitleTextSizeAdjFromPref() {
+        mTitleTextSizeAdj = Utils.parseInt(mSharedPref.getString(PERF_TEXTSIZE_TITLE_ADJ, "0"));
+        return mTitleTextSizeAdj;
+    }
+
+    public void setTitleTextSizeAdj(int adj) {
+        mTitleTextSizeAdj = adj;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_TEXTSIZE_TITLE_ADJ, adj).apply();
+        editor.putString(PERF_TEXTSIZE_TITLE_ADJ, String.valueOf(adj)).apply();
     }
 
     public int getScreenOrietation() {
         return mScreenOrientation;
     }
 
-    public int getScreenOrietationFromPref() {
+    private int getScreenOrietationFromPref() {
         try {
             mScreenOrientation = Integer.parseInt(mSharedPref.getString(PERF_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_USER + ""));
         } catch (Exception e) {
@@ -845,7 +849,7 @@ public class HiSettingsHelper {
         return mGestureBack;
     }
 
-    public boolean isGestureBackFromPref() {
+    private boolean isGestureBackFromPref() {
         mGestureBack = mSharedPref.getBoolean(PERF_GESTURE_BACK, true);
         return mGestureBack;
     }
@@ -907,7 +911,7 @@ public class HiSettingsHelper {
         return mLastForumId;
     }
 
-    public int getLastForumIdFromPerf() {
+    private int getLastForumIdFromPerf() {
         mLastForumId = mSharedPref.getInt(PERF_LAST_FORUM_ID, 0);
         return mLastForumId;
     }
@@ -916,7 +920,7 @@ public class HiSettingsHelper {
         return mBSTypeId;
     }
 
-    public String getBSTypeIdFromPref() {
+    private String getBSTypeIdFromPref() {
         mBSTypeId = mSharedPref.getString(PERF_BS_TYPE_ID, "");
         return mBSTypeId;
     }
@@ -948,13 +952,13 @@ public class HiSettingsHelper {
     public int getPostTextSize() {
         if (mBasePostTextSize <= 0)
             mBasePostTextSize = mCtx.getResources().getInteger(R.integer.post_text_size);
-        return mBasePostTextSize + getInstance().getPostTextsizeAdj();
+        return mBasePostTextSize + getInstance().getPostTextSizeAdj();
     }
 
     public int getTitleTextSize() {
         if (mBaseTitleTextSize <= 0)
             mBaseTitleTextSize = mCtx.getResources().getInteger(R.integer.title_text_size);
-        return mBaseTitleTextSize + getInstance().getTitleTextsizeAdj();
+        return mBaseTitleTextSize + getInstance().getTitleTextSizeAdj();
     }
 
 
@@ -962,7 +966,7 @@ public class HiSettingsHelper {
         return mForumServer;
     }
 
-    public String getForumServerFromPref() {
+    private String getForumServerFromPref() {
         mForumServer = mSharedPref.getString(PERF_FORUM_SERVER, HiUtils.ForumServer);
         return mForumServer;
     }
@@ -977,7 +981,7 @@ public class HiSettingsHelper {
         return mImageHost;
     }
 
-    public String getImageHostFromPref() {
+    private String getImageHostFromPref() {
         mImageHost = mSharedPref.getString(PERF_IMAGE_HOST, HiUtils.ImageHost);
         return mImageHost;
     }
