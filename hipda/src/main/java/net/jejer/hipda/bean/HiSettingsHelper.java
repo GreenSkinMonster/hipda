@@ -91,6 +91,7 @@ public class HiSettingsHelper {
     public static final String PERF_MAX_UPLOAD_FILE_SIZE = "PERF_MAX_UPLOAD_FILE_SIZE";
     public static final String PERF_SHOW_TAIL = "PERF_SHOW_TAIL";
     public static final String PERF_OLD_IMAGE_SELECTOR = "PERF_OLD_IMAGE_SELECTOR";
+    public static final String PERF_CAMERA_PERM_ASKED = "PERF_CAMERA_PERM_ASKED";
 
     public static final String THEME_LIGHT = "light";
     public static final String THEME_DARK = "dark";
@@ -1080,6 +1081,14 @@ public class HiSettingsHelper {
 
     public boolean isOldImageSelector() {
         return getBooleanValue(PERF_OLD_IMAGE_SELECTOR, false);
+    }
+
+    public boolean isCameraPermAsked() {
+        return getBooleanValue(PERF_CAMERA_PERM_ASKED, false);
+    }
+
+    public void setCameraPermAsked(boolean asked) {
+        setBooleanValue(PERF_CAMERA_PERM_ASKED, asked);
     }
 
 }

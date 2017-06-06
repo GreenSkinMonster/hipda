@@ -88,7 +88,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class MainFrameActivity extends AppCompatActivity {
 
     public final static int PERMISSIONS_REQUEST_CODE_STORAGE = 200;
-    public final static int PERMISSIONS_REQUEST_CODE_CAMERA = 201;
+    public final static int PERMISSIONS_REQUEST_CODE_BOTH = 201;
 
     private OnSwipeTouchListener mSwipeListener;
 

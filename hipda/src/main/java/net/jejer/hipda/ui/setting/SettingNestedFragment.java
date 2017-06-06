@@ -80,7 +80,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                     navBarColoredPreference.setEnabled(false);
 
                 Preference fontPreference = findPreference(HiSettingsHelper.PERF_FONT);
-                fontPreference.setOnPreferenceClickListener(new FilePickerListener(FilePickerListener.FONT_FILE));
+                fontPreference.setOnPreferenceClickListener(new FilePickerListener(getActivity(), FilePickerListener.FONT_FILE));
 
                 break;
 
@@ -153,7 +153,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB));
 
                 Preference saveFolderPreference = findPreference(HiSettingsHelper.PERF_SAVE_FOLDER);
-                saveFolderPreference.setOnPreferenceClickListener(new FilePickerListener(FilePickerListener.SAVE_DIR));
+                saveFolderPreference.setOnPreferenceClickListener(new FilePickerListener(getActivity(), FilePickerListener.SAVE_DIR));
 
                 break;
 

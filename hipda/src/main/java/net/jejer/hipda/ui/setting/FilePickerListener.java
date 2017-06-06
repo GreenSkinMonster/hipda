@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui.setting;
 
+import android.app.Activity;
 import android.os.Environment;
 import android.support.v7.preference.Preference;
 import android.text.TextUtils;
@@ -23,10 +24,12 @@ public class FilePickerListener implements Preference.OnPreferenceClickListener,
     public final static int SAVE_DIR = 1;
 
     private Preference mPreference;
+    private Activity mActivity;
     private int mType;
 
-    FilePickerListener(int type) {
+    FilePickerListener(Activity activity, int type) {
         mType = type;
+        mActivity = activity;
     }
 
     @Override
@@ -56,7 +59,7 @@ public class FilePickerListener implements Preference.OnPreferenceClickListener,
             properties.selection_type = DialogConfigs.DIR_SELECT;
         }
 
-        FilePickerDialog mDialog = new FilePickerDialog(preference.getContext());
+        FilePickerDialog mDialog = new FilePickerDialog(mActivity);
         mDialog.setProperties(properties);
         mDialog.setDialogSelectionListener(this);
         mDialog.setTitle(preference.getTitle());

@@ -287,8 +287,6 @@ public class PostFragment extends BaseFragment {
                 setActionBarTitle(getActivity().getResources().getString(R.string.action_edit));
                 break;
         }
-
-        UIUtils.askForCameraPermission(getActivity());
         return view;
     }
 
@@ -401,9 +399,9 @@ public class PostFragment extends BaseFragment {
                     fetchPrePostInfo(false);
                     Toast.makeText(getActivity(), "请等待信息收集结束再选择图片", Toast.LENGTH_LONG).show();
                 } else {
-                    if (UIUtils.askForStoragePermission(getActivity())) {
+
+                    if (UIUtils.askForBothPermissions(getActivity()))
                         return true;
-                    }
 
                     mContentPosition = mEtContent.getSelectionStart();
 
