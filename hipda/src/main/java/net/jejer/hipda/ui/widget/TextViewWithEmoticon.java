@@ -3,6 +3,7 @@ package net.jejer.hipda.ui.widget;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
@@ -29,7 +30,7 @@ import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
-public class TextViewWithEmoticon extends TextView {
+public class TextViewWithEmoticon extends AppCompatTextView {
     private Context mCtx;
     private BaseFragment mFragment;
 

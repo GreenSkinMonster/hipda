@@ -1,7 +1,7 @@
 package net.jejer.hipda.ui.setting;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.widget.TimePicker;
 

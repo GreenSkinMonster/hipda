@@ -1,8 +1,8 @@
 package net.jejer.hipda.async;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Toast;
 

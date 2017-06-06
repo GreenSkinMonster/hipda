@@ -1,8 +1,8 @@
 package net.jejer.hipda.ui;
 
-import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;

@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.database.AbstractCursor;
 import android.database.Cursor;
@@ -10,6 +9,7 @@ import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;

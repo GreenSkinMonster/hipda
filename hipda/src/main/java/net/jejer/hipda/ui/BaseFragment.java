@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -10,6 +9,7 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -182,41 +182,6 @@ public abstract class BaseFragment extends Fragment {
         stopScroll();
         super.onDestroyView();
     }
-
-    /*
-    @Override
-    public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
-        //http://daniel-codes.blogspot.sg/2013/09/smoothing-performance-on-fragment.html
-        Animator animator = super.onCreateAnimator(transit, enter, nextAnim);
-        if (animator == null && nextAnim != 0) {
-            animator = AnimatorInflater.loadAnimator(getActivity(), nextAnim);
-            if (animator != null) {
-                if (getView() != null)
-                    getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
-                animator.addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        if (getView() != null)
-                            getView().setLayerType(View.LAYER_TYPE_NONE, null);
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-                    }
-                });
-            }
-        }
-        return animator;
-    }
-    */
 
     void showSendSmsDialog(final String uid, final String username, final PostSmsAsyncTask.SmsPostListener listener) {
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
