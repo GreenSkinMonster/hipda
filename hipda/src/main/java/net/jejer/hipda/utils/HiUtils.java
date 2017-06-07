@@ -13,6 +13,10 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.ui.HiApplication;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";
 
@@ -76,42 +80,37 @@ public class HiUtils {
     public final static int FID_BS = 6;
     public final static int FID_DISCOVERY = 2;
 
-    private final static Forum[] FORUMS = {
-            new Forum(FID_DISCOVERY, "Discovery", FontAwesome.Icon.faw_cc_discover, 1),
-            new Forum(FID_BS, "Buy & Sell", FontAwesome.Icon.faw_shopping_cart, 1),
-            new Forum(7, "Geek Talks", FontAwesome.Icon.faw_forumbee, 1),
-            new Forum(59, "E-INK", FontAwesome.Icon.faw_book, 1),
-            new Forum(12, "PalmOS", FontAwesome.Icon.faw_mobile, 1),
-            new Forum(57, "疑似机器人", FontAwesome.Icon.faw_reddit, 1),
-            new Forum(63, "已完成交易", FontAwesome.Icon.faw_circle, 1),
-            new Forum(62, "Joggler", FontAwesome.Icon.faw_circle, 1),
-            new Forum(5, "站务与公告", FontAwesome.Icon.faw_circle, 1),
-            new Forum(9, "Smartphone", FontAwesome.Icon.faw_circle, 1),
-            new Forum(56, "iPhone, iPod Touch，iPad", FontAwesome.Icon.faw_circle, 1),
-            new Forum(60, "Android, Chrome, & Google", FontAwesome.Icon.faw_circle, 1),
-            new Forum(14, "Windows Mobile，PocketPC，HPC", FontAwesome.Icon.faw_circle, 1),
-            new Forum(22, "麦客爱苹果", FontAwesome.Icon.faw_circle, 1),
-            new Forum(50, "DC,NB,MP3,Gadgets", FontAwesome.Icon.faw_circle, 1),
-            new Forum(24, "意欲蔓延", FontAwesome.Icon.faw_circle, 1),
-            new Forum(25, "吃喝玩乐", FontAwesome.Icon.faw_circle, 1),
-            new Forum(51, "La Femme", FontAwesome.Icon.faw_circle, 1),
-            new Forum(65, "改版建议", FontAwesome.Icon.faw_circle, 1),
-            new Forum(64, "只讨论2.0", FontAwesome.Icon.faw_circle, 1),
+    public final static Forum[] FORUMS = {
+            new Forum(FID_DISCOVERY, "Discovery", FontAwesome.Icon.faw_cc_discover),
+            new Forum(FID_BS, "Buy & Sell", FontAwesome.Icon.faw_shopping_cart),
+            new Forum(7, "Geek Talks", FontAwesome.Icon.faw_forumbee),
+            new Forum(59, "E-INK", FontAwesome.Icon.faw_book),
+            new Forum(12, "PalmOS", FontAwesome.Icon.faw_mobile),
+            new Forum(57, "疑似机器人", FontAwesome.Icon.faw_reddit),
+            new Forum(63, "已完成交易", FontAwesome.Icon.faw_circle),
+            new Forum(62, "Joggler", FontAwesome.Icon.faw_circle),
+            new Forum(5, "站务与公告", FontAwesome.Icon.faw_circle),
+            new Forum(9, "Smartphone", FontAwesome.Icon.faw_circle),
+            new Forum(56, "iPhone, iPod Touch，iPad", FontAwesome.Icon.faw_circle),
+            new Forum(60, "Android, Chrome, & Google", FontAwesome.Icon.faw_circle),
+            new Forum(14, "Windows Mobile，PocketPC，HPC", FontAwesome.Icon.faw_circle),
+            new Forum(22, "麦客爱苹果", FontAwesome.Icon.faw_circle),
+            new Forum(50, "DC,NB,MP3,Gadgets", FontAwesome.Icon.faw_circle),
+            new Forum(24, "意欲蔓延", FontAwesome.Icon.faw_circle),
+            new Forum(25, "吃喝玩乐", FontAwesome.Icon.faw_circle),
+            new Forum(51, "La Femme", FontAwesome.Icon.faw_circle),
+            new Forum(65, "改版建议", FontAwesome.Icon.faw_circle),
+            new Forum(64, "只讨论2.0", FontAwesome.Icon.faw_circle),
     };
 
-    public static String[] FORUM_NAMES;
-    public static int[] FORUM_IDS;
-    public static IIcon[] FORUM_ICONS;
+    private final static Map<Integer, Forum> FORUMS_MAP;
+
+    public final static int[] DEFAULT_FORUMS = {FID_DISCOVERY, FID_BS, 7, 59};
 
     static {
-        FORUM_NAMES = new String[FORUMS.length];
-        FORUM_IDS = new int[FORUMS.length];
-        FORUM_ICONS = new IIcon[FORUMS.length];
-        for (int i = 0; i < FORUMS.length; i++) {
-            Forum forum = FORUMS[i];
-            FORUM_NAMES[i] = forum.getName();
-            FORUM_IDS[i] = forum.getId();
-            FORUM_ICONS[i] = forum.getIcon();
+        FORUMS_MAP = new LinkedHashMap<>(FORUMS.length);
+        for (Forum forum : FORUMS) {
+            FORUMS_MAP.put(forum.getId(), forum);
         }
     }
 
@@ -160,39 +159,16 @@ public class HiUtils {
         SmallImages.clear();
     }
 
-    public static int getForumID(int idx) {
-        return FORUM_IDS[idx];
-    }
-
-    public static int getForumIndexByFid(int fid) {
-        for (int i = 0; i < FORUM_IDS.length; i++) {
-            if (fid == FORUM_IDS[i]) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     public static String getForumNameByFid(int fid) {
-        int idx = getForumIndexByFid(fid);
-        if (idx == -1)
-            return "";
-        return FORUM_NAMES[idx];
-    }
-
-    public static boolean isForumEnabled(int fid) {
-        if (fid == FID_DISCOVERY) {
-            return true;
-        }
-        if (getForumIndexByFid(fid) >= 0) {
-            if (HiSettingsHelper.getInstance().getForums().contains(fid + ""))
-                return true;
-        }
-        return false;
+        return FORUMS_MAP.containsKey(fid) ? FORUMS_MAP.get(fid).getName() : "";
     }
 
     public static boolean isForumValid(int fid) {
-        return getForumIndexByFid(fid) != -1;
+        return FORUMS_MAP.containsKey(fid);
+    }
+
+    public static Forum getForumByFid(int fid) {
+        return FORUMS_MAP.get(fid);
     }
 
     public final static String[] BS_TYPES = {"全部", "手机", "掌上电脑", "笔记本电脑", "无线产品", "数码相机、摄像机", "MP3随身听", "各类配件", "其他好玩的"};
@@ -301,5 +277,20 @@ public class HiUtils {
         if (userAgent == null)
             userAgent = UserAgentPrefix + " " + HiApplication.getAppVersion();
         return userAgent;
+    }
+
+    public static String getForumsSummary() {
+        List<Integer> fids = HiSettingsHelper.getInstance().getForums();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < fids.size(); i++) {
+            int fid = fids.get(i);
+            Forum forum = getForumByFid(fid);
+            if (forum != null) {
+                sb.append(forum.getName());
+                if (i != fids.size() - 1)
+                    sb.append(", ");
+            }
+        }
+        return sb.toString();
     }
 }

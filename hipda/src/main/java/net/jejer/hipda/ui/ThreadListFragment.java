@@ -110,9 +110,12 @@ public class ThreadListFragment extends BaseFragment
         if (getArguments() != null && getArguments().containsKey(ARG_FID_KEY)) {
             mForumId = getArguments().getInt(ARG_FID_KEY);
         }
-        int forumIdx = HiUtils.getForumIndexByFid(mForumId);
-        if (forumIdx == -1) {
-            mForumId = HiUtils.FID_DISCOVERY;
+        if (!HiUtils.isForumValid(mForumId)) {
+            if (HiSettingsHelper.getInstance().getForums().size() > 0) {
+                mForumId = HiSettingsHelper.getInstance().getForums().get(0);
+            } else {
+                mForumId = HiUtils.FID_BS;
+            }
         }
         mFidHolder[0] = mForumId;
 
@@ -207,9 +210,7 @@ public class ThreadListFragment extends BaseFragment
                 mForumTypeMenuItem.setIcon(new IconicsDrawable(mCtx, HiUtils.BS_TYPE_ICONS[typeIdIndex]).color(Color.WHITE).actionBar());
         }
 
-        int forumIdx = HiUtils.getForumIndexByFid(mForumId);
-
-        setActionBarTitle(HiUtils.FORUM_NAMES[forumIdx]);
+        setActionBarTitle(HiUtils.getForumNameByFid(mForumId));
         setActionBarDisplayHomeAsUpEnabled(false);
         syncActionBarState();
 
@@ -302,7 +303,7 @@ public class ThreadListFragment extends BaseFragment
     private void newThread() {
         Bundle arguments = new Bundle();
         arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_NEW_THREAD);
-        arguments.putString(PostFragment.ARG_FID_KEY, mForumId + "");
+        arguments.putInt(PostFragment.ARG_FID_KEY, mForumId);
 
         PostFragment fragment = new PostFragment();
         fragment.setParentSessionId(mSessionId);
@@ -313,8 +314,7 @@ public class ThreadListFragment extends BaseFragment
     }
 
     public void resetActionBarTitle() {
-        int forumIdx = HiUtils.getForumIndexByFid(mForumId);
-        setActionBarTitle(HiUtils.FORUM_NAMES[forumIdx]);
+        setActionBarTitle(HiUtils.getForumNameByFid(mForumId));
         setActionBarDisplayHomeAsUpEnabled(false);
         syncActionBarState();
     }

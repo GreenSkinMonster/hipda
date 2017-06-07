@@ -8,7 +8,7 @@ public class PostBean {
 
     private String tid;
     private String pid;
-    private String fid;
+    private int fid;
     private int floor;
     private String subject;
     private String content;
@@ -33,11 +33,11 @@ public class PostBean {
         this.pid = pid;
     }
 
-    public String getFid() {
+    public int getFid() {
         return fid;
     }
 
-    public void setFid(String fid) {
+    public void setFid(int fid) {
         this.fid = fid;
     }
 

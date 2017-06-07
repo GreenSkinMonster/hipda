@@ -26,11 +26,11 @@ import net.jejer.hipda.utils.UIUtils;
 public class ThreadDetailActionModeCallback implements ActionMode.Callback {
     private ThreadDetailFragment mFragment;
     private String mTid;
-    private String mFid;
+    private int mFid;
     private String mTitle;
     private DetailBean mDetailBean;
 
-    public ThreadDetailActionModeCallback(ThreadDetailFragment fragment, String fid, String tid, String title, DetailBean detailBean) {
+    public ThreadDetailActionModeCallback(ThreadDetailFragment fragment, int fid, String tid, String title, DetailBean detailBean) {
         mFragment = fragment;
         mFid = fid;
         mTid = tid;
@@ -52,7 +52,7 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
                         || HiSettingsHelper.getInstance().getUid().equals(mDetailBean.getUid())) {
                     mFragment.setHasOptionsMenu(false);
 
-                    arguments.putString(PostFragment.ARG_FID_KEY, mFid);
+                    arguments.putInt(PostFragment.ARG_FID_KEY, mFid);
                     arguments.putString(PostFragment.ARG_TID_KEY, mTid);
                     arguments.putString(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
                     arguments.putInt(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());

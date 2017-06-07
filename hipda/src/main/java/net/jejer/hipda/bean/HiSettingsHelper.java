@@ -17,7 +17,6 @@ import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +49,7 @@ public class HiSettingsHelper {
     public static final String PERF_NIGHT_MODE = "PERF_NIGHT_MODE";
     public static final String PERF_NAVBAR_COLORED = "PERF_NAVBAR_COLORED";
     public static final String PERF_FONT = "PERF_FONT";
-    public static final String PERF_FORUMS = "PERF_FORUMS";
+    public static final String PERF_FORUMS = "PERF_FORUMS2";
     public static final String PERF_FREQ_MENUS = "PERF_FREQ_MENUS";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
     public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
@@ -130,7 +129,7 @@ public class HiSettingsHelper {
     private boolean mNightMode = false;
     private boolean mNavBarColor = false;
     private String mFont = "";
-    private Set<String> mForums = new HashSet<>();
+    private List<Integer> mForums = new ArrayList<>();
     private Set<String> mFreqMenus = new HashSet<>();
 
     private boolean mEncodeUtf8 = false;
@@ -575,7 +574,7 @@ public class HiSettingsHelper {
         return mNightMode;
     }
 
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("ApplySharedPref")
     public void setNightMode(boolean nightMode) {
         mNightMode = nightMode;
         SharedPreferences.Editor editor = mSharedPref.edit();
@@ -612,23 +611,38 @@ public class HiSettingsHelper {
         editor.putBoolean(PERF_NAVBAR_COLORED, navBarColored).apply();
     }
 
-    public Set<String> getForums() {
+    public List<Integer> getForums() {
         return mForums;
     }
 
-    private Set<String> getForumsFromPref() {
-        String[] defaultForums = mCtx.getResources().getStringArray(R.array.default_forum_values);
-        Set<String> forums = new HashSet<>();
-        Collections.addAll(forums, defaultForums);
-        mForums = mSharedPref.getStringSet(PERF_FORUMS, forums);
-        return mForums;
-    }
-
-    public void setForums(Set<String> forums) {
+    private List<Integer> getForumsFromPref() {
+        List<Integer> forums = new ArrayList<>();
+        String fidsAsString = mSharedPref.getString(PERF_FORUMS, "");
+        String[] fids = fidsAsString.split(",");
+        for (String fid : fids) {
+            if (HiUtils.isValidId(fid) && HiUtils.getForumByFid(Integer.valueOf(fid)) != null)
+                forums.add(Integer.valueOf(fid));
+        }
+        if (forums.size() == 0) {
+            for (int fid : HiUtils.DEFAULT_FORUMS) {
+                forums.add(fid);
+            }
+        }
         mForums = forums;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.remove(PERF_FORUMS).apply();
-        editor.putStringSet(PERF_FORUMS, forums).apply();
+        return mForums;
+    }
+
+    public void setForums(List<Integer> forums) {
+        if (forums.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (int fid : forums) {
+                sb.append(fid).append(",");
+            }
+            mForums = forums;
+            SharedPreferences.Editor editor = mSharedPref.edit();
+            editor.remove(PERF_FORUMS).apply();
+            editor.putString(PERF_FORUMS, sb.toString()).apply();
+        }
     }
 
     public Set<String> getFreqMenus() {

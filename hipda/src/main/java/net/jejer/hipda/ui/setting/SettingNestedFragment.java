@@ -17,6 +17,7 @@ import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
@@ -58,10 +59,14 @@ public class SettingNestedFragment extends BaseSettingFragment {
             case SCREEN_TAIL:
                 setActionBarTitle(R.string.pref_category_forum);
                 addPreferencesFromResource(R.xml.pref_forum);
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FORUMS));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FREQ_MENUS));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TAILTEXT));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TAILURL));
+
+                Preference forumsPreference = findPreference(HiSettingsHelper.PERF_FORUMS);
+                forumsPreference.setOnPreferenceClickListener(new ForumSelectListener(getActivity()));
+                forumsPreference.setSummary(HiUtils.getForumsSummary());
+
                 break;
 
             case SCREEN_UI:

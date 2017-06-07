@@ -79,7 +79,7 @@ public class HiParserThreadDetail {
                     Element forumLink = divNavLinkES.get(i);
                     String forumUrl = Utils.nullToText(forumLink.attr("href"));
                     if (forumUrl.indexOf("fid=") > 0) {
-                        details.setFid(Utils.getMiddleString(forumUrl, "fid=", "&"));
+                        details.setFid(Utils.parseInt(Utils.getMiddleString(forumUrl, "fid=", "&")));
                         break;
                     }
                 }

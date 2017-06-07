@@ -59,6 +59,7 @@ import net.jejer.hipda.async.LoginEvent;
 import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.async.UpdateHelper;
+import net.jejer.hipda.bean.Forum;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -81,6 +82,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -309,11 +311,13 @@ public class MainFrameActivity extends AppCompatActivity {
                     }));
         }
         drawerItems.add(new DividerDrawerItem());
-        for (int i = 0; i < HiUtils.FORUM_IDS.length; i++) {
-            if (HiUtils.isForumEnabled(HiUtils.FORUM_IDS[i]))
-                drawerItems.add(new PrimaryDrawerItem().withName(HiUtils.FORUM_NAMES[i])
-                        .withIdentifier(HiUtils.FORUM_IDS[i])
-                        .withIcon(HiUtils.FORUM_ICONS[i]));
+        List<Integer> forums = HiSettingsHelper.getInstance().getForums();
+        for (int fid : forums) {
+            Forum forum = HiUtils.getForumByFid(fid);
+            if (forum != null)
+                drawerItems.add(new PrimaryDrawerItem().withName(forum.getName())
+                        .withIdentifier(forum.getId())
+                        .withIcon(forum.getIcon()));
         }
 
         drawer = new DrawerBuilder()

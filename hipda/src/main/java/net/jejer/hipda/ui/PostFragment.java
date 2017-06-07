@@ -52,6 +52,7 @@ import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.async.PrePostAsyncTask;
+import net.jejer.hipda.bean.Forum;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
@@ -96,7 +97,7 @@ public class PostFragment extends BaseFragment {
 
     public static final String BUNDLE_POSISTION_KEY = "content_position";
 
-    private String mFid;
+    private int mFid;
     private String mTid;
     private String mPid;
     private int mFloor;
@@ -139,7 +140,7 @@ public class PostFragment extends BaseFragment {
         setHasOptionsMenu(false);
 
         if (getArguments().containsKey(ARG_FID_KEY)) {
-            mFid = getArguments().getString(ARG_FID_KEY);
+            mFid = getArguments().getInt(ARG_FID_KEY);
         }
         if (getArguments().containsKey(ARG_TID_KEY)) {
             mTid = getArguments().getString(ARG_TID_KEY);
@@ -183,12 +184,9 @@ public class PostFragment extends BaseFragment {
         });
         updateImageInfo();
 
-        if (HiUtils.isValidId(mFid)) {
-            int fid = Integer.parseInt(mFid);
-            int index = HiUtils.getForumIndexByFid(fid);
-            if (index >= 0 && index < HiUtils.FORUM_NAMES.length)
-                mForumName = HiUtils.FORUM_NAMES[index];
-        }
+        Forum forum = HiUtils.getForumByFid(mFid);
+        if (forum != null)
+            mForumName = forum.getName();
 
         mEtSubject = (EditText) view.findViewById(R.id.et_subject);
         mEtContent.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());

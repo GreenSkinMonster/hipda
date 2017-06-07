@@ -122,7 +122,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private String mGotoPostId;
     private String mAuthorId;
     private String mTitle;
-    private String mFid;
+    private int mFid;
     private XRecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private ThreadDetailAdapter mDetailAdapter;
@@ -1170,7 +1170,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     username = detailBean.getAuthor();
                     postTime = detailBean.getTimePost();
                 }
-                HistoryDao.saveHistoryInBackground(mTid, mFid, mTitle, uid, username, postTime);
+                HistoryDao.saveHistoryInBackground(mTid, String.valueOf(mFid), mTitle, uid, username, postTime);
             }
         }
 
@@ -1215,8 +1215,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (postResult.getDelete() == 1) {
                 if (mGotoFloor == 1) {
                     //first floor is deleted, meaning whole thread is deleted
-                    String fid = postResult.getFid();
-                    FragmentUtils.showForum(getFragmentManager(), HiUtils.isValidId(fid) ? Integer.parseInt(fid) : 0);
+                    FragmentUtils.showForum(getFragmentManager(), postResult.getFid());
                 } else {
                     //this floor is deleted, so goto upper floor
                     mGotoFloor--;

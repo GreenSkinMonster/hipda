@@ -9,13 +9,11 @@ public class Forum {
     private String mName;
     private int mId;
     private IIcon mIcon;
-    private int mLevel;
 
-    public Forum(int id, String name, IIcon icon, int level) {
+    public Forum(int id, String name, IIcon icon) {
         mIcon = icon;
         mId = id;
         mName = name;
-        mLevel = level;
     }
 
     public IIcon getIcon() {
@@ -42,11 +40,4 @@ public class Forum {
         mName = name;
     }
 
-    public int getLevel() {
-        return mLevel;
-    }
-
-    public void setLevel(int level) {
-        mLevel = level;
-    }
 }

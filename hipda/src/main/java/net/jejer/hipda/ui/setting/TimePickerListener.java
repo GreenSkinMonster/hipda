@@ -10,7 +10,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 /**
  * Created by GreenSkinMonster on 2017-06-02.
  */
-public class TimePickerListener implements Preference.OnPreferenceClickListener {
+public class TimePickerListener extends OnPreferenceClickListener {
 
     private String mDefaultValue;
 
@@ -19,7 +19,7 @@ public class TimePickerListener implements Preference.OnPreferenceClickListener 
     }
 
     @Override
-    public boolean onPreferenceClick(final Preference preference) {
+    public boolean onPreferenceSingleClick(final Preference preference) {
         AlertDialog.Builder builder = new AlertDialog.Builder(preference.getContext());
 
         final TimePicker timePicker = new TimePicker(preference.getContext());

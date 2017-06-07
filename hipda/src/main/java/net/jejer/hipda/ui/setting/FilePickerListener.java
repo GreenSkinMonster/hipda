@@ -18,7 +18,7 @@ import java.io.File;
  * Created by GreenSkinMonster on 2017-06-03.
  */
 
-public class FilePickerListener implements Preference.OnPreferenceClickListener, DialogSelectionListener {
+public class FilePickerListener extends OnPreferenceClickListener implements DialogSelectionListener {
 
     public final static int FONT_FILE = 0;
     public final static int SAVE_DIR = 1;
@@ -33,7 +33,7 @@ public class FilePickerListener implements Preference.OnPreferenceClickListener,
     }
 
     @Override
-    public boolean onPreferenceClick(Preference preference) {
+    public boolean onPreferenceSingleClick(Preference preference) {
         mPreference = preference;
 
         File offset = null;

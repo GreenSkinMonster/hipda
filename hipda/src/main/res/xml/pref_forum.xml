@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <MultiSelectListPreference
-        android:defaultValue="@array/default_forum_values"
-        android:entries="@array/pref_title_forum_names"
-        android:entryValues="@array/pref_title_forum_values"
-        android:key="PERF_FORUMS"
-        android:title="@string/pref_title_forum" />
+    <Preference
+        android:defaultValue=""
+        android:key="PERF_FORUMS2"
+        android:title="@string/pref_title_forum"/>
 
     <MultiSelectListPreference
         android:defaultValue="@array/default_freq_menu_values"
@@ -24,7 +22,7 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="PERF_ADDTAIL"
-            android:title="@string/pref_title_add_tail" />
+            android:title="@string/pref_title_add_tail"/>
 
         <EditTextPreference
             android:defaultValue="@string/default_tail_text"
@@ -33,7 +31,7 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_title_tail_text" />
+            android:title="@string/pref_title_tail_text"/>
         <EditTextPreference
             android:defaultValue="@string/default_tail_url"
             android:inputType="text"
@@ -41,7 +39,7 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_title_tail_url" />
+            android:title="@string/pref_title_tail_url"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_blacklist">
@@ -52,7 +50,7 @@
             android:scrollbars="vertical"
             android:selectAllOnFocus="false"
             android:singleLine="false"
-            android:title="@string/pref_title_blacklist" />
+            android:title="@string/pref_title_blacklist"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

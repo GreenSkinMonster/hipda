@@ -29,6 +29,7 @@ import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,7 +41,7 @@ public class SettingMainFragment extends BaseSettingFragment {
     private int mScreenOrietation;
     private String mTheme;
     private int mPrimaryColor;
-    private Set<String> mForums;
+    private List<Integer> mForums;
     private Set<String> mFreqMenus;
     private boolean mNavBarColored;
     private String mFont;

@@ -9,7 +9,7 @@ public class DetailListBean {
     private int mLastPage = 1;
     private int mPage = 0;
     private String mTitle;
-    private String mFid;
+    private int mFid;
     private String mTid;
     private HashMap<String, DetailBean> mPostIdBeans;
     private int mImagesCount = 0;
@@ -65,11 +65,11 @@ public class DetailListBean {
         this.mTitle = mTitle;
     }
 
-    public String getFid() {
+    public int getFid() {
         return mFid;
     }
 
-    public void setFid(String fid) {
+    public void setFid(int fid) {
         mFid = fid;
     }
 

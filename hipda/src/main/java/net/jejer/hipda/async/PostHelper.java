@@ -56,7 +56,7 @@ public class PostHelper {
         String replyText = postBean.getContent();
         String tid = postBean.getTid();
         String pid = postBean.getPid();
-        String fid = postBean.getFid();
+        int fid = postBean.getFid();
         int floor = postBean.getFloor();
         String subject = postBean.getSubject();
         String typeid = postBean.getTypeid();
