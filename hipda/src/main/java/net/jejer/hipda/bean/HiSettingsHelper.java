@@ -65,6 +65,7 @@ public class HiSettingsHelper {
     public static final String PERF_LAST_UPDATE_CHECK = "PERF_LAST_UPDATE_CHECK";
     public static final String PERF_AUTO_UPDATE_CHECK = "PERF_AUTO_UPDATE_CHECK";
     public static final String PERF_ABOUT = "PERF_ABOUT";
+    public static final String PERF_SUPPORT = "PERF_SUPPORT";
     public static final String PERF_MAX_POSTS_IN_PAGE = "PERF_MAX_POSTS_IN_PAGE";
     public static final String PERF_POST_LINE_SPACING = "PERF_POST_LINE_SPACING";
     public static final String PERF_LAST_FORUM_ID = "PERF_LAST_FORUM_ID";

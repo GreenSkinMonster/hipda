@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.widget.Toast;
 
 import net.jejer.hipda.R;
@@ -23,6 +24,7 @@ import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
@@ -96,12 +98,18 @@ public class SettingMainFragment extends BaseSettingFragment {
         mForumServer = HiSettingsHelper.getInstance().getForumServer();
         mTrustAllCerts = HiSettingsHelper.getInstance().isTrustAllCerts();
         mCircleAvatar = HiSettingsHelper.getInstance().isCircleAvatar();
+
+        setHasOptionsMenu(true);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
         setActionBarTitle(R.string.title_fragment_settings);
     }
 
@@ -210,6 +218,16 @@ public class SettingMainFragment extends BaseSettingFragment {
         checkPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 new UpdateHelper(getActivity(), false).check();
+                return true;
+            }
+        });
+
+        Preference supportPreference = findPreference(HiSettingsHelper.PERF_SUPPORT);
+        supportPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                setHasOptionsMenu(false);
+                FragmentUtils.show(getFragmentManager(),
+                        FragmentUtils.parseUrl(HiUtils.BaseUrl + "viewthread.php?tid=1579403"));
                 return true;
             }
         });

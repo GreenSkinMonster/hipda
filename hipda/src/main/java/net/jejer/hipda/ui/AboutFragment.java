@@ -1,21 +1,14 @@
 package net.jejer.hipda.ui;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 /**
@@ -27,8 +20,6 @@ public class AboutFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -72,38 +63,14 @@ public class AboutFragment extends BaseFragment {
             }
         });
 
-        return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        inflater.inflate(R.menu.menu_about, menu);
-        super.onCreateOptionsMenu(menu, inflater);
         setActionBarTitle("关于");
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_bug_report:
-                showReportDialog();
-                return true;
-            case R.id.action_jejer:
-                setHasOptionsMenu(false);
-                FragmentUtils.show(getFragmentManager(),
-                        FragmentUtils.parseUrl(HiUtils.BaseUrl + "viewthread.php?tid=1408844")
-                );
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        return view;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        setActionBarTitle("设置");
+        setActionBarTitle(R.string.title_fragment_settings);
     }
 
     private String getContent(int position) {
@@ -122,22 +89,4 @@ public class AboutFragment extends BaseFragment {
 
     }
 
-    public void showReportDialog() {
-        AlertDialog.Builder builder = UIUtils.getMessageDialogBuilder(
-                getActivity(),
-                getActivity().getString(R.string.action_bug_report),
-                getActivity().getString(R.string.report_reminder));
-        builder.setPositiveButton("确定",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        setHasOptionsMenu(false);
-                        FragmentUtils.show(getFragmentManager(),
-                                FragmentUtils.parseUrl(HiUtils.BaseUrl + "viewthread.php?tid=1579403")
-                        );
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
 }

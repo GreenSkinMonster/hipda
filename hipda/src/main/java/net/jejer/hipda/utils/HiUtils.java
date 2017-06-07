@@ -27,6 +27,8 @@ public class HiUtils {
     public static final String ForumImagePattern = CookieDomain + "/forum/images/";
     public static final String ForumUrlPattern = "." + CookieDomain + "/forum/";
 
+    public static final int CLIENT_TID = 1579403;
+
     public static String BaseUrl;
 
     public static String ThreadListUrl;

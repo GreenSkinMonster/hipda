@@ -373,6 +373,12 @@ public class PostFragment extends BaseFragment {
 
         menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_add_a_photo).actionBar().color(Color.WHITE));
 
+        if (HiUtils.CLIENT_TID == Utils.parseInt(mTid)) {
+            MenuItem menuItem = menu.findItem(R.id.action_device_info);
+            menuItem.setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_bug_report).actionBar().color(Color.WHITE));
+            menuItem.setVisible(true);
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -428,6 +434,9 @@ public class PostFragment extends BaseFragment {
                                 .forResult(SELECT_PICTURE);
                     }
                 }
+                return true;
+            case R.id.action_device_info:
+                showAppendDeviceInfoDialog();
                 return true;
             case R.id.action_restore_content:
                 mEtContent.requestFocus();
@@ -826,6 +835,27 @@ public class PostFragment extends BaseFragment {
             return true;
         }
         return false;
+    }
+
+    private void showAppendDeviceInfoDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("追加系统信息？");
+        builder.setMessage("反馈问题时，提供系统信息可以帮助开发者更好的定位问题。\n\n" + Utils.getDeviceInfo());
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int selectionStart = 0;
+                String deviceInfo = Utils.getDeviceInfo();
+                if (mContentPosition < 0 || mContentPosition > mEtContent.length())
+                    selectionStart = mEtContent.getSelectionStart();
+                if (selectionStart > 0 && mEtContent.getText().charAt(selectionStart - 1) != '\n')
+                    deviceInfo = "\n" + deviceInfo;
+                mEtContent.getText().insert(selectionStart, deviceInfo);
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, null);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void showThreadTypesDialog() {

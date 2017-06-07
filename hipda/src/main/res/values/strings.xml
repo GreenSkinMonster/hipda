@@ -25,6 +25,7 @@
     <string name="action_upload_img">上传图片</string>
     <string name="action_delete_post">删除本帖</string>
     <string name="action_restore_content">恢复输入内容</string>
+    <string name="action_device_info">追加系统信息</string>
     <string name="action_add_favorite">添加收藏</string>
     <string name="action_remove_favorite">取消收藏</string>
     <string name="action_add_attention">添加关注</string>
@@ -39,8 +40,6 @@
     <string name="action_new_thread">发表新帖</string>
     <string name="action_quick_reply">快速回复</string>
     <string name="action_filter_by_type">分类</string>
-    <string name="action_bug_report">问题反馈</string>
-    <string name="action_jejer">简洁版帖子</string>
     <string name="action_text_size">文字调整</string>
 
     <string name="recipient">收件人</string>

@@ -487,13 +487,20 @@ public class Utils {
         return sb.toString();
     }
 
-    public static String getDeviceName() {
+    public static String getDeviceInfo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("设备名称 : ");
         String manufacturer = Build.MANUFACTURER;
         String model = Build.MODEL;
-        if (model.startsWith(manufacturer)) {
-            return model;
+        if (model.toLowerCase().startsWith(manufacturer.toLowerCase())) {
+            sb.append(model);
+        } else {
+            sb.append(manufacturer).append(" ").append(model);
         }
-        return manufacturer + " " + model;
+        sb.append("\n");
+        sb.append("系统版本 : ").append(Build.VERSION.RELEASE).append("\n");
+        sb.append("客户端版本 : ").append(HiApplication.getAppVersion()).append("\n");
+        return sb.toString();
     }
 
 }

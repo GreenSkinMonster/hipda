@@ -315,6 +315,8 @@
     <string name="pref_error_report_mode">显示详细错误信息</string>
     <string name="pref_title_about">关于HiPDA·NG</string>
     <string name="pref_title_check_update">检查更新</string>
+    <string name="pref_title_support">客户端发布帖</string>
+    <string name="pref_summary_support">反馈问题，最新动态，请来这里</string>
     <string name="pref_title_clear_cache">清除缓存</string>
     <string name="pref_noti_task_enabled">接收通知</string>
     <string name="pref_noti_repeat_minuets">接收通知间隔</string>
