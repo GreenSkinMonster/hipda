@@ -485,7 +485,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 cancelAuthorOnlyMode();
                 return true;
             case R.id.action_font_size:
-                showFontSizeDialog();
+                showTextLayoutDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -823,7 +823,7 @@ public class ThreadDetailFragment extends BaseFragment {
         return false;
     }
 
-    private void showFontSizeDialog() {
+    private void showTextLayoutDialog() {
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_thread_font_size, null);
 
@@ -847,7 +847,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         valueChangerLs.setTitle(R.string.title_post_line_spacing);
         valueChangerLs.setValues(
-                HiSettingsHelper.getInstance().getPostTextSizeAdj(),
+                HiSettingsHelper.getInstance().getPostLineSpacing(),
                 HiSettingsHelper.MIN_LS_ADJ_SIZE,
                 HiSettingsHelper.MAX_LS_ADJ_SIZE
         );
