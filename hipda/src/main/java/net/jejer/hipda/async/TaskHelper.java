@@ -14,6 +14,7 @@ import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Utils;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -42,6 +43,7 @@ public class TaskHelper {
                 public void run() {
                     ContentDao.cleanup();
                     HistoryDao.cleanup();
+                    Utils.cleanPictures();
                     //FavoriteHelper.getInstance().fetchMyFavorites();
                     //FavoriteHelper.getInstance().fetchMyAttention();
                 }

@@ -265,6 +265,20 @@ public class Utils {
         }
     }
 
+    public static void cleanPictures() {
+        //defined in provider_paths.xml
+        try {
+            File destFile = HiApplication.getAppContext().getExternalFilesDir("Pictures");
+            if (destFile != null && destFile.exists() && destFile.isDirectory()) {
+                for (File f : destFile.listFiles()) {
+                    f.delete();
+                }
+            }
+        } catch (Exception e) {
+            Logger.e(e);
+        }
+    }
+
     public static boolean isMemoryUsageHigh() {
         Runtime runtime = Runtime.getRuntime();
         return (runtime.totalMemory() - runtime.freeMemory()) > 0.6f * runtime.maxMemory();

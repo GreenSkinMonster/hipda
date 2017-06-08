@@ -425,8 +425,9 @@ public class PostFragment extends BaseFragment {
                                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
                                 .thumbnailScale(0.85f)
                                 .imageEngine(new GlideEngine())
-                                .theme(HiSettingsHelper.getInstance().getActiveTheme().equals(HiSettingsHelper.THEME_LIGHT)
-                                        ? R.style.Matisse_Light : R.style.Matisse_Dracula)
+                                .theme(HiUtils.getThemeValue(getActivity(),
+                                        HiSettingsHelper.getInstance().getActiveTheme(),
+                                        HiSettingsHelper.getInstance().getPrimaryColor()))
                                 .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
                                 .captureStrategy(new CaptureStrategy(false, BuildConfig.APPLICATION_ID + ".provider"))
                                 .forResult(SELECT_PICTURE);
