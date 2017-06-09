@@ -18,6 +18,12 @@ HiPDA·NG是使用MD风格的版本，即master分支，为目前主要维护版
 
 请把 hipad/fabric.properties.example 复制为 fabric.properties ，否则编译可能失败
 
+# 权限要求说明
+- android.permission.INTERNET 必需，用于访问HiPDA论坛服务器及图片、更新服务器等。
+- android.permission.ACCESS_NETWORK_STATE 必需，用于判断不同网络环境条件实施不同图片加载策略。
+- android.permission.WRITE_EXTERNAL_STORAGE 可选，用于保存下载文件，或者选取上传文件、自定义字体等。
+- android.permission.CAMERA 可选，用于直接拍照上传图片。
+
 # Credits
 - HiPDA简洁版 - https://bitbucket.org/jejer/hipda/
 - Android Iconics - https://github.com/mikepenz/Android-Iconics
