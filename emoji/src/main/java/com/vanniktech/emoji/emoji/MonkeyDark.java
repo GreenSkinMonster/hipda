@@ -5,7 +5,7 @@ import com.vanniktech.emoji.R;
 /**
  * Created by GreenSkinMonster on 2016-04-11.
  */
-public class Monkey {
+public class MonkeyDark {
     public final static String[] EMOJIS = {
             "{:2_41:}",
             "{:2_42:}",
@@ -26,22 +26,22 @@ public class Monkey {
     };
 
     public final static int[] DRAWABLES = {
-            R.drawable.coolmonkey_01,
-            R.drawable.coolmonkey_02,
-            R.drawable.coolmonkey_03,
-            R.drawable.coolmonkey_04,
-            R.drawable.coolmonkey_05,
-            R.drawable.coolmonkey_06,
-            R.drawable.coolmonkey_07,
-            R.drawable.coolmonkey_08,
-            R.drawable.coolmonkey_09,
-            R.drawable.coolmonkey_10,
-            R.drawable.coolmonkey_11,
-            R.drawable.coolmonkey_12,
-            R.drawable.coolmonkey_13,
-            R.drawable.coolmonkey_14,
-            R.drawable.coolmonkey_15,
-            R.drawable.coolmonkey_16
+            R.drawable.coolmonkey_01_dark,
+            R.drawable.coolmonkey_02_dark,
+            R.drawable.coolmonkey_03_dark,
+            R.drawable.coolmonkey_04_dark,
+            R.drawable.coolmonkey_05_dark,
+            R.drawable.coolmonkey_06_dark,
+            R.drawable.coolmonkey_07_dark,
+            R.drawable.coolmonkey_08_dark,
+            R.drawable.coolmonkey_09_dark,
+            R.drawable.coolmonkey_10_dark,
+            R.drawable.coolmonkey_11_dark,
+            R.drawable.coolmonkey_12_dark,
+            R.drawable.coolmonkey_13_dark,
+            R.drawable.coolmonkey_14_dark,
+            R.drawable.coolmonkey_15_dark,
+            R.drawable.coolmonkey_16_dark
     };
 
     public final static Emoji[] DATA = new Emoji[EMOJIS.length];

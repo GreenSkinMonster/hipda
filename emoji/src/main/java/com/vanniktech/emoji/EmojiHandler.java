@@ -7,27 +7,42 @@ import android.text.style.ImageSpan;
 
 import com.vanniktech.emoji.emoji.Default;
 import com.vanniktech.emoji.emoji.Dumb;
+import com.vanniktech.emoji.emoji.DumbDark;
 import com.vanniktech.emoji.emoji.Monkey;
+import com.vanniktech.emoji.emoji.MonkeyDark;
 
 import java.util.HashMap;
 import java.util.Map;
 
-final class EmojiHandler {
+public final class EmojiHandler {
     private static final Map<String, Integer> EMOJIS_MAP = new HashMap<>(Default.EMOJIS.length + Monkey.EMOJIS.length + Dumb.EMOJIS.length);
     private static Map<String, Bitmap> IMAGE_MAP;
 
     private final static String IMG_MATCH_START = "[attachimg]";
     private final static String IMG_MATCH_END = "[/attachimg]";
 
-    static {
-        for (int i = 0; i < Default.EMOJIS.length; i++) {
-            EMOJIS_MAP.put(Default.EMOJIS[i], Default.DRAWABLES[i]);
-        }
-        for (int i = 0; i < Monkey.EMOJIS.length; i++) {
-            EMOJIS_MAP.put(Monkey.EMOJIS[i], Monkey.DRAWABLES[i]);
-        }
-        for (int i = 0; i < Dumb.EMOJIS.length; i++) {
-            EMOJIS_MAP.put(Dumb.EMOJIS[i], Dumb.DRAWABLES[i]);
+    public static void init(boolean isLightTheme) {
+        EMOJIS_MAP.clear();
+        if (isLightTheme) {
+            for (int i = 0; i < Default.EMOJIS.length; i++) {
+                EMOJIS_MAP.put(Default.EMOJIS[i], Default.DRAWABLES[i]);
+            }
+            for (int i = 0; i < Monkey.EMOJIS.length; i++) {
+                EMOJIS_MAP.put(Monkey.EMOJIS[i], Monkey.DRAWABLES[i]);
+            }
+            for (int i = 0; i < Dumb.EMOJIS.length; i++) {
+                EMOJIS_MAP.put(Dumb.EMOJIS[i], Dumb.DRAWABLES[i]);
+            }
+        } else {
+            for (int i = 0; i < Default.EMOJIS.length; i++) {
+                EMOJIS_MAP.put(Default.EMOJIS[i], Default.DRAWABLES[i]);
+            }
+            for (int i = 0; i < MonkeyDark.EMOJIS.length; i++) {
+                EMOJIS_MAP.put(MonkeyDark.EMOJIS[i], MonkeyDark.DRAWABLES[i]);
+            }
+            for (int i = 0; i < DumbDark.EMOJIS.length; i++) {
+                EMOJIS_MAP.put(DumbDark.EMOJIS[i], DumbDark.DRAWABLES[i]);
+            }
         }
     }
 

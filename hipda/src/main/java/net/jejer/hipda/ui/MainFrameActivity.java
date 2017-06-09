@@ -52,6 +52,7 @@ import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.vanniktech.emoji.EmojiHandler;
 import com.vanniktech.emoji.EmojiPopup;
 
 import net.jejer.hipda.R;
@@ -123,6 +124,8 @@ public class MainFrameActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && HiSettingsHelper.getInstance().isNavBarColored()) {
             getWindow().setNavigationBarColor(ColorHelper.getColorPrimary(this));
         }
+
+        EmojiHandler.init(HiSettingsHelper.THEME_LIGHT.equals(HiSettingsHelper.getInstance().getActiveTheme()));
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_frame);
