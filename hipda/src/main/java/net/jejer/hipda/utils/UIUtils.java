@@ -26,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.FileDownTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -277,12 +278,16 @@ public class UIUtils {
                     intent.setAction(Intent.ACTION_VIEW);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        Uri contentUri = FileProvider.getUriForFile(activity, "net.jejer.hipda.ng.provider", destFile);
+                        Uri contentUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", destFile);
                         intent.setDataAndType(contentUri, imageInfo.getMime());
                     } else {
                         intent.setDataAndType(Uri.fromFile(destFile), imageInfo.getMime());
                     }
-                    activity.startActivity(intent);
+                    try {
+                        activity.startActivity(intent);
+                    } catch (Exception e) {
+                        errorSnack(view, "打开文件发生错误", "请尝试将保存路径设置到内置存储\n" + e.getMessage());
+                    }
                 }
             });
             snackbar.show();
