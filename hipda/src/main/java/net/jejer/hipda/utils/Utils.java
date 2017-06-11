@@ -5,6 +5,8 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -515,6 +517,19 @@ public class Utils {
         sb.append("系统版本 : ").append(Build.VERSION.RELEASE).append("\n");
         sb.append("客户端版本 : ").append(HiApplication.getAppVersion()).append("\n");
         return sb.toString();
+    }
+
+
+    public static String getRingtoneTitle(Context context, Uri uri) {
+        try {
+            if (uri == null || TextUtils.isEmpty(uri.toString())) {
+                return "无";
+            }
+            Ringtone ringtone = RingtoneManager.getRingtone(context, uri);
+            return ringtone.getTitle(context);
+        } catch (Exception e) {
+            return "-";
+        }
     }
 
 }

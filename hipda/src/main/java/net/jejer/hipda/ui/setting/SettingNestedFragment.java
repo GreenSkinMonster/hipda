@@ -38,6 +38,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
 
     public static final String TAG_KEY = "SCREEN_KEY";
     private HiProgressDialog mProgressDialog;
+    private Preference ringtonePreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,7 +110,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                     }
                 });
 
-                final Preference ringtonePreference = findPreference(HiSettingsHelper.PERF_NOTI_SOUND);
+                ringtonePreference = findPreference(HiSettingsHelper.PERF_NOTI_SOUND);
                 ringtonePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
@@ -136,6 +137,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                         return true;
                     }
                 });
+                ringtonePreference.setSummary(Utils.getRingtoneTitle(getActivity(), Uri.parse(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SOUND, ""))));
 
                 final Preference silentBeginPreference = findPreference(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN);
                 final Preference silentEndPreference = findPreference(HiSettingsHelper.PERF_NOTI_SILENT_END);
@@ -237,7 +239,6 @@ public class SettingNestedFragment extends BaseSettingFragment {
     private void enableNotiItems(boolean isNotiTaskEnabled) {
         findPreference(HiSettingsHelper.PERF_NOTI_REPEAT_MINUETS).setEnabled(isNotiTaskEnabled);
         findPreference(HiSettingsHelper.PERF_NOTI_LED_LIGHT).setEnabled(isNotiTaskEnabled);
-        findPreference(HiSettingsHelper.PERF_NOTI_SOUND).setEnabled(isNotiTaskEnabled);
         findPreference(HiSettingsHelper.PERF_NOTI_SILENT_MODE).setEnabled(isNotiTaskEnabled);
         findPreference(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN).setEnabled(isNotiTaskEnabled);
         findPreference(HiSettingsHelper.PERF_NOTI_SILENT_END).setEnabled(isNotiTaskEnabled);
@@ -246,8 +247,14 @@ public class SettingNestedFragment extends BaseSettingFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_ALERT_RINGTONE && data != null) {
-            Uri ringtone = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-            HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_NOTI_SOUND, ringtone.toString());
+            Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            if (uri == null) {
+                HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_NOTI_SOUND, "");
+                ringtonePreference.setSummary("无");
+            } else {
+                HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_NOTI_SOUND, uri.toString());
+                ringtonePreference.setSummary(Utils.getRingtoneTitle(getActivity(), uri));
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
