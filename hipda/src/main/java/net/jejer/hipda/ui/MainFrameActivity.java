@@ -125,7 +125,7 @@ public class MainFrameActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(ColorHelper.getColorPrimary(this));
         }
 
-        EmojiHandler.init(HiSettingsHelper.THEME_LIGHT.equals(HiSettingsHelper.getInstance().getActiveTheme()));
+        EmojiHandler.init(HiSettingsHelper.getInstance().isUsingLightTheme());
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_frame);

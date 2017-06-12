@@ -30,6 +30,30 @@ public class Default {
             ":sleepy:"
     };
 
+    public final static String[] IMG_SRCS = {
+            "default_smile",
+            "default_sweat",
+            "default_huffy",
+            "default_cry",
+            "default_titter",
+            "default_handshake",
+            "default_victory",
+            "default_curse",
+            "default_dizzy",
+            "default_shutup",
+            "default_funk",
+            "default_loveliness",
+            "default_sad",
+            "default_biggrin",
+            "default_cool",
+            "default_mad",
+            "default_shocked",
+            "default_tongue",
+            "default_lol",
+            "default_shy",
+            "default_sleepy"
+    };
+
     public final static int[] DRAWABLES = {
             R.drawable.default_smile,
             R.drawable.default_sweat,

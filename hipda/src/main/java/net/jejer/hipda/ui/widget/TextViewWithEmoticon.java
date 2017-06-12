@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vanniktech.emoji.EmojiHandler;
+
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.ui.BaseFragment;
@@ -84,7 +86,7 @@ public class TextViewWithEmoticon extends AppCompatTextView {
                 int idx = src.indexOf(HiUtils.SmiliesPattern);
                 if (idx != -1 && src.indexOf(".", idx) != -1) {
                     src = src.substring(src.indexOf(HiUtils.SmiliesPattern) + HiUtils.SmiliesPattern.length(), src.lastIndexOf(".")).replace("/", "_");
-                    int id = mCtx.getResources().getIdentifier(src, "drawable", mCtx.getPackageName());
+                    int id = EmojiHandler.getDrawableResId(src);
                     if (id != 0) {
                         icon = ContextCompat.getDrawable(mCtx, id);
                         if (icon != null)

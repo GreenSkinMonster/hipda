@@ -25,6 +25,25 @@ public class MonkeyDark {
             "{:2_56:}"
     };
 
+    public final static String[] IMG_SRCS = {
+            "coolmonkey_01",
+            "coolmonkey_02",
+            "coolmonkey_03",
+            "coolmonkey_04",
+            "coolmonkey_05",
+            "coolmonkey_06",
+            "coolmonkey_07",
+            "coolmonkey_08",
+            "coolmonkey_09",
+            "coolmonkey_10",
+            "coolmonkey_11",
+            "coolmonkey_12",
+            "coolmonkey_13",
+            "coolmonkey_14",
+            "coolmonkey_15",
+            "coolmonkey_16"
+    };
+
     public final static int[] DRAWABLES = {
             R.drawable.coolmonkey_01_dark,
             R.drawable.coolmonkey_02_dark,

@@ -16,6 +16,7 @@ import java.util.Map;
 
 public final class EmojiHandler {
     private static final Map<String, Integer> EMOJIS_MAP = new HashMap<>(Default.EMOJIS.length + Monkey.EMOJIS.length + Dumb.EMOJIS.length);
+    private static final Map<String, Integer> DRAWABLE_MAP = new HashMap<>(Default.EMOJIS.length + Monkey.EMOJIS.length + Dumb.EMOJIS.length);
     private static Map<String, Bitmap> IMAGE_MAP;
 
     private final static String IMG_MATCH_START = "[attachimg]";
@@ -23,25 +24,32 @@ public final class EmojiHandler {
 
     public static void init(boolean isLightTheme) {
         EMOJIS_MAP.clear();
+        DRAWABLE_MAP.clear();
         if (isLightTheme) {
             for (int i = 0; i < Default.EMOJIS.length; i++) {
                 EMOJIS_MAP.put(Default.EMOJIS[i], Default.DRAWABLES[i]);
+                DRAWABLE_MAP.put(Default.IMG_SRCS[i], Default.DRAWABLES[i]);
             }
             for (int i = 0; i < Monkey.EMOJIS.length; i++) {
                 EMOJIS_MAP.put(Monkey.EMOJIS[i], Monkey.DRAWABLES[i]);
+                DRAWABLE_MAP.put(Monkey.IMG_SRCS[i], Monkey.DRAWABLES[i]);
             }
             for (int i = 0; i < Dumb.EMOJIS.length; i++) {
                 EMOJIS_MAP.put(Dumb.EMOJIS[i], Dumb.DRAWABLES[i]);
+                DRAWABLE_MAP.put(Dumb.IMG_SRCS[i], Dumb.DRAWABLES[i]);
             }
         } else {
             for (int i = 0; i < Default.EMOJIS.length; i++) {
                 EMOJIS_MAP.put(Default.EMOJIS[i], Default.DRAWABLES[i]);
+                DRAWABLE_MAP.put(Default.IMG_SRCS[i], Default.DRAWABLES[i]);
             }
             for (int i = 0; i < MonkeyDark.EMOJIS.length; i++) {
                 EMOJIS_MAP.put(MonkeyDark.EMOJIS[i], MonkeyDark.DRAWABLES[i]);
+                DRAWABLE_MAP.put(MonkeyDark.IMG_SRCS[i], MonkeyDark.DRAWABLES[i]);
             }
             for (int i = 0; i < DumbDark.EMOJIS.length; i++) {
                 EMOJIS_MAP.put(DumbDark.EMOJIS[i], DumbDark.DRAWABLES[i]);
+                DRAWABLE_MAP.put(DumbDark.IMG_SRCS[i], DumbDark.DRAWABLES[i]);
             }
         }
     }
@@ -107,6 +115,10 @@ public final class EmojiHandler {
         if (IMAGE_MAP == null)
             IMAGE_MAP = new HashMap<>();
         IMAGE_MAP.put(imgId, bitmap);
+    }
+
+    public static int getDrawableResId(String imgSrc) {
+        return DRAWABLE_MAP.containsKey(imgSrc) ? DRAWABLE_MAP.get(imgSrc) : 0;
     }
 
     private EmojiHandler() {

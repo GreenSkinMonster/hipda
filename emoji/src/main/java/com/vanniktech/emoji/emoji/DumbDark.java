@@ -33,6 +33,33 @@ public class DumbDark {
             "{:3_80:}"
     };
 
+    public final static String[] IMG_SRCS = {
+            "grapeman_01",
+            "grapeman_02",
+            "grapeman_03",
+            "grapeman_04",
+            "grapeman_05",
+            "grapeman_06",
+            "grapeman_07",
+            "grapeman_08",
+            "grapeman_09",
+            "grapeman_10",
+            "grapeman_11",
+            "grapeman_12",
+            "grapeman_13",
+            "grapeman_14",
+            "grapeman_15",
+            "grapeman_16",
+            "grapeman_17",
+            "grapeman_18",
+            "grapeman_19",
+            "grapeman_20",
+            "grapeman_21",
+            "grapeman_22",
+            "grapeman_23",
+            "grapeman_24"
+    };
+
     public final static int[] DRAWABLES = {
             R.drawable.grapeman_01_dark,
             R.drawable.grapeman_02_dark,

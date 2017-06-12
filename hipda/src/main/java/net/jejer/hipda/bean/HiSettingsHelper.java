@@ -1058,6 +1058,10 @@ public class HiSettingsHelper {
             return getTheme();
     }
 
+    public boolean isUsingLightTheme() {
+        return HiSettingsHelper.THEME_LIGHT.equals(getActiveTheme());
+    }
+
     public boolean isAppBarCollapsible() {
         return getBooleanValue(PERF_APP_BAR_COLLAPSIBLE, true);
     }
