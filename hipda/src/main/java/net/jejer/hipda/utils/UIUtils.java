@@ -274,16 +274,16 @@ public class UIUtils {
             snackbar.setAction("查看", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        Uri contentUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", destFile);
-                        intent.setDataAndType(contentUri, imageInfo.getMime());
-                    } else {
-                        intent.setDataAndType(Uri.fromFile(destFile), imageInfo.getMime());
-                    }
                     try {
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            Uri contentUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", destFile);
+                            intent.setDataAndType(contentUri, imageInfo.getMime());
+                        } else {
+                            intent.setDataAndType(Uri.fromFile(destFile), imageInfo.getMime());
+                        }
                         activity.startActivity(intent);
                     } catch (Exception e) {
                         errorSnack(view, "打开文件发生错误", "请尝试将保存路径设置到内置存储\n" + e.getMessage());
