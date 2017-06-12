@@ -27,6 +27,7 @@ HiPDA·NG是使用MD风格的版本，即master分支，为目前主要维护版
 # Credits
 - HiPDA简洁版 - https://bitbucket.org/jejer/hipda/
 - Android Iconics - https://github.com/mikepenz/Android-Iconics
+- android-filepicker - https://github.com/Angads25/android-filepicker
 - Android Priority Job Queue - https://github.com/yigit/android-priority-jobqueue
 - BubbleLayout - https://github.com/MasayukiSuda/BubbleLayout
 - Calligraphy - https://github.com/chrisjenx/Calligraphy
@@ -37,6 +38,7 @@ HiPDA·NG是使用MD风格的版本，即master分支，为目前主要维护版
 - Glide - https://github.com/bumptech/glide
 - Jsoup - http://jsoup.org/
 - MaterialDrawer - https://github.com/mikepenz/MaterialDrawer
+- Matisse - https://github.com/zhihu/Matisse
 - OkHttp - https://github.com/square/okhttp
 - Spectrum - https://github.com/the-blue-alliance/spectrum
 - Subsampling Scale Image View - https://github.com/davemorrissey/subsampling-scale-image-view
