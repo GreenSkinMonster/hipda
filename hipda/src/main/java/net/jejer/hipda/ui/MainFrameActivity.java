@@ -296,12 +296,13 @@ public class MainFrameActivity extends AppCompatActivity {
                             ));
 
         drawerItems.add(new DividerDrawerItem());
-        drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SETTINGS));
-        if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme())) {
+        if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme())) {
+            drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SETTINGS));
+        } else {
             drawerItems.add(new SwitchDrawerItem()
-                    .withName(R.string.title_drawer_night_mode)
-                    .withIdentifier(Constants.DRAWER_NIGHT_MODE)
-                    .withIcon(GoogleMaterial.Icon.gmd_brightness_medium)
+                    .withName(R.string.title_drawer_setting)
+                    .withIdentifier(Constants.DRAWER_SETTINGS)
+                    .withIcon(GoogleMaterial.Icon.gmd_settings)
                     .withChecked(HiSettingsHelper.getInstance().isNightMode())
                     .withOnCheckedChangeListener(new OnCheckedChangeListener() {
                         @Override
