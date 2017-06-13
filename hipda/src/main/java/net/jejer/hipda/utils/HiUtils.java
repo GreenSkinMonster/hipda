@@ -97,10 +97,11 @@ public class HiUtils {
             new Forum(22, "麦客爱苹果", FontAwesome.Icon.faw_circle),
             new Forum(50, "DC,NB,MP3,Gadgets", FontAwesome.Icon.faw_circle),
             new Forum(24, "意欲蔓延", FontAwesome.Icon.faw_circle),
+            new Forum(23, "随笔与个人文集", FontAwesome.Icon.faw_circle),
             new Forum(25, "吃喝玩乐", FontAwesome.Icon.faw_circle),
             new Forum(51, "La Femme", FontAwesome.Icon.faw_circle),
             new Forum(65, "改版建议", FontAwesome.Icon.faw_circle),
-            new Forum(64, "只讨论2.0", FontAwesome.Icon.faw_circle),
+            new Forum(64, "只讨论2.0", FontAwesome.Icon.faw_circle)
     };
 
     private final static Map<Integer, Forum> FORUMS_MAP;
