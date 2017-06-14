@@ -126,19 +126,23 @@ public abstract class BaseFragment extends Fragment {
         mSessionId = UUID.randomUUID().toString();
         setRetainInstance(true);
 
-        MainFrameActivity mainActivity = ((MainFrameActivity) getActivity());
-        mMainFab = mainActivity.getMainFab();
-        mNotificationFab = mainActivity.getNotificationFab();
+        if (getActivity() instanceof MainFrameActivity) {
+            MainFrameActivity mainActivity = ((MainFrameActivity) getActivity());
+            mMainFab = mainActivity.getMainFab();
+            mNotificationFab = mainActivity.getNotificationFab();
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MainFrameActivity mainActivity = ((MainFrameActivity) getActivity());
-        if (mainActivity != null) {
-            mMainFab = mainActivity.getMainFab();
-            mNotificationFab = mainActivity.getNotificationFab();
-            setupFab();
+        if (getActivity() instanceof MainFrameActivity) {
+            MainFrameActivity mainActivity = ((MainFrameActivity) getActivity());
+            if (mainActivity != null) {
+                mMainFab = mainActivity.getMainFab();
+                mNotificationFab = mainActivity.getNotificationFab();
+                setupFab();
+            }
         }
     }
 
@@ -308,7 +312,7 @@ public abstract class BaseFragment extends Fragment {
             }
         });
 
-        mEmojiPopup = ((MainFrameActivity) getActivity()).getEmojiBuilder()
+        mEmojiPopup = ((BaseActivity) getActivity()).getEmojiBuilder()
                 .setOnEmojiClickedListener(new OnEmojiClickedListener() {
                     @Override
                     public void onEmojiClicked(final Emoji emoji) {

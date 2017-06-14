@@ -6,13 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -22,7 +20,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -57,7 +54,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.vanniktech.emoji.EmojiHandler;
-import com.vanniktech.emoji.EmojiPopup;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginEvent;
@@ -75,7 +71,6 @@ import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.LoginDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.OnSwipeTouchListener;
-import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
@@ -93,9 +88,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
-
-public class MainFrameActivity extends AppCompatActivity {
+public class MainFrameActivity extends BaseActivity {
 
     public final static int PERMISSIONS_REQUEST_CODE_STORAGE = 200;
     public final static int PERMISSIONS_REQUEST_CODE_BOTH = 201;
@@ -105,7 +98,6 @@ public class MainFrameActivity extends AppCompatActivity {
     public Drawer drawer;
     private AccountHeader accountHeader;
     private ActionMode mActionMode;
-    private View rootView;
     private View mMainFrameContainer;
     private AppBarLayout mAppBarLayout;
     private Toolbar mToolbar;
@@ -116,30 +108,16 @@ public class MainFrameActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        if (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT == HiSettingsHelper.getInstance().getScreenOrietation()) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else if (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE == HiSettingsHelper.getInstance().getScreenOrietation()) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
-        }
-
-        setTheme(HiUtils.getThemeValue(this,
-                HiSettingsHelper.getInstance().getActiveTheme(),
-                HiSettingsHelper.getInstance().getPrimaryColor()));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && HiSettingsHelper.getInstance().isNavBarColored()) {
-            getWindow().setNavigationBarColor(ColorHelper.getColorPrimary(this));
-        }
-
-        EmojiHandler.init(HiSettingsHelper.getInstance().isUsingLightTheme());
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_frame);
         rootView = findViewById(R.id.main_activity_root_view);
         mMainFrameContainer = findViewById(R.id.main_frame_container);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
 
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+
+        EmojiHandler.init(HiSettingsHelper.getInstance().isUsingLightTheme());
         EventBus.getDefault().register(this);
         setupDrawer();
         updateAppBarScrollFlag();
@@ -218,18 +196,7 @@ public class MainFrameActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        if (HiApplication.isFontSet())
-            super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-        else
-            super.attachBaseContext(newBase);
-    }
-
     private void setupDrawer() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
@@ -777,10 +744,6 @@ public class MainFrameActivity extends AppCompatActivity {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         }
-    }
-
-    public EmojiPopup.Builder getEmojiBuilder() {
-        return EmojiPopup.Builder.fromRootView(rootView);
     }
 
     public FloatingActionButton getMainFab() {

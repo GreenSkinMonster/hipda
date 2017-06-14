@@ -4,12 +4,14 @@ package net.jejer.hipda.ui;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -301,16 +303,11 @@ public class ThreadListFragment extends BaseFragment
     }
 
     private void newThread() {
-        Bundle arguments = new Bundle();
-        arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_NEW_THREAD);
-        arguments.putInt(PostFragment.ARG_FID_KEY, mForumId);
-
-        PostFragment fragment = new PostFragment();
-        fragment.setParentSessionId(mSessionId);
-        fragment.setArguments(arguments);
-        setHasOptionsMenu(false);
-
-        FragmentUtils.showFragment(getFragmentManager(), fragment);
+        Intent intent = new Intent(getActivity(), PostActivity.class);
+        intent.putExtra(PostFragment.ARG_MODE_KEY, PostHelper.MODE_NEW_THREAD);
+        intent.putExtra(PostFragment.ARG_FID_KEY, mForumId);
+        intent.putExtra(PostFragment.ARG_PARENT_ID, mSessionId);
+        ActivityCompat.startActivity(getActivity(), intent, null);
     }
 
     public void resetActionBarTitle() {

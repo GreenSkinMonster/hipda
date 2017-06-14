@@ -34,7 +34,7 @@ public class PostJob extends BaseJob {
     @Override
     public void onAdded() {
         mEvent.mStatus = Constants.STATUS_IN_PROGRESS;
-        EventBus.getDefault().post(mEvent);
+        EventBus.getDefault().postSticky(mEvent);
     }
 
     @Override

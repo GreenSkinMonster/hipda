@@ -289,7 +289,6 @@ public class ThreadDetailFragment extends BaseFragment {
         mIbPostReply.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                setHasOptionsMenu(false);
                 String replyText = mEtReply.getText().toString();
                 showPost(replyText);
                 hideQuickReply();
@@ -459,7 +458,6 @@ public class ThreadDetailFragment extends BaseFragment {
                 startActivity(Intent.createChooser(sharingIntent, "分享帖子"));
                 return true;
             case R.id.action_reply:
-                setHasOptionsMenu(false);
                 showPost("");
                 return true;
             case R.id.action_refresh_detail:
@@ -524,17 +522,13 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private void showPost(String text) {
-        Bundle arguments = new Bundle();
-        arguments.putString(PostFragment.ARG_TID_KEY, mTid);
-        arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_REPLY_THREAD);
-        arguments.putString(PostFragment.ARG_TEXT_KEY, text);
-
-        PostFragment fragment = new PostFragment();
-        fragment.setParentSessionId(mSessionId);
-        fragment.setArguments(arguments);
-        setHasOptionsMenu(false);
-
-        FragmentUtils.showFragment(getFragmentManager(), fragment);
+        Intent intent = new Intent(getActivity(), PostActivity.class);
+        intent.putExtra(PostFragment.ARG_TID_KEY, mTid);
+        intent.putExtra(PostFragment.ARG_MODE_KEY, PostHelper.MODE_REPLY_THREAD);
+        intent.putExtra(PostFragment.ARG_TEXT_KEY, text);
+        intent.putExtra(PostFragment.ARG_TEXT_KEY, text);
+        intent.putExtra(PostFragment.ARG_PARENT_ID, mSessionId);
+        ActivityCompat.startActivity(getActivity(), intent, null);
     }
 
     private void refresh() {

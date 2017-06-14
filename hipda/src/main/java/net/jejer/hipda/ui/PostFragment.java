@@ -94,6 +94,7 @@ public class PostFragment extends BaseFragment {
     public static final String ARG_FLOOR_AUTHOR_KEY = "floor_author";
     public static final String ARG_TEXT_KEY = "text";
     public static final String ARG_MODE_KEY = "mode";
+    public static final String ARG_PARENT_ID = "parent_id";
 
     public static final String BUNDLE_POSISTION_KEY = "content_position";
 
@@ -159,6 +160,9 @@ public class PostFragment extends BaseFragment {
         }
         if (getArguments().containsKey(ARG_TEXT_KEY)) {
             mText = getArguments().getString(ARG_TEXT_KEY);
+        }
+        if (getArguments().containsKey(ARG_PARENT_ID)) {
+            mParentSessionId = getArguments().getString(ARG_PARENT_ID);
         }
     }
 
@@ -449,10 +453,6 @@ public class PostFragment extends BaseFragment {
         }
     }
 
-    public void setParentSessionId(String parentSessionId) {
-        mParentSessionId = parentSessionId;
-    }
-
     private void postReply() {
         if (mPrePostInfo == null) {
             fetchPrePostInfo(false);
@@ -553,6 +553,7 @@ public class PostFragment extends BaseFragment {
         postBean.setDelete(mDeleteMode);
 
         JobMgr.addJob(new PostJob(mParentSessionId, mMode, mPrePostInfo, postBean));
+        getActivity().onBackPressed();
     }
 
     @Override

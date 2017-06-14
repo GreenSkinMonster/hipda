@@ -5,7 +5,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +18,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.ui.PostActivity;
 import net.jejer.hipda.ui.PostFragment;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.utils.HiUtils;
@@ -41,67 +42,48 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
-        Bundle arguments = new Bundle();
-        PostFragment fragment = new PostFragment();
-        if (mFragment != null)
-            fragment.setParentSessionId(mFragment.mSessionId);
+        Intent intent;
 
         switch (item.getItemId()) {
             case R.id.action_edit:
                 if (HiSettingsHelper.getInstance().getUsername().equalsIgnoreCase(mDetailBean.getAuthor())
                         || HiSettingsHelper.getInstance().getUid().equals(mDetailBean.getUid())) {
-                    mFragment.setHasOptionsMenu(false);
 
-                    arguments.putInt(PostFragment.ARG_FID_KEY, mFid);
-                    arguments.putString(PostFragment.ARG_TID_KEY, mTid);
-                    arguments.putString(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
-                    arguments.putInt(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
-                    arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_EDIT_POST);
-
-                    fragment.setArguments(arguments);
-
-                    mFragment.getFragmentManager().beginTransaction()
-                            .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-                            .addToBackStack(PostFragment.class.getName())
-                            .commit();
-                    mode.finish();
-                    return true;
+                    intent = new Intent(mFragment.getActivity(), PostActivity.class);
+                    intent.putExtra(PostFragment.ARG_FID_KEY, mFid);
+                    intent.putExtra(PostFragment.ARG_TID_KEY, mTid);
+                    intent.putExtra(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
+                    intent.putExtra(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
+                    intent.putExtra(PostFragment.ARG_MODE_KEY, PostHelper.MODE_EDIT_POST);
+                    intent.putExtra(PostFragment.ARG_PARENT_ID, mFragment.mSessionId);
+                    ActivityCompat.startActivity(mFragment.getActivity(), intent, null);
                 }
-                break;
+                mode.finish();
+                return true;
             case R.id.action_reply:
-                mFragment.setHasOptionsMenu(false);
+                intent = new Intent(mFragment.getActivity(), PostActivity.class);
+                intent.putExtra(PostFragment.ARG_TID_KEY, mTid);
+                intent.putExtra(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
+                intent.putExtra(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
+                intent.putExtra(PostFragment.ARG_FLOOR_AUTHOR_KEY, mDetailBean.getAuthor());
+                intent.putExtra(PostFragment.ARG_MODE_KEY, PostHelper.MODE_REPLY_POST);
+                intent.putExtra(PostFragment.ARG_TEXT_KEY, mDetailBean.getContents().getCopyText());
+                intent.putExtra(PostFragment.ARG_PARENT_ID, mFragment.mSessionId);
+                ActivityCompat.startActivity(mFragment.getActivity(), intent, null);
 
-                arguments.putString(PostFragment.ARG_TID_KEY, mTid);
-                arguments.putString(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
-                arguments.putInt(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
-                arguments.putString(PostFragment.ARG_FLOOR_AUTHOR_KEY, mDetailBean.getAuthor());
-                arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_REPLY_POST);
-                arguments.putString(PostFragment.ARG_TEXT_KEY, mDetailBean.getContents().getCopyText());
-
-                fragment.setArguments(arguments);
-
-                mFragment.getFragmentManager().beginTransaction()
-                        .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-                        .addToBackStack(PostFragment.class.getName())
-                        .commit();
                 mode.finish();
                 return true;
             case R.id.action_quote:
-                mFragment.setHasOptionsMenu(false);
+                intent = new Intent(mFragment.getActivity(), PostActivity.class);
+                intent.putExtra(PostFragment.ARG_TID_KEY, mTid);
+                intent.putExtra(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
+                intent.putExtra(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
+                intent.putExtra(PostFragment.ARG_FLOOR_AUTHOR_KEY, mDetailBean.getAuthor());
+                intent.putExtra(PostFragment.ARG_MODE_KEY, PostHelper.MODE_QUOTE_POST);
+                intent.putExtra(PostFragment.ARG_TEXT_KEY, mDetailBean.getContents().getCopyText());
+                intent.putExtra(PostFragment.ARG_PARENT_ID, mFragment.mSessionId);
+                ActivityCompat.startActivity(mFragment.getActivity(), intent, null);
 
-                arguments.putString(PostFragment.ARG_TID_KEY, mTid);
-                arguments.putString(PostFragment.ARG_PID_KEY, mDetailBean.getPostId());
-                arguments.putInt(PostFragment.ARG_FLOOR_KEY, mDetailBean.getFloor());
-                arguments.putString(PostFragment.ARG_FLOOR_AUTHOR_KEY, mDetailBean.getAuthor());
-                arguments.putInt(PostFragment.ARG_MODE_KEY, PostHelper.MODE_QUOTE_POST);
-                arguments.putString(PostFragment.ARG_TEXT_KEY, mDetailBean.getContents().getCopyText());
-
-                fragment.setArguments(arguments);
-
-                mFragment.getFragmentManager().beginTransaction()
-                        .add(R.id.main_frame_container, fragment, PostFragment.class.getName())
-                        .addToBackStack(PostFragment.class.getName())
-                        .commit();
                 mode.finish();
                 return true;
             case R.id.action_copy:
