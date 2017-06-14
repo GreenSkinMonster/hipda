@@ -166,8 +166,12 @@ public class TextViewWithEmoticon extends AppCompatTextView {
                         ((ThreadDetailFragment) mFragment).gotoFloor(floor);
                     } else {
                         //this line is needed, or onCreateOptionsMenu and onPrepareOptionsMenu will be called multiple times
-                        mFragment.setHasOptionsMenu(false);
-                        FragmentUtils.show(mFragment.getFragmentManager(), args);
+                        if (args.getType() == FragmentArgs.TYPE_THREAD) {
+                            FragmentUtils.showThreadActivity(mFragment.getActivity(), args.isSkipEnterAnimation(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
+                        } else {
+                            mFragment.setHasOptionsMenu(false);
+                            FragmentUtils.show(mFragment.getFragmentManager(), args);
+                        }
                     }
                 }
             }

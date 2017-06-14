@@ -5,10 +5,13 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
-import com.mikepenz.iconics.IconicsDrawable;
 import com.vanniktech.emoji.EmojiPopup;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -27,9 +30,11 @@ public class BaseActivity extends AppCompatActivity {
 
     public String mSessionId;
     protected View rootView;
-    protected EmojiPopup mEmojiPopup;
-    protected IconicsDrawable mKeyboardDrawable;
-    protected IconicsDrawable mFaceDrawable;
+    protected View mMainFrameContainer;
+    protected Toolbar mToolbar;
+    protected AppBarLayout mAppBarLayout;
+    protected FloatingActionButton mMainFab;
+    protected FloatingActionButton mNotiificationFab;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,8 +65,52 @@ public class BaseActivity extends AppCompatActivity {
             super.attachBaseContext(newBase);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void updateAppBarScrollFlag() {
+        setAppBarCollapsible(HiSettingsHelper.getInstance().isAppBarCollapsible());
+    }
+
+    protected void setAppBarCollapsible(boolean collapsible) {
+        AppBarLayout.LayoutParams params =
+                (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
+        if (collapsible) {
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+                    | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+                    | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
+            mAppBarLayout.setTag("1");
+        } else {
+            params.setScrollFlags(0);
+            mAppBarLayout.setTag("0");
+            if (mMainFrameContainer.getPaddingBottom() != 0) {
+                mMainFrameContainer.setPadding(
+                        mMainFrameContainer.getPaddingLeft(),
+                        mMainFrameContainer.getPaddingTop(),
+                        mMainFrameContainer.getPaddingRight(),
+                        0);
+                mMainFrameContainer.requestLayout();
+            }
+        }
+    }
+
+    public FloatingActionButton getMainFab() {
+        return mMainFab;
+    }
+
+    public FloatingActionButton getNotificationFab() {
+        return mNotiificationFab;
+    }
+
     public EmojiPopup.Builder getEmojiBuilder() {
         return EmojiPopup.Builder.fromRootView(rootView);
     }
+
 
 }

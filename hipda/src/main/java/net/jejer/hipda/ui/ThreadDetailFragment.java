@@ -1054,7 +1054,7 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     public void startImageGallery(int imageIndex, GlideImageView imageView) {
-        if (!HiApplication.isActivityVisible() || getActivity() == null) {
+        if (getActivity() == null) {
             return;
         }
 
@@ -1145,8 +1145,10 @@ public class ThreadDetailFragment extends BaseFragment {
             if (event.mFectchType == FETCH_NORMAL || event.mFectchType == FETCH_REFRESH) {
                 if (!mDataReceived) {
                     mDataReceived = true;
-                    mMainFab.setEnabled(true);
-                    mMainFab.show();
+                    if (mMainFab != null) {
+                        mMainFab.setEnabled(true);
+                        mMainFab.show();
+                    }
                 }
                 mDetailBeans = details.getAll();
                 mDetailAdapter.setDatas(mDetailBeans);

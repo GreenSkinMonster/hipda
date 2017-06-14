@@ -50,6 +50,10 @@ public class ColorHelper {
         return getColorIdByAttr(ctx, R.attr.colorPrimary);
     }
 
+    public static int getColorPrimaryDark(Context ctx) {
+        return getColorIdByAttr(ctx, R.attr.colorPrimaryDark);
+    }
+
     public static int getListBackgroundColor(Context ctx) {
         return getColorIdByAttr(ctx, R.attr.list_item_background);
     }

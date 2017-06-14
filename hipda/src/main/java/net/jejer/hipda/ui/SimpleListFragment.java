@@ -368,7 +368,7 @@ public class SimpleListFragment extends BaseFragment
                 FragmentUtils.showSmsDetail(getFragmentManager(), false, item.getUid(), item.getAuthor());
             } else {
                 if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
-                    FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
+                    FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
                 } else if (HiUtils.isValidId(item.getUid())) {
                     FragmentUtils.showSpace(getFragmentManager(), false, item.getUid(), item.getAuthor());
                 }
@@ -465,8 +465,7 @@ public class SimpleListFragment extends BaseFragment
             page = ThreadDetailFragment.LAST_PAGE;
             floor = ThreadDetailFragment.LAST_FLOOR;
         }
-        setHasOptionsMenu(false);
-        FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), page, floor, postId, -1);
+        FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), page, floor, postId, -1);
     }
 
     public static class SearchSuggestionsAdapter extends SimpleCursorAdapter {

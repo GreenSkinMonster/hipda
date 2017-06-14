@@ -381,8 +381,7 @@ public class ThreadListFragment extends BaseFragment
             if (thread != null) {
                 String tid = thread.getTid();
                 String title = thread.getTitle();
-                setHasOptionsMenu(false);
-                FragmentUtils.showThread(getFragmentManager(), false, tid, title, -1, -1, null, thread.getMaxPage());
+                FragmentUtils.showThreadActivity(getActivity(), false, tid, title, -1, -1, null, thread.getMaxPage());
                 HistoryDao.saveHistoryInBackground(tid, mFidHolder[0] + "",
                         title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
             }
@@ -399,8 +398,7 @@ public class ThreadListFragment extends BaseFragment
                 if (maxPostsInPage > 0 && TextUtils.isDigitsOnly(thread.getCountCmts())) {
                     page = (int) Math.ceil((Integer.parseInt(thread.getCountCmts()) + 1) * 1.0f / maxPostsInPage);
                 }
-                setHasOptionsMenu(false);
-                FragmentUtils.showThread(getFragmentManager(), false, tid, title, page, ThreadDetailFragment.LAST_FLOOR, null, thread.getMaxPage());
+                FragmentUtils.showThreadActivity(getActivity(), false, tid, title, page, ThreadDetailFragment.LAST_FLOOR, null, thread.getMaxPage());
                 HistoryDao.saveHistoryInBackground(tid, "", title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
             }
         }
@@ -725,8 +723,7 @@ public class ThreadListFragment extends BaseFragment
                 Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
             }
 
-            setHasOptionsMenu(false);
-            FragmentUtils.showThread(getFragmentManager(), true, postResult.getTid(), postResult.getSubject(), -1, -1, null, -1);
+            FragmentUtils.showThreadActivity(getActivity(), true, postResult.getTid(), postResult.getSubject(), -1, -1, null, -1);
 
             refresh();
         } else {

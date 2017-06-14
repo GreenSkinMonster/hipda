@@ -126,21 +126,21 @@ public abstract class BaseFragment extends Fragment {
         mSessionId = UUID.randomUUID().toString();
         setRetainInstance(true);
 
-        if (getActivity() instanceof MainFrameActivity) {
-            MainFrameActivity mainActivity = ((MainFrameActivity) getActivity());
-            mMainFab = mainActivity.getMainFab();
-            mNotificationFab = mainActivity.getNotificationFab();
+        if (getActivity() instanceof BaseActivity) {
+            BaseActivity activity = ((BaseActivity) getActivity());
+            mMainFab = activity.getMainFab();
+            mNotificationFab = activity.getNotificationFab();
         }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() instanceof MainFrameActivity) {
-            MainFrameActivity mainActivity = ((MainFrameActivity) getActivity());
-            if (mainActivity != null) {
-                mMainFab = mainActivity.getMainFab();
-                mNotificationFab = mainActivity.getNotificationFab();
+        if (getActivity() instanceof BaseActivity) {
+            BaseActivity activity = ((BaseActivity) getActivity());
+            if (activity != null) {
+                mMainFab = activity.getMainFab();
+                mNotificationFab = activity.getNotificationFab();
                 setupFab();
             }
         }

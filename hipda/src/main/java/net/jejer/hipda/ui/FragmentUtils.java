@@ -1,8 +1,10 @@
 package net.jejer.hipda.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -170,6 +172,21 @@ public class FragmentUtils {
         fragment.setArguments(arguments);
 
         showFragment(fragmentManager, fragment, directOpen);
+    }
+
+    public static void showThreadActivity(Activity activity, boolean directOpen, String tid, String title, int page, int floor, String pid, int maxPage) {
+        Intent intent = new Intent(activity, ThreadDetailActivity.class);
+        intent.putExtra(ThreadDetailFragment.ARG_TID_KEY, tid);
+        intent.putExtra(ThreadDetailFragment.ARG_TITLE_KEY, title);
+        intent.putExtra(ThreadDetailFragment.ARG_MAX_PAGE_KEY, maxPage);
+        if (page != -1)
+            intent.putExtra(ThreadDetailFragment.ARG_PAGE_KEY, page);
+        if (floor != -1)
+            intent.putExtra(ThreadDetailFragment.ARG_FLOOR_KEY, floor);
+        if (HiUtils.isValidId(pid))
+            intent.putExtra(ThreadDetailFragment.ARG_PID_KEY, pid);
+
+        ActivityCompat.startActivity(activity, intent, null);
     }
 
     public static void showSpace(FragmentManager fragmentManager, boolean directOpen, String uid, String username) {

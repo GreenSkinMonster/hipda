@@ -98,11 +98,6 @@ public class MainFrameActivity extends BaseActivity {
     public Drawer drawer;
     private AccountHeader accountHeader;
     private ActionMode mActionMode;
-    private View mMainFrameContainer;
-    private AppBarLayout mAppBarLayout;
-    private Toolbar mToolbar;
-    private FloatingActionButton mMainFab;
-    private FloatingActionButton mNotiificationFab;
 
     private NetworkStateReceiver mNetworkReceiver = new NetworkStateReceiver();
 
@@ -338,43 +333,6 @@ public class MainFrameActivity extends BaseActivity {
             }
         });
 
-        mToolbar.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
-                if (fg instanceof ThreadDetailFragment) {
-                    ((ThreadDetailFragment) fg).showTheadTitle();
-                }
-                return true;
-            }
-        });
-
-    }
-
-    public void updateAppBarScrollFlag() {
-        setAppBarCollapsible(HiSettingsHelper.getInstance().isAppBarCollapsible());
-    }
-
-    private void setAppBarCollapsible(boolean collapsible) {
-        AppBarLayout.LayoutParams params =
-                (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
-        if (collapsible) {
-            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-                    | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-                    | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
-            mAppBarLayout.setTag("1");
-        } else {
-            params.setScrollFlags(0);
-            mAppBarLayout.setTag("0");
-            if (mMainFrameContainer.getPaddingBottom() != 0) {
-                mMainFrameContainer.setPadding(
-                        mMainFrameContainer.getPaddingLeft(),
-                        mMainFrameContainer.getPaddingTop(),
-                        mMainFrameContainer.getPaddingRight(),
-                        0);
-                mMainFrameContainer.requestLayout();
-            }
-        }
     }
 
     public void updateFabGravity() {
@@ -744,14 +702,6 @@ public class MainFrameActivity extends BaseActivity {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         }
-    }
-
-    public FloatingActionButton getMainFab() {
-        return mMainFab;
-    }
-
-    public FloatingActionButton getNotificationFab() {
-        return mNotiificationFab;
     }
 
     @SuppressWarnings("unused")

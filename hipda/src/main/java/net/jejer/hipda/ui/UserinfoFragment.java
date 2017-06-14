@@ -314,9 +314,8 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
             if (position < 0 || position >= mSimpleListAdapter.getItemCount()) {
                 return;
             }
-            setHasOptionsMenu(false);
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
-            FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), -1, -1, null, -1);
+            FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), -1, -1, null, -1);
         }
 
         @Override
@@ -324,9 +323,8 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
             if (position < 0 || position >= mSimpleListAdapter.getItemCount()) {
                 return;
             }
-            setHasOptionsMenu(false);
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
-            FragmentUtils.showThread(getFragmentManager(), false, item.getTid(), item.getTitle(), ThreadDetailFragment.LAST_PAGE, ThreadDetailFragment.LAST_FLOOR, null, -1);
+            FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), ThreadDetailFragment.LAST_PAGE, ThreadDetailFragment.LAST_FLOOR, null, -1);
         }
 
         @Override
