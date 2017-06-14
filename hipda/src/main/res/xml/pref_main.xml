@@ -2,14 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference
-        android:inputType="text"
-        android:key="PERF_USERNAME"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_username"/>
-
-    <Preference
         android:key="PERF_SUPPORT"
         android:summary="@string/pref_summary_support"
         android:title="@string/pref_title_support"

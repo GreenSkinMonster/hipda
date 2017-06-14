@@ -1,21 +1,16 @@
 package net.jejer.hipda.ui.setting;
 
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 import android.view.Menu;
-import android.widget.Toast;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
@@ -25,10 +20,10 @@ import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -162,48 +157,6 @@ public class SettingMainFragment extends BaseSettingFragment {
     }
 
     private void bindPreferenceSummaryToValue() {
-
-        final Preference userPreference = findPreference(HiSettingsHelper.PERF_USERNAME);
-        if (LoginHelper.isLoggedIn())
-            userPreference.setSummary(HtmlCompat.fromHtml(HiSettingsHelper.getInstance().getUsername() + "    <font color=grey>(已登录)</font>"));
-        else
-            userPreference.setSummary(HtmlCompat.fromHtml("<font color=grey>(未登录)</font>"));
-
-        userPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                if (LoginHelper.isLoggedIn()) {
-                    Dialog dialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("退出登录？")
-                            .setMessage("\n确认清除当前用户的登录信息？\n")
-                            .setPositiveButton(getResources().getString(android.R.string.ok),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            HiSettingsHelper.getInstance().setUsername("");
-                                            HiSettingsHelper.getInstance().setPassword("");
-                                            HiSettingsHelper.getInstance().setSecQuestion("");
-                                            HiSettingsHelper.getInstance().setSecAnswer("");
-                                            HiSettingsHelper.getInstance().setUid("");
-                                            LoginHelper.logout();
-                                            userPreference.setSummary(HtmlCompat.fromHtml("<font color=grey>(未登录)</font>"));
-                                            ((MainFrameActivity) getActivity()).updateAccountHeader();
-                                        }
-                                    })
-                            .setNegativeButton(getResources().getString(android.R.string.cancel),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    }).create();
-                    dialog.show();
-                } else {
-                    Toast.makeText(getActivity(), "已经退出登录，返回可以重新登录", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            }
-        });
-
-
         Preference dialogPref = findPreference(HiSettingsHelper.PERF_ABOUT);
 
         dialogPref.setSummary(HiApplication.getAppVersion()
@@ -215,20 +168,27 @@ public class SettingMainFragment extends BaseSettingFragment {
             }
         });
 
-        Preference checkPreference = findPreference(HiSettingsHelper.PERF_LAST_UPDATE_CHECK);
+        final Preference checkPreference = findPreference(HiSettingsHelper.PERF_LAST_UPDATE_CHECK);
         checkPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
+                checkPreference.setSummary("上次检查 ：" + Utils.formatDate(new Date()));
                 new UpdateHelper(getActivity(), false).check();
                 return true;
             }
         });
+        Date lastCheckTime = HiSettingsHelper.getInstance().getLastUpdateCheckTime();
+        if (lastCheckTime != null) {
+            checkPreference.setSummary("上次检查 ：" + Utils.formatDate(lastCheckTime));
+        } else {
+            checkPreference.setSummary("上次检查 ：- ");
+        }
 
         Preference supportPreference = findPreference(HiSettingsHelper.PERF_SUPPORT);
         supportPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 setHasOptionsMenu(false);
                 FragmentUtils.show(getFragmentManager(),
-                        FragmentUtils.parseUrl(HiUtils.BaseUrl + "viewthread.php?tid=1579403"));
+                        FragmentUtils.parseUrl(HiUtils.BaseUrl + "viewthread.php?tid=" + HiUtils.CLIENT_TID));
                 return true;
             }
         });

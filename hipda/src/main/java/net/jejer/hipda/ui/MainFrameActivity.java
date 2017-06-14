@@ -1,7 +1,9 @@
 package net.jejer.hipda.ui;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -19,6 +21,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
@@ -50,6 +53,7 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.vanniktech.emoji.EmojiHandler;
@@ -57,6 +61,7 @@ import com.vanniktech.emoji.EmojiPopup;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginEvent;
+import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.async.UpdateHelper;
@@ -66,6 +71,8 @@ import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
+import net.jejer.hipda.ui.widget.HiProgressDialog;
+import net.jejer.hipda.ui.widget.LoginDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.OnSwipeTouchListener;
 import net.jejer.hipda.utils.ColorHelper;
@@ -256,6 +263,7 @@ public class MainFrameActivity extends AppCompatActivity {
                                 .withEmail(username)
                                 .withIcon(avatarUrl)
                 )
+                .withOnAccountHeaderProfileImageListener(new ProfileImageListener())
                 .build();
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
@@ -618,6 +626,52 @@ public class MainFrameActivity extends AppCompatActivity {
             return false;
         }
 
+    }
+
+    private class ProfileImageListener implements AccountHeader.OnAccountHeaderProfileImageListener {
+
+        @Override
+        public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
+            if (LoginHelper.isLoggedIn()) {
+                Dialog dialog = new AlertDialog.Builder(MainFrameActivity.this)
+                        .setTitle("退出登录？")
+                        .setMessage("确认退出当前登录用户 <" + HiSettingsHelper.getInstance().getUsername() + "> ，并清除保存的登录信息？\n")
+                        .setPositiveButton(getResources().getString(android.R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        HiProgressDialog progressDialog = HiProgressDialog.show(MainFrameActivity.this, "正在退出...");
+                                        HiSettingsHelper.getInstance().setUsername("");
+                                        HiSettingsHelper.getInstance().setPassword("");
+                                        HiSettingsHelper.getInstance().setSecQuestion("");
+                                        HiSettingsHelper.getInstance().setSecAnswer("");
+                                        HiSettingsHelper.getInstance().setUid("");
+                                        LoginHelper.logout();
+                                        updateAccountHeader();
+                                        progressDialog.dismiss("已退出登录状态", 3000);
+                                    }
+                                })
+                        .setNegativeButton(getResources().getString(android.R.string.cancel),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                }).create();
+                dialog.show();
+            } else {
+                LoginDialog dialog = LoginDialog.getInstance(MainFrameActivity.this);
+                if (dialog != null) {
+                    dialog.setTitle("用户登录");
+                    dialog.show();
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onProfileImageLongClick(View view, IProfile profile, boolean current) {
+            return false;
+        }
     }
 
     private void clearBackStacks(boolean resetActionBarTitle) {
