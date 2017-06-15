@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -36,7 +35,7 @@ import java.util.UUID;
  * Created by GreenSkinMonster on 2016-11-30.
  */
 
-public class ImageViewerActivity extends AppCompatActivity {
+public class ImageViewerActivity extends SwipeBackActivity {
 
     public static final String KEY_IMAGES = "images";
     public static final String KEY_IMAGE_INDEX = "imageIndex";

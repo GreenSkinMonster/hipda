@@ -19,7 +19,7 @@ import net.jejer.hipda.utils.UIUtils;
  * Created by GreenSkinMonster on 2017-06-14.
  */
 
-public class ThreadDetailActivity extends BaseActivity {
+public class ThreadDetailActivity extends SwipeBaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

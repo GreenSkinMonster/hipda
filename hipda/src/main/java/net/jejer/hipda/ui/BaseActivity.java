@@ -55,7 +55,9 @@ public class BaseActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && HiSettingsHelper.getInstance().isNavBarColored()) {
             getWindow().setNavigationBarColor(ColorHelper.getColorPrimary(this));
         }
+
     }
+
 
     @Override
     protected void attachBaseContext(Context newBase) {

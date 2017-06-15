@@ -9,7 +9,7 @@ import net.jejer.hipda.R;
  * Created by GreenSkinMonster on 2017-06-15.
  */
 
-public class SmsActivity extends BaseActivity {
+public class SmsActivity extends SwipeBaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
