@@ -370,7 +370,7 @@ public class SimpleListFragment extends BaseFragment
                 if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
                     FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
                 } else if (HiUtils.isValidId(item.getUid())) {
-                    FragmentUtils.showSpace(getFragmentManager(), false, item.getUid(), item.getAuthor());
+                    FragmentUtils.showUserInfoActivity(getActivity(), item.getUid(), item.getAuthor());
                 }
             }
         }
@@ -391,7 +391,7 @@ public class SimpleListFragment extends BaseFragment
                 if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
                     showLastPage(item);
                 } else if (HiUtils.isValidId(item.getUid())) {
-                    FragmentUtils.showSpace(getFragmentManager(), false, item.getUid(), item.getAuthor());
+                    FragmentUtils.showUserInfoActivity(getActivity(), item.getUid(), item.getAuthor());
                 }
             }
         }

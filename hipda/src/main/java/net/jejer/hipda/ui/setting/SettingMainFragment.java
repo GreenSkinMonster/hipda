@@ -187,7 +187,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         supportPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 setHasOptionsMenu(false);
-                FragmentUtils.show(getFragmentManager(),
+                FragmentUtils.show(getActivity(),
                         FragmentUtils.parseUrl(HiUtils.BaseUrl + "viewthread.php?tid=" + HiUtils.CLIENT_TID));
                 return true;
             }

@@ -103,7 +103,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_userinfo, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_info, container, false);
         view.setClickable(false);
 
         mAvatarView = (ImageView) view.findViewById(R.id.userinfo_avatar);

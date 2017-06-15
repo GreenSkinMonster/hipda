@@ -170,7 +170,7 @@ public class TextViewWithEmoticon extends AppCompatTextView {
                             FragmentUtils.showThreadActivity(mFragment.getActivity(), args.isSkipEnterAnimation(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
                         } else {
                             mFragment.setHasOptionsMenu(false);
-                            FragmentUtils.show(mFragment.getFragmentManager(), args);
+                            FragmentUtils.show(mFragment.getActivity(), args);
                         }
                     }
                 }

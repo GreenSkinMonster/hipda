@@ -82,7 +82,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     void syncActionBarState() {
-        if (getActivity() != null) {
+        if (getActivity() != null && getActivity() instanceof MainFrameActivity) {
             Drawer drawerResult = ((MainFrameActivity) getActivity()).drawer;
             if (drawerResult != null)
                 drawerResult.getActionBarDrawerToggle().syncState();
@@ -91,7 +91,7 @@ public abstract class BaseFragment extends Fragment {
 
     void setDrawerSelection(int forumId) {
         //re-select forum on back
-        if (getActivity() != null) {
+        if (getActivity() != null && getActivity() instanceof MainFrameActivity) {
             Drawer drawer = ((MainFrameActivity) getActivity()).drawer;
             if (drawer != null && !drawer.isDrawerOpen()) {
                 int position = drawer.getPosition(forumId);

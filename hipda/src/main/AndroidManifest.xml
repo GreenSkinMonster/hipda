@@ -115,6 +115,7 @@
             android:theme="@style/ThemeBlack"/>
         <activity android:name=".ui.PostActivity"/>
         <activity android:name=".ui.ThreadDetailActivity"/>
+        <activity android:name=".ui.UserInfoActivity"/>
 
     </application>
 

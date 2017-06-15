@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
@@ -137,7 +139,7 @@ public class FragmentUtils {
 
             if (HiUtils.isValidId(uid)) {
                 FragmentArgs args = new FragmentArgs();
-                args.setType(FragmentArgs.TYPE_SPACE);
+                args.setType(FragmentArgs.TYPE_USER_INFO);
                 args.setUid(uid);
                 return args;
             }
@@ -157,7 +159,7 @@ public class FragmentUtils {
                 .commitAllowingStateLoss();
     }
 
-    public static void showThread(FragmentManager fragmentManager, boolean directOpen, String tid, String title, int page, int floor, String pid, int maxPage) {
+    public static void showThread(FragmentManager fragmentManager, boolean skipEnterAnim, String tid, String title, int page, int floor, String pid, int maxPage) {
         Bundle arguments = new Bundle();
         arguments.putString(ThreadDetailFragment.ARG_TID_KEY, tid);
         arguments.putString(ThreadDetailFragment.ARG_TITLE_KEY, title);
@@ -171,10 +173,10 @@ public class FragmentUtils {
         ThreadDetailFragment fragment = new ThreadDetailFragment();
         fragment.setArguments(arguments);
 
-        showFragment(fragmentManager, fragment, directOpen);
+        showFragment(fragmentManager, fragment, skipEnterAnim);
     }
 
-    public static void showThreadActivity(Activity activity, boolean directOpen, String tid, String title, int page, int floor, String pid, int maxPage) {
+    public static void showThreadActivity(Activity activity, boolean skipEnterAnim, String tid, String title, int page, int floor, String pid, int maxPage) {
         Intent intent = new Intent(activity, ThreadDetailActivity.class);
         intent.putExtra(ThreadDetailFragment.ARG_TID_KEY, tid);
         intent.putExtra(ThreadDetailFragment.ARG_TITLE_KEY, title);
@@ -186,17 +188,30 @@ public class FragmentUtils {
         if (HiUtils.isValidId(pid))
             intent.putExtra(ThreadDetailFragment.ARG_PID_KEY, pid);
 
-        ActivityCompat.startActivity(activity, intent, null);
+        ActivityOptionsCompat options;
+        if (skipEnterAnim) {
+            options = ActivityOptionsCompat.makeBasic();
+        } else {
+            options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_left, R.anim.no_anim);
+        }
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
-    public static void showSpace(FragmentManager fragmentManager, boolean directOpen, String uid, String username) {
+    public static void showUserInfo(FragmentManager fragmentManager, boolean skipEnterAnim, String uid, String username) {
         Bundle arguments = new Bundle();
         arguments.putString(UserinfoFragment.ARG_UID, uid);
         arguments.putString(UserinfoFragment.ARG_USERNAME, username);
         UserinfoFragment fragment = new UserinfoFragment();
         fragment.setArguments(arguments);
 
-        showFragment(fragmentManager, fragment, directOpen);
+        showFragment(fragmentManager, fragment, skipEnterAnim);
+    }
+
+    public static void showUserInfoActivity(Activity activity, String uid, String username) {
+        Intent intent = new Intent(activity, UserInfoActivity.class);
+        intent.putExtra(UserinfoFragment.ARG_UID, uid);
+        intent.putExtra(UserinfoFragment.ARG_USERNAME, username);
+        ActivityCompat.startActivity(activity, intent, null);
     }
 
     public static void showThreadNotify(FragmentManager fragmentManager, boolean skipEnterAnimation) {
@@ -242,21 +257,24 @@ public class FragmentUtils {
         showFragment(fragmentManager, fragment, false);
     }
 
-    public static void show(FragmentManager fragmentManager, FragmentArgs args) {
+    public static void show(FragmentActivity activity, FragmentArgs args) {
         if (args == null)
             return;
-        if (args.getType() == FragmentArgs.TYPE_THREAD)
-            showThread(fragmentManager, args.isSkipEnterAnimation(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
-        else if (args.getType() == FragmentArgs.TYPE_SPACE)
-            showSpace(fragmentManager, args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
-        else if (args.getType() == FragmentArgs.TYPE_SMS)
-            showSmsList(fragmentManager, args.isSkipEnterAnimation());
-        else if (args.getType() == FragmentArgs.TYPE_SMS_DETAIL)
-            showSmsDetail(fragmentManager, args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
-        else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY)
-            showThreadNotify(fragmentManager, args.isSkipEnterAnimation());
-        else if (args.getType() == FragmentArgs.TYPE_FORUM)
-            showForum(fragmentManager, args.getFid());
+        if (args.getType() == FragmentArgs.TYPE_THREAD) {
+            showThreadActivity(activity, args.isSkipEnterAnimation(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
+            //showThread(activity.getSupportFragmentManager(), args.isSkipEnterAnimation(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
+        } else if (args.getType() == FragmentArgs.TYPE_USER_INFO) {
+            //showUserInfo(activity.getSupportFragmentManager(), args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
+            showUserInfoActivity(activity, args.getUid(), args.getUsername());
+        } else if (args.getType() == FragmentArgs.TYPE_SMS) {
+            showSmsList(activity.getSupportFragmentManager(), args.isSkipEnterAnimation());
+        } else if (args.getType() == FragmentArgs.TYPE_SMS_DETAIL) {
+            showSmsDetail(activity.getSupportFragmentManager(), args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
+        } else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY) {
+            showThreadNotify(activity.getSupportFragmentManager(), args.isSkipEnterAnimation());
+        } else if (args.getType() == FragmentArgs.TYPE_FORUM) {
+            showForum(activity.getSupportFragmentManager(), args.getFid());
+        }
     }
 
 }

@@ -24,7 +24,6 @@ public class ThreadDetailActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(R.anim.slide_in_left, R.anim.no_anim);
 
         setContentView(R.layout.activity_thread_detail);
         rootView = findViewById(R.id.main_activity_root_view);

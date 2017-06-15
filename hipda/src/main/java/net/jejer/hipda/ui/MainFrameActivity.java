@@ -160,7 +160,7 @@ public class MainFrameActivity extends BaseActivity {
             FragmentUtils.showForum(getSupportFragmentManager(), fid);
 
             if (args != null)
-                FragmentUtils.show(getSupportFragmentManager(), args);
+                FragmentUtils.show(this, args);
 
             TaskHelper.runDailyTask(false);
 
@@ -187,7 +187,7 @@ public class MainFrameActivity extends BaseActivity {
             HiParserThreadList.holdFetchNotify();
             clearBackStacks(false);
             args.setSkipEnterAnimation(true);
-            FragmentUtils.show(getSupportFragmentManager(), args);
+            FragmentUtils.show(this, args);
         }
     }
 
