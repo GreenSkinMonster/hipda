@@ -287,7 +287,9 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public boolean popFragment() {
-        return getActivity() != null && ((MainFrameActivity) getActivity()).popFragment();
+        return getActivity() != null
+                && (getActivity() instanceof MainFrameActivity)
+                && ((MainFrameActivity) getActivity()).popFragment();
     }
 
     protected void setUpEmojiPopup(final EmojiEditText mEtContent, final ImageButton mIbEmojiSwitch) {

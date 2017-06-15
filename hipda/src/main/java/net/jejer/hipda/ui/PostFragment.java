@@ -553,7 +553,7 @@ public class PostFragment extends BaseFragment {
         postBean.setDelete(mDeleteMode);
 
         JobMgr.addJob(new PostJob(mParentSessionId, mMode, mPrePostInfo, postBean));
-        getActivity().onBackPressed();
+        getActivity().finish();
     }
 
     @Override
@@ -822,7 +822,7 @@ public class PostFragment extends BaseFragment {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    PostFragment.this.popFragment();
+                                    PostFragment.this.getActivity().finish();
                                 }
                             })
                     .setNegativeButton(getResources().getString(android.R.string.cancel),

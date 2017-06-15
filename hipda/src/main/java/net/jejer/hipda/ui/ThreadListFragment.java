@@ -284,7 +284,7 @@ public class ThreadListFragment extends BaseFragment
                             && bean.getThreadCount() == 0
                             && HiUtils.isValidId(bean.getUid())
                             && !TextUtils.isEmpty(bean.getUsername())) {
-                        FragmentUtils.showSmsDetail(getFragmentManager(), true, bean.getUid(), bean.getUsername());
+                        FragmentUtils.showSmsActivity(getActivity(), bean.getUid(), bean.getUsername());
                         NotificationMgr.getCurrentNotification().clearSmsCount();
                         showNotification();
                     } else if (bean.getSmsCount() > 0) {

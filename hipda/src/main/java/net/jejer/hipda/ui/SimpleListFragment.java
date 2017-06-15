@@ -38,6 +38,7 @@ import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.SimpleListEvent;
 import net.jejer.hipda.job.SimpleListJob;
+import net.jejer.hipda.job.SmsRefreshEvent;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SimpleListAdapter;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
@@ -357,16 +358,15 @@ public class SimpleListFragment extends BaseFragment
             if (position < 0 || position >= mSimpleListAdapter.getItemCount()) {
                 return;
             }
-            setHasOptionsMenu(false);
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
 
-            Fragment listFragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
-            if (listFragment != null)
-                listFragment.setHasOptionsMenu(false);
-
             if (mType == SimpleListJob.TYPE_SMS) {
-                FragmentUtils.showSmsDetail(getFragmentManager(), false, item.getUid(), item.getAuthor());
+                FragmentUtils.showSmsActivity(getActivity(), item.getUid(), item.getAuthor());
             } else {
+                setHasOptionsMenu(false);
+                Fragment listFragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+                if (listFragment != null)
+                    listFragment.setHasOptionsMenu(false);
                 if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
                     FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
                 } else if (HiUtils.isValidId(item.getUid())) {
@@ -645,6 +645,14 @@ public class SimpleListFragment extends BaseFragment
             return;
         EventBus.getDefault().removeStickyEvent(event);
         mEventCallback.process(event);
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(SmsRefreshEvent event) {
+        EventBus.getDefault().removeStickyEvent(event);
+        if (mType == SimpleListJob.TYPE_SMS)
+            onRefresh();
     }
 
     @SuppressWarnings("unused")

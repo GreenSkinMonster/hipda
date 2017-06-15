@@ -239,6 +239,15 @@ public class FragmentUtils {
         showFragment(fragmentManager, fragment, skipEnterAnimation);
     }
 
+    public static void showSmsActivity(Activity activity, String uid, String author) {
+        Intent intent = new Intent(activity, SmsActivity.class);
+        intent.putExtra(SmsFragment.ARG_AUTHOR, author);
+        intent.putExtra(SmsFragment.ARG_UID, uid);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_left, R.anim.no_anim);
+        ;
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
+    }
+
     public static void showFragment(FragmentManager fragmentManager, Fragment fragment, boolean skipEnterAnimation) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
@@ -269,7 +278,8 @@ public class FragmentUtils {
         } else if (args.getType() == FragmentArgs.TYPE_SMS) {
             showSmsList(activity.getSupportFragmentManager(), args.isSkipEnterAnimation());
         } else if (args.getType() == FragmentArgs.TYPE_SMS_DETAIL) {
-            showSmsDetail(activity.getSupportFragmentManager(), args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
+            //showSmsDetail(activity.getSupportFragmentManager(), args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
+            showSmsActivity(activity, args.getUid(), args.getUsername());
         } else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY) {
             showThreadNotify(activity.getSupportFragmentManager(), args.isSkipEnterAnimation());
         } else if (args.getType() == FragmentArgs.TYPE_FORUM) {

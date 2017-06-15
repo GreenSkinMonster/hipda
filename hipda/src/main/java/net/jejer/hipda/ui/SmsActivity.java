@@ -1,22 +1,21 @@
 package net.jejer.hipda.ui;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 
 import net.jejer.hipda.R;
 
 /**
- * Created by GreenSkinMonster on 2017-06-14.
+ * Created by GreenSkinMonster on 2017-06-15.
  */
 
-public class PostActivity extends BaseActivity {
+public class SmsActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_post);
+        setContentView(R.layout.activity_sms);
         rootView = findViewById(R.id.main_activity_root_view);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -26,21 +25,20 @@ public class PostActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle arguments = getIntent().getExtras();
-        PostFragment fragment = new PostFragment();
+        SmsFragment fragment = new SmsFragment();
         fragment.setArguments(arguments);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.main_frame_container, fragment).commit();
     }
 
     @Override
-    public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_right);
+    }
 
-        if (fragment instanceof BaseFragment) {
-            if (!((BaseFragment) fragment).onBackPressed()) {
-                finish();
-            }
-        }
+    public void finishWithDelete() {
+        super.finish();
     }
 
 }

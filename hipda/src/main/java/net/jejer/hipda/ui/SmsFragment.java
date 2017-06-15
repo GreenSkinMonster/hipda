@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -35,6 +33,7 @@ import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.SimpleListEvent;
 import net.jejer.hipda.job.SimpleListJob;
+import net.jejer.hipda.job.SmsRefreshEvent;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SmsAdapter;
@@ -206,23 +205,15 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                             @Override
                             public void onError(Request request, Exception e) {
                                 progress.dismissError("操作时发生错误 : " + OkHttpHelper.getErrorMessage(e));
-                                popFragment();
-                                FragmentManager fm = getActivity().getSupportFragmentManager();
-                                Fragment fragment = fm.findFragmentByTag(SimpleListFragment.class.getName());
-                                if (fragment != null && fragment instanceof SimpleListFragment) {
-                                    ((SimpleListFragment) fragment).onRefresh();
-                                }
+                                EventBus.getDefault().postSticky(new SmsRefreshEvent());
+                                ((SmsActivity) getActivity()).finishWithDelete();
                             }
 
                             @Override
                             public void onResponse(String response) {
                                 progress.dismiss("操作完成");
-                                popFragment();
-                                FragmentManager fm = getActivity().getSupportFragmentManager();
-                                Fragment fragment = fm.findFragmentByTag(SimpleListFragment.class.getName());
-                                if (fragment != null && fragment instanceof SimpleListFragment) {
-                                    ((SimpleListFragment) fragment).onRefresh();
-                                }
+                                EventBus.getDefault().postSticky(new SmsRefreshEvent());
+                                ((SmsActivity) getActivity()).finishWithDelete();
                             }
                         });
 
