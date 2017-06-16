@@ -17,6 +17,8 @@ import net.jejer.hipda.utils.Utils;
  */
 public class AboutFragment extends BaseFragment {
 
+    public static final String TAG_KEY = "ABOUT_KEY";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

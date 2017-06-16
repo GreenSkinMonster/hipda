@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 
 import com.thebluealliance.spectrum.SpectrumPreferenceCompat;
 
-import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Utils;
 
@@ -41,19 +40,6 @@ public class BaseSettingFragment extends PreferenceFragmentCompat {
         if (view != null)
             view.setBackgroundColor(ColorHelper.getListBackgroundColor(getActivity()));
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null) {
-            MainFrameActivity mainFrameActivity = (MainFrameActivity) getActivity();
-            mainFrameActivity.setDrawerHomeIdicator(true);
-            mainFrameActivity.getMainFab().hide();
-            mainFrameActivity.getMainFab().setEnabled(false);
-            mainFrameActivity.getNotificationFab().hide();
-            mainFrameActivity.getNotificationFab().setEnabled(false);
-        }
     }
 
     protected void setActionBarTitle(CharSequence title) {

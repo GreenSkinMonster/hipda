@@ -16,6 +16,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -63,9 +65,9 @@ import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.Forum;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.job.SettingChangedEvent;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
-import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.LoginDialog;
@@ -479,62 +481,32 @@ public class MainFrameActivity extends BaseActivity {
 
             switch ((int) iDrawerItem.getIdentifier()) {
                 case Constants.DRAWER_SEARCH:
-//                    Bundle searchBundle = new Bundle();
-//                    searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_SEARCH);
-//                    SimpleListFragment searchFragment = new SimpleListFragment();
-//                    searchFragment.setArguments(searchBundle);
-//                    FragmentUtils.showFragment(getSupportFragmentManager(), searchFragment, true);
                     FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_SEARCH);
                     break;
                 case Constants.DRAWER_MYPOST:
-//                    Bundle postsBundle = new Bundle();
-//                    postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_MYPOST);
-//                    SimpleListFragment postsFragment = new SimpleListFragment();
-//                    postsFragment.setArguments(postsBundle);
-//                    FragmentUtils.showFragment(getSupportFragmentManager(), postsFragment, true);
                     FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_MYPOST);
                     break;
                 case Constants.DRAWER_MYREPLY:
-//                    Bundle replyBundle = new Bundle();
-//                    replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_MYREPLY);
-//                    SimpleListFragment replyFragment = new SimpleListFragment();
-//                    replyFragment.setArguments(replyBundle);
-//                    FragmentUtils.showFragment(getSupportFragmentManager(), replyFragment, true);
                     FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_MYREPLY);
                     break;
                 case Constants.DRAWER_FAVORITES:
-//                    Bundle favBundle = new Bundle();
-//                    favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_FAVORITES);
-//                    SimpleListFragment favFragment = new SimpleListFragment();
-//                    favFragment.setArguments(favBundle);
-//                    FragmentUtils.showFragment(getSupportFragmentManager(), favFragment, true);
                     FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_FAVORITES);
                     break;
                 case Constants.DRAWER_HISTORIES:
-//                    Bundle hisBundle = new Bundle();
-//                    hisBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_HISTORIES);
-//                    SimpleListFragment hisFragment = new SimpleListFragment();
-//                    hisFragment.setArguments(hisBundle);
-//                    FragmentUtils.showFragment(getSupportFragmentManager(), hisFragment, true);
                     FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_HISTORIES);
                     break;
                 case Constants.DRAWER_SMS:
-                    //FragmentUtils.showSmsList(getSupportFragmentManager(), true);
                     FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_SMS);
                     break;
                 case Constants.DRAWER_THREADNOTIFY:
-                    //FragmentUtils.showThreadNotify(getSupportFragmentManager(), true);
                     FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_THREAD_NOTIFY);
                     break;
                 case Constants.DRAWER_SETTINGS:
-                    Fragment fragment = new SettingMainFragment();
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_frame_container, fragment, fragment.getClass().getName())
-                            .addToBackStack(fragment.getClass().getName())
-                            .commit();
+                    Intent intent = new Intent(MainFrameActivity.this, SettingActivity.class);
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(MainFrameActivity.this, R.anim.slide_in_left, R.anim.no_anim);
+                    ActivityCompat.startActivity(MainFrameActivity.this, intent, options.toBundle());
                     break;
                 default:
-                    //for forums
                     int forumId = (int) iDrawerItem.getIdentifier();
                     FragmentUtils.showForum(getSupportFragmentManager(), forumId);
                     break;
@@ -704,6 +676,21 @@ public class MainFrameActivity extends BaseActivity {
             }
         }
         updateAccountHeader();
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(SettingChangedEvent event) {
+        if (event.mRestart) {
+            Utils.restartActivity(this);
+        } else {
+            updateAppBarScrollFlag();
+            updateFabGravity();
+            Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+            if (fg instanceof ThreadListFragment) {
+                ((ThreadListFragment) fg).notifyDataSetChanged();
+            }
+        }
     }
 
     @Override

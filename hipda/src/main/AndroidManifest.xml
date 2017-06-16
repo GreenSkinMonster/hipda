@@ -118,6 +118,7 @@
         <activity android:name=".ui.UserInfoActivity"/>
         <activity android:name=".ui.SmsActivity"/>
         <activity android:name=".ui.SimpleListActivity"/>
+        <activity android:name=".ui.SettingActivity"/>
 
     </application>
 

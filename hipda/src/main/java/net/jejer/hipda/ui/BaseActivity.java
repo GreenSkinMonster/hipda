@@ -130,6 +130,8 @@ public class BaseActivity extends AppCompatActivity {
             if (!((BaseFragment) fragment).onBackPressed()) {
                 finish();
             }
+        } else {
+            super.onBackPressed();
         }
     }
 

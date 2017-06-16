@@ -349,6 +349,11 @@ public class ThreadListFragment extends BaseFragment
             mLoadingView.setState(ContentLoadingView.CONTENT);
     }
 
+    public void notifyDataSetChanged() {
+        if (mThreadListAdapter != null)
+            mThreadListAdapter.notifyDataSetChanged();
+    }
+
     private class OnScrollListener extends RecyclerView.OnScrollListener {
         int visibleItemCount, totalItemCount;
 

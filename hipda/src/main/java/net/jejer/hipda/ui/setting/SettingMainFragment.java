@@ -2,26 +2,31 @@ package net.jejer.hipda.ui.setting;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.preference.Preference;
 import android.text.TextUtils;
-import android.view.Menu;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.job.SettingChangedEvent;
 import net.jejer.hipda.ui.AboutFragment;
 import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
+import net.jejer.hipda.ui.SettingActivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Date;
 import java.util.List;
@@ -69,14 +74,10 @@ public class SettingMainFragment extends BaseSettingFragment {
                     if (elapsedTime <= Constants.MIN_CLICK_INTERVAL)
                         return true;
 
-                    Fragment fragment = new SettingNestedFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(SettingNestedFragment.TAG_KEY, screenKey);
-                    fragment.setArguments(bundle);
-                    getFragmentManager().beginTransaction()
-                            .add(R.id.main_frame_container, fragment)
-                            .addToBackStack(fragment.getClass().getName())
-                            .commit();
+                    Intent intent = new Intent(getActivity(), SettingActivity.class);
+                    intent.putExtra(SettingNestedFragment.TAG_KEY, screenKey);
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(getActivity(), R.anim.slide_in_left, R.anim.no_anim);
+                    ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
                     return true;
                 }
             });
@@ -95,17 +96,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         mTrustAllCerts = HiSettingsHelper.getInstance().isTrustAllCerts();
         mCircleAvatar = HiSettingsHelper.getInstance().isCircleAvatar();
 
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
         setActionBarTitle(R.string.title_fragment_settings);
     }
 
@@ -114,6 +104,8 @@ public class SettingMainFragment extends BaseSettingFragment {
         super.onStop();
 
         HiSettingsHelper.getInstance().reload();
+
+        SettingChangedEvent event = new SettingChangedEvent();
 
         if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
             if (NotificationMgr.isAlarmRuning(getActivity()))
@@ -149,11 +141,9 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || HiSettingsHelper.getInstance().isTrustAllCerts() != mTrustAllCerts
                 || !mIcon.equals(newIcon)) {
             mCacheCleared = false;
-            Utils.restartActivity(getActivity());
+            event.mRestart = true;
         }
-
-        ((MainFrameActivity) getActivity()).updateAppBarScrollFlag();
-        ((MainFrameActivity) getActivity()).updateFabGravity();
+        EventBus.getDefault().postSticky(event);
     }
 
     private void bindPreferenceSummaryToValue() {
@@ -163,7 +153,11 @@ public class SettingMainFragment extends BaseSettingFragment {
                 + (Utils.isFromGooglePlay(getActivity()) ? " (Google Play)" : ""));
         dialogPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                FragmentUtils.showFragment(getFragmentManager(), new AboutFragment());
+
+                Intent intent = new Intent(getActivity(), SettingActivity.class);
+                intent.putExtra(AboutFragment.TAG_KEY, AboutFragment.TAG_KEY);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(getActivity(), R.anim.slide_in_left, R.anim.no_anim);
+                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
                 return true;
             }
         });

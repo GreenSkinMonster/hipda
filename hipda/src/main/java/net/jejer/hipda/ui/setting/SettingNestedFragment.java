@@ -49,7 +49,6 @@ public class SettingNestedFragment extends BaseSettingFragment {
     @Override
     public void onStop() {
         super.onStop();
-        setActionBarTitle("设置");
         UIUtils.getSaveFolder();
     }
 
