@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.widget.swipeback.SwipeBackActivityBase;
 import net.jejer.hipda.ui.widget.swipeback.SwipeBackActivityHelper;
 import net.jejer.hipda.ui.widget.swipeback.SwipeBackLayout;
@@ -28,6 +29,8 @@ public class SwipeBaseActivity extends BaseActivity implements SwipeBackActivity
 
         int width = metrics.widthPixels;
         getSwipeBackLayout().setEdgeSize((int) (width * 0.7));
+
+        setSwipeBackEnable(HiSettingsHelper.getInstance().isGestureBack());
     }
 
     @Override

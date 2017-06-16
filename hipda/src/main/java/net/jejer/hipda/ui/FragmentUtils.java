@@ -244,7 +244,13 @@ public class FragmentUtils {
         intent.putExtra(SmsFragment.ARG_AUTHOR, author);
         intent.putExtra(SmsFragment.ARG_UID, uid);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_left, R.anim.no_anim);
-        ;
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
+    }
+
+    public static void showSimpleListActivity(Activity activity, int type) {
+        Intent intent = new Intent(activity, SimpleListActivity.class);
+        intent.putExtra(SimpleListFragment.ARG_TYPE, type);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_left, R.anim.no_anim);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 

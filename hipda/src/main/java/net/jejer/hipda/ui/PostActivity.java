@@ -1,7 +1,6 @@
 package net.jejer.hipda.ui;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 
 import net.jejer.hipda.R;
@@ -35,17 +34,6 @@ public class PostActivity extends SwipeBaseActivity {
                 .add(R.id.main_frame_container, fragment).commit();
 
         setSwipeBackEnable(false);
-    }
-
-    @Override
-    public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
-
-        if (fragment instanceof BaseFragment) {
-            if (!((BaseFragment) fragment).onBackPressed()) {
-                finish();
-            }
-        }
     }
 
 }

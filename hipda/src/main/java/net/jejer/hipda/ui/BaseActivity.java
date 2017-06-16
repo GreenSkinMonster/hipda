@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import android.view.View;
 
 import com.vanniktech.emoji.EmojiPopup;
 
+import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HiUtils;
@@ -119,6 +121,16 @@ public class BaseActivity extends AppCompatActivity {
 
     public View getToolbar() {
         return mToolbar;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
+        if (fragment instanceof BaseFragment) {
+            if (!((BaseFragment) fragment).onBackPressed()) {
+                finish();
+            }
+        }
     }
 
 }

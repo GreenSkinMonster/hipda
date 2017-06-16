@@ -117,6 +117,7 @@
         <activity android:name=".ui.ThreadDetailActivity"/>
         <activity android:name=".ui.UserInfoActivity"/>
         <activity android:name=".ui.SmsActivity"/>
+        <activity android:name=".ui.SimpleListActivity"/>
 
     </application>
 

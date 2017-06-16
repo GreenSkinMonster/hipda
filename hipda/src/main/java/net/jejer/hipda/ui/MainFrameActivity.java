@@ -70,7 +70,6 @@ import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.LoginDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
-import net.jejer.hipda.ui.widget.OnSwipeTouchListener;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
@@ -92,8 +91,6 @@ public class MainFrameActivity extends BaseActivity {
 
     public final static int PERMISSIONS_REQUEST_CODE_STORAGE = 200;
     public final static int PERMISSIONS_REQUEST_CODE_BOTH = 201;
-
-    private OnSwipeTouchListener mSwipeListener;
 
     public Drawer drawer;
     private AccountHeader accountHeader;
@@ -128,18 +125,6 @@ public class MainFrameActivity extends BaseActivity {
         }
 
         updateFabGravity();
-
-        // Prepare gesture detector
-        mSwipeListener = new OnSwipeTouchListener(this) {
-            public void onSwipeRight() {
-                if (HiSettingsHelper.getInstance().isGestureBack()
-                        && !HiSettingsHelper.getInstance().getIsLandscape()
-                        && !(getSupportFragmentManager().findFragmentByTag(PostFragment.class.getName()) instanceof PostFragment)) {
-                    popFragment();
-                }
-            }
-        };
-        mMainFrameContainer.setOnTouchListener(mSwipeListener);
 
         // Prepare Fragments
         getSupportFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
@@ -494,45 +479,52 @@ public class MainFrameActivity extends BaseActivity {
 
             switch ((int) iDrawerItem.getIdentifier()) {
                 case Constants.DRAWER_SEARCH:
-                    Bundle searchBundle = new Bundle();
-                    searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_SEARCH);
-                    SimpleListFragment searchFragment = new SimpleListFragment();
-                    searchFragment.setArguments(searchBundle);
-                    FragmentUtils.showFragment(getSupportFragmentManager(), searchFragment, true);
+//                    Bundle searchBundle = new Bundle();
+//                    searchBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_SEARCH);
+//                    SimpleListFragment searchFragment = new SimpleListFragment();
+//                    searchFragment.setArguments(searchBundle);
+//                    FragmentUtils.showFragment(getSupportFragmentManager(), searchFragment, true);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_SEARCH);
                     break;
                 case Constants.DRAWER_MYPOST:
-                    Bundle postsBundle = new Bundle();
-                    postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_MYPOST);
-                    SimpleListFragment postsFragment = new SimpleListFragment();
-                    postsFragment.setArguments(postsBundle);
-                    FragmentUtils.showFragment(getSupportFragmentManager(), postsFragment, true);
+//                    Bundle postsBundle = new Bundle();
+//                    postsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_MYPOST);
+//                    SimpleListFragment postsFragment = new SimpleListFragment();
+//                    postsFragment.setArguments(postsBundle);
+//                    FragmentUtils.showFragment(getSupportFragmentManager(), postsFragment, true);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_MYPOST);
                     break;
                 case Constants.DRAWER_MYREPLY:
-                    Bundle replyBundle = new Bundle();
-                    replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_MYREPLY);
-                    SimpleListFragment replyFragment = new SimpleListFragment();
-                    replyFragment.setArguments(replyBundle);
-                    FragmentUtils.showFragment(getSupportFragmentManager(), replyFragment, true);
+//                    Bundle replyBundle = new Bundle();
+//                    replyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_MYREPLY);
+//                    SimpleListFragment replyFragment = new SimpleListFragment();
+//                    replyFragment.setArguments(replyBundle);
+//                    FragmentUtils.showFragment(getSupportFragmentManager(), replyFragment, true);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_MYREPLY);
                     break;
                 case Constants.DRAWER_FAVORITES:
-                    Bundle favBundle = new Bundle();
-                    favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_FAVORITES);
-                    SimpleListFragment favFragment = new SimpleListFragment();
-                    favFragment.setArguments(favBundle);
-                    FragmentUtils.showFragment(getSupportFragmentManager(), favFragment, true);
+//                    Bundle favBundle = new Bundle();
+//                    favBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_FAVORITES);
+//                    SimpleListFragment favFragment = new SimpleListFragment();
+//                    favFragment.setArguments(favBundle);
+//                    FragmentUtils.showFragment(getSupportFragmentManager(), favFragment, true);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_FAVORITES);
                     break;
                 case Constants.DRAWER_HISTORIES:
-                    Bundle hisBundle = new Bundle();
-                    hisBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_HISTORIES);
-                    SimpleListFragment hisFragment = new SimpleListFragment();
-                    hisFragment.setArguments(hisBundle);
-                    FragmentUtils.showFragment(getSupportFragmentManager(), hisFragment, true);
+//                    Bundle hisBundle = new Bundle();
+//                    hisBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_HISTORIES);
+//                    SimpleListFragment hisFragment = new SimpleListFragment();
+//                    hisFragment.setArguments(hisBundle);
+//                    FragmentUtils.showFragment(getSupportFragmentManager(), hisFragment, true);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_HISTORIES);
                     break;
                 case Constants.DRAWER_SMS:
-                    FragmentUtils.showSmsList(getSupportFragmentManager(), true);
+                    //FragmentUtils.showSmsList(getSupportFragmentManager(), true);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_SMS);
                     break;
                 case Constants.DRAWER_THREADNOTIFY:
-                    FragmentUtils.showThreadNotify(getSupportFragmentManager(), true);
+                    //FragmentUtils.showThreadNotify(getSupportFragmentManager(), true);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_THREAD_NOTIFY);
                     break;
                 case Constants.DRAWER_SETTINGS:
                     Fragment fragment = new SettingMainFragment();
@@ -655,9 +647,6 @@ public class MainFrameActivity extends BaseActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (HiSettingsHelper.getInstance().isGestureBack()) {
-            mSwipeListener.onTouch(null, ev);
-        }
         try {
             return super.dispatchTouchEvent(ev);
         } catch (Exception e) {
