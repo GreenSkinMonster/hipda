@@ -21,7 +21,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.ui.adapter.ImageViewerAdapter;
-import net.jejer.hipda.ui.widget.ImageViewPager;
+import net.jejer.hipda.ui.widget.swipeback.SwipeBackLayout;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -58,7 +58,7 @@ public class ImageViewerActivity extends SwipeBackActivity {
         int imageIndex = intent.getExtras().getInt(KEY_IMAGE_INDEX);
         final ArrayList<ContentImg> images = intent.getExtras().getParcelableArrayList(KEY_IMAGES);
 
-        final ImageViewPager viewPager = (ImageViewPager) findViewById(R.id.view_pager);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         final TextView tvImageInfo = (TextView) findViewById(R.id.tv_image_info);
         final TextView tvImageFileInfo = (TextView) findViewById(R.id.tv_image_file_info);
         final TextView tvFloorInfo = (TextView) findViewById(R.id.tv_floor_info);
@@ -92,23 +92,11 @@ public class ImageViewerActivity extends SwipeBackActivity {
                 tvImageInfo.setText((position + 1) + " / " + images.size());
                 String url = images.get(viewPager.getCurrentItem()).getContent();
                 updateImageFileInfo(tvImageFileInfo, url);
+                updateSwipeEdges(images.size(), position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-            }
-        });
-
-        viewPager.setOnSwipeOutListener(new ImageViewPager.OnSwipeOutListener() {
-
-            @Override
-            public void onSwipeOutAtStart() {
-                finishRight();
-            }
-
-            @Override
-            public void onSwipeOutAtEnd() {
-                finishLeft();
             }
         });
 
@@ -119,6 +107,8 @@ public class ImageViewerActivity extends SwipeBackActivity {
 
         String url = images.get(viewPager.getCurrentItem()).getContent();
         updateImageFileInfo(tvImageFileInfo, url);
+
+        updateSwipeEdges(images.size(), imageIndex);
 
         tvImageInfo.setOnClickListener(
                 new View.OnClickListener() {
@@ -221,20 +211,22 @@ public class ImageViewerActivity extends SwipeBackActivity {
         }
     }
 
+    private void updateSwipeEdges(int total, int position) {
+        if (total == 1) {
+            getSwipeBackLayout().setEdgeTrackingEnabled(SwipeBackLayout.EDGE_ALL);
+        } else if (position == 0) {
+            getSwipeBackLayout().setEdgeTrackingEnabled(SwipeBackLayout.EDGE_LEFT);
+        } else if (position == total - 1) {
+            getSwipeBackLayout().setEdgeTrackingEnabled(SwipeBackLayout.EDGE_RIGHT);
+        } else {
+            getSwipeBackLayout().setEdgeTrackingEnabled(SwipeBackLayout.EDGE_BOTTOM);
+        }
+    }
+
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(0, R.anim.fade_out);
-    }
-
-    public void finishLeft() {
-        super.finish();
-        overridePendingTransition(0, R.anim.slide_out_left);
-    }
-
-    public void finishRight() {
-        super.finish();
-        overridePendingTransition(0, R.anim.slide_out_right);
     }
 
     @Override
