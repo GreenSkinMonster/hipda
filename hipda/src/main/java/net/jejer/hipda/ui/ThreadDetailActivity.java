@@ -26,7 +26,7 @@ public class ThreadDetailActivity extends SwipeBaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_thread_detail);
-        rootView = findViewById(R.id.main_activity_root_view);
+        mRootView = findViewById(R.id.main_activity_root_view);
         mMainFrameContainer = findViewById(R.id.main_frame_container);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
 
@@ -36,6 +36,8 @@ public class ThreadDetailActivity extends SwipeBaseActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         updateAppBarScrollFlag();
+
+        UIUtils.hackStatusBar(this);
 
         mMainFab = (FloatingActionButton) findViewById(R.id.fab_main);
         mMainFab.setEnabled(false);

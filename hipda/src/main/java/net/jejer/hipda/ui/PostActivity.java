@@ -5,31 +5,36 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.utils.UIUtils;
 
 /**
  * Created by GreenSkinMonster on 2017-06-14.
  */
 
-public class PostActivity extends BaseActivity {
+public class PostActivity extends SwipeBaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_post);
-        rootView = findViewById(R.id.main_activity_root_view);
+        mRootView = findViewById(R.id.main_activity_root_view);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        UIUtils.hackStatusBar(this);
 
         Bundle arguments = getIntent().getExtras();
         PostFragment fragment = new PostFragment();
         fragment.setArguments(arguments);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.main_frame_container, fragment).commit();
+
+        setSwipeBackEnable(false);
     }
 
     @Override

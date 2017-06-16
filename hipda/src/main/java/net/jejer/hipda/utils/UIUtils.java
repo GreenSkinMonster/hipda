@@ -22,7 +22,10 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,8 +35,10 @@ import net.jejer.hipda.async.FileDownTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
+import net.jejer.hipda.ui.BaseActivity;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
+import net.jejer.hipda.ui.widget.swipeback.AndroidBug5497Workaround;
 
 import java.io.File;
 
@@ -317,6 +322,28 @@ public class UIUtils {
         if (activity != null)
             return activity.getWindow().getDecorView().getRootView().findViewById(R.id.main_frame_container);
         return null;
+    }
+
+    public static void hackStatusBar(BaseActivity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && HiSettingsHelper.getInstance().isHackStatusBar()) {
+            int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId != 0) {
+                Window window = activity.getWindow();
+                int flags = window.getAttributes().flags;
+                if ((flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) == 0) { //not in fullscrenn mode
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                    window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    window.setStatusBarColor(Color.TRANSPARENT);
+
+                    int statusBarHeight = activity.getResources().getDimensionPixelSize(resourceId);
+                    FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) activity.getRootView().getLayoutParams();
+                    //AppBarLayout.LayoutParams layoutParams = (AppBarLayout.LayoutParams) activity.getToolbar().getLayoutParams();
+                    layoutParams.setMargins(0, statusBarHeight, 0, 0);
+                    AndroidBug5497Workaround.assistActivity(activity);
+                }
+            }
+        }
     }
 
 }

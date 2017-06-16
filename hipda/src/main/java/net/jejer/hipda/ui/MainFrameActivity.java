@@ -105,7 +105,7 @@ public class MainFrameActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_frame);
-        rootView = findViewById(R.id.main_activity_root_view);
+        mRootView = findViewById(R.id.main_activity_root_view);
         mMainFrameContainer = findViewById(R.id.main_frame_container);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
 

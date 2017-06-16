@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.utils.UIUtils;
 
 /**
  * Created by GreenSkinMonster on 2017-06-15.
@@ -16,13 +17,15 @@ public class SmsActivity extends SwipeBaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_sms);
-        rootView = findViewById(R.id.main_activity_root_view);
+        mRootView = findViewById(R.id.main_activity_root_view);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        UIUtils.hackStatusBar(this);
 
         Bundle arguments = getIntent().getExtras();
         SmsFragment fragment = new SmsFragment();

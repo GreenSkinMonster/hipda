@@ -30,6 +30,12 @@
             android:summary="@string/pref_summary_old_image_selector"
             android:title="@string/pref_title_old_image_selector"/>
 
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="PERF_SWIPE_COMPAT_MODE"
+            android:summary="@string/pref_summary_swipe_compat_mode"
+            android:title="@string/pref_title_swipe_compat_mode"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_cache">

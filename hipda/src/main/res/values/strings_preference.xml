@@ -313,7 +313,8 @@
     <string name="pref_title_trust_all_certs">信任所有证书</string>
     <string name="pref_summary_trust_all_certs">启用此项可能导致中间人攻击，详情请自行搜索</string>
     <string name="pref_summary_auto_load_thumb">缩略图为论坛自动生成，一般为200KB以下，点击缩略图或者保存、分享时会加载原图</string>
-
+    <string name="pref_title_swipe_compat_mode">兼容性更好的拖动效果</string>
+    <string name="pref_summary_swipe_compat_mode">状态栏出现异常白边、黑边，输入法遮挡输入框时可以尝试启用</string>
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
     <string name="pref_summary_primary_color">仅浅色主题有效</string>
     <string name="pref_summary_old_image_selector">新的图片选择方式存在问题时可以启用</string>

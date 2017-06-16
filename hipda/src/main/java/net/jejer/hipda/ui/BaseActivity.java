@@ -29,7 +29,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class BaseActivity extends AppCompatActivity {
 
     public String mSessionId;
-    protected View rootView;
+    protected View mRootView;
     protected View mMainFrameContainer;
     protected Toolbar mToolbar;
     protected AppBarLayout mAppBarLayout;
@@ -52,12 +52,11 @@ public class BaseActivity extends AppCompatActivity {
         setTheme(HiUtils.getThemeValue(this,
                 HiSettingsHelper.getInstance().getActiveTheme(),
                 HiSettingsHelper.getInstance().getPrimaryColor()));
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && HiSettingsHelper.getInstance().isNavBarColored()) {
             getWindow().setNavigationBarColor(ColorHelper.getColorPrimary(this));
         }
-
     }
-
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -111,8 +110,15 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public EmojiPopup.Builder getEmojiBuilder() {
-        return EmojiPopup.Builder.fromRootView(rootView);
+        return EmojiPopup.Builder.fromRootView(mRootView);
     }
 
+    public View getRootView() {
+        return mRootView;
+    }
+
+    public View getToolbar() {
+        return mToolbar;
+    }
 
 }

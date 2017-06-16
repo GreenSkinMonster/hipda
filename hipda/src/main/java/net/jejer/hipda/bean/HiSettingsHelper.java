@@ -92,6 +92,7 @@ public class HiSettingsHelper {
     public static final String PERF_SHOW_TAIL = "PERF_SHOW_TAIL";
     public static final String PERF_OLD_IMAGE_SELECTOR = "PERF_OLD_IMAGE_SELECTOR";
     public static final String PERF_CAMERA_PERM_ASKED = "PERF_CAMERA_PERM_ASKED";
+    public static final String PERF_SWIPE_COMPAT_MODE = "PERF_SWIPE_COMPAT_MODE";
 
     public static final String THEME_LIGHT = "light";
     public static final String THEME_DARK = "dark";
@@ -1108,6 +1109,10 @@ public class HiSettingsHelper {
 
     public void setCameraPermAsked(boolean asked) {
         setBooleanValue(PERF_CAMERA_PERM_ASKED, asked);
+    }
+
+    public boolean isHackStatusBar() {
+        return !mSharedPref.getBoolean(PERF_SWIPE_COMPAT_MODE, false);
     }
 
 }
