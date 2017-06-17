@@ -16,7 +16,6 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -337,7 +336,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
         setActionBarTitle((mCurrentPage > 0 && mMaxPage > 0 ? "(" + mCurrentPage + "/" + mMaxPage + ") " : "")
                 + mTitle);
-        setActionBarDisplayHomeAsUpEnabled(true);
 
         mShowAllMenuItem = menu.findItem(R.id.action_show_all);
 
@@ -540,10 +538,6 @@ public class ThreadDetailFragment extends BaseFragment {
     private void refreshAtEnd() {
         mFooterLoading = true;
         startJob(mCurrentPage, FETCH_REFRESH, POSITION_FOOTER);
-    }
-
-    public void showTheadTitle() {
-        Toast.makeText(mCtx, mTitle, Toast.LENGTH_SHORT).show();
     }
 
     private void startJob(int page, int fetchType, int loadingPosition) {
@@ -861,7 +855,7 @@ public class ThreadDetailFragment extends BaseFragment {
         dialog.show();
     }
 
-    public class GoToFloorOnClickListener implements Button.OnClickListener {
+    private class GoToFloorOnClickListener implements Button.OnClickListener {
         @Override
         public void onClick(View view) {
             if (!TextUtils.isEmpty(mAuthorId)) {
@@ -1182,11 +1176,7 @@ public class ThreadDetailFragment extends BaseFragment {
         if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
             postProgressDialog = HiProgressDialog.show(mCtx, "请稍候...");
         } else if (event.mStatus == Constants.STATUS_SUCCESS) {
-            //pop post fragment on success
-            Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
-            if (fg instanceof PostFragment) {
-                ((BaseFragment) fg).popFragment();
-            } else if (mQuickReply.getVisibility() == View.VISIBLE) {
+            if (mQuickReply.getVisibility() == View.VISIBLE) {
                 mEtReply.setText("");
                 hideQuickReply();
             }
@@ -1201,8 +1191,11 @@ public class ThreadDetailFragment extends BaseFragment {
 
             if (postResult.getDelete() == 1) {
                 if (mGotoFloor == 1) {
+                    //re-post event to thread list
+                    event.mSessionId = "";
+                    EventBus.getDefault().postSticky(event);
                     //first floor is deleted, meaning whole thread is deleted
-                    FragmentUtils.showForum(getFragmentManager(), postResult.getFid());
+                    ((ThreadDetailActivity) getActivity()).finishWithNoSlide();
                 } else {
                     //this floor is deleted, so goto upper floor
                     mGotoFloor--;

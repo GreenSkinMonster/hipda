@@ -20,15 +20,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -96,7 +93,6 @@ public class MainFrameActivity extends BaseActivity {
 
     public Drawer drawer;
     private AccountHeader accountHeader;
-    private ActionMode mActionMode;
 
     private NetworkStateReceiver mNetworkReceiver = new NetworkStateReceiver();
 
@@ -128,9 +124,6 @@ public class MainFrameActivity extends BaseActivity {
 
         updateFabGravity();
 
-        // Prepare Fragments
-        getSupportFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
-
         registerReceiver(mNetworkReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
@@ -143,7 +136,6 @@ public class MainFrameActivity extends BaseActivity {
             if (args != null && args.getType() == FragmentArgs.TYPE_FORUM)
                 fid = args.getFid();
 
-            clearBackStacks(false);
             FragmentUtils.showForum(getSupportFragmentManager(), fid);
 
             if (args != null)
@@ -172,7 +164,7 @@ public class MainFrameActivity extends BaseActivity {
         FragmentArgs args = FragmentUtils.parse(intent);
         if (args != null) {
             HiParserThreadList.holdFetchNotify();
-            clearBackStacks(false);
+            //clearBackStacks(false);
             args.setSkipEnterAnimation(true);
             FragmentUtils.show(this, args);
         }
@@ -304,7 +296,7 @@ public class MainFrameActivity extends BaseActivity {
                     else
                         drawer.openDrawer();
                 } else {
-                    popFragment();
+                    //popFragment();
                 }
             }
         });
@@ -354,16 +346,6 @@ public class MainFrameActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         unregisterReceiver(mNetworkReceiver);
@@ -374,26 +356,16 @@ public class MainFrameActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         HiApplication.activityResumed();
-        Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
-        if (fg instanceof ThreadListFragment) {
-            clearBackStacks(true);
-        }
+//        Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
+//        if (fg instanceof ThreadListFragment) {
+//            clearBackStacks(true);
+//        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         HiApplication.activityPaused();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -408,7 +380,7 @@ public class MainFrameActivity extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 UIUtils.hideSoftKeyboard(this);
-                popFragment();
+                //popFragment();
                 break;
             default:
                 break;
@@ -431,40 +403,7 @@ public class MainFrameActivity extends BaseActivity {
                 return;
         }
 
-        if (!popFragment()) {
-            finish();
-        }
-
-    }
-
-    @Override
-    public ActionMode startSupportActionMode(@NonNull ActionMode.Callback callback) {
-        ActionMode actionMode = super.startSupportActionMode(callback);
-        mActionMode = actionMode;
-        return actionMode;
-    }
-
-    @Override
-    public void onSupportActionModeFinished(@NonNull ActionMode mode) {
-        super.onSupportActionModeFinished(mode);
-        mActionMode = null;
-    }
-
-    public boolean popFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        int count = fm.getBackStackEntryCount();
-        if (count > 0) {
-            try {
-                fm.popBackStackImmediate();
-            } catch (IllegalStateException ignored) {
-                // There's no way to avoid getting this if saveInstanceState has already been called.
-            }
-            Fragment fg = fm.findFragmentById(R.id.main_frame_container);
-            if (fg != null)
-                fg.setHasOptionsMenu(true);
-            return true;
-        }
-        return false;
+        finishWithNoSlide();
     }
 
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {
@@ -477,7 +416,7 @@ public class MainFrameActivity extends BaseActivity {
                 return false;
 
             //clear all backStacks from menu click
-            clearBackStacks(false);
+            //clearBackStacks(false);
 
             switch ((int) iDrawerItem.getIdentifier()) {
                 case Constants.DRAWER_SEARCH:
@@ -563,66 +502,25 @@ public class MainFrameActivity extends BaseActivity {
         }
     }
 
-    private void clearBackStacks(boolean resetActionBarTitle) {
-        FragmentManager fm = getSupportFragmentManager();
-        while (fm.getBackStackEntryCount() > 0) {
-            fm.popBackStackImmediate();
-        }
-
-        if (resetActionBarTitle) {
-            Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
-            if (fg instanceof ThreadListFragment) {
-                ((ThreadListFragment) fg).resetActionBarTitle();
-            }
-        }
-    }
-
-    private class BackStackChangedListener implements FragmentManager.OnBackStackChangedListener {
-
-        @Override
-        public void onBackStackChanged() {
-            if (mActionMode != null) {
-                try {
-                    mActionMode.finish();
-                    mActionMode = null;
-                } catch (Exception ignored) {
-                }
-            }
-
-            FragmentManager fm = getSupportFragmentManager();
-            setDrawerHomeIdicator(fm.getBackStackEntryCount() > 0);
-
-            if (HiSettingsHelper.getInstance().isAppBarCollapsible()) {
-                Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
-                //set flag every time, or setting fragment's last item is not visible
-                setAppBarCollapsible(fg instanceof BaseFragment
-                        && ((BaseFragment) fg).isAppBarCollapsible());
-            }
-
-            if (HiSettingsHelper.getInstance().isGestureBack()) {
-                if (fm.getBackStackEntryCount() > 0) {
-                    drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                } else {
-                    drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                }
-            }
-        }
-    }
+//    private void clearBackStacks(boolean resetActionBarTitle) {
+//        FragmentManager fm = getSupportFragmentManager();
+//        while (fm.getBackStackEntryCount() > 0) {
+//            fm.popBackStackImmediate();
+//        }
+//
+//        if (resetActionBarTitle) {
+//            Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
+//            if (fg instanceof ThreadListFragment) {
+//                ((ThreadListFragment) fg).resetActionBarTitle();
+//            }
+//        }
+//    }
 
     private class NetworkStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             HiSettingsHelper.updateMobileNetworkStatus(context);
             EventBus.getDefault().post(new NetworkReadyEvent());
-        }
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        try {
-            return super.dispatchTouchEvent(ev);
-        } catch (Exception e) {
-            return true;
         }
     }
 
@@ -653,7 +551,15 @@ public class MainFrameActivity extends BaseActivity {
         }
     }
 
-    public void setDrawerHomeIdicator(boolean showHomeAsUp) {
+    void setDrawerSelection(int forumId) {
+        if (drawer != null && !drawer.isDrawerOpen()) {
+            int position = drawer.getPosition(forumId);
+            if (drawer.getCurrentSelectedPosition() != position)
+                drawer.setSelectionAtPosition(position, false);
+        }
+    }
+
+    public void setActionBarDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
         if (showHomeAsUp) {
             drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
             if (getSupportActionBar() != null)
@@ -665,11 +571,16 @@ public class MainFrameActivity extends BaseActivity {
         }
     }
 
+    void syncActionBarState() {
+        if (drawer != null)
+            drawer.getActionBarDrawerToggle().syncState();
+    }
+
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginEvent event) {
         if (event.mManual) {
-            clearBackStacks(true);
+            //clearBackStacks(true);
             Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
             if (fg instanceof ThreadListFragment) {
                 ((ThreadListFragment) fg).onRefresh();

@@ -175,7 +175,6 @@ public class SimpleListFragment extends BaseFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
 
-        setActionBarDisplayHomeAsUpEnabled(true);
         switch (mType) {
             case SimpleListJob.TYPE_MYREPLY:
                 setActionBarTitle(R.string.title_drawer_myreply);

@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +31,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.UUID;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by GreenSkinMonster on 2016-11-30.
@@ -109,6 +112,7 @@ public class ImageViewerActivity extends SwipeBackActivity {
         updateImageFileInfo(tvImageFileInfo, url);
 
         updateSwipeEdges(images.size(), imageIndex);
+        getSwipeBackLayout().setEdgeSize(Utils.dpToPx(this, 50));
 
         tvImageInfo.setOnClickListener(
                 new View.OnClickListener() {
@@ -125,7 +129,7 @@ public class ImageViewerActivity extends SwipeBackActivity {
 
         ImageButton btnDownload = (ImageButton) findViewById(R.id.btn_download_image);
         btnDownload.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_file_download)
-                .sizeDp(24).color(ContextCompat.getColor(this, R.color.silver)));
+                .sizeDp(20).color(ContextCompat.getColor(this, R.color.md_grey_300)));
         btnDownload.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -139,7 +143,7 @@ public class ImageViewerActivity extends SwipeBackActivity {
 
         ImageButton btnShare = (ImageButton) findViewById(R.id.btn_share_image);
         btnShare.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_share)
-                .sizeDp(24).color(ContextCompat.getColor(this, R.color.silver)));
+                .sizeDp(20).color(ContextCompat.getColor(this, R.color.md_grey_300)));
 
         btnShare.setOnClickListener(
                 new View.OnClickListener() {
@@ -152,8 +156,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
         );
 
         ImageButton btnNext = (ImageButton) findViewById(R.id.btn_next_image);
-//        btnNext.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_chevron_right)
-//                .sizeDp(24).color(ContextCompat.getColor(this, R.color.silver)));
         btnNext.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -174,8 +176,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
         );
 
         ImageButton btnPrev = (ImageButton) findViewById(R.id.btn_previous_image);
-//        btnPrev.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_chevron_left)
-//                .sizeDp(24).color(ContextCompat.getColor(this, R.color.silver)));
         btnPrev.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -194,6 +194,14 @@ public class ImageViewerActivity extends SwipeBackActivity {
                     }
                 }
         );
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if (HiApplication.isFontSet())
+            super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+        else
+            super.attachBaseContext(newBase);
     }
 
     private void updateImageFileInfo(TextView tvImageFileInfo, String url) {

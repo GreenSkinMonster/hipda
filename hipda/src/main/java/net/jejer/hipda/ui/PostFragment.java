@@ -96,7 +96,7 @@ public class PostFragment extends BaseFragment {
     public static final String ARG_MODE_KEY = "mode";
     public static final String ARG_PARENT_ID = "parent_id";
 
-    public static final String BUNDLE_POSISTION_KEY = "content_position";
+    public static final String BUNDLE_POSITION_KEY = "content_position";
 
     private int mFid;
     private String mTid;
@@ -269,7 +269,6 @@ public class PostFragment extends BaseFragment {
         setUpEmojiPopup(mEtContent, mIbEmojiSwitch);
 
         setActionBarTitle(R.string.action_reply);
-        setActionBarDisplayHomeAsUpEnabled(true);
 
         switch (mMode) {
             case PostHelper.MODE_REPLY_THREAD:
@@ -357,14 +356,14 @@ public class PostFragment extends BaseFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(BUNDLE_POSISTION_KEY, mContentPosition);
+        outState.putInt(BUNDLE_POSITION_KEY, mContentPosition);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            mContentPosition = savedInstanceState.getInt(BUNDLE_POSISTION_KEY, -1);
+            mContentPosition = savedInstanceState.getInt(BUNDLE_POSITION_KEY, -1);
         }
     }
 
@@ -461,7 +460,7 @@ public class PostFragment extends BaseFragment {
         }
 
         if (mMode == PostHelper.MODE_NEW_THREAD &&
-                (HiUtils.FID_BS + "").equals(mFid) && "0".equals(mTypeId)) {
+                HiUtils.FID_BS == mFid && "0".equals(mTypeId)) {
             Toast.makeText(getActivity(), "B&S版发帖必须指定分类", Toast.LENGTH_LONG).show();
             return;
         }

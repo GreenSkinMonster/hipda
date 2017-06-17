@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -53,6 +52,7 @@ import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.PostEvent;
+import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.job.ThreadListEvent;
 import net.jejer.hipda.job.ThreadListJob;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
@@ -190,6 +190,9 @@ public class ThreadListFragment extends BaseFragment
                 hideFooter();
             }
         }
+        if (getActivity() != null && getActivity() instanceof MainFrameActivity) {
+            ((MainFrameActivity) getActivity()).setDrawerSelection(mForumId);
+        }
     }
 
     @Override
@@ -213,10 +216,10 @@ public class ThreadListFragment extends BaseFragment
         }
 
         setActionBarTitle(HiUtils.getForumNameByFid(mForumId));
-        setActionBarDisplayHomeAsUpEnabled(false);
-        syncActionBarState();
-
-        setDrawerSelection(mForumId);
+        if (getActivity() instanceof MainFrameActivity) {
+            ((MainFrameActivity) getActivity()).setActionBarDisplayHomeAsUpEnabled(false);
+            ((MainFrameActivity) getActivity()).syncActionBarState();
+        }
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -288,10 +291,10 @@ public class ThreadListFragment extends BaseFragment
                         NotificationMgr.getCurrentNotification().clearSmsCount();
                         showNotification();
                     } else if (bean.getSmsCount() > 0) {
-                        FragmentUtils.showSmsList(getFragmentManager(), true);
+                        FragmentUtils.showSimpleListActivity(getActivity(), SimpleListJob.TYPE_SMS);
                     } else if (bean.getThreadCount() > 0) {
-                        FragmentUtils.showThreadNotify(getFragmentManager(), true);
                         NotificationMgr.getCurrentNotification().setThreadCount(0);
+                        FragmentUtils.showSimpleListActivity(getActivity(), SimpleListJob.TYPE_THREAD_NOTIFY);
                         showNotification();
                     } else {
                         Toast.makeText(mCtx, "没有未处理的通知", Toast.LENGTH_SHORT).show();
@@ -312,23 +315,8 @@ public class ThreadListFragment extends BaseFragment
 
     public void resetActionBarTitle() {
         setActionBarTitle(HiUtils.getForumNameByFid(mForumId));
-        setActionBarDisplayHomeAsUpEnabled(false);
-        syncActionBarState();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+        ((MainFrameActivity) getActivity()).setActionBarDisplayHomeAsUpEnabled(false);
+        ((MainFrameActivity) getActivity()).syncActionBarState();
     }
 
     private void refresh() {
@@ -705,31 +693,31 @@ public class ThreadListFragment extends BaseFragment
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(PostEvent event) {
+        PostBean postResult = event.mPostResult;
+        if (postResult.getDelete() == 1
+                && postResult.getFid() == mForumId
+                && postResult.getFloor() == 1) {
+            //thread deleted, refresh
+            EventBus.getDefault().removeStickyEvent(event);
+            onRefresh();
+        }
+
         if (!mSessionId.equals(event.mSessionId))
             return;
 
         EventBus.getDefault().removeStickyEvent(event);
 
         String message = event.mMessage;
-        PostBean postResult = event.mPostResult;
 
         if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
             postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
         } else if (event.mStatus == Constants.STATUS_SUCCESS) {
-            //pop post fragment on success
-            Fragment fg = getFragmentManager().findFragmentById(R.id.main_frame_container);
-            if (fg instanceof PostFragment) {
-                ((BaseFragment) fg).popFragment();
-            }
-
             if (postProgressDialog != null) {
                 postProgressDialog.dismiss(message);
             } else {
                 Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
             }
-
             FragmentUtils.showThreadActivity(getActivity(), true, postResult.getTid(), postResult.getSubject(), -1, -1, null, -1);
-
             refresh();
         } else {
             if (postProgressDialog != null) {

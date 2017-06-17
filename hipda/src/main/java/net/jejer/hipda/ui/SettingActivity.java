@@ -47,10 +47,4 @@ public class SettingActivity extends SwipeBaseActivity {
         }
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(0, R.anim.slide_out_right);
-    }
-
 }

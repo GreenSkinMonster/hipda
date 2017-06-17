@@ -35,10 +35,4 @@ public class UserInfoActivity extends SwipeBaseActivity {
                 .add(R.id.main_frame_container, fragment).commit();
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(0, R.anim.slide_out_right);
-    }
-
 }

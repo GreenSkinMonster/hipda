@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.mikepenz.materialdrawer.Drawer;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.emoji.Emoji;
@@ -75,32 +74,6 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-    void setActionBarDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
-        if (getActivity() != null && getActivity() instanceof MainFrameActivity) {
-            ((MainFrameActivity) getActivity()).setDrawerHomeIdicator(showHomeAsUp);
-        }
-    }
-
-    void syncActionBarState() {
-        if (getActivity() != null && getActivity() instanceof MainFrameActivity) {
-            Drawer drawerResult = ((MainFrameActivity) getActivity()).drawer;
-            if (drawerResult != null)
-                drawerResult.getActionBarDrawerToggle().syncState();
-        }
-    }
-
-    void setDrawerSelection(int forumId) {
-        //re-select forum on back
-        if (getActivity() != null && getActivity() instanceof MainFrameActivity) {
-            Drawer drawer = ((MainFrameActivity) getActivity()).drawer;
-            if (drawer != null && !drawer.isDrawerOpen()) {
-                int position = drawer.getPosition(forumId);
-                if (drawer.getCurrentSelectedPosition() != position)
-                    drawer.setSelectionAtPosition(position, false);
-            }
-        }
-    }
-
     void setupFab() {
         if (getActivity() != null) {
             if (mMainFab != null) {
@@ -112,12 +85,6 @@ public abstract class BaseFragment extends Fragment {
                 mNotificationFab.setEnabled(false);
             }
         }
-    }
-
-    public boolean isAppBarCollapsible() {
-        return this instanceof ThreadListFragment
-                || this instanceof ThreadDetailFragment
-                || this instanceof SimpleListFragment;
     }
 
     @Override
@@ -157,16 +124,6 @@ public abstract class BaseFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         setupFab();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     public void scrollToTop() {
@@ -284,12 +241,6 @@ public abstract class BaseFragment extends Fragment {
 
     public boolean onBackPressed() {
         return false;
-    }
-
-    public boolean popFragment() {
-        return getActivity() != null
-                && (getActivity() instanceof MainFrameActivity)
-                && ((MainFrameActivity) getActivity()).popFragment();
     }
 
     protected void setUpEmojiPopup(final EmojiEditText mEtContent, final ImageButton mIbEmojiSwitch) {

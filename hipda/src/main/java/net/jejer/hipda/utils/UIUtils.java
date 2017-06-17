@@ -20,6 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -344,6 +345,13 @@ public class UIUtils {
                 }
             }
         }
+    }
+
+    public static int getWindowWidth(Activity activity) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        return metrics.widthPixels;
     }
 
 }

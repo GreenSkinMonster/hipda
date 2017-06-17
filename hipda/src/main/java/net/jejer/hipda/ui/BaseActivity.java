@@ -135,4 +135,14 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_right);
+    }
+
+    public void finishWithNoSlide() {
+        super.finish();
+    }
+
 }

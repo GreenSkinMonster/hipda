@@ -169,7 +169,6 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         menu.findItem(R.id.action_clear_sms)
                 .setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_trash).actionBar().color(Color.WHITE));
 
-        setActionBarDisplayHomeAsUpEnabled(true);
         setActionBarTitle(mAuthor);
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -206,14 +205,14 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                             public void onError(Request request, Exception e) {
                                 progress.dismissError("操作时发生错误 : " + OkHttpHelper.getErrorMessage(e));
                                 EventBus.getDefault().postSticky(new SmsRefreshEvent());
-                                ((SmsActivity) getActivity()).finishWithDelete();
+                                ((BaseActivity) getActivity()).finishWithNoSlide();
                             }
 
                             @Override
                             public void onResponse(String response) {
                                 progress.dismiss("操作完成");
                                 EventBus.getDefault().postSticky(new SmsRefreshEvent());
-                                ((SmsActivity) getActivity()).finishWithDelete();
+                                ((BaseActivity) getActivity()).finishWithNoSlide();
                             }
                         });
 

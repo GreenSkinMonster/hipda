@@ -30,8 +30,8 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/btn_back"
             android:paddingLeft="4dp"
-            android:textColor="@color/silver"
-            android:textSize="18sp"/>
+            android:textColor="@color/md_grey_300"
+            android:textSize="20sp"/>
 
         <ImageButton
             android:id="@+id/btn_download_image"

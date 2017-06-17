@@ -36,4 +36,8 @@ public class PostActivity extends SwipeBaseActivity {
         setSwipeBackEnable(false);
     }
 
+    @Override
+    public void finish() {
+        finishWithNoSlide();
+    }
 }

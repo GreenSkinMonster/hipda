@@ -282,12 +282,12 @@ public class FragmentUtils {
             //showUserInfo(activity.getSupportFragmentManager(), args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
             showUserInfoActivity(activity, args.getUid(), args.getUsername());
         } else if (args.getType() == FragmentArgs.TYPE_SMS) {
-            showSmsList(activity.getSupportFragmentManager(), args.isSkipEnterAnimation());
+            showSimpleListActivity(activity, SimpleListJob.TYPE_SMS);
         } else if (args.getType() == FragmentArgs.TYPE_SMS_DETAIL) {
             //showSmsDetail(activity.getSupportFragmentManager(), args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
             showSmsActivity(activity, args.getUid(), args.getUsername());
         } else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY) {
-            showThreadNotify(activity.getSupportFragmentManager(), args.isSkipEnterAnimation());
+            showSimpleListActivity(activity, SimpleListJob.TYPE_THREAD_NOTIFY);
         } else if (args.getType() == FragmentArgs.TYPE_FORUM) {
             showForum(activity.getSupportFragmentManager(), args.getFid());
         }
