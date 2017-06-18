@@ -211,7 +211,8 @@ public class FragmentUtils {
         Intent intent = new Intent(activity, UserInfoActivity.class);
         intent.putExtra(UserinfoFragment.ARG_UID, uid);
         intent.putExtra(UserinfoFragment.ARG_USERNAME, username);
-        ActivityCompat.startActivity(activity, intent, null);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_left, R.anim.no_anim);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
     public static void showThreadNotify(FragmentManager fragmentManager, boolean skipEnterAnimation) {

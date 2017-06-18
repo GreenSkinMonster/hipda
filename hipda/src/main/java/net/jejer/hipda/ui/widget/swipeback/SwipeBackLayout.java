@@ -187,9 +187,9 @@ public class SwipeBackLayout extends FrameLayout {
     /**
      * Enable edge tracking for the selected edges of the parent view. The
      * callback's
-     * {@link me.imid.swipebacklayout.lib.ViewDragHelper.Callback#onEdgeTouched(int, int)}
+     * {@link ViewDragHelper.Callback#onEdgeTouched(int, int)}
      * and
-     * {@link me.imid.swipebacklayout.lib.ViewDragHelper.Callback#onEdgeDragStarted(int, int)}
+     * {@link ViewDragHelper.Callback#onEdgeDragStarted(int, int)}
      * methods will only be invoked for edges for which edge tracking has been
      * enabled.
      *
@@ -261,7 +261,7 @@ public class SwipeBackLayout extends FrameLayout {
         mListeners.remove(listener);
     }
 
-    public static interface SwipeListener {
+    interface SwipeListener {
         /**
          * Invoke when state change
          *
@@ -271,7 +271,7 @@ public class SwipeBackLayout extends FrameLayout {
          * @see #STATE_DRAGGING
          * @see #STATE_SETTLING
          */
-        public void onScrollStateChange(int state, float scrollPercent);
+        void onScrollStateChange(int state, float scrollPercent);
 
         /**
          * Invoke when edge touched
@@ -281,12 +281,12 @@ public class SwipeBackLayout extends FrameLayout {
          * @see #EDGE_RIGHT
          * @see #EDGE_BOTTOM
          */
-        public void onEdgeTouch(int edgeFlag);
+        void onEdgeTouch(int edgeFlag);
 
         /**
          * Invoke when scroll percent over the threshold for the first time
          */
-        public void onScrollOverThreshold();
+        void onScrollOverThreshold();
     }
 
     /**

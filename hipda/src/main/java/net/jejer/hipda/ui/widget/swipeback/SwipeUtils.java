@@ -4,6 +4,7 @@ package net.jejer.hipda.ui.widget.swipeback;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import java.lang.reflect.Method;
 
@@ -80,6 +81,7 @@ public class SwipeUtils {
     /**
      * Calling the convertToTranslucent method on platforms after Android 5.0
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private static void convertActivityToTranslucentAfterL(Activity activity) {
         try {
             Method getActivityOptions = Activity.class.getDeclaredMethod("getActivityOptions");
