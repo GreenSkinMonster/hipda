@@ -258,6 +258,8 @@ public class HiUtils {
                 return R.style.ThemeLight_Grey;
             if (primaryColor == ContextCompat.getColor(context, R.color.md_blue_grey_700))
                 return R.style.ThemeLight_BlueGrey;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_grey_200))
+                return R.style.ThemeLight_White;
             if (primaryColor == ContextCompat.getColor(context, R.color.md_black_1000))
                 return R.style.ThemeLight_Black;
         }

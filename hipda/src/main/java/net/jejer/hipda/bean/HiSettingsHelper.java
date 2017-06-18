@@ -1,11 +1,14 @@
 package net.jejer.hipda.bean;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
@@ -1113,6 +1116,24 @@ public class HiSettingsHelper {
 
     public boolean isHackStatusBar() {
         return !mSharedPref.getBoolean(PERF_SWIPE_COMPAT_MODE, false);
+    }
+
+    public boolean isWhiteTheme() {
+        return THEME_LIGHT.equals(getActiveTheme())
+                && getPrimaryColor() == ContextCompat.getColor(mCtx, R.color.md_grey_200);
+    }
+
+    public int getToolbarTextColor() {
+        return isWhiteTheme() ? Color.BLACK : Color.WHITE;
+    }
+
+    public int getImageActivityTheme(Activity activity) {
+        if (isWhiteTheme()) {
+            return R.style.Matisse_Zhihu;
+        }
+        return HiUtils.getThemeValue(activity,
+                HiSettingsHelper.getInstance().getActiveTheme(),
+                HiSettingsHelper.getInstance().getPrimaryColor());
     }
 
 }

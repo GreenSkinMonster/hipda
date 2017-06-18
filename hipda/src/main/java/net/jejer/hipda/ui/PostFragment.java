@@ -372,11 +372,15 @@ public class PostFragment extends BaseFragment {
         menu.clear();
         inflater.inflate(R.menu.menu_reply, menu);
 
-        menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_add_a_photo).actionBar().color(Color.WHITE));
+        menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(),
+                GoogleMaterial.Icon.gmd_add_a_photo).actionBar()
+                .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
 
         if (HiUtils.CLIENT_TID == Utils.parseInt(mTid)) {
             MenuItem menuItem = menu.findItem(R.id.action_device_info);
-            menuItem.setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_bug_report).actionBar().color(Color.WHITE));
+            menuItem.setIcon(new IconicsDrawable(getActivity(),
+                    GoogleMaterial.Icon.gmd_bug_report).actionBar()
+                    .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
             menuItem.setVisible(true);
         }
 
@@ -428,9 +432,7 @@ public class PostFragment extends BaseFragment {
                                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
                                 .thumbnailScale(0.85f)
                                 .imageEngine(new GlideEngine())
-                                .theme(HiUtils.getThemeValue(getActivity(),
-                                        HiSettingsHelper.getInstance().getActiveTheme(),
-                                        HiSettingsHelper.getInstance().getPrimaryColor()))
+                                .theme(HiSettingsHelper.getInstance().getImageActivityTheme(getActivity()))
                                 .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
                                 .captureStrategy(new CaptureStrategy(false, BuildConfig.APPLICATION_ID + ".provider"))
                                 .forResult(SELECT_PICTURE);

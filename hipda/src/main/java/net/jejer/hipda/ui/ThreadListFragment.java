@@ -5,7 +5,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -212,7 +211,8 @@ public class ThreadListFragment extends BaseFragment
             int typeIdIndex = HiUtils.getBSTypeIndexByFid(typeId);
             if (typeIdIndex == -1) typeIdIndex = 0;
             if (mCtx != null)
-                mForumTypeMenuItem.setIcon(new IconicsDrawable(mCtx, HiUtils.BS_TYPE_ICONS[typeIdIndex]).color(Color.WHITE).actionBar());
+                mForumTypeMenuItem.setIcon(new IconicsDrawable(mCtx, HiUtils.BS_TYPE_ICONS[typeIdIndex])
+                        .color(HiSettingsHelper.getInstance().getToolbarTextColor()).actionBar());
         }
 
         setActionBarTitle(HiUtils.getForumNameByFid(mForumId));
@@ -482,7 +482,8 @@ public class ThreadListFragment extends BaseFragment
                     mLoadingView.setState(ContentLoadingView.LOAD_NOW);
                     HiSettingsHelper.getInstance().setBSTypeId(HiUtils.BS_TYPE_IDS[position]);
                     if (mForumTypeMenuItem != null) {
-                        mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position]).color(Color.WHITE).actionBar());
+                        mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position])
+                                .color(HiSettingsHelper.getInstance().getToolbarTextColor()).actionBar());
                     }
                     refresh();
                 }

@@ -3,7 +3,6 @@ package net.jejer.hipda.ui;
 import android.content.Context;
 import android.database.AbstractCursor;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
@@ -32,6 +31,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.PostSmsAsyncTask;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.job.EventCallback;
@@ -187,7 +187,9 @@ public class SimpleListFragment extends BaseFragment
             case SimpleListJob.TYPE_SMS:
                 setActionBarTitle(R.string.title_drawer_sms);
                 inflater.inflate(R.menu.menu_sms_list, menu);
-                menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_insert_comment).actionBar().color(Color.WHITE));
+                menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(),
+                        GoogleMaterial.Icon.gmd_insert_comment).actionBar()
+                        .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
                 break;
             case SimpleListJob.TYPE_THREAD_NOTIFY:
                 setActionBarTitle(R.string.title_drawer_notify);

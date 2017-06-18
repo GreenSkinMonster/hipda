@@ -21,6 +21,7 @@
         <item name="actionModeStyle">@style/MyActionMode</item>
         <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
         <item name="actionBarPopupTheme">@style/MyToolbar.PopupTheme.Light</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
 
         <item name="action_mode_text_color">@android:color/white</item>
         <item name="fab_background_tint">@color/md_grey_400</item>
@@ -175,6 +176,14 @@
         <item name="colorPrimaryDark">@color/md_blue_grey_800</item>
     </style>
 
+    <style name="ThemeLight.White" parent="ThemeLight">
+        <item name="colorPrimary">@color/md_white_1000</item>
+        <item name="colorPrimaryDark">@color/md_grey_300</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <!-- Hamburger-Icon color -->
+        <item name="drawerArrowStyle">@style/MaterialDrawer.DrawerArrowStyle.Dark</item>
+    </style>
+
     <style name="ThemeLight.Black" parent="ThemeLight">
         <item name="colorPrimary">@color/nearly_black</item>
         <item name="colorPrimaryDark">@color/md_black_1000</item>
@@ -189,6 +198,7 @@
         <item name="actionModeStyle">@style/MyActionMode</item>
         <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
         <item name="actionBarPopupTheme">@style/MyToolbar.PopupTheme.Dark</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
 
         <item name="action_mode_text_color">@android:color/white</item>
         <item name="fab_background_tint">@color/md_grey_900</item>
@@ -262,7 +272,6 @@
 
     <style name="MyActionModeTitleStyle" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
         <item name="android:textColor">?action_mode_text_color</item>
-        <!--<item name="android:textSize">20sp</item>-->
     </style>
 
     <style name="MyActionModeSubtitleStyle" parent="TextAppearance.AppCompat.Widget.ActionMode.Subtitle">
@@ -276,6 +285,11 @@
     <style name="MaterialDrawer.DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">false</item>
         <item name="color">@android:color/white</item>
+    </style>
+
+    <style name="MaterialDrawer.DrawerArrowStyle.Dark" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">false</item>
+        <item name="color">@android:color/black</item>
     </style>
 
     <style name="MyToolbar.PopupTheme.Light" parent="ThemeOverlay.AppCompat.Light">
