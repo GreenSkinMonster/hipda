@@ -281,7 +281,7 @@ public class PostFragment extends BaseFragment {
                 setActionBarTitle("引用 " + mFloor + "# " + mFloorAuthor);
                 break;
             case PostHelper.MODE_NEW_THREAD:
-                setActionBarTitle(mForumName);
+                setActionBarTitle("发表 · " + mForumName);
                 mEtSubject.setVisibility(View.VISIBLE);
                 break;
             case PostHelper.MODE_EDIT_POST:

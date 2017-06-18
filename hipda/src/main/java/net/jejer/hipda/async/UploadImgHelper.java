@@ -36,11 +36,11 @@ import okhttp3.Response;
 
 public class UploadImgHelper {
 
-    public final static int MAX_QUALITY = 90;
-    private static final int THUMB_SIZE = 192;
+    private final static int MAX_QUALITY = 90;
+    private final static int MAX_IMAGE_FILE_SIZE = 400 * 1024;
+    private static final int THUMB_SIZE = 256;
 
     private final static int MAX_PIXELS = 1600 * 900;
-    public final static int MAX_IMAGE_FILE_SIZE = 400 * 1024;
 
     private UploadImgListener mListener;
 
@@ -49,7 +49,6 @@ public class UploadImgHelper {
     private Context mCtx;
     private Uri[] mUris;
 
-    private Uri mCurrentUri;
     private String mMessage = "";
     private Bitmap mThumb;
     private int mTotal;
@@ -88,7 +87,6 @@ public class UploadImgHelper {
     }
 
     private String uploadImage(String urlStr, Map<String, String> param, Uri uri) {
-        mCurrentUri = uri;
         mThumb = null;
         mMessage = "";
         mCurrentFileName = "";
