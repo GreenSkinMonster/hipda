@@ -5,11 +5,13 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -21,6 +23,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.PostActivity;
 import net.jejer.hipda.ui.PostFragment;
 import net.jejer.hipda.ui.ThreadDetailFragment;
+import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.UIUtils;
 
@@ -161,11 +164,19 @@ public class ThreadDetailActionModeCallback implements ActionMode.Callback {
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window w = mFragment.getActivity().getWindow();
+            w.setStatusBarColor(Color.BLACK);
+        }
         return true;
     }
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window w = mFragment.getActivity().getWindow();
+            w.setStatusBarColor(ColorHelper.getColorPrimaryDark(mFragment.getActivity()));
+        }
     }
 
 }

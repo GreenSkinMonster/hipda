@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 
 import net.jejer.hipda.R;
@@ -30,20 +31,24 @@ public class SettingActivity extends SwipeBaseActivity {
         UIUtils.hackStatusBar(this);
 
         Bundle arguments = getIntent().getExtras();
-        if (arguments == null) {
-            SettingMainFragment fragment = new SettingMainFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_frame_container, fragment).commit();
-        } else if (arguments.containsKey(AboutFragment.TAG_KEY)) {
-            AboutFragment fragment = new AboutFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_frame_container, fragment).commit();
-        } else {
-            SettingNestedFragment fragment = new SettingNestedFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_frame_container, fragment).commit();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentById(R.id.main_frame_container) == null) {
+            if (arguments == null) {
+                SettingMainFragment fragment = new SettingMainFragment();
+                fragmentManager.beginTransaction()
+                        .add(R.id.main_frame_container, fragment).commit();
+            } else if (arguments.containsKey(AboutFragment.TAG_KEY)) {
+                AboutFragment fragment = new AboutFragment();
+                fragment.setArguments(arguments);
+                fragmentManager.beginTransaction()
+                        .add(R.id.main_frame_container, fragment).commit();
+            } else {
+                SettingNestedFragment fragment = new SettingNestedFragment();
+                fragment.setArguments(arguments);
+                fragmentManager.beginTransaction()
+                        .add(R.id.main_frame_container, fragment).commit();
+            }
         }
     }
 

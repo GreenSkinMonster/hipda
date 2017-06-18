@@ -5,6 +5,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
@@ -59,11 +60,14 @@ public class ThreadDetailActivity extends SwipeBaseActivity {
             }
         });
 
-        Bundle arguments = getIntent().getExtras();
-        ThreadDetailFragment fragment = new ThreadDetailFragment();
-        fragment.setArguments(arguments);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.main_frame_container, fragment).commit();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentById(R.id.main_frame_container) == null) {
+            Bundle arguments = getIntent().getExtras();
+            ThreadDetailFragment fragment = new ThreadDetailFragment();
+            fragment.setArguments(arguments);
+            fragmentManager.beginTransaction()
+                    .add(R.id.main_frame_container, fragment).commit();
+        }
     }
 
     public void updateFabGravity() {

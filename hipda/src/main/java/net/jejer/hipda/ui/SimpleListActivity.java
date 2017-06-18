@@ -3,6 +3,7 @@ package net.jejer.hipda.ui;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
@@ -44,11 +45,14 @@ public class SimpleListActivity extends SwipeBaseActivity {
             }
         });
 
-        Bundle arguments = getIntent().getExtras();
-        SimpleListFragment fragment = new SimpleListFragment();
-        fragment.setArguments(arguments);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.main_frame_container, fragment).commit();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentById(R.id.main_frame_container) == null) {
+            Bundle arguments = getIntent().getExtras();
+            SimpleListFragment fragment = new SimpleListFragment();
+            fragment.setArguments(arguments);
+            fragmentManager.beginTransaction()
+                    .add(R.id.main_frame_container, fragment).commit();
+        }
     }
 
 
