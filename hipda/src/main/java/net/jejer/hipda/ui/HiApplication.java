@@ -1,7 +1,9 @@
 package net.jejer.hipda.ui;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Bundle;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -19,7 +21,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 /**
  * Created by GreenSkinMonster on 2015-03-28.
  */
-public class HiApplication extends Application {
+public class HiApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
     private static Context context;
     private static boolean notified;
@@ -29,7 +31,8 @@ public class HiApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        HiApplication.context = getApplicationContext();
+        context = getApplicationContext();
+        registerActivityLifecycleCallbacks(this);
 
         if (!BuildConfig.DEBUG)
             Fabric.with(this, new Crashlytics());
@@ -52,20 +55,6 @@ public class HiApplication extends Application {
 
     public static Context getAppContext() {
         return HiApplication.context;
-    }
-
-    private static boolean activityVisible;
-
-    public static boolean isActivityVisible() {
-        return activityVisible;
-    }
-
-    public static void activityResumed() {
-        activityVisible = true;
-    }
-
-    public static void activityPaused() {
-        activityVisible = false;
     }
 
     public static String getAppVersion() {
@@ -96,4 +85,62 @@ public class HiApplication extends Application {
     public static boolean isFontSet() {
         return fontSet;
     }
+
+    /**
+     * Manages the state of opened vs closed activities, should be 0 or 1.
+     * It will be 2 if this value is checked between activity B onStart() and
+     * activity A onStop().
+     * It could be greater if the top activities are not fullscreen or have
+     * transparent backgrounds.
+     */
+    private static int visibleActivityCount = 0;
+
+    /**
+     * Manages the state of opened vs closed activities, should be 0 or 1
+     * because only one can be in foreground at a time. It will be 2 if this
+     * value is checked between activity B onResume() and activity A onPause().
+     */
+    private static int foregroundActivityCount = 0;
+
+    /**
+     * Returns true if app has foreground
+     */
+    public static boolean isAppInForeground() {
+        return foregroundActivityCount > 0;
+    }
+
+    /**
+     * Returns true if any activity of app is visible (or device is sleep when
+     * an activity was visible)
+     */
+    public static boolean isAppVisible() {
+        return visibleActivityCount > 0;
+    }
+
+    public void onActivityCreated(Activity activity, Bundle bundle) {
+    }
+
+    public void onActivityDestroyed(Activity activity) {
+    }
+
+    public void onActivityResumed(Activity activity) {
+        foregroundActivityCount++;
+    }
+
+    public void onActivityPaused(Activity activity) {
+        foregroundActivityCount--;
+    }
+
+
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+    }
+
+    public void onActivityStarted(Activity activity) {
+        visibleActivityCount++;
+    }
+
+    public void onActivityStopped(Activity activity) {
+        visibleActivityCount--;
+    }
+
 }

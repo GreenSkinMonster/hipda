@@ -71,7 +71,7 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
         event.message = message;
         event.mImage = image;
 
-        if (HiApplication.isActivityVisible()) {
+        if (HiApplication.isAppVisible()) {
             EventBus.getDefault().post(event);
         } else {
             mHoldEvents.add(event);

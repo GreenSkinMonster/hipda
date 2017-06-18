@@ -27,7 +27,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (HiApplication.isActivityVisible()) {
+        if (HiApplication.isAppVisible()) {
             Logger.v("Activity is visible, do nothing.");
             return;
         }

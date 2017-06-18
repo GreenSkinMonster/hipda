@@ -353,22 +353,6 @@ public class MainFrameActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        HiApplication.activityResumed();
-//        Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
-//        if (fg instanceof ThreadListFragment) {
-//            clearBackStacks(true);
-//        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        HiApplication.activityPaused();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.main_frame, menu);

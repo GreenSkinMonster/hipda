@@ -135,7 +135,7 @@ public class NotificationMgr {
     }
 
     public static void showNotification(Context context) {
-        if (!HiApplication.isActivityVisible()) {
+        if (!HiApplication.isAppVisible()) {
             if (mCurrentBean.hasNew()) {
                 Intent intent = new Intent(context, MainFrameActivity.class);
                 intent.setAction(Constants.INTENT_NOTIFICATION);
