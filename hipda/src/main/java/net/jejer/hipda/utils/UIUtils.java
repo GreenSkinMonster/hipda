@@ -326,7 +326,9 @@ public class UIUtils {
     }
 
     public static void hackStatusBar(BaseActivity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && HiSettingsHelper.getInstance().isHackStatusBar()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                && HiSettingsHelper.getInstance().isGestureBack()
+                && HiSettingsHelper.getInstance().isHackStatusBar()) {
             int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
             if (resourceId != 0) {
                 Window window = activity.getWindow();
@@ -347,9 +349,9 @@ public class UIUtils {
         }
     }
 
-    public static int getWindowWidth(Activity activity) {
+    public static int getWindowWidth(Window window) {
         DisplayMetrics metrics = new DisplayMetrics();
-        activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        window.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         return metrics.widthPixels;
     }

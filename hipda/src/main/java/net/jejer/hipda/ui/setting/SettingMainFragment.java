@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 
@@ -19,7 +18,6 @@ import net.jejer.hipda.job.SettingChangedEvent;
 import net.jejer.hipda.ui.AboutFragment;
 import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
-import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.ui.SettingActivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
@@ -114,9 +112,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         } else {
             NotificationMgr.cancelAlarm(getActivity());
         }
-
-        if (!HiSettingsHelper.getInstance().isGestureBack() && getActivity() != null)
-            ((MainFrameActivity) getActivity()).drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
         String newIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
         if (TextUtils.isDigitsOnly(newIcon) && !mIcon.equals(newIcon))

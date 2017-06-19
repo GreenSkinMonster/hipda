@@ -21,19 +21,20 @@ public class SwipeBaseActivity extends BaseActivity implements SwipeBackActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHelper = new SwipeBackActivityHelper(this);
-        mHelper.onActivityCreate();
+        if (HiSettingsHelper.getInstance().isGestureBack()) {
+            mHelper = new SwipeBackActivityHelper(this);
+            mHelper.onActivityCreate();
 
-
-        getSwipeBackLayout().setEdgeSize((int) (UIUtils.getWindowWidth(this) * 0.7));
-
-        setSwipeBackEnable(HiSettingsHelper.getInstance().isGestureBack());
+            getSwipeBackLayout().setEdgeSize((UIUtils.getWindowWidth(getWindow())));
+            setSwipeBackEnable(HiSettingsHelper.getInstance().isGestureBack());
+        }
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mHelper.onPostCreate();
+        if (mHelper != null)
+            mHelper.onPostCreate();
     }
 
     @Override
@@ -46,18 +47,22 @@ public class SwipeBaseActivity extends BaseActivity implements SwipeBackActivity
 
     @Override
     public SwipeBackLayout getSwipeBackLayout() {
-        return mHelper.getSwipeBackLayout();
+        return mHelper != null ? mHelper.getSwipeBackLayout() : null;
     }
 
     @Override
     public void setSwipeBackEnable(boolean enable) {
-        getSwipeBackLayout().setEnableGesture(enable);
+        if (mHelper != null) {
+            getSwipeBackLayout().setEnableGesture(enable);
+        }
     }
 
     @Override
     public void scrollToFinishActivity() {
-        SwipeUtils.convertActivityToTranslucent(this);
-        getSwipeBackLayout().scrollToFinishActivity();
+        if (mHelper != null) {
+            SwipeUtils.convertActivityToTranslucent(this);
+            getSwipeBackLayout().scrollToFinishActivity();
+        }
     }
 
 }
