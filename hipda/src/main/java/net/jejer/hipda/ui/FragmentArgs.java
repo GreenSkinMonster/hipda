@@ -12,6 +12,9 @@ public class FragmentArgs {
     public final static int TYPE_SMS = 3;
     public final static int TYPE_THREAD_NOTIFY = 4;
     public final static int TYPE_SMS_DETAIL = 5;
+    public final static int TYPE_SEARCH = 6;
+    public final static int TYPE_FAVORITE = 7;
+    public final static int TYPE_NEW_THREAD = 8;
 
     private int type;
     private int fid;
@@ -22,6 +25,7 @@ public class FragmentArgs {
     private String uid;
     private String username;
     private boolean skipEnterAnim;
+    private String parentId;
 
     public int getFid() {
         return fid;
@@ -93,5 +97,13 @@ public class FragmentArgs {
 
     public void setSkipEnterAnim(boolean skipEnterAnim) {
         this.skipEnterAnim = skipEnterAnim;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 }

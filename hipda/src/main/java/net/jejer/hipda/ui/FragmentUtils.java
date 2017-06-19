@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
@@ -33,6 +34,22 @@ public class FragmentUtils {
                         intent.getStringExtra(Constants.EXTRA_UID),
                         intent.getStringExtra(Constants.EXTRA_USERNAME)
                 );
+            } else if (Constants.INTENT_SMS.equals(intent.getAction())) {
+                FragmentArgs args = new FragmentArgs();
+                args.setType(FragmentArgs.TYPE_SMS);
+                return args;
+            } else if (Constants.INTENT_SEARCH.equals(intent.getAction())) {
+                FragmentArgs args = new FragmentArgs();
+                args.setType(FragmentArgs.TYPE_SEARCH);
+                return args;
+            } else if (Constants.INTENT_FAVORITE.equals(intent.getAction())) {
+                FragmentArgs args = new FragmentArgs();
+                args.setType(FragmentArgs.TYPE_FAVORITE);
+                return args;
+            } else if (Constants.INTENT_NEW_THREAD.equals(intent.getAction())) {
+                FragmentArgs args = new FragmentArgs();
+                args.setType(FragmentArgs.TYPE_NEW_THREAD);
+                return args;
             } else {
                 Uri data = intent.getData();
                 if (data != null) {
@@ -256,6 +273,14 @@ public class FragmentUtils {
         ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, skipEnterAnim));
     }
 
+    public static void showPostActivity(Activity activity, int fid, String parentSessionId) {
+        Intent intent = new Intent(activity, PostActivity.class);
+        intent.putExtra(PostFragment.ARG_MODE_KEY, PostHelper.MODE_NEW_THREAD);
+        intent.putExtra(PostFragment.ARG_FID_KEY, fid);
+        intent.putExtra(PostFragment.ARG_PARENT_ID, parentSessionId);
+        ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, true));
+    }
+
     public static void showFragment(FragmentManager fragmentManager, Fragment fragment, boolean skipEnterAnim) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
@@ -279,19 +304,22 @@ public class FragmentUtils {
             return;
         if (args.getType() == FragmentArgs.TYPE_THREAD) {
             showThreadActivity(activity, args.isSkipEnterAnim(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
-            //showThread(activity.getSupportFragmentManager(), args.isSkipEnterAnim(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
         } else if (args.getType() == FragmentArgs.TYPE_USER_INFO) {
-            //showUserInfo(activity.getSupportFragmentManager(), args.isSkipEnterAnim(), args.getUid(), args.getUsername());
             showUserInfoActivity(activity, args.isSkipEnterAnim(), args.getUid(), args.getUsername());
         } else if (args.getType() == FragmentArgs.TYPE_SMS) {
             showSimpleListActivity(activity, args.isSkipEnterAnim(), SimpleListJob.TYPE_SMS);
+        } else if (args.getType() == FragmentArgs.TYPE_SEARCH) {
+            showSimpleListActivity(activity, args.isSkipEnterAnim(), SimpleListJob.TYPE_SEARCH);
+        } else if (args.getType() == FragmentArgs.TYPE_FAVORITE) {
+            showSimpleListActivity(activity, args.isSkipEnterAnim(), SimpleListJob.TYPE_FAVORITES);
         } else if (args.getType() == FragmentArgs.TYPE_SMS_DETAIL) {
-            //showSmsDetail(activity.getSupportFragmentManager(), args.isSkipEnterAnim(), args.getUid(), args.getUsername());
             showSmsActivity(activity, args.isSkipEnterAnim(), args.getUid(), args.getUsername());
         } else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY) {
             showSimpleListActivity(activity, args.isSkipEnterAnim(), SimpleListJob.TYPE_THREAD_NOTIFY);
         } else if (args.getType() == FragmentArgs.TYPE_FORUM) {
             showForum(activity.getSupportFragmentManager(), args.getFid());
+        } else if (args.getType() == FragmentArgs.TYPE_NEW_THREAD) {
+            showPostActivity(activity, args.getFid(), args.getParentId());
         }
     }
 

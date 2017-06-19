@@ -69,7 +69,6 @@
     <string name="title_drawer_histories">浏览记录</string>
     <string name="title_drawer_sms">短消息</string>
     <string name="title_drawer_notify">信息提醒</string>
-    <string name="title_drawer_newpost">发表新帖</string>
     <string name="title_drawer_setting">设置</string>
     <string name="title_drawer_night_mode">夜间模式</string>
     <string name="title_drawer_expandable">更多</string>
@@ -81,6 +80,7 @@
     <string name="prefix_search_history">搜索记录：</string>
     <string name="user_online">目前在线</string>
     <string name="site_url">站内地址</string>
+    <string name="new_thread">发表主题</string>
 
     <string name="title_text_size_adjust">标题字号调整</string>
     <string name="title_post_text_size_adjust">帖子字号调整</string>

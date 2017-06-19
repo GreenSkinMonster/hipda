@@ -23,6 +23,10 @@ public class Constants {
     public static final int DRAWER_NO_ACTION = 10002;
 
     public static final String INTENT_NOTIFICATION = "notification";
+    public static final String INTENT_SMS = "sms";
+    public static final String INTENT_SEARCH = "search";
+    public static final String INTENT_NEW_THREAD = "new_thread";
+    public static final String INTENT_FAVORITE = "favorite";
 
     public static final String EXTRA_SMS_COUNT = "sms_count";
     public static final String EXTRA_THREAD_COUNT = "thread_count";

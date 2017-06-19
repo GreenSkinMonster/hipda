@@ -131,15 +131,19 @@ public class MainFrameActivity extends BaseActivity {
             TaskHelper.updateImageHost();
 
             int fid = HiSettingsHelper.getInstance().getLastForumId();
-
             FragmentArgs args = FragmentUtils.parse(getIntent());
-            if (args != null && args.getType() == FragmentArgs.TYPE_FORUM)
+            if (args != null && args.getType() == FragmentArgs.TYPE_FORUM) {
                 fid = args.getFid();
-
+            }
             FragmentUtils.showForum(getSupportFragmentManager(), fid);
 
-            if (args != null)
+            if (args != null && args.getType() != FragmentArgs.TYPE_FORUM) {
+                args.setSkipEnterAnim(true);
+                args.setFid(fid);
+                if (args.getType() == FragmentArgs.TYPE_NEW_THREAD)
+                    args.setParentId(mSessionId);
                 FragmentUtils.show(this, args);
+            }
 
             TaskHelper.runDailyTask(false);
 
@@ -164,7 +168,6 @@ public class MainFrameActivity extends BaseActivity {
         FragmentArgs args = FragmentUtils.parse(intent);
         if (args != null) {
             HiParserThreadList.holdFetchNotify();
-            //clearBackStacks(false);
             args.setSkipEnterAnim(true);
             FragmentUtils.show(this, args);
         }

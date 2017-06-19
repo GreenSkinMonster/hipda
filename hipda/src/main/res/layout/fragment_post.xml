@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:background="@drawable/edittext_background"
         android:gravity="bottom"
         android:hint="@string/hint_subject"

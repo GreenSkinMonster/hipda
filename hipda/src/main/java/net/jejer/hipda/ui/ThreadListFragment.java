@@ -313,12 +313,6 @@ public class ThreadListFragment extends BaseFragment
         ActivityCompat.startActivity(getActivity(), intent, null);
     }
 
-    public void resetActionBarTitle() {
-        setActionBarTitle(HiUtils.getForumNameByFid(mForumId));
-        ((MainFrameActivity) getActivity()).setActionBarDisplayHomeAsUpEnabled(false);
-        ((MainFrameActivity) getActivity()).syncActionBarState();
-    }
-
     private void refresh() {
         mPage = 1;
         mRecyclerView.scrollToTop();
@@ -695,7 +689,8 @@ public class ThreadListFragment extends BaseFragment
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(PostEvent event) {
         PostBean postResult = event.mPostResult;
-        if (postResult.getDelete() == 1
+        if (postResult != null
+                && postResult.getDelete() == 1
                 && postResult.getFid() == mForumId
                 && postResult.getFloor() == 1) {
             //thread deleted, refresh
@@ -703,7 +698,12 @@ public class ThreadListFragment extends BaseFragment
             onRefresh();
         }
 
-        if (!mSessionId.equals(event.mSessionId))
+        String activitySessionId = "";
+        if (getActivity() != null && getActivity() instanceof BaseActivity) {
+            activitySessionId = ((BaseActivity) getActivity()).mSessionId;
+        }
+        if (!mSessionId.equals(event.mSessionId)
+                && !activitySessionId.equals(event.mSessionId))
             return;
 
         EventBus.getDefault().removeStickyEvent(event);
