@@ -167,7 +167,7 @@ public class TextViewWithEmoticon extends AppCompatTextView {
                     } else {
                         //this line is needed, or onCreateOptionsMenu and onPrepareOptionsMenu will be called multiple times
                         if (args.getType() == FragmentArgs.TYPE_THREAD) {
-                            FragmentUtils.showThreadActivity(mFragment.getActivity(), args.isSkipEnterAnimation(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
+                            FragmentUtils.showThreadActivity(mFragment.getActivity(), args.isSkipEnterAnim(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
                         } else {
                             mFragment.setHasOptionsMenu(false);
                             FragmentUtils.show(mFragment.getActivity(), args);

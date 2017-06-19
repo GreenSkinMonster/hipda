@@ -188,13 +188,17 @@ public class FragmentUtils {
         if (HiUtils.isValidId(pid))
             intent.putExtra(ThreadDetailFragment.ARG_PID_KEY, pid);
 
+        ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, skipEnterAnim));
+    }
+
+    private static Bundle getAnimBundle(Activity activity, boolean skipEnterAnim) {
         ActivityOptionsCompat options;
         if (skipEnterAnim) {
             options = ActivityOptionsCompat.makeBasic();
         } else {
             options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_left, R.anim.no_anim);
         }
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
+        return options.toBundle();
     }
 
     public static void showUserInfo(FragmentManager fragmentManager, boolean skipEnterAnim, String uid, String username) {
@@ -207,58 +211,55 @@ public class FragmentUtils {
         showFragment(fragmentManager, fragment, skipEnterAnim);
     }
 
-    public static void showUserInfoActivity(Activity activity, String uid, String username) {
+    public static void showUserInfoActivity(Activity activity, boolean skipEnterAnim, String uid, String username) {
         Intent intent = new Intent(activity, UserInfoActivity.class);
         intent.putExtra(UserinfoFragment.ARG_UID, uid);
         intent.putExtra(UserinfoFragment.ARG_USERNAME, username);
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_left, R.anim.no_anim);
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
+        ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, skipEnterAnim));
     }
 
-    public static void showThreadNotify(FragmentManager fragmentManager, boolean skipEnterAnimation) {
+    public static void showThreadNotify(FragmentManager fragmentManager, boolean skipEnterAnim) {
         Bundle notifyBundle = new Bundle();
         notifyBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_THREAD_NOTIFY);
         SimpleListFragment fragment = new SimpleListFragment();
         fragment.setArguments(notifyBundle);
-        showFragment(fragmentManager, fragment, skipEnterAnimation);
+        showFragment(fragmentManager, fragment, skipEnterAnim);
     }
 
-    public static void showSmsList(FragmentManager fragmentManager, boolean skipEnterAnimation) {
+    public static void showSmsList(FragmentManager fragmentManager, boolean skipEnterAnim) {
         Bundle smsBundle = new Bundle();
         smsBundle.putInt(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_SMS);
         SimpleListFragment fragment = new SimpleListFragment();
         fragment.setArguments(smsBundle);
-        showFragment(fragmentManager, fragment, skipEnterAnimation);
+        showFragment(fragmentManager, fragment, skipEnterAnim);
     }
 
-    public static void showSmsDetail(FragmentManager fragmentManager, boolean skipEnterAnimation, String uid, String author) {
+    public static void showSmsDetail(FragmentManager fragmentManager, boolean skipEnterAnim, String uid, String author) {
         Bundle smsBundle = new Bundle();
         smsBundle.putString(SmsFragment.ARG_AUTHOR, author);
         smsBundle.putString(SmsFragment.ARG_UID, uid);
         SmsFragment fragment = new SmsFragment();
         fragment.setArguments(smsBundle);
-        showFragment(fragmentManager, fragment, skipEnterAnimation);
+        showFragment(fragmentManager, fragment, skipEnterAnim);
     }
 
-    public static void showSmsActivity(Activity activity, String uid, String author) {
+    public static void showSmsActivity(Activity activity, boolean skipEnterAnim, String uid, String author) {
         Intent intent = new Intent(activity, SmsActivity.class);
         intent.putExtra(SmsFragment.ARG_AUTHOR, author);
         intent.putExtra(SmsFragment.ARG_UID, uid);
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_left, R.anim.no_anim);
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
+        ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, skipEnterAnim));
     }
 
-    public static void showSimpleListActivity(Activity activity, int type) {
+    public static void showSimpleListActivity(Activity activity, boolean skipEnterAnim, int type) {
         Intent intent = new Intent(activity, SimpleListActivity.class);
         intent.putExtra(SimpleListFragment.ARG_TYPE, type);
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_left, R.anim.no_anim);
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
+        ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, skipEnterAnim));
     }
 
-    public static void showFragment(FragmentManager fragmentManager, Fragment fragment, boolean skipEnterAnimation) {
+    public static void showFragment(FragmentManager fragmentManager, Fragment fragment, boolean skipEnterAnim) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        if (skipEnterAnimation) {
+        if (skipEnterAnim) {
             transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
         } else {
             transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right);
@@ -277,18 +278,18 @@ public class FragmentUtils {
         if (args == null)
             return;
         if (args.getType() == FragmentArgs.TYPE_THREAD) {
-            showThreadActivity(activity, args.isSkipEnterAnimation(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
-            //showThread(activity.getSupportFragmentManager(), args.isSkipEnterAnimation(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
+            showThreadActivity(activity, args.isSkipEnterAnim(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
+            //showThread(activity.getSupportFragmentManager(), args.isSkipEnterAnim(), args.getTid(), "", args.getPage(), args.getFloor(), args.getPostId(), -1);
         } else if (args.getType() == FragmentArgs.TYPE_USER_INFO) {
-            //showUserInfo(activity.getSupportFragmentManager(), args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
-            showUserInfoActivity(activity, args.getUid(), args.getUsername());
+            //showUserInfo(activity.getSupportFragmentManager(), args.isSkipEnterAnim(), args.getUid(), args.getUsername());
+            showUserInfoActivity(activity, args.isSkipEnterAnim(), args.getUid(), args.getUsername());
         } else if (args.getType() == FragmentArgs.TYPE_SMS) {
-            showSimpleListActivity(activity, SimpleListJob.TYPE_SMS);
+            showSimpleListActivity(activity, args.isSkipEnterAnim(), SimpleListJob.TYPE_SMS);
         } else if (args.getType() == FragmentArgs.TYPE_SMS_DETAIL) {
-            //showSmsDetail(activity.getSupportFragmentManager(), args.isSkipEnterAnimation(), args.getUid(), args.getUsername());
-            showSmsActivity(activity, args.getUid(), args.getUsername());
+            //showSmsDetail(activity.getSupportFragmentManager(), args.isSkipEnterAnim(), args.getUid(), args.getUsername());
+            showSmsActivity(activity, args.isSkipEnterAnim(), args.getUid(), args.getUsername());
         } else if (args.getType() == FragmentArgs.TYPE_THREAD_NOTIFY) {
-            showSimpleListActivity(activity, SimpleListJob.TYPE_THREAD_NOTIFY);
+            showSimpleListActivity(activity, args.isSkipEnterAnim(), SimpleListJob.TYPE_THREAD_NOTIFY);
         } else if (args.getType() == FragmentArgs.TYPE_FORUM) {
             showForum(activity.getSupportFragmentManager(), args.getFid());
         }

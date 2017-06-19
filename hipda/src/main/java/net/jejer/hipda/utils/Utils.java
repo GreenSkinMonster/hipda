@@ -245,7 +245,9 @@ public class Utils {
     public static void restartActivity(Activity activity) {
         ColorHelper.clear();
         activity.finish();
-        activity.startActivity(new Intent(activity.getApplicationContext(), activity.getClass()));
+        Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
         activity.overridePendingTransition(0, 0);
         System.exit(0);
     }

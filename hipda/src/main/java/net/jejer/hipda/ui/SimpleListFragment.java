@@ -362,7 +362,7 @@ public class SimpleListFragment extends BaseFragment
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
 
             if (mType == SimpleListJob.TYPE_SMS) {
-                FragmentUtils.showSmsActivity(getActivity(), item.getUid(), item.getAuthor());
+                FragmentUtils.showSmsActivity(getActivity(), false, item.getUid(), item.getAuthor());
             } else {
                 setHasOptionsMenu(false);
                 Fragment listFragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
@@ -371,7 +371,7 @@ public class SimpleListFragment extends BaseFragment
                 if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
                     FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
                 } else if (HiUtils.isValidId(item.getUid())) {
-                    FragmentUtils.showUserInfoActivity(getActivity(), item.getUid(), item.getAuthor());
+                    FragmentUtils.showUserInfoActivity(getActivity(), false, item.getUid(), item.getAuthor());
                 }
             }
         }
@@ -392,7 +392,7 @@ public class SimpleListFragment extends BaseFragment
                 if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
                     showLastPage(item);
                 } else if (HiUtils.isValidId(item.getUid())) {
-                    FragmentUtils.showUserInfoActivity(getActivity(), item.getUid(), item.getAuthor());
+                    FragmentUtils.showUserInfoActivity(getActivity(), false, item.getUid(), item.getAuthor());
                 }
             }
         }

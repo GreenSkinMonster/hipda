@@ -965,7 +965,7 @@ public class ThreadDetailFragment extends BaseFragment {
         public void onSingleClick(View view) {
             String uid = (String) view.getTag(R.id.avatar_tag_uid);
             String username = (String) view.getTag(R.id.avatar_tag_username);
-            FragmentUtils.showUserInfoActivity(getActivity(), uid, username);
+            FragmentUtils.showUserInfoActivity(getActivity(), false, uid, username);
         }
     }
 

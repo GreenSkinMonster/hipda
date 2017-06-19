@@ -21,7 +21,7 @@ public class FragmentArgs {
     private int floor;
     private String uid;
     private String username;
-    private boolean skipEnterAnimation;
+    private boolean skipEnterAnim;
 
     public int getFid() {
         return fid;
@@ -87,11 +87,11 @@ public class FragmentArgs {
         this.username = username;
     }
 
-    public boolean isSkipEnterAnimation() {
-        return skipEnterAnimation;
+    public boolean isSkipEnterAnim() {
+        return skipEnterAnim;
     }
 
-    public void setSkipEnterAnimation(boolean skipEnterAnimation) {
-        this.skipEnterAnimation = skipEnterAnimation;
+    public void setSkipEnterAnim(boolean skipEnterAnim) {
+        this.skipEnterAnim = skipEnterAnim;
     }
 }

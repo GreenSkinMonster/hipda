@@ -165,7 +165,7 @@ public class MainFrameActivity extends BaseActivity {
         if (args != null) {
             HiParserThreadList.holdFetchNotify();
             //clearBackStacks(false);
-            args.setSkipEnterAnimation(true);
+            args.setSkipEnterAnim(true);
             FragmentUtils.show(this, args);
         }
     }
@@ -404,25 +404,25 @@ public class MainFrameActivity extends BaseActivity {
 
             switch ((int) iDrawerItem.getIdentifier()) {
                 case Constants.DRAWER_SEARCH:
-                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_SEARCH);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_SEARCH);
                     break;
                 case Constants.DRAWER_MYPOST:
-                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_MYPOST);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_MYPOST);
                     break;
                 case Constants.DRAWER_MYREPLY:
-                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_MYREPLY);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_MYREPLY);
                     break;
                 case Constants.DRAWER_FAVORITES:
-                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_FAVORITES);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_FAVORITES);
                     break;
                 case Constants.DRAWER_HISTORIES:
-                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_HISTORIES);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_HISTORIES);
                     break;
                 case Constants.DRAWER_SMS:
-                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_SMS);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_SMS);
                     break;
                 case Constants.DRAWER_THREADNOTIFY:
-                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, SimpleListJob.TYPE_THREAD_NOTIFY);
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_THREAD_NOTIFY);
                     break;
                 case Constants.DRAWER_SETTINGS:
                     Intent intent = new Intent(MainFrameActivity.this, SettingActivity.class);

@@ -287,14 +287,14 @@ public class ThreadListFragment extends BaseFragment
                             && bean.getThreadCount() == 0
                             && HiUtils.isValidId(bean.getUid())
                             && !TextUtils.isEmpty(bean.getUsername())) {
-                        FragmentUtils.showSmsActivity(getActivity(), bean.getUid(), bean.getUsername());
+                        FragmentUtils.showSmsActivity(getActivity(), false, bean.getUid(), bean.getUsername());
                         NotificationMgr.getCurrentNotification().clearSmsCount();
                         showNotification();
                     } else if (bean.getSmsCount() > 0) {
-                        FragmentUtils.showSimpleListActivity(getActivity(), SimpleListJob.TYPE_SMS);
+                        FragmentUtils.showSimpleListActivity(getActivity(), false, SimpleListJob.TYPE_SMS);
                     } else if (bean.getThreadCount() > 0) {
                         NotificationMgr.getCurrentNotification().setThreadCount(0);
-                        FragmentUtils.showSimpleListActivity(getActivity(), SimpleListJob.TYPE_THREAD_NOTIFY);
+                        FragmentUtils.showSimpleListActivity(getActivity(), false, SimpleListJob.TYPE_THREAD_NOTIFY);
                         showNotification();
                     } else {
                         Toast.makeText(mCtx, "没有未处理的通知", Toast.LENGTH_SHORT).show();

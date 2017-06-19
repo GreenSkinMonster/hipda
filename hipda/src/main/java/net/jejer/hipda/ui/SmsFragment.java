@@ -261,7 +261,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             String uid = (String) view.getTag(R.id.avatar_tag_uid);
             String username = (String) view.getTag(R.id.avatar_tag_username);
 
-            FragmentUtils.showUserInfoActivity(getActivity(), uid, username);
+            FragmentUtils.showUserInfoActivity(getActivity(), false, uid, username);
         }
     }
 
