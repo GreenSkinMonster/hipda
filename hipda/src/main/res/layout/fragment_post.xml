@@ -12,15 +12,13 @@
         android:id="@+id/et_subject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="6dp"
+        android:layout_margin="6dp"
         android:background="@drawable/edittext_background"
         android:gravity="bottom"
         android:hint="@string/hint_subject"
         android:inputType="text"
         android:maxLines="1"
-        android:padding="4dp"
+        android:padding="6dp"
         android:textSize="20sp"
         android:visibility="gone"/>
 

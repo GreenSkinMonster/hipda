@@ -1,20 +1,16 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="ThemeLightBase" parent="MaterialDrawerTheme.Light">
-        <item name="actionBarMargin">0dp</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="ThemeDarkBase" parent="MaterialDrawerTheme">
-        <item name="actionBarMargin">0dp</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="ThemeLight" parent="ThemeLightBase">
 
         <item name="android:windowBackground">?list_item_background</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
         <!-- make ActionMode overlap Toolbar -->
         <item name="windowActionModeOverlay">true</item>
@@ -22,6 +18,7 @@
         <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
         <item name="actionBarPopupTheme">@style/MyToolbar.PopupTheme.Light</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="actionBarMargin">0dp</item>
 
         <item name="action_mode_text_color">@android:color/white</item>
         <item name="fab_background_tint">@color/md_grey_400</item>
@@ -177,7 +174,7 @@
     </style>
 
     <style name="ThemeLight.White" parent="ThemeLight">
-        <item name="colorPrimary">@color/md_white_1000</item>
+        <item name="colorPrimary">@color/md_grey_50</item>
         <item name="colorPrimaryDark">@color/md_grey_300</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
         <!-- Hamburger-Icon color -->
@@ -192,6 +189,9 @@
     <style name="ThemeDark" parent="ThemeDarkBase">
 
         <item name="android:windowBackground">?list_item_background</item>
+        <item name="android:windowIsTranslucent">true</item>
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
         <!-- make ActionMode overlap Toolbar -->
         <item name="windowActionModeOverlay">true</item>
@@ -199,6 +199,7 @@
         <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
         <item name="actionBarPopupTheme">@style/MyToolbar.PopupTheme.Dark</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="actionBarMargin">0dp</item>
 
         <item name="action_mode_text_color">@android:color/white</item>
         <item name="fab_background_tint">@color/md_grey_900</item>

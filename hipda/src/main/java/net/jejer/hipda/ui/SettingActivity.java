@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 
@@ -21,6 +22,7 @@ public class SettingActivity extends SwipeBaseActivity {
 
         setContentView(R.layout.activity_post);
         mRootView = findViewById(R.id.main_activity_root_view);
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);

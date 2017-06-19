@@ -19,6 +19,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Utils;
 
 import java.util.UUID;
 
@@ -57,6 +58,18 @@ public class BaseActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && HiSettingsHelper.getInstance().isNavBarColored()) {
             getWindow().setNavigationBarColor(ColorHelper.getColorPrimary(this));
+        }
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                && mAppBarLayout != null) {
+            if (HiSettingsHelper.getInstance().isWhiteTheme()) {
+                mAppBarLayout.setStateListAnimator(null);
+                mAppBarLayout.setElevation(Utils.dpToPx(this, 2));
+            }
         }
     }
 
