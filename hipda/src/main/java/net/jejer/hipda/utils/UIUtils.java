@@ -161,6 +161,9 @@ public class UIUtils {
         if (askCamera && askStorage) {
             HiSettingsHelper.getInstance().setCameraPermAsked(true);
             perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        } else if (askCamera) {
+            HiSettingsHelper.getInstance().setCameraPermAsked(true);
+            perms = new String[]{Manifest.permission.CAMERA};
         } else if (askStorage) {
             perms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
             Toast.makeText(ctx, "需要授予 \"存储空间\" 权限", Toast.LENGTH_SHORT).show();
