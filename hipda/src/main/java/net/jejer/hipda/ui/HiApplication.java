@@ -23,10 +23,16 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
  */
 public class HiApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
+    public final static int IDLE = 0;
+    public final static int RELOAD = 1;
+    public final static int RECREATE = 2;
+    public final static int RESTART = 3;
+
     private static Context context;
     private static boolean notified;
     private static boolean updated;
     private static boolean fontSet;
+    private static int settingStatus;
 
     @Override
     public void onCreate() {
@@ -84,6 +90,14 @@ public class HiApplication extends Application implements Application.ActivityLi
 
     public static boolean isFontSet() {
         return fontSet;
+    }
+
+    public static int getSettingStatus() {
+        return settingStatus;
+    }
+
+    public static void setSettingStatus(int settingStatus) {
+        HiApplication.settingStatus = settingStatus;
     }
 
     /**

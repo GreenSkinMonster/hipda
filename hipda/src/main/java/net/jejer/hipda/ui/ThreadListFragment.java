@@ -121,12 +121,12 @@ public class ThreadListFragment extends BaseFragment
         mFidHolder[0] = mForumId;
 
         HiSettingsHelper.getInstance().setLastForumId(mForumId);
-
-        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+
         View view = inflater.inflate(R.layout.fragment_thread_list, parent, false);
         mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_threads);
         mRecyclerView.setHasFixedSize(true);
@@ -166,15 +166,20 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        setHasOptionsMenu(true);
         if (savedInstanceState != null) {
             mCtx = getActivity();
         }
+        startLoading();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        startLoading();
+    }
+
+    private void startLoading() {
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         if (!mInloading) {
@@ -194,10 +199,11 @@ public class ThreadListFragment extends BaseFragment
         }
     }
 
+
     @Override
-    public void onPause() {
+    public void onStop() {
         EventBus.getDefault().unregister(this);
-        super.onPause();
+        super.onStop();
     }
 
     @Override

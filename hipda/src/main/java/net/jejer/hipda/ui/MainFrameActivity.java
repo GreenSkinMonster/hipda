@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -62,13 +63,13 @@ import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.Forum;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.job.SettingChangedEvent;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.LoginDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
+import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
@@ -261,7 +262,13 @@ public class MainFrameActivity extends BaseActivity {
                         public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
                             if (HiSettingsHelper.getInstance().isNightMode() != isChecked) {
                                 HiSettingsHelper.getInstance().setNightMode(isChecked);
-                                Utils.restartActivity(MainFrameActivity.this);
+                                drawer.closeDrawer();
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        recreateActivity();
+                                    }
+                                }, 250);
                             }
                         }
                     }));
@@ -345,6 +352,27 @@ public class MainFrameActivity extends BaseActivity {
             accountHeader.addProfile(new ProfileDrawerItem()
                     .withEmail(username)
                     .withIcon(avatarUrl), 0);
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (HiApplication.getSettingStatus() == HiApplication.RESTART) {
+            HiApplication.setSettingStatus(HiApplication.IDLE);
+            Utils.restartActivity(this);
+        } else if (HiApplication.getSettingStatus() == HiApplication.RECREATE) {
+            HiApplication.setSettingStatus(HiApplication.IDLE);
+            recreateActivity();
+        } else if (HiApplication.getSettingStatus() == HiApplication.RELOAD) {
+            HiApplication.setSettingStatus(HiApplication.IDLE);
+            updateAppBarScrollFlag();
+            updateFabGravity();
+
+            Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+            if (fg instanceof ThreadListFragment) {
+                ((ThreadListFragment) fg).notifyDataSetChanged();
+            }
         }
     }
 
@@ -489,20 +517,6 @@ public class MainFrameActivity extends BaseActivity {
         }
     }
 
-//    private void clearBackStacks(boolean resetActionBarTitle) {
-//        FragmentManager fm = getSupportFragmentManager();
-//        while (fm.getBackStackEntryCount() > 0) {
-//            fm.popBackStackImmediate();
-//        }
-//
-//        if (resetActionBarTitle) {
-//            Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
-//            if (fg instanceof ThreadListFragment) {
-//                ((ThreadListFragment) fg).resetActionBarTitle();
-//            }
-//        }
-//    }
-
     private class NetworkStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -563,6 +577,26 @@ public class MainFrameActivity extends BaseActivity {
             drawer.getActionBarDrawerToggle().syncState();
     }
 
+    private void recreateActivity() {
+        HiUtils.updateBaseUrls();
+        ColorHelper.clear();
+        int theme = HiUtils.getThemeValue(this,
+                HiSettingsHelper.getInstance().getActiveTheme(),
+                HiSettingsHelper.getInstance().getPrimaryColor());
+        setTheme(theme);
+        //avoid “RuntimeException: Performing pause of activity that is not resumed”
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    recreate();
+                } catch (Exception e) {
+                    Utils.restartActivity(MainFrameActivity.this);
+                }
+            }
+        }, 5);
+    }
+
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginEvent event) {
@@ -574,21 +608,6 @@ public class MainFrameActivity extends BaseActivity {
             }
         }
         updateAccountHeader();
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(SettingChangedEvent event) {
-        if (event.mRestart) {
-            Utils.restartActivity(this);
-        } else {
-            updateAppBarScrollFlag();
-            updateFabGravity();
-            Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
-            if (fg instanceof ThreadListFragment) {
-                ((ThreadListFragment) fg).notifyDataSetChanged();
-            }
-        }
     }
 
     @Override

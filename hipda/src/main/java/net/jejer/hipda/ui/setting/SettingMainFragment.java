@@ -14,7 +14,6 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.job.SettingChangedEvent;
 import net.jejer.hipda.ui.AboutFragment;
 import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
@@ -23,8 +22,6 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.Date;
 import java.util.List;
@@ -49,6 +46,8 @@ public class SettingMainFragment extends BaseSettingFragment {
     private String mForumServer;
     private boolean mTrustAllCerts;
     private boolean mCircleAvatar;
+
+    private boolean mFirstResume = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,13 +97,18 @@ public class SettingMainFragment extends BaseSettingFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (!mFirstResume) {
+            updateSettingStatus();
+        } else {
+            mFirstResume = false;
+        }
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-
-        HiSettingsHelper.getInstance().reload();
-
-        SettingChangedEvent event = new SettingChangedEvent();
-
         if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
             if (NotificationMgr.isAlarmRuning(getActivity()))
                 NotificationMgr.cancelAlarm(getActivity());
@@ -122,23 +126,30 @@ public class SettingMainFragment extends BaseSettingFragment {
         if (HiSettingsHelper.getInstance().isCircleAvatar() != mCircleAvatar) {
             GlideHelper.initDefaultFiles();
         }
+    }
+
+    private void updateSettingStatus() {
+        HiSettingsHelper.getInstance().reload();
+
+        if (HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
+            HiSettingsHelper.getInstance().setNightMode(false);
 
         if (mCacheCleared
-                || HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
+                || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
+            HiApplication.setSettingStatus(HiApplication.RESTART);
+        } else if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getActiveTheme().equals(mTheme)
-                || HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor
+                || (HiSettingsHelper.getInstance().isUsingLightTheme() && HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || !HiSettingsHelper.getInstance().getFreqMenus().equals(mFreqMenus)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
-                || !HiSettingsHelper.getInstance().getFont().equals(mFont)
                 || !HiSettingsHelper.getInstance().getForumServer().equals(mForumServer)
-                || HiSettingsHelper.getInstance().isTrustAllCerts() != mTrustAllCerts
-                || !mIcon.equals(newIcon)) {
-            mCacheCleared = false;
-            event.mRestart = true;
+                || HiSettingsHelper.getInstance().isTrustAllCerts() != mTrustAllCerts) {
+            HiApplication.setSettingStatus(HiApplication.RECREATE);
+        } else {
+            HiApplication.setSettingStatus(HiApplication.RELOAD);
         }
-        EventBus.getDefault().postSticky(event);
     }
 
     private void bindPreferenceSummaryToValue() {
