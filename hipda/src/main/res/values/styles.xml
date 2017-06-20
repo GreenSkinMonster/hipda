@@ -354,4 +354,9 @@
         <item name="shadow_bottom">@drawable/shadow_bottom</item>
     </style>
 
+    <style name="ThemeTransitionAnimation">
+        <item name="@android:windowEnterAnimation">@anim/window_fade_in</item>
+        <item name="@android:windowExitAnimation">@anim/window_fade_out</item>
+    </style>
+
 </resources>

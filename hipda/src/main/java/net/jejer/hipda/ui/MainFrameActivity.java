@@ -161,6 +161,17 @@ public class MainFrameActivity extends BaseActivity {
                 }
             }
         }
+
+        if (HiApplication.getSettingStatus() == HiApplication.RECREATING) {
+            HiApplication.setSettingStatus(HiApplication.IDLE);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (drawer != null && drawer.isDrawerOpen())
+                        drawer.closeDrawer();
+                }
+            }, 500);
+        }
     }
 
     @Override
@@ -262,7 +273,6 @@ public class MainFrameActivity extends BaseActivity {
                         public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
                             if (HiSettingsHelper.getInstance().isNightMode() != isChecked) {
                                 HiSettingsHelper.getInstance().setNightMode(isChecked);
-                                drawer.closeDrawer();
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -589,6 +599,8 @@ public class MainFrameActivity extends BaseActivity {
             @Override
             public void run() {
                 try {
+                    HiApplication.setSettingStatus(HiApplication.RECREATING);
+                    getWindow().setWindowAnimations(R.style.ThemeTransitionAnimation);
                     recreate();
                 } catch (Exception e) {
                     Utils.restartActivity(MainFrameActivity.this);
