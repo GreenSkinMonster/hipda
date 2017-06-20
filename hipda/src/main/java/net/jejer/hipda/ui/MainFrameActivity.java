@@ -115,8 +115,6 @@ public class MainFrameActivity extends BaseActivity {
 
         mMainFab = (FloatingActionButton) findViewById(R.id.fab_main);
         mNotiificationFab = (FloatingActionButton) findViewById(R.id.fab_notification);
-        mMainFab.setEnabled(false);
-        mNotiificationFab.setEnabled(false);
 
         if (UIUtils.isTablet(this)) {
             mMainFab.setSize(FloatingActionButton.SIZE_NORMAL);
@@ -348,8 +346,6 @@ public class MainFrameActivity extends BaseActivity {
         } else {
             mainFabParams.setBehavior(null);
             notiFabParams.setBehavior(null);
-            mMainFab.setEnabled(true);
-            mNotiificationFab.setEnabled(true);
             mMainFab.show();
         }
     }

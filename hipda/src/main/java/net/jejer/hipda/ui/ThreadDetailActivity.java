@@ -41,7 +41,6 @@ public class ThreadDetailActivity extends SwipeBaseActivity {
         UIUtils.hackStatusBar(this);
 
         mMainFab = (FloatingActionButton) findViewById(R.id.fab_main);
-        mMainFab.setEnabled(false);
 
         if (UIUtils.isTablet(this)) {
             mMainFab.setSize(FloatingActionButton.SIZE_NORMAL);
@@ -81,7 +80,6 @@ public class ThreadDetailActivity extends SwipeBaseActivity {
             mainFabParams.setBehavior(new FABHideOnScrollBehavior());
         } else {
             mainFabParams.setBehavior(null);
-            mMainFab.setEnabled(true);
             mMainFab.show();
         }
     }

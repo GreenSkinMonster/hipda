@@ -494,7 +494,6 @@ public class ThreadDetailFragment extends BaseFragment {
             if (!mDataReceived) {
                 mMainFab.hide();
             } else {
-                mMainFab.setEnabled(true);
                 mMainFab.show();
             }
 
@@ -512,10 +511,6 @@ public class ThreadDetailFragment extends BaseFragment {
                     }, 100);
                 }
             });
-        }
-        if (mNotificationFab != null) {
-            mNotificationFab.setEnabled(false);
-            mNotificationFab.hide();
         }
     }
 
@@ -793,7 +788,6 @@ public class ThreadDetailFragment extends BaseFragment {
         mQuickReply.setVisibility(View.VISIBLE);
         mQuickReply.bringToFront();
         mMainFab.hide();
-        mMainFab.setEnabled(false);
     }
 
     public boolean hideQuickReply() {
@@ -804,7 +798,6 @@ public class ThreadDetailFragment extends BaseFragment {
         if (mQuickReply != null && mQuickReply.getVisibility() == View.VISIBLE) {
             mEtReply.setText("");
             mQuickReply.setVisibility(View.INVISIBLE);
-            mMainFab.setEnabled(true);
             mMainFab.show();
             return true;
         }
@@ -947,7 +940,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 mRecyclerView.setFooterState(XFooterView.STATE_READY);
             }
 
-            if (mMainFab != null && mMainFab.isEnabled() && mMainFab.getVisibility() != View.VISIBLE)
+            if (mMainFab != null && mMainFab.getVisibility() == View.INVISIBLE)
                 mMainFab.show();
         } else {
             int fetchType = FETCH_NORMAL;
@@ -1032,7 +1025,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (newState == RecyclerView.SCROLL_STATE_IDLE
                     && HiSettingsHelper.getInstance().isFabAutoHide()
                     && mRecyclerView.isNearBottom()) {
-                if (mMainFab != null && mMainFab.isEnabled() && mMainFab.getVisibility() != View.VISIBLE)
+                if (mMainFab != null && mMainFab.getVisibility() == View.INVISIBLE)
                     mMainFab.show();
             }
         }
@@ -1131,7 +1124,6 @@ public class ThreadDetailFragment extends BaseFragment {
                 if (!mDataReceived) {
                     mDataReceived = true;
                     if (mMainFab != null) {
-                        mMainFab.setEnabled(true);
                         mMainFab.show();
                     }
                 }

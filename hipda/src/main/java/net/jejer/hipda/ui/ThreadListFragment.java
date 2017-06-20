@@ -58,6 +58,7 @@ import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadListAdapter;
 import net.jejer.hipda.ui.widget.BottomDialog;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
+import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.OnViewItemSingleClickListener;
 import net.jejer.hipda.ui.widget.SimpleDivider;
@@ -269,7 +270,6 @@ public class ThreadListFragment extends BaseFragment
     @Override
     void setupFab() {
         if (mMainFab != null) {
-            mMainFab.setEnabled(true);
             mMainFab.setImageResource(R.drawable.ic_refresh_white_24dp);
             mMainFab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -324,8 +324,9 @@ public class ThreadListFragment extends BaseFragment
         mRecyclerView.scrollToTop();
         hideFooter();
         mInloading = true;
-        if (HiSettingsHelper.getInstance().isFabAutoHide() && mMainFab != null)
-            mMainFab.hide();
+        if (HiSettingsHelper.getInstance().isFabAutoHide() && mMainFab != null) {
+            FABHideOnScrollBehavior.hideFab(mMainFab);
+        }
         ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
         JobMgr.addJob(job);
     }
@@ -550,17 +551,12 @@ public class ThreadListFragment extends BaseFragment
             int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
             if (smsCount > 0) {
                 mNotificationFab.setImageResource(R.drawable.ic_mail_white_24dp);
-                mNotificationFab.setEnabled(true);
                 mNotificationFab.show();
             } else if (threadCount > 0) {
                 mNotificationFab.setImageResource(R.drawable.ic_notifications_white_24dp);
-                mNotificationFab.setEnabled(true);
                 mNotificationFab.show();
             } else {
-                if (mNotificationFab.isEnabled()) {
-                    mNotificationFab.setEnabled(false);
-                    mNotificationFab.hide();
-                }
+                mNotificationFab.hide();
             }
             ((MainFrameActivity) getActivity()).updateDrawerBadge();
         }

@@ -28,12 +28,12 @@ public class FABHideOnScrollBehavior extends FloatingActionButton.Behavior {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
 
         boolean isNearBottom = target != null && (target instanceof XRecyclerView) && ((XRecyclerView) target).isNearBottom();
-        if (isNearBottom && child.isEnabled() && child.getVisibility() == View.GONE) {
+        if (isNearBottom && child.getVisibility() == View.INVISIBLE) {
             child.show();
         } else {
             if (!isNearBottom && dyConsumed > 0 && child.getVisibility() == View.VISIBLE) {
-                child.hide();
-            } else if (dyConsumed < 0 && child.isEnabled() && child.getVisibility() == View.GONE) {
+                hideFab(child);
+            } else if (dyConsumed < 0 && child.getVisibility() != View.VISIBLE) {
                 child.show();
             }
         }
@@ -51,5 +51,15 @@ public class FABHideOnScrollBehavior extends FloatingActionButton.Behavior {
     public boolean getInsetDodgeRect(@NonNull CoordinatorLayout parent, @NonNull FloatingActionButton child, @NonNull Rect rect) {
         super.getInsetDodgeRect(parent, child, rect);
         return false;
+    }
+
+    public static void hideFab(FloatingActionButton child) {
+        child.hide(new FloatingActionButton.OnVisibilityChangedListener() {
+            @Override
+            public void onHidden(FloatingActionButton fab) {
+                super.onHidden(fab);
+                fab.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 }

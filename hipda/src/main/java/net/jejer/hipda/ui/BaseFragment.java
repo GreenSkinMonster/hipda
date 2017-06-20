@@ -77,12 +77,10 @@ public abstract class BaseFragment extends Fragment {
     void setupFab() {
         if (getActivity() != null) {
             if (mMainFab != null) {
-                mMainFab.hide();
-                mMainFab.setEnabled(false);
+                mMainFab.setVisibility(View.GONE);
             }
             if (mNotificationFab != null) {
-                mNotificationFab.hide();
-                mNotificationFab.setEnabled(false);
+                mNotificationFab.setVisibility(View.GONE);
             }
         }
     }
