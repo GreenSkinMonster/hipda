@@ -63,6 +63,7 @@ import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.Forum;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
@@ -92,8 +93,8 @@ public class MainFrameActivity extends BaseActivity {
     public final static int PERMISSIONS_REQUEST_CODE_STORAGE = 200;
     public final static int PERMISSIONS_REQUEST_CODE_BOTH = 201;
 
-    public Drawer drawer;
-    private AccountHeader accountHeader;
+    private Drawer mDrawer;
+    private AccountHeader mAccountHeader;
 
     private NetworkStateReceiver mNetworkReceiver = new NetworkStateReceiver();
 
@@ -165,8 +166,7 @@ public class MainFrameActivity extends BaseActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (drawer != null && drawer.isDrawerOpen())
-                        drawer.closeDrawer();
+                    closeDrawer();
                 }
             }, 500);
         }
@@ -207,7 +207,7 @@ public class MainFrameActivity extends BaseActivity {
         // Create the AccountHeader
         String username = OkHttpHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
         String avatarUrl = OkHttpHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
-        accountHeader = new AccountHeaderBuilder()
+        mAccountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
                 .withCompactStyle(true)
@@ -291,10 +291,10 @@ public class MainFrameActivity extends BaseActivity {
                         .withIcon(forum.getIcon()));
         }
 
-        drawer = new DrawerBuilder()
+        mDrawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(mToolbar)
-                .withAccountHeader(accountHeader)
+                .withAccountHeader(mAccountHeader)
                 .withTranslucentStatusBar(true)
                 .withDrawerItems(drawerItems)
                 .withStickyFooterDivider(false)
@@ -302,20 +302,15 @@ public class MainFrameActivity extends BaseActivity {
                 .withOnDrawerItemClickListener(new DrawerItemClickListener())
                 .build();
 
-        drawer.getRecyclerView().setVerticalScrollBarEnabled(false);
+        mDrawer.getRecyclerView().setVerticalScrollBarEnabled(false);
 
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UIUtils.hideSoftKeyboard(MainFrameActivity.this);
-                if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                    if (drawer.isDrawerOpen())
-                        drawer.closeDrawer();
-                    else
-                        drawer.openDrawer();
-                } else {
-                    //popFragment();
-                }
+                if (mDrawer.isDrawerOpen())
+                    mDrawer.closeDrawer();
+                else
+                    mDrawer.openDrawer();
             }
         });
 
@@ -351,11 +346,11 @@ public class MainFrameActivity extends BaseActivity {
     }
 
     public void updateAccountHeader() {
-        if (accountHeader != null) {
+        if (mAccountHeader != null) {
             String username = OkHttpHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
             String avatarUrl = OkHttpHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
-            accountHeader.removeProfile(0);
-            accountHeader.addProfile(new ProfileDrawerItem()
+            mAccountHeader.removeProfile(0);
+            mAccountHeader.addProfile(new ProfileDrawerItem()
                     .withEmail(username)
                     .withIcon(avatarUrl), 0);
         }
@@ -411,8 +406,8 @@ public class MainFrameActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen()) {
-            drawer.closeDrawer();
+        if (mDrawer.isDrawerOpen()) {
+            mDrawer.closeDrawer();
             return;
         }
 
@@ -534,53 +529,58 @@ public class MainFrameActivity extends BaseActivity {
     public void updateDrawerBadge() {
         int smsCount = NotificationMgr.getCurrentNotification().getSmsCount();
         int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
-        int threadNotifyIndex = drawer.getPosition(Constants.DRAWER_THREADNOTIFY);
+        int threadNotifyIndex = mDrawer.getPosition(Constants.DRAWER_THREADNOTIFY);
         if (threadNotifyIndex != -1) {
-            PrimaryDrawerItem drawerItem = (PrimaryDrawerItem) drawer.getDrawerItem(Constants.DRAWER_THREADNOTIFY);
+            PrimaryDrawerItem drawerItem = (PrimaryDrawerItem) mDrawer.getDrawerItem(Constants.DRAWER_THREADNOTIFY);
             if (threadCount > 0) {
                 drawerItem.withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700));
-                drawer.updateBadge(Constants.DRAWER_THREADNOTIFY, new StringHolder(threadCount + ""));
+                mDrawer.updateBadge(Constants.DRAWER_THREADNOTIFY, new StringHolder(threadCount + ""));
             } else {
                 drawerItem.withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.background_grey));
-                drawer.updateBadge(Constants.DRAWER_THREADNOTIFY, new StringHolder("0"));
+                mDrawer.updateBadge(Constants.DRAWER_THREADNOTIFY, new StringHolder("0"));
             }
         }
-        int smsNotifyIndex = drawer.getPosition(Constants.DRAWER_SMS);
+        int smsNotifyIndex = mDrawer.getPosition(Constants.DRAWER_SMS);
         if (smsNotifyIndex != -1) {
-            PrimaryDrawerItem drawerItem = (PrimaryDrawerItem) drawer.getDrawerItem(Constants.DRAWER_SMS);
+            PrimaryDrawerItem drawerItem = (PrimaryDrawerItem) mDrawer.getDrawerItem(Constants.DRAWER_SMS);
             if (smsCount > 0) {
                 drawerItem.withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.md_red_700));
-                drawer.updateBadge(Constants.DRAWER_SMS, new StringHolder(smsCount + ""));
+                mDrawer.updateBadge(Constants.DRAWER_SMS, new StringHolder(smsCount + ""));
             } else {
                 drawerItem.withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.background_grey));
-                drawer.updateBadge(Constants.DRAWER_SMS, new StringHolder("0"));
+                mDrawer.updateBadge(Constants.DRAWER_SMS, new StringHolder("0"));
             }
         }
     }
 
     void setDrawerSelection(int forumId) {
-        if (drawer != null && !drawer.isDrawerOpen()) {
-            int position = drawer.getPosition(forumId);
-            if (drawer.getCurrentSelectedPosition() != position)
-                drawer.setSelectionAtPosition(position, false);
+        if (mDrawer != null && !mDrawer.isDrawerOpen()) {
+            int position = mDrawer.getPosition(forumId);
+            if (mDrawer.getCurrentSelectedPosition() != position)
+                mDrawer.setSelectionAtPosition(position, false);
         }
     }
 
     public void setActionBarDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
         if (showHomeAsUp) {
-            drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+            mDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
             if (getSupportActionBar() != null)
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } else {
             if (getSupportActionBar() != null)
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+            mDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         }
     }
 
     void syncActionBarState() {
-        if (drawer != null)
-            drawer.getActionBarDrawerToggle().syncState();
+        if (mDrawer != null)
+            mDrawer.getActionBarDrawerToggle().syncState();
+    }
+
+    private void closeDrawer() {
+        if (mDrawer != null && mDrawer.isDrawerOpen())
+            mDrawer.closeDrawer();
     }
 
     private void recreateActivity() {
@@ -590,6 +590,7 @@ public class MainFrameActivity extends BaseActivity {
                 HiSettingsHelper.getInstance().getActiveTheme(),
                 HiSettingsHelper.getInstance().getPrimaryColor());
         setTheme(theme);
+        GlideHelper.initDefaultFiles();
         //avoid “RuntimeException: Performing pause of activity that is not resumed”
         new Handler().postDelayed(new Runnable() {
             @Override

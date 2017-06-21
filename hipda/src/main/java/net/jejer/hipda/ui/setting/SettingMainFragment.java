@@ -120,16 +120,13 @@ public class SettingMainFragment extends BaseSettingFragment {
         String newIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
         if (TextUtils.isDigitsOnly(newIcon) && !mIcon.equals(newIcon))
             setIcon(Integer.parseInt(newIcon));
-
-        HiSettingsHelper.getInstance().resetImageAutoLoadSize();
-
-        if (HiSettingsHelper.getInstance().isCircleAvatar() != mCircleAvatar) {
-            GlideHelper.initDefaultFiles();
-        }
     }
 
     private void updateSettingStatus() {
         HiSettingsHelper.getInstance().reload();
+
+        if (HiSettingsHelper.getInstance().isCircleAvatar() != mCircleAvatar)
+            GlideHelper.initDefaultFiles();
 
         if (HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
             HiSettingsHelper.getInstance().setNightMode(false);

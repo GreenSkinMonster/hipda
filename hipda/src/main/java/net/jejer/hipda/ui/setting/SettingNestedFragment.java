@@ -15,6 +15,7 @@ import android.support.v7.preference.Preference;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
@@ -86,6 +87,10 @@ public class SettingNestedFragment extends BaseSettingFragment {
 
                 Preference fontPreference = findPreference(HiSettingsHelper.PERF_FONT);
                 fontPreference.setOnPreferenceClickListener(new FilePickerListener(getActivity(), FilePickerListener.FONT_FILE));
+
+                Preference swipeCompatPreference = findPreference(HiSettingsHelper.PERF_SWIPE_COMPAT_MODE);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && swipeCompatPreference != null)
+                    swipeCompatPreference.setEnabled(false);
 
                 break;
 
@@ -180,52 +185,15 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 Preference clearPreference = findPreference(HiSettingsHelper.PERF_CLEAR_CACHE);
                 clearPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        Dialog dialog = new AlertDialog.Builder(getActivity())
-                                .setTitle("清除缓存？")
-                                .setMessage("继续操作将清除相关缓存资源。\n\n在频繁出现网络错误情况下，可以尝试本功能看是否可以解决问题。")
-                                .setPositiveButton(getResources().getString(android.R.string.ok),
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                new AsyncTask<Void, Void, Exception>() {
-                                                    @Override
-                                                    protected Exception doInBackground(Void... voids) {
-                                                        try {
-                                                            OkHttpHelper.getInstance().clearCookies();
-                                                            Utils.clearOkhttpCache();
-                                                            SettingMainFragment.mCacheCleared = true;
-                                                        } catch (Exception e) {
-                                                            return e;
-                                                        }
-                                                        return null;
-                                                    }
+                        showClearCacheDialog();
+                        return true;
+                    }
+                });
 
-                                                    @Override
-                                                    protected void onPreExecute() {
-                                                        super.onPreExecute();
-                                                        mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
-                                                    }
-
-                                                    @Override
-                                                    protected void onPostExecute(Exception e) {
-                                                        super.onPostExecute(e);
-                                                        if (mProgressDialog != null) {
-                                                            if (e == null)
-                                                                mProgressDialog.dismiss("缓存已经清除");
-                                                            else
-                                                                mProgressDialog.dismissError("发生错误 : " + e.getMessage());
-                                                        }
-                                                    }
-                                                }.execute();
-                                            }
-                                        })
-                                .setNegativeButton(getResources().getString(android.R.string.cancel),
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                            }
-                                        }).create();
-                        dialog.show();
+                Preference clearImagePreference = findPreference(HiSettingsHelper.PERF_CLEAR_IMAGE_CACHE);
+                clearImagePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        showClearImageCacheDialog();
                         return true;
                     }
                 });
@@ -257,6 +225,104 @@ public class SettingNestedFragment extends BaseSettingFragment {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private void showClearCacheDialog() {
+        Dialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle("清除网络缓存？")
+                .setMessage("继续操作将清除网络访问相关缓存。\n\n在频繁出现网络错误情况下，可以尝试本功能看是否可以解决问题。")
+                .setPositiveButton(getResources().getString(android.R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new AsyncTask<Void, Void, Exception>() {
+                                    @Override
+                                    protected Exception doInBackground(Void... voids) {
+                                        SettingMainFragment.mCacheCleared = true;
+                                        try {
+                                            OkHttpHelper.getInstance().clearCookies();
+                                            Utils.clearOkhttpCache();
+                                        } catch (Exception e) {
+                                            return e;
+                                        }
+                                        return null;
+                                    }
+
+                                    @Override
+                                    protected void onPreExecute() {
+                                        super.onPreExecute();
+                                        mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(Exception e) {
+                                        super.onPostExecute(e);
+                                        if (mProgressDialog != null) {
+                                            if (e == null)
+                                                mProgressDialog.dismiss("网络缓存已经清除");
+                                            else
+                                                mProgressDialog.dismissError("发生错误 : " + e.getMessage());
+                                        }
+                                    }
+                                }.execute();
+                            }
+                        })
+                .setNegativeButton(getResources().getString(android.R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }).create();
+        dialog.show();
+    }
+
+    private void showClearImageCacheDialog() {
+        Dialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle("清除图片和头像缓存？")
+                .setMessage("图片和头像缓存文件较多，该操作可能需要较长时间。")
+                .setPositiveButton(getResources().getString(android.R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new AsyncTask<Void, Void, Exception>() {
+                                    @Override
+                                    protected Exception doInBackground(Void... voids) {
+                                        SettingMainFragment.mCacheCleared = true;
+                                        try {
+                                            GlideHelper.clearAvatarFiles();
+                                            Utils.clearExternalCache();
+                                        } catch (Exception e) {
+                                            return e;
+                                        }
+                                        return null;
+                                    }
+
+                                    @Override
+                                    protected void onPreExecute() {
+                                        super.onPreExecute();
+                                        mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(Exception e) {
+                                        super.onPostExecute(e);
+                                        if (mProgressDialog != null) {
+                                            if (e == null)
+                                                mProgressDialog.dismiss("图片和头像缓存已经清除");
+                                            else
+                                                mProgressDialog.dismissError("发生错误 : " + e.getMessage());
+                                        }
+                                    }
+                                }.execute();
+                            }
+                        })
+                .setNegativeButton(getResources().getString(android.R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }).create();
+        dialog.show();
     }
 
 }

@@ -74,6 +74,7 @@ public class HiSettingsHelper {
     public static final String PERF_ERROR_REPORT_MODE = "PERF_ERROR_REPORT_MODE";
     public static final String PERF_INSTALLED_VERSION = "PERF_INSTALLED_VERSION";
     public static final String PERF_CLEAR_CACHE = "PERF_CLEAR_CACHE";
+    public static final String PERF_CLEAR_IMAGE_CACHE = "PERF_CLEAR_IMAGE_CACHE";
     public static final String PERF_NOTI_TASK_ENABLED = "PERF_NOTI_TASK_ENABLED";
     public static final String PERF_NOTI_REPEAT_MINUETS = "PERF_NOTI_REPEAT_MINUETS";
     public static final String PERF_NOTI_LED_LIGHT = "PERF_NOTI_LED_LIGHT";
@@ -201,10 +202,6 @@ public class HiSettingsHelper {
         return mImageAutoLoadSize;
     }
 
-    public void resetImageAutoLoadSize() {
-        mImageAutoLoadSize = -1;
-    }
-
     public boolean isLoadAvatar() {
         return Constants.LOAD_TYPE_ALWAYS.equals(mAvatarLoadType)
                 || (!isMobileNetwork() && Constants.LOAD_TYPE_ONLY_WIFI.equals(mAvatarLoadType));
@@ -284,6 +281,7 @@ public class HiSettingsHelper {
         getForumServerFromPref();
         getImageHostFromPref();
 
+        mImageAutoLoadSize = -1;
         updateMobileNetworkStatus(mCtx);
     }
 

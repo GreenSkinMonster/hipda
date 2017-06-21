@@ -77,6 +77,12 @@
             android:title="@string/pref_title_gesture_back"/>
 
         <SwitchPreference
+            android:defaultValue="false"
+            android:key="PERF_SWIPE_COMPAT_MODE"
+            android:summary="@string/pref_summary_swipe_compat_mode"
+            android:title="@string/pref_title_swipe_compat_mode"/>
+
+        <SwitchPreference
             android:defaultValue="true"
             android:key="PERF_APP_BAR_COLLAPSIBLE"
             android:title="@string/pref_title_app_bar_collapsible"/>

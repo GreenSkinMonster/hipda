@@ -112,6 +112,10 @@ public class GlideHelper {
         AVATAR_CACHE_KEYS.put(url, System.currentTimeMillis() + "");
     }
 
+    public static void clearAvatarFiles() throws Exception {
+        AVATAR_CACHE_DIR.delete();
+    }
+
     public static boolean isOkToLoad(Context activity) {
         if (activity != null
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
@@ -127,7 +131,6 @@ public class GlideHelper {
     }
 
     public static void initDefaultFiles() {
-
         AVATAR_CACHE_DIR = Glide.getPhotoCacheDir(HiApplication.getAppContext(), "avatar");
 
         HashMap<String, Drawable> avatars = new HashMap<>();

@@ -30,12 +30,6 @@
             android:summary="@string/pref_summary_old_image_selector"
             android:title="@string/pref_title_old_image_selector"/>
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="PERF_SWIPE_COMPAT_MODE"
-            android:summary="@string/pref_summary_swipe_compat_mode"
-            android:title="@string/pref_title_swipe_compat_mode"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_cache">
@@ -44,8 +38,17 @@
             android:key="PERF_CLEAR_CACHE"
             android:persistent="false"
             android:selectable="true"
-            android:summary=""
+            android:summary="@string/pref_summary_clear_cache"
             android:title="@string/pref_title_clear_cache"/>
+
+        <Preference
+            android:enabled="true"
+            android:key="PERF_CLEAR_IMAGE_CACHE"
+            android:persistent="false"
+            android:selectable="true"
+            android:summary="@string/pref_summary_clear_image_cache"
+            android:title="@string/pref_title_clear_image_cache"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>
