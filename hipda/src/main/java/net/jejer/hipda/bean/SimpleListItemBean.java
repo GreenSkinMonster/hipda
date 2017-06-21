@@ -13,6 +13,7 @@ public class SimpleListItemBean {
     private String mAuthor;
     private String mAvatarUrl = "";
     private boolean mNew = false;
+    private int mStatus;
 
     public String getUid() {
         return mUid;
@@ -97,4 +98,11 @@ public class SimpleListItemBean {
         mAvatarUrl = avatarUrl.replace("small", "middle");
     }
 
+    public int getStatus() {
+        return mStatus;
+    }
+
+    public void setStatus(int status) {
+        mStatus = status;
+    }
 }

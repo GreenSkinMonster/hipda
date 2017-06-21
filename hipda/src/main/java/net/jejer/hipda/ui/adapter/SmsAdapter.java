@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.daasuu.bl.ArrowDirection;
@@ -20,6 +21,7 @@ import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.ui.SmsFragment;
 import net.jejer.hipda.ui.widget.TextViewWithEmoticon;
+import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.Utils;
 
 /**
@@ -118,10 +120,17 @@ public class SmsAdapter extends BaseRvAdapter<SimpleListItemBean> {
         holder.tv_content.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         holder.tv_content.setTextColor(ContextCompat.getColor(mFragment.getActivity(), R.color.black));
 
-        if (item.isNew())
+        if (item.isNew()) {
             holder.tv_isnew.setVisibility(View.VISIBLE);
-        else
+        } else {
             holder.tv_isnew.setVisibility(View.GONE);
+        }
+
+        if (item.getStatus() == Constants.STATUS_IN_PROGRESS) {
+            holder.progressBar.setVisibility(View.VISIBLE);
+        } else {
+            holder.progressBar.setVisibility(View.GONE);
+        }
     }
 
     private static class ViewHolderImpl extends RecyclerView.ViewHolder {
@@ -132,6 +141,7 @@ public class SmsAdapter extends BaseRvAdapter<SimpleListItemBean> {
         ImageView iv_friend_avatar;
         LinearLayout info_layout;
         BubbleLayout bubble_layout;
+        ProgressBar progressBar;
 
         ViewHolderImpl(View itemView) {
             super(itemView);
@@ -143,7 +153,7 @@ public class SmsAdapter extends BaseRvAdapter<SimpleListItemBean> {
             iv_friend_avatar = (ImageView) itemView.findViewById(R.id.iv_friend_avatar);
             info_layout = (LinearLayout) itemView.findViewById(R.id.sms_info_layout);
             bubble_layout = (BubbleLayout) itemView.findViewById(R.id.bl_bubble);
-
+            progressBar = (ProgressBar) itemView.findViewById(R.id.pb_sms);
         }
     }
 

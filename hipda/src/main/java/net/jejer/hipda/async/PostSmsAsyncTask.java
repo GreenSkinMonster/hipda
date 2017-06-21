@@ -22,6 +22,9 @@ import static net.jejer.hipda.okhttp.OkHttpHelper.getInstance;
 
 public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 
+    private static long LAST_SMS_TIME = 0;
+    private static final long SMS_DELAY_IN_SECS = 10;
+
     private Context mCtx;
     private String mUid;
     private String mUsername;
@@ -122,11 +125,20 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
                 mResult = "短消息发送成功.";
                 mStatus = Constants.STATUS_SUCCESS;
             }
+            LAST_SMS_TIME = System.currentTimeMillis();
         } catch (Exception e) {
             Logger.e(e);
             mResult = "短消息发送失败 :  " + getErrorMessage(e);
         }
         return response;
+    }
+
+    public static int getWaitTimeToSendSms() {
+        long delta = (System.currentTimeMillis() - LAST_SMS_TIME) / 1000;
+        if (SMS_DELAY_IN_SECS > delta) {
+            return (int) (SMS_DELAY_IN_SECS - delta);
+        }
+        return 0;
     }
 
     @Override

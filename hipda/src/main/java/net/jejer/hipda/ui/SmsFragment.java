@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
@@ -45,7 +46,6 @@ import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
-import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -53,6 +53,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -72,10 +73,11 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
     private EmojiEditText mEtSms;
     private ImageButton mIbEmojiSwitch;
     private ImageButton mIbSendSms;
+    private TextView mTvCountdown;
 
-    private HiProgressDialog postProgressDialog;
     private ContentLoadingView mLoadingView;
     private SmsEventCallback mEventCallback = new SmsEventCallback();
+    private boolean mSending = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -116,6 +118,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         mIbSendSms = (ImageButton) view.findViewById(R.id.ib_send_sms);
         mIbSendSms.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
 
+        mTvCountdown = (TextView) view.findViewById(R.id.tv_countdown);
+
         mEtSms = (EmojiEditText) view.findViewById(R.id.et_sms);
         mEtSms.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         mIbSendSms.setOnClickListener(new View.OnClickListener() {
@@ -123,8 +127,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             public void onClick(View v) {
                 String replyText = mEtSms.getText().toString();
                 if (replyText.length() > 0) {
-                    new PostSmsAsyncTask(getActivity(), mUid, null, SmsFragment.this, null).execute(replyText);
-                    UIUtils.hideSoftKeyboard(getActivity());
+                    sendSms(replyText);
                 }
             }
         });
@@ -132,7 +135,43 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         mIbEmojiSwitch = (ImageButton) view.findViewById(R.id.ib_emoji_switch);
         setUpEmojiPopup(mEtSms, mIbEmojiSwitch);
 
+        showSendButton();
+
         return view;
+    }
+
+    private void sendSms(String replyText) {
+        mSending = true;
+        new PostSmsAsyncTask(getActivity(), mUid, null, SmsFragment.this, null).execute(replyText);
+        mEtSms.setText("");
+        mIbSendSms.setEnabled(false);
+        SimpleListItemBean bean = new SimpleListItemBean();
+        bean.setAuthor(HiSettingsHelper.getInstance().getUsername());
+        bean.setUid(HiSettingsHelper.getInstance().getUid());
+        bean.setNew(false);
+        bean.setTime(Utils.formatDate(new Date(), "yyyy-M-d HH:mm"));
+        bean.setAvatarUrl(HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()));
+        bean.setInfo(replyText);
+        bean.setStatus(Constants.STATUS_IN_PROGRESS);
+        mSmsAdapter.getDatas().add(bean);
+        mSmsAdapter.notifyItemInserted(mSmsAdapter.getItemCount() - 1);
+    }
+
+    private void removeFailedSms(int position) {
+        if (position >= 0 && position < mSmsAdapter.getItemCount()) {
+            mSmsAdapter.getDatas().remove(position);
+            mSmsAdapter.notifyItemRemoved(position);
+            mSmsAdapter.notifyItemRangeChanged(position, mSmsAdapter.getItemCount());
+        }
+    }
+
+    private void markNewSmsFailed() {
+        SimpleListItemBean bean = mSmsAdapter.getDatas().get(mSmsAdapter.getItemCount() - 1);
+        if (bean.getStatus() == Constants.STATUS_IN_PROGRESS) {
+            bean.setStatus(Constants.STATUS_FAIL);
+            bean.setTime("发送失败");
+            mSmsAdapter.notifyItemChanged(mSmsAdapter.getItemCount() - 1);
+        }
     }
 
     @Override
@@ -227,13 +266,17 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
     @Override
     public void onSmsPrePost() {
-        postProgressDialog = HiProgressDialog.show(getActivity(), "正在发送...");
+        mRecyclerView.scrollToBottom();
     }
 
     @Override
     public void onSmsPostDone(int status, final String message, AlertDialog dialog) {
         if (status == Constants.STATUS_SUCCESS) {
-            mEtSms.setText("");
+            mSending = false;
+
+            showSendButton();
+
+            mIbSendSms.setEnabled(true);
             //new sms has some delay, so this is a dirty hack
             new CountDownTimer(1000, 1000) {
                 public void onTick(long millisUntilFinished) {
@@ -244,18 +287,41 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                         SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, SimpleListJob.TYPE_SMS_DETAIL, 1, mUid);
                         JobMgr.addJob(job);
                     } catch (Exception ignored) {
-
                     }
-                    postProgressDialog.dismiss(message);
                 }
             }.start();
-
         } else {
-            postProgressDialog.dismissError(message);
+            mSending = false;
+            mIbSendSms.setEnabled(true);
+            markNewSmsFailed();
+            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
         }
     }
 
-    class AvatarOnClickListener extends OnSingleClickListener {
+    private void showSendButton() {
+        int timeToWait = PostSmsAsyncTask.getWaitTimeToSendSms();
+        if (timeToWait > 0) {
+            mIbSendSms.setVisibility(View.INVISIBLE);
+            mTvCountdown.setText(timeToWait + "");
+            mTvCountdown.setVisibility(View.VISIBLE);
+            new CountDownTimer(timeToWait * 1000, 500) {
+
+                public void onTick(long millisUntilFinished) {
+                    mTvCountdown.setText((millisUntilFinished / 1000) + "");
+                }
+
+                public void onFinish() {
+                    mTvCountdown.setVisibility(View.GONE);
+                    mIbSendSms.setVisibility(View.VISIBLE);
+                }
+            }.start();
+        } else {
+            mIbSendSms.setVisibility(View.VISIBLE);
+            mTvCountdown.setVisibility(View.GONE);
+        }
+    }
+
+    private class AvatarOnClickListener extends OnSingleClickListener {
         @Override
         public void onSingleClick(View view) {
             String uid = (String) view.getTag(R.id.avatar_tag_uid);
@@ -274,18 +340,30 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         @Override
         public void onLongItemClick(View view, int position) {
             final SimpleListItemBean bean = mSmsAdapter.getItem(position);
+            final int rvPosition = position;
             if (bean != null) {
                 AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
-                        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                        CharSequence content = Utils.fromHtmlAndStrip(bean.getInfo());
-                        if (content.length() > 0) {
-                            ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
-                            clipboard.setPrimaryClip(clip);
-                            Toast.makeText(getActivity(), "内容已复制", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getActivity(), "内容为空", Toast.LENGTH_SHORT).show();
+                        String action = (String) view.getTag();
+                        if ("copy".equals(action)) {
+                            ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                            CharSequence content = Utils.fromHtmlAndStrip(bean.getInfo());
+                            if (content.length() > 0) {
+                                ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
+                                clipboard.setPrimaryClip(clip);
+                                Toast.makeText(getActivity(), "内容已复制", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity(), "内容为空", Toast.LENGTH_SHORT).show();
+                            }
+                        } else if ("resend".equals(action)) {
+                            if (!mSending && PostSmsAsyncTask.getWaitTimeToSendSms() <= 0) {
+                                String content = bean.getInfo();
+                                removeFailedSms(rvPosition);
+                                sendSms(content);
+                            } else {
+                                Toast.makeText(getActivity(), "短消息发送时间限制", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 };
@@ -293,6 +371,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                 SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
                 LinkedHashMap<String, String> actions = new LinkedHashMap<>();
                 actions.put("copy", "复制内容");
+                if (!mSending && bean.getStatus() == Constants.STATUS_FAIL && PostSmsAsyncTask.getWaitTimeToSendSms() <= 0)
+                    actions.put("resend", "重新发送");
                 popupMenu.setActions(actions);
                 popupMenu.setListener(listener);
                 popupMenu.show();
@@ -329,7 +409,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         @Override
         public void onFail(SimpleListEvent event) {
             mLoadingView.setState(ContentLoadingView.ERROR);
-            UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
+            Toast.makeText(getActivity(), event.mMessage, Toast.LENGTH_SHORT).show();
         }
 
         @Override
