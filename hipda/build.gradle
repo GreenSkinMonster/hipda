@@ -63,8 +63,10 @@ dependencies {
 
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
 
-    compile('com.mikepenz:materialdrawer:5.8.0@aar') { transitive = true }
-    compile 'com.mikepenz:iconics-core:2.6.7@aar'
+    compile('com.mikepenz:materialdrawer:5.9.3@aar') {
+        transitive = true
+        exclude group: 'com.android.support'
+    }
     compile 'com.mikepenz:google-material-typeface:2.2.0.2.original@aar'
     compile 'com.mikepenz:fontawesome-typeface:4.6.0.2@aar'
 

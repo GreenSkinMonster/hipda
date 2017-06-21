@@ -19,7 +19,6 @@ public class Constants {
     public static final int DRAWER_THREADNOTIFY = 1005;
     public static final int DRAWER_HISTORIES = 1006;
     public static final int DRAWER_SETTINGS = 10000;
-    public static final int DRAWER_NIGHT_MODE = 10001;
     public static final int DRAWER_NO_ACTION = 10002;
 
     public static final String INTENT_NOTIFICATION = "notification";

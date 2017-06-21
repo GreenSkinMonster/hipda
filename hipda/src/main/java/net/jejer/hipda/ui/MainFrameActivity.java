@@ -210,6 +210,7 @@ public class MainFrameActivity extends BaseActivity {
         mAccountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
+                .withDividerBelowHeader(false)
                 .withCompactStyle(true)
                 .withSelectionListEnabled(false)
                 .addProfiles(
@@ -426,8 +427,6 @@ public class MainFrameActivity extends BaseActivity {
         @Override
         public boolean onItemClick(View view, int position, IDrawerItem iDrawerItem) {
 
-            if (iDrawerItem.getIdentifier() == Constants.DRAWER_NIGHT_MODE)
-                return false;
             if (iDrawerItem.getIdentifier() == Constants.DRAWER_NO_ACTION)
                 return false;
 
