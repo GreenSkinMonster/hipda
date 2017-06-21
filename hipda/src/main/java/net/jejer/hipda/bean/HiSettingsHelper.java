@@ -1048,9 +1048,7 @@ public class HiSettingsHelper {
 
     public boolean isInSilentMode() {
         return mSharedPref.getBoolean(PERF_NOTI_SILENT_MODE, false)
-                && Utils.isInTimeRange(
-                getStringValue(PERF_NOTI_SILENT_BEGIN, NotificationMgr.DEFAUL_SLIENT_BEGIN),
-                getStringValue(PERF_NOTI_SILENT_END, NotificationMgr.DEFAUL_SLIENT_END));
+                && Utils.isInTimeRange(getSilentBegin(), getSilentEnd());
     }
 
     public String getActiveTheme() {
@@ -1132,6 +1130,18 @@ public class HiSettingsHelper {
         return HiUtils.getThemeValue(activity,
                 HiSettingsHelper.getInstance().getActiveTheme(),
                 HiSettingsHelper.getInstance().getPrimaryColor());
+    }
+
+    public String getSilentBegin() {
+        return getStringValue(
+                HiSettingsHelper.PERF_NOTI_SILENT_BEGIN,
+                NotificationMgr.DEFAUL_SLIENT_BEGIN);
+    }
+
+    public String getSilentEnd() {
+        return getStringValue(
+                HiSettingsHelper.PERF_NOTI_SILENT_END,
+                NotificationMgr.DEFAUL_SLIENT_END);
     }
 
 }

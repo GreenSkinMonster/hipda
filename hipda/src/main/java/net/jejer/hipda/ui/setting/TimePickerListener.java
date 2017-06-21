@@ -47,7 +47,7 @@ public class TimePickerListener extends OnPreferenceClickListener {
                 int hour = timePicker.getCurrentHour();
                 int minute = timePicker.getCurrentMinute();
                 String hourMinute = (hour < 10 ? "0" : "") + String.valueOf(hour) + ":" + (minute < 10 ? "0" : "") + String.valueOf(minute);
-                HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN, hourMinute);
+                HiSettingsHelper.getInstance().setStringValue(preference.getKey(), hourMinute);
                 preference.setSummary(hourMinute);
             }
         });

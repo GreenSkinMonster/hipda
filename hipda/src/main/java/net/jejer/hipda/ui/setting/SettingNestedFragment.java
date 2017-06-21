@@ -147,10 +147,10 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 final Preference silentEndPreference = findPreference(HiSettingsHelper.PERF_NOTI_SILENT_END);
 
                 silentBeginPreference.setOnPreferenceClickListener(
-                        new TimePickerListener(NotificationMgr.DEFAUL_SLIENT_BEGIN));
+                        new TimePickerListener(HiSettingsHelper.getInstance().getSilentBegin()));
 
                 silentEndPreference.setOnPreferenceClickListener(
-                        new TimePickerListener(NotificationMgr.DEFAUL_SLIENT_END));
+                        new TimePickerListener(HiSettingsHelper.getInstance().getSilentEnd()));
 
                 enableNotiItems(HiSettingsHelper.getInstance().isNotiTaskEnabled());
                 break;
