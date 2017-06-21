@@ -22,7 +22,7 @@ public class SwipeBackLayout extends FrameLayout {
     /**
      * Minimum velocity that will be detected as a fling
      */
-    private static final int MIN_FLING_VELOCITY = 550; // dips per second
+    private static final int MIN_FLING_VELOCITY = 400; // dips per second
 
     private static final int DEFAULT_SCRIM_COLOR = 0x99000000;
 
@@ -500,10 +500,9 @@ public class SwipeBackLayout extends FrameLayout {
             }
             boolean directionCheck = false;
             if (mEdgeFlag == EDGE_LEFT || mEdgeFlag == EDGE_RIGHT) {
-                directionCheck = !mDragHelper.checkTouchSlop(ViewDragHelper.DIRECTION_VERTICAL, i);
+                directionCheck = mDragHelper.checkTouchSlop(ViewDragHelper.DIRECTION_HORIZONTAL, i);
             } else if (mEdgeFlag == EDGE_BOTTOM) {
-                directionCheck = !mDragHelper
-                        .checkTouchSlop(ViewDragHelper.DIRECTION_HORIZONTAL, i);
+                directionCheck = mDragHelper.checkTouchSlop(ViewDragHelper.DIRECTION_VERTICAL, i);
             } else if (mEdgeFlag == EDGE_ALL) {
                 directionCheck = true;
             }
