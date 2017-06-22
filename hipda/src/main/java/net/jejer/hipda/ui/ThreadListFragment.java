@@ -692,7 +692,7 @@ public class ThreadListFragment extends BaseFragment
     public void onEvent(PostEvent event) {
         PostBean postResult = event.mPostResult;
         if (postResult != null
-                && postResult.getDelete() == 1
+                && postResult.isDelete()
                 && postResult.getFid() == mForumId
                 && postResult.getFloor() == 1) {
             //thread deleted, refresh

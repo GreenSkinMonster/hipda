@@ -5,12 +5,14 @@ import android.text.TextUtils;
 
 import com.vdurmont.emoji.EmojiParser;
 
+import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HiParserThreadDetail;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
@@ -36,6 +38,7 @@ public class PostHelper {
     private int mMode;
     private String mResult;
     private int mStatus = Constants.STATUS_FAIL;
+    private DetailListBean mDetailListBean;
     private Context mCtx;
     private PrePostInfoBean mInfo;
     private PostBean mPostArg;
@@ -87,19 +90,19 @@ public class PostHelper {
         switch (mMode) {
             case MODE_REPLY_THREAD:
             case MODE_QUICK_REPLY:
-                doPost(url, replyText, null, null, 0);
+                doPost(url, replyText, null, null, false);
                 break;
             case MODE_REPLY_POST:
             case MODE_QUOTE_POST:
-                doPost(url, mInfo.getText() + "\n\n    " + replyText, null, null, 0);
+                doPost(url, mInfo.getText() + "\n\n    " + replyText, null, null, false);
                 break;
             case MODE_NEW_THREAD:
                 url = HiUtils.NewThreadUrl + fid + "&typeid=" + typeid + "&topicsubmit=yes";
-                doPost(url, replyText, subject, null, 0);
+                doPost(url, replyText, subject, null, false);
                 break;
             case MODE_EDIT_POST:
                 url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
-                doPost(url, replyText, subject, typeid, postBean.getDelete());
+                doPost(url, replyText, subject, typeid, postBean.isDelete());
                 break;
         }
 
@@ -109,11 +112,12 @@ public class PostHelper {
 
         postBean.setMessage(mResult);
         postBean.setStatus(mStatus);
+        postBean.setDetailListBean(mDetailListBean);
 
         return postBean;
     }
 
-    private void doPost(String url, String replyText, String subject, String typeid, int delete) {
+    private void doPost(String url, String replyText, String subject, String typeid, boolean delete) {
         String formhash = mInfo != null ? mInfo.getFormhash() : null;
 
         if (TextUtils.isEmpty(formhash)) {
@@ -128,7 +132,7 @@ public class PostHelper {
         params.put("wysiwyg", "0");
         params.put("checkbox", "0");
         params.put("message", replyText);
-        if (mMode == MODE_EDIT_POST && delete == 1)
+        if (mMode == MODE_EDIT_POST && delete)
             params.put("delete", "1");
         for (String attach : mInfo.getAttaches()) {
             params.put("attachnew[][description]", attach);
@@ -164,10 +168,10 @@ public class PostHelper {
 
         try {
             Response response = OkHttpHelper.getInstance().postAsResponse(url, params);
-            String rspStr = OkHttpHelper.getResponseBody(response);
+            String resp = OkHttpHelper.getResponseBody(response);
             String requestUrl = response.request().url().toString();
 
-            if (delete == 1 && requestUrl.contains("forumdisplay.php")) {
+            if (delete && requestUrl.contains("forumdisplay.php")) {
                 //delete first post == whole tread, forward to forum url
                 mResult = "发表成功!";
                 mStatus = Constants.STATUS_SUCCESS;
@@ -178,12 +182,22 @@ public class PostHelper {
                     mTid = tid;
                     mResult = "发表成功!";
                     mStatus = Constants.STATUS_SUCCESS;
+                    try {
+                        //parse resp to get redirected page content
+                        Document doc = Jsoup.parse(resp);
+                        DetailListBean data = HiParserThreadDetail.parse(mCtx, doc, false);
+                        if (data != null && data.getCount() > 0) {
+                            mDetailListBean = data;
+                        }
+                    } catch (Exception e) {
+                        Logger.e(e);
+                    }
                 } else {
-                    Logger.e(rspStr);
+                    Logger.e(resp);
                     mResult = "发表失败! ";
                     mStatus = Constants.STATUS_FAIL;
 
-                    Document doc = Jsoup.parse(rspStr);
+                    Document doc = Jsoup.parse(resp);
                     Elements error = doc.select("div.alert_info");
                     if (error != null && error.size() > 0) {
                         mResult += "\n" + error.text();
@@ -196,7 +210,7 @@ public class PostHelper {
             mStatus = Constants.STATUS_FAIL;
         }
 
-        if (delete == 1) {
+        if (delete) {
             mResult = mResult.replace("发表", "删除");
         }
 

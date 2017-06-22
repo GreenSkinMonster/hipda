@@ -1180,8 +1180,15 @@ public class ThreadDetailFragment extends BaseFragment {
             }
 
             mGotoFloor = postResult.getFloor();
+            DetailListBean details = postResult.getDetailListBean();
+            if (details != null) {
+                if (mCurrentPage != details.getPage()) {
+                    mCache.remove(mCurrentPage);
+                }
+                mCache.put(details.getPage(), details);
+            }
 
-            if (postResult.getDelete() == 1) {
+            if (postResult.isDelete()) {
                 if (mGotoFloor == 1) {
                     //re-post event to thread list
                     event.mSessionId = "";
@@ -1191,11 +1198,9 @@ public class ThreadDetailFragment extends BaseFragment {
                 } else {
                     //this floor is deleted, so goto upper floor
                     mGotoFloor--;
-                    mCache.remove(mCurrentPage);
                     showOrLoadPage(true);
                 }
-            } else if (isInAuthorOnlyMode()
-                    && event.mMode != PostHelper.MODE_EDIT_POST) {
+            } else if (isInAuthorOnlyMode() && event.mMode != PostHelper.MODE_EDIT_POST) {
                 mCache.clear();
                 mCurrentPage = LAST_PAGE;
                 mGotoFloor = LAST_FLOOR;
@@ -1207,7 +1212,6 @@ public class ThreadDetailFragment extends BaseFragment {
                     mCurrentPage = mMaxPage;
                     mGotoFloor = LAST_FLOOR;
                 }
-                mCache.remove(mCurrentPage);
                 showOrLoadPage(true);
             }
         } else {

@@ -132,7 +132,7 @@ public class PostFragment extends BaseFragment {
     private Map<Uri, UploadImage> mUploadImages = new LinkedHashMap<>();
     private Collection<Uri> mHoldedImages = new ArrayList<>();
     private long mLastSavedTime = -1;
-    private int mDeleteMode = 0; // 0 : edit, 1 : delete
+    private boolean mDeleteMode = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -669,7 +669,7 @@ public class PostFragment extends BaseFragment {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mDeleteMode = 1;
+                        mDeleteMode = true;
                         postReply();
                     }
                 });

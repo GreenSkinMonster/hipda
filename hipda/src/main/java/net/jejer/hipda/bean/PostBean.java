@@ -15,7 +15,8 @@ public class PostBean {
     private String typeid;
     private int status;
     private String message;
-    private int delete;
+    private boolean delete;
+    private DetailListBean detailListBean;
 
     public String getTid() {
         return tid;
@@ -89,12 +90,19 @@ public class PostBean {
         this.status = status;
     }
 
-    public int getDelete() {
+    public boolean isDelete() {
         return delete;
     }
 
-    public void setDelete(int delete) {
+    public void setDelete(boolean delete) {
         this.delete = delete;
     }
 
+    public DetailListBean getDetailListBean() {
+        return detailListBean;
+    }
+
+    public void setDetailListBean(DetailListBean detailListBean) {
+        this.detailListBean = detailListBean;
+    }
 }
