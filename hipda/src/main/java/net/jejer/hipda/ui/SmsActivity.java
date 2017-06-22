@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentManager;
@@ -30,14 +31,22 @@ public class SmsActivity extends SwipeBaseActivity {
 
         UIUtils.hackStatusBar(this);
 
+        showFragment();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        showFragment();
+    }
+
+    private void showFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if (fragmentManager.findFragmentById(R.id.main_frame_container) == null) {
-            Bundle arguments = getIntent().getExtras();
-            SmsFragment fragment = new SmsFragment();
-            fragment.setArguments(arguments);
-            fragmentManager.beginTransaction()
-                    .add(R.id.main_frame_container, fragment).commit();
-        }
+        Bundle arguments = getIntent().getExtras();
+        SmsFragment fragment = new SmsFragment();
+        fragment.setArguments(arguments);
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_frame_container, fragment).commit();
     }
 
 }

@@ -63,7 +63,6 @@ public class FragmentUtils {
     private static FragmentArgs parseNotification(int smsCount, int threadCount, String uid, String username) {
         FragmentArgs args = null;
         if (smsCount == 1
-                && threadCount == 0
                 && HiUtils.isValidId(uid)
                 && !TextUtils.isEmpty(username)) {
             args = new FragmentArgs();

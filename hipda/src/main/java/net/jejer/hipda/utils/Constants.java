@@ -22,6 +22,7 @@ public class Constants {
     public static final int DRAWER_NO_ACTION = 10002;
 
     public static final String INTENT_NOTIFICATION = "notification";
+    public static final String INTENT_VIEW = "android.intent.action.VIEW";
     public static final String INTENT_SMS = "sms";
     public static final String INTENT_SEARCH = "search";
     public static final String INTENT_NEW_THREAD = "new_thread";

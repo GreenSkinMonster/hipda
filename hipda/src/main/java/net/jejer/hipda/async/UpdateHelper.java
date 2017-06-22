@@ -80,6 +80,8 @@ public class UpdateHelper {
         @Override
         public void onError(Request request, Exception e) {
             Logger.e(e);
+            if (!HiApplication.isAppVisible())
+                return;
             if (!mSilent) {
                 pd.dismissError("检查新版本时发生错误 : " + OkHttpHelper.getErrorMessage(e));
             }
@@ -92,6 +94,9 @@ public class UpdateHelper {
     }
 
     private void processUpdate(String response) {
+        if (!HiApplication.isAppVisible())
+            return;
+
         response = Utils.nullToText(response).replace("\r\n", "\n").trim();
 
         String version = HiApplication.getAppVersion();
