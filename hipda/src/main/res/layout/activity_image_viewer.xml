@@ -64,57 +64,13 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_image_info"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp">
-
-        <ImageButton
-            android:id="@+id/btn_previous_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:background="?attr/selectableItemBackground"
-            android:minHeight="36dp"
-            android:minWidth="36dp"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="true"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_image_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:padding="0dp"
-                android:textColor="@color/silver"
-                android:textSize="18sp"/>
-
-            <TextView
-                android:id="@+id/tv_image_file_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/grey"
-                android:textSize="15sp"
-                android:visibility="gone"/>
-        </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/btn_next_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="?attr/selectableItemBackground"
-            android:minHeight="36dp"
-            android:minWidth="36dp"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
-    </RelativeLayout>
+        android:layout_gravity="center_horizontal"
+        android:padding="0dp"
+        android:textColor="@color/silver"
+        android:textSize="18sp"/>
 
 </LinearLayout>

@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * adapter for image gallery
@@ -51,10 +52,10 @@ public class ImageViewerAdapter extends PagerAdapter {
     private String mSessionId;
     private boolean mFirstShow = true;
 
-    public ImageViewerAdapter(Activity activity, List<ContentImg> images, String sessionId) {
+    public ImageViewerAdapter(Activity activity, List<ContentImg> images) {
         mActivity = activity;
         mImages = images;
-        mSessionId = sessionId;
+        mSessionId = UUID.randomUUID().toString();
     }
 
     @Override
@@ -146,6 +147,12 @@ public class ImageViewerAdapter extends PagerAdapter {
                 scaleImageView.setMinimumTileDpi(160);
                 scaleImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
                 scaleImageView.setImage(ImageSource.uri(imageInfo.getPath()));
+                scaleImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mActivity.finish();
+                    }
+                });
 
                 scaleImageView.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener() {
                     @Override

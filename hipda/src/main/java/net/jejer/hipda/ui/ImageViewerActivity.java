@@ -11,16 +11,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
-import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.cache.ImageContainer;
-import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.ui.adapter.ImageViewerAdapter;
 import net.jejer.hipda.ui.widget.swipeback.SwipeBackLayout;
 import net.jejer.hipda.utils.UIUtils;
@@ -28,9 +24,7 @@ import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -45,17 +39,10 @@ public class ImageViewerActivity extends SwipeBackActivity {
 
     private PagerAdapter mPagerAdapter;
 
-    private boolean lastClicked = false;
-    private boolean firstClicked = false;
-
-    private String mSessionId;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_viewer);
-
-        mSessionId = UUID.randomUUID().toString();
 
         Intent intent = getIntent();
         int imageIndex = intent.getExtras().getInt(KEY_IMAGE_INDEX);
@@ -63,7 +50,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         final TextView tvImageInfo = (TextView) findViewById(R.id.tv_image_info);
-        final TextView tvImageFileInfo = (TextView) findViewById(R.id.tv_image_file_info);
         final TextView tvFloorInfo = (TextView) findViewById(R.id.tv_floor_info);
         final Button btnBack = (Button) findViewById(R.id.btn_back);
 
@@ -78,7 +64,7 @@ public class ImageViewerActivity extends SwipeBackActivity {
             finish();
         }
 
-        mPagerAdapter = new ImageViewerAdapter(this, images, mSessionId);
+        mPagerAdapter = new ImageViewerAdapter(this, images);
         viewPager.setAdapter(mPagerAdapter);
 
         EventBus.getDefault().register(mPagerAdapter);
@@ -93,8 +79,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
                 ContentImg contentImg = images.get(position);
                 tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
                 tvImageInfo.setText((position + 1) + " / " + images.size());
-                String url = images.get(viewPager.getCurrentItem()).getContent();
-                updateImageFileInfo(tvImageFileInfo, url);
                 updateSwipeEdges(images.size(), position);
             }
 
@@ -108,24 +92,8 @@ public class ImageViewerActivity extends SwipeBackActivity {
         tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
         tvImageInfo.setText((imageIndex + 1) + " / " + images.size());
 
-        String url = images.get(viewPager.getCurrentItem()).getContent();
-        updateImageFileInfo(tvImageFileInfo, url);
-
         updateSwipeEdges(images.size(), imageIndex);
         getSwipeBackLayout().setEdgeSize(Utils.dpToPx(this, 50));
-
-        tvImageInfo.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View arg0) {
-                        if (tvImageFileInfo.getVisibility() == View.GONE) {
-                            tvImageFileInfo.setVisibility(View.VISIBLE);
-                        } else {
-                            tvImageFileInfo.setVisibility(View.GONE);
-                        }
-                    }
-                }
-        );
 
         ImageButton btnDownload = (ImageButton) findViewById(R.id.btn_download_image);
         btnDownload.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_file_download)
@@ -155,45 +123,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
                 }
         );
 
-        ImageButton btnNext = (ImageButton) findViewById(R.id.btn_next_image);
-        btnNext.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (viewPager.getCurrentItem() < images.size() - 1) {
-                            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-                            firstClicked = false;
-                        } else {
-                            if (!lastClicked) {
-                                Toast.makeText(ImageViewerActivity.this, "已经是最后一张，再次点击关闭.", Toast.LENGTH_SHORT).show();
-                                lastClicked = true;
-                            } else {
-                                finish();
-                            }
-                        }
-                    }
-                }
-        );
-
-        ImageButton btnPrev = (ImageButton) findViewById(R.id.btn_previous_image);
-        btnPrev.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (viewPager.getCurrentItem() > 0) {
-                            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-                            lastClicked = false;
-                        } else {
-                            if (!firstClicked) {
-                                Toast.makeText(ImageViewerActivity.this, "已经是第一张，再次点击关闭.", Toast.LENGTH_SHORT).show();
-                                firstClicked = true;
-                            } else {
-                                finish();
-                            }
-                        }
-                    }
-                }
-        );
     }
 
     @Override
@@ -204,21 +133,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
             super.attachBaseContext(newBase);
     }
 
-    private void updateImageFileInfo(TextView tvImageFileInfo, String url) {
-        ImageInfo imageInfo = ImageContainer.getImageInfo(url);
-        if (imageInfo != null && imageInfo.isReady()) {
-            String msg = imageInfo.getWidth() + "x" + imageInfo.getHeight()
-                    + " / " + Utils.toSizeText(imageInfo.getFileSize());
-            if (HiSettingsHelper.getInstance().isErrorReportMode()) {
-                DecimalFormat df = new DecimalFormat("#.##");
-                msg += " / " + df.format(imageInfo.getSpeed()) + " K/s";
-            }
-            tvImageFileInfo.setText(msg);
-        } else {
-            tvImageFileInfo.setText("?");
-        }
-    }
-
     private void updateSwipeEdges(int total, int position) {
         if (total == 1) {
             getSwipeBackLayout().setEdgeTrackingEnabled(SwipeBackLayout.EDGE_ALL);
@@ -226,8 +140,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
             getSwipeBackLayout().setEdgeTrackingEnabled(SwipeBackLayout.EDGE_LEFT);
         } else if (position == total - 1) {
             getSwipeBackLayout().setEdgeTrackingEnabled(SwipeBackLayout.EDGE_RIGHT);
-        } else {
-            getSwipeBackLayout().setEdgeTrackingEnabled(SwipeBackLayout.EDGE_BOTTOM);
         }
     }
 
