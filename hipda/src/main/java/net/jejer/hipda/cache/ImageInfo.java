@@ -151,9 +151,11 @@ public class ImageInfo {
                 displayWidth = scaledWidth;
                 displayHeight = scaledHeight;
             }
-            //at last, limit ImageView to 2xScreen.Long.Side size
-            if (displayHeight > 2 * Utils.getScreenHeight())
-                displayHeight = 2 * Utils.getScreenHeight();
+            //at last, limit ImageView height for gif or very long images
+            float maxHeightScale = isGif() ? 0.75f : 2f;
+            if (displayHeight > maxHeightScale * Utils.getScreenHeight()) {
+                displayHeight = Math.round(maxHeightScale * Utils.getScreenHeight());
+            }
         }
 
         if (isWidth)

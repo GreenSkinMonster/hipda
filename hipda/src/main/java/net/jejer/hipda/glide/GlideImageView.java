@@ -1,6 +1,7 @@
 package net.jejer.hipda.glide;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,7 +20,7 @@ import net.jejer.hipda.ui.widget.OnSingleClickListener;
 
 import java.lang.ref.WeakReference;
 
-public class GlideImageView extends ImageView {
+public class GlideImageView extends AppCompatImageView {
 
     private ThreadDetailFragment mFragment;
     private String mUrl;
