@@ -495,11 +495,11 @@ public class PostFragment extends BaseFragment {
                     extraImgs.add(imgId);
                 }
             }
-            if (extraImgs.size() > 0) {
+            if (extraImgs.size() > 0 && !mDeleteMode) {
                 Dialog dialog = new AlertDialog.Builder(getActivity())
                         .setTitle("未使用的图片")
-                        .setMessage(HtmlCompat.fromHtml("有 " + extraImgs.size() + " 张图片未以图片标签[attachimg]形式显示在正文中<br>"
-                                + "<br>如果您希望其他用户看到这些图片，请选择 <b>保留图片</b>"
+                        .setMessage(HtmlCompat.fromHtml("有 " + extraImgs.size() + " 张图片未以标签[attachimg]形式显示在帖子中<br>"
+                                + "<br>如果您希望显示这些图片，请选择 <b>保留图片</b>"
                                 + "<br>否则请选择 <b>丢弃图片</b>"))
                         .setPositiveButton("保留图片",
                                 new DialogInterface.OnClickListener() {

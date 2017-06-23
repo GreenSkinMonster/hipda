@@ -51,6 +51,10 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
         return hasHeader() ? 1 : 0;
     }
 
+    public int getFooterCount() {
+        return hasFooter() ? 1 : 0;
+    }
+
     private boolean hasHeader() {
         return mHeaderView != null;
     }

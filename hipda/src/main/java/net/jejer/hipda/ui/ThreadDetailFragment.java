@@ -143,7 +143,6 @@ public class ThreadDetailFragment extends BaseFragment {
     private ImageButton mIbPostReply;
     private CountDownTimer mCountDownTimer;
 
-    private String mBlinkPostId;
     private Animation mBlinkAnim;
 
     private boolean mDataReceived = false;
@@ -282,6 +281,13 @@ public class ThreadDetailFragment extends BaseFragment {
                     JobMgr.addJob(new PostJob(mSessionId, PostHelper.MODE_QUICK_REPLY, null, postBean));
 
                     UIUtils.hideSoftKeyboard(getActivity());
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRecyclerView.scrollToBottom();
+                        }
+                    }, 200);
+
                 }
             }
         });
@@ -796,7 +802,6 @@ public class ThreadDetailFragment extends BaseFragment {
             mCountDownTimer = null;
         }
         if (mQuickReply != null && mQuickReply.getVisibility() == View.VISIBLE) {
-            mEtReply.setText("");
             mQuickReply.setVisibility(View.INVISIBLE);
             mMainFab.show();
             return true;
@@ -878,21 +883,23 @@ public class ThreadDetailFragment extends BaseFragment {
     private void blinkItemView(int position) {
         DetailBean detailBean = mDetailAdapter.getItem(position);
         if (detailBean != null) {
-            mBlinkPostId = detailBean.getPostId();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    int pos = mDetailAdapter.getPositionByPostId(mBlinkPostId);
-                    mBlinkPostId = null;
-                    View view = mLayoutManager.findViewByPosition(pos);
-                    if (view != null && ViewCompat.isAttachedToWindow(view)) {
-                        View floorView = view.findViewById(R.id.floor);
-                        if (floorView != null)
-                            floorView.startAnimation(mBlinkAnim);
-                    }
-                }
-            }, 150);
+            blinkItemView(detailBean.getPostId());
         }
+    }
+
+    private void blinkItemView(final String postId) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int pos = mDetailAdapter.getPositionByPostId(postId);
+                View view = mLayoutManager.findViewByPosition(pos);
+                if (view != null && ViewCompat.isAttachedToWindow(view)) {
+                    View floorView = view.findViewById(R.id.floor);
+                    if (floorView != null)
+                        floorView.startAnimation(mBlinkAnim);
+                }
+            }
+        }, 150);
     }
 
     private void showOrLoadPage() {
@@ -909,7 +916,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
             int position = -1;
             if (mGotoFloor == LAST_FLOOR) {
-                position = mDetailAdapter.getItemCount() - 1;
+                position = mDetailAdapter.getItemCount() - 1 - mDetailAdapter.getFooterCount();
             } else if (mGotoFloor == FIRST_FLOOR) {
                 position = 0;
             } else if (mGotoFloor != -1) {
@@ -917,10 +924,7 @@ public class ThreadDetailFragment extends BaseFragment {
             } else if (HiUtils.isValidId(mGotoPostId)) {
                 position = mDetailAdapter.getPositionByPostId(mGotoPostId);
             }
-            if (position >= 0) {
-                mRecyclerView.scrollToPosition(position);
-                blinkItemView(position);
-            }
+
             mGotoPostId = null;
             mGotoFloor = -1;
 
@@ -940,8 +944,16 @@ public class ThreadDetailFragment extends BaseFragment {
                 mRecyclerView.setFooterState(XFooterView.STATE_READY);
             }
 
-            if (mMainFab != null && mMainFab.getVisibility() == View.INVISIBLE)
+            if (position >= 0) {
+                mRecyclerView.scrollToPosition(position);
+                blinkItemView(position);
+            }
+
+            if (mMainFab != null
+                    && mMainFab.getVisibility() != View.VISIBLE
+                    && mQuickReply.getVisibility() != View.VISIBLE)
                 mMainFab.show();
+
         } else {
             int fetchType = FETCH_NORMAL;
             if (refresh || mCurrentPage == mMaxPage || mCurrentPage == LAST_PAGE) {
@@ -1166,17 +1178,21 @@ public class ThreadDetailFragment extends BaseFragment {
         PostBean postResult = event.mPostResult;
 
         if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
-            postProgressDialog = HiProgressDialog.show(mCtx, "请稍候...");
+            if (event.mMode == PostHelper.MODE_QUICK_REPLY) {
+                mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+                hideQuickReply();
+                mMainFab.hide();
+            } else {
+                postProgressDialog = HiProgressDialog.show(mCtx, "请稍候...");
+            }
         } else if (event.mStatus == Constants.STATUS_SUCCESS) {
+            mEtReply.setText("");
             if (mQuickReply.getVisibility() == View.VISIBLE) {
-                mEtReply.setText("");
                 hideQuickReply();
             }
 
             if (postProgressDialog != null) {
                 postProgressDialog.dismiss(message);
-            } else {
-                Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
             }
 
             mGotoFloor = postResult.getFloor();
@@ -1184,6 +1200,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (details != null) {
                 if (mCurrentPage != details.getPage()) {
                     mCache.remove(mCurrentPage);
+                    mMaxPage = details.getLastPage();
                 }
                 mCache.put(details.getPage(), details);
             }
@@ -1202,6 +1219,9 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
             } else if (isInAuthorOnlyMode() && event.mMode != PostHelper.MODE_EDIT_POST) {
                 mCache.clear();
+                if (details != null) {
+                    mCache.put(details.getPage(), details);
+                }
                 mCurrentPage = LAST_PAGE;
                 mGotoFloor = LAST_FLOOR;
                 mAuthorId = "";
@@ -1215,6 +1235,10 @@ public class ThreadDetailFragment extends BaseFragment {
                 showOrLoadPage(true);
             }
         } else {
+            if (event.mMode == PostHelper.MODE_QUICK_REPLY) {
+                showQuickReply();
+                mRecyclerView.setFooterState(XFooterView.STATE_ERROR);
+            }
             if (postProgressDialog != null) {
                 postProgressDialog.dismissError(message);
             } else {
