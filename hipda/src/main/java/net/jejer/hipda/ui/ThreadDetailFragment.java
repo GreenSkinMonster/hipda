@@ -76,7 +76,6 @@ import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.ImageSizeUtils;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -127,8 +126,6 @@ public class ThreadDetailFragment extends BaseFragment {
     private ThreadDetailAdapter mDetailAdapter;
     private ThreadDetailCache mCache = new ThreadDetailCache();
     private List<DetailBean> mDetailBeans = new ArrayList<>();
-
-    public static int mMaxImageDecodeWidth = ImageSizeUtils.NORMAL_IMAGE_DECODE_WIDTH;
 
     private int mCurrentPage = 1;
     private int mMaxPage = 0;
@@ -1116,7 +1113,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
             // Set MaxPage earlier than showOrLoadPage()
             mMaxPage = details.getLastPage();
-            mMaxImageDecodeWidth = ImageSizeUtils.getDecodeSize(details.getImagesCount());
 
             mCache.put(details.getPage(), details);
 

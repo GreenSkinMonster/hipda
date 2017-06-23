@@ -24,14 +24,13 @@ import java.io.InputStream;
 public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> {
 
     private final static int IN_SAMPLE_LIMIT = 10000;
-    private int mMaxWidth = -1;
-    private int mMaxHeight = -1;
+    private final static int MAX_WIDTH = getMaxWidth();
+    private final static Bitmap.Config BITMAP_CONFIG = getBitmapConfig();
+    private final static int MAX_HEIGHT = 2 * Utils.getScreenHeight();
 
     private ImageInfo mImageInfo;
 
-    public ThreadImageDecoder(int maxWidth, ImageInfo imageInfo) {
-        mMaxWidth = maxWidth;
-        mMaxHeight = 2 * Utils.getScreenHeight();
+    public ThreadImageDecoder(ImageInfo imageInfo) {
         mImageInfo = imageInfo;
     }
 
@@ -55,7 +54,7 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
             }
 
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            options.inPreferredConfig = BITMAP_CONFIG;
             if (inSampleSize > 1)
                 options.inSampleSize = inSampleSize;
             Bitmap original = BitmapFactory.decodeStream(bis, null, options);
@@ -67,46 +66,72 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
 
             int originalWidth = original.getWidth();
             int originalHeight = original.getHeight();
+            int rotationDegree = getRotationDegree();
 
-            if (originalWidth <= mMaxWidth && originalHeight <= mMaxHeight) {
+            if (originalWidth <= MAX_WIDTH
+                    && originalHeight <= MAX_HEIGHT
+                    && rotationDegree == 0) {
                 return new SimpleResource<>(original);
             }
 
-            int newWidth = originalWidth > mMaxWidth ? mMaxWidth : originalWidth;
+            int newWidth = originalWidth > MAX_WIDTH ? MAX_WIDTH : originalWidth;
             float scale = ((float) newWidth) / originalWidth;
             int newHeight = Math.round(originalHeight * scale);
-            if (Utils.getScreenHeight() > 0 && newHeight > mMaxHeight) {
-                newHeight = mMaxHeight;
+            if (newHeight > MAX_HEIGHT) {
+                newHeight = MAX_HEIGHT;
                 scale = ((float) newHeight) / originalHeight;
             }
 
             Matrix matrix = new Matrix();
             matrix.postScale(scale, scale);
 
-            int degree = 0;
-            if (mImageInfo.getOrientation() == ExifInterface.ORIENTATION_ROTATE_90) {
-                degree = 90;
-            } else if (mImageInfo.getOrientation() == ExifInterface.ORIENTATION_ROTATE_180) {
-                degree = 180;
-            } else if (mImageInfo.getOrientation() == ExifInterface.ORIENTATION_ROTATE_270) {
-                degree = 270;
-            }
-            if (degree != 0)
-                matrix.postRotate(degree);
+            if (rotationDegree != 0)
+                matrix.postRotate(rotationDegree);
 
             Bitmap bitmap = Bitmap.createBitmap(original, 0, 0, originalWidth, originalHeight, matrix, true);
             result = new SimpleResource<>(bitmap);
 
             original.recycle();
-
         } catch (Exception e) {
             Logger.e("error when decoding image", e);
         }
         return result;
     }
 
+    private int getRotationDegree() {
+        int degree = 0;
+        if (mImageInfo.getOrientation() == ExifInterface.ORIENTATION_ROTATE_90) {
+            degree = 90;
+        } else if (mImageInfo.getOrientation() == ExifInterface.ORIENTATION_ROTATE_180) {
+            degree = 180;
+        } else if (mImageInfo.getOrientation() == ExifInterface.ORIENTATION_ROTATE_270) {
+            degree = 270;
+        }
+        return degree;
+    }
+
     @Override
     public String getId() {
         return "ThreadImageDecoder.net.jejer.hipda.glide";
+    }
+
+    private static int getMaxWidth() {
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        if (maxMemory <= 64 * 1024 * 1024) {
+            return 460;
+        } else if (maxMemory <= 128 * 1024 * 1024) {
+            return 520;
+        } else if (maxMemory <= 256 * 1024 * 1024) {
+            return 640;
+        }
+        return 800;
+    }
+
+    private static Bitmap.Config getBitmapConfig() {
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        if (maxMemory < 256 * 1024 * 1024) {
+            return Bitmap.Config.RGB_565;
+        }
+        return Bitmap.Config.ARGB_8888;
     }
 }

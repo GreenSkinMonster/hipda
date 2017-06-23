@@ -126,8 +126,8 @@ public class ThreadImageLayout extends RelativeLayout {
                 mRequestManager
                         .load(mUrl)
                         .asBitmap()
-                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(ThreadDetailFragment.mMaxImageDecodeWidth, imageInfo)))
-                        .imageDecoder(new ThreadImageDecoder(ThreadDetailFragment.mMaxImageDecodeWidth, imageInfo))
+                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(imageInfo)))
+                        .imageDecoder(new ThreadImageDecoder(imageInfo))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(new GlideBitmapTarget(mImageView, imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight()));
             }

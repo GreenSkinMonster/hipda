@@ -27,7 +27,6 @@ import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
-import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.widget.ImageViewerLayout;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -87,8 +86,8 @@ public class ImageViewerAdapter extends PagerAdapter {
                     Glide.with(mActivity)
                             .load(info.getUrl())
                             .asBitmap()
-                            .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(ThreadDetailFragment.mMaxImageDecodeWidth, imageInfo)))
-                            .imageDecoder(new ThreadImageDecoder(ThreadDetailFragment.mMaxImageDecodeWidth, imageInfo))
+                            .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(imageInfo)))
+                            .imageDecoder(new ThreadImageDecoder(imageInfo))
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .into(new GlideBitmapTarget(imageLayout.getGlideImageView(), info.getDisplayWidth(), info.getDisplayHeight()));
                 }

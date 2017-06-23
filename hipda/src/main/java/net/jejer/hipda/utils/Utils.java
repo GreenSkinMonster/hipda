@@ -516,6 +516,7 @@ public class Utils {
             sb.append(manufacturer).append(" ").append(model);
         }
         sb.append("\n");
+        sb.append("内存限制 : ").append(toSizeText(Runtime.getRuntime().maxMemory())).append("\n");
         sb.append("系统版本 : ").append(Build.VERSION.RELEASE).append("\n");
         sb.append("客户端版本 : ").append(HiApplication.getAppVersion()).append("\n");
         return sb.toString();
