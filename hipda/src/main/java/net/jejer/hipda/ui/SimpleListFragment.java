@@ -364,10 +364,7 @@ public class SimpleListFragment extends BaseFragment
             if (mType == SimpleListJob.TYPE_SMS) {
                 FragmentUtils.showSmsActivity(getActivity(), false, item.getUid(), item.getAuthor());
             } else {
-                setHasOptionsMenu(false);
                 Fragment listFragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
-                if (listFragment != null)
-                    listFragment.setHasOptionsMenu(false);
                 if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
                     FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
                 } else if (HiUtils.isValidId(item.getUid())) {
@@ -378,10 +375,6 @@ public class SimpleListFragment extends BaseFragment
 
         @Override
         public void onLongItemClick(View view, int position) {
-            Fragment listFragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
-            if (listFragment != null)
-                listFragment.setHasOptionsMenu(false);
-
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
             if (mType == SimpleListJob.TYPE_SMS) {
             } else if (mType == SimpleListJob.TYPE_FAVORITES) {

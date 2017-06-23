@@ -114,6 +114,7 @@ public class BaseActivity extends AppCompatActivity {
                 mMainFrameContainer.requestLayout();
             }
         }
+        mToolbar.setLayoutParams(params);
     }
 
     public FloatingActionButton getMainFab() {
