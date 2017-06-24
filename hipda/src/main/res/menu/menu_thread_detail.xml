@@ -4,7 +4,6 @@
 
     <item
         android:id="@+id/action_show_all"
-        android:icon="@drawable/ic_eject_white_24dp"
         android:title="@string/action_show_all"
         android:visible="false"
         app:showAsAction="always"/>

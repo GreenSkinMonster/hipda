@@ -341,6 +341,8 @@ public class ThreadDetailFragment extends BaseFragment {
                 + mTitle);
 
         mShowAllMenuItem = menu.findItem(R.id.action_show_all);
+        mShowAllMenuItem.setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_eject)
+                .color(HiSettingsHelper.getInstance().getToolbarTextColor()).sizeDp(16));
 
         super.onCreateOptionsMenu(menu, inflater);
     }
