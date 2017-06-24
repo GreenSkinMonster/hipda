@@ -8,4 +8,5 @@ import net.jejer.hipda.bean.PostBean;
 public class PostEvent extends BaseEvent {
     public PostBean mPostResult;
     public int mMode;
+    public boolean fromQuickReply;
 }

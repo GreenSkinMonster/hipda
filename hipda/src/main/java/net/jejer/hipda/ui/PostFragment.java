@@ -93,6 +93,7 @@ public class PostFragment extends BaseFragment {
     public static final String ARG_FLOOR_KEY = "floor";
     public static final String ARG_FLOOR_AUTHOR_KEY = "floor_author";
     public static final String ARG_TEXT_KEY = "text";
+    public static final String ARG_QUOTE_TEXT_KEY = "quote_text";
     public static final String ARG_MODE_KEY = "mode";
     public static final String ARG_PARENT_ID = "parent_id";
 
@@ -104,6 +105,7 @@ public class PostFragment extends BaseFragment {
     private int mFloor;
     private String mFloorAuthor;
     private String mText;
+    private String mQuoteText;
     private String mTypeId = "0";
     private int mMode;
     private TextView mTvQuoteText;
@@ -160,6 +162,9 @@ public class PostFragment extends BaseFragment {
         }
         if (getArguments().containsKey(ARG_TEXT_KEY)) {
             mText = getArguments().getString(ARG_TEXT_KEY);
+        }
+        if (getArguments().containsKey(ARG_QUOTE_TEXT_KEY)) {
+            mQuoteText = getArguments().getString(ARG_QUOTE_TEXT_KEY);
         }
         if (getArguments().containsKey(ARG_PARENT_ID)) {
             mParentSessionId = getArguments().getString(ARG_PARENT_ID);
@@ -229,7 +234,7 @@ public class PostFragment extends BaseFragment {
             }
         });
 
-        if (mMode == PostHelper.MODE_REPLY_THREAD && !TextUtils.isEmpty(mText)) {
+        if (!TextUtils.isEmpty(mText)) {
             mEtContent.setText(mText);
         }
 
@@ -783,12 +788,12 @@ public class PostFragment extends BaseFragment {
             } else {
                 mTvQuoteText.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                 UIUtils.setLineSpacing(mTvQuoteText);
-                mTvQuoteText.setText(mText);
+                mTvQuoteText.setText(mQuoteText);
                 mTvQuoteText.setVisibility(View.VISIBLE);
                 mTvQuoteText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        UIUtils.showMessageDialog(getActivity(), mFloor + "# " + mFloorAuthor, mText, true);
+                        UIUtils.showMessageDialog(getActivity(), mFloor + "# " + mFloorAuthor, mQuoteText, true);
                     }
                 });
             }

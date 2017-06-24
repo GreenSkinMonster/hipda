@@ -140,6 +140,9 @@ public class ThreadDetailFragment extends BaseFragment {
     private ImageButton mIbPostReply;
     private CountDownTimer mCountDownTimer;
 
+    private DetailBean mQuickReplyToPost;
+    private int mQuickReplyMode;
+
     private Animation mBlinkAnim;
 
     private boolean mDataReceived = false;
@@ -274,8 +277,13 @@ public class ThreadDetailFragment extends BaseFragment {
                     PostBean postBean = new PostBean();
                     postBean.setContent(replyText);
                     postBean.setTid(mTid);
+                    postBean.setFid(mFid);
+                    if (mQuickReplyToPost != null) {
+                        postBean.setPid(mQuickReplyToPost.getPostId());
+                        postBean.setFloor(mQuickReplyToPost.getFloor());
+                    }
 
-                    JobMgr.addJob(new PostJob(mSessionId, PostHelper.MODE_QUICK_REPLY, null, postBean));
+                    JobMgr.addJob(new PostJob(mSessionId, mQuickReplyMode, null, postBean));
 
                     UIUtils.hideSoftKeyboard(getActivity());
                     new Handler().postDelayed(new Runnable() {
@@ -293,7 +301,7 @@ public class ThreadDetailFragment extends BaseFragment {
             public boolean onLongClick(View v) {
                 String replyText = mEtReply.getText().toString();
                 showPost(replyText);
-                hideQuickReply();
+                hideQuickReply(true);
                 return true;
             }
         });
@@ -507,26 +515,24 @@ public class ThreadDetailFragment extends BaseFragment {
                 @Override
                 public void onClick(View view) {
                     showQuickReply();
-                    (new Handler()).postDelayed(new Runnable() {
-                        public void run() {
-                            mEtReply.requestFocus();
-                            mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-                            mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
-                        }
-                    }, 100);
+                    showSoftKeyboard();
                 }
             });
         }
     }
 
     private void showPost(String text) {
-        Intent intent = new Intent(getActivity(), PostActivity.class);
-        intent.putExtra(PostFragment.ARG_TID_KEY, mTid);
-        intent.putExtra(PostFragment.ARG_MODE_KEY, PostHelper.MODE_REPLY_THREAD);
-        intent.putExtra(PostFragment.ARG_TEXT_KEY, text);
-        intent.putExtra(PostFragment.ARG_TEXT_KEY, text);
-        intent.putExtra(PostFragment.ARG_PARENT_ID, mSessionId);
-        ActivityCompat.startActivity(getActivity(), intent, null);
+        if (mQuickReplyToPost != null) {
+            FragmentUtils.showPostActivity(getActivity(), mQuickReplyMode,
+                    mSessionId, mFid, mTid,
+                    mQuickReplyToPost.getPostId(),
+                    mQuickReplyToPost.getFloor(),
+                    mQuickReplyToPost.getAuthor(), text, mQuickReplyToPost.getContents().getCopyText());
+        } else {
+            FragmentUtils.showPostActivity(getActivity(), mQuickReplyMode,
+                    mSessionId, mFid, mTid,
+                    null, -1, null, text, null);
+        }
     }
 
     private void refresh() {
@@ -770,6 +776,10 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private void showQuickReply() {
+        showQuickReply(PostHelper.MODE_REPLY_THREAD, null);
+    }
+
+    public void showQuickReply(int mode, final DetailBean detailBean) {
         int timeToWait = PostHelper.getWaitTimeToPost();
         if (timeToWait > 0) {
             mIbPostReply.setVisibility(View.GONE);
@@ -790,22 +800,60 @@ public class ThreadDetailFragment extends BaseFragment {
             mIbPostReply.setVisibility(View.VISIBLE);
             mTvCountdown.setVisibility(View.GONE);
         }
+
+        mQuickReplyMode = mode;
+        mQuickReplyToPost = detailBean;
+
+        if (mode == PostHelper.MODE_QUOTE_POST) {
+            mEtReply.setHint("引用 " + detailBean.getFloor() + "# " + detailBean.getAuthor());
+        } else if (mode == PostHelper.MODE_REPLY_POST) {
+            mEtReply.setHint("回复 " + detailBean.getFloor() + "# " + detailBean.getAuthor());
+        } else {
+            mEtReply.setHint(R.string.action_quick_reply);
+        }
+
         mQuickReply.setVisibility(View.VISIBLE);
         mQuickReply.bringToFront();
         mMainFab.hide();
+
+        if (mode != PostHelper.MODE_NEW_THREAD && mQuickReplyToPost != null) {
+            showSoftKeyboard();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    gotoFloor(mQuickReplyToPost.getFloor());
+                    highlightFloor(mQuickReplyToPost.getPostId());
+                }
+            }, 500);
+        }
     }
 
-    public boolean hideQuickReply() {
+    public boolean hideQuickReply(boolean clearReplyTo) {
         if (mCountDownTimer != null) {
             mCountDownTimer.cancel();
             mCountDownTimer = null;
         }
-        if (mQuickReply != null && mQuickReply.getVisibility() == View.VISIBLE) {
+        if (clearReplyTo) {
+            mQuickReplyMode = PostHelper.MODE_REPLY_THREAD;
+            mQuickReplyToPost = null;
+        }
+        if (mQuickReply.getVisibility() == View.VISIBLE) {
             mQuickReply.setVisibility(View.INVISIBLE);
             mMainFab.show();
             return true;
         }
         return false;
+    }
+
+    private void showSoftKeyboard() {
+        (new Handler()).postDelayed(new Runnable() {
+            public void run() {
+                mEtReply.requestFocus();
+                mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                mEtReply.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+                mEtReply.setSelection(mEtReply.getText().length());
+            }
+        }, 100);
     }
 
     private void showTextLayoutDialog() {
@@ -899,6 +947,14 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
             }
         }, 150);
+    }
+
+    private void highlightFloor(final String postId) {
+        int pos = mDetailAdapter.getPositionByPostId(postId);
+        View view = mLayoutManager.findViewByPosition(pos);
+        if (view != null && ViewCompat.isAttachedToWindow(view)) {
+            view.setPressed(true);
+        }
     }
 
     private void showOrLoadPage() {
@@ -1075,7 +1131,7 @@ public class ThreadDetailFragment extends BaseFragment {
         if (mEmojiPopup != null && mEmojiPopup.isShowing()) {
             mEmojiPopup.dismiss();
         }
-        return hideQuickReply();
+        return hideQuickReply(true);
     }
 
     private class ThreadDetailEventCallback extends EventCallback<ThreadDetailEvent> {
@@ -1176,18 +1232,16 @@ public class ThreadDetailFragment extends BaseFragment {
         PostBean postResult = event.mPostResult;
 
         if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
-            if (event.mMode == PostHelper.MODE_QUICK_REPLY) {
+            if (event.fromQuickReply) {
                 mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
-                hideQuickReply();
+                hideQuickReply(false);
                 mMainFab.hide();
             } else {
                 postProgressDialog = HiProgressDialog.show(mCtx, "请稍候...");
             }
         } else if (event.mStatus == Constants.STATUS_SUCCESS) {
             mEtReply.setText("");
-            if (mQuickReply.getVisibility() == View.VISIBLE) {
-                hideQuickReply();
-            }
+            hideQuickReply(true);
 
             if (postProgressDialog != null) {
                 postProgressDialog.dismiss(message);
@@ -1233,7 +1287,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 showOrLoadPage(true);
             }
         } else {
-            if (event.mMode == PostHelper.MODE_QUICK_REPLY) {
+            if (event.fromQuickReply) {
                 showQuickReply();
                 mRecyclerView.setFooterState(XFooterView.STATE_ERROR);
             }

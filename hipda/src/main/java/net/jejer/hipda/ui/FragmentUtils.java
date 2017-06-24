@@ -272,11 +272,30 @@ public class FragmentUtils {
         ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, skipEnterAnim));
     }
 
-    public static void showPostActivity(Activity activity, int fid, String parentSessionId) {
+    public static void showNewPostActivity(Activity activity, int fid, String parentSessionId) {
         Intent intent = new Intent(activity, PostActivity.class);
         intent.putExtra(PostFragment.ARG_MODE_KEY, PostHelper.MODE_NEW_THREAD);
         intent.putExtra(PostFragment.ARG_FID_KEY, fid);
         intent.putExtra(PostFragment.ARG_PARENT_ID, parentSessionId);
+        ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, true));
+    }
+
+    public static void showPostActivity(Activity activity, int mode, String parentSessionId,
+                                        int fid, String tid, String postId, int floor,
+                                        String author, String text, String quoteText) {
+        Intent intent = new Intent(activity, PostActivity.class);
+        intent.putExtra(PostFragment.ARG_MODE_KEY, mode);
+        intent.putExtra(PostFragment.ARG_FID_KEY, fid);
+        intent.putExtra(PostFragment.ARG_PARENT_ID, parentSessionId);
+        intent.putExtra(PostFragment.ARG_TID_KEY, tid);
+        intent.putExtra(PostFragment.ARG_PID_KEY, postId);
+        intent.putExtra(PostFragment.ARG_FLOOR_KEY, floor);
+        if (text != null)
+            intent.putExtra(PostFragment.ARG_TEXT_KEY, text);
+        if (author != null)
+            intent.putExtra(PostFragment.ARG_FLOOR_AUTHOR_KEY, author);
+        if (quoteText != null)
+            intent.putExtra(PostFragment.ARG_QUOTE_TEXT_KEY, quoteText);
         ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, true));
     }
 
@@ -318,7 +337,7 @@ public class FragmentUtils {
         } else if (args.getType() == FragmentArgs.TYPE_FORUM) {
             showForum(activity.getSupportFragmentManager(), args.getFid());
         } else if (args.getType() == FragmentArgs.TYPE_NEW_THREAD) {
-            showPostActivity(activity, args.getFid(), args.getParentId());
+            showNewPostActivity(activity, args.getFid(), args.getParentId());
         }
     }
 

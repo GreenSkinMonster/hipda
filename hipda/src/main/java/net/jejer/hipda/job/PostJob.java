@@ -31,6 +31,7 @@ public class PostJob extends BaseJob {
         mEvent = new PostEvent();
         mEvent.mMode = mMode;
         mEvent.mSessionId = mSessionId;
+        mEvent.fromQuickReply = prePostInfo == null;
     }
 
     @Override
