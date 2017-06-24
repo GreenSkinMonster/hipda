@@ -59,7 +59,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -396,56 +395,46 @@ public class SimpleListFragment extends BaseFragment
     }
 
     private void showFavoriteActionDialog(final int itemPosition, final SimpleListItemBean item) {
-        LinkedHashMap<String, String> actions = new LinkedHashMap<>();
-        actions.put("cancel", "取消收藏");
-        actions.put("last_page", "转到最新回复");
-
-        AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
-                String action = (String) view.getTag();
-                if ("cancel".equals(action)) {
-                    mSimpleListAdapter.getDatas().remove(itemPosition);
-                    mSimpleListAdapter.notifyItemRemoved(itemPosition);
-                    if (mSimpleListAdapter.getItemCount() - itemPosition - 1 > 0)
-                        mSimpleListAdapter.notifyItemRangeChanged(itemPosition, mSimpleListAdapter.getItemCount() - itemPosition - 1);
-                    FavoriteHelper.getInstance().deleteFavorite(getActivity(), mFormhash, FavoriteHelper.TYPE_FAVORITE, item.getTid());
-                } else {
-                    showLastPage(item);
-                }
-            }
-        };
-
         SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
-        popupMenu.setActions(actions);
-        popupMenu.setListener(listener);
+        popupMenu.add("cancel", "取消收藏", new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mSimpleListAdapter.getDatas().remove(itemPosition);
+                mSimpleListAdapter.notifyItemRemoved(itemPosition);
+                if (mSimpleListAdapter.getItemCount() - itemPosition - 1 > 0)
+                    mSimpleListAdapter.notifyItemRangeChanged(itemPosition, mSimpleListAdapter.getItemCount() - itemPosition - 1);
+                FavoriteHelper.getInstance().deleteFavorite(getActivity(), mFormhash, FavoriteHelper.TYPE_FAVORITE, item.getTid());
+            }
+        });
+        popupMenu.add("last_page", "转到最新回复", new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showLastPage(item);
+            }
+        });
         popupMenu.show();
     }
 
     private void showAttentionActionDialog(final int itemPosition, final SimpleListItemBean item) {
-        LinkedHashMap<String, String> actions = new LinkedHashMap<>();
-        actions.put("cancel", "取消关注");
-        actions.put("last_page", "转到最新回复");
-
-        AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
-                String action = (String) view.getTag();
-                if ("cancel".equals(action)) {
-                    mSimpleListAdapter.getDatas().remove(itemPosition);
-                    mSimpleListAdapter.notifyItemRemoved(itemPosition);
-                    if (mSimpleListAdapter.getItemCount() - itemPosition - 1 > 0)
-                        mSimpleListAdapter.notifyItemRangeChanged(itemPosition, mSimpleListAdapter.getItemCount() - itemPosition - 1);
-                    FavoriteHelper.getInstance().deleteFavorite(getActivity(), mFormhash, FavoriteHelper.TYPE_ATTENTION, item.getTid());
-                } else {
-                    showLastPage(item);
-                }
-            }
-        };
-
         SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
-        popupMenu.setActions(actions);
-        popupMenu.setListener(listener);
+        popupMenu.add("cancel", "取消关注", new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mSimpleListAdapter.getDatas().remove(itemPosition);
+                mSimpleListAdapter.notifyItemRemoved(itemPosition);
+                if (mSimpleListAdapter.getItemCount() - itemPosition - 1 > 0)
+                    mSimpleListAdapter.notifyItemRangeChanged(itemPosition, mSimpleListAdapter.getItemCount() - itemPosition - 1);
+                FavoriteHelper.getInstance().deleteFavorite(getActivity(), mFormhash, FavoriteHelper.TYPE_ATTENTION, item.getTid());
+
+            }
+        });
+        popupMenu.add("last_page", "转到最新回复",
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        showLastPage(item);
+                    }
+                });
         popupMenu.show();
     }
 

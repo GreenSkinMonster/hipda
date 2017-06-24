@@ -96,11 +96,9 @@ public class UIUtils {
 
         final TextView tvTitle = (TextView) viewlayout.findViewById(R.id.tv_dialog_title);
         tvTitle.setText(message);
-        tvTitle.setTextSize(HiSettingsHelper.getInstance().getTitleTextSize());
 
         final TextView textView = (TextView) viewlayout.findViewById(R.id.tv_dialog_content);
         textView.setText(detail);
-        textView.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         UIUtils.setLineSpacing(textView);
 
         builder.setView(viewlayout);

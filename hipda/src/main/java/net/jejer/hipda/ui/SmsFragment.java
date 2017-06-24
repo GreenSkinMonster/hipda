@@ -54,7 +54,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import okhttp3.Request;
@@ -342,21 +341,25 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             final SimpleListItemBean bean = mSmsAdapter.getItem(position);
             final int rvPosition = position;
             if (bean != null) {
-                AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+                SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
+                popupMenu.add("copy", "复制内容", new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
-                        String action = (String) view.getTag();
-                        if ("copy".equals(action)) {
-                            ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                            CharSequence content = Utils.fromHtmlAndStrip(bean.getInfo());
-                            if (content.length() > 0) {
-                                ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
-                                clipboard.setPrimaryClip(clip);
-                                Toast.makeText(getActivity(), "内容已复制", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getActivity(), "内容为空", Toast.LENGTH_SHORT).show();
-                            }
-                        } else if ("resend".equals(action)) {
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                        CharSequence content = Utils.fromHtmlAndStrip(bean.getInfo());
+                        if (content.length() > 0) {
+                            ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(getActivity(), "内容已复制", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), "内容为空", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                if (!mSending && bean.getStatus() == Constants.STATUS_FAIL && PostSmsAsyncTask.getWaitTimeToSendSms() <= 0) {
+                    popupMenu.add("resend", "重新发送", new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             if (!mSending && PostSmsAsyncTask.getWaitTimeToSendSms() <= 0) {
                                 String content = bean.getInfo();
                                 removeFailedSms(rvPosition);
@@ -365,16 +368,8 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                                 Toast.makeText(getActivity(), "短消息发送时间限制", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    }
-                };
-
-                SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
-                LinkedHashMap<String, String> actions = new LinkedHashMap<>();
-                actions.put("copy", "复制内容");
-                if (!mSending && bean.getStatus() == Constants.STATUS_FAIL && PostSmsAsyncTask.getWaitTimeToSendSms() <= 0)
-                    actions.put("resend", "重新发送");
-                popupMenu.setActions(actions);
-                popupMenu.setListener(listener);
+                    });
+                }
                 popupMenu.show();
             }
         }

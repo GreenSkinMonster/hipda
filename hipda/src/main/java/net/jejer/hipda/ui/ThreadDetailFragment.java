@@ -17,7 +17,6 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -30,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -68,7 +68,7 @@ import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.SimpleDivider;
-import net.jejer.hipda.ui.widget.ThreadDetailActionModeCallback;
+import net.jejer.hipda.ui.widget.SimpleGridMenu;
 import net.jejer.hipda.ui.widget.ValueChagerView;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XHeaderView;
@@ -601,15 +601,112 @@ public class ThreadDetailFragment extends BaseFragment {
                 return;
             }
 
-            ThreadDetailActionModeCallback cb = new ThreadDetailActionModeCallback(ThreadDetailFragment.this,
-                    mFid, mTid, mTitle, detailBean);
-            ((AppCompatActivity) getActivity()).startSupportActionMode(cb);
+            showGridMenu(detailBean);
         }
 
         @Override
         public void onDoubleTap(View view, int position) {
             showGotoPageDialog();
         }
+    }
+
+    private void showGridMenu(final DetailBean detailBean) {
+        SimpleGridMenu gridMenu = new SimpleGridMenu(getActivity());
+        gridMenu.setTitle(detailBean.getFloor() + "# " + detailBean.getAuthor());
+
+        gridMenu.add("copy", "复制文字", new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", detailBean.getContents().getCopyText());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getActivity(), "文字已复制", Toast.LENGTH_SHORT).show();
+            }
+        });
+        String authorText = isInAuthorOnlyMode() ? getString(R.string.action_show_all) : getString(R.string.action_only_floor_author);
+        gridMenu.add("author", authorText,
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        if (isInAuthorOnlyMode()) {
+                            cancelAuthorOnlyMode();
+                        } else {
+                            enterAuthorOnlyMode(detailBean.getUid());
+                        }
+                    }
+                });
+        gridMenu.add("share", "分享",
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        String shareBody = "帖子 ：" + mTitle + "\n" +
+                                HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", detailBean.getPostId()) + "\n" +
+                                detailBean.getFloor() + "#  作者 ：" + detailBean.getAuthor() + "\n\n" +
+                                detailBean.getContents().getCopyText();
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                        startActivity(Intent.createChooser(sharingIntent, "分享文字内容"));
+                    }
+                });
+        gridMenu.add("select_text", "文字选择",
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        UIUtils.showMessageDialog(getActivity(),
+                                detailBean.getFloor() + "# " + detailBean.getAuthor(),
+                                detailBean.getContents().getCopyText().trim(),
+                                true);
+                    }
+                });
+        gridMenu.add("reply", "回复",
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        showQuickReply(PostHelper.MODE_REPLY_POST, detailBean);
+                    }
+                },
+                GoogleMaterial.Icon.gmd_open_in_new, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FragmentUtils.showPostActivity(getActivity(), PostHelper.MODE_REPLY_POST,
+                                mSessionId, mFid, mTid,
+                                detailBean.getPostId(), detailBean.getFloor(),
+                                detailBean.getAuthor(), null, detailBean.getContents().getCopyText());
+                        hideQuickReply(true);
+                    }
+                });
+        gridMenu.add("quote", "引用",
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        showQuickReply(PostHelper.MODE_QUOTE_POST, detailBean);
+                    }
+                },
+                GoogleMaterial.Icon.gmd_open_in_new, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FragmentUtils.showPostActivity(getActivity(), PostHelper.MODE_QUOTE_POST,
+                                mSessionId, mFid, mTid,
+                                detailBean.getPostId(), detailBean.getFloor(),
+                                detailBean.getAuthor(), null, detailBean.getContents().getCopyText());
+                        hideQuickReply(true);
+                    }
+                });
+        if (HiSettingsHelper.getInstance().getUsername().equalsIgnoreCase(detailBean.getAuthor())
+                || HiSettingsHelper.getInstance().getUid().equals(detailBean.getUid())) {
+            gridMenu.add("edit", "编辑",
+                    new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            FragmentUtils.showPostActivity(getActivity(), PostHelper.MODE_EDIT_POST,
+                                    mSessionId, mFid, mTid,
+                                    detailBean.getPostId(), detailBean.getFloor(),
+                                    null, null, null);
+                        }
+                    });
+        }
+        gridMenu.show();
     }
 
     @Override

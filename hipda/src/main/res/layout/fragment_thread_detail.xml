@@ -51,7 +51,7 @@
             android:maxLines="6"
             android:minHeight="48dp"
             android:minLines="1"
-            android:padding="10dp"
+            android:padding="12dp"
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
             android:text=""

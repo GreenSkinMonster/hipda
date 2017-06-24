@@ -36,8 +36,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.LinkedHashMap;
-
 /**
  * Created by GreenSkinMonster on 2015-11-07.
  */
@@ -181,30 +179,28 @@ public class ThreadImageLayout extends RelativeLayout {
     }
 
     private void showImageActionDialog() {
-        LinkedHashMap<String, String> actions = new LinkedHashMap<>();
-        actions.put("save", getResources().getString(R.string.action_save));
-        actions.put("share", getResources().getString(R.string.action_share));
-        actions.put("gallery", getResources().getString(R.string.action_image_gallery));
-
-        AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long row) {
-                String action = (String) view.getTag();
-                if (mFragment != null && mFragment.getActivity() != null) {
-                    if ("save".equals(action)) {
+        SimplePopupMenu popupMenu = new SimplePopupMenu(getContext());
+        popupMenu.add("save", getResources().getString(R.string.action_save),
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         UIUtils.saveImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mContentImg.getContent());
-                    } else if ("share".equals(action)) {
+                    }
+                });
+        popupMenu.add("share", getResources().getString(R.string.action_share),
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         UIUtils.shareImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mUrl);
-                    } else if ("gallery".equals(action)) {
+                    }
+                });
+        popupMenu.add("gallery", getResources().getString(R.string.action_image_gallery),
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         mFragment.startImageGallery(mImageIndex, mImageView);
                     }
-                }
-            }
-        };
-
-        SimplePopupMenu popupMenu = new SimplePopupMenu(getContext());
-        popupMenu.setActions(actions);
-        popupMenu.setListener(listener);
+                });
         popupMenu.show();
     }
 
