@@ -18,6 +18,7 @@ public class DetailBean {
     private int mPage;
     private boolean mWarned;
     private Collection<ContentImg> mImages = new ArrayList<>();
+    private boolean mSelectMode;
 
     public DetailBean() {
         mContents = new Contents();
@@ -252,6 +253,14 @@ public class DetailBean {
 
     public void setWarned(boolean warned) {
         mWarned = warned;
+    }
+
+    public boolean isSelectMode() {
+        return mSelectMode;
+    }
+
+    public void setSelectMode(boolean selectMode) {
+        mSelectMode = selectMode;
     }
 
     private String unEscapeHtml(String str) {

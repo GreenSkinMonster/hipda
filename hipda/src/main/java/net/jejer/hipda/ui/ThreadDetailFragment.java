@@ -156,6 +156,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private MenuItem mShowAllMenuItem;
 
     private boolean mHistorySaved = false;
+    private int mPendingBlinkFloor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -653,10 +654,14 @@ public class ThreadDetailFragment extends BaseFragment {
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        UIUtils.showMessageDialog(getActivity(),
-                                detailBean.getFloor() + "# " + detailBean.getAuthor(),
-                                detailBean.getContents().getCopyText().trim(),
-                                true);
+                        detailBean.setSelectMode(true);
+                        int pos = mDetailAdapter.getPositionByPostId(detailBean.getPostId());
+                        if (pos != -1)
+                            mDetailAdapter.notifyItemChanged(pos);
+//                        UIUtils.showMessageDialog(getActivity(),
+//                                detailBean.getFloor() + "# " + detailBean.getAuthor(),
+//                                detailBean.getContents().getCopyText().trim(),
+//                                true);
                     }
                 });
         gridMenu.add("reply", "回复",
@@ -1015,6 +1020,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         if (mGoToPage != mCurrentPage) {
             mCurrentPage = mGoToPage;
+            mPendingBlinkFloor = floor;
             showOrLoadPage();
         } else {
             int position = mDetailAdapter.getPositionByFloor(floor);
@@ -1098,7 +1104,11 @@ public class ThreadDetailFragment extends BaseFragment {
 
             if (position >= 0) {
                 mRecyclerView.scrollToPosition(position);
-                blinkItemView(position);
+            }
+            if (mPendingBlinkFloor > 0) {
+                int pos = mDetailAdapter.getPositionByFloor(mPendingBlinkFloor);
+                blinkItemView(pos);
+                mPendingBlinkFloor = 0;
             }
 
             if (mMainFab != null
