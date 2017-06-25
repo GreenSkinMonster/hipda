@@ -457,7 +457,7 @@ public class MainFrameActivity extends BaseActivity {
                     break;
                 case Constants.DRAWER_SETTINGS:
                     Intent intent = new Intent(MainFrameActivity.this, SettingActivity.class);
-                    ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(MainFrameActivity.this, R.anim.slide_in_left, R.anim.no_anim);
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(MainFrameActivity.this, R.anim.slide_in_right, 0);
                     ActivityCompat.startActivity(MainFrameActivity.this, intent, options.toBundle());
                     break;
                 default:

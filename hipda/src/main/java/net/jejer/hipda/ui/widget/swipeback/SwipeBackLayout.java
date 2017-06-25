@@ -69,7 +69,7 @@ public class SwipeBackLayout extends FrameLayout {
     /**
      * Default threshold of scroll
      */
-    private static final float DEFAULT_SCROLL_THRESHOLD = 0.3f;
+    private static final float DEFAULT_SCROLL_THRESHOLD = 0.25f;
 
     private static final int OVERSCROLL_DISTANCE = 10;
 

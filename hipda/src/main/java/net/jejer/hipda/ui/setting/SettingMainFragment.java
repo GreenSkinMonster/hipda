@@ -73,7 +73,7 @@ public class SettingMainFragment extends BaseSettingFragment {
 
                     Intent intent = new Intent(getActivity(), SettingActivity.class);
                     intent.putExtra(SettingNestedFragment.TAG_KEY, screenKey);
-                    ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(getActivity(), R.anim.slide_in_left, R.anim.no_anim);
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(getActivity(), R.anim.slide_in_right, 0);
                     ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
                     return true;
                 }
@@ -159,7 +159,7 @@ public class SettingMainFragment extends BaseSettingFragment {
 
                 Intent intent = new Intent(getActivity(), SettingActivity.class);
                 intent.putExtra(AboutFragment.TAG_KEY, AboutFragment.TAG_KEY);
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(getActivity(), R.anim.slide_in_left, R.anim.no_anim);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(getActivity(), R.anim.slide_in_right, 0);
                 ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
                 return true;
             }

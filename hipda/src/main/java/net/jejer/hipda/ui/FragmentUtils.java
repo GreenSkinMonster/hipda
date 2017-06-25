@@ -212,7 +212,7 @@ public class FragmentUtils {
         if (skipEnterAnim) {
             options = ActivityOptionsCompat.makeBasic();
         } else {
-            options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_left, R.anim.no_anim);
+            options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_right, 0);
         }
         return options.toBundle();
     }
@@ -305,7 +305,7 @@ public class FragmentUtils {
         if (skipEnterAnim) {
             transaction.setCustomAnimations(0, 0, 0, R.anim.slide_out_right);
         } else {
-            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right);
+            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_right);
         }
 
         transaction.add(R.id.main_frame_container, fragment, fragment.getClass().getName())
