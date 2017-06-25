@@ -157,6 +157,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public void finishWithNoSlide() {
         super.finish();
+        overridePendingTransition(0, R.anim.activity_close_exit);
     }
 
 }

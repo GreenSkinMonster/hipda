@@ -207,10 +207,10 @@ public class FragmentUtils {
         ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, skipEnterAnim));
     }
 
-    private static Bundle getAnimBundle(Activity activity, boolean skipEnterAnim) {
+    public static Bundle getAnimBundle(Activity activity, boolean skipEnterAnim) {
         ActivityOptionsCompat options;
         if (skipEnterAnim) {
-            options = ActivityOptionsCompat.makeBasic();
+            options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.activity_open_enter, 0);
         } else {
             options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_right, 0);
         }

@@ -4,13 +4,11 @@ package net.jejer.hipda.ui;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,7 +39,6 @@ import com.mikepenz.iconics.view.IconicsImageView;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
-import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.bean.PostBean;
@@ -254,7 +251,7 @@ public class ThreadListFragment extends BaseFragment
                 showThreadListSettingsDialog();
                 return true;
             case R.id.action_new_thread:
-                newThread();
+                FragmentUtils.showNewPostActivity(getActivity(), mForumId, mSessionId);
                 return true;
             case R.id.action_filter_by_type:
                 showForumTypesDialog();
@@ -309,14 +306,6 @@ public class ThreadListFragment extends BaseFragment
                 }
             });
         }
-    }
-
-    private void newThread() {
-        Intent intent = new Intent(getActivity(), PostActivity.class);
-        intent.putExtra(PostFragment.ARG_MODE_KEY, PostHelper.MODE_NEW_THREAD);
-        intent.putExtra(PostFragment.ARG_FID_KEY, mForumId);
-        intent.putExtra(PostFragment.ARG_PARENT_ID, mSessionId);
-        ActivityCompat.startActivity(getActivity(), intent, null);
     }
 
     private void refresh() {

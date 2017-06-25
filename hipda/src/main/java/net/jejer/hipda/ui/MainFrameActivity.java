@@ -18,7 +18,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -457,8 +456,8 @@ public class MainFrameActivity extends BaseActivity {
                     break;
                 case Constants.DRAWER_SETTINGS:
                     Intent intent = new Intent(MainFrameActivity.this, SettingActivity.class);
-                    ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(MainFrameActivity.this, R.anim.slide_in_right, 0);
-                    ActivityCompat.startActivity(MainFrameActivity.this, intent, options.toBundle());
+                    ActivityCompat.startActivity(MainFrameActivity.this, intent,
+                            FragmentUtils.getAnimBundle(MainFrameActivity.this, false));
                     break;
                 default:
                     int forumId = (int) iDrawerItem.getIdentifier();
