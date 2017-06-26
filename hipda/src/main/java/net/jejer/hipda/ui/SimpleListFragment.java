@@ -377,7 +377,7 @@ public class SimpleListFragment extends BaseFragment
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
             if (mType == SimpleListJob.TYPE_SMS) {
             } else if (mType == SimpleListJob.TYPE_FAVORITES) {
-                showFavoriteActionDialog(position, item);
+                showFavoriteActionDialog(item);
             } else if (mType == SimpleListJob.TYPE_ATTENTION) {
                 showAttentionActionDialog(position, item);
             } else {
@@ -394,16 +394,26 @@ public class SimpleListFragment extends BaseFragment
         }
     }
 
-    private void showFavoriteActionDialog(final int itemPosition, final SimpleListItemBean item) {
-        SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
+    private void showFavoriteActionDialog(final SimpleListItemBean item) {
+        final SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
         popupMenu.add("cancel", "取消收藏", new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mSimpleListAdapter.getDatas().remove(itemPosition);
-                mSimpleListAdapter.notifyItemRemoved(itemPosition);
-                if (mSimpleListAdapter.getItemCount() - itemPosition - 1 > 0)
-                    mSimpleListAdapter.notifyItemRangeChanged(itemPosition, mSimpleListAdapter.getItemCount() - itemPosition - 1);
                 FavoriteHelper.getInstance().deleteFavorite(getActivity(), mFormhash, FavoriteHelper.TYPE_FAVORITE, item.getTid());
+                int pos = -1;
+                for (int i = 0; i < mSimpleListAdapter.getDatas().size(); i++) {
+                    SimpleListItemBean bean = mSimpleListAdapter.getItem(mSimpleListAdapter.getHeaderCount() + i);
+                    if (item.getTid().equals(bean.getTid())) {
+                        pos = mSimpleListAdapter.getHeaderCount() + i;
+                        break;
+                    }
+                }
+                if (pos != -1) {
+                    mSimpleListAdapter.getDatas().remove(pos);
+                    mSimpleListAdapter.notifyItemRemoved(pos);
+                    if (mSimpleListAdapter.getItemCount() - pos - 1 > 0)
+                        mSimpleListAdapter.notifyItemRangeChanged(pos, mSimpleListAdapter.getItemCount() - pos - 1);
+                }
             }
         });
         popupMenu.add("last_page", "转到最新回复", new AdapterView.OnItemClickListener() {
