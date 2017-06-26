@@ -557,7 +557,7 @@ public class HiSettingsHelper {
     }
 
     private String getNightThemeFromPref() {
-        mNightTheme = mSharedPref.getString(PERF_NIGHT_THEME, "");
+        mNightTheme = mSharedPref.getString(PERF_NIGHT_THEME, THEME_DARK);
         return mNightTheme;
     }
 

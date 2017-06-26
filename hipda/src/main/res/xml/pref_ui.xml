@@ -21,7 +21,7 @@
             app:spectrum_colors="@array/material_colors"/>
 
         <ListPreference
-            android:defaultValue=""
+            android:defaultValue="dark"
             android:entries="@array/pref_title_night_theme_names"
             android:entryValues="@array/pref_title_night_theme_values"
             android:key="PERF_NIGHT_THEME"
