@@ -51,6 +51,7 @@ import net.jejer.hipda.job.PostEvent;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.job.ThreadListEvent;
 import net.jejer.hipda.job.ThreadListJob;
+import net.jejer.hipda.job.ThreadUpdatedEvent;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadListAdapter;
 import net.jejer.hipda.ui.widget.BottomDialog;
@@ -734,6 +735,22 @@ public class ThreadListFragment extends BaseFragment
             return;
         EventBus.getDefault().removeStickyEvent(event);
         mEventCallback.process(event);
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(ThreadUpdatedEvent event) {
+        if (event.mFid == mForumId && event.mTid != null) {
+            for (int i = 0; i < mThreadListAdapter.getDatas().size(); i++) {
+                ThreadBean bean = mThreadListAdapter.getItem(mThreadListAdapter.getHeaderCount() + i);
+                if (event.mTid.equals(bean.getTid())) {
+                    bean.setTitle(event.mTitle);
+                    bean.setCountCmts(String.valueOf(event.mReplyCount));
+                    mThreadListAdapter.notifyItemChanged(mThreadListAdapter.getHeaderCount() + i);
+                    break;
+                }
+            }
+        }
     }
 
 }

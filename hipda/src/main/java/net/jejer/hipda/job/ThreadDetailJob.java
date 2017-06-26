@@ -11,6 +11,7 @@ import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParserThreadDetail;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jsoup.Jsoup;
@@ -77,7 +78,8 @@ public class ThreadDetailJob extends BaseJob {
                         }
                     } else {
                         Document doc = Jsoup.parse(resp);
-                        data = HiParserThreadDetail.parse(mCtx, doc, mTid == null);
+                        String tid = Utils.getMiddleString(resp, "tid = parseInt('", "')");
+                        data = HiParserThreadDetail.parse(mCtx, doc, tid);
                         if (data == null || data.getCount() == 0) {
                             eventStatus = Constants.STATUS_FAIL_ABORT;
                             eventMessage = "页面加载失败";
@@ -106,6 +108,18 @@ public class ThreadDetailJob extends BaseJob {
         mEvent.mDetail = eventDetail;
         mEvent.mAuthorId = mAuthorId;
         EventBus.getDefault().postSticky(mEvent);
+
+
+        if (data != null && data.getPage() == data.getLastPage()
+                && mAuthorId == null
+                && HiUtils.isForumValid(data.getFid()) && data.getTid() != null) {
+            ThreadUpdatedEvent tuEvent = new ThreadUpdatedEvent();
+            tuEvent.mFid = data.getFid();
+            tuEvent.mTid = data.getTid();
+            tuEvent.mTitle = data.getTitle();
+            tuEvent.mReplyCount = data.getAll().get(data.getCount() - 1).getFloor() - 1;
+            EventBus.getDefault().postSticky(tuEvent);
+        }
     }
 
     private String fetchDetail() throws Exception {

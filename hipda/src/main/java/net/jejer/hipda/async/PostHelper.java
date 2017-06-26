@@ -185,7 +185,7 @@ public class PostHelper {
                     try {
                         //parse resp to get redirected page content
                         Document doc = Jsoup.parse(resp);
-                        DetailListBean data = HiParserThreadDetail.parse(mCtx, doc, false);
+                        DetailListBean data = HiParserThreadDetail.parse(mCtx, doc, tid);
                         if (data != null && data.getCount() > 0) {
                             mDetailListBean = data;
                         }

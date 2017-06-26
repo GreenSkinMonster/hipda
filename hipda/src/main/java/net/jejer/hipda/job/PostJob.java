@@ -1,10 +1,12 @@
 package net.jejer.hipda.job;
 
 import net.jejer.hipda.async.PostHelper;
+import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HiUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -56,6 +58,17 @@ public class PostJob extends BaseJob {
         }
 
         EventBus.getDefault().postSticky(mEvent);
+
+        DetailListBean data = postResult.getDetailListBean();
+        if (data != null && data.getPage() == data.getLastPage()
+                && HiUtils.isForumValid(data.getFid())) {
+            ThreadUpdatedEvent tuEvent = new ThreadUpdatedEvent();
+            tuEvent.mFid = data.getFid();
+            tuEvent.mTid = data.getTid();
+            tuEvent.mTitle = data.getTitle();
+            tuEvent.mReplyCount = data.getAll().get(data.getCount() - 1).getFloor() - 1;
+            EventBus.getDefault().postSticky(tuEvent);
+        }
     }
 
 }

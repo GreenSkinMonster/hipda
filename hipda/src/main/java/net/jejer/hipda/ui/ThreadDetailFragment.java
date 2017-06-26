@@ -1410,7 +1410,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     mCurrentPage = mMaxPage;
                     mGotoFloor = LAST_FLOOR;
                 }
-                showOrLoadPage(true);
+                showOrLoadPage(false);
             }
         } else {
             if (event.fromQuickReply) {

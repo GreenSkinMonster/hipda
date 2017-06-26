@@ -34,8 +34,7 @@ public class HiParserThreadDetail {
         return "";
     }
 
-    public static DetailListBean parse(Context ctx, Document doc, boolean parseTid) {
-
+    public static DetailListBean parse(Context ctx, Document doc, String tid) {
         // get last page
         Elements pagesES = doc.select("div#wrap div.forumcontrol div.pages");
         // thread have only 1 page don't have "div.pages"
@@ -61,14 +60,8 @@ public class HiParserThreadDetail {
         details.setPage(page);
         details.setLastPage(last_page);
 
-        if (parseTid) {
-            Elements printES = doc.select("div.posterinfo div.pagecontrol a.print");
-            if (printES.size() > 0) {
-                String tid = Utils.getMiddleString(printES.first().attr("href"), "tid=", "&");
-                if (!TextUtils.isEmpty(tid) && TextUtils.isDigitsOnly(tid))
-                    details.setTid(tid);
-            }
-        }
+        if (!TextUtils.isEmpty(tid) && TextUtils.isDigitsOnly(tid))
+            details.setTid(tid);
 
         //get forum id
         Elements divNavES = doc.select("div#nav");
