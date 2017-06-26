@@ -48,6 +48,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
     private View.OnClickListener mWarningListener;
     private ThreadDetailFragment mDetailFragment;
     private int mBackgroundResource;
+    private int mBackgroundColor;
 
     public ThreadDetailAdapter(Context context,
                                ThreadDetailFragment detailFragment,
@@ -67,6 +68,9 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         TypedArray typedArray = mCtx.obtainStyledAttributes(attrs);
         mBackgroundResource = typedArray.getResourceId(0, 0);
         typedArray.recycle();
+
+        mBackgroundColor = HiSettingsHelper.getInstance().getActiveTheme().equals(HiSettingsHelper.THEME_LIGHT)
+                ? R.color.md_light_green_100 : R.color.md_blue_grey_900;
     }
 
     @Override
@@ -87,7 +91,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         final DetailBean detail = getItem(position);
 
         if (detail.isHighlightMode()) {
-            viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.background_silver));
+            viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(mCtx, mBackgroundColor));
         } else {
             viewHolder.itemView.setBackgroundResource(mBackgroundResource);
         }

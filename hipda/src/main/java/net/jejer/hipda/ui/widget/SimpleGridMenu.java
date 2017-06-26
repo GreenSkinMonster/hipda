@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -33,6 +34,7 @@ public class SimpleGridMenu {
     private LayoutInflater mInflater;
     private String mTitle;
     private AlertDialog mDialog;
+    private DialogInterface.OnDismissListener mOnDismissListener;
 
     private LinkedHashMap<String, MenuItem> mMenuItems = new LinkedHashMap<>();
     private List<String> mActionKeys = new ArrayList<>();
@@ -50,6 +52,10 @@ public class SimpleGridMenu {
         mTitle = title;
     }
 
+    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
+        mOnDismissListener = onDismissListener;
+    }
+
     public void show() {
         View view = mInflater.inflate(R.layout.dialog_grid_menu, null);
         GridView gridView = (GridView) view.findViewById(R.id.grid_view);
@@ -61,6 +67,7 @@ public class SimpleGridMenu {
         final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setView(view);
         mDialog = builder.create();
+        mDialog.setOnDismissListener(mOnDismissListener);
         mDialog.show();
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -71,12 +78,12 @@ public class SimpleGridMenu {
                 if (menuItem != null) {
                     menuItem.listener.onItemClick(adapterView, view, position, row);
                 }
-                closeDialog();
+                dismiss();
             }
         });
     }
 
-    private void closeDialog() {
+    public void dismiss() {
         if (mDialog != null)
             mDialog.dismiss();
     }
@@ -115,7 +122,7 @@ public class SimpleGridMenu {
                     public void onClick(View v) {
                         if (menuItem.iconListener != null)
                             menuItem.iconListener.onClick(v);
-                        closeDialog();
+                        dismiss();
                     }
                 });
 

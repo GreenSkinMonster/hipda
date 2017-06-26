@@ -160,4 +160,8 @@ public class BaseActivity extends AppCompatActivity {
         overridePendingTransition(0, R.anim.activity_close_exit);
     }
 
+    public void finishWithDefault() {
+        super.finish();
+    }
+
 }

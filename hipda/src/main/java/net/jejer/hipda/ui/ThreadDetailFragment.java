@@ -72,6 +72,7 @@ import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.SimpleDivider;
 import net.jejer.hipda.ui.widget.SimpleGridMenu;
+import net.jejer.hipda.ui.widget.SmoothLinearLayoutManager;
 import net.jejer.hipda.ui.widget.ValueChagerView;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XHeaderView;
@@ -163,6 +164,8 @@ public class ThreadDetailFragment extends BaseFragment {
     private boolean mHistorySaved = false;
     private int mPendingBlinkFloor;
 
+    SimpleGridMenu mGridMenu;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -205,7 +208,7 @@ public class ThreadDetailFragment extends BaseFragment {
         mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_thread_details);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(null);
-        mLayoutManager = new LinearLayoutManager(mCtx);
+        mLayoutManager = new SmoothLinearLayoutManager(mCtx);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new SimpleDivider(getActivity()));
 
@@ -617,10 +620,18 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private void showGridMenu(final DetailBean detailBean) {
-        SimpleGridMenu gridMenu = new SimpleGridMenu(getActivity());
-        gridMenu.setTitle(detailBean.getFloor() + "# " + detailBean.getAuthor());
+        if (mGridMenu != null)
+            return;
+        mGridMenu = new SimpleGridMenu(getActivity());
+        mGridMenu.setTitle(detailBean.getFloor() + "# " + detailBean.getAuthor());
+        mGridMenu.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mGridMenu = null;
+            }
+        });
 
-        gridMenu.add("copy", "复制文字", new AdapterView.OnItemClickListener() {
+        mGridMenu.add("copy", "复制文字", new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -630,7 +641,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
         String authorText = isInAuthorOnlyMode() ? getString(R.string.action_show_all) : getString(R.string.action_only_floor_author);
-        gridMenu.add("author", authorText,
+        mGridMenu.add("author", authorText,
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -641,7 +652,7 @@ public class ThreadDetailFragment extends BaseFragment {
                         }
                     }
                 });
-        gridMenu.add("share", "分享",
+        mGridMenu.add("share", "分享",
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -655,7 +666,7 @@ public class ThreadDetailFragment extends BaseFragment {
                         startActivity(Intent.createChooser(sharingIntent, "分享文字内容"));
                     }
                 });
-        gridMenu.add("select_text", "文字选择",
+        mGridMenu.add("select_text", "文字选择",
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -669,7 +680,7 @@ public class ThreadDetailFragment extends BaseFragment {
 //                                true);
                     }
                 });
-        gridMenu.add("reply", "回复",
+        mGridMenu.add("reply", "回复",
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -686,7 +697,7 @@ public class ThreadDetailFragment extends BaseFragment {
                         hideQuickReply(true);
                     }
                 });
-        gridMenu.add("quote", "引用",
+        mGridMenu.add("quote", "引用",
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -705,14 +716,14 @@ public class ThreadDetailFragment extends BaseFragment {
                 });
         if (HiSettingsHelper.getInstance().getUsername().equalsIgnoreCase(detailBean.getAuthor())
                 || HiSettingsHelper.getInstance().getUid().equals(detailBean.getUid())) {
-            gridMenu.add("delete", "删除",
+            mGridMenu.add("delete", "快速删除",
                     new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             showDeletePostDialog(detailBean);
                         }
                     });
-            gridMenu.add("edit", "编辑",
+            mGridMenu.add("edit", "编辑",
                     new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -723,14 +734,14 @@ public class ThreadDetailFragment extends BaseFragment {
                         }
                     });
         }
-        gridMenu.show();
+        mGridMenu.show();
     }
 
     private void showDeletePostDialog(final DetailBean detailBean) {
         final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
         popDialog.setTitle("删除本帖？");
         popDialog.setMessage(HtmlCompat.fromHtml("确认删除发表的内容吗？<br><br><font color=red>注意：此操作不可恢复。" +
-                "<br><br>如帖子受限制不能被删除，本操作将清空帖子内容以及图片和附件。</font>"));
+                "<br><br>如帖子可以删除，则进行删除，否则清空帖子内容以及图片和附件。</font>"));
         popDialog.setPositiveButton("删除",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -753,8 +764,14 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        if (mGridMenu != null)
+            mGridMenu.dismiss();
+    }
+
+    @Override
     public void onDestroy() {
-        getLoaderManager().destroyLoader(0);
         if (Utils.isMemoryUsageHigh())
             Glide.get(getActivity()).clearMemory();
         super.onDestroy();
@@ -842,6 +859,7 @@ public class ThreadDetailFragment extends BaseFragment {
             @Override
             public void onSingleClick(View v) {
                 mCurrentPage = mGoToPage;
+                mGotoFloor = FIRST_FLOOR;
                 showOrLoadPage();
                 dialog.dismiss();
             }
@@ -962,9 +980,19 @@ public class ThreadDetailFragment extends BaseFragment {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    gotoFloor(mQuickReplyToPost.getFloor());
+                    int pos = mDetailAdapter.getPositionByFloor(mQuickReplyToPost.getFloor());
+                    if (pos != -1) {
+                        try {
+                            View v = mLayoutManager.getChildAt(0);
+                            TextView tv = (TextView) v.findViewById(R.id.floor);
+                            if (Utils.parseInt(tv.getText().toString()) != mQuickReplyToPost.getFloor())
+                                mRecyclerView.smoothScrollToPosition(pos);
+                        } catch (Exception e) {
+                            mRecyclerView.smoothScrollToPosition(pos);
+                        }
+                    }
                 }
-            }, 500);
+            }, 300);
         }
     }
 

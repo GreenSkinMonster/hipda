@@ -419,7 +419,7 @@ public class MainFrameActivity extends BaseActivity {
                 return;
         }
 
-        finishWithNoSlide();
+        finishWithDefault();
     }
 
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {
