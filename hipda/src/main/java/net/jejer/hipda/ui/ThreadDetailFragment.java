@@ -1025,15 +1025,11 @@ public class ThreadDetailFragment extends BaseFragment {
         } else {
             int position = mDetailAdapter.getPositionByFloor(floor);
             mRecyclerView.scrollToPosition(position);
-            blinkItemView(position);
+            DetailBean detailBean = mDetailAdapter.getItem(position);
+            if (detailBean != null) {
+                blinkItemView(detailBean.getPostId());
+            }
             mGotoFloor = -1;
-        }
-    }
-
-    private void blinkItemView(int position) {
-        DetailBean detailBean = mDetailAdapter.getItem(position);
-        if (detailBean != null) {
-            blinkItemView(detailBean.getPostId());
         }
     }
 
@@ -1107,7 +1103,9 @@ public class ThreadDetailFragment extends BaseFragment {
             }
             if (mPendingBlinkFloor > 0) {
                 int pos = mDetailAdapter.getPositionByFloor(mPendingBlinkFloor);
-                blinkItemView(pos);
+                DetailBean detailBean = mDetailAdapter.getItem(pos);
+                if (detailBean != null)
+                    blinkItemView(detailBean.getPostId());
                 mPendingBlinkFloor = 0;
             }
 
