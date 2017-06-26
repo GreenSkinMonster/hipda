@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
@@ -46,6 +47,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
     private View.OnClickListener mAvatarListener;
     private View.OnClickListener mWarningListener;
     private ThreadDetailFragment mDetailFragment;
+    private int mBackgroundResource;
 
     public ThreadDetailAdapter(Context context,
                                ThreadDetailFragment detailFragment,
@@ -60,6 +62,11 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         mAvatarListener = avatarListener;
         mWarningListener = warningListener;
         mDetailFragment = detailFragment;
+
+        int[] attrs = new int[]{R.attr.selectableItemBackground};
+        TypedArray typedArray = mCtx.obtainStyledAttributes(attrs);
+        mBackgroundResource = typedArray.getResourceId(0, 0);
+        typedArray.recycle();
     }
 
     @Override
@@ -78,6 +85,12 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         viewHolder.itemView.setOnTouchListener(mListener);
 
         final DetailBean detail = getItem(position);
+
+        if (detail.isHighlightMode()) {
+            viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.background_silver));
+        } else {
+            viewHolder.itemView.setBackgroundResource(mBackgroundResource);
+        }
 
         holder.author.setText(detail.getAuthor());
         holder.time.setText(Utils.shortyTime(detail.getTimePost()));

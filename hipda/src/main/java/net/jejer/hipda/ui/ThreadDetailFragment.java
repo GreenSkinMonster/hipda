@@ -142,6 +142,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
     private DetailBean mQuickReplyToPost;
     private int mQuickReplyMode;
+    private String mHighlightPostId;
 
     private Animation mBlinkAnim;
 
@@ -920,11 +921,11 @@ public class ThreadDetailFragment extends BaseFragment {
 
         if (mode != PostHelper.MODE_NEW_THREAD && mQuickReplyToPost != null) {
             showSoftKeyboard();
+            highlightPost(mQuickReplyToPost.getPostId());
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     gotoFloor(mQuickReplyToPost.getFloor());
-                    highlightFloor(mQuickReplyToPost.getPostId());
                 }
             }, 500);
         }
@@ -936,6 +937,7 @@ public class ThreadDetailFragment extends BaseFragment {
             mCountDownTimer = null;
         }
         if (clearReplyTo) {
+            deHighlightPostId();
             mQuickReplyMode = PostHelper.MODE_REPLY_THREAD;
             mQuickReplyToPost = null;
         }
@@ -1048,11 +1050,30 @@ public class ThreadDetailFragment extends BaseFragment {
         }, 150);
     }
 
-    private void highlightFloor(final String postId) {
+    private void highlightPost(final String postId) {
+        if (mHighlightPostId != null && !mHighlightPostId.equals(postId))
+            deHighlightPostId();
         int pos = mDetailAdapter.getPositionByPostId(postId);
-        View view = mLayoutManager.findViewByPosition(pos);
-        if (view != null && ViewCompat.isAttachedToWindow(view)) {
-            view.setPressed(true);
+        if (pos != -1) {
+            DetailBean detailBean = mDetailAdapter.getItem(pos);
+            detailBean.setHighlightMode(true);
+            mDetailAdapter.notifyItemChanged(pos);
+            mHighlightPostId = postId;
+        }
+    }
+
+    private void deHighlightPostId() {
+        if (mHighlightPostId == null)
+            return;
+        int pos = mDetailAdapter.getPositionByPostId(mHighlightPostId);
+        DetailBean detailBean = mDetailAdapter.getItem(pos);
+        if (detailBean != null) {
+            detailBean.setHighlightMode(false);
+            mDetailAdapter.notifyItemChanged(pos);
+        } else {
+            detailBean = mCache.getPostByPostId(mHighlightPostId);
+            if (detailBean != null)
+                detailBean.setHighlightMode(false);
         }
     }
 

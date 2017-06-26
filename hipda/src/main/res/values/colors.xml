@@ -23,13 +23,6 @@
     <item name="night_background" type="color">#1C1D1E</item>
     <item name="quote_text_background" type="color">#2AC0C0C0</item>
 
-    <color name="pink">#e91e63</color>
-    <color name="pink_pressed">#ec407a</color>
-    <color name="blue_semi_transparent">#805677fc</color>
-    <color name="blue_semi_transparent_pressed">#80738ffe</color>
-    <color name="blue_normal">#5677fc</color>
-    <color name="blue_pressed">#738ffe</color>
-
     <color name="nearly_black">#161616</color>
 
     <color name="splash_background">@color/md_grey_800</color>

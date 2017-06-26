@@ -19,6 +19,7 @@ public class DetailBean {
     private boolean mWarned;
     private Collection<ContentImg> mImages = new ArrayList<>();
     private boolean mSelectMode;
+    private boolean mHighlightMode;
 
     public DetailBean() {
         mContents = new Contents();
@@ -261,6 +262,14 @@ public class DetailBean {
 
     public void setSelectMode(boolean selectMode) {
         mSelectMode = selectMode;
+    }
+
+    public boolean isHighlightMode() {
+        return mHighlightMode;
+    }
+
+    public void setHighlightMode(boolean highlightMode) {
+        mHighlightMode = highlightMode;
     }
 
     private String unEscapeHtml(String str) {

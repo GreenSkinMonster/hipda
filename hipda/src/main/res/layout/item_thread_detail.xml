@@ -50,7 +50,7 @@
             android:layout_height="24dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="2dp"
+            android:layout_margin="2dp"
             android:background="@drawable/round_textview"
             android:gravity="center"
             android:minWidth="32dp"
