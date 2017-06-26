@@ -523,7 +523,7 @@ public class PostFragment extends BaseFragment {
                                         sb.append(content).append("\n");
                                         for (String imgId : extraImgs) {
                                             sb.append("[attachimg]").append(imgId).append("[/attachimg]").append("\n");
-                                            mPrePostInfo.addAttach(imgId);
+                                            mPrePostInfo.addNewAttach(imgId);
                                         }
                                         if (appendTail)
                                             sb.append(tail);
@@ -535,7 +535,7 @@ public class PostFragment extends BaseFragment {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         for (String imgId : extraImgs) {
-                                            mPrePostInfo.addAttachdel(imgId);
+                                            mPrePostInfo.addDeleteAttach(imgId);
                                         }
                                         startPostJob(subjectText, replyText);
                                     }
@@ -558,7 +558,7 @@ public class PostFragment extends BaseFragment {
         postBean.setFloor(mFloor);
         postBean.setDelete(mDeleteMode);
 
-        JobMgr.addJob(new PostJob(mParentSessionId, mMode, mPrePostInfo, postBean));
+        JobMgr.addJob(new PostJob(mParentSessionId, mMode, mPrePostInfo, postBean, false));
         getActivity().finish();
     }
 
@@ -707,7 +707,7 @@ public class PostFragment extends BaseFragment {
             mEtContent.setSelection(selectionStart + imgTxt.length());
             mContentPosition = selectionStart + imgTxt.length();
             mEtContent.requestFocus();
-            mPrePostInfo.addAttach(imgId);
+            mPrePostInfo.addNewAttach(imgId);
             mPrePostInfo.addImage(imgId);
         }
     }
@@ -764,7 +764,7 @@ public class PostFragment extends BaseFragment {
         getActivity().invalidateOptionsMenu();
 
         mTypeValues = mPrePostInfo.getTypeValues();
-        mTypeId = mPrePostInfo.getTypeid();
+        mTypeId = mPrePostInfo.getTypeId();
 
         if (mTypeValues.size() > 0) {
             mTvType.setText(mTypeValues.get(mTypeId));

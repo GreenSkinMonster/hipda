@@ -28,8 +28,6 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
     private int mMode;
     private String mMessage;
 
-    private String mUrl;
-
     public PrePostAsyncTask(Context ctx, PrePostListener listener, int mode) {
         mCtx = ctx;
         mListener = listener;
@@ -37,37 +35,37 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
     }
 
     @Override
-    protected PrePostInfoBean doInBackground(PostBean... postBeans) {
+    public PrePostInfoBean doInBackground(PostBean... postBeans) {
 
         PostBean postBean = postBeans[0];
         String tid = postBean.getTid();
         String pid = postBean.getPid();
         int fid = postBean.getFid();
 
-        mUrl = HiUtils.ReplyUrl + tid;
+        String url = HiUtils.ReplyUrl + tid;
         switch (mMode) {
             case PostHelper.MODE_REPLY_THREAD:
             case PostHelper.MODE_QUICK_REPLY:
                 break;
             case PostHelper.MODE_REPLY_POST:
-                mUrl += "&reppost=" + pid;
+                url += "&reppost=" + pid;
                 break;
             case PostHelper.MODE_QUOTE_POST:
-                mUrl += "&repquote=" + pid;
+                url += "&repquote=" + pid;
                 break;
             case PostHelper.MODE_NEW_THREAD:
-                mUrl = HiUtils.NewThreadUrl + fid;
+                url = HiUtils.NewThreadUrl + fid;
                 break;
             case PostHelper.MODE_EDIT_POST:
                 //fid is not really needed, just put a value here
-                mUrl = HiUtils.EditUrl + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
+                url = HiUtils.EditUrl + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
                 break;
         }
 
 
         for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
             try {
-                String resp = OkHttpHelper.getInstance().get(mUrl);
+                String resp = OkHttpHelper.getInstance().get(url);
                 if (resp != null) {
                     if (!LoginHelper.checkLoggedin(mCtx, resp)) {
                         int status = new LoginHelper(mCtx).login();
@@ -160,13 +158,13 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
                 || mMode == PostHelper.MODE_QUOTE_POST) {
             Elements authorES = doc.select("input[name=noticeauthor]");
             if (authorES.size() > 0)
-                prePostInfo.setNoticeauthor(authorES.first().attr("value"));
+                prePostInfo.setNoticeAuthor(authorES.first().attr("value"));
             Elements authorMsgES = doc.select("input[name=noticeauthormsg]");
             if (authorMsgES.size() > 0)
-                prePostInfo.setNoticeauthormsg(authorMsgES.first().attr("value"));
+                prePostInfo.setNoticeAuthorMsg(authorMsgES.first().attr("value"));
             Elements noticeTrimES = doc.select("input[name=noticetrimstr]");
             if (noticeTrimES.size() > 0)
-                prePostInfo.setNoticetrimstr(noticeTrimES.first().attr("value"));
+                prePostInfo.setNoticeTrimStr(noticeTrimES.first().attr("value"));
         }
 
         Elements unusedImagesES = doc.select("div#unusedimgattachlist table.imglist img");
@@ -199,11 +197,18 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
             Element aTag = attachmentImages.get(i);
             String href = Utils.nullToText(aTag.attr("href"));
             String onclick = Utils.nullToText(aTag.attr("onclick"));
-            if (href.startsWith("javascript") && onclick.startsWith("insertAttachimgTag")) {
-                //<a href="javascript:;" class="lighttxt" onclick="insertAttachimgTag('2810014')" title="...">Hi_160723_2240.jpg</a>
-                String imgId = Utils.getMiddleString(onclick, "insertAttachimgTag('", "'");
-                if (imgId.length() > 0 && TextUtils.isDigitsOnly(imgId)) {
-                    prePostInfo.addImage(imgId);
+            if (href.startsWith("javascript")) {
+                if (onclick.startsWith("insertAttachimgTag")) {
+                    //<a href="javascript:;" class="lighttxt" onclick="insertAttachimgTag('2810014')" title="...">Hi_160723_2240.jpg</a>
+                    String imgId = Utils.getMiddleString(onclick, "insertAttachimgTag('", "'");
+                    if (!TextUtils.isEmpty(imgId) && TextUtils.isDigitsOnly(imgId)) {
+                        prePostInfo.addImage(imgId);
+                    }
+                } else if (onclick.startsWith("insertAttachTag")) {
+                    String attachId = Utils.getMiddleString(onclick, "insertAttachTag('", "'");
+                    if (!TextUtils.isEmpty(attachId) && TextUtils.isDigitsOnly(attachId)) {
+                        prePostInfo.addAttach(attachId);
+                    }
                 }
             }
         }
@@ -214,7 +219,7 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
             Element typeidEl = typeidES.get(i);
             values.put(typeidEl.val(), typeidEl.text());
             if (i == 0 || "selected".equals(typeidEl.attr("selected")))
-                prePostInfo.setTypeid(typeidEl.val());
+                prePostInfo.setTypeId(typeidEl.val());
         }
         prePostInfo.setTypeValues(values);
         return prePostInfo;
@@ -230,6 +235,10 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
 
     public interface PrePostListener {
         void PrePostComplete(int mode, boolean result, String message, PrePostInfoBean info);
+    }
+
+    public String getMessage() {
+        return mMessage;
     }
 
 }

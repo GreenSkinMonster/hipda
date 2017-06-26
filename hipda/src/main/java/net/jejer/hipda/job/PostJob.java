@@ -1,6 +1,7 @@
 package net.jejer.hipda.job;
 
 import net.jejer.hipda.async.PostHelper;
+import net.jejer.hipda.async.PrePostAsyncTask;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
@@ -22,7 +23,7 @@ public class PostJob extends BaseJob {
     private int mMode;
     private PostEvent mEvent;
 
-    public PostJob(String sessionId, int mode, PrePostInfoBean prePostInfo, PostBean postArg) {
+    public PostJob(String sessionId, int mode, PrePostInfoBean prePostInfo, PostBean postArg, boolean fromQuickReply) {
 
         super(sessionId, JobMgr.PRIORITY_HIGH);
 
@@ -33,7 +34,7 @@ public class PostJob extends BaseJob {
         mEvent = new PostEvent();
         mEvent.mMode = mMode;
         mEvent.mSessionId = mSessionId;
-        mEvent.fromQuickReply = prePostInfo == null;
+        mEvent.fromQuickReply = fromQuickReply;
     }
 
     @Override
@@ -45,6 +46,36 @@ public class PostJob extends BaseJob {
     @Override
     public void onRun() throws Throwable {
         long start = System.currentTimeMillis();
+
+        if (mMode == PostHelper.MODE_QUICK_DELETE) {
+            PrePostAsyncTask prePostAsyncTask = new PrePostAsyncTask(HiApplication.getAppContext(), null, PostHelper.MODE_EDIT_POST);
+            PostBean postBean = new PostBean();
+            postBean.setTid(mPostArg.getTid());
+            postBean.setPid(mPostArg.getPid());
+            postBean.setFid(mPostArg.getFid());
+            mPrePostInfo = prePostAsyncTask.doInBackground(postBean);
+            if (mPrePostInfo == null) {
+                mEvent.mStatus = Constants.STATUS_FAIL;
+                mEvent.mMessage = prePostAsyncTask.getMessage();
+                EventBus.getDefault().postSticky(mEvent);
+                return;
+            }
+            if (mPrePostInfo.isDeleteable()) {
+                mMode = PostHelper.MODE_EDIT_POST;
+                mPostArg.setDelete(true);
+            } else {
+                mMode = PostHelper.MODE_EDIT_POST;
+                mPostArg.setDelete(false);
+                mPostArg.setContent(".....");
+                for (String attach : mPrePostInfo.getAllImages()) {
+                    mPrePostInfo.addDeleteAttach(attach);
+                }
+                for (String attach : mPrePostInfo.getAttaches()) {
+                    mPrePostInfo.addDeleteAttach(attach);
+                }
+            }
+        }
+
         PostHelper postHelper = new PostHelper(HiApplication.getAppContext(), mMode, mPrePostInfo, mPostArg);
         PostBean postResult = postHelper.post();
 

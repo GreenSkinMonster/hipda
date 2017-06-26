@@ -31,6 +31,7 @@ public class PostHelper {
     public static final int MODE_NEW_THREAD = 3;
     public static final int MODE_QUICK_REPLY = 4;
     public static final int MODE_EDIT_POST = 5;
+    public static final int MODE_QUICK_DELETE = 6;
 
     private static long LAST_POST_TIME = 0;
     private static final long POST_DELAY_IN_SECS = 30;
@@ -134,10 +135,10 @@ public class PostHelper {
         params.put("message", replyText);
         if (mMode == MODE_EDIT_POST && delete)
             params.put("delete", "1");
-        for (String attach : mInfo.getAttaches()) {
+        for (String attach : mInfo.getNewAttaches()) {
             params.put("attachnew[][description]", attach);
         }
-        for (String attach : mInfo.getAttachdel()) {
+        for (String attach : mInfo.getDeleteAttaches()) {
             params.put("attachdel[]", attach);
         }
         if (mMode == MODE_NEW_THREAD) {
@@ -156,9 +157,9 @@ public class PostHelper {
 
         if (mMode == MODE_QUOTE_POST
                 || mMode == MODE_REPLY_POST) {
-            String noticeauthor = mInfo.getNoticeauthor();
-            String noticeauthormsg = mInfo.getNoticeauthormsg();
-            String noticetrimstr = mInfo.getNoticetrimstr();
+            String noticeauthor = mInfo.getNoticeAuthor();
+            String noticeauthormsg = mInfo.getNoticeAuthorMsg();
+            String noticetrimstr = mInfo.getNoticeTrimStr();
             if (!TextUtils.isEmpty(noticeauthor)) {
                 params.put("noticeauthor", noticeauthor);
                 params.put("noticeauthormsg", Utils.nullToText(noticeauthormsg));

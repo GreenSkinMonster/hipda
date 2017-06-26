@@ -3,6 +3,7 @@ package net.jejer.hipda.ui;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -52,6 +54,7 @@ import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.cache.ThreadDetailCache;
+import net.jejer.hipda.db.ContentDao;
 import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.job.EventCallback;
@@ -76,6 +79,7 @@ import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -285,7 +289,7 @@ public class ThreadDetailFragment extends BaseFragment {
                         postBean.setFloor(mQuickReplyToPost.getFloor());
                     }
 
-                    JobMgr.addJob(new PostJob(mSessionId, mQuickReplyMode, null, postBean));
+                    JobMgr.addJob(new PostJob(mSessionId, mQuickReplyMode, null, postBean, true));
 
                     UIUtils.hideSoftKeyboard(getActivity());
                     new Handler().postDelayed(new Runnable() {
@@ -701,6 +705,13 @@ public class ThreadDetailFragment extends BaseFragment {
                 });
         if (HiSettingsHelper.getInstance().getUsername().equalsIgnoreCase(detailBean.getAuthor())
                 || HiSettingsHelper.getInstance().getUid().equals(detailBean.getUid())) {
+            gridMenu.add("delete", "删除",
+                    new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            showDeletePostDialog(detailBean);
+                        }
+                    });
             gridMenu.add("edit", "编辑",
                     new AdapterView.OnItemClickListener() {
                         @Override
@@ -713,6 +724,32 @@ public class ThreadDetailFragment extends BaseFragment {
                     });
         }
         gridMenu.show();
+    }
+
+    private void showDeletePostDialog(final DetailBean detailBean) {
+        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
+        popDialog.setTitle("删除本帖？");
+        popDialog.setMessage(HtmlCompat.fromHtml("确认删除发表的内容吗？<br><br><font color=red>注意：此操作不可恢复。" +
+                "<br><br>如帖子受限制不能被删除，本操作将清空帖子内容以及图片和附件。</font>"));
+        popDialog.setPositiveButton("删除",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        PostBean postBean = new PostBean();
+                        postBean.setFid(mFid);
+                        postBean.setTid(mTid);
+                        postBean.setPid(detailBean.getPostId());
+                        postBean.setFloor(detailBean.getFloor());
+                        postBean.setContent(detailBean.getContents().getContent());
+                        if (detailBean.getFloor() == 1)
+                            postBean.setSubject(mTitle);
+
+                        JobMgr.addJob(new PostJob(mSessionId, PostHelper.MODE_QUICK_DELETE, null, postBean, false));
+                    }
+                });
+        popDialog.setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_exclamation_circle).sizeDp(24).color(Color.RED));
+        popDialog.setNegativeButton("取消", null);
+        popDialog.create().show();
     }
 
     @Override
@@ -1391,8 +1428,6 @@ public class ThreadDetailFragment extends BaseFragment {
                     //first floor is deleted, meaning whole thread is deleted
                     ((ThreadDetailActivity) getActivity()).finishWithNoSlide();
                 } else {
-                    //this floor is deleted, so goto upper floor
-                    mGotoFloor--;
                     showOrLoadPage(true);
                 }
             } else if (isInAuthorOnlyMode() && event.mMode != PostHelper.MODE_EDIT_POST) {
@@ -1414,6 +1449,9 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         } else {
             if (event.fromQuickReply) {
+                if (!TextUtils.isEmpty(mEtReply.getText())) {
+                    ContentDao.saveContent(mSessionId, mEtReply.getText().toString());
+                }
                 showQuickReply();
                 mRecyclerView.setFooterState(XFooterView.STATE_ERROR);
             }
