@@ -54,12 +54,14 @@ public class GlideHelper {
     }
 
     public static void loadAvatar(RequestManager glide, ImageView view, String avatarUrl) {
-        if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
-            avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
+        if (avatarUrl != null) {
+            if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
+                avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
+            }
+            String cacheKey = AVATAR_CACHE_KEYS.get(avatarUrl);
+            if (!avatarUrl.startsWith("/") && !TextUtils.isEmpty(cacheKey))
+                avatarUrl = avatarUrl + "?" + cacheKey;
         }
-        String cacheKey = AVATAR_CACHE_KEYS.get(avatarUrl);
-        if (!avatarUrl.startsWith("/") && !TextUtils.isEmpty(cacheKey))
-            avatarUrl = avatarUrl + "?" + cacheKey;
         if (HiSettingsHelper.getInstance().isCircleAvatar()) {
             glide.load(avatarUrl)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)

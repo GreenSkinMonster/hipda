@@ -276,7 +276,7 @@
     <string name="pref_title_old_image_selector">老的图片选择方式</string>
     <string name="pref_title_long_click_save_image">长按保存图片</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
-    <string name="pref_title_swipe_compat_mode">手势返回兼容性模式</string>
+    <string name="pref_title_swipe_compat_mode">手势返回兼容模式</string>
     <string name="pref_summary_swipe_compat_mode">适用Android 5.0或以上。状态栏出现异常白边、黑边，输入法遮挡输入框时可以尝试启用</string>
     <string name="pref_title_app_bar_collapsible">标题栏动态隐藏</string>
     <string name="pref_title_fab_auto_hide">浮动按钮动态隐藏</string>
