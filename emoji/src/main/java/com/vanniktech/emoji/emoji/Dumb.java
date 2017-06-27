@@ -57,7 +57,7 @@ public class Dumb {
             "grapeman_21",
             "grapeman_22",
             "grapeman_23",
-            "grapeman_24_dark"
+            "grapeman_24"
     };
 
     public final static int[] DRAWABLES = {
