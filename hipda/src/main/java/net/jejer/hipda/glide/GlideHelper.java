@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -16,7 +17,6 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.signature.StringSignature;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -26,7 +26,6 @@ import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
-import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -59,12 +58,11 @@ public class GlideHelper {
             avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
         }
         String cacheKey = AVATAR_CACHE_KEYS.get(avatarUrl);
-        if (cacheKey == null)
-            cacheKey = Utils.nullToText(avatarUrl);
+        if (!avatarUrl.startsWith("/") && !TextUtils.isEmpty(cacheKey))
+            avatarUrl = avatarUrl + "?" + cacheKey;
         if (HiSettingsHelper.getInstance().isCircleAvatar()) {
             glide.load(avatarUrl)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .signature(new StringSignature(cacheKey))
                     .error(DEFAULT_USER_ICON)
                     .crossFade()
                     .bitmapTransform(new CropCircleTransformation(HiApplication.getAppContext()))
@@ -72,7 +70,6 @@ public class GlideHelper {
         } else {
             glide.load(avatarUrl)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .signature(new StringSignature(cacheKey))
                     .centerCrop()
                     .error(DEFAULT_USER_ICON)
                     .crossFade()

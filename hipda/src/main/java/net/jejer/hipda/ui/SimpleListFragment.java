@@ -342,8 +342,6 @@ public class SimpleListFragment extends BaseFragment
                             JobMgr.addJob(job);
                         } else {
                             mRecyclerView.setFooterState(XFooterView.STATE_END);
-//                            if (mMaxPage > 0)
-//                                Toast.makeText(getActivity(), "已经是最后一页，共 " + mMaxPage + " 页", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }

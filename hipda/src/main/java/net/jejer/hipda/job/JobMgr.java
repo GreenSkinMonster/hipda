@@ -32,8 +32,8 @@ public class JobMgr {
 
             @Override
             public void d(String text, Object... args) {
-                if (isDebugEnabled())
-                    Log.d(TAG, String.format(text, args));
+//                if (isDebugEnabled())
+//                    Log.d(TAG, String.format(text, args));
             }
 
             @Override
