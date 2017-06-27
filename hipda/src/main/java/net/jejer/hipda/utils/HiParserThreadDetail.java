@@ -546,9 +546,12 @@ public class HiParserThreadDetail {
 
             ContentImg contentImg = getContentImg(e, size);
             content.addImg(contentImg);
-        } else if (src.contains(HiUtils.SmiliesPattern) || SmallImages.contains(src)) {
+        } else if (src.contains(HiUtils.SmiliesPattern)) {
             //emotion added as img tag, will be parsed in TextViewWithEmoticon later
             content.addText("<img src=\"" + src + "\"/>");
+        } else if (SmallImages.contains(src)) {
+            if (HiSettingsHelper.getInstance().isShowTail())
+                content.addText("<img src=\"" + src + "\"/>");
         } else if (src.contains(HiUtils.ForumImagePattern)) {
             //skip common/default/attach icons
         } else if (src.contains("://")) {
