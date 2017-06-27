@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:visibility="gone"
-        app:backgroundTint="@color/md_pink_700"
+        app:backgroundTint="@color/md_pink_500"
         app:fabSize="mini"
         app:layout_anchor="@id/main_frame_container"
         app:layout_anchorGravity="bottom|center|center_horizontal"
