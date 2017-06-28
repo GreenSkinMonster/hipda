@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
@@ -39,6 +38,7 @@ import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SmsAdapter;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
+import net.jejer.hipda.ui.widget.CountdownButton;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.SimplePopupMenu;
@@ -71,8 +71,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
     private EmojiEditText mEtSms;
     private ImageButton mIbEmojiSwitch;
-    private ImageButton mIbSendSms;
-    private TextView mTvCountdown;
+    private CountdownButton mCountdownButton;
 
     private ContentLoadingView mLoadingView;
     private SmsEventCallback mEventCallback = new SmsEventCallback();
@@ -114,16 +113,14 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             }
         });
 
-        mIbSendSms = (ImageButton) view.findViewById(R.id.ib_send_sms);
-        mIbSendSms.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
-
-        mTvCountdown = (TextView) view.findViewById(R.id.tv_countdown);
+        mCountdownButton = (CountdownButton) view.findViewById(R.id.countdown_button);
+        mCountdownButton.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
 
         mEtSms = (EmojiEditText) view.findViewById(R.id.et_sms);
         mEtSms.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
-        mIbSendSms.setOnClickListener(new View.OnClickListener() {
+        mCountdownButton.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 String replyText = mEtSms.getText().toString();
                 if (replyText.length() > 0) {
                     sendSms(replyText);
@@ -143,7 +140,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         mSending = true;
         new PostSmsAsyncTask(getActivity(), mUid, null, SmsFragment.this, null).execute(replyText);
         mEtSms.setText("");
-        mIbSendSms.setEnabled(false);
+        mCountdownButton.setEnabled(false);
         SimpleListItemBean bean = new SimpleListItemBean();
         bean.setAuthor(HiSettingsHelper.getInstance().getUsername());
         bean.setUid(HiSettingsHelper.getInstance().getUid());
@@ -275,7 +272,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
             showSendButton();
 
-            mIbSendSms.setEnabled(true);
+            mCountdownButton.setEnabled(true);
             //new sms has some delay, so this is a dirty hack
             new CountDownTimer(1000, 1000) {
                 public void onTick(long millisUntilFinished) {
@@ -291,33 +288,14 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             }.start();
         } else {
             mSending = false;
-            mIbSendSms.setEnabled(true);
+            mCountdownButton.setEnabled(true);
             markNewSmsFailed();
             Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void showSendButton() {
-        int timeToWait = PostSmsAsyncTask.getWaitTimeToSendSms();
-        if (timeToWait > 0) {
-            mIbSendSms.setVisibility(View.INVISIBLE);
-            mTvCountdown.setText(timeToWait + "");
-            mTvCountdown.setVisibility(View.VISIBLE);
-            new CountDownTimer(timeToWait * 1000, 500) {
-
-                public void onTick(long millisUntilFinished) {
-                    mTvCountdown.setText((millisUntilFinished / 1000) + "");
-                }
-
-                public void onFinish() {
-                    mTvCountdown.setVisibility(View.GONE);
-                    mIbSendSms.setVisibility(View.VISIBLE);
-                }
-            }.start();
-        } else {
-            mIbSendSms.setVisibility(View.VISIBLE);
-            mTvCountdown.setVisibility(View.GONE);
-        }
+        mCountdownButton.setCountdown(PostSmsAsyncTask.getWaitTimeToSendSms());
     }
 
     private class AvatarOnClickListener extends OnSingleClickListener {

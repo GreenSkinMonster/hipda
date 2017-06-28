@@ -23,7 +23,7 @@ import static net.jejer.hipda.okhttp.OkHttpHelper.getInstance;
 public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 
     private static long LAST_SMS_TIME = 0;
-    private static final long SMS_DELAY_IN_SECS = 10;
+    private static final long SMS_DELAY_IN_SECS = 15;
 
     private Context mCtx;
     private String mUid;

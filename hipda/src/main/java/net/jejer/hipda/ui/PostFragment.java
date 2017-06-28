@@ -13,7 +13,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
@@ -66,6 +65,7 @@ import net.jejer.hipda.job.UploadImage;
 import net.jejer.hipda.ui.adapter.GridImageAdapter;
 import net.jejer.hipda.ui.adapter.ThreadTypeAdapter;
 import net.jejer.hipda.ui.widget.ContentLoadingProgressBar;
+import net.jejer.hipda.ui.widget.CountdownButton;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.OnViewItemSingleClickListener;
@@ -238,37 +238,16 @@ public class PostFragment extends BaseFragment {
             mEtContent.setText(mText);
         }
 
-        final ImageButton ibReply = (ImageButton) view.findViewById(R.id.ib_reply);
-        ibReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
-        ibReply.setOnClickListener(new OnSingleClickListener() {
+        final CountdownButton countdownButton = (CountdownButton) view.findViewById(R.id.countdown_button);
+        countdownButton.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
+        countdownButton.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
                 postReply();
             }
         });
 
-        final TextView tvCountdown = (TextView) view.findViewById(R.id.tv_countdown);
-
-        int timeToWait = PostHelper.getWaitTimeToPost();
-        if (timeToWait > 0 && mMode != PostHelper.MODE_EDIT_POST) {
-            ibReply.setVisibility(View.INVISIBLE);
-            tvCountdown.setText(timeToWait + "");
-            tvCountdown.setVisibility(View.VISIBLE);
-            new CountDownTimer(timeToWait * 1000, 500) {
-
-                public void onTick(long millisUntilFinished) {
-                    tvCountdown.setText((millisUntilFinished / 1000) + "");
-                }
-
-                public void onFinish() {
-                    tvCountdown.setVisibility(View.GONE);
-                    ibReply.setVisibility(View.VISIBLE);
-                }
-            }.start();
-        } else {
-            ibReply.setVisibility(View.VISIBLE);
-            tvCountdown.setVisibility(View.GONE);
-        }
+        countdownButton.setCountdown(PostHelper.getWaitTimeToPost());
 
         mIbEmojiSwitch = (ImageButton) view.findViewById(R.id.ib_emoji_switch);
         setUpEmojiPopup(mEtContent, mIbEmojiSwitch);

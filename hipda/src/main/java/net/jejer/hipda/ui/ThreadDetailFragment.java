@@ -9,7 +9,6 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.SystemClock;
@@ -68,6 +67,7 @@ import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadDetailAdapter;
 import net.jejer.hipda.ui.widget.BottomDialog;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
+import net.jejer.hipda.ui.widget.CountdownButton;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.SimpleDivider;
@@ -141,9 +141,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private View mQuickReply;
     private EmojiEditText mEtReply;
     private ImageButton mIbEmojiSwitch;
-    private TextView mTvCountdown;
-    private ImageButton mIbPostReply;
-    private CountDownTimer mCountDownTimer;
+    private CountdownButton mCountdownButton;
 
     private DetailBean mQuickReplyToPost;
     private int mQuickReplyMode;
@@ -272,13 +270,11 @@ public class ThreadDetailFragment extends BaseFragment {
         mEtReply = (EmojiEditText) mQuickReply.findViewById(R.id.tv_reply_text);
         mEtReply.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
 
-        mTvCountdown = (TextView) mQuickReply.findViewById(R.id.tv_countdown);
-
-        mIbPostReply = (ImageButton) mQuickReply.findViewById(R.id.ib_reply_post);
-        mIbPostReply.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
-        mIbPostReply.setOnClickListener(new View.OnClickListener() {
+        mCountdownButton = (CountdownButton) view.findViewById(R.id.countdown_button);
+        mCountdownButton.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
+        mCountdownButton.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 String replyText = mEtReply.getText().toString();
                 if (Utils.getWordCount(replyText) < 5) {
                     Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
@@ -305,7 +301,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
             }
         });
-        mIbPostReply.setOnLongClickListener(new View.OnLongClickListener() {
+        mCountdownButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 String replyText = mEtReply.getText().toString();
@@ -938,26 +934,7 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     public void showQuickReply(int mode, final DetailBean detailBean) {
-        int timeToWait = PostHelper.getWaitTimeToPost();
-        if (timeToWait > 0) {
-            mIbPostReply.setVisibility(View.GONE);
-            mTvCountdown.setText(timeToWait + "");
-            mTvCountdown.setVisibility(View.VISIBLE);
-            mCountDownTimer = new CountDownTimer(timeToWait * 1000, 500) {
-
-                public void onTick(long millisUntilFinished) {
-                    mTvCountdown.setText((millisUntilFinished / 1000) + "");
-                }
-
-                public void onFinish() {
-                    mTvCountdown.setVisibility(View.GONE);
-                    mIbPostReply.setVisibility(View.VISIBLE);
-                }
-            }.start();
-        } else {
-            mIbPostReply.setVisibility(View.VISIBLE);
-            mTvCountdown.setVisibility(View.GONE);
-        }
+        mCountdownButton.setCountdown(PostHelper.getWaitTimeToPost());
 
         mQuickReplyMode = mode;
         mQuickReplyToPost = detailBean;
@@ -999,10 +976,6 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     public boolean hideQuickReply(boolean clearReplyTo) {
-        if (mCountDownTimer != null) {
-            mCountDownTimer.cancel();
-            mCountDownTimer = null;
-        }
         if (clearReplyTo) {
             deHighlightPostId();
             mQuickReplyMode = PostHelper.MODE_REPLY_THREAD;
