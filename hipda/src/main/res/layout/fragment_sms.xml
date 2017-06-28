@@ -42,7 +42,7 @@
             android:id="@+id/et_sms"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/ib_send_sms"
+            android:layout_toLeftOf="@+id/reply_layout"
             android:layout_toRightOf="@+id/ib_emoji_switch"
             android:background="@android:color/transparent"
             android:gravity="bottom"
@@ -57,30 +57,35 @@
             android:text=""
             app:emojiSize="26sp"/>
 
-        <ImageButton
-            android:id="@+id/ib_send_sms"
+        <RelativeLayout
+            android:id="@+id/reply_layout"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignBottom="@+id/et_sms"
-            android:layout_alignParentRight="true"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/ib_quick_send"
-            android:visibility="visible"/>
+            android:layout_alignParentRight="true">
 
-        <TextView
-            android:id="@+id/tv_countdown"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_alignBottom="@+id/et_sms"
-            android:layout_alignParentRight="true"
-            android:layout_margin="8dp"
-            android:background="@drawable/circle_background"
-            android:clickable="true"
-            android:gravity="center"
-            android:textColor="@color/hipda"
-            android:textSize="17sp"
-            android:visibility="gone"/>
+            <ImageButton
+                android:id="@+id/ib_send_sms"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerInParent="true"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/ib_quick_send"
+                android:visibility="visible"/>
 
+            <TextView
+                android:id="@+id/tv_countdown"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="8dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/circle_background"
+                android:clickable="true"
+                android:gravity="center"
+                android:textColor="@color/hipda"
+                android:textSize="17sp"
+                android:visibility="gone"/>
+        </RelativeLayout>
     </RelativeLayout>
 
     <net.jejer.hipda.ui.widget.ContentLoadingView

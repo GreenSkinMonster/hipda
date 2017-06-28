@@ -993,6 +993,8 @@ public class ThreadDetailFragment extends BaseFragment {
                     }
                 }
             }, 300);
+        } else {
+            deHighlightPostId();
         }
     }
 
@@ -1283,7 +1285,8 @@ public class ThreadDetailFragment extends BaseFragment {
             if (newState == RecyclerView.SCROLL_STATE_IDLE
                     && HiSettingsHelper.getInstance().isFabAutoHide()
                     && mRecyclerView.isNearBottom()) {
-                if (mMainFab != null && mMainFab.getVisibility() == View.INVISIBLE)
+                if (mMainFab != null && mMainFab.getVisibility() == View.INVISIBLE
+                        && mQuickReply.getVisibility() != View.VISIBLE)
                     mMainFab.show();
             }
         }
