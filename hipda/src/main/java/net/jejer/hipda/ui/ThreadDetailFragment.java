@@ -146,6 +146,9 @@ public class ThreadDetailFragment extends BaseFragment {
     private DetailBean mQuickReplyToPost;
     private int mQuickReplyMode;
     private String mHighlightPostId;
+    private String mPendingScrollPostId;
+    private int mPostViewTop = -1;
+    private int mPostViewHeight = -1;
 
     private Animation mBlinkAnim;
 
@@ -162,7 +165,17 @@ public class ThreadDetailFragment extends BaseFragment {
     private boolean mHistorySaved = false;
     private int mPendingBlinkFloor;
 
-    SimpleGridMenu mGridMenu;
+    private SimpleGridMenu mGridMenu;
+
+    private View.OnLayoutChangeListener mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            if (top < oldTop - 100) {
+                v.removeOnLayoutChangeListener(this);
+                scrollPostForReply(top);
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -520,7 +533,6 @@ public class ThreadDetailFragment extends BaseFragment {
                 @Override
                 public void onClick(View view) {
                     showQuickReply();
-                    showSoftKeyboard();
                 }
             });
         }
@@ -950,26 +962,21 @@ public class ThreadDetailFragment extends BaseFragment {
         mQuickReply.setVisibility(View.VISIBLE);
         mQuickReply.bringToFront();
         mMainFab.hide();
+        showSoftKeyboard();
 
         if (mode != PostHelper.MODE_NEW_THREAD && mQuickReplyToPost != null) {
-            showSoftKeyboard();
-            highlightPost(mQuickReplyToPost.getPostId());
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    int pos = mDetailAdapter.getPositionByFloor(mQuickReplyToPost.getFloor());
-                    if (pos != -1) {
-                        try {
-                            View v = mLayoutManager.getChildAt(0);
-                            TextView tv = (TextView) v.findViewById(R.id.floor);
-                            if (Utils.parseInt(tv.getText().toString()) != mQuickReplyToPost.getFloor())
-                                mRecyclerView.smoothScrollToPosition(pos);
-                        } catch (Exception e) {
-                            mRecyclerView.smoothScrollToPosition(pos);
-                        }
-                    }
+            int pos = mDetailAdapter.getPositionByPostId(mQuickReplyToPost.getPostId());
+            if (pos != -1) {
+                View view = mLayoutManager.findViewByPosition(pos);
+                if (view != null) {
+                    mPostViewTop = view.getTop();
+                    mPostViewHeight = view.getHeight();
                 }
-            }, 300);
+            }
+
+            highlightPost(mQuickReplyToPost.getPostId());
+            mPendingScrollPostId = mQuickReplyToPost.getPostId();
+            mQuickReply.addOnLayoutChangeListener(mOnLayoutChangeListener);
         } else {
             deHighlightPostId();
         }
@@ -1299,6 +1306,37 @@ public class ThreadDetailFragment extends BaseFragment {
             mEmojiPopup.dismiss();
         }
         return hideQuickReply(true);
+    }
+
+    private void scrollPostForReply(int newTop) {
+        if (mPendingScrollPostId != null) {
+            int pos = mDetailAdapter.getPositionByPostId(mPendingScrollPostId);
+            mPendingScrollPostId = null;
+            if (pos != -1 && mQuickReply.getVisibility() == View.VISIBLE) {
+                View v = mLayoutManager.getChildAt(0);
+                TextView tv = (TextView) v.findViewById(R.id.floor);
+                if (Utils.parseInt(tv.getText().toString()) != mQuickReplyToPost.getFloor()) {
+                    int replyTop = newTop - 30;
+                    View view = mLayoutManager.findViewByPosition(pos);
+                    if (view != null) {
+                        //post view is visable
+                        int postTop = view.getTop();
+                        int scroll = postTop - replyTop + view.getHeight();
+                        if (scroll > 0)
+                            mRecyclerView.smoothScrollBy(0, scroll);
+                    } else if (mPostViewTop > 0 && mPostViewHeight > 0) {
+                        //post view is not visable, get stored position
+                        int scroll = mPostViewTop - replyTop + mPostViewHeight;
+                        if (scroll > 0)
+                            mRecyclerView.smoothScrollBy(0, scroll);
+                    } else {
+                        mRecyclerView.smoothScrollToPosition(pos);
+                    }
+                }
+            }
+            mPostViewHeight = -1;
+            mPostViewTop = -1;
+        }
     }
 
     private class ThreadDetailEventCallback extends EventCallback<ThreadDetailEvent> {
