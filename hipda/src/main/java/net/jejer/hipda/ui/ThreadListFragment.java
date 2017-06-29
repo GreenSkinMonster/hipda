@@ -196,6 +196,9 @@ public class ThreadListFragment extends BaseFragment
         if (getActivity() != null && getActivity() instanceof MainFrameActivity) {
             ((MainFrameActivity) getActivity()).setDrawerSelection(mForumId);
         }
+        if (LoginHelper.isLoggedIn()) {
+            showNotification();
+        }
     }
 
 
@@ -231,9 +234,7 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if (LoginHelper.isLoggedIn()) {
-            showNotification();
-        } else if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {
+        if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {
             showLoginDialog();
         }
         super.onPrepareOptionsMenu(menu);
