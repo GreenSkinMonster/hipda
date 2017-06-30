@@ -12,10 +12,6 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
-        <!-- make ActionMode overlap Toolbar -->
-        <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeStyle">@style/MyActionMode</item>
-        <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
         <item name="actionBarPopupTheme">@style/MyToolbar.PopupTheme.Light</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="actionBarMargin">0dp</item>
@@ -193,10 +189,6 @@
 
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
-        <!-- make ActionMode overlap Toolbar -->
-        <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeStyle">@style/MyActionMode</item>
-        <item name="actionModeCloseDrawable">@drawable/ic_action_tick</item>
         <item name="actionBarPopupTheme">@style/MyToolbar.PopupTheme.Dark</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="actionBarMargin">0dp</item>
@@ -263,20 +255,6 @@
 
         <item name="list_item_background">@color/black</item>
         <item name="list_item_divider">#252525</item>
-    </style>
-
-    <style name="MyActionMode" parent="@style/Widget.AppCompat.ActionMode">
-        <item name="background">@color/black</item>
-        <item name="titleTextStyle">@style/MyActionModeTitleStyle</item>
-        <item name="subtitleTextStyle">@style/MyActionModeSubtitleStyle</item>
-    </style>
-
-    <style name="MyActionModeTitleStyle" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
-        <item name="android:textColor">?action_mode_text_color</item>
-    </style>
-
-    <style name="MyActionModeSubtitleStyle" parent="TextAppearance.AppCompat.Widget.ActionMode.Subtitle">
-        <item name="android:textColor">?action_mode_text_color</item>
     </style>
 
     <style name="MyAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
