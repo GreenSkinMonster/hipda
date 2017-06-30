@@ -1315,7 +1315,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (pos != -1 && mQuickReply.getVisibility() == View.VISIBLE) {
                 View v = mLayoutManager.getChildAt(0);
                 TextView tv = (TextView) v.findViewById(R.id.floor);
-                if (Utils.parseInt(tv.getText().toString()) != mQuickReplyToPost.getFloor()) {
+                if (tv == null || Utils.parseInt(tv.getText().toString()) != mQuickReplyToPost.getFloor()) {
                     int replyTop = newTop - 30;
                     View view = mLayoutManager.findViewByPosition(pos);
                     if (view != null) {
