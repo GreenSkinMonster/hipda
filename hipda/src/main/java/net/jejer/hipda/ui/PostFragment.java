@@ -247,7 +247,8 @@ public class PostFragment extends BaseFragment {
             }
         });
 
-        countdownButton.setCountdown(PostHelper.getWaitTimeToPost());
+        if (mMode != PostHelper.MODE_EDIT_POST)
+            countdownButton.setCountdown(PostHelper.getWaitTimeToPost());
 
         mIbEmojiSwitch = (ImageButton) view.findViewById(R.id.ib_emoji_switch);
         setUpEmojiPopup(mEtContent, mIbEmojiSwitch);
