@@ -5,7 +5,6 @@ import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -361,7 +360,6 @@ public class SimpleListFragment extends BaseFragment
             if (mType == SimpleListJob.TYPE_SMS) {
                 FragmentUtils.showSmsActivity(getActivity(), false, item.getUid(), item.getAuthor());
             } else {
-                Fragment listFragment = getFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
                 if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
                     FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), -1, -1, item.getPid(), -1);
                 } else if (HiUtils.isValidId(item.getUid())) {
@@ -377,7 +375,7 @@ public class SimpleListFragment extends BaseFragment
             } else if (mType == SimpleListJob.TYPE_FAVORITES) {
                 showFavoriteActionDialog(item);
             } else if (mType == SimpleListJob.TYPE_ATTENTION) {
-                showAttentionActionDialog(position, item);
+                showAttentionActionDialog(item);
             } else {
                 if (HiUtils.isValidId(item.getTid()) || HiUtils.isValidId(item.getPid())) {
                     showLastPage(item);
@@ -398,20 +396,7 @@ public class SimpleListFragment extends BaseFragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FavoriteHelper.getInstance().deleteFavorite(getActivity(), mFormhash, FavoriteHelper.TYPE_FAVORITE, item.getTid());
-                int pos = -1;
-                for (int i = 0; i < mSimpleListAdapter.getDatas().size(); i++) {
-                    SimpleListItemBean bean = mSimpleListAdapter.getItem(mSimpleListAdapter.getHeaderCount() + i);
-                    if (item.getTid().equals(bean.getTid())) {
-                        pos = mSimpleListAdapter.getHeaderCount() + i;
-                        break;
-                    }
-                }
-                if (pos != -1) {
-                    mSimpleListAdapter.getDatas().remove(pos);
-                    mSimpleListAdapter.notifyItemRemoved(pos);
-                    if (mSimpleListAdapter.getItemCount() - pos - 1 > 0)
-                        mSimpleListAdapter.notifyItemRangeChanged(pos, mSimpleListAdapter.getItemCount() - pos - 1);
-                }
+                removeItem(item);
             }
         });
         popupMenu.add("last_page", "转到最新回复", new AdapterView.OnItemClickListener() {
@@ -423,17 +408,13 @@ public class SimpleListFragment extends BaseFragment
         popupMenu.show();
     }
 
-    private void showAttentionActionDialog(final int itemPosition, final SimpleListItemBean item) {
+    private void showAttentionActionDialog(final SimpleListItemBean item) {
         SimplePopupMenu popupMenu = new SimplePopupMenu(getActivity());
         popupMenu.add("cancel", "取消关注", new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mSimpleListAdapter.getDatas().remove(itemPosition);
-                mSimpleListAdapter.notifyItemRemoved(itemPosition);
-                if (mSimpleListAdapter.getItemCount() - itemPosition - 1 > 0)
-                    mSimpleListAdapter.notifyItemRangeChanged(itemPosition, mSimpleListAdapter.getItemCount() - itemPosition - 1);
                 FavoriteHelper.getInstance().deleteFavorite(getActivity(), mFormhash, FavoriteHelper.TYPE_ATTENTION, item.getTid());
-
+                removeItem(item);
             }
         });
         popupMenu.add("last_page", "转到最新回复",
@@ -444,6 +425,25 @@ public class SimpleListFragment extends BaseFragment
                     }
                 });
         popupMenu.show();
+    }
+
+    private void removeItem(SimpleListItemBean item) {
+        int pos = -1;
+        for (int i = 0; i < mSimpleListAdapter.getDatas().size(); i++) {
+            SimpleListItemBean bean = mSimpleListAdapter.getItem(mSimpleListAdapter.getHeaderCount() + i);
+            if (item.getTid().equals(bean.getTid())) {
+                pos = mSimpleListAdapter.getHeaderCount() + i;
+                break;
+            }
+        }
+        if (pos != -1) {
+            mSimpleListAdapter.getDatas().remove(pos);
+            mSimpleListAdapter.notifyItemRemoved(pos);
+            if (mSimpleListAdapter.getItemCount() - pos - 1 > 0)
+                mSimpleListAdapter.notifyItemRangeChanged(pos, mSimpleListAdapter.getItemCount() - pos - 1);
+        } else {
+            refresh();
+        }
     }
 
     private void showLastPage(SimpleListItemBean item) {
