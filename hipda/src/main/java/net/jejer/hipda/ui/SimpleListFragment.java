@@ -105,6 +105,9 @@ public class SimpleListFragment extends BaseFragment
         super.onResume();
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
+        if (searchView != null && mSimpleListAdapter.getDatas().size() > 0) {
+            searchView.clearFocus();
+        }
     }
 
     @Override
@@ -247,6 +250,7 @@ public class SimpleListFragment extends BaseFragment
                         mSimpleListItemBeans.clear();
                         mSimpleListAdapter.setDatas(mSimpleListItemBeans);
                         UIUtils.hideSoftKeyboard(getActivity());
+                        searchView.clearFocus();
                         refresh();
                         return false;
                     }
