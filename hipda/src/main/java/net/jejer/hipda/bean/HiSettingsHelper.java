@@ -1111,7 +1111,7 @@ public class HiSettingsHelper {
     }
 
     public boolean isHackStatusBar() {
-        return !mSharedPref.getBoolean(PERF_SWIPE_COMPAT_MODE, false);
+        return !mSharedPref.getBoolean(PERF_SWIPE_COMPAT_MODE, true);
     }
 
     public boolean isWhiteTheme() {
