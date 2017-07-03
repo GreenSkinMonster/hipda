@@ -229,8 +229,8 @@ public class XRecyclerView extends RecyclerView {
         }
         try {
             return super.onTouchEvent(ev);
-        } catch (IndexOutOfBoundsException ingored) {
-            // avoid random  IndexOutOfBoundsException error
+        } catch (IndexOutOfBoundsException | IllegalArgumentException ingored) {
+            // avoid random  error
         }
         return true;
     }

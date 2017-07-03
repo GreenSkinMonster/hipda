@@ -1309,7 +1309,7 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private void scrollPostForReply(int newTop) {
-        if (mPendingScrollPostId != null) {
+        if (mPendingScrollPostId != null && mQuickReplyToPost != null) {
             int pos = mDetailAdapter.getPositionByPostId(mPendingScrollPostId);
             mPendingScrollPostId = null;
             if (pos != -1 && mQuickReply.getVisibility() == View.VISIBLE) {
