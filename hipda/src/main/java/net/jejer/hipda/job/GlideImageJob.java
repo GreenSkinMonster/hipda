@@ -13,6 +13,7 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.path.android.jobqueue.Params;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.glide.GlideImageEvent;
@@ -25,6 +26,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 
@@ -124,7 +126,16 @@ public class GlideImageJob extends BaseJob {
             if (mNetworkFetch) {
                 Logger.e(e);
                 imageInfo.setStatus(ImageInfo.FAIL);
-                EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, ImageInfo.FAIL));
+                String message = "";
+                if (HiSettingsHelper.getInstance().isErrorReportMode()) {
+                    message = "url : " + mUrl + "\n\nmessage : ";
+                    if (e instanceof ExecutionException && e.getCause() != null) {
+                        message += e.getCause().getMessage();
+                    } else {
+                        message += e.getMessage();
+                    }
+                }
+                EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, ImageInfo.FAIL, message));
             }
         } finally {
             try {

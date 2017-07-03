@@ -26,6 +26,7 @@ public class ImageInfo {
     private double mSpeed;
     private int mProgress;
     private int mStatus = IDLE;
+    private String mMessage;
 
     private int maxViewWidth;
     private int displayWidth;
@@ -125,6 +126,14 @@ public class ImageInfo {
 
     public void setStatus(int status) {
         mStatus = status;
+    }
+
+    public String getMessage() {
+        return mMessage;
+    }
+
+    public void setMessage(String message) {
+        mMessage = message;
     }
 
     public String getUrl() {

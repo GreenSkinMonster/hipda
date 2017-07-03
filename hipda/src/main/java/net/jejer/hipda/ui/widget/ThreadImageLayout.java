@@ -216,7 +216,9 @@ public class ThreadImageLayout extends RelativeLayout {
     public void onEvent(GlideImageEvent event) {
         if (!event.getImageUrl().equals(mUrl))
             return;
-        ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+        final ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+        imageInfo.setMessage(event.getMessage());
+
         if (event.getStatus() == ImageInfo.IN_PROGRESS
                 && imageInfo.getStatus() != ImageInfo.SUCCESS) {
             if (mProgressBar.getVisibility() != View.VISIBLE)
@@ -235,6 +237,16 @@ public class ThreadImageLayout extends RelativeLayout {
         } else {
             mProgressBar.setVisibility(GONE);
             mImageView.setImageResource(R.drawable.image_broken);
+            if (!TextUtils.isEmpty(imageInfo.getMessage())) {
+                mTextView.setText("加载错误");
+                mTextView.setClickable(true);
+                mTextView.setOnClickListener(new OnSingleClickListener() {
+                    @Override
+                    public void onSingleClick(View v) {
+                        UIUtils.showMessageDialog(mFragment.getActivity(), "错误信息", imageInfo.getMessage(), true);
+                    }
+                });
+            }
         }
     }
 
