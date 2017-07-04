@@ -1,9 +1,6 @@
 package net.jejer.hipda.ui.setting;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -117,9 +114,6 @@ public class SettingMainFragment extends BaseSettingFragment {
             NotificationMgr.cancelAlarm(getActivity());
         }
 
-        String newIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
-        if (TextUtils.isDigitsOnly(newIcon) && !mIcon.equals(newIcon))
-            setIcon(Integer.parseInt(newIcon));
     }
 
     private void updateSettingStatus() {
@@ -131,8 +125,13 @@ public class SettingMainFragment extends BaseSettingFragment {
         if (HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
             HiSettingsHelper.getInstance().setNightMode(false);
 
+        String newIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
+        boolean iconChanged = !mIcon.equals(String.valueOf(Utils.parseInt(newIcon)));
+        HiApplication.setIconChanged(iconChanged);
+
         if (mCacheCleared
-                || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
+                || !HiSettingsHelper.getInstance().getFont().equals(mFont)
+                || iconChanged) {
             HiApplication.setSettingStatus(HiApplication.RESTART);
         } else if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getActiveTheme().equals(mTheme)
@@ -189,27 +188,6 @@ public class SettingMainFragment extends BaseSettingFragment {
             }
         });
 
-    }
-
-    private void setIcon(int icon) {
-        Context ctx = getActivity();
-        PackageManager pm = getActivity().getPackageManager();
-
-        pm.setComponentEnabledSetting(
-                new ComponentName(ctx, "net.jejer.hipda.ng.MainActivity-Original"),
-                icon == Constants.ICON_ORIGINAL ?
-                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-        );
-
-        pm.setComponentEnabledSetting(
-                new ComponentName(ctx, "net.jejer.hipda.ng.MainActivity-Circle"),
-                icon == Constants.ICON_ROUND ?
-                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-        );
     }
 
 }
