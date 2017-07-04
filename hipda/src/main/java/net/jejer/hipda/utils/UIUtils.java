@@ -24,9 +24,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +37,6 @@ import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.ui.BaseActivity;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
-import net.jejer.hipda.ui.widget.swipeback.AndroidBug5497Workaround;
 
 import java.io.File;
 
@@ -327,6 +324,7 @@ public class UIUtils {
     }
 
     public static void hackStatusBar(BaseActivity activity) {
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 && HiSettingsHelper.getInstance().isGestureBack()
                 && HiSettingsHelper.getInstance().isHackStatusBar()) {
@@ -348,6 +346,7 @@ public class UIUtils {
                 }
             }
         }
+        */
     }
 
     public static int getWindowWidth(Window window) {

@@ -17,8 +17,8 @@
             android:key="PERF_PRIMARY_COLOR"
             android:summary="@string/pref_summary_primary_color"
             android:title="@string/pref_title_primary_color"
-            app:spectrum_outlineWidth="1px"
-            app:spectrum_colors="@array/material_colors"/>
+            app:spectrum_colors="@array/material_colors"
+            app:spectrum_outlineWidth="1px"/>
 
         <ListPreference
             android:defaultValue="dark"
@@ -76,11 +76,13 @@
             android:key="PERF_GESTURE_BACK"
             android:title="@string/pref_title_gesture_back"/>
 
+        <!--
         <SwitchPreference
             android:defaultValue="false"
             android:key="PERF_SWIPE_COMPAT_MODE"
             android:summary="@string/pref_summary_swipe_compat_mode"
             android:title="@string/pref_title_swipe_compat_mode"/>
+            -->
 
         <SwitchPreference
             android:defaultValue="true"
