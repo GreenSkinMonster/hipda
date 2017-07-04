@@ -269,11 +269,7 @@ public class HiUtils {
     }
 
     public static boolean isValidId(String id) {
-        try {
-            return !TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id) && Integer.parseInt(id) > 0;
-        } catch (Exception e) {
-            return false;
-        }
+        return !TextUtils.isEmpty(id) && Utils.parseInt(id) > 0;
     }
 
     public static String getUserAgent() {

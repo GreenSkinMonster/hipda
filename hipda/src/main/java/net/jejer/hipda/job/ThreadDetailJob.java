@@ -24,7 +24,7 @@ import org.jsoup.nodes.Document;
 public class ThreadDetailJob extends BaseJob {
 
     public final static String FIND_AUTHOR_ID = "-1";
-    private final static int MIN_JOB_TIME_MS = 300;
+    private final static int MIN_JOB_TIME_MS = 150;
 
     private Context mCtx;
     private String mTid;
@@ -78,7 +78,7 @@ public class ThreadDetailJob extends BaseJob {
                         }
                     } else {
                         Document doc = Jsoup.parse(resp);
-                        String tid = Utils.getMiddleString(resp, "tid = parseInt('", "')");
+                        String tid = HiUtils.isValidId(mTid) ? mTid : Utils.getMiddleString(resp, "tid = parseInt('", "')");
                         data = HiParserThreadDetail.parse(mCtx, doc, tid);
                         if (data == null || data.getCount() == 0) {
                             eventStatus = Constants.STATUS_FAIL_ABORT;
@@ -108,7 +108,6 @@ public class ThreadDetailJob extends BaseJob {
         mEvent.mDetail = eventDetail;
         mEvent.mAuthorId = mAuthorId;
         EventBus.getDefault().postSticky(mEvent);
-
 
         if (data != null && data.getPage() == data.getLastPage()
                 && mAuthorId == null
@@ -140,8 +139,7 @@ public class ThreadDetailJob extends BaseJob {
                 mUrl += "&authorid=" + mAuthorId;
 
         }
-        return OkHttpHelper.getInstance().get(mUrl, mSessionId,
-                mFetchType == ThreadDetailFragment.FETCH_REFRESH ? OkHttpHelper.FORCE_NETWORK : OkHttpHelper.PREFER_CACHE);
+        return OkHttpHelper.getInstance().get(mUrl, mSessionId, OkHttpHelper.FORCE_NETWORK);
     }
 
     private String getThreadAuthorId() {
