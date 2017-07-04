@@ -360,7 +360,8 @@ public class SimpleListFragment extends BaseFragment
                 return;
             }
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
-
+            if (item == null)
+                return;
             if (mType == SimpleListJob.TYPE_SMS) {
                 FragmentUtils.showSmsActivity(getActivity(), false, item.getUid(), item.getAuthor());
             } else {
@@ -374,7 +375,12 @@ public class SimpleListFragment extends BaseFragment
 
         @Override
         public void onLongItemClick(View view, int position) {
+            if (position < 0 || position >= mSimpleListAdapter.getItemCount()) {
+                return;
+            }
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
+            if (item == null)
+                return;
             if (mType == SimpleListJob.TYPE_SMS) {
             } else if (mType == SimpleListJob.TYPE_FAVORITES) {
                 showFavoriteActionDialog(item);
