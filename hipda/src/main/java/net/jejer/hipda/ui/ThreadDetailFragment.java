@@ -964,6 +964,9 @@ public class ThreadDetailFragment extends BaseFragment {
         mMainFab.hide();
         showSoftKeyboard();
 
+        if (HiSettingsHelper.getInstance().isGestureBack())
+            ((ThreadDetailActivity) getActivity()).setSwipeBackEnable(false);
+
         if (mode != PostHelper.MODE_NEW_THREAD && mQuickReplyToPost != null) {
             int pos = mDetailAdapter.getPositionByPostId(mQuickReplyToPost.getPostId());
             if (pos != -1) {
@@ -983,6 +986,9 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     public boolean hideQuickReply(boolean clearReplyTo) {
+        if (HiSettingsHelper.getInstance().isGestureBack())
+            ((ThreadDetailActivity) getActivity()).setSwipeBackEnable(true);
+
         if (clearReplyTo) {
             deHighlightPostId();
             mQuickReplyMode = PostHelper.MODE_REPLY_THREAD;
