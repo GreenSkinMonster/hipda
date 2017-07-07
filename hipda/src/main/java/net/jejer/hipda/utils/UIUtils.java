@@ -37,6 +37,7 @@ import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.ui.BaseActivity;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
+import net.jejer.hipda.ui.PostActivity;
 
 import java.io.File;
 
@@ -146,11 +147,11 @@ public class UIUtils {
         return false;
     }
 
-    public static boolean askForBothPermissions(Context ctx) {
+    public static boolean askForBothPermissions(Activity activity) {
         boolean askCamera = !HiSettingsHelper.getInstance().isCameraPermAsked()
-                && ContextCompat.checkSelfPermission(ctx, Manifest.permission.CAMERA)
+                && ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED;
-        boolean askStorage = ContextCompat.checkSelfPermission(ctx, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        boolean askStorage = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED;
         String[] perms = null;
         if (askCamera && askStorage) {
@@ -161,12 +162,11 @@ public class UIUtils {
             perms = new String[]{Manifest.permission.CAMERA};
         } else if (askStorage) {
             perms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            Toast.makeText(ctx, "需要授予 \"存储空间\" 权限", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "需要授予 \"存储空间\" 权限", Toast.LENGTH_SHORT).show();
         }
         if (perms != null) {
-            if (ctx instanceof Activity)
-                ActivityCompat.requestPermissions((Activity) ctx, perms,
-                        MainFrameActivity.PERMISSIONS_REQUEST_CODE_BOTH);
+            ActivityCompat.requestPermissions(activity, perms,
+                    PostActivity.PERMISSIONS_REQUEST_CODE_BOTH);
             return true;
         }
         return false;

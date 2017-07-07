@@ -1,8 +1,12 @@
 package net.jejer.hipda.ui;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 
 import net.jejer.hipda.R;
@@ -13,6 +17,8 @@ import net.jejer.hipda.utils.UIUtils;
  */
 
 public class PostActivity extends SwipeBaseActivity {
+
+    public final static int PERMISSIONS_REQUEST_CODE_BOTH = 201;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,4 +52,22 @@ public class PostActivity extends SwipeBaseActivity {
     public void finish() {
         finishWithNoSlide();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_CODE_BOTH: {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    PostFragment fragment = (PostFragment) getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
+                    if (fragment != null) {
+                        fragment.showImageSelector();
+                    }
+                }
+                break;
+            }
+        }
+    }
+
 }

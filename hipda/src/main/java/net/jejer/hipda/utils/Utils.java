@@ -33,6 +33,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -246,7 +249,7 @@ public class Utils {
         ColorHelper.clear();
         activity.finish();
         Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
         activity.overridePendingTransition(0, 0);
         System.exit(0);
@@ -522,7 +525,6 @@ public class Utils {
         return sb.toString();
     }
 
-
     public static String getRingtoneTitle(Context context, Uri uri) {
         try {
             if (uri == null || TextUtils.isEmpty(uri.toString())) {
@@ -532,6 +534,30 @@ public class Utils {
             return ringtone.getTitle(context);
         } catch (Exception e) {
             return "-";
+        }
+    }
+
+    public static String md5(String content) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        byte[] hash;
+        hash = MessageDigest.getInstance("MD5").digest(content.getBytes("UTF-8"));
+
+        StringBuilder hex = new StringBuilder(hash.length * 2);
+        for (byte b : hash) {
+            if ((b & 0xFF) < 0x10) {
+                hex.append("0");
+            }
+            hex.append(Integer.toHexString(b & 0xFF));
+        }
+        return hex.toString();
+    }
+
+    public static boolean isDestroyed(Activity activity) {
+        if (activity == null)
+            return true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return activity.isDestroyed() || activity.isFinishing();
+        } else {
+            return activity.isFinishing();
         }
     }
 

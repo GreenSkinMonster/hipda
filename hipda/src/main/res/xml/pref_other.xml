@@ -24,12 +24,6 @@
             android:summary="@string/pref_summary_encode_utf8"
             android:title="@string/pref_title_encode_utf8"/>
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="PERF_OLD_IMAGE_SELECTOR"
-            android:summary="@string/pref_summary_old_image_selector"
-            android:title="@string/pref_title_old_image_selector"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_cache">

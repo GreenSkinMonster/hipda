@@ -3,7 +3,6 @@ package net.jejer.hipda.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -395,33 +393,10 @@ public class PostFragment extends BaseFragment {
                     fetchPrePostInfo(false);
                     Toast.makeText(getActivity(), "请等待信息收集结束再选择图片", Toast.LENGTH_LONG).show();
                 } else {
-
                     if (UIUtils.askForBothPermissions(getActivity()))
                         return true;
 
-                    mContentPosition = mEtContent.getSelectionStart();
-
-                    if (HiSettingsHelper.getInstance().isOldImageSelector()) {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-                            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                        startActivityForResult(Intent.createChooser(intent,
-                                "Select Picture"), SELECT_PICTURE);
-                    } else {
-                        Matisse.from(PostFragment.this)
-                                .choose(MimeType.ofImage())
-                                .countable(true)
-                                .maxSelectable(9)
-                                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                                .thumbnailScale(0.85f)
-                                .imageEngine(new GlideEngine())
-                                .theme(HiSettingsHelper.getInstance().getImageActivityTheme(getActivity()))
-                                .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
-                                .captureStrategy(new CaptureStrategy(false, BuildConfig.APPLICATION_ID + ".provider"))
-                                .forResult(SELECT_PICTURE);
-                    }
+                    showImageSelector();
                 }
                 return true;
             case R.id.action_device_info:
@@ -437,6 +412,22 @@ public class PostFragment extends BaseFragment {
             default:
                 return false;
         }
+    }
+
+    protected void showImageSelector() {
+        mContentPosition = mEtContent.getSelectionStart();
+
+        Matisse.from(PostFragment.this)
+                .choose(MimeType.ofImage())
+                .countable(true)
+                .maxSelectable(9)
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                .thumbnailScale(0.85f)
+                .imageEngine(new GlideEngine())
+                .theme(HiSettingsHelper.getInstance().getImageActivityTheme(getActivity()))
+                .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+                .captureStrategy(new CaptureStrategy(false, BuildConfig.APPLICATION_ID + ".provider"))
+                .forResult(SELECT_PICTURE);
     }
 
     private void postReply() {
@@ -559,38 +550,12 @@ public class PostFragment extends BaseFragment {
             boolean duplicate = false;
             Collection<Uri> uris = new ArrayList<>();
 
-            if (HiSettingsHelper.getInstance().isOldImageSelector()) {
-                boolean findData = false;
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    ClipData clipData = intent.getClipData();
-                    if (clipData != null && clipData.getItemCount() > 0) {
-                        for (int i = 0; i < clipData.getItemCount(); i++) {
-                            Uri uri = clipData.getItemAt(i).getUri();
-                            if (!mUploadImages.containsKey(uri)) {
-                                uris.add(uri);
-                            } else {
-                                duplicate = true;
-                            }
-                        }
-                        findData = true;
-                    }
-                }
-                if (!findData && intent.getData() != null) {
-                    if (!mUploadImages.containsKey(intent.getData())) {
-                        uris.add(intent.getData());
-                    } else {
-                        duplicate = true;
-                    }
-                }
-            } else {
-                List<Uri> selects = Matisse.obtainResult(intent);
-                for (Uri uri : selects) {
-                    if (!mUploadImages.containsKey(uri)) {
-                        uris.add(uri);
-                    } else {
-                        duplicate = true;
-                    }
+            List<Uri> selects = Matisse.obtainResult(intent);
+            for (Uri uri : selects) {
+                if (!mUploadImages.containsKey(uri)) {
+                    uris.add(uri);
+                } else {
+                    duplicate = true;
                 }
             }
 

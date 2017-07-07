@@ -273,7 +273,6 @@
     <string name="pref_title_tail_text">尾巴文字</string>
     <string name="pref_title_tail_url">尾巴链接</string>
     <string name="pref_title_encode_utf8">使用UTF8编码</string>
-    <string name="pref_title_old_image_selector">老的图片选择方式</string>
     <string name="pref_title_long_click_save_image">长按保存图片</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
     <string name="pref_title_swipe_compat_mode">手势返回兼容模式</string>
@@ -320,6 +319,5 @@
     <string name="pref_summary_auto_load_thumb">缩略图为论坛自动生成，一般为200KB以下，点击缩略图或者保存、分享时会加载原图</string>
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
     <string name="pref_summary_primary_color">仅浅色主题有效</string>
-    <string name="pref_summary_old_image_selector">新的图片选择方式存在问题时可以启用</string>
 
 </resources>
