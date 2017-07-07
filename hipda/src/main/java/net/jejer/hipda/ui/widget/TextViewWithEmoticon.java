@@ -15,7 +15,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.vanniktech.emoji.EmojiHandler;
 
@@ -136,7 +135,6 @@ public class TextViewWithEmoticon extends AppCompatTextView {
         return new URLSpan(s_url) {
             public void onClick(View view) {
                 if (mFragment == null) {
-                    Toast.makeText(mCtx, "need FragmentManager here", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 FragmentArgs args = FragmentUtils.parseUrl(s_url);
@@ -195,11 +193,11 @@ public class TextViewWithEmoticon extends AppCompatTextView {
                         if (fileName.contains(" ("))
                             fileName = fileName.substring(0, fileName.lastIndexOf(" (")).trim();
                     }
-                    Toast.makeText(mCtx, "开始下载 " + fileName + " ...", Toast.LENGTH_SHORT).show();
+                    UIUtils.toast("开始下载 " + fileName + " ...");
                     Utils.download(mCtx, getURL(), fileName);
                 } catch (Exception e) {
                     Logger.e(e);
-                    Toast.makeText(mCtx, "下载出现错误，请使用浏览器下载\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+                    UIUtils.toast("下载出现错误，请使用浏览器下载\n" + e.getMessage());
                 }
             }
         };
@@ -242,7 +240,7 @@ public class TextViewWithEmoticon extends AppCompatTextView {
                         try {
                             link[0].onClick(this);
                         } catch (Exception e) {
-                            Toast.makeText(mCtx, "发生错误 : " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            UIUtils.toast("发生错误 : " + e.getMessage());
                         }
                     }
                 }

@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -42,6 +41,7 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.UIUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -114,9 +114,9 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                     if (!TextUtils.isEmpty(mAvatarUrl)) {
                         GlideHelper.clearAvatarCache(mAvatarUrl);
                         GlideHelper.loadAvatar(UserinfoFragment.this, mAvatarView, mAvatarUrl);
-                        Toast.makeText(getActivity(), "头像已经刷新", Toast.LENGTH_SHORT).show();
+                        UIUtils.toast("头像已经刷新");
                     } else {
-                        Toast.makeText(getActivity(), "用户未设置头像", Toast.LENGTH_SHORT).show();
+                        UIUtils.toast("用户未设置头像");
                     }
                 }
             });
@@ -237,9 +237,9 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
     private void blacklistUser() {
         if (!HiSettingsHelper.getInstance().isUserBlack(mUsername)) {
             HiSettingsHelper.getInstance().addToBlacklist(mUsername);
-            Toast.makeText(getActivity(), "已经将用户 " + mUsername + " 添加到黑名单", Toast.LENGTH_SHORT).show();
+            UIUtils.toast("已经将用户 " + mUsername + " 添加到黑名单");
         } else {
-            Toast.makeText(getActivity(), "用户 " + mUsername + " 已经在黑名单中", Toast.LENGTH_SHORT).show();
+            UIUtils.toast("用户 " + mUsername + " 已经在黑名单中");
         }
     }
 
@@ -300,7 +300,6 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                             JobMgr.addJob(job);
                         } else {
                             mRecyclerView.setFooterState(XFooterView.STATE_END);
-                            //Toast.makeText(getActivity(), "已经是最后一页，共 " + mMaxPage + " 页", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -367,7 +366,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
             mButton.setEnabled(true);
 
         if (list == null || list.getCount() == 0) {
-            Toast.makeText(getActivity(), "帖子加载失败", Toast.LENGTH_SHORT).show();
+            UIUtils.toast("帖子加载失败");
             return;
         }
 

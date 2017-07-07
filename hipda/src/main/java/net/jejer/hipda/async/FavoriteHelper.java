@@ -3,13 +3,13 @@ package net.jejer.hipda.async;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.jsoup.Jsoup;
@@ -202,7 +202,7 @@ public class FavoriteHelper {
 
     public void addFavorite(final Context ctx, final String item, final String tid) {
         if (TextUtils.isEmpty(item) || TextUtils.isEmpty(tid)) {
-            Toast.makeText(ctx, "参数错误", Toast.LENGTH_SHORT).show();
+            UIUtils.toast("参数错误");
             return;
         }
 
@@ -211,7 +211,7 @@ public class FavoriteHelper {
         OkHttpHelper.getInstance().asyncGet(url, new OkHttpHelper.ResultCallback() {
             @Override
             public void onError(Request request, Exception e) {
-                Toast.makeText(ctx, "添加失败 : " + OkHttpHelper.getErrorMessage(e), Toast.LENGTH_SHORT).show();
+                UIUtils.toast("添加失败 : " + OkHttpHelper.getErrorMessage(e));
             }
 
             @Override
@@ -224,14 +224,14 @@ public class FavoriteHelper {
                         result = result.substring(0, result.indexOf("<"));
                 }
                 addToCahce(item, tid);
-                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                UIUtils.toast(result);
             }
         });
     }
 
     public void removeFavorite(final Context ctx, final String item, final String tid) {
         if (TextUtils.isEmpty(item) || TextUtils.isEmpty(tid)) {
-            Toast.makeText(ctx, "参数错误", Toast.LENGTH_SHORT).show();
+            UIUtils.toast("参数错误");
             return;
         }
 
@@ -240,7 +240,7 @@ public class FavoriteHelper {
         OkHttpHelper.getInstance().asyncGet(url, new OkHttpHelper.ResultCallback() {
             @Override
             public void onError(Request request, Exception e) {
-                Toast.makeText(ctx, "移除失败 : " + OkHttpHelper.getErrorMessage(e), Toast.LENGTH_SHORT).show();
+                UIUtils.toast("移除失败 : " + OkHttpHelper.getErrorMessage(e));
             }
 
             @Override
@@ -253,14 +253,14 @@ public class FavoriteHelper {
                         result = result.substring(0, result.indexOf("<"));
                 }
                 removeFromCahce(item, tid);
-                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                UIUtils.toast(result);
             }
         });
     }
 
     public void deleteFavorite(final Context ctx, final String formhash, final String item, final String tid) {
         if (TextUtils.isEmpty(item) || TextUtils.isEmpty(tid) || TextUtils.isEmpty(formhash)) {
-            Toast.makeText(ctx, "参数错误", Toast.LENGTH_SHORT).show();
+            UIUtils.toast("参数错误");
             return;
         }
 
@@ -279,18 +279,18 @@ public class FavoriteHelper {
             OkHttpHelper.getInstance().asyncPost(url, params, new OkHttpHelper.ResultCallback() {
                 @Override
                 public void onError(Request request, Exception e) {
-                    Toast.makeText(ctx, "移除失败 : " + OkHttpHelper.getErrorMessage(e), Toast.LENGTH_SHORT).show();
+                    UIUtils.toast("移除失败 : " + OkHttpHelper.getErrorMessage(e));
                 }
 
                 @Override
                 public void onResponse(String response) {
                     String result = "已取消" + (FavoriteHelper.TYPE_FAVORITE.equals(item) ? "收藏" : "关注");
                     removeFromCahce(item, tid);
-                    Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                    UIUtils.toast(result);
                 }
             });
         } catch (Exception e) {
-            Toast.makeText(ctx, "移除失败 : " + OkHttpHelper.getErrorMessage(e), Toast.LENGTH_SHORT).show();
+            UIUtils.toast("移除失败 : " + OkHttpHelper.getErrorMessage(e));
         }
     }
 

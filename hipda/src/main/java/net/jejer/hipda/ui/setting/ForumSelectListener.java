@@ -12,12 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.Forum;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,7 +113,7 @@ public class ForumSelectListener extends OnPreferenceClickListener {
                     HiSettingsHelper.getInstance().setForums(forums);
                     preference.setSummary(HiUtils.getForumsSummary());
                 } else {
-                    Toast.makeText(mContext, "至少选择一个版面", Toast.LENGTH_SHORT).show();
+                    UIUtils.toast("至少选择一个版面");
                 }
             }
         });

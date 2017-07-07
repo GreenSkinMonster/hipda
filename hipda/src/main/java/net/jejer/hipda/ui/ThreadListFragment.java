@@ -30,7 +30,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -301,7 +300,7 @@ public class ThreadListFragment extends BaseFragment
                         FragmentUtils.showSimpleListActivity(getActivity(), false, SimpleListJob.TYPE_THREAD_NOTIFY);
                         showNotification();
                     } else {
-                        Toast.makeText(mCtx, "没有未处理的通知", Toast.LENGTH_SHORT).show();
+                        UIUtils.toast("没有未处理的通知");
                         mNotificationFab.hide();
                     }
                 }
@@ -637,7 +636,7 @@ public class ThreadListFragment extends BaseFragment
 
             if (mPage <= 5 && mThreadBeans.size() < MIN_TREADS_IN_PAGE) {
                 if (mPage == 1 && mThreadBeans.size() == 0)
-                    Toast.makeText(mCtx, "置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认", Toast.LENGTH_LONG).show();
+                    UIUtils.toast("置顶贴较多，请在网页版论坛 个人中心 \n将 论坛个性化设定 - 每页主题 设为 默认");
                 mPage++;
                 mInloading = true;
                 ThreadListJob job = new ThreadListJob(getActivity(), mSessionId, mForumId, mPage);
@@ -712,7 +711,7 @@ public class ThreadListFragment extends BaseFragment
             if (postProgressDialog != null) {
                 postProgressDialog.dismiss(message);
             } else {
-                Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
+                UIUtils.toast(message);
             }
             FragmentUtils.showThreadActivity(getActivity(), true, postResult.getTid(), postResult.getSubject(), -1, -1, null, -1);
             refresh();
@@ -720,7 +719,7 @@ public class ThreadListFragment extends BaseFragment
             if (postProgressDialog != null) {
                 postProgressDialog.dismissError(message);
             } else {
-                Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
+                UIUtils.toast(message);
             }
         }
     }

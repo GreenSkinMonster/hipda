@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -35,6 +36,8 @@ public class HiApplication extends Application implements Application.ActivityLi
     private static boolean fontSet;
     private static int settingStatus;
     private static boolean mIconChanged;
+
+    private Toast mToast;
 
     @Override
     public void onCreate() {

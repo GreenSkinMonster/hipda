@@ -33,7 +33,6 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -391,7 +390,7 @@ public class PostFragment extends BaseFragment {
             case R.id.action_upload_img:
                 if (mPrePostInfo == null) {
                     fetchPrePostInfo(false);
-                    Toast.makeText(getActivity(), "请等待信息收集结束再选择图片", Toast.LENGTH_LONG).show();
+                    UIUtils.toast("请等待信息收集结束再选择图片");
                 } else {
                     if (UIUtils.askForBothPermissions(getActivity()))
                         return true;
@@ -433,31 +432,31 @@ public class PostFragment extends BaseFragment {
     private void postReply() {
         if (mPrePostInfo == null) {
             fetchPrePostInfo(false);
-            Toast.makeText(getActivity(), "请等待信息收集结束再发送", Toast.LENGTH_LONG).show();
+            UIUtils.toast("请等待信息收集结束再发送");
             return;
         }
 
         if (mMode == PostHelper.MODE_NEW_THREAD &&
                 HiUtils.FID_BS == mFid && "0".equals(mTypeId)) {
-            Toast.makeText(getActivity(), "B&S版发帖必须指定分类", Toast.LENGTH_LONG).show();
+            UIUtils.toast("B&S版发帖必须指定分类");
             return;
         }
 
         final String subjectText = mEtSubject.getText().toString();
         if (mEtSubject.getVisibility() == View.VISIBLE) {
             if (Utils.getWordCount(subjectText) < 5) {
-                Toast.makeText(getActivity(), "主题字数必须大于 5", Toast.LENGTH_LONG).show();
+                UIUtils.toast("主题字数必须大于 5");
                 return;
             }
             if (Utils.getWordCount(subjectText) > 80) {
-                Toast.makeText(getActivity(), "主题字数必须少于 80", Toast.LENGTH_LONG).show();
+                UIUtils.toast("主题字数必须少于 80");
                 return;
             }
         }
 
         final String replyText = mEtContent.getText().toString();
         if (Utils.getWordCount(replyText) < 5) {
-            Toast.makeText(getActivity(), "帖子内容字数必须大于 5", Toast.LENGTH_LONG).show();
+            UIUtils.toast("帖子内容字数必须大于 5");
             return;
         }
 
@@ -561,9 +560,9 @@ public class PostFragment extends BaseFragment {
 
             if (uris.size() == 0) {
                 if (duplicate) {
-                    Toast.makeText(getActivity(), "选择的图片重复", Toast.LENGTH_SHORT).show();
+                    UIUtils.toast("选择的图片重复");
                 } else {
-                    Toast.makeText(getActivity(), "无法获取图片信息", Toast.LENGTH_SHORT).show();
+                    UIUtils.toast("无法获取图片信息");
                 }
                 return;
             }
@@ -582,7 +581,7 @@ public class PostFragment extends BaseFragment {
         final Content[] contents = ContentDao.getSavedContents(mSessionId);
 
         if (contents == null || contents.length == 0) {
-            Toast.makeText(getActivity(), "没有之前输入的内容", Toast.LENGTH_SHORT).show();
+            UIUtils.toast("没有之前输入的内容");
             return;
         }
 
@@ -666,7 +665,7 @@ public class PostFragment extends BaseFragment {
                 mPrePostInfo = info;
                 setupPrePostInfo();
                 if (mFetchInfoCount > 1)
-                    Toast.makeText(getActivity(), "收集信息成功", Toast.LENGTH_SHORT).show();
+                    UIUtils.toast("收集信息成功");
             } else {
                 if (getView() != null) {
                     mSnackbar = Snackbar.make(getView(), "收集信息失败 : " + message, Snackbar.LENGTH_LONG);

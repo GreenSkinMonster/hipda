@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -211,11 +210,11 @@ public abstract class BaseFragment extends Fragment {
                     recipient = etRecipient.getText().toString().trim();
 
                 if (TextUtils.isEmpty(uid) && TextUtils.isEmpty(recipient)) {
-                    Toast.makeText(getActivity(), "请填写收件人", Toast.LENGTH_SHORT).show();
+                    UIUtils.toast("请填写收件人");
                     return;
                 }
                 if (TextUtils.isEmpty(content)) {
-                    Toast.makeText(getActivity(), "请填写内容", Toast.LENGTH_SHORT).show();
+                    UIUtils.toast("请填写内容");
                     return;
                 }
                 new PostSmsAsyncTask(getActivity(), uid, recipient, listener, dialog).execute(content);

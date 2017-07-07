@@ -35,7 +35,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
@@ -290,7 +289,7 @@ public class ThreadDetailFragment extends BaseFragment {
             public void onSingleClick(View v) {
                 String replyText = mEtReply.getText().toString();
                 if (Utils.getWordCount(replyText) < 5) {
-                    Toast.makeText(getActivity(), "字数必须大于5", Toast.LENGTH_LONG).show();
+                    UIUtils.toast("字数必须大于5");
                 } else {
                     PostBean postBean = new PostBean();
                     postBean.setContent(replyText);
@@ -460,21 +459,21 @@ public class ThreadDetailFragment extends BaseFragment {
                             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[targetIntents.size()]));
                             startActivity(chooserIntent);
                         } else {
-                            Toast.makeText(mCtx, "没有找到浏览器应用", Toast.LENGTH_SHORT).show();
+                            UIUtils.toast("没有找到浏览器应用");
                         }
 
                     } else {
                         startActivity(intent);
                     }
                 } catch (Exception e) {
-                    Toast.makeText(mCtx, "没有找到浏览器应用 : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    UIUtils.toast("没有找到浏览器应用 : " + e.getMessage());
                 }
                 return true;
             case R.id.action_copy_url:
                 ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("THREAD URL FROM HiPDA", HiUtils.DetailListUrl + mTid);
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(mCtx, "帖子地址已经复制到粘贴板", Toast.LENGTH_SHORT).show();
+                UIUtils.toast("帖子地址已经复制到粘贴板");
                 return true;
             case R.id.action_share_thread:
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -645,7 +644,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", detailBean.getContents().getCopyText());
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(getActivity(), "文字已复制", Toast.LENGTH_SHORT).show();
+                UIUtils.toast("文字已复制");
             }
         });
         String authorText = isInAuthorOnlyMode() ? getString(R.string.action_show_all) : getString(R.string.action_only_floor_author);
@@ -1061,7 +1060,7 @@ public class ThreadDetailFragment extends BaseFragment {
         @Override
         public void onClick(View view) {
             if (!TextUtils.isEmpty(mAuthorId)) {
-                Toast.makeText(getActivity(), "请先退出只查看该作者模式", Toast.LENGTH_SHORT).show();
+                UIUtils.toast("请先退出只查看该作者模式");
                 return;
             }
             int floor = (Integer) view.getTag();
@@ -1217,7 +1216,7 @@ public class ThreadDetailFragment extends BaseFragment {
                         new OkHttpHelper.ResultCallback() {
                             @Override
                             public void onError(Request request, Exception e) {
-                                Toast.makeText(mCtx, OkHttpHelper.getErrorMessage(e).getMessage(), Toast.LENGTH_SHORT).show();
+                                UIUtils.toast(OkHttpHelper.getErrorMessage(e).getMessage());
                             }
 
                             @Override
@@ -1235,7 +1234,7 @@ public class ThreadDetailFragment extends BaseFragment {
                                     sb.append(doc.select("div.moreconf").text());
                                     UIUtils.showMessageDialog(mCtx, title, sb.toString(), false);
                                 } catch (Exception e) {
-                                    Toast.makeText(mCtx, OkHttpHelper.getErrorMessage(e).getMessage(), Toast.LENGTH_SHORT).show();
+                                    UIUtils.toast(OkHttpHelper.getErrorMessage(e).getMessage());
                                 }
                             }
                         });
@@ -1285,7 +1284,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
         DetailListBean detailListBean = mCache.get(mCurrentPage);
         if (detailListBean == null) {
-            Toast.makeText(getActivity(), "帖子还未加载完成", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -1297,8 +1295,6 @@ public class ThreadDetailFragment extends BaseFragment {
             intent.putExtra(ImageViewerActivity.KEY_IMAGE_INDEX, imageIndex);
             intent.putParcelableArrayListExtra(ImageViewerActivity.KEY_IMAGES, mCache.get(mCurrentPage).getContentImages());
             ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
-        } else {
-            Toast.makeText(mCtx, "本页没有图片", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1511,7 +1507,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (postProgressDialog != null) {
                 postProgressDialog.dismissError(message);
             } else {
-                Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
+                UIUtils.toast(message);
             }
         }
     }

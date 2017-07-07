@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
@@ -89,10 +88,10 @@ public class LoginDialog extends Dialog {
                     @Override
                     protected void onPostExecute(Integer result) {
                         if (result == Constants.STATUS_SUCCESS) {
-                            Toast.makeText(mCtx, "登录成功", Toast.LENGTH_SHORT).show();
+                            UIUtils.toast("登录成功");
                             TaskHelper.runDailyTask(true);
                         } else {
-                            Toast.makeText(mCtx, loginHelper.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                            UIUtils.toast(loginHelper.getErrorMsg());
                             HiSettingsHelper.getInstance().setUsername("");
                             HiSettingsHelper.getInstance().setPassword("");
                             HiSettingsHelper.getInstance().setSecQuestion("");

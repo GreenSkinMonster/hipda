@@ -4,12 +4,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.UIUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -144,10 +144,11 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (mPostListenerCallback != null)
+        if (mPostListenerCallback != null) {
             mPostListenerCallback.onSmsPrePost();
-        else
-            Toast.makeText(mCtx, "正在发送...", Toast.LENGTH_LONG).show();
+        } else {
+            UIUtils.toast("正在发送...");
+        }
     }
 
     @Override
@@ -156,7 +157,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
         if (mPostListenerCallback != null) {
             mPostListenerCallback.onSmsPostDone(mStatus, mResult, mDialog);
         } else {
-            Toast.makeText(mCtx, mResult, Toast.LENGTH_LONG).show();
+            UIUtils.toast(mResult);
         }
     }
 

@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -46,6 +45,7 @@ import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -290,7 +290,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
             mSending = false;
             mCountdownButton.setEnabled(true);
             markNewSmsFailed();
-            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            UIUtils.toast(message);
         }
     }
 
@@ -328,9 +328,9 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                         if (content.length() > 0) {
                             ClipData clip = ClipData.newPlainText("SMS CONTENT FROM HiPDA", content);
                             clipboard.setPrimaryClip(clip);
-                            Toast.makeText(getActivity(), "内容已复制", Toast.LENGTH_SHORT).show();
+                            UIUtils.toast("内容已复制");
                         } else {
-                            Toast.makeText(getActivity(), "内容为空", Toast.LENGTH_SHORT).show();
+                            UIUtils.toast("内容为空");
                         }
                     }
                 });
@@ -343,7 +343,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
                                 removeFailedSms(rvPosition);
                                 sendSms(content);
                             } else {
-                                Toast.makeText(getActivity(), "短消息发送时间限制", Toast.LENGTH_SHORT).show();
+                                UIUtils.toast("短消息发送时间限制");
                             }
                         }
                     });
@@ -382,7 +382,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         @Override
         public void onFail(SimpleListEvent event) {
             mLoadingView.setState(ContentLoadingView.ERROR);
-            Toast.makeText(getActivity(), event.mMessage, Toast.LENGTH_SHORT).show();
+            UIUtils.toast(event.mMessage);
         }
 
         @Override

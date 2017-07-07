@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -472,7 +471,7 @@ public class Utils {
 
         if (TextUtils.isEmpty(url) || TextUtils.isEmpty(filename)
                 || (url.contains(HiUtils.ForumUrlPattern) && TextUtils.isEmpty(authCookie))) {
-            Toast.makeText(ctx, "下载信息不完整，无法进行下载", Toast.LENGTH_SHORT).show();
+            UIUtils.toast("下载信息不完整，无法进行下载");
             return;
         }
 

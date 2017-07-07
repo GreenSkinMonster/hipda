@@ -137,7 +137,7 @@ public class UIUtils {
     public static boolean askForStoragePermission(Context ctx) {
         if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(ctx, "需要授予 \"存储空间\" 权限", Toast.LENGTH_SHORT).show();
+            UIUtils.toast("需要授予 \"存储空间\" 权限");
             if (ctx instanceof Activity)
                 ActivityCompat.requestPermissions((Activity) ctx,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -162,7 +162,7 @@ public class UIUtils {
             perms = new String[]{Manifest.permission.CAMERA};
         } else if (askStorage) {
             perms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            Toast.makeText(activity, "需要授予 \"存储空间\" 权限", Toast.LENGTH_SHORT).show();
+            UIUtils.toast("需要授予 \"存储空间\" 权限");
         }
         if (perms != null) {
             ActivityCompat.requestPermissions(activity, perms,
@@ -354,6 +354,10 @@ public class UIUtils {
         window.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         return metrics.widthPixels;
+    }
+
+    public static void toast(String text) {
+        Toast.makeText(HiApplication.getAppContext(), text, Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -10,13 +10,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
@@ -133,7 +133,7 @@ public class UpdateHelper {
                                                     Utils.download(mCtx, url, filename);
                                                 } catch (Exception e) {
                                                     Logger.e(e);
-                                                    Toast.makeText(mCtx, "下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    UIUtils.toast("下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage());
                                                 }
                                             }
                                         }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
