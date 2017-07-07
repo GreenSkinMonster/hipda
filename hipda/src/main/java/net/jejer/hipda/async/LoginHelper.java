@@ -10,6 +10,7 @@ import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jsoup.Jsoup;
@@ -81,19 +82,18 @@ public class LoginHelper {
     }
 
     private int doLogin(String formhash) {
-        ParamsMap params = new ParamsMap();
-        params.put("m_formhash", formhash);
-        params.put("referer", HiUtils.BaseUrl + "index.php");
-        params.put("loginfield", "username");
-        params.put("username", HiSettingsHelper.getInstance().getUsername());
-        params.put("password", HiSettingsHelper.getInstance().getPassword());
-        params.put("questionid", HiSettingsHelper.getInstance().getSecQuestion());
-        params.put("answer", HiSettingsHelper.getInstance().getSecAnswer());
-        params.put("cookietime", "2592000");
-
-        String rspStr;
         try {
-            rspStr = OkHttpHelper.getInstance().post(HiUtils.LoginSubmit, params);
+            ParamsMap params = new ParamsMap();
+            params.put("m_formhash", formhash);
+            params.put("referer", HiUtils.BaseUrl + "index.php");
+            params.put("loginfield", "username");
+            params.put("username", HiSettingsHelper.getInstance().getUsername());
+            params.put("password", Utils.md5(HiSettingsHelper.getInstance().getPassword()));
+            params.put("questionid", HiSettingsHelper.getInstance().getSecQuestion());
+            params.put("answer", HiSettingsHelper.getInstance().getSecAnswer());
+            params.put("cookietime", "2592000");
+
+            String rspStr = OkHttpHelper.getInstance().post(HiUtils.LoginSubmit, params);
             Logger.v(rspStr);
 
             // response is in XML format

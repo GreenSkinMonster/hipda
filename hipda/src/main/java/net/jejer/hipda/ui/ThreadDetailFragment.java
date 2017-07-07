@@ -183,7 +183,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         mCtx = getActivity();
 
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
 
         if (getArguments().containsKey(ARG_TID_KEY)) {
             mTid = getArguments().getString(ARG_TID_KEY);
@@ -327,6 +327,9 @@ public class ThreadDetailFragment extends BaseFragment {
         mIbEmojiSwitch = (ImageButton) mQuickReply.findViewById(R.id.ib_goto_post);
         setUpEmojiPopup(mEtReply, mIbEmojiSwitch);
 
+        setActionBarTitle((mCurrentPage > 0 && mMaxPage > 0 ? "(" + mCurrentPage + "/" + mMaxPage + ") " : "")
+                + mTitle);
+
         return view;
     }
 
@@ -362,9 +365,6 @@ public class ThreadDetailFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.menu_thread_detail, menu);
-
-        setActionBarTitle((mCurrentPage > 0 && mMaxPage > 0 ? "(" + mCurrentPage + "/" + mMaxPage + ") " : "")
-                + mTitle);
 
         mShowAllMenuItem = menu.findItem(R.id.action_show_all);
         mShowAllMenuItem.setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_eject)
@@ -1400,6 +1400,8 @@ public class ThreadDetailFragment extends BaseFragment {
             if (event.mFectchType == FETCH_NORMAL || event.mFectchType == FETCH_REFRESH) {
                 if (!mDataReceived) {
                     mDataReceived = true;
+                    setHasOptionsMenu(true);
+                    getActivity().invalidateOptionsMenu();
                     if (mMainFab != null) {
                         mMainFab.show();
                     }
@@ -1426,7 +1428,10 @@ public class ThreadDetailFragment extends BaseFragment {
 
         @Override
         public void onFailRelogin(ThreadDetailEvent event) {
-            showLoginDialog();
+            mInloading = false;
+            mDetailBeans.clear();
+            mDetailAdapter.notifyDataSetChanged();
+            mLoadingView.setState(ContentLoadingView.NOT_LOGIN);
         }
 
     }

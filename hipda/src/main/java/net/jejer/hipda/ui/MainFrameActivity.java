@@ -34,7 +34,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.github.angads25.filepicker.view.FilePickerDialog;
-import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -91,12 +90,12 @@ import java.util.Set;
 public class MainFrameActivity extends BaseActivity {
 
     public final static int PERMISSIONS_REQUEST_CODE_STORAGE = 200;
-    public final static int PERMISSIONS_REQUEST_CODE_BOTH = 201;
 
     private Drawer mDrawer;
     private AccountHeader mAccountHeader;
 
     private NetworkStateReceiver mNetworkReceiver = new NetworkStateReceiver();
+    private LoginDialog mLoginDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +108,7 @@ public class MainFrameActivity extends BaseActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
+        GlideHelper.initDefaultFiles();
         EmojiHandler.init(HiSettingsHelper.getInstance().isUsingLightTheme());
         EventBus.getDefault().register(this);
         setupDrawer();
@@ -200,13 +200,15 @@ public class MainFrameActivity extends BaseActivity {
 
             @Override
             public Drawable placeholder(Context ctx) {
-                return new IconicsDrawable(ctx, FontAwesome.Icon.faw_user).color(Color.WHITE);
+                return new IconicsDrawable(ctx, GoogleMaterial.Icon.gmd_account_circle).color(Color.WHITE).sizeDp(48);
             }
         });
 
         // Create the AccountHeader
         String username = OkHttpHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
-        String avatarUrl = OkHttpHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
+        String avatarUrl = OkHttpHelper.getInstance().isLoggedIn()
+                ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid())
+                : (GlideHelper.DEFAULT_AVATAR_FILE != null ? GlideHelper.DEFAULT_AVATAR_FILE.getAbsolutePath() : "");
         mAccountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
@@ -378,6 +380,9 @@ public class MainFrameActivity extends BaseActivity {
             if (fg instanceof ThreadListFragment) {
                 ((ThreadListFragment) fg).notifyDataSetChanged();
             }
+        } else {
+            if (!LoginHelper.isLoggedIn())
+                showLoginDialog();
         }
     }
 
@@ -385,6 +390,7 @@ public class MainFrameActivity extends BaseActivity {
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         unregisterReceiver(mNetworkReceiver);
+        dismissLoginDialog();
         super.onDestroy();
     }
 
@@ -432,9 +438,6 @@ public class MainFrameActivity extends BaseActivity {
 
             if (iDrawerItem.getIdentifier() == Constants.DRAWER_NO_ACTION)
                 return false;
-
-            //clear all backStacks from menu click
-            //clearBackStacks(false);
 
             switch ((int) iDrawerItem.getIdentifier()) {
                 case Constants.DRAWER_SEARCH:
@@ -494,7 +497,19 @@ public class MainFrameActivity extends BaseActivity {
                                         HiSettingsHelper.getInstance().setUid("");
                                         LoginHelper.logout();
                                         updateAccountHeader();
-                                        progressDialog.dismiss("已退出登录状态", 3000);
+
+                                        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
+                                        if (fragment != null && fragment instanceof ThreadListFragment) {
+                                            ((ThreadListFragment) fragment).enterNotLoginState();
+                                        }
+
+                                        progressDialog.dismiss("已退出登录状态", 2000);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                showLoginDialog();
+                                            }
+                                        }, 2000);
                                     }
                                 })
                         .setNegativeButton(getResources().getString(android.R.string.cancel),
@@ -505,11 +520,7 @@ public class MainFrameActivity extends BaseActivity {
                                 }).create();
                 dialog.show();
             } else {
-                LoginDialog dialog = LoginDialog.getInstance(MainFrameActivity.this);
-                if (dialog != null) {
-                    dialog.setTitle("用户登录");
-                    dialog.show();
-                }
+                showLoginDialog();
             }
             return false;
         }
@@ -592,7 +603,6 @@ public class MainFrameActivity extends BaseActivity {
                 HiSettingsHelper.getInstance().getActiveTheme(),
                 HiSettingsHelper.getInstance().getPrimaryColor());
         setTheme(theme);
-        GlideHelper.initDefaultFiles();
         //avoid “RuntimeException: Performing pause of activity that is not resumed”
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -615,10 +625,13 @@ public class MainFrameActivity extends BaseActivity {
             //clearBackStacks(true);
             Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
             if (fg instanceof ThreadListFragment) {
+                fg.setHasOptionsMenu(true);
+                invalidateOptionsMenu();
                 ((ThreadListFragment) fg).onRefresh();
             }
         }
         updateAccountHeader();
+        dismissLoginDialog();
     }
 
     @Override
@@ -661,6 +674,22 @@ public class MainFrameActivity extends BaseActivity {
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP
         );
+    }
+
+    public void showLoginDialog() {
+        if (mLoginDialog == null || !mLoginDialog.isShowing()) {
+            mLoginDialog = new LoginDialog(this);
+            mLoginDialog.setTitle("用户登录");
+            mLoginDialog.show();
+        }
+    }
+
+    public void dismissLoginDialog() {
+        if (mLoginDialog != null) {
+            if (mLoginDialog.isShowing())
+                mLoginDialog.dismiss();
+            mLoginDialog = null;
+        }
     }
 
 }

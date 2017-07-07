@@ -55,6 +55,7 @@
     <string name="hint_subject">主题</string>
     <string name="content_hint_error">加载失败</string>
     <string name="content_hint_nodata">没有数据</string>
+    <string name="content_not_login">未登录</string>
 
     <string name="screen_portrait">竖向</string>
     <string name="screen_landscape">横向</string>

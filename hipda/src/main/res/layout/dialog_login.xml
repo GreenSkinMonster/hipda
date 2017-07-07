@@ -17,6 +17,7 @@
             android:layout_margin="8dp"
             android:background="@drawable/edittext_background"
             android:hint="@string/pref_title_username"
+            android:maxLines="1"
             android:padding="8dp"
             android:textSize="18sp"/>
 
@@ -28,6 +29,7 @@
             android:background="@drawable/edittext_background"
             android:hint="@string/pref_title_password"
             android:inputType="textPassword"
+            android:maxLines="1"
             android:padding="8dp"
             android:textSize="18sp"/>
 

@@ -628,14 +628,11 @@ public class SimpleListFragment extends BaseFragment
         public void onFailRelogin(SimpleListEvent event) {
             swipeLayout.setEnabled(true);
             swipeLayout.setRefreshing(false);
-            if (mSimpleListItemBeans.size() == 0)
-                mLoadingView.setState(ContentLoadingView.ERROR);
-            else
-                mLoadingView.setState(ContentLoadingView.CONTENT);
+            mSimpleListItemBeans.clear();
+            mSimpleListAdapter.notifyDataSetChanged();
+            mLoadingView.setState(ContentLoadingView.NOT_LOGIN);
             mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
             mInloading = false;
-
-            showLoginDialog();
         }
     }
 

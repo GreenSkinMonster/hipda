@@ -27,22 +27,12 @@ import net.jejer.hipda.utils.UIUtils;
  */
 public class LoginDialog extends Dialog {
 
-    private static boolean isShown = false;
-
     private Context mCtx;
     private HiProgressDialog progressDialog;
 
-    private LoginDialog(Context context) {
+    public LoginDialog(Context context) {
         super(context);
         mCtx = context;
-    }
-
-    public static LoginDialog getInstance(Context context) {
-        if (!isShown) {
-            isShown = true;
-            return new LoginDialog(context);
-        }
-        return null;
     }
 
     @Override
@@ -100,9 +90,6 @@ public class LoginDialog extends Dialog {
                     protected void onPostExecute(Integer result) {
                         if (result == Constants.STATUS_SUCCESS) {
                             Toast.makeText(mCtx, "登录成功", Toast.LENGTH_SHORT).show();
-                            if (LoginDialog.this.isShowing() && isShown)
-                                dismiss();
-                            isShown = false;
                             TaskHelper.runDailyTask(true);
                         } else {
                             Toast.makeText(mCtx, loginHelper.getErrorMsg(), Toast.LENGTH_SHORT).show();
@@ -118,17 +105,6 @@ public class LoginDialog extends Dialog {
         });
 
         setContentView(view);
-    }
-
-    @Override
-    public void show() {
-        super.show();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        isShown = false;
     }
 
 }

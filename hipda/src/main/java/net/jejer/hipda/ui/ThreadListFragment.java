@@ -52,6 +52,7 @@ import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.job.ThreadListEvent;
 import net.jejer.hipda.job.ThreadListJob;
 import net.jejer.hipda.job.ThreadUpdatedEvent;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadListAdapter;
 import net.jejer.hipda.ui.widget.BottomDialog;
@@ -124,7 +125,7 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(OkHttpHelper.getInstance().isLoggedIn());
 
         View view = inflater.inflate(R.layout.fragment_thread_list, parent, false);
         mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_threads);
@@ -157,7 +158,20 @@ public class ThreadListFragment extends BaseFragment
             }
         });
 
+        mLoadingView.setNotLoginStateListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainFrameActivity) getActivity()).showLoginDialog();
+            }
+        });
+
         mRecyclerView.scrollToPosition(mFirstVisibleItem);
+
+        setActionBarTitle(HiUtils.getForumNameByFid(mForumId));
+        if (getActivity() instanceof MainFrameActivity) {
+            ((MainFrameActivity) getActivity()).setActionBarDisplayHomeAsUpEnabled(false);
+            ((MainFrameActivity) getActivity()).syncActionBarState();
+        }
 
         return view;
     }
@@ -165,7 +179,6 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
         if (savedInstanceState != null) {
             mCtx = getActivity();
         }
@@ -223,21 +236,7 @@ public class ThreadListFragment extends BaseFragment
                         .color(HiSettingsHelper.getInstance().getToolbarTextColor()).actionBar());
         }
 
-        setActionBarTitle(HiUtils.getForumNameByFid(mForumId));
-        if (getActivity() instanceof MainFrameActivity) {
-            ((MainFrameActivity) getActivity()).setActionBarDisplayHomeAsUpEnabled(false);
-            ((MainFrameActivity) getActivity()).syncActionBarState();
-        }
-
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {
-            showLoginDialog();
-        }
-        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -630,13 +629,11 @@ public class ThreadListFragment extends BaseFragment
                 mThreadListAdapter.setDatas(mThreadBeans);
             }
 
-            if (getFragmentManager().findFragmentById(R.id.main_frame_container).equals(ThreadListFragment.this)) {
-                if (!mDataReceived) {
-                    mDataReceived = true;
-                    mMainFab.show();
-                }
-                showNotification();
+            if (!mDataReceived) {
+                mDataReceived = true;
+                mMainFab.show();
             }
+            showNotification();
 
             if (mPage <= 5 && mThreadBeans.size() < MIN_TREADS_IN_PAGE) {
                 if (mPage == 1 && mThreadBeans.size() == 0)
@@ -667,15 +664,21 @@ public class ThreadListFragment extends BaseFragment
 
         @Override
         public void onFailRelogin(ThreadListEvent event) {
-            mInloading = false;
-            swipeLayout.setRefreshing(false);
-            if (mThreadBeans.size() == 0)
-                mLoadingView.setState(ContentLoadingView.ERROR);
-            else
-                mLoadingView.setState(ContentLoadingView.CONTENT);
-            hideFooter();
-            showLoginDialog();
+            enterNotLoginState();
+            ((MainFrameActivity) getActivity()).showLoginDialog();
         }
+    }
+
+    protected void enterNotLoginState() {
+        setHasOptionsMenu(false);
+        getActivity().invalidateOptionsMenu();
+
+        mInloading = false;
+        swipeLayout.setRefreshing(false);
+        hideFooter();
+        mThreadBeans.clear();
+        mThreadListAdapter.notifyDataSetChanged();
+        mLoadingView.setState(ContentLoadingView.NOT_LOGIN);
     }
 
     @SuppressWarnings("unused")

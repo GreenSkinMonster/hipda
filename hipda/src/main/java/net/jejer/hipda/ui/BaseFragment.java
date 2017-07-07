@@ -36,7 +36,6 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
-import net.jejer.hipda.ui.widget.LoginDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
@@ -225,16 +224,6 @@ public abstract class BaseFragment extends Fragment {
         });
 
         theButton.setEnabled(false);
-    }
-
-    protected void showLoginDialog() {
-        if (isAdded()) {
-            LoginDialog dialog = LoginDialog.getInstance(getActivity());
-            if (dialog != null) {
-                dialog.setTitle("用户登录");
-                dialog.show();
-            }
-        }
     }
 
     public boolean onBackPressed() {

@@ -387,8 +387,9 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
         @Override
         public void onFailRelogin(SimpleListEvent event) {
-            mLoadingView.setState(ContentLoadingView.ERROR);
-            showLoginDialog();
+            mSmsBeans.clear();
+            mSmsAdapter.notifyDataSetChanged();
+            mLoadingView.setState(ContentLoadingView.NOT_LOGIN);
         }
     }
 

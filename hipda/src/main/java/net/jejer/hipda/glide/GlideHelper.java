@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.ImageView;
@@ -26,6 +25,7 @@ import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,7 +40,7 @@ public class GlideHelper {
 
     private static Drawable DEFAULT_USER_ICON;
     public static File SYSTEM_AVATAR_FILE;
-    static File DEFAULT_AVATAR_FILE;
+    public static File DEFAULT_AVATAR_FILE;
 
     final static long AVATAR_CACHE_MILLS = 3 * 24 * 60 * 60 * 1000;
     final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
@@ -116,11 +116,8 @@ public class GlideHelper {
     }
 
     public static boolean isOkToLoad(Context activity) {
-        if (activity != null
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
-                && activity instanceof Activity) {
-            if (((Activity) activity).isDestroyed())
-                return false;
+        if (activity instanceof Activity) {
+            return !Utils.isDestroyed((Activity) activity);
         }
         return true;
     }
