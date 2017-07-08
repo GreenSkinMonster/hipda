@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -36,8 +35,6 @@ public class HiApplication extends Application implements Application.ActivityLi
     private static boolean fontSet;
     private static int settingStatus;
     private static boolean mIconChanged;
-
-    private Toast mToast;
 
     @Override
     public void onCreate() {
@@ -113,41 +110,32 @@ public class HiApplication extends Application implements Application.ActivityLi
         mIconChanged = iconChanged;
     }
 
-    /**
-     * Manages the state of opened vs closed activities, should be 0 or 1.
-     * It will be 2 if this value is checked between activity B onStart() and
-     * activity A onStop().
-     * It could be greater if the top activities are not fullscreen or have
-     * transparent backgrounds.
-     */
     private static int visibleActivityCount = 0;
-
-    /**
-     * Manages the state of opened vs closed activities, should be 0 or 1
-     * because only one can be in foreground at a time. It will be 2 if this
-     * value is checked between activity B onResume() and activity A onPause().
-     */
     private static int foregroundActivityCount = 0;
+    private static int mainActivityCount = 0;
 
-    /**
-     * Returns true if app has foreground
-     */
     public static boolean isAppInForeground() {
         return foregroundActivityCount > 0;
     }
 
-    /**
-     * Returns true if any activity of app is visible (or device is sleep when
-     * an activity was visible)
-     */
     public static boolean isAppVisible() {
         return visibleActivityCount > 0;
     }
 
+    public static int getMainActivityCount() {
+        return mainActivityCount;
+    }
+
     public void onActivityCreated(Activity activity, Bundle bundle) {
+        if (activity instanceof MainFrameActivity) {
+            mainActivityCount++;
+        }
     }
 
     public void onActivityDestroyed(Activity activity) {
+        if (activity instanceof MainFrameActivity) {
+            mainActivityCount--;
+        }
     }
 
     public void onActivityResumed(Activity activity) {

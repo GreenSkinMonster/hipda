@@ -93,12 +93,19 @@ public class MainFrameActivity extends BaseActivity {
     private Drawer mDrawer;
     private AccountHeader mAccountHeader;
 
-    private NetworkStateReceiver mNetworkReceiver = new NetworkStateReceiver();
+    private NetworkStateReceiver mNetworkReceiver;
     private LoginDialog mLoginDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //hack, to avoid MainFrameActivity be created more than once
+        if (HiApplication.getMainActivityCount() > 1) {
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main_frame);
         mRootView = findViewById(R.id.main_activity_root_view);
         mMainFrameContainer = findViewById(R.id.main_frame_container);
@@ -123,6 +130,7 @@ public class MainFrameActivity extends BaseActivity {
 
         updateFabGravity();
 
+        mNetworkReceiver = new NetworkStateReceiver();
         registerReceiver(mNetworkReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
@@ -387,8 +395,9 @@ public class MainFrameActivity extends BaseActivity {
 
     @Override
     public void onDestroy() {
+        if (mNetworkReceiver != null)
+            unregisterReceiver(mNetworkReceiver);
         EventBus.getDefault().unregister(this);
-        unregisterReceiver(mNetworkReceiver);
         dismissLoginDialog();
         super.onDestroy();
     }
