@@ -101,11 +101,6 @@ public class HiSettingsHelper {
     public static final String THEME_DARK = "dark";
     public static final String THEME_BLACK = "black";
 
-    public static final int MAX_FONT_ADJ_SIZE = 8;
-    public static final int MIN_FONT_ADJ_SIZE = -3;
-    public static final int MAX_LS_ADJ_SIZE = 3;
-    public static final int MIN_LS_ADJ_SIZE = 0;
-
     private Context mCtx;
     private SharedPreferences mSharedPref;
 

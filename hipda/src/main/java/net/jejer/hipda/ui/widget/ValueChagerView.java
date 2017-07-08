@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -18,42 +19,43 @@ public class ValueChagerView extends RelativeLayout {
     private Button mBtnPlus;
     private Button mBtnMinus;
     private TextView mTvValue;
-    private TextView mTvTitle;
 
     private int mMinValue;
     private int mMaxValue;
     private int mCurrentValue;
-    private String mTitle;
 
     private OnChangeListener mOnChangeListener;
 
     public ValueChagerView(Context context) {
         super(context);
-        init();
+        init(context, null);
     }
 
     public ValueChagerView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context, attrs);
     }
 
     public ValueChagerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context, attrs);
     }
 
-    public ValueChagerView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
+    private void init(Context context, AttributeSet attrs) {
 
-    private void init() {
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ValueChagerView);
+        String title = a.getString(R.styleable.ValueChagerView_title);
+        mMinValue = a.getInt(R.styleable.ValueChagerView_minValue, 0);
+        mMaxValue = a.getInt(R.styleable.ValueChagerView_maxValue, 0);
+        a.recycle();
+
         inflate(getContext(), R.layout.vw_value_changer, this);
         mBtnPlus = (Button) findViewById(R.id.btn_plus);
         mBtnMinus = (Button) findViewById(R.id.btn_minus);
         mTvValue = (TextView) findViewById(R.id.tv_value);
-        mTvTitle = (TextView) findViewById(R.id.tv_title);
+        TextView tvTitle = (TextView) findViewById(R.id.tv_title);
 
+        tvTitle.setText(title);
         updateViews();
 
         mBtnPlus.setOnClickListener(new View.OnClickListener() {
@@ -90,14 +92,8 @@ public class ValueChagerView extends RelativeLayout {
         mBtnMinus.setEnabled(mCurrentValue > mMinValue);
     }
 
-    public void setTitle(int resId) {
-        mTvTitle.setText(resId);
-    }
-
-    public void setValues(int currentValue, int minValue, int maxValue) {
+    public void setCurrentValue(int currentValue) {
         mCurrentValue = currentValue;
-        mMaxValue = maxValue;
-        mMinValue = minValue;
         updateViews();
     }
 

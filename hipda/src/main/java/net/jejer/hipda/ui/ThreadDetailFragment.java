@@ -1019,12 +1019,7 @@ public class ThreadDetailFragment extends BaseFragment {
         final ValueChagerView valueChangerSize = (ValueChagerView) view.findViewById(R.id.value_changer_size);
         final ValueChagerView valueChangerLs = (ValueChagerView) view.findViewById(R.id.value_changer_ls);
 
-        valueChangerSize.setTitle(R.string.title_post_text_size_adjust);
-        valueChangerSize.setValues(
-                HiSettingsHelper.getInstance().getPostTextSizeAdj(),
-                HiSettingsHelper.MIN_FONT_ADJ_SIZE,
-                HiSettingsHelper.MAX_FONT_ADJ_SIZE
-        );
+        valueChangerSize.setCurrentValue(HiSettingsHelper.getInstance().getPostTextSizeAdj());
         valueChangerSize.setOnChangeListener(new ValueChagerView.OnChangeListener() {
             @Override
             public void onChange(int currentValue) {
@@ -1034,12 +1029,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
 
-        valueChangerLs.setTitle(R.string.title_post_line_spacing);
-        valueChangerLs.setValues(
-                HiSettingsHelper.getInstance().getPostLineSpacing(),
-                HiSettingsHelper.MIN_LS_ADJ_SIZE,
-                HiSettingsHelper.MAX_LS_ADJ_SIZE
-        );
+        valueChangerLs.setCurrentValue(HiSettingsHelper.getInstance().getPostLineSpacing());
         valueChangerLs.setOnChangeListener(new ValueChagerView.OnChangeListener() {
             @Override
             public void onChange(int currentValue) {

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <attr name="list_item_background" format="color" />
-    <attr name="list_item_divider" format="color" />
-    <attr name="swipe_color" format="color" />
-    <attr name="swipe_background" format="color" />
+    <attr name="list_item_background" format="color"/>
+    <attr name="list_item_divider" format="color"/>
+    <attr name="swipe_color" format="color"/>
+    <attr name="swipe_background" format="color"/>
     <attr name="dialog_background" format="color"/>
 
-    <attr name="action_mode_text_color" format="color" />
+    <attr name="action_mode_text_color" format="color"/>
     <attr name="fab_background_tint" format="color"/>
 
-    <attr name="actionBarMargin" format="dimension" />
+    <attr name="actionBarMargin" format="dimension"/>
 
     <declare-styleable name="SwipeBackLayout">
         <attr name="edge_size" format="dimension"/>
@@ -26,5 +26,12 @@
     </declare-styleable>
 
     <attr name="SwipeBackLayoutStyle" format="reference"/>
+
+    <declare-styleable name="ValueChagerView">
+        <attr name="title" format="string"/>
+        <attr name="maxValue" format="integer"/>
+        <attr name="minValue" format="integer"/>
+        <attr name="currentValue" format="integer"/>
+    </declare-styleable>
 
 </resources>

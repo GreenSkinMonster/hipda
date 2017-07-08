@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="?attr/dialog_background"
@@ -34,6 +35,9 @@
     <net.jejer.hipda.ui.widget.ValueChagerView
         android:id="@+id/value_changer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:maxValue="8"
+        app:minValue="-3"
+        app:title="@string/title_text_size_adjust"/>
 
 </LinearLayout>

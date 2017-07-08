@@ -404,11 +404,7 @@ public class ThreadListFragment extends BaseFragment
         final Switch sShowPostType = (Switch) view.findViewById(R.id.sw_show_post_type);
         final ValueChagerView valueChagerView = (ValueChagerView) view.findViewById(R.id.value_changer);
 
-        valueChagerView.setTitle(R.string.title_text_size_adjust);
-        valueChagerView.setValues(
-                HiSettingsHelper.getInstance().getTitleTextSizeAdj(),
-                HiSettingsHelper.MIN_FONT_ADJ_SIZE,
-                HiSettingsHelper.MAX_FONT_ADJ_SIZE);
+        valueChagerView.setCurrentValue(HiSettingsHelper.getInstance().getTitleTextSizeAdj());
 
         final BottomSheetDialog dialog = new BottomDialog(getActivity());
 
