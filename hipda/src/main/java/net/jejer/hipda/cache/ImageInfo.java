@@ -165,7 +165,7 @@ public class ImageInfo {
                 displayHeight = scaledHeight;
             }
             //at last, limit ImageView height for gif or very long images
-            float maxHeightScale = !isLongImage() ? 0.75f : 2f;
+            float maxHeightScale = isGif() ? 0.75f : 2f;
             if (displayHeight > maxHeightScale * Utils.getScreenHeight()) {
                 displayHeight = Math.round(maxHeightScale * Utils.getScreenHeight());
             }
