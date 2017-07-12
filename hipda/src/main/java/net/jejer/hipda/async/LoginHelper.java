@@ -88,7 +88,7 @@ public class LoginHelper {
             params.put("referer", HiUtils.BaseUrl + "index.php");
             params.put("loginfield", "username");
             params.put("username", HiSettingsHelper.getInstance().getUsername());
-            params.put("password", Utils.md5(HiSettingsHelper.getInstance().getPassword()));
+            params.put("password", processedPassword());
             params.put("questionid", HiSettingsHelper.getInstance().getSecQuestion());
             params.put("answer", HiSettingsHelper.getInstance().getSecAnswer());
             params.put("cookietime", "2592000");
@@ -138,6 +138,17 @@ public class LoginHelper {
 
     public String getErrorMsg() {
         return mErrorMsg;
+    }
+
+    private String processedPassword() {
+        String pass = HiSettingsHelper.getInstance().getPassword();
+        try {
+            return Utils.md5(pass.replace("\\", "\\\\")
+                    .replace("'", "\'")
+                    .replace("\"", "\\\""));
+        } catch (Exception e) {
+            return pass;
+        }
     }
 
 }
