@@ -117,15 +117,16 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
                     if (result.contains("<"))
                         result = result.substring(0, result.indexOf("<"));
                 }
-                if (!TextUtils.isEmpty(result))
+                if (!TextUtils.isEmpty(result)) {
                     mResult = result;
-                else
+                } else {
                     mResult = "短消息发送失败.";
+                }
             } else {
                 mResult = "短消息发送成功.";
                 mStatus = Constants.STATUS_SUCCESS;
+                LAST_SMS_TIME = System.currentTimeMillis();
             }
-            LAST_SMS_TIME = System.currentTimeMillis();
         } catch (Exception e) {
             Logger.e(e);
             mResult = "短消息发送失败 :  " + getErrorMessage(e);
