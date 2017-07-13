@@ -22,6 +22,8 @@ import net.jejer.hipda.utils.UIUtils;
 
 public class ThreadDetailActivity extends SwipeBaseActivity {
 
+    private View mQuickReply;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +32,7 @@ public class ThreadDetailActivity extends SwipeBaseActivity {
         mRootView = findViewById(R.id.main_activity_root_view);
         mMainFrameContainer = findViewById(R.id.main_frame_container);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
+        mQuickReply = findViewById(R.id.quick_reply);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -82,6 +85,10 @@ public class ThreadDetailActivity extends SwipeBaseActivity {
             mainFabParams.setBehavior(null);
             mMainFab.show();
         }
+    }
+
+    public View getQuickReplyView() {
+        return mQuickReply;
     }
 
 }

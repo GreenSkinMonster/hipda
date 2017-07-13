@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?list_item_background"
-        app:layout_behavior="net.jejer.hipda.ui.widget.FixScrollingFooterBehavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_main"
@@ -25,5 +25,61 @@
         app:layout_anchor="@id/main_frame_container"
         app:layout_anchorGravity="bottom|right|end"
         app:layout_behavior="net.jejer.hipda.ui.widget.FABHideOnScrollBehavior"/>
+
+    <RelativeLayout
+        android:id="@+id/quick_reply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="?list_item_background"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:layout_anchor="@id/main_frame_container"
+        app:layout_anchorGravity="bottom">
+
+        <View
+            android:id="@+id/border_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/background_grey"/>
+
+        <ImageButton
+            android:id="@+id/ib_goto_post"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignBottom="@+id/tv_reply_text"
+            android:layout_alignParentLeft="true"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/action_reply"/>
+
+        <com.vanniktech.emoji.EmojiEditText
+            android:id="@+id/tv_reply_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/countdown_button"
+            android:layout_toRightOf="@+id/ib_goto_post"
+            android:background="@android:color/transparent"
+            android:gravity="bottom"
+            android:hint="@string/action_quick_reply"
+            android:inputType="textMultiLine"
+            android:maxLines="6"
+            android:minHeight="48dp"
+            android:minLines="1"
+            android:padding="12dp"
+            android:scrollHorizontally="false"
+            android:scrollbars="vertical"
+            android:text=""
+            app:emojiSize="26sp"/>
+
+        <net.jejer.hipda.ui.widget.CountdownButton
+            android:id="@+id/countdown_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignBottom="@+id/tv_reply_text"
+            android:layout_alignParentRight="true"
+            android:padding="8dp"/>
+
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

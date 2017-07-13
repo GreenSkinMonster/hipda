@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -23,6 +24,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
@@ -358,6 +360,13 @@ public class UIUtils {
 
     public static void toast(String text) {
         Toast.makeText(HiApplication.getAppContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
+    public static int getRelativeTop(View myView, ViewGroup parentView) {
+        Rect offsetViewBounds = new Rect();
+        myView.getDrawingRect(offsetViewBounds);
+        parentView.offsetDescendantRectToMyCoords(myView, offsetViewBounds);
+        return offsetViewBounds.top;
     }
 
 }

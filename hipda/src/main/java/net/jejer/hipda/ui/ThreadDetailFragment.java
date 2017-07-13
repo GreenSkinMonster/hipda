@@ -139,7 +139,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
     private View mQuickReply;
     private EmojiEditText mEtReply;
-    private ImageButton mIbEmojiSwitch;
     private CountdownButton mCountdownButton;
 
     private DetailBean mQuickReplyToPost;
@@ -169,7 +168,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private View.OnLayoutChangeListener mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
         @Override
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            if (top < oldTop - 100) {
+            if (oldTop - top > Utils.dpToPx(getActivity(), 96)) {
                 v.removeOnLayoutChangeListener(this);
                 scrollPostForReply(top);
             }
@@ -278,11 +277,11 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
 
-        mQuickReply = view.findViewById(R.id.quick_reply);
+        mQuickReply = ((ThreadDetailActivity) getActivity()).getQuickReplyView();
         mEtReply = (EmojiEditText) mQuickReply.findViewById(R.id.tv_reply_text);
         mEtReply.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
 
-        mCountdownButton = (CountdownButton) view.findViewById(R.id.countdown_button);
+        mCountdownButton = (CountdownButton) mQuickReply.findViewById(R.id.countdown_button);
         mCountdownButton.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
         mCountdownButton.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -323,8 +322,8 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
 
-        mIbEmojiSwitch = (ImageButton) mQuickReply.findViewById(R.id.ib_goto_post);
-        setUpEmojiPopup(mEtReply, mIbEmojiSwitch);
+        ImageButton ibEmojiSwitch = (ImageButton) mQuickReply.findViewById(R.id.ib_goto_post);
+        setUpEmojiPopup(mEtReply, ibEmojiSwitch);
 
         setActionBarTitle((mCurrentPage > 0 && mMaxPage > 0 ? "(" + mCurrentPage + "/" + mMaxPage + ") " : "")
                 + mTitle);
@@ -971,7 +970,8 @@ public class ThreadDetailFragment extends BaseFragment {
             if (pos != -1) {
                 View view = mLayoutManager.findViewByPosition(pos);
                 if (view != null) {
-                    mPostViewTop = view.getTop();
+                    View rootView = ((ThreadDetailActivity) getActivity()).getRootView();
+                    mPostViewTop = UIUtils.getRelativeTop(view, (ViewGroup) rootView);
                     mPostViewHeight = view.getHeight();
                 }
             }
@@ -1132,6 +1132,7 @@ public class ThreadDetailFragment extends BaseFragment {
             mDetailAdapter.setDatas(mDetailBeans);
 
             int position = -1;
+            final boolean toBottom = (mGotoFloor == LAST_FLOOR);
             if (mGotoFloor == LAST_FLOOR) {
                 position = mDetailAdapter.getItemCount() - 1 - mDetailAdapter.getFooterCount();
             } else if (mGotoFloor == FIRST_FLOOR) {
@@ -1161,9 +1162,18 @@ public class ThreadDetailFragment extends BaseFragment {
                 mRecyclerView.setFooterState(XFooterView.STATE_READY);
             }
 
-            if (position >= 0) {
-                mRecyclerView.scrollToPosition(position);
-            }
+            final int fpos = position;
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (toBottom) {
+                        mRecyclerView.scrollToBottom();
+                    } else if (fpos >= 0) {
+                        mRecyclerView.scrollToPosition(fpos);
+                    }
+                }
+            });
+
             if (mPendingBlinkFloor > 0) {
                 int pos = mDetailAdapter.getPositionByFloor(mPendingBlinkFloor);
                 DetailBean detailBean = mDetailAdapter.getItem(pos);
@@ -1300,7 +1310,7 @@ public class ThreadDetailFragment extends BaseFragment {
         return hideQuickReply(true);
     }
 
-    private void scrollPostForReply(int newTop) {
+    private void scrollPostForReply(final int newTop) {
         if (mPendingScrollPostId != null && mQuickReplyToPost != null) {
             int pos = mDetailAdapter.getPositionByPostId(mPendingScrollPostId);
             mPendingScrollPostId = null;
@@ -1308,11 +1318,13 @@ public class ThreadDetailFragment extends BaseFragment {
                 View v = mLayoutManager.getChildAt(0);
                 TextView tv = (TextView) v.findViewById(R.id.floor);
                 if (tv == null || Utils.parseInt(tv.getText().toString()) != mQuickReplyToPost.getFloor()) {
+                    //minus height of quick reply view
                     int replyTop = newTop - 30;
                     View view = mLayoutManager.findViewByPosition(pos);
                     if (view != null) {
                         //post view is visable
-                        int postTop = view.getTop();
+                        View rootView = ((ThreadDetailActivity) getActivity()).getRootView();
+                        int postTop = UIUtils.getRelativeTop(view, (ViewGroup) rootView);
                         int scroll = postTop - replyTop + view.getHeight();
                         if (scroll > 0)
                             mRecyclerView.smoothScrollBy(0, scroll);
