@@ -100,6 +100,7 @@ public class HiSettingsHelper {
     public static final String THEME_LIGHT = "light";
     public static final String THEME_DARK = "dark";
     public static final String THEME_BLACK = "black";
+    public static final int MAX_TAIL_TEXT_LENGTH = 12;
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
@@ -455,7 +456,7 @@ public class HiSettingsHelper {
     }
 
     public boolean isAddTail() {
-        return mAddTail;
+        return mAddTail && Utils.getWordCount(mTailText) <= MAX_TAIL_TEXT_LENGTH;
     }
 
     public boolean isAddTailFromPref() {

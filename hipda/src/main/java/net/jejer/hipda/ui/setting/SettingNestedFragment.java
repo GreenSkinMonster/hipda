@@ -61,12 +61,26 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 setActionBarTitle(R.string.pref_category_forum);
                 addPreferencesFromResource(R.xml.pref_forum);
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FREQ_MENUS));
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TAILTEXT));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TAILURL));
 
                 Preference forumsPreference = findPreference(HiSettingsHelper.PERF_FORUMS);
                 forumsPreference.setOnPreferenceClickListener(new ForumSelectListener(getActivity()));
                 forumsPreference.setSummary(HiUtils.getForumsSummary());
+
+                final Preference tailTextPreference = findPreference(HiSettingsHelper.PERF_TAILTEXT);
+                tailTextPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        String text = Utils.nullToText((String) newValue);
+                        if (Utils.getWordCount(text) > HiSettingsHelper.MAX_TAIL_TEXT_LENGTH) {
+                            UIUtils.toast("小尾巴文字限制最长 " + HiSettingsHelper.MAX_TAIL_TEXT_LENGTH + " 字符，中文视为 2 个字符");
+                            return false;
+                        }
+                        preference.setSummary(text);
+                        return true;
+                    }
+                });
+                tailTextPreference.setSummary(HiSettingsHelper.getInstance().getTailText());
 
                 break;
 
