@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -438,6 +439,32 @@ public class MainFrameActivity extends BaseActivity {
         }
 
         finishWithDefault();
+    }
+
+    private float mStartX;
+    private float mStartY;
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        int action = ev.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mStartX = ev.getX();
+                mStartY = ev.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                float deltaX = ev.getX() - mStartX;
+                float deltaY = Math.abs(ev.getY() - mStartY);
+
+                float sensitivity = 20;
+                if (deltaX >= sensitivity && deltaY < 0.5 * deltaX) {
+                    if (!mDrawer.isDrawerOpen()) {
+                        mDrawer.openDrawer();
+                    }
+                }
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener {
