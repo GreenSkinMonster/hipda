@@ -76,7 +76,7 @@ public class ThreadBean {
     public boolean setAuthor(String mAuthor) {
         this.mAuthor = mAuthor;
 
-        return !HiSettingsHelper.getInstance().isUserBlack(mAuthor);
+        return !HiSettingsHelper.getInstance().isInBlacklist(mAuthor);
     }
 
 

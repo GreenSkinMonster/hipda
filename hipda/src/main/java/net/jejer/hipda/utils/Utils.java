@@ -101,6 +101,10 @@ public class Utils {
         return time;
     }
 
+    public static String shortyTime(Date date) {
+        return Utils.shortyTime(Utils.formatDate(date, "yyyy-M-d HH:mm"));
+    }
+
     /**
      * return parsable html for TextViewWithEmoticon
      */
@@ -432,18 +436,21 @@ public class Utils {
     }
 
     public static String getMiddleString(String source, String start, String end) {
-        int start_idx = source.indexOf(start) + start.length();
-        int end_idx = 0;
-        if (end.isEmpty()) {
+        int start_idx = source.indexOf(start);
+        if (start_idx == -1)
+            return "";
+        start_idx += start.length();
+        int end_idx;
+        if (TextUtils.isEmpty(end)) {
             end_idx = source.length();
         } else {
             end_idx = source.indexOf(end, start_idx);
-            if (end_idx <= 0) {
+            if (end_idx == -1) {
                 end_idx = source.length();
             }
         }
 
-        if (start_idx <= 0 || end_idx <= 0 || end_idx <= start_idx) {
+        if (end_idx == -1 || end_idx <= start_idx) {
             return "";
         }
         return source.substring(start_idx, end_idx);

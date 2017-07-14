@@ -173,7 +173,7 @@ public class DetailBean {
     public boolean setAuthor(String mAuthor) {
         this.mAuthor = mAuthor;
 
-        return !HiSettingsHelper.getInstance().isUserBlack(mAuthor);
+        return !HiSettingsHelper.getInstance().isInBlacklist(mAuthor);
     }
 
     public String getUid() {

@@ -64,6 +64,9 @@ public class HiUtils {
     public static String FavoriteDeleteUrl;
     public static String UserInfoUrl;
     public static String UserWarningUrl;
+    public static String AddBlackUrl;
+    public static String DelBlackUrl;
+    public static String ViewBlackUrl;
 
     public static String LoginSubmit;
     public static String LoginGetFormHash;
@@ -153,6 +156,9 @@ public class HiUtils {
         FavoriteDeleteUrl = BaseUrl + "my.php?item={item}&type=thread";
         UserInfoUrl = BaseUrl + "space.php?uid=";
         UserWarningUrl = BaseUrl + "misc.php?action=viewwarning&tid={tid}&uid={uid}";
+        AddBlackUrl = BaseUrl + "pm.php?action=addblack";
+        DelBlackUrl = BaseUrl + "pm.php?action=delblack";
+        ViewBlackUrl = BaseUrl + "pm.php?action=viewblack";
 
         LoginSubmit = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
         LoginGetFormHash = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";

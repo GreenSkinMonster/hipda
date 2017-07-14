@@ -18,6 +18,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+
 
 public class LoginHelper {
 
@@ -134,6 +136,7 @@ public class LoginHelper {
     public static void logout() {
         OkHttpHelper.getInstance().clearCookies();
         FavoriteHelper.getInstance().clearAll();
+        HiSettingsHelper.getInstance().setBlacklists(new ArrayList<String>());
     }
 
     public String getErrorMsg() {

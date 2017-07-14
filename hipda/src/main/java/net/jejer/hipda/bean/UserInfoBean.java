@@ -7,6 +7,7 @@ public class UserInfoBean {
     private String mUsername;
     private String mUid;
     private boolean mOnline;
+    private String mFormhash;
 
     public UserInfoBean() {
     }
@@ -49,5 +50,13 @@ public class UserInfoBean {
 
     public void setOnline(boolean online) {
         this.mOnline = online;
+    }
+
+    public String getFormhash() {
+        return mFormhash;
+    }
+
+    public void setFormhash(String formhash) {
+        mFormhash = formhash;
     }
 }

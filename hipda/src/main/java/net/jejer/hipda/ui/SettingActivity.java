@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.ui.setting.AboutFragment;
+import net.jejer.hipda.ui.setting.BlacklistFragment;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.ui.setting.SettingNestedFragment;
 import net.jejer.hipda.utils.UIUtils;
@@ -42,6 +44,11 @@ public class SettingActivity extends SwipeBaseActivity {
                         .add(R.id.main_frame_container, fragment).commit();
             } else if (arguments.containsKey(AboutFragment.TAG_KEY)) {
                 AboutFragment fragment = new AboutFragment();
+                fragment.setArguments(arguments);
+                fragmentManager.beginTransaction()
+                        .add(R.id.main_frame_container, fragment).commit();
+            } else if (arguments.containsKey(BlacklistFragment.TAG_KEY)) {
+                BlacklistFragment fragment = new BlacklistFragment();
                 fragment.setArguments(arguments);
                 fragmentManager.beginTransaction()
                         .add(R.id.main_frame_container, fragment).commit();

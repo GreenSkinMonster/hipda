@@ -15,6 +15,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HiParser {
 
     public static SimpleListBean parseSimpleList(Context ctx, int type, Document doc) {
@@ -750,6 +753,17 @@ public class HiParser {
             info.setAvatarUrl(avatarES.first().attr("src"));
         }
 
+        Elements logoutUrls = doc.select("div#umenu a");
+        if (logoutUrls.size() > 0) {
+            for (Element url : logoutUrls) {
+                String formhash = Utils.getMiddleString(url.attr("href"), "formhash=", "&");
+                if (!TextUtils.isEmpty(formhash)) {
+                    info.setFormhash(formhash);
+                    break;
+                }
+            }
+        }
+
         StringBuilder sb = new StringBuilder();
 
         Elements titleES = doc.select("h3.blocktitle");
@@ -779,5 +793,33 @@ public class HiParser {
         if (inputs.size() > 0)
             return inputs.get(0).val();
         return null;
+    }
+
+    public static String parseErrorMessage(Document doc) {
+        Elements errors = doc.select("div.alert_error");
+        if (errors.size() > 0) {
+            Element el = errors.first();
+            el.select("a").remove();
+            return el.text();
+        }
+        return null;
+    }
+
+    public static List<String> parseBlacklist(Document doc) throws Exception {
+        List<String> blacklists = new ArrayList<>();
+        Elements divs = doc.select("div.blacklist");
+        if (divs.size() > 0) {
+            Elements elements = doc.select("ul.commonlist a");
+            for (Element el : elements) {
+                String spaceUrl = el.attr("href");
+                if (spaceUrl.contains("space.php")) {
+                    String username = Utils.getMiddleString(spaceUrl, "username=", "&");
+                    if (!blacklists.contains(username))
+                        blacklists.add(username);
+                }
+            }
+            return blacklists;
+        }
+        throw new Exception("页面解析错误");
     }
 }

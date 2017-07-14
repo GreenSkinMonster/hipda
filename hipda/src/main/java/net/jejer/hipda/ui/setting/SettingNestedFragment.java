@@ -9,6 +9,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 
@@ -17,11 +19,14 @@ import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.ui.SettingActivity;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
+
+import java.util.Date;
 
 /**
  * nested setting fragment
@@ -40,6 +45,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
     public static final String TAG_KEY = "SCREEN_KEY";
     private HiProgressDialog mProgressDialog;
     private Preference ringtonePreference;
+    private Preference mBlackListPreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,17 @@ public class SettingNestedFragment extends BaseSettingFragment {
     public void onStop() {
         super.onStop();
         UIUtils.getSaveFolder();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mBlackListPreference != null) {
+            Date bSyncDate = HiSettingsHelper.getInstance().getBlacklistSyncTime();
+            mBlackListPreference.setSummary(
+                    "黑名单用户 : " + HiSettingsHelper.getInstance().getBlacklists().size() + "，上次同步 : "
+                            + (bSyncDate == null ? " - " : Utils.shortyTime(bSyncDate)));
+        }
     }
 
     private void checkPreferenceResource() {
@@ -81,6 +98,17 @@ public class SettingNestedFragment extends BaseSettingFragment {
                     }
                 });
                 tailTextPreference.setSummary(HiSettingsHelper.getInstance().getTailText());
+
+                mBlackListPreference = findPreference(HiSettingsHelper.PERF_BLACKLIST);
+                mBlackListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        Intent intent = new Intent(getActivity(), SettingActivity.class);
+                        intent.putExtra(BlacklistFragment.TAG_KEY, BlacklistFragment.TAG_KEY);
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(getActivity(), R.anim.slide_in_right, 0);
+                        ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+                        return true;
+                    }
+                });
 
                 break;
 

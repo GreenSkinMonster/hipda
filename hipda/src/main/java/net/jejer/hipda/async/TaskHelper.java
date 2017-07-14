@@ -51,6 +51,12 @@ public class TaskHelper {
             HiSettingsHelper.getInstance()
                     .setStringValue(HiSettingsHelper.PERF_LAST_TASK_TIME, System.currentTimeMillis() + "");
         }
+        Date bSyncDate = HiSettingsHelper.getInstance().getBlacklistSyncTime();
+        if (OkHttpHelper.getInstance().isLoggedIn()
+                && (force || bSyncDate == null
+                || System.currentTimeMillis() > bSyncDate.getTime() + 24 * 60 * 60 * 1000)) {
+            BlacklistHelper.syncBlacklists();
+        }
     }
 
     public static void updateImageHost() {

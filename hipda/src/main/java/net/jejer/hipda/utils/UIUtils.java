@@ -369,4 +369,10 @@ public class UIUtils {
         return offsetViewBounds.top;
     }
 
+    public static void copyToClipboard(String text) {
+        ClipboardManager clipboard = (ClipboardManager) HiApplication.getAppContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", text);
+        clipboard.setPrimaryClip(clip);
+    }
+
 }

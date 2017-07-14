@@ -55,7 +55,7 @@ public class HiSettingsHelper {
     public static final String PERF_FORUMS = "PERF_FORUMS2";
     public static final String PERF_FREQ_MENUS = "PERF_FREQ_MENUS";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
-    public static final String PERF_BLANKLIST_USERNAMES = "PERF_BLANKLIST_USERNAMES";
+    public static final String PERF_OLD_BLACKLIST = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
     public static final String PERF_TEXTSIZE_TITLE_ADJ = "PERF_TEXTSIZE_TITLE_ADJ";
     public static final String PERF_SCREEN_ORIENTATION = "PERF_SCREEN_ORIENTATION";
@@ -96,6 +96,8 @@ public class HiSettingsHelper {
     public static final String PERF_SHOW_TAIL = "PERF_SHOW_TAIL";
     public static final String PERF_CAMERA_PERM_ASKED = "PERF_CAMERA_PERM_ASKED";
     public static final String PERF_SWIPE_COMPAT_MODE = "PERF_SWIPE_COMPAT_MODE";
+    public static final String PERF_BLACKLIST = "PERF_BLACKLIST";
+    public static final String PERF_BLACKLIST_SYNC_TIME = "PERF_BLACKLIST_SYNC_TIME";
 
     public static final String THEME_LIGHT = "light";
     public static final String THEME_DARK = "dark";
@@ -134,7 +136,8 @@ public class HiSettingsHelper {
 
     private boolean mEncodeUtf8 = false;
 
-    private ArrayList<String> mBlanklistUsernames;
+    private List<String> mOldBlacklists;
+    private List<String> mBlacklists;
 
     private int mPostTextSizeAdj = 0;
     private int mPostLineSpacing = 0;
@@ -258,7 +261,6 @@ public class HiSettingsHelper {
         isNavBarColoredFromPref();
         getFontFromPref();
         isEncodeUtf8FromPref();
-        getBlanklistUsernamesFromPref();
         getPostTextSizeAdjFromPref();
         getTitleTextSizeAdjFromPref();
         getScreenOrietationFromPref();
@@ -275,6 +277,8 @@ public class HiSettingsHelper {
         getBSTypeIdFromPref();
         getForumServerFromPref();
         getImageHostFromPref();
+        getOldBlacklistsFromPref();
+        getBlacklistsFromPref();
 
         mImageAutoLoadSize = -1;
         updateMobileNetworkStatus(mCtx);
@@ -749,45 +753,80 @@ public class HiSettingsHelper {
         return mNotiRepeatMinutes;
     }
 
-    public ArrayList<String> getBlanklistUsernames() {
-        if (mBlanklistUsernames != null)
-            mBlanklistUsernames = new ArrayList<>();
-        return mBlanklistUsernames;
+    public List<String> getOldBlacklists() {
+        return mOldBlacklists;
     }
 
-    private List<String> getBlanklistUsernamesFromPref() {
-        String[] usernames = mSharedPref.getString(PERF_BLANKLIST_USERNAMES, "").split("\n");
-        mBlanklistUsernames = new ArrayList<>();
-        for (String username : usernames) {
-            if (!TextUtils.isEmpty(username) && !mBlanklistUsernames.contains(username))
-                mBlanklistUsernames.add(username);
-        }
-        return mBlanklistUsernames;
-    }
-
-    public void setBlanklistUsernames(ArrayList<String> blanklistUsernames) {
-        mBlanklistUsernames = blanklistUsernames;
+    public void setOldBlacklists(List<String> blacklists) {
+        mOldBlacklists = blacklists;
         StringBuilder sb = new StringBuilder();
-        for (String username : blanklistUsernames) {
-            username = Utils.nullToText(username);
-            if (username.length() > 0) {
+        for (String username : blacklists) {
+            if (!TextUtils.isEmpty(username)) {
                 if (sb.length() > 0)
                     sb.append("\n");
                 sb.append(username);
             }
         }
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_BLANKLIST_USERNAMES, sb.toString()).apply();
+        editor.putString(PERF_OLD_BLACKLIST, sb.toString()).apply();
     }
 
-    public boolean isUserBlack(String username) {
-        return mBlanklistUsernames.contains(username);
+    private List<String> getOldBlacklistsFromPref() {
+        String[] usernames = mSharedPref.getString(PERF_OLD_BLACKLIST, "").split("\n");
+        mOldBlacklists = new ArrayList<>();
+        for (String username : usernames) {
+            if (!TextUtils.isEmpty(username) && !mOldBlacklists.contains(username))
+                mOldBlacklists.add(username);
+        }
+        return mOldBlacklists;
+    }
+
+    public List<String> getBlacklists() {
+        if (mBlacklists == null)
+            mBlacklists = new ArrayList<>();
+        return mBlacklists;
+    }
+
+    private List<String> getBlacklistsFromPref() {
+        String[] usernames = mSharedPref.getString(PERF_BLACKLIST, "").split("\n");
+        mBlacklists = new ArrayList<>();
+        for (String username : usernames) {
+            if (!TextUtils.isEmpty(username) && !mBlacklists.contains(username))
+                mBlacklists.add(username);
+        }
+        return mBlacklists;
+    }
+
+    public void setBlacklists(List<String> blacklists) {
+        mBlacklists = blacklists;
+        StringBuilder sb = new StringBuilder();
+        for (String username : blacklists) {
+            if (!TextUtils.isEmpty(username)) {
+                if (sb.length() > 0)
+                    sb.append("\n");
+                sb.append(username);
+            }
+        }
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_BLACKLIST, sb.toString()).apply();
+    }
+
+    public boolean isInBlacklist(String username) {
+        return mBlacklists.contains(username) || mOldBlacklists.contains(username);
     }
 
     public void addToBlacklist(String username) {
-        if (!TextUtils.isEmpty(username) && !mBlanklistUsernames.contains(username))
-            mBlanklistUsernames.add(username);
-        setBlanklistUsernames(mBlanklistUsernames);
+        if (!TextUtils.isEmpty(username) && !mBlacklists.contains(username)) {
+            mBlacklists.add(username);
+            setBlacklists(mBlacklists);
+        }
+    }
+
+    public void removeFromBlacklist(String username) {
+        if (!TextUtils.isEmpty(username)) {
+            mBlacklists.remove(username);
+            setBlacklists(mBlacklists);
+        }
     }
 
     public int getPostTextSizeAdj() {
@@ -1133,6 +1172,21 @@ public class HiSettingsHelper {
         return getStringValue(
                 HiSettingsHelper.PERF_NOTI_SILENT_END,
                 NotificationMgr.DEFAUL_SLIENT_END);
+    }
+
+    public Date getBlacklistSyncTime() {
+        long millis = getLongValue(PERF_BLACKLIST_SYNC_TIME, 0);
+        if (millis > 0) {
+            try {
+                return new Date(millis);
+            } catch (Exception ignored) {
+            }
+        }
+        return null;
+    }
+
+    public void setBlacklistSyncTime() {
+        setLongValue(PERF_BLACKLIST_SYNC_TIME, System.currentTimeMillis());
     }
 
 }

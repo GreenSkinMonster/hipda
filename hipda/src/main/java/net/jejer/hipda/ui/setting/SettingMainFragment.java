@@ -11,7 +11,6 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.ui.AboutFragment;
 import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.SettingActivity;
@@ -167,14 +166,14 @@ public class SettingMainFragment extends BaseSettingFragment {
         final Preference checkPreference = findPreference(HiSettingsHelper.PERF_LAST_UPDATE_CHECK);
         checkPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                checkPreference.setSummary("上次检查 ：" + Utils.formatDate(new Date()));
+                checkPreference.setSummary("上次检查 ：" + Utils.shortyTime(new Date()));
                 new UpdateHelper(getActivity(), false).check();
                 return true;
             }
         });
         Date lastCheckTime = HiSettingsHelper.getInstance().getLastUpdateCheckTime();
         if (lastCheckTime != null) {
-            checkPreference.setSummary("上次检查 ：" + Utils.formatDate(lastCheckTime));
+            checkPreference.setSummary("上次检查 ：" + Utils.shortyTime(lastCheckTime));
         } else {
             checkPreference.setSummary("上次检查 ：- ");
         }

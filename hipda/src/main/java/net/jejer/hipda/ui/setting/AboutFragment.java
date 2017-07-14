@@ -1,4 +1,4 @@
-package net.jejer.hipda.ui;
+package net.jejer.hipda.ui.setting;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -9,6 +9,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.ui.BaseFragment;
+import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Utils;
 
 /**
@@ -18,11 +20,6 @@ import net.jejer.hipda.utils.Utils;
 public class AboutFragment extends BaseFragment {
 
     public static final String TAG_KEY = "ABOUT_KEY";
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,12 +64,6 @@ public class AboutFragment extends BaseFragment {
 
         setActionBarTitle("关于");
         return view;
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        setActionBarTitle(R.string.title_fragment_settings);
     }
 
     private String getContent(int position) {

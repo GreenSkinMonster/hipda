@@ -20,6 +20,7 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.BlacklistHelper;
 import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
@@ -60,6 +61,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
     private String mUid;
     private String mUsername;
     private String mAvatarUrl;
+    private String mFormhash;
 
     private ImageView mAvatarView;
     private TextView mDetailView;
@@ -226,21 +228,12 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 showSendSmsDialog(mUid, mUsername, this);
                 return true;
             case R.id.action_blacklist:
-                blacklistUser();
+                BlacklistHelper.addBlacklist(mFormhash, mUsername);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
-    }
-
-    private void blacklistUser() {
-        if (!HiSettingsHelper.getInstance().isUserBlack(mUsername)) {
-            HiSettingsHelper.getInstance().addToBlacklist(mUsername);
-            UIUtils.toast("已经将用户 " + mUsername + " 添加到黑名单");
-        } else {
-            UIUtils.toast("用户 " + mUsername + " 已经在黑名单中");
-        }
     }
 
     private class UserInfoCallback implements OkHttpHelper.ResultCallback {
@@ -264,6 +257,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 mDetailView.setText(info.getDetail());
                 mUsername = info.getUsername();
                 mUsernameView.setText(mUsername);
+                mFormhash = info.getFormhash();
                 setActionBarTitle(mUsername);
                 if (info.isOnline()) {
                     mOnlineView.setVisibility(View.VISIBLE);

@@ -43,14 +43,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_blacklist">
-        <EditTextPreference
-            android:inputType="textMultiLine"
-            android:key="PERF_BLANKLIST_USERNAMES"
-            android:maxLines="8"
-            android:scrollbars="vertical"
-            android:selectAllOnFocus="false"
-            android:singleLine="false"
-            android:title="@string/pref_title_blacklist"/>
+        <Preference
+            android:key="PERF_BLACKLIST"
+            android:title="@string/pref_title_blacklist"
+            android:summary="@string/pref_summary_blacklist"
+            android:widgetLayout="@layout/layout_preference"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

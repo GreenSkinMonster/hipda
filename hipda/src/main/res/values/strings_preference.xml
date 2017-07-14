@@ -282,7 +282,8 @@
     <string name="pref_title_fab_left_side">浮动按钮放在左侧</string>
     <string name="pref_title_click_effect">列表触摸效果</string>
     <string name="pref_title_circle_avatar">圆形头像</string>
-    <string name="pref_title_blacklist">黑名单, 每行一个用户名</string>
+    <string name="pref_title_blacklist">黑名单</string>
+    <string name="pref_summary_blacklist">目前黑名单已经与论坛同步</string>
     <string name="pref_title_theme">界面主题</string>
     <string name="pref_title_icon">程序图标</string>
     <string name="pref_title_primary_color">界面主色调</string>

@@ -45,7 +45,7 @@ public class Content {
 
     public String getDesc() {
         return "输入于 "
-                + Utils.shortyTime(Utils.formatDate(new Date(mTime), "yyyy-MM-dd HH:mm"))
+                + Utils.shortyTime(new Date(mTime))
                 + "，共 " + Utils.getWordCount(mContent) + " 字";
     }
 
