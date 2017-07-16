@@ -2,7 +2,7 @@
               xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="@drawable/rounded_corner"
+              android:background="?attr/quote_background"
               android:orientation="vertical">
 
     <RelativeLayout
@@ -40,8 +40,8 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?attr/list_item_divider"/>
+        android:layout_height="1px"
+        android:background="@color/background_silver"/>
 
     <net.jejer.hipda.ui.widget.TextViewWithEmoticon
         android:id="@+id/quote_content"

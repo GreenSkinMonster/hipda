@@ -6,6 +6,7 @@
     <attr name="swipe_color" format="color"/>
     <attr name="swipe_background" format="color"/>
     <attr name="dialog_background" format="color"/>
+    <attr name="quote_background" format="reference"/>
 
     <attr name="action_mode_text_color" format="color"/>
     <attr name="fab_background_tint" format="color"/>

@@ -40,6 +40,7 @@
         <item name="background">@color/day_background</item>
         <item name="list_item_background">#FFFFFF</item>
         <item name="list_item_divider">#F0F0F0</item>
+        <item name="quote_background">@drawable/quote_background_light</item>
         <item name="dialog_background">#FFFFFF</item>
         <item name="emojiBackground">@color/md_grey_200</item>
         <item name="swipe_background">@color/white</item>
@@ -216,6 +217,7 @@
         <item name="background">@color/night_background</item>
         <item name="list_item_background">#1C1D1E</item>
         <item name="list_item_divider">#282828</item>
+        <item name="quote_background">@drawable/quote_background_dark</item>
         <item name="dialog_background">#2B2C2D</item>
         <item name="emojiBackground">@color/md_grey_900</item>
         <item name="swipe_background">@color/md_grey_800</item>
@@ -256,6 +258,7 @@
 
         <item name="list_item_background">@color/black</item>
         <item name="list_item_divider">#252525</item>
+        <item name="quote_background">@drawable/quote_background_black</item>
     </style>
 
     <style name="MyAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
