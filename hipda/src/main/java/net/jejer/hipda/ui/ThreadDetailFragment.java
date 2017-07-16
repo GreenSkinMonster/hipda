@@ -1131,56 +1131,55 @@ public class ThreadDetailFragment extends BaseFragment {
             mDetailBeans = mCache.get(mCurrentPage).getAll();
             mDetailAdapter.setDatas(mDetailBeans);
 
-            int position = -1;
-            final boolean toBottom = (mGotoFloor == LAST_FLOOR);
-            if (mGotoFloor == LAST_FLOOR) {
-                position = mDetailAdapter.getItemCount() - 1 - mDetailAdapter.getFooterCount();
-            } else if (mGotoFloor == FIRST_FLOOR) {
-                position = 0;
-            } else if (mGotoFloor != -1) {
-                position = mDetailAdapter.getPositionByFloor(mGotoFloor);
-            } else if (HiUtils.isValidId(mGotoPostId)) {
-                position = mDetailAdapter.getPositionByPostId(mGotoPostId);
-            }
-
-            mGotoPostId = null;
-            mGotoFloor = -1;
-
             if (mCurrentPage == 1) {
                 mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
-            } else if (position < 8) {
-                prefetchPreviousPage();
+            }
+            if (mCurrentPage == mMaxPage) {
+                mRecyclerView.setFooterState(XFooterView.STATE_END);
             } else {
                 mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
             }
 
-            if (mCurrentPage == mMaxPage) {
-                mRecyclerView.setFooterState(XFooterView.STATE_END);
-            } else if (position > mDetailAdapter.getItemCount() - 8) {
-                prefetchNextPage();
-            } else {
-                mRecyclerView.setFooterState(XFooterView.STATE_READY);
-            }
-
-            final int fpos = position;
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
+                    int position = -1;
+                    final boolean toBottom = (mGotoFloor == LAST_FLOOR);
+                    if (mGotoFloor == LAST_FLOOR) {
+                        position = mDetailAdapter.getItemCount() - 1 - mDetailAdapter.getFooterCount();
+                    } else if (mGotoFloor == FIRST_FLOOR) {
+                        position = 0;
+                    } else if (mGotoFloor != -1) {
+                        position = mDetailAdapter.getPositionByFloor(mGotoFloor);
+                    } else if (HiUtils.isValidId(mGotoPostId)) {
+                        position = mDetailAdapter.getPositionByPostId(mGotoPostId);
+                        blinkItemView(mGotoPostId);
+                    }
+
                     if (toBottom) {
                         mRecyclerView.scrollToBottom();
-                    } else if (fpos >= 0) {
-                        mRecyclerView.scrollToPosition(fpos);
+                    } else if (position >= 0) {
+                        mRecyclerView.scrollToPosition(position);
+                    }
+
+                    mGotoPostId = null;
+                    mGotoFloor = -1;
+
+                    if (mPendingBlinkFloor > 0) {
+                        int pos = mDetailAdapter.getPositionByFloor(mPendingBlinkFloor);
+                        DetailBean detailBean = mDetailAdapter.getItem(pos);
+                        if (detailBean != null)
+                            blinkItemView(detailBean.getPostId());
+                        mPendingBlinkFloor = 0;
+                    }
+
+                    if (position < 8) {
+                        prefetchPreviousPage();
+                    } else if (position > mDetailAdapter.getItemCount() - 8) {
+                        prefetchNextPage();
                     }
                 }
             });
-
-            if (mPendingBlinkFloor > 0) {
-                int pos = mDetailAdapter.getPositionByFloor(mPendingBlinkFloor);
-                DetailBean detailBean = mDetailAdapter.getItem(pos);
-                if (detailBean != null)
-                    blinkItemView(detailBean.getPostId());
-                mPendingBlinkFloor = 0;
-            }
 
             if (mMainFab != null
                     && mMainFab.getVisibility() != View.VISIBLE
