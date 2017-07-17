@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.utils.UIUtils;
 
 /**
  * Created by GreenSkinMonster on 2017-06-14.
@@ -33,8 +32,6 @@ public class PostActivity extends SwipeBaseActivity {
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        UIUtils.hackStatusBar(this);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentById(R.id.main_frame_container) == null) {

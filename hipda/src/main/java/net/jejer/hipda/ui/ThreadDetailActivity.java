@@ -41,8 +41,6 @@ public class ThreadDetailActivity extends SwipeBaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         updateAppBarScrollFlag();
 
-        UIUtils.hackStatusBar(this);
-
         mMainFab = (FloatingActionButton) findViewById(R.id.fab_main);
 
         if (UIUtils.isTablet(this)) {

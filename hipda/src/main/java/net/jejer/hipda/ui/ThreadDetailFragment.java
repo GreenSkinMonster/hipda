@@ -1133,11 +1133,11 @@ public class ThreadDetailFragment extends BaseFragment {
 
             if (mCurrentPage == 1) {
                 mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
+            } else {
+                mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
             }
             if (mCurrentPage == mMaxPage) {
                 mRecyclerView.setFooterState(XFooterView.STATE_END);
-            } else {
-                mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
             }
 
             mRecyclerView.post(new Runnable() {

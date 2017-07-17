@@ -3,9 +3,9 @@ package net.jejer.hipda.job;
 import android.content.Context;
 import android.text.TextUtils;
 
-import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.LoginHelper;
+import net.jejer.hipda.bean.SearchBean;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.db.History;
@@ -46,6 +46,7 @@ public class SimpleListJob extends BaseJob {
     private int mType;
     private int mPage = 1;
     private String mExtra = "";
+    private SearchBean mSearchBean;
 
     private SimpleListEvent mEvent;
 
@@ -55,6 +56,20 @@ public class SimpleListJob extends BaseJob {
         mType = type;
         mPage = page;
         mExtra = extra;
+
+        mEvent = new SimpleListEvent();
+        mEvent.mSessionId = mSessionId;
+        mEvent.mPage = page;
+        mEvent.mType = mType;
+        mEvent.mExtra = mExtra;
+    }
+
+    public SimpleListJob(Context context, String sessionId, int type, int page, SearchBean searchBean) {
+        super(sessionId);
+        mCtx = context;
+        mType = type;
+        mPage = page;
+        mSearchBean = searchBean;
 
         mEvent = new SimpleListEvent();
         mEvent.mSessionId = mSessionId;
@@ -150,16 +165,13 @@ public class SimpleListJob extends BaseJob {
                 break;
             case TYPE_SEARCH:
                 try {
-                    String prefixsft = mCtx.getResources().getString(R.string.prefix_search_fulltext);
-                    if (mExtra.startsWith(prefixsft)) {
-                        url = HiUtils.SearchFullText + URLEncoder.encode(mExtra.substring(prefixsft.length()), "GBK");
-                        if (mPage > 1)
-                            url += "&page=" + mPage;
-                    } else {
-                        url = HiUtils.SearchTitle + URLEncoder.encode(mExtra, "GBK");
-                        if (mPage > 1)
-                            url += "&page=" + mPage;
-                    }
+                    url = HiUtils.SearchUrl
+                            .replace("{srchtype}", mSearchBean.isFulltext() ? "fulltext" : "title")
+                            .replace("{srchtxt}", URLEncoder.encode(mSearchBean.getQuery(), "GBK"))
+                            .replace("{srchuname}", URLEncoder.encode(mSearchBean.getAuthor(), "GBK"))
+                            .replace("{fid}", mSearchBean.getForum());
+                    if (mPage > 1)
+                        url += "&page=" + mPage;
                 } catch (UnsupportedEncodingException e) {
                     Logger.e("Encoding error", e);
                 }

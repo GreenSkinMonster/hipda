@@ -1,16 +1,11 @@
 package net.jejer.hipda.ui;
 
-import android.content.Context;
-import android.database.AbstractCursor;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,9 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
-import android.widget.SearchView;
-import android.widget.SimpleCursorAdapter;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -71,10 +63,9 @@ public class SimpleListFragment extends BaseFragment
     private SimpleListAdapter mSimpleListAdapter;
     private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
     private String mQuery = "";
-    private SearchView searchView = null;
-    private SwipeRefreshLayout swipeLayout;
+    private SwipeRefreshLayout mSwipeLayout;
     private ContentLoadingView mLoadingView;
-    private HiProgressDialog smsPostProgressDialog;
+    private HiProgressDialog mSmsPostProgressDialog;
     private SimpleListEventCallback mEventCallback = new SimpleListEventCallback();
 
     private int mPage = 1;
@@ -82,8 +73,6 @@ public class SimpleListFragment extends BaseFragment
     private int mMaxPage;
     private int mFirstVisibleItem = 0;
     private String mFormhash;
-
-    private static String mPrefixSearchFullText;
 
     private MenuItem mFavoritesMenuItem;
 
@@ -105,9 +94,6 @@ public class SimpleListFragment extends BaseFragment
         super.onResume();
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
-        if (searchView != null && mSimpleListAdapter.getDatas().size() > 0) {
-            searchView.clearFocus();
-        }
     }
 
     @Override
@@ -126,11 +112,11 @@ public class SimpleListFragment extends BaseFragment
 
         mRecyclerView.addOnScrollListener(new OnScrollListener());
 
-        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-        swipeLayout.setOnRefreshListener(this);
-        swipeLayout.setColorSchemeColors(ColorHelper.getSwipeColor(getActivity()));
-        swipeLayout.setProgressBackgroundColorSchemeColor(ColorHelper.getSwipeBackgroundColor(getActivity()));
-        swipeLayout.setEnabled(false);
+        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        mSwipeLayout.setOnRefreshListener(this);
+        mSwipeLayout.setColorSchemeColors(ColorHelper.getSwipeColor(getActivity()));
+        mSwipeLayout.setProgressBackgroundColorSchemeColor(ColorHelper.getSwipeBackgroundColor(getActivity()));
+        mSwipeLayout.setEnabled(false);
 
         mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
         mLoadingView.setErrorStateListener(new View.OnClickListener() {
@@ -166,8 +152,6 @@ public class SimpleListFragment extends BaseFragment
                     SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mQuery);
                     JobMgr.addJob(job);
                 }
-                break;
-            case SimpleListJob.TYPE_SEARCH:
                 break;
         }
     }
@@ -211,56 +195,6 @@ public class SimpleListFragment extends BaseFragment
                 mFavoritesMenuItem = menu.getItem(0);
                 mFavoritesMenuItem.setTitle(R.string.action_favorites);
                 break;
-            case SimpleListJob.TYPE_SEARCH:
-                setActionBarTitle(R.string.title_drawer_search);
-                mPrefixSearchFullText = getActivity().getResources().getString(R.string.prefix_search_fulltext);
-
-                inflater.inflate(R.menu.menu_search, menu);
-                searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-                searchView.setIconified(false);
-                searchView.setQueryHint("按标题搜索");
-                if (!TextUtils.isEmpty(mQuery)) {
-                    searchView.setQuery(mQuery, false);
-                    searchView.clearFocus();
-                }
-                searchView.setSuggestionsAdapter(new SearchSuggestionsAdapter(getActivity()));
-
-                AutoCompleteTextView search_text = (AutoCompleteTextView) searchView.findViewById(getActivity().getResources().getIdentifier("android:id/search_src_text", null, null));
-                search_text.setThreshold(1);
-
-                searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-                    @Override
-                    public boolean onSuggestionClick(int position) {
-                        String s = searchView.getSuggestionsAdapter().getCursor().getString(1);
-                        searchView.setQuery(s, true);
-                        searchView.clearFocus();
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onSuggestionSelect(int position) {
-                        return false;
-                    }
-                });
-
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        mQuery = query;
-                        mSimpleListItemBeans.clear();
-                        mSimpleListAdapter.setDatas(mSimpleListItemBeans);
-                        UIUtils.hideSoftKeyboard(getActivity());
-                        searchView.clearFocus();
-                        refresh();
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        return false;
-                    }
-                });
-                break;
 
             default:
                 break;
@@ -300,7 +234,6 @@ public class SimpleListFragment extends BaseFragment
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     private void refresh() {
@@ -469,97 +402,20 @@ public class SimpleListFragment extends BaseFragment
         FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), page, floor, postId, -1);
     }
 
-    public static class SearchSuggestionsAdapter extends SimpleCursorAdapter {
-        private static final String[] mFields = {"_id", "result"};
-        private static final String[] mVisible = {"result"};
-        private static final int[] mViewIds = {android.R.id.text1};
-
-        public SearchSuggestionsAdapter(Context context) {
-            super(context, android.R.layout.simple_list_item_1, null, mVisible, mViewIds, 0);
-        }
-
-        @Override
-        public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
-            return new SuggestionsCursor(constraint);
-        }
-
-        private class SuggestionsCursor extends AbstractCursor {
-            private ArrayList<String> mResults;
-
-            public SuggestionsCursor(CharSequence constraint) {
-                mResults = new ArrayList<>();
-                String query = (constraint != null ? constraint.toString() : "").trim();
-                query = query.startsWith(SimpleListFragment.mPrefixSearchFullText) ? query.substring(SimpleListFragment.mPrefixSearchFullText.length()).trim() : query;
-                mResults.add(SimpleListFragment.mPrefixSearchFullText + query);
-            }
-
-            @Override
-            public int getCount() {
-                return mResults.size();
-            }
-
-            @Override
-            public String[] getColumnNames() {
-                return mFields;
-            }
-
-            @Override
-            public long getLong(int column) {
-                if (column == 0) {
-                    return mPos;
-                }
-                throw new UnsupportedOperationException("unimplemented");
-            }
-
-            @Override
-            public String getString(int column) {
-                if (column == 1) {
-                    return mResults.get(mPos);
-                }
-                throw new UnsupportedOperationException("unimplemented");
-            }
-
-            @Override
-            public short getShort(int column) {
-                throw new UnsupportedOperationException("unimplemented");
-            }
-
-            @Override
-            public int getInt(int column) {
-                throw new UnsupportedOperationException("unimplemented");
-            }
-
-            @Override
-            public float getFloat(int column) {
-                throw new UnsupportedOperationException("unimplemented");
-            }
-
-            @Override
-            public double getDouble(int column) {
-                throw new UnsupportedOperationException("unimplemented");
-            }
-
-            @Override
-            public boolean isNull(int column) {
-                return false;
-            }
-        }
-    }
-
     @Override
     public void onSmsPrePost() {
-        smsPostProgressDialog = HiProgressDialog.show(getActivity(), "正在发送...");
+        mSmsPostProgressDialog = HiProgressDialog.show(getActivity(), "正在发送...");
     }
 
     @Override
     public void onSmsPostDone(int status, final String message, AlertDialog dialog) {
         if (status == Constants.STATUS_SUCCESS) {
-            smsPostProgressDialog.dismiss(message);
+            mSmsPostProgressDialog.dismiss(message);
             if (dialog != null)
                 dialog.dismiss();
             onRefresh();
         } else {
-            smsPostProgressDialog.dismissError(message);
+            mSmsPostProgressDialog.dismissError(message);
         }
     }
 
@@ -567,8 +423,8 @@ public class SimpleListFragment extends BaseFragment
 
         @Override
         public void onFail(SimpleListEvent event) {
-            swipeLayout.setEnabled(true);
-            swipeLayout.setRefreshing(false);
+            mSwipeLayout.setEnabled(true);
+            mSwipeLayout.setRefreshing(false);
             if (mSimpleListItemBeans.size() == 0)
                 mLoadingView.setState(ContentLoadingView.ERROR);
             else
@@ -582,8 +438,8 @@ public class SimpleListFragment extends BaseFragment
 
         @Override
         public void onSuccess(SimpleListEvent event) {
-            swipeLayout.setEnabled(true);
-            swipeLayout.setRefreshing(false);
+            mSwipeLayout.setEnabled(true);
+            mSwipeLayout.setRefreshing(false);
             mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
             mInloading = false;
             mFormhash = event.mFormhash;
@@ -626,8 +482,8 @@ public class SimpleListFragment extends BaseFragment
 
         @Override
         public void onFailRelogin(SimpleListEvent event) {
-            swipeLayout.setEnabled(true);
-            swipeLayout.setRefreshing(false);
+            mSwipeLayout.setEnabled(true);
+            mSwipeLayout.setRefreshing(false);
             mSimpleListItemBeans.clear();
             mSimpleListAdapter.notifyDataSetChanged();
             mLoadingView.setState(ContentLoadingView.NOT_LOGIN);

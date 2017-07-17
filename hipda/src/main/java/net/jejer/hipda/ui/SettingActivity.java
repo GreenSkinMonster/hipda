@@ -10,7 +10,6 @@ import net.jejer.hipda.ui.setting.AboutFragment;
 import net.jejer.hipda.ui.setting.BlacklistFragment;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.ui.setting.SettingNestedFragment;
-import net.jejer.hipda.utils.UIUtils;
 
 /**
  * Created by GreenSkinMonster on 2017-06-16.
@@ -31,8 +30,6 @@ public class SettingActivity extends SwipeBaseActivity {
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        UIUtils.hackStatusBar(this);
 
         Bundle arguments = getIntent().getExtras();
 

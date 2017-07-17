@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.utils.UIUtils;
 
 /**
  * Created by GreenSkinMonster on 2017-06-15.
@@ -28,8 +27,6 @@ public class SmsActivity extends SwipeBaseActivity {
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        UIUtils.hackStatusBar(this);
 
         showFragment();
     }

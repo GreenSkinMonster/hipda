@@ -55,8 +55,7 @@ public class HiUtils {
     public static String NewSMS;
     public static String ClearSMS;
     public static String UploadImgUrl;
-    public static String SearchTitle;
-    public static String SearchFullText;
+    public static String SearchUrl;
     public static String SearchUserThreads;
     public static String FavoritesUrl;
     public static String FavoriteAddUrl;
@@ -147,8 +146,7 @@ public class HiUtils {
         NewSMS = BaseUrl + "pm.php?filter=newpm";
         ClearSMS = BaseUrl + "pm.php?action=del&uid={uid}&filter=privatepm";
         UploadImgUrl = BaseUrl + "misc.php?action=swfupload&operation=upload&simple=1&type=image";
-        SearchTitle = BaseUrl + "search.php?srchtype=title&searchsubmit=true&st=on&srchuname=&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D=all&srchtxt=";
-        SearchFullText = BaseUrl + "search.php?srchtype=fulltext&searchsubmit=true&st=on&srchuname=&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D=all&srchtxt=";
+        SearchUrl = BaseUrl + "search.php?srchtype={srchtype}&srchtxt={srchtxt}&searchsubmit=true&st=on&srchuname={srchuname}&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D={fid}";
         SearchUserThreads = BaseUrl + "search.php?srchfid=all&srchfrom=0&searchsubmit=yes&srchuid=";
         FavoritesUrl = BaseUrl + "my.php?item={item}&type=thread";
         FavoriteAddUrl = BaseUrl + "my.php?item={item}&action=add&inajax=1&ajaxtarget=favorite_msg&tid={tid}";

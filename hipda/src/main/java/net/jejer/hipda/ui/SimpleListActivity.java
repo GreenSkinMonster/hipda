@@ -9,8 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
-import net.jejer.hipda.utils.UIUtils;
 
 /**
  * Created by GreenSkinMonster on 2017-06-16.
@@ -32,9 +32,6 @@ public class SimpleListActivity extends SwipeBaseActivity {
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        updateAppBarScrollFlag();
-
-        UIUtils.hackStatusBar(this);
 
         mToolbar.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -60,7 +57,15 @@ public class SimpleListActivity extends SwipeBaseActivity {
     private void showFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Bundle arguments = getIntent().getExtras();
-        SimpleListFragment fragment = new SimpleListFragment();
+
+        BaseFragment fragment;
+        if (arguments.getInt(SimpleListFragment.ARG_TYPE) == SimpleListJob.TYPE_SEARCH) {
+            fragment = new SearchFragment();
+        } else {
+            updateAppBarScrollFlag();
+            fragment = new SimpleListFragment();
+        }
+
         fragment.setArguments(arguments);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_frame_container, fragment).commit();
