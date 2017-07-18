@@ -64,6 +64,7 @@
 
     <string name="title_drawer_forum">论坛</string>
     <string name="title_drawer_search">搜索</string>
+    <string name="title_drawer_new_posts">今日新帖</string>
     <string name="title_drawer_mypost">我的帖子</string>
     <string name="title_drawer_myreply">我的回复</string>
     <string name="title_drawer_favorites">收藏关注</string>

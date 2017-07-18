@@ -12,7 +12,9 @@ public class SearchBean {
 
     private String mQuery = "";
     private String mAuthor = "";
+    private String mUid = "";
     private String mForum = "all";
+    private String mSearchId = "";
     private boolean mFulltext;
 
     public String getQuery() {
@@ -47,27 +49,20 @@ public class SearchBean {
         mFulltext = fulltext;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SearchBean that = (SearchBean) o;
-
-        if (mFulltext != that.mFulltext) return false;
-        if (mQuery != null ? !mQuery.equals(that.mQuery) : that.mQuery != null) return false;
-        if (mAuthor != null ? !mAuthor.equals(that.mAuthor) : that.mAuthor != null) return false;
-        return mForum != null ? mForum.equals(that.mForum) : that.mForum == null;
-
+    public String getUid() {
+        return mUid;
     }
 
-    @Override
-    public int hashCode() {
-        int result = mQuery != null ? mQuery.hashCode() : 0;
-        result = 31 * result + (mAuthor != null ? mAuthor.hashCode() : 0);
-        result = 31 * result + (mForum != null ? mForum.hashCode() : 0);
-        result = 31 * result + (mFulltext ? 1 : 0);
-        return result;
+    public void setUid(String uid) {
+        mUid = Utils.nullToText(uid);
+    }
+
+    public String getSearchId() {
+        return mSearchId;
+    }
+
+    public void setSearchId(String searchId) {
+        mSearchId = Utils.nullToText(searchId);
     }
 
     public SearchBean newCopy() {
@@ -76,6 +71,8 @@ public class SearchBean {
         bean.setForum(mForum);
         bean.setFulltext(mFulltext);
         bean.setQuery(mQuery);
+        bean.setUid(mUid);
+        bean.setSearchId(mSearchId);
         return bean;
     }
 
@@ -96,4 +93,30 @@ public class SearchBean {
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SearchBean bean = (SearchBean) o;
+
+        if (mFulltext != bean.mFulltext) return false;
+        if (mQuery != null ? !mQuery.equals(bean.mQuery) : bean.mQuery != null) return false;
+        if (mAuthor != null ? !mAuthor.equals(bean.mAuthor) : bean.mAuthor != null) return false;
+        if (mUid != null ? !mUid.equals(bean.mUid) : bean.mUid != null) return false;
+        if (mForum != null ? !mForum.equals(bean.mForum) : bean.mForum != null) return false;
+        return mSearchId != null ? mSearchId.equals(bean.mSearchId) : bean.mSearchId == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mQuery != null ? mQuery.hashCode() : 0;
+        result = 31 * result + (mAuthor != null ? mAuthor.hashCode() : 0);
+        result = 31 * result + (mUid != null ? mUid.hashCode() : 0);
+        result = 31 * result + (mForum != null ? mForum.hashCode() : 0);
+        result = 31 * result + (mSearchId != null ? mSearchId.hashCode() : 0);
+        result = 31 * result + (mFulltext ? 1 : 0);
+        return result;
+    }
 }

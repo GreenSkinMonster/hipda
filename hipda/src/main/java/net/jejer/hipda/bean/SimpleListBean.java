@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SimpleListBean {
     private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
-    private String mSearchIdUrl;
+    private String mSearchId;
     private int mMaxPage;
 
     public void add(SimpleListItemBean item) {
@@ -20,12 +20,12 @@ public class SimpleListBean {
         return mSimpleListItemBeans;
     }
 
-    public String getSearchIdUrl() {
-        return mSearchIdUrl;
+    public String getSearchId() {
+        return mSearchId;
     }
 
-    public void setSearchIdUrl(String searchIdUrl) {
-        mSearchIdUrl = searchIdUrl;
+    public void setSearchId(String searchId) {
+        mSearchId = searchId;
     }
 
     public int getMaxPage() {

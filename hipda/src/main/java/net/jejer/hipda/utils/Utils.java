@@ -95,8 +95,8 @@ public class Utils {
             time = time.replace(TODAY, "今天");
         } else if (time.contains(YESTERDAY)) {
             time = time.replace(YESTERDAY, "昨天");
-        } else if (time.startsWith(THIS_YEAR)) {
-            time = time.substring(THIS_YEAR.length());
+        } else if (time.contains(THIS_YEAR)) {
+            time = time.replace(THIS_YEAR, "");
         }
         return time;
     }

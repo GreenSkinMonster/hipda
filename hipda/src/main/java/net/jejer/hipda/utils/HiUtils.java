@@ -66,6 +66,8 @@ public class HiUtils {
     public static String AddBlackUrl;
     public static String DelBlackUrl;
     public static String ViewBlackUrl;
+    public static String NewPostsUrl;
+    public static String SearchByIdUrl;
 
     public static String LoginSubmit;
     public static String LoginGetFormHash;
@@ -147,7 +149,7 @@ public class HiUtils {
         ClearSMS = BaseUrl + "pm.php?action=del&uid={uid}&filter=privatepm";
         UploadImgUrl = BaseUrl + "misc.php?action=swfupload&operation=upload&simple=1&type=image";
         SearchUrl = BaseUrl + "search.php?srchtype={srchtype}&srchtxt={srchtxt}&searchsubmit=true&st=on&srchuname={srchuname}&srchfilter=all&srchfrom=0&before=&orderby=lastpost&ascdesc=desc&srchfid%5B0%5D={fid}";
-        SearchUserThreads = BaseUrl + "search.php?srchfid=all&srchfrom=0&searchsubmit=yes&srchuid=";
+        SearchUserThreads = BaseUrl + "search.php?srchfid=all&srchfrom=0&searchsubmit=yes&srchuid={srchuid}";
         FavoritesUrl = BaseUrl + "my.php?item={item}&type=thread";
         FavoriteAddUrl = BaseUrl + "my.php?item={item}&action=add&inajax=1&ajaxtarget=favorite_msg&tid={tid}";
         FavoriteRemoveUrl = BaseUrl + "my.php?item={item}&action=remove&inajax=1&ajaxtarget=favorite_msg&tid={tid}";
@@ -157,6 +159,8 @@ public class HiUtils {
         AddBlackUrl = BaseUrl + "pm.php?action=addblack";
         DelBlackUrl = BaseUrl + "pm.php?action=delblack";
         ViewBlackUrl = BaseUrl + "pm.php?action=viewblack";
+        NewPostsUrl = BaseUrl + "search.php?srchfrom=86400&searchsubmit=yes";
+        SearchByIdUrl = BaseUrl + "search.php?searchid={searchid}&orderby=lastpost&ascdesc=desc&searchsubmit=yes";
 
         LoginSubmit = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
         LoginGetFormHash = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";

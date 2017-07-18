@@ -41,6 +41,7 @@ public class SimpleListJob extends BaseJob {
     public static final int TYPE_SEARCH_USER_THREADS = 7;
     public static final int TYPE_ATTENTION = 8;
     public static final int TYPE_HISTORIES = 9;
+    public static final int TYPE_NEW_POSTS = 10;
 
     private Context mCtx;
     private int mType;
@@ -104,9 +105,10 @@ public class SimpleListJob extends BaseJob {
                 bean.setTid(history.getTid());
                 bean.setUid(history.getUid());
                 bean.setTitle(history.getTitle());
-                bean.setTime(forumName + " " + history.getPostTime());
+                bean.setAuthor(history.getUsername());
+                bean.setTime(history.getPostTime());
                 bean.setAvatarUrl(HiUtils.getAvatarUrlByUid(history.getUid()));
-                bean.setForum(history.getUsername());
+                bean.setForum(forumName);
                 data.add(bean);
             }
         } else {
@@ -163,6 +165,16 @@ public class SimpleListJob extends BaseJob {
             case TYPE_SMS_DETAIL:
                 url = HiUtils.SMSDetailUrl + mExtra;
                 break;
+            case TYPE_NEW_POSTS:
+                //mExtra is searchid
+                if (TextUtils.isEmpty(mExtra)) {
+                    url = HiUtils.NewPostsUrl;
+                } else {
+                    url = HiUtils.SearchByIdUrl.replace("{searchid}", mExtra);
+                }
+                if (mPage > 1)
+                    url += "&page=" + mPage;
+                break;
             case TYPE_SEARCH:
                 try {
                     url = HiUtils.SearchUrl
@@ -177,21 +189,13 @@ public class SimpleListJob extends BaseJob {
                 }
                 break;
             case TYPE_SEARCH_USER_THREADS:
-                if (TextUtils.isDigitsOnly(mExtra)) {
-                    //first search, use uid
-                    url = HiUtils.SearchUserThreads + mExtra + "&page=" + mPage;
+                if (TextUtils.isEmpty(mSearchBean.getSearchId())) {
+                    url = HiUtils.SearchUserThreads.replace("{srchuid}", mSearchBean.getUid());
                 } else {
-                    //after first seach, searchId is generated
-                    url = HiUtils.BaseUrl + mExtra;
-                    //replace page number in url
-                    int pageIndex = url.indexOf("page=");
-                    int pageEndIndex = url.indexOf("&", pageIndex + "page=".length());
-                    if (pageIndex > 0 && pageEndIndex > pageIndex) {
-                        url = url.substring(0, pageIndex) + "page=" + mPage + url.substring(pageEndIndex);
-                    } else if (pageEndIndex == -1) {
-                        url = url.substring(0, pageIndex) + "page=" + mPage;
-                    }
+                    url = HiUtils.SearchByIdUrl.replace("{searchid}", mSearchBean.getSearchId());
                 }
+                if (mPage > 1)
+                    url += "&page=" + mPage;
                 break;
             case TYPE_FAVORITES:
                 url = HiUtils.FavoritesUrl;

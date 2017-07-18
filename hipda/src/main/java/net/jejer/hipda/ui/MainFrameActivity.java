@@ -258,6 +258,11 @@ public class MainFrameActivity extends BaseActivity {
         else
             subItems.add(DrawerHelper.getSecondaryMenuItem(DrawerHelper.DrawerItem.HISTORIES));
 
+        if (freqMenuIds.contains("" + DrawerHelper.DrawerItem.NEW_POSTS.id))
+            drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.NEW_POSTS));
+        else
+            subItems.add(DrawerHelper.getSecondaryMenuItem(DrawerHelper.DrawerItem.NEW_POSTS));
+
         if (subItems.size() > 0)
             drawerItems.add(
                     new ExpandableDrawerItem()
@@ -477,6 +482,9 @@ public class MainFrameActivity extends BaseActivity {
             switch ((int) iDrawerItem.getIdentifier()) {
                 case Constants.DRAWER_SEARCH:
                     FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_SEARCH);
+                    break;
+                case Constants.DRAWER_NEW_POSTS:
+                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_NEW_POSTS);
                     break;
                 case Constants.DRAWER_MYPOST:
                     FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_MYPOST);

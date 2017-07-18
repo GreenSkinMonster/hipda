@@ -38,6 +38,8 @@ public class HiParser {
                 return parseSmsDetail(doc);
             case SimpleListJob.TYPE_SEARCH:
                 return parseSearch(doc);
+            case SimpleListJob.TYPE_NEW_POSTS:
+                return parseSearch(doc);
             case SimpleListJob.TYPE_SEARCH_USER_THREADS:
                 return parseSearch(doc);
             case SimpleListJob.TYPE_FAVORITES:
@@ -239,7 +241,6 @@ public class HiParser {
                 continue;
             }
             item.setAuthor(citeES.first().text());
-            item.setForum(item.getAuthor());
             Elements uidAES = citeES.first().select("a");
             if (uidAES.size() == 0) {
                 continue;
@@ -420,7 +421,7 @@ public class HiParser {
         if (emES.size() == 0) {
             return null;
         }
-        item.setTime(item.getAuthor() + " " + emES.first().text());
+        item.setTime(emES.first().text());
 
         // summary
         String info = "";
@@ -535,7 +536,7 @@ public class HiParser {
             if (searchIdUrl.contains("srchtype=fulltext")) {
                 return parseSearchFullText(doc);
             }
-            list.setSearchIdUrl(searchIdUrl);
+            list.setSearchId(Utils.getMiddleString(searchIdUrl, "searchid=", "&"));
             for (Node n : pagesES) {
                 int tmp = Utils.getIntFromString(((Element) n).text());
                 if (tmp > last_page) {
@@ -550,18 +551,15 @@ public class HiParser {
             Element tbodyE = tbodyES.get(i);
             SimpleListItemBean item = new SimpleListItemBean();
 
-            Elements subjectES = tbodyE.select("tr th.subject");
+            Elements subjectES = tbodyE.select("tr th.subject a");
             if (subjectES.size() == 0) {
                 continue;
             }
-            item.setTitle(subjectES.first().text());
 
-            Elements subjectAES = subjectES.first().select("a");
-            if (subjectAES.size() == 0) {
-                continue;
-            }
-            String href = subjectAES.first().attr("href");
+            Element titleLink = subjectES.first();
+            String href = titleLink.attr("href");
             item.setTid(Utils.getMiddleString(href, "tid=", "&"));
+            item.setTitle(titleLink.text());
 
             Elements authorAES = tbodyE.select("tr td.author cite a");
             if (authorAES.size() == 0) {
@@ -577,7 +575,7 @@ public class HiParser {
 
             Elements timeES = tbodyE.select("tr td.author em");
             if (timeES.size() > 0) {
-                item.setTime(item.getAuthor() + "  " + timeES.first().text());
+                item.setTime(timeES.first().text());
             }
 
             Elements forumES = tbodyE.select("tr td.forum");
@@ -605,7 +603,7 @@ public class HiParser {
         String searchIdUrl;
         if (pagesES.size() > 0) {
             searchIdUrl = pagesES.first().attr("href");
-            list.setSearchIdUrl(searchIdUrl);
+            list.setSearchId(Utils.getMiddleString(searchIdUrl, "searchid=", "&"));
             for (Node n : pagesES) {
                 int tmp = Utils.getIntFromString(((Element) n).text());
                 if (tmp > last_page) {
@@ -658,7 +656,7 @@ public class HiParser {
                 }
             }
 
-            item.setTime(item.getAuthor() + " " + Utils.getMiddleString(postInfoES.get(4).text(), ":", "&"));
+            item.setTime(Utils.getMiddleString(postInfoES.get(4).text(), ":", "&"));
 
             Elements forumES = postInfoES.get(0).select("a");
             if (forumES.size() > 0)

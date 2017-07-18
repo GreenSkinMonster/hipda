@@ -23,6 +23,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.BlacklistHelper;
 import net.jejer.hipda.async.PostSmsAsyncTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.SearchBean;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.bean.UserInfoBean;
@@ -79,7 +80,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
 
     private int mPage = 1;
     private boolean mInloading = false;
-    private String mSearchIdUrl;
+    private String mSearchId;
     private int mMaxPage;
 
     private HiProgressDialog smsPostProgressDialog;
@@ -161,10 +162,13 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                     mRecyclerView.setVisibility(View.VISIBLE);
                     if (!isThreadsLoaded) {
                         mButton.setEnabled(false);
+                        SearchBean bean = new SearchBean();
+                        bean.setUid(mUid);
+                        bean.setSearchId(mSearchId);
                         SimpleListJob job = new SimpleListJob(UserinfoFragment.this.getActivity(), mSessionId,
                                 SimpleListJob.TYPE_SEARCH_USER_THREADS,
                                 mPage,
-                                TextUtils.isEmpty(mSearchIdUrl) ? mUid : mSearchIdUrl);
+                                bean);
                         JobMgr.addJob(job);
                     }
                 } else {
@@ -213,7 +217,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 GoogleMaterial.Icon.gmd_insert_comment).actionBar()
                 .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
 
-        setActionBarTitle(mUsername);
+        setActionBarTitle("用户信息");
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -258,7 +262,6 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 mUsername = info.getUsername();
                 mUsernameView.setText(mUsername);
                 mFormhash = info.getFormhash();
-                setActionBarTitle(mUsername);
                 if (info.isOnline()) {
                     mOnlineView.setVisibility(View.VISIBLE);
                 } else {
@@ -287,10 +290,13 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                         if (mPage < mMaxPage) {
                             mPage++;
                             mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
+                            SearchBean bean = new SearchBean();
+                            bean.setUid(mUid);
+                            bean.setSearchId(mSearchId);
                             SimpleListJob job = new SimpleListJob(UserinfoFragment.this.getActivity(), mSessionId,
                                     SimpleListJob.TYPE_SEARCH_USER_THREADS,
                                     mPage,
-                                    TextUtils.isEmpty(mSearchIdUrl) ? mUid : mSearchIdUrl);
+                                    bean);
                             JobMgr.addJob(job);
                         } else {
                             mRecyclerView.setFooterState(XFooterView.STATE_END);
@@ -364,7 +370,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
             return;
         }
 
-        mSearchIdUrl = list.getSearchIdUrl();
+        mSearchId = list.getSearchId();
         mMaxPage = list.getMaxPage();
         mSimpleListItemBeans.addAll(list.getAll());
         mSimpleListAdapter.setDatas(mSimpleListItemBeans);

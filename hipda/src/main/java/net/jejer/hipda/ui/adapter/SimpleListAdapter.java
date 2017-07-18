@@ -66,14 +66,21 @@ public class SimpleListAdapter extends BaseRvAdapter<SimpleListItemBean> {
             holder.tv_info.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         }
 
-        if (TextUtils.isEmpty(item.getTime()) && TextUtils.isEmpty(item.getForum())) {
+        if (TextUtils.isEmpty(item.getTime()) && TextUtils.isEmpty(item.getForum()) && TextUtils.isEmpty(item.getAuthor())) {
             holder.tv_time.setVisibility(View.GONE);
             holder.tv_forum.setVisibility(View.GONE);
+            holder.tv_author.setVisibility(View.GONE);
         } else {
             holder.tv_time.setVisibility(View.VISIBLE);
             holder.tv_forum.setVisibility(View.VISIBLE);
-            holder.tv_time.setText(item.getTime());
-            holder.tv_forum.setText(item.getForum());
+            holder.tv_author.setVisibility(View.VISIBLE);
+            holder.tv_time.setText(Utils.shortyTime(item.getTime()));
+            if (mType == SimpleListJob.TYPE_SMS || mType == SimpleListJob.TYPE_THREAD_NOTIFY) {
+                holder.tv_forum.setText(item.getAuthor());
+            } else {
+                holder.tv_forum.setText(item.getForum());
+                holder.tv_author.setText(item.getAuthor());
+            }
         }
 
         if (HiSettingsHelper.getInstance().isLoadAvatar()
@@ -93,6 +100,7 @@ public class SimpleListAdapter extends BaseRvAdapter<SimpleListItemBean> {
         TextView tv_title;
         TextView tv_forum;
         TextView tv_info;
+        TextView tv_author;
         TextView tv_time;
         ImageView iv_avatar;
 
@@ -102,6 +110,7 @@ public class SimpleListAdapter extends BaseRvAdapter<SimpleListItemBean> {
             tv_info = (TextView) itemView.findViewById(R.id.tv_info);
             tv_forum = (TextView) itemView.findViewById(R.id.tv_forum);
             tv_time = (TextView) itemView.findViewById(R.id.tv_time);
+            tv_author = (TextView) itemView.findViewById(R.id.tv_author);
             iv_avatar = (ImageView) itemView.findViewById(R.id.iv_avatar);
         }
     }

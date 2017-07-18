@@ -62,7 +62,7 @@ public class SimpleListFragment extends BaseFragment
     private XRecyclerView mRecyclerView;
     private SimpleListAdapter mSimpleListAdapter;
     private List<SimpleListItemBean> mSimpleListItemBeans = new ArrayList<>();
-    private String mQuery = "";
+    private String mSearchId = "";
     private SwipeRefreshLayout mSwipeLayout;
     private ContentLoadingView mLoadingView;
     private HiProgressDialog mSmsPostProgressDialog;
@@ -145,11 +145,12 @@ public class SimpleListFragment extends BaseFragment
             case SimpleListJob.TYPE_THREAD_NOTIFY:
             case SimpleListJob.TYPE_FAVORITES:
             case SimpleListJob.TYPE_ATTENTION:
+            case SimpleListJob.TYPE_NEW_POSTS:
             case SimpleListJob.TYPE_HISTORIES:
                 if (mSimpleListItemBeans.size() == 0) {
                     mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
                     mLoadingView.setState(ContentLoadingView.LOADING);
-                    SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mQuery);
+                    SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mSearchId);
                     JobMgr.addJob(job);
                 }
                 break;
@@ -163,11 +164,9 @@ public class SimpleListFragment extends BaseFragment
         switch (mType) {
             case SimpleListJob.TYPE_MYREPLY:
                 setActionBarTitle(R.string.title_drawer_myreply);
-//                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListJob.TYPE_MYPOST:
                 setActionBarTitle(R.string.title_drawer_mypost);
-//                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListJob.TYPE_SMS:
                 setActionBarTitle(R.string.title_drawer_sms);
@@ -178,7 +177,6 @@ public class SimpleListFragment extends BaseFragment
                 break;
             case SimpleListJob.TYPE_THREAD_NOTIFY:
                 setActionBarTitle(R.string.title_drawer_notify);
-//                inflater.inflate(R.menu.menu_simple_thread_list, menu);
                 break;
             case SimpleListJob.TYPE_FAVORITES:
                 setActionBarTitle(R.string.title_my_favorites);
@@ -194,6 +192,9 @@ public class SimpleListFragment extends BaseFragment
                 inflater.inflate(R.menu.menu_favorites, menu);
                 mFavoritesMenuItem = menu.getItem(0);
                 mFavoritesMenuItem.setTitle(R.string.action_favorites);
+                break;
+            case SimpleListJob.TYPE_NEW_POSTS:
+                setActionBarTitle(R.string.title_drawer_new_posts);
                 break;
 
             default:
@@ -239,7 +240,7 @@ public class SimpleListFragment extends BaseFragment
     private void refresh() {
         mMaxPage = 0;
         mPage = 1;
-        SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mQuery);
+        SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mSearchId);
         JobMgr.addJob(job);
     }
 
@@ -274,7 +275,7 @@ public class SimpleListFragment extends BaseFragment
                         if (mPage < mMaxPage) {
                             mPage++;
                             mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
-                            SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mQuery);
+                            SimpleListJob job = new SimpleListJob(getActivity(), mSessionId, mType, mPage, mSearchId);
                             JobMgr.addJob(job);
                         } else {
                             mRecyclerView.setFooterState(XFooterView.STATE_END);
@@ -471,6 +472,8 @@ public class SimpleListFragment extends BaseFragment
                 NotificationMgr.getCurrentNotification().clearSmsCount();
             if (mType == SimpleListJob.TYPE_THREAD_NOTIFY)
                 NotificationMgr.getCurrentNotification().setThreadCount(0);
+            if (mType == SimpleListJob.TYPE_NEW_POSTS)
+                mSearchId = list.getSearchId();
 
             if (mPage == 1) {
                 mSimpleListItemBeans.clear();
