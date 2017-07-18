@@ -90,6 +90,7 @@ import java.util.Set;
 public class MainFrameActivity extends BaseActivity {
 
     public final static int PERMISSIONS_REQUEST_CODE_STORAGE = 200;
+    private final static int DRAG_SENSITIVITY = Utils.dpToPx(HiApplication.getAppContext(), 32);
 
     private Drawer mDrawer;
     private AccountHeader mAccountHeader;
@@ -461,8 +462,7 @@ public class MainFrameActivity extends BaseActivity {
                 float deltaX = ev.getX() - mStartX;
                 float deltaY = Math.abs(ev.getY() - mStartY);
 
-                float sensitivity = 20;
-                if (deltaX >= sensitivity && deltaY < 0.5 * deltaX) {
+                if (deltaX >= DRAG_SENSITIVITY && deltaY < 0.5 * deltaX) {
                     if (!mDrawer.isDrawerOpen()) {
                         mDrawer.openDrawer();
                     }

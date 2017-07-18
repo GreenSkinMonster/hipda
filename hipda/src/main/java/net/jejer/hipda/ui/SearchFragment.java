@@ -167,6 +167,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
 
         mSearchFilterLayout = (RelativeLayout) view.findViewById(R.id.search_filter_layout);
         ViewCompat.setElevation(mSearchFilterLayout, Utils.dpToPx(getActivity(), 4));
+        mSearchFilterLayout.setAlpha(0);
 
         mSpForum = (Spinner) view.findViewById(R.id.sp_forum);
         mSpAdapter = new KeyValueArrayAdapter(getActivity(), R.layout.spinner_row);
@@ -205,22 +206,28 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
         mSwipeLayout.setEnabled(false);
 
         mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
-        mLoadingView.setErrorStateListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!mInloading) {
-                    mInloading = true;
-                    refresh();
-                }
-            }
-        });
+        mLoadingView.setState(ContentLoadingView.NO_DATA);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                showSearchFilter();
+                //hide then show mSearchFilterLayout, cannot get it's height on first show
+                //so I use a fixed value here, tell me if you know a better way
+                mSearchFilterLayout.animate()
+                        .alpha(0)
+                        .setDuration(100)
+                        .translationYBy(-300)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                mSearchFilterLayout.setVisibility(View.GONE);
+                                mSearchFilterAnimating = false;
+                                showSearchFilter();
+                            }
+                        });
             }
-        }, 500);
+        }, 150);
         return view;
     }
 
@@ -387,33 +394,38 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
         refresh();
     }
 
-    private void hideSearchFilter() {
-        if (mSearchFilterAnimating || mSearchFilterLayout.getVisibility() != View.VISIBLE)
-            return;
-
-        mSearchFilterLayout.animate()
-                .alpha(0)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        mSearchFilterLayout.setVisibility(View.GONE);
-                        mSearchFilterAnimating = false;
-                    }
-                });
-    }
-
     private void showSearchFilter() {
         if (mSearchFilterAnimating || mSearchFilterLayout.getVisibility() == View.VISIBLE)
             return;
 
         mSearchFilterLayout.setVisibility(View.VISIBLE);
         mSearchFilterLayout.animate()
+                .setDuration(250)
                 .alpha(1)
+                .translationYBy(mSearchFilterLayout.getHeight())
+                .translationY(0)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
+                        mSearchFilterAnimating = false;
+                    }
+                });
+    }
+
+    private void hideSearchFilter() {
+        if (mSearchFilterAnimating || mSearchFilterLayout.getVisibility() != View.VISIBLE)
+            return;
+
+        mSearchFilterLayout.animate()
+                .setDuration(250)
+                .alpha(0)
+                .translationYBy(-mSearchFilterLayout.getHeight())
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        mSearchFilterLayout.setVisibility(View.GONE);
                         mSearchFilterAnimating = false;
                     }
                 });

@@ -2,6 +2,7 @@ package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
@@ -90,10 +91,18 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
 
         final DetailBean detail = getItem(position);
 
+        int pLeft = viewHolder.itemView.getPaddingLeft();
+        int pRight = viewHolder.itemView.getPaddingRight();
+        int pTop = viewHolder.itemView.getPaddingTop();
+        int pBottom = viewHolder.itemView.getPaddingBottom();
         if (detail.isHighlightMode()) {
             viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(mCtx, mBackgroundColor));
         } else {
             viewHolder.itemView.setBackgroundResource(mBackgroundResource);
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            //set background cause padding values lost, reset them
+            viewHolder.itemView.setPadding(pLeft, pTop, pRight, pBottom);
         }
 
         holder.author.setText(detail.getAuthor());

@@ -1,9 +1,12 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
     <style name="ThemeLightBase" parent="MaterialDrawerTheme.Light">
+        <!-- dialog_background is override in v21 styles.xml -->
+        <item name="dialog_background">@color/md_grey_100</item>
     </style>
 
     <style name="ThemeDarkBase" parent="MaterialDrawerTheme">
+        <item name="dialog_background">#2B2C2D</item>
     </style>
 
     <style name="ThemeLight" parent="ThemeLightBase">
@@ -41,7 +44,6 @@
         <item name="list_item_background">#FFFFFF</item>
         <item name="list_item_divider">#F0F0F0</item>
         <item name="quote_background">@drawable/quote_background_light</item>
-        <item name="dialog_background">#FFFFFF</item>
         <item name="emojiBackground">@color/md_grey_200</item>
         <item name="swipe_background">@color/white</item>
         <item name="swipe_color">@color/icon_blue</item>
@@ -218,7 +220,6 @@
         <item name="list_item_background">#1C1D1E</item>
         <item name="list_item_divider">#282828</item>
         <item name="quote_background">@drawable/quote_background_dark</item>
-        <item name="dialog_background">#2B2C2D</item>
         <item name="emojiBackground">@color/md_grey_900</item>
         <item name="swipe_background">@color/md_grey_800</item>
         <item name="swipe_color">@color/white</item>

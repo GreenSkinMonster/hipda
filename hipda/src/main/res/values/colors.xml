@@ -9,7 +9,6 @@
 
     <item name="background_grey" type="color">#4E808080</item>
     <item name="background_silver" type="color">#4EC0C0C0</item>
-    <color name="black_semi_transparent">#80000000</color>
 
     <item name="textColorPrimaryLight" type="color">#333333</item>
     <item name="textColorSecondaryLight" type="color">#999999</item>

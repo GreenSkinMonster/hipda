@@ -18,7 +18,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="12dp"
-        android:maxLines="2"
         android:textSize="17sp"/>
 
 </LinearLayout>
