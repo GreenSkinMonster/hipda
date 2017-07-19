@@ -65,6 +65,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.LoginDialog;
@@ -74,7 +75,6 @@ import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -84,6 +84,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -156,16 +157,22 @@ public class MainFrameActivity extends BaseActivity {
 
             TaskHelper.runDailyTask(false);
 
-            if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-                if (!NotificationMgr.isAlarmRuning(this))
-                    NotificationMgr.startAlarm(this);
-            }
             if (HiApplication.isUpdated()) {
                 HiApplication.setUpdated(false);
                 UIUtils.showReleaseNotesDialog(this);
             } else {
                 if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
                     new UpdateHelper(this, true).check();
+                }
+            }
+
+            if (OkHttpHelper.getInstance().isLoggedIn() && HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
+                //if NotiJob hasn't run for 30 mins, it might died, re schedule it
+                Date last = HiSettingsHelper.getInstance().getNotiJobLastRunTime();
+                if (last == null ||
+                        System.currentTimeMillis() - 2 * NotiHelper.NOTI_REPEAT_MINUTTE * 60 * 1000 > last.getTime()) {
+                    HiSettingsHelper.getInstance().setNotiJobLastRunTime();
+                    NotiHelper.scheduleJob();
                 }
             }
         }
@@ -583,8 +590,8 @@ public class MainFrameActivity extends BaseActivity {
     }
 
     public void updateDrawerBadge() {
-        int smsCount = NotificationMgr.getCurrentNotification().getSmsCount();
-        int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
+        int smsCount = NotiHelper.getCurrentNotification().getSmsCount();
+        int threadCount = NotiHelper.getCurrentNotification().getThreadCount();
         int threadNotifyIndex = mDrawer.getPosition(Constants.DRAWER_THREADNOTIFY);
         if (threadNotifyIndex != -1) {
             PrimaryDrawerItem drawerItem = (PrimaryDrawerItem) mDrawer.getDrawerItem(Constants.DRAWER_THREADNOTIFY);

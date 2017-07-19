@@ -6,15 +6,6 @@
         android:key="PERF_NOTI_TASK_ENABLED"
         android:title="@string/pref_noti_task_enabled"/>
 
-    <ListPreference
-        android:defaultValue="10"
-        android:entries="@array/pref_noti_repeat_minute"
-        android:entryValues="@array/pref_noti_repeat_minute_values"
-        android:key="PERF_NOTI_REPEAT_MINUETS"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_noti_repeat_minuets"/>
-
     <PreferenceCategory android:title="@string/pref_category_notification_style">
         <SwitchPreference
             android:defaultValue="true"

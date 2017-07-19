@@ -102,6 +102,8 @@ public class Utils {
     }
 
     public static String shortyTime(Date date) {
+        if (date == null)
+            return " - ";
         return Utils.shortyTime(Utils.formatDate(date, "yyyy-M-d HH:mm"));
     }
 

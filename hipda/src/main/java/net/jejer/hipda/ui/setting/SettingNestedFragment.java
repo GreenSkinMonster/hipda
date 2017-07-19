@@ -22,7 +22,6 @@ import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.SettingActivity;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -66,7 +65,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
             Date bSyncDate = HiSettingsHelper.getInstance().getBlacklistSyncTime();
             mBlackListPreference.setSummary(
                     "黑名单用户 : " + HiSettingsHelper.getInstance().getBlacklists().size() + "，上次同步 : "
-                            + (bSyncDate == null ? " - " : Utils.shortyTime(bSyncDate)));
+                            + Utils.shortyTime(bSyncDate));
         }
     }
 
@@ -139,18 +138,15 @@ public class SettingNestedFragment extends BaseSettingFragment {
             case SCREEN_NOTIFICATION:
                 setActionBarTitle(R.string.pref_category_notification);
                 addPreferencesFromResource(R.xml.pref_notification);
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_NOTI_REPEAT_MINUETS));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_NOTI_SILENT_END));
 
                 final Preference notiEnablePreference = findPreference(HiSettingsHelper.PERF_NOTI_TASK_ENABLED);
-                if (NotificationMgr.isAlarmRuning(getActivity()))
-                    notiEnablePreference.setTitle(notiEnablePreference.getTitle() + "*");
                 notiEnablePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     @Override
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
                         if (newValue instanceof Boolean) {
-                            enableNotiItems((Boolean) newValue);
+                            enableNotiItems(preference, (Boolean) newValue);
                         }
                         return true;
                     }
@@ -196,7 +192,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                         new TimePickerListener(HiSettingsHelper.getInstance().getSilentEnd()));
                 silentEndPreference.setSummary(HiSettingsHelper.getInstance().getSilentEnd());
 
-                enableNotiItems(HiSettingsHelper.getInstance().isNotiTaskEnabled());
+                enableNotiItems(notiEnablePreference, HiSettingsHelper.getInstance().isNotiTaskEnabled());
                 break;
 
             case SCREEN_NETWORK:
@@ -247,8 +243,12 @@ public class SettingNestedFragment extends BaseSettingFragment {
         }
     }
 
-    private void enableNotiItems(boolean isNotiTaskEnabled) {
-        findPreference(HiSettingsHelper.PERF_NOTI_REPEAT_MINUETS).setEnabled(isNotiTaskEnabled);
+    private void enableNotiItems(Preference preference, boolean isNotiTaskEnabled) {
+        if (isNotiTaskEnabled) {
+            preference.setSummary("上次检查 : " + Utils.shortyTime(HiSettingsHelper.getInstance().getNotiJobLastRunTime()));
+        } else {
+            preference.setSummary("已停用");
+        }
         findPreference(HiSettingsHelper.PERF_NOTI_LED_LIGHT).setEnabled(isNotiTaskEnabled);
         findPreference(HiSettingsHelper.PERF_NOTI_SILENT_MODE).setEnabled(isNotiTaskEnabled);
         findPreference(HiSettingsHelper.PERF_NOTI_SILENT_BEGIN).setEnabled(isNotiTaskEnabled);

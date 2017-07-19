@@ -84,6 +84,8 @@ dependencies {
         exclude group: 'com.android.support'
     }
 
+    compile 'com.evernote:android-job:1.1.11'
+
     //compile fileTree(dir: 'libs', include: ['*.jar'])
     compile(name: 'calligraphy-release-2.3.0', ext: 'aar')
     compile(name: 'filepicker-release-1.1.1', ext: 'aar')

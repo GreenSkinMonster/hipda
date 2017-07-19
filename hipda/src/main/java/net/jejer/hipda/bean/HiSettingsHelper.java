@@ -12,11 +12,11 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class HiSettingsHelper {
     public static final String PERF_CLEAR_CACHE = "PERF_CLEAR_CACHE";
     public static final String PERF_CLEAR_IMAGE_CACHE = "PERF_CLEAR_IMAGE_CACHE";
     public static final String PERF_NOTI_TASK_ENABLED = "PERF_NOTI_TASK_ENABLED";
-    public static final String PERF_NOTI_REPEAT_MINUETS = "PERF_NOTI_REPEAT_MINUETS";
+    public static final String PERF_NOTI_JOB_LAST_TIME = "PERF_NOTI_JOB_LAST_TIME";
     public static final String PERF_NOTI_LED_LIGHT = "PERF_NOTI_LED_LIGHT";
     public static final String PERF_NOTI_SOUND = "PERF_NOTI_SOUND";
     public static final String PERF_NOTI_SILENT_MODE = "PERF_NOTI_SILENT_MODE";
@@ -149,7 +149,6 @@ public class HiSettingsHelper {
     private boolean mErrorReportMode;
 
     private boolean mNotiTaskEnabled;
-    private int mNotiRepeatMinutes;
     private boolean mNotiLedLight;
     private String mBSTypeId;
 
@@ -273,7 +272,6 @@ public class HiSettingsHelper {
         getFreqMenusFromPref();
         isNotiLedLightFromPref();
         isNotiTaskEnabledFromPref();
-        getNotiRepeatMinutesFromPref();
         getBSTypeIdFromPref();
         getForumServerFromPref();
         getImageHostFromPref();
@@ -730,29 +728,6 @@ public class HiSettingsHelper {
         return mNotiLedLight;
     }
 
-    public int getNotiRepeatMinutes() {
-        return mNotiRepeatMinutes;
-    }
-
-    public void setNotiRepeatMinutes(int notiTaskEnable) {
-        mNotiRepeatMinutes = notiTaskEnable;
-
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_NOTI_REPEAT_MINUETS, mNotiRepeatMinutes + "").apply();
-    }
-
-    private int getNotiRepeatMinutesFromPref() {
-        try {
-            mNotiRepeatMinutes = Integer.parseInt(mSharedPref.getString(PERF_NOTI_REPEAT_MINUETS, NotificationMgr.MIN_REPEAT_MINUTTES + ""));
-        } catch (Exception ignored) {
-        }
-        if (mNotiRepeatMinutes < NotificationMgr.MIN_REPEAT_MINUTTES) {
-            mNotiRepeatMinutes = NotificationMgr.MIN_REPEAT_MINUTTES;
-            setNotiRepeatMinutes(mNotiRepeatMinutes);
-        }
-        return mNotiRepeatMinutes;
-    }
-
     public List<String> getOldBlacklists() {
         return mOldBlacklists;
     }
@@ -1165,13 +1140,13 @@ public class HiSettingsHelper {
     public String getSilentBegin() {
         return getStringValue(
                 HiSettingsHelper.PERF_NOTI_SILENT_BEGIN,
-                NotificationMgr.DEFAUL_SLIENT_BEGIN);
+                NotiHelper.DEFAUL_SLIENT_BEGIN);
     }
 
     public String getSilentEnd() {
         return getStringValue(
                 HiSettingsHelper.PERF_NOTI_SILENT_END,
-                NotificationMgr.DEFAUL_SLIENT_END);
+                NotiHelper.DEFAUL_SLIENT_END);
     }
 
     public Date getBlacklistSyncTime() {
@@ -1187,6 +1162,21 @@ public class HiSettingsHelper {
 
     public void setBlacklistSyncTime() {
         setLongValue(PERF_BLACKLIST_SYNC_TIME, System.currentTimeMillis());
+    }
+
+    public Date getNotiJobLastRunTime() {
+        long millis = getLongValue(PERF_NOTI_JOB_LAST_TIME, 0);
+        if (millis > 0) {
+            try {
+                return new Date(millis);
+            } catch (Exception ignored) {
+            }
+        }
+        return null;
+    }
+
+    public void setNotiJobLastRunTime() {
+        setLongValue(PERF_NOTI_JOB_LAST_TIME, System.currentTimeMillis());
     }
 
 }

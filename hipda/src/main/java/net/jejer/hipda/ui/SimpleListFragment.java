@@ -30,6 +30,7 @@ import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.SimpleListEvent;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.job.SmsRefreshEvent;
+import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.SimpleListAdapter;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
@@ -41,7 +42,6 @@ import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -469,9 +469,9 @@ public class SimpleListFragment extends BaseFragment
             }
 
             if (mType == SimpleListJob.TYPE_SMS)
-                NotificationMgr.getCurrentNotification().clearSmsCount();
+                NotiHelper.getCurrentNotification().clearSmsCount();
             if (mType == SimpleListJob.TYPE_THREAD_NOTIFY)
-                NotificationMgr.getCurrentNotification().setThreadCount(0);
+                NotiHelper.getCurrentNotification().setThreadCount(0);
             if (mType == SimpleListJob.TYPE_NEW_POSTS)
                 mSearchId = list.getSearchId();
 

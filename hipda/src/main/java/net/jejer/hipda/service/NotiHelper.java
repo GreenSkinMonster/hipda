@@ -1,6 +1,5 @@
-package net.jejer.hipda.utils;
+package net.jejer.hipda.service;
 
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,10 +9,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+
+import com.evernote.android.job.JobManager;
+import com.evernote.android.job.JobRequest;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -24,21 +25,26 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.IntentActivity;
+import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HiParser;
+import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
+import net.jejer.hipda.utils.Utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 /**
  * parse and fetch notifications
  * Created by GreenSkinMonster on 2015-09-08.
  */
-public class NotificationMgr {
+public class NotiHelper {
 
-    private final static int REQUEST_CODE = 0;
-    public final static int MIN_REPEAT_MINUTTES = 10;
+    public final static int NOTI_REPEAT_MINUTTE = 15;
     public final static String DEFAUL_SLIENT_BEGIN = "22:00";
     public final static String DEFAUL_SLIENT_END = "08:00";
 
@@ -48,40 +54,7 @@ public class NotificationMgr {
         return mCurrentBean;
     }
 
-    public static void startAlarm(Context context) {
-        Intent intent = new Intent(context, NotificationReceiver.class);
-        PendingIntent sender = PendingIntent.getBroadcast(context,
-                REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        int repeat = HiSettingsHelper.getInstance().getNotiRepeatMinutes();
-        if (repeat < MIN_REPEAT_MINUTTES) {
-            repeat = MIN_REPEAT_MINUTTES;
-            HiSettingsHelper.getInstance().setNotiRepeatMinutes(repeat);
-        }
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 30000,
-                repeat * 60 * 1000, sender);
-        Logger.v("NotificationAlarm started.");
-        isAlarmRuning(context);
-    }
-
-    public static void cancelAlarm(Context context) {
-        cancelNotification(context);
-        try {
-            Intent intent = new Intent(context, NotificationReceiver.class);
-            PendingIntent sender = PendingIntent.getBroadcast(context,
-                    REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            am.cancel(sender);
-            sender.cancel();
-        } catch (Exception e) {
-            Logger.e(e);
-        }
-        Logger.v("NotificationAlarm cancelled.");
-        isAlarmRuning(context);
-    }
-
-    static void fetchNotification(Document doc) {
+    public static void fetchNotification(Document doc) {
         int smsCount = -1;
         int threadCount = -1;
         SimpleListItemBean smsBean = null;
@@ -134,7 +107,7 @@ public class NotificationMgr {
         }
     }
 
-    static void showNotification(Context context) {
+    public static void showNotification(Context context) {
         if (!HiApplication.isAppVisible()) {
             if (mCurrentBean.hasNew()) {
                 sendNotification(context,
@@ -171,12 +144,6 @@ public class NotificationMgr {
             sb.append("， ");
         sb.append(threadCount > 0 ? threadCount + " 条新的帖子通知" : "");
         return sb.toString();
-    }
-
-    public static boolean isAlarmRuning(Context context) {
-        return (PendingIntent.getBroadcast(context, REQUEST_CODE,
-                new Intent(context, NotificationReceiver.class),
-                PendingIntent.FLAG_NO_CREATE) != null);
     }
 
 
@@ -233,5 +200,17 @@ public class NotificationMgr {
         notificationManager.notify(0, builder.build());
     }
 
+    public static void scheduleJob() {
+        new JobRequest.Builder(NotiJob.TAG)
+                .setPeriodic(TimeUnit.MINUTES.toMillis(NOTI_REPEAT_MINUTTE), TimeUnit.MINUTES.toMillis(5))
+                .setPersisted(true)
+                .setUpdateCurrent(true)
+                .setRequiredNetworkType(JobRequest.NetworkType.ANY)
+                .build()
+                .schedule();
+    }
 
+    public static void cancelJob() {
+        JobManager.instance().cancelAll();
+    }
 }

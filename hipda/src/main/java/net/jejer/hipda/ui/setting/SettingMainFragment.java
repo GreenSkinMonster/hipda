@@ -11,12 +11,12 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.SettingActivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
@@ -106,13 +106,10 @@ public class SettingMainFragment extends BaseSettingFragment {
     public void onStop() {
         super.onStop();
         if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-            if (NotificationMgr.isAlarmRuning(getActivity()))
-                NotificationMgr.cancelAlarm(getActivity());
-            NotificationMgr.startAlarm(getActivity());
+            NotiHelper.scheduleJob();
         } else {
-            NotificationMgr.cancelAlarm(getActivity());
+            NotiHelper.cancelJob();
         }
-
     }
 
     private void updateSettingStatus() {

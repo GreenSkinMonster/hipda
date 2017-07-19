@@ -152,23 +152,6 @@
         <item>0</item>
     </string-array>
 
-    <string-array name="pref_noti_repeat_minute">
-        <item>10分钟</item>
-        <item>15分钟</item>
-        <item>20分钟</item>
-        <item>30分钟</item>
-        <item>1小时</item>
-        <item>2小时</item>
-    </string-array>
-    <string-array name="pref_noti_repeat_minute_values">
-        <item>10</item>
-        <item>15</item>
-        <item>20</item>
-        <item>30</item>
-        <item>60</item>
-        <item>120</item>
-    </string-array>
-
     <string-array name="pref_image_load_type">
         <item>不自动加载</item>
         <item>仅WiFi时</item>
@@ -306,7 +289,6 @@
     <string name="pref_summary_clear_cache">遇到发帖502错误时可以尝试使用</string>
     <string name="pref_summary_clear_image_cache">清除下载的图片和头像缓存</string>
     <string name="pref_noti_task_enabled">接收通知</string>
-    <string name="pref_noti_repeat_minuets">接收通知间隔</string>
     <string name="pref_noti_led_light">LED通知灯</string>
     <string name="pref_noti_sound">通知声音</string>
     <string name="pref_noti_silent_mode">免打扰时段</string>

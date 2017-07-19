@@ -8,6 +8,7 @@ import com.vdurmont.emoji.EmojiParser;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
+import net.jejer.hipda.service.NotiHelper;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -207,8 +208,8 @@ public class HiParserThreadList {
         @Override
         public void run() {
             if (System.currentTimeMillis() > HOLD_FETCH_NOTIFY + 10 * 1000) {
-                NotificationMgr.fetchNotification(mDoc);
-                NotificationMgr.showNotification(mCtx);
+                NotiHelper.fetchNotification(mDoc);
+                NotiHelper.showNotification(mCtx);
             }
         }
     }

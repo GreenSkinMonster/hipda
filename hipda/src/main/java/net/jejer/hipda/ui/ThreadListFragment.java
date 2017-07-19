@@ -52,6 +52,7 @@ import net.jejer.hipda.job.ThreadListEvent;
 import net.jejer.hipda.job.ThreadListJob;
 import net.jejer.hipda.job.ThreadUpdatedEvent;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadListAdapter;
 import net.jejer.hipda.ui.widget.BottomDialog;
@@ -66,7 +67,6 @@ import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.NotificationMgr;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -285,18 +285,18 @@ public class ThreadListFragment extends BaseFragment
             mNotificationFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    NotificationBean bean = NotificationMgr.getCurrentNotification();
+                    NotificationBean bean = NotiHelper.getCurrentNotification();
                     if (bean.getSmsCount() == 1
                             && bean.getThreadCount() == 0
                             && HiUtils.isValidId(bean.getUid())
                             && !TextUtils.isEmpty(bean.getUsername())) {
                         FragmentUtils.showSmsActivity(getActivity(), false, bean.getUid(), bean.getUsername());
-                        NotificationMgr.getCurrentNotification().clearSmsCount();
+                        NotiHelper.getCurrentNotification().clearSmsCount();
                         showNotification();
                     } else if (bean.getSmsCount() > 0) {
                         FragmentUtils.showSimpleListActivity(getActivity(), false, SimpleListJob.TYPE_SMS);
                     } else if (bean.getThreadCount() > 0) {
-                        NotificationMgr.getCurrentNotification().setThreadCount(0);
+                        NotiHelper.getCurrentNotification().setThreadCount(0);
                         FragmentUtils.showSimpleListActivity(getActivity(), false, SimpleListJob.TYPE_THREAD_NOTIFY);
                         showNotification();
                     } else {
@@ -532,8 +532,8 @@ public class ThreadListFragment extends BaseFragment
 
     public void showNotification() {
         if (mNotificationFab != null) {
-            int smsCount = NotificationMgr.getCurrentNotification().getSmsCount();
-            int threadCount = NotificationMgr.getCurrentNotification().getThreadCount();
+            int smsCount = NotiHelper.getCurrentNotification().getSmsCount();
+            int threadCount = NotiHelper.getCurrentNotification().getThreadCount();
             if (smsCount > 0) {
                 mNotificationFab.setImageResource(R.drawable.ic_mail_white_24dp);
                 mNotificationFab.show();

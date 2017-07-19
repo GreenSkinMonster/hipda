@@ -7,7 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import net.jejer.hipda.BuildConfig;
-import net.jejer.hipda.utils.NotificationMgr;
+import net.jejer.hipda.service.NotiHelper;
 
 /**
  * Created by GreenSkinMonster on 2017-06-22.
@@ -39,15 +39,15 @@ public class IntentActivity extends AppCompatActivity {
         boolean finished = false;
         if (BuildConfig.DEBUG) {
             if ("test_sms".equals(intent.getAction())) {
-                NotificationMgr.sendNotification(this, 0, 1, "绿皮怪兽", "723379", "测试短消息内容");
+                NotiHelper.sendNotification(this, 0, 1, "绿皮怪兽", "723379", "测试短消息内容");
                 finished = true;
                 finish();
             } else if ("test_thread".equals(intent.getAction())) {
-                NotificationMgr.sendNotification(this, 1, 0, "", "", "");
+                NotiHelper.sendNotification(this, 1, 0, "", "", "");
                 finished = true;
                 finish();
             } else if ("test_all".equals(intent.getAction())) {
-                NotificationMgr.sendNotification(this, 1, 1, "", "", "");
+                NotiHelper.sendNotification(this, 1, 1, "", "", "");
                 finished = true;
                 finish();
             }
