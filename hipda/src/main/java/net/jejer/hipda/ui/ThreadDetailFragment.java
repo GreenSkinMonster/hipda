@@ -959,7 +959,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         mQuickReply.setVisibility(View.VISIBLE);
         mQuickReply.bringToFront();
-        mMainFab.hide();
+        mMainFab.setVisibility(View.GONE);
         showSoftKeyboard();
 
         if (HiSettingsHelper.getInstance().isGestureBack())
@@ -1181,10 +1181,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
             });
 
-            if (mMainFab != null
-                    && mMainFab.getVisibility() != View.VISIBLE
-                    && mQuickReply.getVisibility() != View.VISIBLE)
-                mMainFab.show();
+            showMainFab();
 
         } else {
             int fetchType = FETCH_NORMAL;
@@ -1195,6 +1192,13 @@ public class ThreadDetailFragment extends BaseFragment {
             mLoadingView.setState(ContentLoadingView.LOADING);
             startJob(mCurrentPage, fetchType, POSITION_NORMAL);
         }
+    }
+
+    private void showMainFab() {
+        if (mMainFab != null
+                && mMainFab.getVisibility() == View.INVISIBLE
+                && mQuickReply.getVisibility() != View.VISIBLE)
+            mMainFab.show();
     }
 
     private class AvatarOnClickListener extends OnSingleClickListener {
@@ -1269,9 +1273,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (newState == RecyclerView.SCROLL_STATE_IDLE
                     && HiSettingsHelper.getInstance().isFabAutoHide()
                     && mRecyclerView.isNearBottom()) {
-                if (mMainFab != null && mMainFab.getVisibility() == View.INVISIBLE
-                        && mQuickReply.getVisibility() != View.VISIBLE)
-                    mMainFab.show();
+                showMainFab();
             }
         }
     }
@@ -1399,9 +1401,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     mDataReceived = true;
                     setHasOptionsMenu(true);
                     getActivity().invalidateOptionsMenu();
-                    if (mMainFab != null) {
-                        mMainFab.show();
-                    }
+                    showMainFab();
                 }
                 mDetailBeans = details.getAll();
                 mDetailAdapter.setDatas(mDetailBeans);
