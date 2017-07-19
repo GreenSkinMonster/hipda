@@ -101,32 +101,21 @@ public class BlacklistHelper {
         });
     }
 
-    public static boolean uploadOldBlackLists(String formhash) {
-        boolean success = true;
-        List<String> oldBlacklists = HiSettingsHelper.getInstance().getOldBlacklists();
-        for (final String username : oldBlacklists) {
-            ParamsMap params = new ParamsMap();
-            params.put("formhash", formhash);
-            params.put("user", username);
-            try {
-                String response = OkHttpHelper.getInstance().post(HiUtils.AddBlackUrl, params);
-                Document doc = Jsoup.parse(response);
-                Elements errors = doc.select("div.alert_error");
-                if (errors.size() > 0) {
-                    Element el = errors.first();
-                    el.select("a").remove();
-                    UIUtils.toast(el.text());
-                } else {
-                    HiSettingsHelper.getInstance().addToBlacklist(username);
-                }
-                Thread.sleep(100);
-            } catch (Exception e) {
-                success = false;
-                //UIUtils.toast(username + " : " + OkHttpHelper.getErrorMessage(e).getMessage());
-            }
+    public static String addBlacklist2(String formhash, String username) throws Exception {
+        ParamsMap params = new ParamsMap();
+        params.put("formhash", formhash);
+        params.put("user", username);
+        String response = OkHttpHelper.getInstance().post(HiUtils.AddBlackUrl, params);
+        Document doc = Jsoup.parse(response);
+        Elements errors = doc.select("div.alert_error");
+        if (errors.size() > 0) {
+            Element el = errors.first();
+            el.select("a").remove();
+            return el.text();
+        } else {
+            HiSettingsHelper.getInstance().addToBlacklist(username);
         }
-        return success;
-
+        return "";
     }
 
 }

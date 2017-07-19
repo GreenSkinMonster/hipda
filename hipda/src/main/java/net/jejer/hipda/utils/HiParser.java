@@ -804,9 +804,11 @@ public class HiParser {
     }
 
     public static List<String> parseBlacklist(Document doc) throws Exception {
-        List<String> blacklists = new ArrayList<>();
         Elements divs = doc.select("div.blacklist");
-        if (divs.size() > 0) {
+        if (divs.text().contains("暂无数据")) {
+            return new ArrayList<>();
+        } else if (divs.size() > 0) {
+            List<String> blacklists = new ArrayList<>();
             Elements elements = doc.select("ul.commonlist a");
             for (Element el : elements) {
                 String spaceUrl = el.attr("href");
@@ -816,6 +818,8 @@ public class HiParser {
                         blacklists.add(username);
                 }
             }
+            if (blacklists.size() == 0)
+                throw new Exception("无法解析黑名单数据");
             return blacklists;
         }
         throw new Exception("页面解析错误");

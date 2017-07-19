@@ -33,12 +33,12 @@ import net.jejer.hipda.ui.widget.SimpleDivider;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.UIUtils;
+import net.jejer.hipda.utils.Utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import okhttp3.Request;
@@ -124,19 +124,19 @@ public class BlacklistFragment extends BaseFragment implements SwipeRefreshLayou
                     mFormhash = HiParser.parseFormhash(doc);
                     String errorMsg = HiParser.parseErrorMessage(doc);
                     if (TextUtils.isEmpty(errorMsg)) {
-                        List<String> list = HiParser.parseBlacklist(doc);
-                        for (String username : list) {
-                            if (!mBlacklists.contains(username))
-                                mBlacklists.add(username);
-                        }
-                        Collections.sort(mBlacklists);
+                        mBlacklists = HiParser.parseBlacklist(doc);
                         mAdapter.notifyDataSetChanged();
                         HiSettingsHelper.getInstance().setBlacklists(mBlacklists);
                         HiSettingsHelper.getInstance().setBlacklistSyncTime();
 
                         if (!mDialogShown && HiSettingsHelper.getInstance().getOldBlacklists().size() > 0) {
                             mDialogShown = true;
-                            showUploadBlacklistDialog(getActivity());
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showUploadBlacklistDialog(getActivity());
+                                }
+                            }, 300);
                         }
 
                         new Handler().postDelayed(new Runnable() {
@@ -144,7 +144,7 @@ public class BlacklistFragment extends BaseFragment implements SwipeRefreshLayou
                             public void run() {
                                 UIUtils.toast("黑名单数据已同步");
                             }
-                        }, 250);
+                        }, 200);
                     } else {
                         UIUtils.toast(errorMsg);
                     }
@@ -207,7 +207,7 @@ public class BlacklistFragment extends BaseFragment implements SwipeRefreshLayou
 
     public void showUploadBlacklistDialog(final Context context) {
         StringBuilder sb = new StringBuilder();
-        sb.append("黑名单将与论坛 短消息>消息设置 中的黑名单同步，详情请看客户端帖子1楼说明")
+        sb.append("黑名单将与论坛\"短消息黑名单\"同步，建议先复制保存，上传后老版本黑名单数据将清除。")
                 .append("\n\n");
         for (String u : HiSettingsHelper.getInstance().getOldBlacklists()) {
             sb.append(u).append("\n");
@@ -238,7 +238,15 @@ public class BlacklistFragment extends BaseFragment implements SwipeRefreshLayou
     }
 
     private void uploadOldBlacklists() {
-        new AsyncTask<Void, Void, Boolean>() {
+        new AsyncTask<Void, Integer, String>() {
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+                if (!Utils.isDestroyed(getActivity()) && mProgressDialog != null && mProgressDialog.isShowing()) {
+                    mProgressDialog.setMessage(" 正在处理... (" + values[0] + "/" + values[1] + ")");
+                }
+            }
 
             @Override
             protected void onPreExecute() {
@@ -247,20 +255,52 @@ public class BlacklistFragment extends BaseFragment implements SwipeRefreshLayou
             }
 
             @Override
-            protected Boolean doInBackground(Void... params) {
-                return BlacklistHelper.uploadOldBlackLists(mFormhash);
+            protected String doInBackground(Void... params) {
+                StringBuilder sb = new StringBuilder();
+                List<String> oldBlacklists = HiSettingsHelper.getInstance().getOldBlacklists();
+                List<String> uploaded = new ArrayList<>();
+                int i = 0;
+                Integer[] values = new Integer[2];
+                values[1] = oldBlacklists.size();
+                for (final String username : oldBlacklists) {
+                    i++;
+                    values[0] = i;
+                    publishProgress(values);
+                    try {
+                        String errorMsg = BlacklistHelper.addBlacklist2(mFormhash, username);
+                        if (TextUtils.isEmpty(errorMsg)) {
+                            uploaded.add(username);
+                        } else {
+                            sb.append(username).append(" : ")
+                                    .append(errorMsg)
+                                    .append("\n");
+                        }
+                    } catch (Exception e) {
+                        sb.append(username).append(" : ")
+                                .append(OkHttpHelper.getErrorMessage(e).getMessage())
+                                .append("\n");
+                    }
+                    try {
+                        Thread.sleep(300);
+                    } catch (Exception ignored) {
+                    }
+                }
+                for (String u : uploaded) {
+                    oldBlacklists.remove(u);
+                }
+                HiSettingsHelper.getInstance().setOldBlacklists(oldBlacklists);
+                return sb.toString();
             }
 
             @Override
-            protected void onPostExecute(Boolean success) {
-                super.onPostExecute(success);
-                mProgressDialog.dismiss();
-                refresh();
-                if (!success) {
-                    UIUtils.copyToClipboard(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_OLD_BLACKLIST, ""));
-                    UIUtils.toast("上传可能发生错误，老版本黑名单已经复制到粘贴板");
+            protected void onPostExecute(String message) {
+                if (!Utils.isDestroyed(getActivity())) {
+                    mProgressDialog.dismiss();
+                    refresh();
                 }
-                HiSettingsHelper.getInstance().setOldBlacklists(new ArrayList<String>());
+                if (!TextUtils.isEmpty(message)) {
+                    UIUtils.showMessageDialog(getActivity(), "部分数据上传失败", message, true);
+                }
             }
         }.execute();
     }
