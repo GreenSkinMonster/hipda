@@ -15,6 +15,7 @@ public class FragmentArgs {
     public final static int TYPE_SEARCH = 6;
     public final static int TYPE_FAVORITE = 7;
     public final static int TYPE_NEW_THREAD = 8;
+    public final static int TYPE_NEW_POSTS = 9;
 
     private int type;
     private int fid;

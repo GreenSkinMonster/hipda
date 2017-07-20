@@ -2,11 +2,11 @@
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_shortcut_add"
-        android:shortcutId="new_thread"
-        android:shortcutShortLabel="@string/new_thread">
+        android:icon="@drawable/ic_shortcut_wb_sunny"
+        android:shortcutId="new_posts"
+        android:shortcutShortLabel="@string/title_drawer_new_posts">
         <intent
-            android:action="new_thread"
+            android:action="new_posts"
             android:targetClass="net.jejer.hipda.ui.MainFrameActivity"
             android:targetPackage="net.jejer.hipda.ng"/>
     </shortcut>

@@ -50,6 +50,10 @@ public class FragmentUtils {
                 FragmentArgs args = new FragmentArgs();
                 args.setType(FragmentArgs.TYPE_NEW_THREAD);
                 return args;
+            } else if (Constants.INTENT_NEW_POSTS.equals(intent.getAction())) {
+                FragmentArgs args = new FragmentArgs();
+                args.setType(FragmentArgs.TYPE_NEW_POSTS);
+                return args;
             } else {
                 Uri data = intent.getData();
                 if (data != null) {
@@ -338,6 +342,8 @@ public class FragmentUtils {
             showForum(activity.getSupportFragmentManager(), args.getFid());
         } else if (args.getType() == FragmentArgs.TYPE_NEW_THREAD) {
             showNewPostActivity(activity, args.getFid(), args.getParentId());
+        } else if (args.getType() == FragmentArgs.TYPE_NEW_POSTS) {
+            showSimpleListActivity(activity, args.isSkipEnterAnim(), SimpleListJob.TYPE_NEW_POSTS);
         }
     }
 

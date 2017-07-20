@@ -28,6 +28,7 @@ public class Constants {
     public static final String INTENT_SEARCH = "search";
     public static final String INTENT_NEW_THREAD = "new_thread";
     public static final String INTENT_FAVORITE = "favorite";
+    public static final String INTENT_NEW_POSTS = "new_posts";
 
     public static final String EXTRA_SMS_COUNT = "sms_count";
     public static final String EXTRA_THREAD_COUNT = "thread_count";
