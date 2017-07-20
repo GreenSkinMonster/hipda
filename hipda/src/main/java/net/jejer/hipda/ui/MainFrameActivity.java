@@ -103,13 +103,13 @@ public class MainFrameActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_main_frame);
         //hack, to avoid MainFrameActivity be created more than once
         if (HiApplication.getMainActivityCount() > 1) {
             finish();
             return;
         }
 
-        setContentView(R.layout.activity_main_frame);
         mRootView = findViewById(R.id.main_activity_root_view);
         mMainFrameContainer = findViewById(R.id.main_frame_container);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
@@ -166,7 +166,9 @@ public class MainFrameActivity extends BaseActivity {
                 }
             }
 
-            if (OkHttpHelper.getInstance().isLoggedIn() && HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
+            if (OkHttpHelper.getInstance().isLoggedIn()
+                    && HiSettingsHelper.getInstance().isNotiTaskEnabled()
+                    && !HiSettingsHelper.getInstance().isErrorReportMode()) {
                 //if NotiJob hasn't run for 30 mins, it might died, re schedule it
                 Date last = HiSettingsHelper.getInstance().getNotiJobLastRunTime();
                 if (last == null ||

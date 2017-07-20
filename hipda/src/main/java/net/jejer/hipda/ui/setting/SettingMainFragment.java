@@ -42,6 +42,7 @@ public class SettingMainFragment extends BaseSettingFragment {
     private String mForumServer;
     private boolean mTrustAllCerts;
     private boolean mCircleAvatar;
+    private boolean mNotiTaskEnabled;
 
     private boolean mFirstResume = true;
 
@@ -88,6 +89,7 @@ public class SettingMainFragment extends BaseSettingFragment {
         mForumServer = HiSettingsHelper.getInstance().getForumServer();
         mTrustAllCerts = HiSettingsHelper.getInstance().isTrustAllCerts();
         mCircleAvatar = HiSettingsHelper.getInstance().isCircleAvatar();
+        mNotiTaskEnabled = HiSettingsHelper.getInstance().isNotiTaskEnabled();
 
         setActionBarTitle(R.string.title_fragment_settings);
     }
@@ -105,10 +107,12 @@ public class SettingMainFragment extends BaseSettingFragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-            NotiHelper.scheduleJob();
-        } else {
-            NotiHelper.cancelJob();
+        if (mNotiTaskEnabled != HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
+            if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
+                NotiHelper.scheduleJob();
+            } else {
+                NotiHelper.cancelJob();
+            }
         }
     }
 

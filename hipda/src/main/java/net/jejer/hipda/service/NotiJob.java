@@ -20,7 +20,7 @@ public class NotiJob extends Job {
     @Override
     @NonNull
     protected Result onRunJob(Params params) {
-        if (OkHttpHelper.getInstance().isLoggedIn()) {
+        if (!OkHttpHelper.getInstance().isLoggedIn()) {
             NotiHelper.cancelJob();
         } else {
             HiSettingsHelper.getInstance().setNotiJobLastRunTime();
@@ -31,7 +31,6 @@ public class NotiJob extends Job {
         }
         return Result.SUCCESS;
     }
-
 
     private void checkNotifications() {
         try {
