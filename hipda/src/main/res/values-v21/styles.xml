@@ -1,7 +1,0 @@
-<resources>
-
-    <style name="ThemeLightBase" parent="MaterialDrawerTheme.Light">
-        <item name="dialog_background">@color/md_white_1000</item>
-    </style>
-
-</resources>
