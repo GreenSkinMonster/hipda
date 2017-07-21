@@ -84,7 +84,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -163,18 +162,6 @@ public class MainFrameActivity extends BaseActivity {
             } else {
                 if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
                     new UpdateHelper(this, true).check();
-                }
-            }
-
-            if (OkHttpHelper.getInstance().isLoggedIn()
-                    && HiSettingsHelper.getInstance().isNotiTaskEnabled()
-                    && !HiSettingsHelper.getInstance().isErrorReportMode()) {
-                //if NotiJob hasn't run for 30 mins, it might died, re schedule it
-                Date last = HiSettingsHelper.getInstance().getNotiJobLastRunTime();
-                if (last == null ||
-                        System.currentTimeMillis() - 2 * NotiHelper.NOTI_REPEAT_MINUTTE * 60 * 1000 > last.getTime()) {
-                    HiSettingsHelper.getInstance().setNotiJobLastRunTime();
-                    NotiHelper.scheduleJob();
                 }
             }
         }

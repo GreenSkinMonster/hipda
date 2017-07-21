@@ -23,9 +23,9 @@ public class NotiJob extends Job {
         if (!OkHttpHelper.getInstance().isLoggedIn()) {
             NotiHelper.cancelJob();
         } else {
-            HiSettingsHelper.getInstance().setNotiJobLastRunTime();
             if (!HiApplication.isAppVisible()
                     && !HiSettingsHelper.getInstance().isInSilentMode()) {
+                HiSettingsHelper.getInstance().setNotiJobLastRunTime();
                 checkNotifications();
             }
         }

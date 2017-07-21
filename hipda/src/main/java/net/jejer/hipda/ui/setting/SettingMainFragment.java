@@ -104,18 +104,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mNotiTaskEnabled != HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-            if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-                NotiHelper.scheduleJob();
-            } else {
-                NotiHelper.cancelJob();
-            }
-        }
-    }
-
     private void updateSettingStatus() {
         HiSettingsHelper.getInstance().reload();
 
@@ -124,6 +112,14 @@ public class SettingMainFragment extends BaseSettingFragment {
 
         if (HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
             HiSettingsHelper.getInstance().setNightMode(false);
+
+        if (mNotiTaskEnabled != HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
+            if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
+                NotiHelper.scheduleJob();
+            } else {
+                NotiHelper.cancelJob();
+            }
+        }
 
         String newIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
         boolean iconChanged = !mIcon.equals(String.valueOf(Utils.parseInt(newIcon)));
