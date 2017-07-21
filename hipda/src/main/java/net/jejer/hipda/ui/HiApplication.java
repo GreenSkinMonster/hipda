@@ -29,7 +29,6 @@ public class HiApplication extends Application implements Application.ActivityLi
     public final static int RELOAD = 1;
     public final static int RECREATE = 2;
     public final static int RESTART = 3;
-    public final static int RECREATING = 4;
 
     private static Context context;
     private static boolean notified;

@@ -21,6 +21,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -165,16 +166,6 @@ public class MainFrameActivity extends BaseActivity {
                 }
             }
         }
-
-        if (HiApplication.getSettingStatus() == HiApplication.RECREATING) {
-            HiApplication.setSettingStatus(HiApplication.IDLE);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    closeDrawer();
-                }
-            }, 500);
-        }
     }
 
     @Override
@@ -283,13 +274,28 @@ public class MainFrameActivity extends BaseActivity {
                         @Override
                         public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
                             if (HiSettingsHelper.getInstance().isNightMode() != isChecked) {
-                                HiSettingsHelper.getInstance().setNightMode(isChecked);
-                                new Handler().postDelayed(new Runnable() {
+                                final DrawerLayout.DrawerListener nightModeDrawerListener = new DrawerLayout.DrawerListener() {
                                     @Override
-                                    public void run() {
+                                    public void onDrawerSlide(View drawerView, float slideOffset) {
+                                    }
+
+                                    @Override
+                                    public void onDrawerOpened(View drawerView) {
+                                    }
+
+                                    @Override
+                                    public void onDrawerClosed(View drawerView) {
+                                        mDrawer.getDrawerLayout().removeDrawerListener(this);
                                         recreateActivity();
                                     }
-                                }, 250);
+
+                                    @Override
+                                    public void onDrawerStateChanged(int newState) {
+                                    }
+                                };
+                                HiSettingsHelper.getInstance().setNightMode(isChecked);
+                                mDrawer.getDrawerLayout().addDrawerListener(nightModeDrawerListener);
+                                mDrawer.closeDrawer();
                             }
                         }
                     }));
@@ -647,7 +653,6 @@ public class MainFrameActivity extends BaseActivity {
             @Override
             public void run() {
                 try {
-                    HiApplication.setSettingStatus(HiApplication.RECREATING);
                     getWindow().setWindowAnimations(R.style.ThemeTransitionAnimation);
                     recreate();
                 } catch (Exception e) {
