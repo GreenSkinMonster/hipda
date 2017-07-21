@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -16,6 +15,7 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.StringSignature;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -54,23 +54,26 @@ public class GlideHelper {
     }
 
     public static void loadAvatar(RequestManager glide, ImageView view, String avatarUrl) {
-        if (avatarUrl != null) {
-            if (NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
-                avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
-            }
-            String cacheKey = AVATAR_CACHE_KEYS.get(avatarUrl);
-            if (!avatarUrl.startsWith("/") && !TextUtils.isEmpty(cacheKey))
-                avatarUrl = avatarUrl + "?" + cacheKey;
+        String cacheKey;
+        if (avatarUrl == null || NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
+            avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
+            cacheKey = avatarUrl;
+        } else {
+            cacheKey = AVATAR_CACHE_KEYS.get(avatarUrl);
+            if (cacheKey == null)
+                cacheKey = avatarUrl;
         }
         if (HiSettingsHelper.getInstance().isCircleAvatar()) {
             glide.load(avatarUrl)
+                    .signature(new StringSignature(cacheKey))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .bitmapTransform(new CropCircleTransformation(HiApplication.getAppContext()))
                     .error(DEFAULT_USER_ICON)
                     .crossFade()
-                    .bitmapTransform(new CropCircleTransformation(HiApplication.getAppContext()))
                     .into(view);
         } else {
             glide.load(avatarUrl)
+                    .signature(new StringSignature(cacheKey))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .centerCrop()
                     .error(DEFAULT_USER_ICON)
