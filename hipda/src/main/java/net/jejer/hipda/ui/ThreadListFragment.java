@@ -627,6 +627,8 @@ public class ThreadListFragment extends BaseFragment
             if (!mDataReceived) {
                 mDataReceived = true;
                 mMainFab.show();
+                if (HiSettingsHelper.getInstance().isAppBarCollapsible())
+                    ((MainFrameActivity) getActivity()).mAppBarLayout.setExpanded(true, true);
             }
             showNotification();
 
