@@ -295,15 +295,15 @@ public class XRecyclerView extends RecyclerView {
     }
 
     public void scrollToBottom() {
-        mLayoutManager.scrollToPositionWithOffset(mAdapter.getItemCount() - 1, 0);
+        mLayoutManager.scrollToPositionWithOffset(mLayoutManager.getItemCount() - 1, 0);
     }
 
     public void smoothScrollToBottom() {
-        smoothScrollToPosition(mAdapter.getItemCount() - 1);
+        smoothScrollToPosition(mLayoutManager.getItemCount() - 1);
     }
 
     public boolean isNearBottom() {
-        return mLayoutManager.findLastVisibleItemPosition() >= mAdapter.getItemCount() - 2;
+        return mLayoutManager.findLastVisibleItemPosition() >= mLayoutManager.getItemCount() - 2;
     }
 
     @Override

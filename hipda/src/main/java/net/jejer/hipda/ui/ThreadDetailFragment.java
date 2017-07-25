@@ -302,13 +302,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     JobMgr.addJob(new PostJob(mSessionId, mQuickReplyMode, null, postBean, true));
 
                     UIUtils.hideSoftKeyboard(getActivity());
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mRecyclerView.scrollToBottom();
-                        }
-                    }, 200);
-
+                    scrollToBottom();
                 }
             }
         });
@@ -789,6 +783,14 @@ public class ThreadDetailFragment extends BaseFragment {
         mRecyclerView.scrollToTop();
     }
 
+    public void scrollToBottom() {
+        if (HiSettingsHelper.getInstance().isAppBarCollapsible()) {
+            ((BaseActivity) getActivity()).mAppBarLayout.setExpanded(false, true);
+        }
+        prefetchNextPage();
+        mRecyclerView.scrollToBottom();
+    }
+
     public void stopScroll() {
         mRecyclerView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
     }
@@ -856,8 +858,7 @@ public class ThreadDetailFragment extends BaseFragment {
         btnPageBottom.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                mRecyclerView.scrollToBottom();
-                prefetchNextPage();
+                scrollToBottom();
                 dialog.dismiss();
             }
         });
@@ -1138,6 +1139,8 @@ public class ThreadDetailFragment extends BaseFragment {
             }
             if (mCurrentPage == mMaxPage) {
                 mRecyclerView.setFooterState(XFooterView.STATE_END);
+            } else {
+                mRecyclerView.setFooterState(XFooterView.STATE_READY);
             }
 
             mRecyclerView.post(new Runnable() {
@@ -1491,11 +1494,26 @@ public class ThreadDetailFragment extends BaseFragment {
                 mShowAllMenuItem.setVisible(false);
                 showOrLoadPage(true);
             } else {
-                if (event.mMode != PostHelper.MODE_EDIT_POST) {
-                    mCurrentPage = mMaxPage;
-                    mGotoFloor = LAST_FLOOR;
+                if (event.fromQuickReply && details != null && mCurrentPage == details.getPage() && mCurrentPage == details.getLastPage()) {
+                    DetailBean lastpost = mDetailAdapter.getDatas().get(mDetailAdapter.getDatas().size() - 1);
+                    for (DetailBean bean : details.getAll()) {
+                        if (bean.getFloor() > lastpost.getFloor()) {
+                            mDetailAdapter.getDatas().add(bean);
+                            mDetailAdapter.notifyItemInserted(mDetailAdapter.getDatas().size() - 1);
+                            if (bean.getAuthor().equals(HiSettingsHelper.getInstance().getUsername())) {
+                                blinkItemView(bean.getPostId());
+                            }
+                        }
+                    }
+                    mRecyclerView.smoothScrollToPosition(mDetailAdapter.getItemCount() - 1 - mDetailAdapter.getFooterCount());
+                    mRecyclerView.setFooterState(XFooterView.STATE_END);
+                } else {
+                    if (event.mMode != PostHelper.MODE_EDIT_POST) {
+                        mCurrentPage = mMaxPage;
+                        mGotoFloor = LAST_FLOOR;
+                    }
+                    showOrLoadPage(false);
                 }
-                showOrLoadPage(false);
             }
         } else {
             if (event.fromQuickReply) {
