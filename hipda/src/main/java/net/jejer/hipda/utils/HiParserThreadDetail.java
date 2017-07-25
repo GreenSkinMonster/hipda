@@ -589,7 +589,7 @@ public class HiParserThreadDetail {
     private static String getAbsoluteUrl(String url) {
         if (TextUtils.isEmpty(url) || url.contains("://"))
             return url;
-        return HiUtils.ImageBaseUrl + url;
+        return HiUtils.BaseUrl + url;
     }
 
 }

@@ -91,8 +91,6 @@ public class BlacklistHelper {
                         Collections.sort(list);
                         HiSettingsHelper.getInstance().setBlacklists(list);
                         HiSettingsHelper.getInstance().setBlacklistSyncTime();
-                    } else {
-                        UIUtils.toast(errorMsg);
                     }
                 } catch (Exception e) {
                     Logger.e(e);

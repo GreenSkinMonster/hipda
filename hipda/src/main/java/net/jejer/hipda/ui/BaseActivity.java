@@ -101,18 +101,8 @@ public class BaseActivity extends AppCompatActivity {
             params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                     | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
                     | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
-            mAppBarLayout.setTag("1");
         } else {
             params.setScrollFlags(0);
-            mAppBarLayout.setTag("0");
-            if (mMainFrameContainer.getPaddingBottom() != 0) {
-                mMainFrameContainer.setPadding(
-                        mMainFrameContainer.getPaddingLeft(),
-                        mMainFrameContainer.getPaddingTop(),
-                        mMainFrameContainer.getPaddingRight(),
-                        0);
-                mMainFrameContainer.requestLayout();
-            }
         }
         mToolbar.setLayoutParams(params);
     }

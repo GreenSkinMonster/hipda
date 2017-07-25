@@ -104,12 +104,6 @@ public class MainFrameActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main_frame);
-        //hack, to avoid MainFrameActivity be created more than once
-        if (HiApplication.getMainActivityCount() > 1) {
-            finish();
-            return;
-        }
-
         mRootView = findViewById(R.id.main_activity_root_view);
         mMainFrameContainer = findViewById(R.id.main_frame_container);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
@@ -125,6 +119,12 @@ public class MainFrameActivity extends BaseActivity {
 
         mMainFab = (FloatingActionButton) findViewById(R.id.fab_main);
         mNotiificationFab = (FloatingActionButton) findViewById(R.id.fab_notification);
+
+        //hack, to avoid MainFrameActivity be created more than once
+        if (HiApplication.getMainActivityCount() > 1) {
+            finish();
+            return;
+        }
 
         if (UIUtils.isTablet(this)) {
             mMainFab.setSize(FloatingActionButton.SIZE_NORMAL);
@@ -171,6 +171,8 @@ public class MainFrameActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (isFinishing())
+            return;
         FragmentArgs args = FragmentUtils.parse(intent);
         if (args != null) {
             HiParserThreadList.holdFetchNotify();

@@ -183,28 +183,30 @@ public class ThreadDetailFragment extends BaseFragment {
 
         setHasOptionsMenu(false);
 
-        if (getArguments().containsKey(ARG_TID_KEY)) {
-            mTid = getArguments().getString(ARG_TID_KEY);
-        }
-        if (getArguments().containsKey(ARG_PID_KEY)) {
-            mGotoPostId = getArguments().getString(ARG_PID_KEY);
-        }
-        if (getArguments().containsKey(ARG_AUTHOR_ID_KEY)) {
-            mAuthorId = getArguments().getString(ARG_AUTHOR_ID_KEY);
-        }
-        if (getArguments().containsKey(ARG_TITLE_KEY)) {
-            mTitle = getArguments().getString(ARG_TITLE_KEY);
-        }
-        if (getArguments().containsKey(ARG_PAGE_KEY)) {
-            mCurrentPage = getArguments().getInt(ARG_PAGE_KEY);
-            if (mCurrentPage <= 0 && mCurrentPage != LAST_PAGE)
-                mCurrentPage = 1;
-        }
-        if (getArguments().containsKey(ARG_MAX_PAGE_KEY)) {
-            mMaxPage = getArguments().getInt(ARG_MAX_PAGE_KEY);
-        }
-        if (getArguments().containsKey(ARG_FLOOR_KEY)) {
-            mGotoFloor = getArguments().getInt(ARG_FLOOR_KEY);
+        if (getArguments() != null) {
+            if (getArguments().containsKey(ARG_TID_KEY)) {
+                mTid = getArguments().getString(ARG_TID_KEY);
+            }
+            if (getArguments().containsKey(ARG_PID_KEY)) {
+                mGotoPostId = getArguments().getString(ARG_PID_KEY);
+            }
+            if (getArguments().containsKey(ARG_AUTHOR_ID_KEY)) {
+                mAuthorId = getArguments().getString(ARG_AUTHOR_ID_KEY);
+            }
+            if (getArguments().containsKey(ARG_TITLE_KEY)) {
+                mTitle = getArguments().getString(ARG_TITLE_KEY);
+            }
+            if (getArguments().containsKey(ARG_PAGE_KEY)) {
+                mCurrentPage = getArguments().getInt(ARG_PAGE_KEY);
+                if (mCurrentPage <= 0 && mCurrentPage != LAST_PAGE)
+                    mCurrentPage = 1;
+            }
+            if (getArguments().containsKey(ARG_MAX_PAGE_KEY)) {
+                mMaxPage = getArguments().getInt(ARG_MAX_PAGE_KEY);
+            }
+            if (getArguments().containsKey(ARG_FLOOR_KEY)) {
+                mGotoFloor = getArguments().getInt(ARG_FLOOR_KEY);
+            }
         }
 
         mBlinkAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.blink);
