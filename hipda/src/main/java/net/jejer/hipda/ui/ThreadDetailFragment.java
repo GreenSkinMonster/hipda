@@ -789,7 +789,6 @@ public class ThreadDetailFragment extends BaseFragment {
         if (HiSettingsHelper.getInstance().isAppBarCollapsible()) {
             ((BaseActivity) getActivity()).mAppBarLayout.setExpanded(false, true);
         }
-        prefetchNextPage();
         mRecyclerView.scrollToBottom();
     }
 
@@ -860,6 +859,7 @@ public class ThreadDetailFragment extends BaseFragment {
         btnPageBottom.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
+                prefetchNextPage();
                 scrollToBottom();
                 dialog.dismiss();
             }
@@ -1394,8 +1394,9 @@ public class ThreadDetailFragment extends BaseFragment {
                 mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
             } else if (event.mLoadingPosition == POSITION_FOOTER) {
                 mFooterLoading = false;
-                if (event.mFectchType == FETCH_NEXT)
-                    mRecyclerView.setFooterState(XFooterView.STATE_READY);
+                if (event.mFectchType == FETCH_NEXT) {
+                    mRecyclerView.setFooterState(mCurrentPage < mMaxPage ? XFooterView.STATE_READY : XFooterView.STATE_END);
+                }
             } else {
                 mInloading = false;
                 mLoadingView.setState(ContentLoadingView.CONTENT);
