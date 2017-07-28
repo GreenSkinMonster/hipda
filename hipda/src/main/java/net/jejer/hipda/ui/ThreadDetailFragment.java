@@ -996,9 +996,9 @@ public class ThreadDetailFragment extends BaseFragment {
             mQuickReplyMode = PostHelper.MODE_REPLY_THREAD;
             mQuickReplyToPost = null;
         }
+        mMainFab.show();
         if (mQuickReply.getVisibility() == View.VISIBLE) {
             mQuickReply.setVisibility(View.INVISIBLE);
-            mMainFab.show();
             return true;
         }
         return false;
@@ -1452,6 +1452,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
             if (event.fromQuickReply) {
+                mFooterLoading = true;
                 mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
                 hideQuickReply(false);
                 mMainFab.hide();
@@ -1465,6 +1466,8 @@ public class ThreadDetailFragment extends BaseFragment {
             if (postProgressDialog != null) {
                 postProgressDialog.dismiss(message);
             }
+            if (event.fromQuickReply)
+                mFooterLoading = false;
 
             mGotoFloor = postResult.getFloor();
             DetailListBean details = postResult.getDetailListBean();
@@ -1497,15 +1500,26 @@ public class ThreadDetailFragment extends BaseFragment {
                 mShowAllMenuItem.setVisible(false);
                 showOrLoadPage(true);
             } else {
-                if (event.fromQuickReply && details != null && mCurrentPage == details.getPage() && mCurrentPage == details.getLastPage()) {
-                    DetailBean lastpost = mDetailAdapter.getDatas().get(mDetailAdapter.getDatas().size() - 1);
-                    for (DetailBean bean : details.getAll()) {
-                        if (bean.getFloor() > lastpost.getFloor()) {
-                            mDetailAdapter.getDatas().add(bean);
-                            mDetailAdapter.notifyItemInserted(mDetailAdapter.getDatas().size() - 1);
-                            if (bean.getAuthor().equals(HiSettingsHelper.getInstance().getUsername())) {
-                                blinkItemView(bean.getPostId());
-                            }
+                boolean append = false;
+                DetailBean lastpost = null;
+                if (mDetailBeans.size() > 0)
+                    lastpost = mDetailBeans.get(mDetailBeans.size() - 1);
+                if (lastpost != null && event.fromQuickReply && details != null
+                        && mCurrentPage == details.getPage() && mCurrentPage == details.getLastPage()) {
+                    List<DetailBean> newBeans = details.getAll();
+                    if (newBeans.size() > mDetailBeans.size()) {
+                        DetailBean oldLastpost = newBeans.get(mDetailBeans.size() - 1);
+                        append = oldLastpost.getPostId().equals(lastpost.getPostId());
+                    }
+                }
+                if (append) {
+                    List<DetailBean> newBeans = details.getAll();
+                    for (int i = mDetailBeans.size(); i < newBeans.size(); i++) {
+                        DetailBean bean = newBeans.get(i);
+                        mDetailBeans.add(bean);
+                        mDetailAdapter.notifyItemInserted(mDetailBeans.size() + mDetailAdapter.getHeaderCount() - 1);
+                        if (bean.getAuthor().equals(HiSettingsHelper.getInstance().getUsername())) {
+                            blinkItemView(bean.getPostId());
                         }
                     }
                     mRecyclerView.smoothScrollToPosition(mDetailAdapter.getItemCount() - 1 - mDetailAdapter.getFooterCount());
@@ -1520,6 +1534,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         } else {
             if (event.fromQuickReply) {
+                mFooterLoading = false;
                 if (!TextUtils.isEmpty(mEtReply.getText())) {
                     ContentDao.saveContent(mSessionId, mEtReply.getText().toString());
                 }
