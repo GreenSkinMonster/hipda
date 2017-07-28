@@ -122,9 +122,9 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
         } else if (maxMemory <= 128 * 1024 * 1024) {
             return 520;
         } else if (maxMemory <= 256 * 1024 * 1024) {
-            return 640;
+            return 560;
         }
-        return 800;
+        return 720;
     }
 
     private static Bitmap.Config getBitmapConfig() {
