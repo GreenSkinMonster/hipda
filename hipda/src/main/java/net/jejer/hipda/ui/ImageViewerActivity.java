@@ -45,6 +45,10 @@ public class ImageViewerActivity extends SwipeBackActivity {
         setContentView(R.layout.activity_image_viewer);
 
         Intent intent = getIntent();
+        if (intent == null || intent.getExtras() == null) {
+            finish();
+        }
+
         int imageIndex = intent.getExtras().getInt(KEY_IMAGE_INDEX);
         final ArrayList<ContentImg> images = intent.getExtras().getParcelableArrayList(KEY_IMAGES);
 
@@ -52,7 +56,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
         final TextView tvImageInfo = (TextView) findViewById(R.id.tv_image_info);
         final TextView tvFloorInfo = (TextView) findViewById(R.id.tv_floor_info);
         final Button btnBack = (Button) findViewById(R.id.btn_back);
-
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
