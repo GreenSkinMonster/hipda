@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,6 +36,11 @@ public class ThreadItemLayout extends LinearLayout {
     public ThreadItemLayout(Context context, RequestManager glide) {
         super(context, null, 0);
         inflate(context, R.layout.item_thread_list, this);
+
+        LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        setLayoutParams(layoutParams);
+        setOrientation(VERTICAL);
+        setPadding(Utils.dpToPx(context, 8), Utils.dpToPx(context, 4), Utils.dpToPx(context, 8), Utils.dpToPx(context, 4));
 
         mAvatar = (ImageView) findViewById(R.id.iv_avatar);
         mTvAuthor = (TextView) findViewById(R.id.tv_author);
