@@ -131,7 +131,7 @@ public class PostHelper {
         params.put("formhash", formhash);
         params.put("posttime", String.valueOf(System.currentTimeMillis()));
         params.put("wysiwyg", "0");
-        params.put("checkbox", "0");
+        //params.put("usesig", "1");
         params.put("message", replyText);
         if (mMode == MODE_EDIT_POST && delete)
             params.put("delete", "1");
