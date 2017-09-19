@@ -20,7 +20,7 @@ import java.util.List;
 
 public class HiParser {
 
-    public static SimpleListBean parseSimpleList(Context ctx, int type, Document doc) {
+    public static SimpleListBean parseSimpleList(Context ctx, int type, Document doc, boolean isFullTextSearch) {
 
         // Async check notify
         new HiParserThreadList.parseNotifyRunnable(ctx, doc).run();
@@ -37,7 +37,11 @@ public class HiParser {
             case SimpleListJob.TYPE_SMS_DETAIL:
                 return parseSmsDetail(doc);
             case SimpleListJob.TYPE_SEARCH:
-                return parseSearch(doc);
+                if (isFullTextSearch) {
+                    return parseSearchFullText(doc);
+                } else {
+                    parseSearch(doc);
+                }
             case SimpleListJob.TYPE_NEW_POSTS:
                 return parseSearch(doc);
             case SimpleListJob.TYPE_SEARCH_USER_THREADS:
@@ -533,9 +537,6 @@ public class HiParser {
         String searchIdUrl;
         if (pagesES.size() > 0) {
             searchIdUrl = pagesES.first().attr("href");
-            if (searchIdUrl.contains("srchtype=fulltext")) {
-                return parseSearchFullText(doc);
-            }
             list.setSearchId(Utils.getMiddleString(searchIdUrl, "searchid=", "&"));
             for (Node n : pagesES) {
                 int tmp = Utils.getIntFromString(((Element) n).text());

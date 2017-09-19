@@ -124,7 +124,7 @@ public class SimpleListJob extends BaseJob {
                         }
                     } else {
                         Document doc = Jsoup.parse(resp);
-                        data = HiParser.parseSimpleList(mCtx, mType, doc);
+                        data = HiParser.parseSimpleList(mCtx, mType, doc, (mType == TYPE_SEARCH && mSearchBean != null && mSearchBean.isFulltext()));
                         formhash = HiParser.parseFormhash(doc);
                         break;
                     }
