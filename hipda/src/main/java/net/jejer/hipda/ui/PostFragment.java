@@ -292,11 +292,9 @@ public class PostFragment extends BaseFragment {
             EventBus.getDefault().register(this);
         if (mPrePostInfo == null) {
             fetchPrePostInfo(false);
-        } else {
-            setupPrePostInfo();
         }
 
-        if (mMode == PostHelper.MODE_NEW_THREAD) {
+        if (mMode == PostHelper.MODE_NEW_THREAD && TextUtils.isEmpty(mEtSubject.getText().toString())) {
             (new Handler()).postDelayed(new Runnable() {
                 public void run() {
                     mEtSubject.requestFocus();
@@ -312,8 +310,7 @@ public class PostFragment extends BaseFragment {
                     long t = SystemClock.uptimeMillis();
                     mEtContent.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
                     mEtContent.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
-                    if (mContentPosition < 0)
-                        mEtContent.setSelection(mEtContent.getText().length());
+                    mEtContent.setSelection(mContentPosition <= 0 ? mEtContent.getText().length() : mContentPosition);
                 }
             }, 100);
         }
@@ -322,6 +319,7 @@ public class PostFragment extends BaseFragment {
     @Override
     public void onPause() {
         EventBus.getDefault().unregister(this);
+        mContentPosition = mEtContent.getSelectionStart();
         savePostConent(true);
         super.onPause();
     }
