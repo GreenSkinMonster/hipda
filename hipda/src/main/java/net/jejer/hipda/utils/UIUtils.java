@@ -229,9 +229,19 @@ public class UIUtils {
             File destFile = new File(cacheDirectory, filename);
             Utils.copy(new File(imageInfo.getPath()), destFile);
 
+            Uri uri;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                uri = FileProvider.getUriForFile(
+                        activity,
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        destFile);
+            } else {
+                uri = Uri.fromFile(destFile);
+            }
+
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType(imageInfo.getMime());
-            Uri uri = Uri.fromFile(destFile);
+
             shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
             activity.startActivity(Intent.createChooser(shareIntent, "分享图片"));
         } catch (Exception e) {
