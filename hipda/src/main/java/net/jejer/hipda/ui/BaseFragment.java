@@ -72,6 +72,16 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    protected void setActionBarSubtitle(CharSequence title) {
+        if (getActivity() != null) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            String t = Utils.nullToText(title);
+            if (actionBar != null && !t.equals(actionBar.getTitle())) {
+                actionBar.setSubtitle(t);
+            }
+        }
+    }
+
     void setupFab() {
         if (getActivity() != null) {
             if (mMainFab != null) {

@@ -321,8 +321,8 @@ public class ThreadDetailFragment extends BaseFragment {
         ImageButton ibEmojiSwitch = (ImageButton) mQuickReply.findViewById(R.id.ib_goto_post);
         setUpEmojiPopup(mEtReply, ibEmojiSwitch);
 
-        setActionBarTitle((mCurrentPage > 0 && mMaxPage > 0 ? "(" + mCurrentPage + "/" + mMaxPage + ") " : "")
-                + mTitle);
+        setActionBarTitle(mTitle);
+        setActionBarSubtitle(mCurrentPage > 0 && mMaxPage > 0 ? mCurrentPage + "/" + mMaxPage : "?");
 
         return view;
     }
@@ -1127,8 +1127,8 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private void showOrLoadPage(boolean refresh) {
-        setActionBarTitle((mCurrentPage > 0 && mMaxPage > 0 ? "(" + mCurrentPage + "/" + mMaxPage + ") " : "")
-                + mTitle);
+        setActionBarTitle(mTitle);
+        setActionBarSubtitle(mCurrentPage > 0 && mMaxPage > 0 ? mCurrentPage + "/" + mMaxPage : "?");
 
         if (mCache.get(mCurrentPage) != null) {
             mDetailBeans = mCache.get(mCurrentPage).getAll();
