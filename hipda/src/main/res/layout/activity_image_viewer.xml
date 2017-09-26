@@ -10,28 +10,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
+        android:paddingLeft="8dp"
         android:paddingRight="8dp">
 
-        <com.mikepenz.iconics.view.IconicsButton
-            android:id="@+id/btn_back"
-            android:layout_width="56dp"
-            android:layout_height="?attr/actionBarSize"
+        <TextView
+            android:id="@+id/tv_image_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="?attr/actionBarMargin"
-            android:background="?attr/selectableItemBackground"
-            android:text="{gmd-arrow-back}"
-            android:textColor="@color/white"
-            android:textSize="24sp"/>
+            android:textColor="@color/md_grey_300"
+            android:textSize="17sp"/>
 
         <TextView
             android:id="@+id/tv_floor_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/btn_back"
-            android:paddingLeft="4dp"
+            android:layout_centerInParent="true"
             android:textColor="@color/md_grey_300"
-            android:textSize="20sp"/>
+            android:textSize="17sp"/>
 
         <ImageButton
             android:id="@+id/btn_download_image"
@@ -49,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="6dp"
+            android:layout_marginLeft="12dp"
             android:layout_marginRight="6dp"
             android:layout_toLeftOf="@+id/btn_download_image"
             android:background="?attr/selectableItemBackground"
@@ -63,14 +60,5 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-
-    <TextView
-        android:id="@+id/tv_image_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:padding="0dp"
-        android:textColor="@color/silver"
-        android:textSize="18sp"/>
 
 </LinearLayout>

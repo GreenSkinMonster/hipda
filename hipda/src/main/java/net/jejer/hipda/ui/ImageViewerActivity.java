@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -55,13 +54,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
         final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         final TextView tvImageInfo = (TextView) findViewById(R.id.tv_image_info);
         final TextView tvFloorInfo = (TextView) findViewById(R.id.tv_floor_info);
-        final Button btnBack = (Button) findViewById(R.id.btn_back);
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         if (images == null || images.size() == 0) {
             finish();
