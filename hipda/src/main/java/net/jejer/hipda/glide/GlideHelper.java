@@ -90,7 +90,8 @@ public class GlideHelper {
                     .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             f = future.get();
             Glide.clear(future);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            Logger.e(e);
         }
         return f;
     }

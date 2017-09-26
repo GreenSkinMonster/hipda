@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
@@ -146,8 +147,19 @@ public class NotiHelper {
         return sb.toString();
     }
 
+    public static void sendNotification(final Context context, final int threadCount, final int smsCount, final String username, final String uid, final String smsContent) {
+        new AsyncTask<Void, Void, Void>() {
 
-    public static void sendNotification(Context context, int threadCount, int smsCount, String username, String uid, String smsContent) {
+            @Override
+            protected Void doInBackground(Void... params) {
+                sendNotificationInBackground(context, threadCount, smsCount, username, uid, smsContent);
+                return null;
+            }
+        }.execute();
+    }
+
+
+    private static void sendNotificationInBackground(Context context, int threadCount, int smsCount, String username, String uid, String smsContent) {
         Intent intent = new Intent(context, IntentActivity.class);
         intent.setAction(Constants.INTENT_NOTIFICATION);
         intent.putExtra(Constants.EXTRA_SMS_COUNT, smsCount);
@@ -171,7 +183,7 @@ public class NotiHelper {
             if (avatarFile != null && avatarFile.exists()) {
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                icon = BitmapFactory.decodeFile(avatarFile.getPath(), options);
+                icon = Utils.getCircleBitmap(BitmapFactory.decodeFile(avatarFile.getPath(), options));
             }
         }
 
