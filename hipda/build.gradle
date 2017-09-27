@@ -80,9 +80,11 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
 
-    compile('com.zhihu.android:matisse:0.5.0-alpha4') {
-        exclude group: 'com.android.support'
-    }
+//    compile('com.zhihu.android:matisse:0.5.0-alpha4') {
+//        exclude group: 'com.android.support'
+//    }
+    compile 'it.sephiroth.android.library.imagezoom:library:1.0.4'
+    compile(name: 'matisse-release-0.5.0', ext: 'aar')
 
     compile 'com.evernote:android-job:1.1.11'
 
