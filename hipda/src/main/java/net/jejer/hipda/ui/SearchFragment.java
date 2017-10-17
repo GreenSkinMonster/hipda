@@ -151,7 +151,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
                 new RecyclerItemClickListener(getActivity(), new HistoryItemClickListener()));
 
         mIconDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_history).sizeDp(16).color(Color.GRAY);
-        mIbDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_close).sizeDp(16).color(Color.GRAY);
+        mIbDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_close).sizeDp(12).color(Color.GRAY);
 
         loadQueries();
     }
