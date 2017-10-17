@@ -19,8 +19,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="4dp"
             android:textColor="@color/md_grey_300"
-            android:textSize="17sp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/tv_floor_info"
@@ -28,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textColor="@color/md_grey_300"
-            android:textSize="17sp"/>
+            android:textSize="16sp"/>
 
         <ImageButton
             android:id="@+id/btn_download_image"
