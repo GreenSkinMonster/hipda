@@ -8,30 +8,6 @@
               android:orientation="vertical"
               android:padding="16dp">
 
-    <Switch
-        android:id="@+id/sw_sort_by_post_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/pref_title_sort_by_post_time"
-        android:textColor="?android:attr/textColorPrimary"/>
-
-    <Switch
-        android:id="@+id/sw_show_stick_threads"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/pref_title_show_stick_threads"
-        android:textColor="?android:attr/textColorPrimary"/>
-
-    <Switch
-        android:id="@+id/sw_show_post_type"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/pref_title_show_post_type"
-        android:textColor="?android:attr/textColorPrimary"/>
-
     <net.jejer.hipda.ui.widget.ValueChagerView
         android:id="@+id/value_changer"
         android:layout_width="match_parent"

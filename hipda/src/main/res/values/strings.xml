@@ -41,6 +41,9 @@
     <string name="action_quick_reply">快速回复</string>
     <string name="action_filter_by_type">分类</string>
     <string name="action_text_size">文字调整</string>
+    <string name="action_order_by_thread">按发表排序</string>
+    <string name="action_order_by_reply">按回复排序</string>
+    <string name="action_show_stick_threads">显示置顶帖</string>
 
     <string name="recipient">收件人</string>
     <string name="content">内容</string>

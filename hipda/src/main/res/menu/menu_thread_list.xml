@@ -21,8 +21,18 @@
         android:title="@string/action_new_thread" />
 
     <item
+        android:id="@+id/action_order_by"
+        android:checkable="true"
+        android:title="@string/action_order_by_thread"/>
+
+    <item
+        android:id="@+id/action_show_stick_threads"
+        android:checkable="true"
+        android:title="@string/action_show_stick_threads"/>
+
+    <item
         android:id="@+id/action_thread_list_settings"
-        android:title="@string/action_thread_list_settings" />
+        android:title="@string/action_text_size"/>
 
     <item
         android:id="@+id/action_open_by_url"

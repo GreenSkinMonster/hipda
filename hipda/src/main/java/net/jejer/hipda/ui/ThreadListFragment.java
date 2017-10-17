@@ -25,10 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -167,6 +165,7 @@ public class ThreadListFragment extends BaseFragment
         mRecyclerView.scrollToPosition(mFirstVisibleItem);
 
         setActionBarTitle(HiUtils.getForumNameByFid(mForumId));
+        setActionBarSubtitle();
         if (getActivity() instanceof MainFrameActivity) {
             ((MainFrameActivity) getActivity()).setActionBarDisplayHomeAsUpEnabled(false);
             ((MainFrameActivity) getActivity()).syncActionBarState();
@@ -234,8 +233,15 @@ public class ThreadListFragment extends BaseFragment
                 mForumTypeMenuItem.setIcon(new IconicsDrawable(mCtx, HiUtils.BS_TYPE_ICONS[typeIdIndex])
                         .color(HiSettingsHelper.getInstance().getToolbarTextColor()).actionBar());
         }
-
+        MenuItem showStickItem = menu.findItem(R.id.action_show_stick_threads);
+        showStickItem.setChecked(HiSettingsHelper.getInstance().isShowStickThreads());
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.action_order_by).setChecked(HiSettingsHelper.getInstance().isSortByPostTime(mForumId));
     }
 
     @Override
@@ -256,11 +262,34 @@ public class ThreadListFragment extends BaseFragment
             case R.id.action_filter_by_type:
                 showForumTypesDialog();
                 return true;
+            case R.id.action_order_by:
+                if (!mInloading) {
+                    item.setChecked(!item.isChecked());
+                    HiSettingsHelper.getInstance().setSortByPostTime(mForumId, item.isChecked());
+                    setActionBarSubtitle();
+                    mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+                    refresh();
+                }
+                return true;
+            case R.id.action_show_stick_threads:
+                item.setChecked(!item.isChecked());
+                HiSettingsHelper.getInstance().setShowStickThreads(item.isChecked());
+                mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+                refresh();
+                return true;
             case R.id.action_open_by_url:
                 showOpenUrlDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void setActionBarSubtitle() {
+        if (HiSettingsHelper.getInstance().isSortByPostTime(mForumId)) {
+            setActionBarSubtitle(getString(R.string.action_order_by_thread));
+        } else {
+            setActionBarSubtitle("");
         }
     }
 
@@ -399,37 +428,11 @@ public class ThreadListFragment extends BaseFragment
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_thread_list_settings, null);
 
-        final Switch sShowStickThreads = (Switch) view.findViewById(R.id.sw_show_stick_threads);
-        final Switch sSortByPostTime = (Switch) view.findViewById(R.id.sw_sort_by_post_time);
-        final Switch sShowPostType = (Switch) view.findViewById(R.id.sw_show_post_type);
         final ValueChagerView valueChagerView = (ValueChagerView) view.findViewById(R.id.value_changer);
 
         valueChagerView.setCurrentValue(HiSettingsHelper.getInstance().getTitleTextSizeAdj());
 
         final BottomSheetDialog dialog = new BottomDialog(getActivity());
-
-        sShowStickThreads.setChecked(HiSettingsHelper.getInstance().isShowStickThreads());
-        sShowStickThreads.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                HiSettingsHelper.getInstance().setShowStickThreads(arg1);
-            }
-        });
-        sShowPostType.setChecked(HiSettingsHelper.getInstance().isShowPostType());
-        sShowPostType.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                HiSettingsHelper.getInstance().setShowPostType(arg1);
-                mThreadListAdapter.notifyDataSetChanged();
-            }
-        });
-        sSortByPostTime.setChecked(HiSettingsHelper.getInstance().isSortByPostTime(mForumId));
-        sSortByPostTime.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                HiSettingsHelper.getInstance().setSortByPostTime(mForumId, arg0.isChecked());
-            }
-        });
 
         valueChagerView.setOnChangeListener(new ValueChagerView.OnChangeListener() {
             @Override

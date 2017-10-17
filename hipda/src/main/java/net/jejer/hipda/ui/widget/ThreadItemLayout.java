@@ -69,8 +69,7 @@ public class ThreadItemLayout extends LinearLayout {
         } else
             mTvTitle.setTextColor(ColorHelper.getTextColorPrimary(getContext()));
 
-        if (HiSettingsHelper.getInstance().isShowPostType() &&
-                !TextUtils.isEmpty(thread.getType())) {
+        if (!TextUtils.isEmpty(thread.getType())) {
             mTvThreadType.setText(thread.getType());
             mTvThreadType.setVisibility(View.VISIBLE);
         } else {

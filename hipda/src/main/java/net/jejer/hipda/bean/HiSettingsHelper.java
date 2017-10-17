@@ -114,7 +114,6 @@ public class HiSettingsHelper {
     private String mUid = "";
 
     private boolean mShowStickThreads = false;
-    private boolean mShowPostType = false;
     private String mImageLoadType = "0";
     private long mImageAutoLoadSize = -1;
     private boolean mAutoLoadThumb = false;
@@ -266,7 +265,6 @@ public class HiSettingsHelper {
         isGestureBackFromPref();
         getPostLineSpacingFromPref();
         getLastForumIdFromPerf();
-        isShowPostTypeFromPref();
         isErrorReportModeFromPref();
         getForumsFromPref();
         getFreqMenusFromPref();
@@ -359,21 +357,6 @@ public class HiSettingsHelper {
         mSecAnswer = secAnswer;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_SECANSWER, secAnswer).apply();
-    }
-
-    public boolean isShowPostType() {
-        return mShowPostType;
-    }
-
-    private boolean isShowPostTypeFromPref() {
-        mShowPostType = mSharedPref.getBoolean(PERF_SHOW_POST_TYPE, true);
-        return mShowPostType;
-    }
-
-    public void setShowPostType(boolean showPostType) {
-        mShowPostType = showPostType;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_SHOW_POST_TYPE, showPostType).apply();
     }
 
     public boolean isShowStickThreads() {
