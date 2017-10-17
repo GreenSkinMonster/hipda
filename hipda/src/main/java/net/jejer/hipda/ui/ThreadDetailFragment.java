@@ -1087,9 +1087,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 int pos = mDetailAdapter.getPositionByPostId(postId);
                 View view = mLayoutManager.findViewByPosition(pos);
                 if (view != null && ViewCompat.isAttachedToWindow(view)) {
-                    View floorView = view.findViewById(R.id.floor);
-                    if (floorView != null)
-                        floorView.startAnimation(mBlinkAnim);
+                    view.startAnimation(mBlinkAnim);
                 }
             }
         }, 150);
