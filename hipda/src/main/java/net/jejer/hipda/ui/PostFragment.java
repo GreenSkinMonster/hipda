@@ -292,6 +292,8 @@ public class PostFragment extends BaseFragment {
             EventBus.getDefault().register(this);
         if (mPrePostInfo == null) {
             fetchPrePostInfo(false);
+        } else {
+            setupPrePostInfo();
         }
 
         if (mMode == PostHelper.MODE_NEW_THREAD && TextUtils.isEmpty(mEtSubject.getText().toString())) {
@@ -321,6 +323,12 @@ public class PostFragment extends BaseFragment {
         EventBus.getDefault().unregister(this);
         mContentPosition = mEtContent.getSelectionStart();
         savePostConent(true);
+        if (mPrePostInfo != null) {
+            if (mEtSubject.getVisibility() == View.VISIBLE)
+                mPrePostInfo.setSubject(mEtSubject.getText().toString());
+            mPrePostInfo.setText(mEtContent.getText().toString());
+            mPrePostInfo.setTypeId(mTypeId);
+        }
         super.onPause();
     }
 
@@ -721,24 +729,24 @@ public class PostFragment extends BaseFragment {
         }
 
         if (!TextUtils.isEmpty(mPrePostInfo.getText())) {
-            if (mMode == PostHelper.MODE_EDIT_POST) {
-                mEtContent.setText(EmojiParser.parseToUnicode(mPrePostInfo.getText()));
-                if (!TextUtils.isEmpty(mPrePostInfo.getSubject())) {
-                    mEtSubject.setText(EmojiParser.parseToUnicode(mPrePostInfo.getSubject()));
-                    mEtSubject.setVisibility(View.VISIBLE);
-                }
-            } else {
-                mTvQuoteText.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
-                UIUtils.setLineSpacing(mTvQuoteText);
-                mTvQuoteText.setText(mQuoteText);
-                mTvQuoteText.setVisibility(View.VISIBLE);
-                mTvQuoteText.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        UIUtils.showMessageDialog(getActivity(), mFloor + "# " + mFloorAuthor, mQuoteText, true);
-                    }
-                });
+            mEtContent.setText(EmojiParser.parseToUnicode(mPrePostInfo.getText()));
+            if (!TextUtils.isEmpty(mPrePostInfo.getSubject())) {
+                mEtSubject.setText(EmojiParser.parseToUnicode(mPrePostInfo.getSubject()));
+                mEtSubject.setVisibility(View.VISIBLE);
             }
+        }
+
+        if (mMode == PostHelper.MODE_QUOTE_POST || mMode == PostHelper.MODE_REPLY_POST) {
+            mTvQuoteText.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+            UIUtils.setLineSpacing(mTvQuoteText);
+            mTvQuoteText.setText(mQuoteText);
+            mTvQuoteText.setVisibility(View.VISIBLE);
+            mTvQuoteText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UIUtils.showMessageDialog(getActivity(), mFloor + "# " + mFloorAuthor, mQuoteText, true);
+                }
+            });
         }
 
         //try to upload holded images when pre post info is ready
