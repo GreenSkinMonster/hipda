@@ -95,7 +95,7 @@ public class PostHelper {
                 break;
             case MODE_REPLY_POST:
             case MODE_QUOTE_POST:
-                doPost(url, mInfo.getText() + "\n\n    " + replyText, null, null, false);
+                doPost(url, EmojiParser.parseToHtmlDecimal(mInfo.getQuoteText()) + "\n\n    " + replyText, null, null, false);
                 break;
             case MODE_NEW_THREAD:
                 url = HiUtils.NewThreadUrl + fid + "&typeid=" + typeid + "&topicsubmit=yes";

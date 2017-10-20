@@ -97,11 +97,15 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
             prePostInfo.setFormhash(formhashES.first().attr("value"));
         }
 
-        Elements addtextES = doc.select("textarea");
-        if (addtextES.size() < 1) {
+        Element addtextEl = doc.select("textarea").first();
+        if (addtextEl == null) {
             return prePostInfo;
+        }
+        if (mMode == PostHelper.MODE_REPLY_POST
+                || mMode == PostHelper.MODE_QUOTE_POST) {
+            prePostInfo.setQuoteText(addtextEl.text());
         } else {
-            prePostInfo.setText(addtextES.first().text());
+            prePostInfo.setText(addtextEl.text());
         }
 
         Elements scriptES = doc.select("script");

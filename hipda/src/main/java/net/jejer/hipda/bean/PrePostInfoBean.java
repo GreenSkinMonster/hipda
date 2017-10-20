@@ -14,7 +14,8 @@ public class PrePostInfoBean {
     private String mUid;
     private String mHash;
     private String mSubject;
-    private String mText;
+    private String mText = "";
+    private String mQuoteText = "";
     private String mTypeId;
     private String mNoticeAuthor;
     private String mNoticeAuthorMsg;
@@ -83,6 +84,14 @@ public class PrePostInfoBean {
 
     public void setText(String text) {
         this.mText = text;
+    }
+
+    public String getQuoteText() {
+        return mQuoteText;
+    }
+
+    public void setQuoteText(String quoteText) {
+        mQuoteText = quoteText;
     }
 
     public String getTypeId() {

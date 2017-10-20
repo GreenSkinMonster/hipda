@@ -312,7 +312,9 @@ public class PostFragment extends BaseFragment {
                     long t = SystemClock.uptimeMillis();
                     mEtContent.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 0, 0, 0));
                     mEtContent.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_UP, 0, 0, 0));
-                    mEtContent.setSelection(mContentPosition <= 0 ? mEtContent.getText().length() : mContentPosition);
+                    mEtContent.setSelection(
+                            (mContentPosition <= 0 || mContentPosition > mEtContent.getText().length())
+                                    ? mEtContent.getText().length() : mContentPosition);
                 }
             }, 100);
         }
@@ -728,12 +730,13 @@ public class PostFragment extends BaseFragment {
             });
         }
 
-        if (!TextUtils.isEmpty(mPrePostInfo.getText())) {
+        if (TextUtils.isEmpty(mEtContent.getText())) {
             mEtContent.setText(EmojiParser.parseToUnicode(mPrePostInfo.getText()));
-            if (!TextUtils.isEmpty(mPrePostInfo.getSubject())) {
-                mEtSubject.setText(EmojiParser.parseToUnicode(mPrePostInfo.getSubject()));
-                mEtSubject.setVisibility(View.VISIBLE);
-            }
+        }
+
+        if (TextUtils.isEmpty(mEtSubject.getText()) && !TextUtils.isEmpty(mPrePostInfo.getSubject())) {
+            mEtSubject.setText(EmojiParser.parseToUnicode(mPrePostInfo.getSubject()));
+            mEtSubject.setVisibility(View.VISIBLE);
         }
 
         if (mMode == PostHelper.MODE_QUOTE_POST || mMode == PostHelper.MODE_REPLY_POST) {
