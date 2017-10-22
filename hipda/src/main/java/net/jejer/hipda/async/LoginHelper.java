@@ -145,6 +145,8 @@ public class LoginHelper {
 
     private String processedPassword() {
         String pass = HiSettingsHelper.getInstance().getPassword();
+        if (TextUtils.isEmpty(pass) || pass.length() == 32)
+            return pass;
         try {
             return Utils.md5(pass.replace("\\", "\\\\")
                     .replace("'", "\'")
