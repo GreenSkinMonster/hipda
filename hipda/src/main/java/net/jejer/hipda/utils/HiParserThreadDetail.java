@@ -11,6 +11,7 @@ import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailBean.Contents;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.cache.SignatureContainer;
 import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.ui.textstyle.TextStyle;
 import net.jejer.hipda.ui.textstyle.TextStyleHolder;
@@ -173,6 +174,11 @@ public class HiParserThreadDetail {
 //                detail.setAvatarUrl(avatarES.first().attr("src"));
 //            }
             detail.setAvatarUrl(HiUtils.getAvatarUrlByUid(uid));
+
+            Element sigEl = postE.select("td.postbottom > div.signatures").first();
+            if (sigEl != null) {
+                SignatureContainer.putSignature(uid, sigEl.text());
+            }
 
             //content
             Contents content = detail.getContents();

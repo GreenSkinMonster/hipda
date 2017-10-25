@@ -27,6 +27,7 @@ import net.jejer.hipda.bean.SearchBean;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.bean.UserInfoBean;
+import net.jejer.hipda.cache.SignatureContainer;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.SimpleListEvent;
@@ -258,7 +259,8 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 } else {
                     mAvatarView.setVisibility(View.GONE);
                 }
-                mDetailView.setText(info.getDetail());
+                String sig = SignatureContainer.getSignature(mUid);
+                mDetailView.setText((!TextUtils.isEmpty(sig) ? "签名: " + sig + "\n\n" : "") + info.getDetail());
                 mUsername = info.getUsername();
                 mUsernameView.setText(mUsername);
                 mFormhash = info.getFormhash();
