@@ -225,6 +225,8 @@ public class MainFrameActivity extends BaseActivity {
         drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SEARCH));
         drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SMS));
         drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.THREAD_NOTIFY));
+        drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.HISTORIES));
+        drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.NEW_POSTS));
 
         Set<String> freqMenuIds = HiSettingsHelper.getInstance().getFreqMenus();
         Collection<IDrawerItem> subItems = new ArrayList<>();
@@ -243,15 +245,6 @@ public class MainFrameActivity extends BaseActivity {
         else
             subItems.add(DrawerHelper.getSecondaryMenuItem(DrawerHelper.DrawerItem.MY_FAVORITES));
 
-        if (freqMenuIds.contains("" + DrawerHelper.DrawerItem.HISTORIES.id))
-            drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.HISTORIES));
-        else
-            subItems.add(DrawerHelper.getSecondaryMenuItem(DrawerHelper.DrawerItem.HISTORIES));
-
-        if (freqMenuIds.contains("" + DrawerHelper.DrawerItem.NEW_POSTS.id))
-            drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.NEW_POSTS));
-        else
-            subItems.add(DrawerHelper.getSecondaryMenuItem(DrawerHelper.DrawerItem.NEW_POSTS));
 
         if (subItems.size() > 0)
             drawerItems.add(

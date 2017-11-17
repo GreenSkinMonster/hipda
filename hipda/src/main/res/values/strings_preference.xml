@@ -127,15 +127,11 @@
         <item>@string/title_drawer_mypost</item>
         <item>@string/title_drawer_myreply</item>
         <item>@string/title_drawer_favorites</item>
-        <item>@string/title_drawer_histories</item>
-        <item>@string/title_drawer_new_posts</item>
     </string-array>
     <string-array name="pref_title_freq_menu_values">
         <item>1001</item>
         <item>1002</item>
         <item>1003</item>
-        <item>1006</item>
-        <item>1007</item>
     </string-array>
     <string-array name="default_freq_menu_values">
     </string-array>
