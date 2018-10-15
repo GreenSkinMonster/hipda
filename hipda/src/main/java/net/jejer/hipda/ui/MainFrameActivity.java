@@ -699,7 +699,7 @@ public class MainFrameActivity extends BaseActivity {
         PackageManager pm = getPackageManager();
 
         pm.setComponentEnabledSetting(
-                new ComponentName(this, "net.jejer.hipda.ng.MainActivity-Original"),
+                new ComponentName(this, "net.jejer.hipda.ng.MainActivityOriginal"),
                 icon == Constants.ICON_ORIGINAL ?
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
@@ -707,7 +707,7 @@ public class MainFrameActivity extends BaseActivity {
         );
 
         pm.setComponentEnabledSetting(
-                new ComponentName(this, "net.jejer.hipda.ng.MainActivity-Circle"),
+                new ComponentName(this, "net.jejer.hipda.ng.MainActivityCircle"),
                 icon == Constants.ICON_ROUND ?
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED,

@@ -39,7 +39,7 @@
             android:noHistory="true"/>
 
         <activity-alias
-            android:name=".ng.MainActivity-Original"
+            android:name=".ng.MainActivityOriginal"
             android:enabled="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -54,7 +54,7 @@
         </activity-alias>
 
         <activity-alias
-            android:name=".ng.MainActivity-Circle"
+            android:name=".ng.MainActivityCircle"
             android:enabled="false"
             android:icon="@mipmap/ic_launcher_circle"
             android:label="@string/app_name"

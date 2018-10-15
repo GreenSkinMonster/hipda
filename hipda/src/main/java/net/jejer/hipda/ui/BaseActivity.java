@@ -99,8 +99,7 @@ public class BaseActivity extends AppCompatActivity {
                 (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
         if (collapsible) {
             params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-                    | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-                    | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
+                    | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
         } else {
             params.setScrollFlags(0);
         }
