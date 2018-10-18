@@ -114,15 +114,6 @@
         <item>black</item>
     </string-array>
 
-    <string-array name="pref_icon">
-        <item>默认</item>
-        <item>圆形</item>
-    </string-array>
-    <string-array name="pref_icon_values">
-        <item>0</item>
-        <item>1</item>
-    </string-array>
-
     <string-array name="pref_title_freq_menu_names">
         <item>@string/title_drawer_mypost</item>
         <item>@string/title_drawer_myreply</item>
@@ -266,7 +257,6 @@
     <string name="pref_title_blacklist">黑名单</string>
     <string name="pref_summary_blacklist">目前黑名单已经与论坛同步</string>
     <string name="pref_title_theme">界面主题</string>
-    <string name="pref_title_icon">程序图标</string>
     <string name="pref_title_primary_color">界面主色调</string>
     <string name="pref_title_night_theme">夜间模式主题</string>
     <string name="pref_title_navbar_colored">导航栏着色</string>

@@ -35,7 +35,6 @@ public class HiApplication extends Application implements Application.ActivityLi
     private static boolean updated;
     private static boolean fontSet;
     private static int settingStatus;
-    private static boolean mIconChanged;
 
     @Override
     public void onCreate() {
@@ -103,14 +102,6 @@ public class HiApplication extends Application implements Application.ActivityLi
 
     public static void setSettingStatus(int settingStatus) {
         HiApplication.settingStatus = settingStatus;
-    }
-
-    public static boolean isIconChanged() {
-        return mIconChanged;
-    }
-
-    public static void setIconChanged(boolean iconChanged) {
-        mIconChanged = iconChanged;
     }
 
     private static int visibleActivityCount = 0;

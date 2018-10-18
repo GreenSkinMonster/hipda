@@ -38,7 +38,6 @@ public class SettingMainFragment extends BaseSettingFragment {
     private String mFont;
     static boolean mCacheCleared;
     private boolean mNightSwitchEnabled;
-    private String mIcon;
     private String mForumServer;
     private boolean mTrustAllCerts;
     private boolean mCircleAvatar;
@@ -85,7 +84,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
         mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
         mFont = HiSettingsHelper.getInstance().getFont();
-        mIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
         mForumServer = HiSettingsHelper.getInstance().getForumServer();
         mTrustAllCerts = HiSettingsHelper.getInstance().isTrustAllCerts();
         mCircleAvatar = HiSettingsHelper.getInstance().isCircleAvatar();
@@ -121,13 +119,8 @@ public class SettingMainFragment extends BaseSettingFragment {
             }
         }
 
-        String newIcon = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0");
-        boolean iconChanged = !mIcon.equals(String.valueOf(Utils.parseInt(newIcon)));
-        HiApplication.setIconChanged(iconChanged);
-
         if (mCacheCleared
-                || !HiSettingsHelper.getInstance().getFont().equals(mFont)
-                || iconChanged) {
+                || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
             HiApplication.setSettingStatus(HiApplication.RESTART);
         } else if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getActiveTheme().equals(mTheme)

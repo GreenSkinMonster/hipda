@@ -77,6 +77,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 setActionBarTitle(R.string.pref_category_forum);
                 addPreferencesFromResource(R.xml.pref_forum);
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FREQ_MENUS));
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TAILTEXT));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TAILURL));
 
                 Preference forumsPreference = findPreference(HiSettingsHelper.PERF_FORUMS);

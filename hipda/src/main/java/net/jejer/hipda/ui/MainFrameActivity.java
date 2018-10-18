@@ -2,7 +2,6 @@ package net.jejer.hipda.ui;
 
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -375,9 +374,6 @@ public class MainFrameActivity extends BaseActivity {
         super.onPostResume();
         if (HiApplication.getSettingStatus() == HiApplication.RESTART) {
             HiApplication.setSettingStatus(HiApplication.IDLE);
-            if (HiApplication.isIconChanged()) {
-                setIcon(Utils.parseInt(HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_ICON, "0")));
-            }
             Utils.restartActivity(this);
         } else if (HiApplication.getSettingStatus() == HiApplication.RECREATE) {
             HiApplication.setSettingStatus(HiApplication.IDLE);
@@ -693,26 +689,6 @@ public class MainFrameActivity extends BaseActivity {
                 break;
             }
         }
-    }
-
-    private void setIcon(int icon) {
-        PackageManager pm = getPackageManager();
-
-        pm.setComponentEnabledSetting(
-                new ComponentName(this, "net.jejer.hipda.ng.MainActivityOriginal"),
-                icon == Constants.ICON_ORIGINAL ?
-                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-        );
-
-        pm.setComponentEnabledSetting(
-                new ComponentName(this, "net.jejer.hipda.ng.MainActivityCircle"),
-                icon == Constants.ICON_ROUND ?
-                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-        );
     }
 
     public void showLoginDialog() {
