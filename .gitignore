@@ -3,16 +3,7 @@ local.properties
 gradle.properties
 fabric.properties
 
-.idea/workspace.xml
-.idea/libraries
-.idea/dictionaries
-.idea/gradle.xml
-.idea/misc.xml
-.idea/inspectionProfiles/Project_Default.xml
-.idea/inspectionProfiles/Serializable.xml
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/codeStyleSettings.xml
-.idea/runConfigurations.xml
+.idea/
 *.iml
 
 .navigation
