@@ -171,7 +171,7 @@
     </style>
 
     <style name="ThemeLight.White" parent="ThemeLight">
-        <item name="colorPrimary">@color/md_grey_50</item>
+        <item name="colorPrimary">@color/md_grey_100</item>
         <item name="colorPrimaryDark">@color/md_grey_300</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
