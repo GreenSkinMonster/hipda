@@ -176,6 +176,11 @@ public class HiSettingsHelper {
         return mMobileNetwork;
     }
 
+    public boolean isPreferOriginalImage() {
+        return Constants.LOAD_TYPE_ALWAYS.equals(mImageLoadType)
+                || (!isMobileNetwork() && Constants.LOAD_TYPE_ONLY_WIFI.equals(mImageLoadType));
+    }
+
     public boolean isImageLoadable(long imageSize, boolean isThumb) {
         return Constants.LOAD_TYPE_ALWAYS.equals(mImageLoadType)
                 || (!isMobileNetwork() && Constants.LOAD_TYPE_ONLY_WIFI.equals(mImageLoadType))

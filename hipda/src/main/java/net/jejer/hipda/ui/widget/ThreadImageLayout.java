@@ -54,7 +54,7 @@ public class ThreadImageLayout extends RelativeLayout {
     private ThreadDetailFragment mFragment;
     private ContentImg mContentImg;
 
-    public ThreadImageLayout(ThreadDetailFragment fragment, String url) {
+    public ThreadImageLayout(ThreadDetailFragment fragment, ContentImg contentImg) {
         super(fragment.getActivity(), null);
 
         LayoutInflater.from(fragment.getActivity()).inflate(R.layout.layout_thread_image, this, true);
@@ -64,9 +64,14 @@ public class ThreadImageLayout extends RelativeLayout {
         mProgressBar = (ProgressBar) findViewById(R.id.thread_image_progress);
         mTextView = (TextView) findViewById(R.id.thread_image_info);
         mRequestManager = Glide.with(mFragment);
-        mUrl = url;
+        mContentImg = contentImg;
+        mUrl = contentImg.getActiveUrl();
 
-        ImageInfo imageInfo = ImageContainer.getImageInfo(url);
+        mImageIndex = contentImg.getIndexInPage();
+        mImageView.setImageIndex(mImageIndex);
+        mParsedFileSize = contentImg.getFileSize();
+
+        ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         if (!imageInfo.isReady()) {
             mImageView.setImageDrawable(ContextCompat.getDrawable(mFragment.getActivity(), R.drawable.ic_action_image));
         }
@@ -77,21 +82,8 @@ public class ThreadImageLayout extends RelativeLayout {
         mImageView.setSingleClickListener();
     }
 
-    public void setParsedFileSize(long parsedFileSize) {
-        mParsedFileSize = parsedFileSize;
-    }
-
     public void setParentSessionId(String parentSessionId) {
         mParentSessionId = parentSessionId;
-    }
-
-    public void setImageIndex(int imageIndex) {
-        mImageIndex = imageIndex;
-        mImageView.setImageIndex(mImageIndex);
-    }
-
-    public void setContentImg(ContentImg contentImg) {
-        mContentImg = contentImg;
     }
 
     private void loadImage() {

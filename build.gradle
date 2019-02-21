@@ -31,5 +31,5 @@ ext {
     targetSdkVersion = 26
 
     buildToolsVersion = '28.0.3'
-    supportLibraryVersion = '25.3.1'
+    supportLibraryVersion = '27.1.0'
 }

@@ -1,6 +1,7 @@
 package net.jejer.hipda.ui.adapter;
 
 import android.app.Activity;
+import android.graphics.PointF;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewCompat;
@@ -117,7 +118,7 @@ public class ImageViewerAdapter extends PagerAdapter {
         if (scaleImageView == null || glideImageView == null)
             return;
 
-        ImageInfo imageInfo = ImageContainer.getImageInfo(imageUrl);
+        final ImageInfo imageInfo = ImageContainer.getImageInfo(imageUrl);
 
         if (!imageInfo.isReady()) {
             glideImageView.setVisibility(View.VISIBLE);
@@ -159,6 +160,14 @@ public class ImageViewerAdapter extends PagerAdapter {
                         Glide.clear(glideImageView);
                         glideImageView.setVisibility(View.GONE);
                         scaleImageView.setVisibility(View.VISIBLE);
+                        if (imageInfo.isLongImage()) {
+                            float scale = 1f * scaleImageView.getWidth() / imageInfo.getWidth();
+                            scaleImageView.animateScaleAndCenter(scale, new PointF(scaleImageView.getWidth() / 2, 0))
+                                    .withDuration(500)
+                                    .withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)
+                                    .withInterruptible(false)
+                                    .start();
+                        }
                     }
 
                     @Override
