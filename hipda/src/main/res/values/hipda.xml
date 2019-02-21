@@ -12,4 +12,6 @@
 
     <integer name="defaultAnimTime">200</integer>
 
+    <id name="rippleKey"/>
+
 </resources>

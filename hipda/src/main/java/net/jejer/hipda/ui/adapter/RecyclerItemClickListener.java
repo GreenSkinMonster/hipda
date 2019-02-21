@@ -7,6 +7,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 
 /**
@@ -70,13 +71,14 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
     }
 
     @Override
-    public boolean onTouch(View view, MotionEvent event) {
+    public boolean onTouch(final View view, MotionEvent event) {
         mChildView = view;
         mGestureDetector.onTouchEvent(event);
 
         float x = event.getX();
         float y = event.getY();
 
+        //hack to delay ripple effect, should be replaced by better way
         if (HiSettingsHelper.getInstance().isClickEffect()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 view.drawableHotspotChanged(x, y);
@@ -84,10 +86,21 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
 
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
-                    view.setPressed(true);
+                    view.setTag(R.id.rippleKey, "");
+                    view.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                if (view.getTag(R.id.rippleKey) != null)
+                                    view.setPressed(true);
+                            } catch (Exception ingored) {
+                            }
+                        }
+                    }, 150);
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
+                    view.setTag(R.id.rippleKey, null);
                     view.setPressed(false);
                     break;
             }
