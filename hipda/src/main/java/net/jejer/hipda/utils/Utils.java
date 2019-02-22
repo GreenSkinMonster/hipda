@@ -615,4 +615,12 @@ public class Utils {
         return output;
     }
 
+    public static Bitmap.Config getBitmapConfig() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return Bitmap.Config.ARGB_8888;
+        } else {
+            return Bitmap.Config.HARDWARE;
+        }
+    }
+
 }

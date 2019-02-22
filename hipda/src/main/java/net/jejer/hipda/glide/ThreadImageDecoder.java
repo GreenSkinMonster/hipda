@@ -25,7 +25,6 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
 
     private final static int IN_SAMPLE_LIMIT = 10000;
     private final static int MAX_WIDTH = getMaxWidth();
-    private final static Bitmap.Config BITMAP_CONFIG = getBitmapConfig();
     private final static int MAX_HEIGHT = 2 * Utils.getScreenHeight();
 
     private ImageInfo mImageInfo;
@@ -54,7 +53,7 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
             }
 
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = BITMAP_CONFIG;
+            options.inPreferredConfig = Utils.getBitmapConfig();
             if (inSampleSize > 1)
                 options.inSampleSize = inSampleSize;
             Bitmap original = BitmapFactory.decodeStream(bis, null, options);
@@ -127,11 +126,4 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
         return 720;
     }
 
-    private static Bitmap.Config getBitmapConfig() {
-        long maxMemory = Runtime.getRuntime().maxMemory();
-        if (maxMemory < 256 * 1024 * 1024) {
-            return Bitmap.Config.RGB_565;
-        }
-        return Bitmap.Config.ARGB_8888;
-    }
 }

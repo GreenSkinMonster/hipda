@@ -15,6 +15,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+import com.davemorrissey.labs.subscaleview.decoder.CompatDecoderFactory;
+import com.davemorrissey.labs.subscaleview.decoder.ImageDecoder;
+import com.davemorrissey.labs.subscaleview.decoder.ImageRegionDecoder;
+import com.davemorrissey.labs.subscaleview.decoder.SkiaImageDecoder;
+import com.davemorrissey.labs.subscaleview.decoder.SkiaImageRegionDecoder;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
@@ -29,6 +34,7 @@ import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.ui.widget.ImageViewerLayout;
+import net.jejer.hipda.utils.Utils;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -147,6 +153,8 @@ public class ImageViewerAdapter extends PagerAdapter {
                 scaleImageView.setMinimumTileDpi(160);
                 scaleImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
                 scaleImageView.setImage(ImageSource.uri(imageInfo.getPath()));
+                scaleImageView.setBitmapDecoderFactory(new CompatDecoderFactory<ImageDecoder>(SkiaImageDecoder.class, Utils.getBitmapConfig()));
+                scaleImageView.setRegionDecoderFactory(new CompatDecoderFactory<ImageRegionDecoder>(SkiaImageRegionDecoder.class, Utils.getBitmapConfig()));
                 scaleImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
