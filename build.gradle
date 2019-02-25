@@ -2,10 +2,7 @@
 buildscript {
     repositories {
         jcenter()
-        maven {
-            url 'https://maven.google.com/'
-            name 'Google'
-        }
+        google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
@@ -15,10 +12,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven {
-            url 'https://maven.google.com/'
-            name 'Google'
-        }
+        google()
         flatDir {
             dirs 'libs'
         }
@@ -27,9 +21,9 @@ allprojects {
 
 ext {
     minSdkVersion = 15
-    compileSdkVersion = 26
-    targetSdkVersion = 26
+    compileSdkVersion = 28
+    targetSdkVersion = 28
 
     buildToolsVersion = '28.0.3'
-    supportLibraryVersion = '27.1.0'
+    androidxVersion = '1.0.2'
 }

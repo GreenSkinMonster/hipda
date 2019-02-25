@@ -1,13 +1,13 @@
 package net.jejer.hipda.service;
 
-import android.support.annotation.NonNull;
-
 import com.evernote.android.job.Job;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Logger;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by GreenSkinMonster on 2017-07-19.

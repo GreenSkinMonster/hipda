@@ -2,9 +2,6 @@ package net.jejer.hipda.ui.setting;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
@@ -22,6 +19,10 @@ import net.jejer.hipda.utils.Utils;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.preference.Preference;
 
 /**
  * main setting fragment

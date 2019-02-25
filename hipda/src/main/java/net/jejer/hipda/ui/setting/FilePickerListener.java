@@ -2,7 +2,6 @@ package net.jejer.hipda.ui.setting;
 
 import android.app.Activity;
 import android.os.Environment;
-import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 
 import com.github.angads25.filepicker.controller.DialogSelectionListener;
@@ -13,6 +12,8 @@ import com.github.angads25.filepicker.view.FilePickerDialog;
 import net.jejer.hipda.bean.HiSettingsHelper;
 
 import java.io.File;
+
+import androidx.preference.Preference;
 
 /**
  * Created by GreenSkinMonster on 2017-06-03.

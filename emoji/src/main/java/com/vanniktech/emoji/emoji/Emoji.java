@@ -1,8 +1,8 @@
 package com.vanniktech.emoji.emoji;
 
-import android.support.annotation.NonNull;
-
 import java.io.Serializable;
+
+import androidx.annotation.NonNull;
 
 public final class Emoji implements Serializable {
     private static final long serialVersionUID = 1L;

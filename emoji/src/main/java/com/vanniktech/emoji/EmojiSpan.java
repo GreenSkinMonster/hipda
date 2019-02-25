@@ -2,8 +2,9 @@ package com.vanniktech.emoji;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.text.style.DynamicDrawableSpan;
+
+import androidx.core.content.ContextCompat;
 
 final class EmojiSpan extends DynamicDrawableSpan {
     private final Context context;

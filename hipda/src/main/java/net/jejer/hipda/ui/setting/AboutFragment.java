@@ -1,12 +1,13 @@
 package net.jejer.hipda.ui.setting;
 
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.google.android.material.tabs.TabLayout;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.ui.BaseFragment;

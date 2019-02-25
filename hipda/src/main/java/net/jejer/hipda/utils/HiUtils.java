@@ -1,7 +1,6 @@
 package net.jejer.hipda.utils;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
@@ -16,6 +15,8 @@ import net.jejer.hipda.ui.HiApplication;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.core.content.ContextCompat;
 
 public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";

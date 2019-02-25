@@ -2,7 +2,6 @@ package net.jejer.hipda.async;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -19,6 +18,8 @@ import net.jejer.hipda.utils.Utils;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.Map;
+
+import androidx.preference.Preference;
 
 /**
  * Created by GreenSkinMonster on 2016-07-24.

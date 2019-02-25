@@ -1,7 +1,5 @@
 package net.jejer.hipda.ui.adapter;
 
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +16,9 @@ import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HtmlCompat;
 import net.jejer.hipda.utils.Utils;
+
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by GreenSkinMonster on 2016-11-14.

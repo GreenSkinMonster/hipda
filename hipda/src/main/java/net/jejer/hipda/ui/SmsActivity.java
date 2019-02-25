@@ -2,11 +2,13 @@ package net.jejer.hipda.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.Toolbar;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import net.jejer.hipda.R;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * Created by GreenSkinMonster on 2017-06-15.

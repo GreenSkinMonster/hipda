@@ -2,12 +2,13 @@ package com.vanniktech.emoji;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 
 import com.vanniktech.emoji.emoji.Emoji;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
 
 public class EmojiEditText extends AppCompatEditText {
     private int emojiSize;

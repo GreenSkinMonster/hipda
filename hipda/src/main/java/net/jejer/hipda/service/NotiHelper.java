@@ -10,8 +10,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.evernote.android.job.JobManager;
@@ -38,6 +36,9 @@ import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 /**
  * parse and fetch notifications

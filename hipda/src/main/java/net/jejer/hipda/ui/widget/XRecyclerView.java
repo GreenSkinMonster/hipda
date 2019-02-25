@@ -3,8 +3,6 @@ package net.jejer.hipda.ui.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.SystemClock;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +11,9 @@ import android.widget.Scroller;
 
 import net.jejer.hipda.ui.adapter.BaseRvAdapter;
 import net.jejer.hipda.utils.Utils;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by GreenSkinMonster on 2016-11-13.

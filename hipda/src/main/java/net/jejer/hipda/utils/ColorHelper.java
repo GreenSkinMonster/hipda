@@ -2,13 +2,14 @@ package net.jejer.hipda.utils;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.graphics.ColorUtils;
 import android.util.TypedValue;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 
 import java.util.HashMap;
+
+import androidx.core.graphics.ColorUtils;
 
 /**
  * get color id from theme attr id

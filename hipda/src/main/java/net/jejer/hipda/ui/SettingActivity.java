@@ -1,15 +1,17 @@
 package net.jejer.hipda.ui;
 
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.Toolbar;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.ui.setting.AboutFragment;
 import net.jejer.hipda.ui.setting.BlacklistFragment;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.ui.setting.SettingNestedFragment;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * Created by GreenSkinMonster on 2017-06-16.

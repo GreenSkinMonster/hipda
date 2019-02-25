@@ -9,12 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -69,6 +63,13 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * Created by GreenSkinMonster on 2017-07-17.
@@ -246,7 +247,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
         mSearchView.setIconified(false);
         mSearchView.setQueryHint("搜索标题");
 
-        mSearchTextView = ((EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text));
+        mSearchTextView = ((EditText) mSearchView.findViewById(androidx.appcompat.R.id.search_src_text));
         mSearchTextView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         mSearchTextView.setOnEditorActionListener(mSearchEditorActionListener);
         mSearchTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -268,7 +269,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
             }
         });
 
-        ImageView closeButton = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        ImageView closeButton = (ImageView) mSearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,11 +1,12 @@
 package com.vanniktech.emoji;
 
-import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import java.util.List;
+
+import androidx.viewpager.widget.PagerAdapter;
 
 final class EmojiPagerAdapter extends PagerAdapter {
     private final List<FrameLayout> views;

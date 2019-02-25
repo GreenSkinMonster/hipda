@@ -1,6 +1,6 @@
 package net.jejer.hipda.ui.setting;
 
-import android.support.v7.preference.Preference;
+import androidx.preference.Preference;
 
 /**
  * Created by GreenSkinMonster on 2017-06-08.

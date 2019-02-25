@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetDialog;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by GreenSkinMonster on 2016-11-23.

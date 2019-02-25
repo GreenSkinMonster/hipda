@@ -1,7 +1,6 @@
 package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,8 @@ import net.jejer.hipda.R;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import androidx.appcompat.app.AlertDialog;
 
 /**
  * Created by GreenSkinMonster on 2016-11-23.

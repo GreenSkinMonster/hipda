@@ -2,7 +2,6 @@ package net.jejer.hipda.async;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import net.jejer.hipda.okhttp.ParamsMap;
@@ -16,6 +15,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+
+import androidx.appcompat.app.AlertDialog;
 
 import static net.jejer.hipda.okhttp.OkHttpHelper.getErrorMessage;
 import static net.jejer.hipda.okhttp.OkHttpHelper.getInstance;

@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui.widget;
 
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +35,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import androidx.core.content.ContextCompat;
+
 /**
  * Created by GreenSkinMonster on 2015-11-07.
  */
@@ -63,7 +64,7 @@ public class ThreadImageLayout extends RelativeLayout {
         mImageView = (GlideImageView) findViewById(R.id.thread_image);
         mProgressBar = (ProgressBar) findViewById(R.id.thread_image_progress);
         mTextView = (TextView) findViewById(R.id.thread_image_info);
-        mRequestManager = Glide.with(mFragment);
+        mRequestManager = Glide.with(mFragment.getActivity());
         mContentImg = contentImg;
         mUrl = contentImg.getActiveUrl();
 

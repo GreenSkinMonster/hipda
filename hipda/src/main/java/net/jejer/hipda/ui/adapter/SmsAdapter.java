@@ -1,7 +1,5 @@
 package net.jejer.hipda.ui.adapter;
 
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,6 +21,9 @@ import net.jejer.hipda.ui.SmsFragment;
 import net.jejer.hipda.ui.widget.TextViewWithEmoticon;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.Utils;
+
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by GreenSkinMonster on 2016-11-14.

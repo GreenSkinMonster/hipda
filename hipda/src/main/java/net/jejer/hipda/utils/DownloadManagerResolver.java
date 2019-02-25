@@ -7,8 +7,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatTextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * https://gist.github.com/Folyd/b9412bb6e2b06eb511f7

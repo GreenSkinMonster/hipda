@@ -2,13 +2,14 @@ package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
+
+import androidx.core.view.GestureDetectorCompat;
 
 /**
  * Created by GreenSkinMonster on 2016-11-10.

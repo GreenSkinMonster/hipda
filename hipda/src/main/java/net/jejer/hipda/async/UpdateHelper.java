@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -21,6 +20,7 @@ import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
 
+import androidx.appcompat.app.AlertDialog;
 import okhttp3.Request;
 
 /**

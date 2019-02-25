@@ -8,7 +8,6 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
@@ -24,6 +23,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import androidx.core.content.ContextCompat;
 
 public class HiSettingsHelper {
     /*

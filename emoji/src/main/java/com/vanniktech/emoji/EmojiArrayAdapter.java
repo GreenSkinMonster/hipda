@@ -1,7 +1,6 @@
 package com.vanniktech.emoji;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 final class EmojiArrayAdapter extends ArrayAdapter<Emoji> {
     /**

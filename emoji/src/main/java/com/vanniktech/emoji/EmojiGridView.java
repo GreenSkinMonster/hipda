@@ -1,13 +1,14 @@
 package com.vanniktech.emoji;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiClickedListener;
+
+import androidx.annotation.Nullable;
 
 final class EmojiGridView extends FrameLayout {
     EmojiGridView(final Context context) {

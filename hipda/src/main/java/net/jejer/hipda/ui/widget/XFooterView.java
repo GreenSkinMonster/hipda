@@ -2,7 +2,6 @@ package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -12,6 +11,8 @@ import android.widget.TextView;
 import net.jejer.hipda.R;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Utils;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * Created by GreenSkinMonster on 2016-11-08.

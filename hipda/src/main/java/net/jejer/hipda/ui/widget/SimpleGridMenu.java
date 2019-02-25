@@ -2,9 +2,6 @@ package net.jejer.hipda.ui.widget;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +20,10 @@ import net.jejer.hipda.utils.Utils;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
 /**
  * Created by GreenSkinMonster on 2017-06-24.
