@@ -39,7 +39,6 @@ import com.vanniktech.emoji.EmojiEditText;
 import com.vdurmont.emoji.EmojiParser;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import net.jejer.hipda.BuildConfig;
@@ -52,6 +51,7 @@ import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.db.Content;
 import net.jejer.hipda.db.ContentDao;
+import net.jejer.hipda.glide.MatisseGlideEngine;
 import net.jejer.hipda.job.ImageUploadEvent;
 import net.jejer.hipda.job.ImageUploadJob;
 import net.jejer.hipda.job.JobMgr;
@@ -431,7 +431,7 @@ public class PostFragment extends BaseFragment {
                 .maxSelectable(9)
                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
                 .thumbnailScale(0.85f)
-                .imageEngine(new GlideEngine())
+                .imageEngine(new MatisseGlideEngine())
                 .theme(HiSettingsHelper.getInstance().getImageActivityTheme(getActivity()))
                 .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
                 .captureStrategy(new CaptureStrategy(false, BuildConfig.APPLICATION_ID + ".provider"))
