@@ -11,6 +11,10 @@ import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
 import net.jejer.hipda.R;
 
+import java.security.MessageDigest;
+
+import androidx.annotation.NonNull;
+
 /**
  * draw a mark on gif
  * Created by GreenSkinMonster on 2015-04-12.
@@ -24,8 +28,11 @@ public class GifTransformation extends BitmapTransformation {
     private Context mCtx;
 
     public GifTransformation(Context context) {
-        super(context);
         mCtx = context;
+    }
+
+    @Override
+    public void updateDiskCacheKey(@NonNull MessageDigest messageDigest) {
     }
 
     @Override
@@ -63,8 +70,4 @@ public class GifTransformation extends BitmapTransformation {
         return result;
     }
 
-    @Override
-    public String getId() {
-        return "GifTransformation.net.jejer.hipda.glide";
-    }
 }

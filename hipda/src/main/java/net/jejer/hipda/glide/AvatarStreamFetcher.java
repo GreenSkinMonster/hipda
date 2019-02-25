@@ -1,6 +1,7 @@
 package net.jejer.hipda.glide;
 
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.model.GlideUrl;
 
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -39,60 +41,80 @@ public class AvatarStreamFetcher implements DataFetcher<InputStream> {
         stringUrl = url.toStringUrl();
     }
 
+    @NonNull
     @Override
-    public InputStream loadData(Priority priority) throws Exception {
-        File f = GlideHelper.getAvatarFile(stringUrl);
-        if (f == null)
-            return null;
-        if (refetch(f)) {
-            if (!f.exists() || f.delete()) {
-                Request request = getRequest();
-                Response response = client.newCall(request).execute();
-                responseBody = response.body();
+    public Class<InputStream> getDataClass() {
+        return InputStream.class;
+    }
 
-                if (!response.isSuccessful()) {
-                    if (response.code() == 404) {
-                        if (!f.createNewFile())
-                            Logger.e("create file failed : " + f.getName());
-                    } else
-                        throw new IOException(OkHttpHelper.ERROR_CODE_PREFIX + response.code());
-                } else {
-                    InputStream is = response.body().byteStream();
-                    BufferedInputStream input = null;
-                    OutputStream output = null;
+    @NonNull
+    @Override
+    public DataSource getDataSource() {
+        return DataSource.REMOTE;
+    }
 
-                    try {
-                        input = new BufferedInputStream(is);
-                        output = new FileOutputStream(f);
-                        int count;
-                        byte[] data = new byte[2048];
-                        while ((count = input.read(data)) != -1) {
-                            output.write(data, 0, count);
-                        }
-                        output.flush();
-                    } catch (Exception e) {
-                        if (f.exists())
-                            f.delete();
-                    } finally {
+    @Override
+    public void loadData(Priority priority, DataCallback<? super InputStream> callback) {
+        try {
+            File f = GlideHelper.getAvatarFile(stringUrl);
+            if (f == null) {
+                callback.onDataReady(null);
+                return;
+            }
+            if (refetch(f)) {
+                if (!f.exists() || f.delete()) {
+                    Request request = getRequest();
+                    Response response = client.newCall(request).execute();
+                    responseBody = response.body();
+
+                    if (!response.isSuccessful()) {
+                        if (response.code() == 404) {
+                            if (!f.createNewFile())
+                                Logger.e("create file failed : " + f.getName());
+                        } else
+                            throw new IOException(OkHttpHelper.ERROR_CODE_PREFIX + response.code());
+                    } else {
+                        InputStream is = response.body().byteStream();
+                        BufferedInputStream input = null;
+                        OutputStream output = null;
+
                         try {
-                            if (input != null) input.close();
-                            if (output != null) output.close();
-                            if (is != null) is.close();
-                        } catch (Exception ignored) {
+                            input = new BufferedInputStream(is);
+                            output = new FileOutputStream(f);
+                            int count;
+                            byte[] data = new byte[2048];
+                            while ((count = input.read(data)) != -1) {
+                                output.write(data, 0, count);
+                            }
+                            output.flush();
+                        } catch (Exception e) {
+                            if (f.exists())
+                                f.delete();
+                        } finally {
+                            try {
+                                if (input != null) input.close();
+                                if (output != null) output.close();
+                                if (is != null) is.close();
+                            } catch (Exception ignored) {
+                            }
                         }
                     }
                 }
             }
+            if (!f.exists()) {
+                //no memory cahce, avatar will be re-download in next ImageView
+                callback.onDataReady(null);
+                return;
+            } else if (f.length() == 0) {
+                //with memory cahce, avatar not found, will be re-download after one day
+                GlideHelper.markAvatarNotFound(stringUrl);
+                callback.onDataReady(new FileInputStream(GlideHelper.DEFAULT_AVATAR_FILE));
+                return;
+            }
+            callback.onDataReady(new FileInputStream(f));
+        } catch (Exception e) {
+            callback.onLoadFailed(e);
         }
-        if (!f.exists()) {
-            //no memory cahce, avatar will be re-download in next ImageView
-            return null;
-        } else if (f.length() == 0) {
-            //with memory cahce, avatar not found, will be re-download after one day
-            GlideHelper.markAvatarNotFound(stringUrl);
-            return new FileInputStream(GlideHelper.DEFAULT_AVATAR_FILE);
-        }
-        return new FileInputStream(f);
     }
 
     private Request getRequest() {
@@ -123,11 +145,6 @@ public class AvatarStreamFetcher implements DataFetcher<InputStream> {
         if (responseBody != null) {
             responseBody.close();
         }
-    }
-
-    @Override
-    public String getId() {
-        return url.getCacheKey();
     }
 
     @Override

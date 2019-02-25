@@ -7,7 +7,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.cache.ImageContainer;
@@ -86,13 +85,13 @@ public class GlideImageView extends AppCompatImageView {
     private void loadGif() {
         mCurrentUrl = mUrl;
         mCurrentViewHolder = new WeakReference<ImageView>(this);
-        Glide.clear(this);
+        Glide.with(getContext()).clear(this);
         if (GlideHelper.isOkToLoad(getContext())) {
             ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
             Glide.with(getContext())
                     .load(mUrl)
                     .priority(Priority.IMMEDIATE)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+//                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .skipMemoryCache(true)
                     .error(R.drawable.image_broken)
                     .override(imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight())
@@ -104,13 +103,13 @@ public class GlideImageView extends AppCompatImageView {
         try {
             if (mCurrentViewHolder != null && mCurrentViewHolder.get() != null) {
                 ImageView lastView = mCurrentViewHolder.get();
-                Glide.clear(mCurrentViewHolder.get());
+                Glide.with(getContext()).clear(mCurrentViewHolder.get());
                 if (GlideHelper.isOkToLoad(getContext())) {
                     ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
                     Glide.with(getContext())
-                            .load(mCurrentUrl)
                             .asBitmap()
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                            .load(mCurrentUrl)
+//                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .transform(new GifTransformation(getContext()))
                             .error(R.drawable.image_broken)
                             .override(imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight())

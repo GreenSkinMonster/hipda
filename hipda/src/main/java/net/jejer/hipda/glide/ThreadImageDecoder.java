@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 
+import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.resource.SimpleResource;
@@ -16,6 +17,8 @@ import net.jejer.hipda.utils.Utils;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import androidx.annotation.NonNull;
 
 /**
  * pre scale bitmap before load to ImageView
@@ -34,7 +37,12 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
     }
 
     @Override
-    public Resource<Bitmap> decode(InputStream source, int width, int height) throws IOException {
+    public boolean handles(@NonNull InputStream source, @NonNull Options options) throws IOException {
+        return false;
+    }
+
+    @Override
+    public Resource<Bitmap> decode(InputStream source, int width, int height, @NonNull Options options1) throws IOException {
         Resource<Bitmap> result = null;
         BufferedInputStream bis = new BufferedInputStream(source);
 
@@ -107,11 +115,6 @@ public class ThreadImageDecoder implements ResourceDecoder<InputStream, Bitmap> 
             degree = 270;
         }
         return degree;
-    }
-
-    @Override
-    public String getId() {
-        return "ThreadImageDecoder.net.jejer.hipda.glide";
     }
 
     private static int getMaxWidth() {

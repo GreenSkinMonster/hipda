@@ -5,10 +5,7 @@ import android.media.ExifInterface;
 import android.os.SystemClock;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.data.DataFetcher;
-import com.bumptech.glide.load.model.stream.StreamModelLoader;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.path.android.jobqueue.Params;
@@ -24,8 +21,6 @@ import net.jejer.hipda.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +66,6 @@ public class GlideImageJob extends BaseJob {
                         .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             } else {
                 future = mRequestManager
-                        .using(cacheOnlyStreamLoader)
                         .load(mUrl)
                         .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             }
@@ -140,7 +134,7 @@ public class GlideImageJob extends BaseJob {
         } finally {
             try {
                 if (future != null)
-                    Glide.clear(future);
+                    mRequestManager.clear(future);
             } catch (Exception ignored) {
             }
         }
@@ -150,32 +144,5 @@ public class GlideImageJob extends BaseJob {
     protected void onCancel() {
         ImageContainer.markImageIdle(mUrl);
     }
-
-    private static final StreamModelLoader<String> cacheOnlyStreamLoader = new StreamModelLoader<String>() {
-        @Override
-        public DataFetcher<InputStream> getResourceFetcher(final String model, int i, int i1) {
-            return new DataFetcher<InputStream>() {
-                @Override
-                public InputStream loadData(Priority priority) throws Exception {
-                    throw new IOException();
-                }
-
-                @Override
-                public void cleanup() {
-
-                }
-
-                @Override
-                public String getId() {
-                    return model;
-                }
-
-                @Override
-                public void cancel() {
-
-                }
-            };
-        }
-    };
 
 }

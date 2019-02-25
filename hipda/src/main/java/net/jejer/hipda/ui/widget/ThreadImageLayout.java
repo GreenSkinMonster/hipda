@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
@@ -24,7 +23,6 @@ import net.jejer.hipda.glide.GlideBitmapTarget;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.glide.GlideImageView;
-import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.ui.ThreadDetailFragment;
@@ -108,17 +106,17 @@ public class ThreadImageLayout extends RelativeLayout {
 
             if (imageInfo.isGif()) {
                 mRequestManager
-                        .load(mUrl)
                         .asBitmap()
+                        .load(mUrl)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .transform(new GifTransformation(getContext()))
                         .into(new GlideBitmapTarget(mImageView, imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight()));
             } else {
                 mRequestManager
-                        .load(mUrl)
                         .asBitmap()
-                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(imageInfo)))
-                        .imageDecoder(new ThreadImageDecoder(imageInfo))
+                        .load(mUrl)
+//                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(imageInfo)))
+//                        .imageDecoder(new ThreadImageDecoder(imageInfo))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(new GlideBitmapTarget(mImageView, imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight()));
             }

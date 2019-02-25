@@ -1,6 +1,7 @@
 package net.jejer.hipda.glide;
 
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.util.ContentLengthInputStream;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -37,19 +39,33 @@ public class ImageStreamFetcher implements DataFetcher<InputStream> {
         stringUrl = url.toStringUrl();
     }
 
+    @NonNull
     @Override
-    public InputStream loadData(Priority priority) throws Exception {
+    public Class<InputStream> getDataClass() {
+        return InputStream.class;
+    }
+
+    @NonNull
+    @Override
+    public DataSource getDataSource() {
+        return DataSource.REMOTE;
+    }
+
+    @Override
+    public void loadData(Priority priority, DataCallback<? super InputStream> callback) {
         Request request = getRequest();
-
-        Response response = client.newCall(request).execute();
-        responseBody = response.body();
-        if (!response.isSuccessful()) {
-            throw new IOException(OkHttpHelper.ERROR_CODE_PREFIX + response.code());
+        try {
+            Response response = client.newCall(request).execute();
+            responseBody = response.body();
+            if (!response.isSuccessful()) {
+                throw new IOException(OkHttpHelper.ERROR_CODE_PREFIX + response.code());
+            }
+            long contentLength = responseBody.contentLength();
+            stream = ContentLengthInputStream.obtain(responseBody.byteStream(), contentLength);
+            callback.onDataReady(stream);
+        } catch (Exception e) {
+            callback.onLoadFailed(e);
         }
-
-        long contentLength = responseBody.contentLength();
-        stream = ContentLengthInputStream.obtain(responseBody.byteStream(), contentLength);
-        return stream;
     }
 
     private Request getRequest() {
@@ -82,11 +98,6 @@ public class ImageStreamFetcher implements DataFetcher<InputStream> {
         if (responseBody != null) {
             responseBody.close();
         }
-    }
-
-    @Override
-    public String getId() {
-        return url.getCacheKey();
     }
 
     @Override

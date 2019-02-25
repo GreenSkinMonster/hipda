@@ -12,9 +12,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.signature.StringSignature;
+import com.bumptech.glide.signature.ObjectKey;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -66,19 +67,19 @@ public class GlideHelper {
         }
         if (HiSettingsHelper.getInstance().isCircleAvatar()) {
             glide.load(avatarUrl)
-                    .signature(new StringSignature(cacheKey))
+                    .signature(new ObjectKey(cacheKey))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .bitmapTransform(new CropCircleTransformation(HiApplication.getAppContext()))
+                    .circleCrop()
                     .error(DEFAULT_USER_ICON)
-                    .crossFade()
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(view);
         } else {
             glide.load(avatarUrl)
-                    .signature(new StringSignature(cacheKey))
+                    .signature(new ObjectKey(cacheKey))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .centerCrop()
                     .error(DEFAULT_USER_ICON)
-                    .crossFade()
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(view);
         }
     }
@@ -90,7 +91,7 @@ public class GlideHelper {
                     .load(avatarUrl)
                     .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             f = future.get();
-            Glide.clear(future);
+            Glide.with(ctx).clear(future);
         } catch (Exception e) {
             Logger.e(e);
         }

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.Registry;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.GlideModule;
@@ -54,7 +55,7 @@ public class MyGlideModule implements GlideModule {
     }
 
     @Override
-    public void registerComponents(Context context, Glide glide) {
+    public void registerComponents(Context context, Glide glide, Registry registry) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
@@ -96,7 +97,7 @@ public class MyGlideModule implements GlideModule {
 
         OkHttpClient client = builder.build();
 
-        glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
+        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
     }
 
 }

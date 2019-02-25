@@ -9,7 +9,6 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.davemorrissey.labs.subscaleview.decoder.CompatDecoderFactory;
@@ -27,7 +26,6 @@ import net.jejer.hipda.glide.GlideBitmapTarget;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.glide.GlideImageView;
-import net.jejer.hipda.glide.ThreadImageDecoder;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.ui.widget.ImageViewerLayout;
@@ -92,10 +90,10 @@ public class ImageViewerAdapter extends PagerAdapter {
                 //load argument must match ThreadDetailFragment to hit memory cache
                 if (info.isReady()) {
                     Glide.with(mActivity)
-                            .load(info.getUrl())
                             .asBitmap()
-                            .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(imageInfo)))
-                            .imageDecoder(new ThreadImageDecoder(imageInfo))
+                            .load(info.getUrl())
+//                            .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(imageInfo)))
+//                            .imageDecoder(new ThreadImageDecoder(imageInfo))
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .into(new GlideBitmapTarget(imageLayout.getGlideImageView(), info.getDisplayWidth(), info.getDisplayHeight()));
                 }
@@ -138,8 +136,8 @@ public class ImageViewerAdapter extends PagerAdapter {
 
                 if (GlideHelper.isOkToLoad(mActivity)) {
                     Glide.with(mActivity)
-                            .load(imageUrl)
                             .asBitmap()
+                            .load(imageUrl)
                             .priority(Priority.IMMEDIATE)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .transform(new GifTransformation(mActivity))
@@ -166,7 +164,7 @@ public class ImageViewerAdapter extends PagerAdapter {
                 scaleImageView.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener() {
                     @Override
                     public void onImageLoaded() {
-                        Glide.clear(glideImageView);
+                        Glide.with(mActivity).clear(glideImageView);
                         glideImageView.setVisibility(View.GONE);
                         scaleImageView.setVisibility(View.VISIBLE);
                         if (imageInfo.isLongImage()) {
@@ -181,7 +179,7 @@ public class ImageViewerAdapter extends PagerAdapter {
 
                     @Override
                     public void onImageLoadError(Exception e) {
-                        Glide.clear(glideImageView);
+                        Glide.with(mActivity).clear(glideImageView);
                         glideImageView.setVisibility(View.GONE);
                         scaleImageView.setImage(ImageSource.resource(R.drawable.image_broken));
                     }

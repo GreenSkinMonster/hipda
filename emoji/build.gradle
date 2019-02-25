@@ -4,6 +4,11 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion as int
     buildToolsVersion rootProject.ext.buildToolsVersion as String
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion as int
         targetSdkVersion rootProject.ext.targetSdkVersion as int

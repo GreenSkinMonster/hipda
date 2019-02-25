@@ -63,6 +63,6 @@ public class ImageViewerLayout extends RelativeLayout {
 
     public void recycle() {
         scaleImageView.recycle();
-        Glide.clear(glideImageView);
+        Glide.with(getContext()).clear(glideImageView);
     }
 }
