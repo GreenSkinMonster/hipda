@@ -6,9 +6,10 @@ import android.text.TextUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.Registry;
+import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.model.GlideUrl;
-import com.bumptech.glide.module.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageInfo;
@@ -33,7 +34,8 @@ import okhttp3.Response;
  * Created by GreenSkinMonster on 2016-11-03.
  */
 
-public class MyGlideModule implements GlideModule {
+@GlideModule
+public class MyGlideModule extends AppGlideModule {
 
     private final static int DEFAULT_CACHE_SIZE = 500;
     private final static int MIN_CACHE_SIZE = 300;
@@ -98,6 +100,11 @@ public class MyGlideModule implements GlideModule {
         OkHttpClient client = builder.build();
 
         registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
+    }
+
+    @Override
+    public boolean isManifestParsingEnabled() {
+        return false;
     }
 
 }

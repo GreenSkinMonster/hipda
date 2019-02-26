@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
@@ -77,7 +79,7 @@ public class GlideHelper {
             glide.load(avatarUrl)
                     .signature(new ObjectKey(cacheKey))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .centerCrop()
+                    .transform(new CenterCrop(), new RoundedCorners(Utils.dpToPx(HiApplication.getAppContext(), 4)))
                     .error(DEFAULT_USER_ICON)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(view);

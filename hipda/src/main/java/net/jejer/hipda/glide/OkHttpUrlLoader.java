@@ -7,7 +7,6 @@ import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 import com.bumptech.glide.signature.ObjectKey;
 
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.HiUtils;
 
 import java.io.InputStream;
@@ -38,30 +37,31 @@ public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
 
     private final OkHttpClient client;
 
-    public OkHttpUrlLoader(OkHttpClient client) {
+    private OkHttpUrlLoader(OkHttpClient client) {
         this.client = client;
     }
 
     @Override
-    public LoadData<InputStream> buildLoadData(GlideUrl model, int width, int height, @NonNull Options options) {
+    public LoadData<InputStream> buildLoadData(@NonNull GlideUrl model, int width, int height, @NonNull Options options) {
         boolean forumUrl = false;
         try {
             URL url = model.toURL();
             forumUrl = url.getHost().endsWith(HiUtils.CookieDomain);
         } catch (Exception ignored) {
         }
-        if (HiSettingsHelper.isMobileNetwork()) {
-            return new LoadData<>(new ObjectKey(model), new CacheOnlyFetcher());
-        } else if (forumUrl && model.toStringUrl().contains(HiUtils.AvatarPath)) {
+        if (forumUrl && model.toStringUrl().contains(HiUtils.AvatarPath)) {
             return new LoadData<>(new ObjectKey(model), new AvatarStreamFetcher(client, model));
         } else {
+//            if(){
+//                return new LoadData<>(new ObjectKey(model), new CacheOnlyFetcher());
+//            }
             return new LoadData<>(new ObjectKey(model), new ImageStreamFetcher(client, model, forumUrl));
         }
     }
 
     @Override
     public boolean handles(GlideUrl model) {
-        return false;
+        return true;
     }
 
 }
