@@ -89,8 +89,8 @@ public class ThreadImageLayout extends RelativeLayout {
         mProgressBar.setVisibility(View.GONE);
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
             mTextView.setVisibility(GONE);
-            if (getLayoutParams().height != imageInfo.getDisplayHeight()) {
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getDisplayHeight());
+            if (getLayoutParams().height != imageInfo.getViewHeight()) {
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getViewHeight());
                 setLayoutParams(params);
             }
             if (imageInfo.getWidth() >= MIN_WIDTH || imageInfo.isGif()) {
@@ -135,7 +135,7 @@ public class ThreadImageLayout extends RelativeLayout {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
             LinearLayout.LayoutParams params
-                    = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getDisplayHeight());
+                    = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getViewHeight());
             setLayoutParams(params);
         } else {
             LinearLayout.LayoutParams params

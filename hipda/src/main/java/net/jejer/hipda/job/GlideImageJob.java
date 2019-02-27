@@ -72,10 +72,6 @@ public class GlideImageJob extends BaseJob {
 
             File cacheFile = future.get(MAX_TIME_SECS, TimeUnit.SECONDS);
 
-            double speed = -1;
-            if (mNetworkFetch)
-                speed = cacheFile.length() * 1.0f / 1024 / (SystemClock.uptimeMillis() - start) * 1000;
-
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
 
@@ -110,7 +106,6 @@ public class GlideImageJob extends BaseJob {
             imageInfo.setHeight(height);
             imageInfo.setMime(mime);
             imageInfo.setFileSize(cacheFile.length());
-            imageInfo.setSpeed(speed);
             if (orientation > 0)
                 imageInfo.setOrientation(orientation);
             ImageContainer.markImageReady(mUrl, imageInfo);

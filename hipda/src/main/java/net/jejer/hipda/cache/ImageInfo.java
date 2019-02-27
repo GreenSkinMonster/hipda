@@ -14,6 +14,10 @@ public class ImageInfo {
     private final static int MAX_WIDTH = Math.min(getMaxBitmapWidth(), (int) (Utils.getScreenWidth() * 0.8));
     private final static int MAX_HEIGHT = Utils.getScreenHeight();
 
+    private final static int MAX_VIEW_WIDTH = Utils.getScreenWidth() - Utils.dpToPx(HiApplication.getAppContext(), 12 * 2);
+    private final static int MAX_VIEW_HEIGHT = (int) (Utils.getScreenHeight() * 0.8);
+
+
     public static final int IDLE = 0;
     public static final int IN_PROGRESS = 1;
     public static final int FAIL = 2;
@@ -26,14 +30,9 @@ public class ImageInfo {
     private String mMime;
     private long mFileSize;
     private int mOrientation;
-    private double mSpeed;
     private int mProgress;
     private int mStatus = IDLE;
     private String mMessage;
-
-    private int maxViewWidth;
-    private int displayWidth;
-    private int displayHeight;
 
     public ImageInfo(String url) {
         mUrl = url;
@@ -99,22 +98,6 @@ public class ImageInfo {
         mOrientation = orientation;
     }
 
-    public double getSpeed() {
-        return mSpeed;
-    }
-
-    public void setSpeed(double speed) {
-        mSpeed = speed;
-    }
-
-    public int getDisplayHeight() {
-        return getDisplaySize(false);
-    }
-
-    public int getDisplayWidth() {
-        return getDisplaySize(true);
-    }
-
     public int getBitmapHeight() {
         return Math.round(getHeight() * getMaxBitmapScaleRate());
     }
@@ -136,6 +119,8 @@ public class ImageInfo {
     }
 
     public void setStatus(int status) {
+        if (mStatus == SUCCESS)
+            return;
         mStatus = status;
     }
 
@@ -151,46 +136,19 @@ public class ImageInfo {
         return mUrl;
     }
 
-    private int getDisplaySize(boolean isWidth) {
-        //calculate ImageView size for image to display
+    public int getViewHeight() {
+        int viewWidth = (int) Math.pow(mWidth, 1.3);
+        if (isGif() || viewWidth > MAX_VIEW_WIDTH / 2)
+            viewWidth = MAX_VIEW_WIDTH;
 
-        //leave 12dp on both left and right side, this should match layout setup
-        int tmpMaxViewWidth = Utils.getScreenWidth() - Utils.dpToPx(HiApplication.getAppContext(), 12 * 2);
+        int viewHeight = Math.round(viewWidth * 1.0f * mHeight / mWidth);
 
-        if (maxViewWidth != tmpMaxViewWidth) {
-            maxViewWidth = tmpMaxViewWidth;
-
-            //if image width < half maxViewWidth, scale it up for better view
-            int maxScaleWidth = Math.round(maxViewWidth * 0.5f);
-
-            double scaleRate = getViewScaleRate(mWidth);
-            int scaledWidth = Math.round((int) (mWidth * scaleRate));
-            int scaledHeight = Math.round((int) (mHeight * scaleRate));
-
-            if (scaledWidth >= maxScaleWidth ||
-                    (isGif() && scaledWidth >= maxScaleWidth / 3)) {
-                displayWidth = maxViewWidth;
-                displayHeight = Math.round(maxViewWidth * 1.0f * mHeight / mWidth);
-            } else {
-                displayWidth = scaledWidth;
-                displayHeight = scaledHeight;
-            }
-            //at last, limit ImageView height for gif or very long images
-            float maxHeightScale = 0.8f;
-            if (displayHeight > maxHeightScale * Utils.getScreenHeight()) {
-                displayHeight = Math.round(maxHeightScale * Utils.getScreenHeight());
-            }
+        //at last, limit ImageView max height
+        if (viewHeight > MAX_VIEW_HEIGHT) {
+            viewHeight = MAX_VIEW_HEIGHT;
         }
 
-        if (isWidth)
-            return displayWidth;
-        else
-            return displayHeight;
-    }
-
-    //Math! http://www.mathsisfun.com/data/function-grapher.php
-    private double getViewScaleRate(int x) {
-        return Math.pow(x, 1.2) / x;
+        return viewHeight;
     }
 
     private float getMaxBitmapScaleRate() {
