@@ -22,7 +22,6 @@ import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.glide.GifTransformation;
-import net.jejer.hipda.glide.GlideBitmapTarget;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.glide.GlideImageView;
@@ -92,10 +91,9 @@ public class ImageViewerAdapter extends PagerAdapter {
                     Glide.with(mActivity)
                             .asBitmap()
                             .load(info.getUrl())
-//                            .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(imageInfo)))
-//                            .imageDecoder(new ThreadImageDecoder(imageInfo))
+                            .override(info.getBitmapWidth(), info.getBitmapHeight())
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(new GlideBitmapTarget(imageLayout.getGlideImageView(), info.getDisplayWidth(), info.getDisplayHeight()));
+                            .into(imageLayout.getGlideImageView());
                 }
             }
         }
@@ -138,11 +136,12 @@ public class ImageViewerAdapter extends PagerAdapter {
                     Glide.with(mActivity)
                             .asBitmap()
                             .load(imageUrl)
+                            .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
                             .priority(Priority.IMMEDIATE)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .transform(new GifTransformation(mActivity))
                             .error(R.drawable.image_broken)
-                            .into(new GlideBitmapTarget(glideImageView, imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight()));
+                            .into(glideImageView);
                 }
 
                 glideImageView.setUrl(imageUrl);

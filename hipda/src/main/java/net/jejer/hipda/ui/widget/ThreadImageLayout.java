@@ -19,7 +19,6 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.glide.GifTransformation;
-import net.jejer.hipda.glide.GlideBitmapTarget;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.glide.GlideImageView;
@@ -110,15 +109,14 @@ public class ThreadImageLayout extends RelativeLayout {
                         .load(mUrl)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .transform(new GifTransformation(getContext()))
-                        .into(new GlideBitmapTarget(mImageView, imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight()));
+                        .into(mImageView);
             } else {
                 mRequestManager
                         .asBitmap()
                         .load(mUrl)
-//                        .cacheDecoder(new FileToStreamDecoder<>(new ThreadImageDecoder(imageInfo)))
-//                        .imageDecoder(new ThreadImageDecoder(imageInfo))
+                        .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(new GlideBitmapTarget(mImageView, imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight()));
+                        .into(mImageView);
             }
         } else {
             mImageView.setImageResource(R.drawable.image_broken);
@@ -137,7 +135,7 @@ public class ThreadImageLayout extends RelativeLayout {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
             LinearLayout.LayoutParams params
-                    = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getHeight());
+                    = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getDisplayHeight());
             setLayoutParams(params);
         } else {
             LinearLayout.LayoutParams params
@@ -195,10 +193,10 @@ public class ThreadImageLayout extends RelativeLayout {
         popupMenu.show();
     }
 
-
     @Override
     protected void onDetachedFromWindow() {
         EventBus.getDefault().unregister(this);
+        mRequestManager.clear(mImageView);
         super.onDetachedFromWindow();
     }
 
@@ -210,21 +208,21 @@ public class ThreadImageLayout extends RelativeLayout {
         final ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         imageInfo.setMessage(event.getMessage());
 
-        if (event.getStatus() == ImageInfo.IN_PROGRESS
-                && imageInfo.getStatus() != ImageInfo.SUCCESS) {
-            if (mProgressBar.getVisibility() != View.VISIBLE)
-                mProgressBar.setVisibility(View.VISIBLE);
-            mProgressBar.setProgress(event.getProgress());
-
-            imageInfo.setProgress(event.getProgress());
-            imageInfo.setStatus(ImageInfo.IN_PROGRESS);
-        } else if (event.getStatus() == ImageInfo.SUCCESS) {
+        if (event.getStatus() == ImageInfo.SUCCESS
+                || imageInfo.getStatus() == ImageInfo.SUCCESS) {
             if (mProgressBar.getVisibility() == View.VISIBLE)
                 mProgressBar.setVisibility(View.GONE);
             if (mTextView.getVisibility() == View.VISIBLE)
                 mTextView.setVisibility(View.GONE);
             if (GlideHelper.isOkToLoad(mFragment))
                 loadImage();
+        } else if (event.getStatus() == ImageInfo.IN_PROGRESS) {
+            if (mProgressBar.getVisibility() != View.VISIBLE)
+                mProgressBar.setVisibility(View.VISIBLE);
+            mProgressBar.setProgress(event.getProgress());
+
+            imageInfo.setProgress(event.getProgress());
+            imageInfo.setStatus(ImageInfo.IN_PROGRESS);
         } else {
             mProgressBar.setVisibility(GONE);
             mImageView.setImageResource(R.drawable.image_broken);

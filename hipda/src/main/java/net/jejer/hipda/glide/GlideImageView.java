@@ -91,10 +91,8 @@ public class GlideImageView extends AppCompatImageView {
             Glide.with(getContext())
                     .load(mUrl)
                     .priority(Priority.IMMEDIATE)
-//                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .skipMemoryCache(true)
                     .error(R.drawable.image_broken)
-                    .override(imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight())
+                    .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
                     .into(this);
         }
     }
@@ -109,10 +107,9 @@ public class GlideImageView extends AppCompatImageView {
                     Glide.with(getContext())
                             .asBitmap()
                             .load(mCurrentUrl)
-//                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .transform(new GifTransformation(getContext()))
                             .error(R.drawable.image_broken)
-                            .override(imageInfo.getDisplayWidth(), imageInfo.getDisplayHeight())
+                            .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
                             .into(lastView);
                 }
             }

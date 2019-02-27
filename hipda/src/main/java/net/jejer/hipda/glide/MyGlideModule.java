@@ -1,15 +1,18 @@
 package net.jejer.hipda.glide;
 
 import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.AppGlideModule;
+import com.bumptech.glide.request.RequestOptions;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageInfo;
@@ -52,6 +55,8 @@ public class MyGlideModule extends AppGlideModule {
             }
         }
         gb.setDiskCache(new ExternalCacheDiskCacheFactory(context, cacheSize * 1024 * 1024));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            gb.setDefaultRequestOptions(new RequestOptions().format(DecodeFormat.PREFER_RGB_565));
 
         GlideHelper.initDefaultFiles();
     }

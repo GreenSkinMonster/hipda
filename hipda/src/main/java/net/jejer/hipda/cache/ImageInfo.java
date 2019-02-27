@@ -11,6 +11,9 @@ import net.jejer.hipda.utils.Utils;
  */
 public class ImageInfo {
 
+    private final static int MAX_WIDTH = Math.min(getMaxBitmapWidth(), (int) (Utils.getScreenWidth() * 0.8));
+    private final static int MAX_HEIGHT = Utils.getScreenHeight();
+
     public static final int IDLE = 0;
     public static final int IN_PROGRESS = 1;
     public static final int FAIL = 2;
@@ -112,6 +115,14 @@ public class ImageInfo {
         return getDisplaySize(true);
     }
 
+    public int getBitmapHeight() {
+        return Math.round(getHeight() * getMaxBitmapScaleRate());
+    }
+
+    public int getBitmapWidth() {
+        return Math.round(getWidth() * getMaxBitmapScaleRate());
+    }
+
     public int getProgress() {
         return mProgress;
     }
@@ -152,7 +163,7 @@ public class ImageInfo {
             //if image width < half maxViewWidth, scale it up for better view
             int maxScaleWidth = Math.round(maxViewWidth * 0.5f);
 
-            double scaleRate = getScaleRate(mWidth);
+            double scaleRate = getViewScaleRate(mWidth);
             int scaledWidth = Math.round((int) (mWidth * scaleRate));
             int scaledHeight = Math.round((int) (mHeight * scaleRate));
 
@@ -165,7 +176,7 @@ public class ImageInfo {
                 displayHeight = scaledHeight;
             }
             //at last, limit ImageView height for gif or very long images
-            float maxHeightScale = isGif() ? 0.75f : 2f;
+            float maxHeightScale = 0.8f;
             if (displayHeight > maxHeightScale * Utils.getScreenHeight()) {
                 displayHeight = Math.round(maxHeightScale * Utils.getScreenHeight());
             }
@@ -178,7 +189,29 @@ public class ImageInfo {
     }
 
     //Math! http://www.mathsisfun.com/data/function-grapher.php
-    private double getScaleRate(int x) {
+    private double getViewScaleRate(int x) {
         return Math.pow(x, 1.2) / x;
     }
+
+    private float getMaxBitmapScaleRate() {
+        float scaleW = (float) MAX_WIDTH / getWidth();
+        float scaleH = (float) MAX_HEIGHT / getHeight();
+        float scale = (float) Math.round(Math.min(scaleH, scaleW) * 10) / 10;
+        if (scale > 1)
+            scale = 1;
+        if (scale < 0.1)
+            scale = 0.1f;
+        return scale;
+    }
+
+    private static int getMaxBitmapWidth() {
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        if (maxMemory <= 128 * 1024 * 1024) {
+            return 560;
+        } else if (maxMemory <= 256 * 1024 * 1024) {
+            return 720;
+        }
+        return 800;
+    }
+
 }
