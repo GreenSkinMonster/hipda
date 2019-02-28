@@ -1,7 +1,6 @@
 package net.jejer.hipda.glide;
 
 import com.bumptech.glide.load.Options;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
@@ -12,9 +11,9 @@ import java.io.InputStream;
 import androidx.annotation.NonNull;
 import okhttp3.OkHttpClient;
 
-public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
+public class AvatarLoader implements ModelLoader<AvatarModel, InputStream> {
 
-    public static class Factory implements ModelLoaderFactory<GlideUrl, InputStream> {
+    public static class Factory implements ModelLoaderFactory<AvatarModel, InputStream> {
         private OkHttpClient client;
 
         Factory(OkHttpClient client) {
@@ -23,8 +22,8 @@ public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
 
         @NonNull
         @Override
-        public ModelLoader<GlideUrl, InputStream> build(MultiModelLoaderFactory factories) {
-            return new OkHttpUrlLoader(client);
+        public ModelLoader<AvatarModel, InputStream> build(MultiModelLoaderFactory factories) {
+            return new AvatarLoader(client);
         }
 
         @Override
@@ -34,17 +33,17 @@ public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
 
     private final OkHttpClient client;
 
-    private OkHttpUrlLoader(OkHttpClient client) {
+    private AvatarLoader(OkHttpClient client) {
         this.client = client;
     }
 
     @Override
-    public LoadData<InputStream> buildLoadData(@NonNull GlideUrl model, int width, int height, @NonNull Options options) {
-        return new LoadData<>(new ObjectKey(model), new ImageStreamFetcher(client, model));
+    public LoadData<InputStream> buildLoadData(@NonNull AvatarModel model, int width, int height, @NonNull Options options) {
+        return new LoadData<>(new ObjectKey(model), new AvatarStreamFetcher(client, model));
     }
 
     @Override
-    public boolean handles(GlideUrl model) {
+    public boolean handles(@NonNull AvatarModel model) {
         return true;
     }
 

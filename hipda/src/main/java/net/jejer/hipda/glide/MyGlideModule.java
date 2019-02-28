@@ -104,6 +104,8 @@ public class MyGlideModule extends AppGlideModule {
 
         OkHttpClient client = builder.build();
 
+        registry.prepend(AvatarModel.class, InputStream.class, new AvatarLoader.Factory(client));
+        registry.prepend(CacheModel.class, InputStream.class, new CacheLoader.Factory());
         registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
     }
 

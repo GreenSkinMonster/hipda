@@ -2,7 +2,6 @@ package net.jejer.hipda.job;
 
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
-import android.os.SystemClock;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -13,6 +12,7 @@ import com.path.android.jobqueue.Params;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
+import net.jejer.hipda.glide.CacheModel;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Logger;
@@ -59,14 +59,13 @@ public class GlideImageJob extends BaseJob {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         FutureTarget<File> future = null;
         try {
-            long start = SystemClock.uptimeMillis();
             if (mNetworkFetch) {
                 future = mRequestManager
                         .load(mUrl)
                         .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             } else {
                 future = mRequestManager
-                        .load(mUrl)
+                        .load(new CacheModel(mUrl))
                         .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
             }
 

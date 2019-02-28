@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 /**
  * Created by GreenSkinMonster on 2019-02-25.
  */
-public class CacheOnlyFetcher implements DataFetcher<InputStream> {
+public class CacheFetcher implements DataFetcher<InputStream> {
     @Override
     public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super InputStream> callback) {
         callback.onLoadFailed(new IOException());

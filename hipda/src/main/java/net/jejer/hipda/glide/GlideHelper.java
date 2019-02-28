@@ -22,7 +22,6 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.cache.LRUCache;
 import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.HiUtils;
@@ -34,11 +33,10 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 public class GlideHelper {
-
-    private static LRUCache<String, String> NOT_FOUND_AVATARS = new LRUCache<>(1024);
 
     private static File AVATAR_CACHE_DIR;
 
@@ -57,18 +55,13 @@ public class GlideHelper {
         }
     }
 
-    public static void loadAvatar(RequestManager glide, ImageView view, String avatarUrl) {
-        String cacheKey = null;
-        if (avatarUrl != null)
-            cacheKey = AVATAR_CACHE_KEYS.get(avatarUrl);
+    public static void loadAvatar(RequestManager glide, ImageView view, @NonNull String avatarUrl) {
+        String cacheKey = AVATAR_CACHE_KEYS.get(avatarUrl);
         if (cacheKey == null) {
-            if (avatarUrl == null || NOT_FOUND_AVATARS.containsKey(avatarUrl)) {
-                avatarUrl = DEFAULT_AVATAR_FILE.getAbsolutePath();
-            }
             cacheKey = avatarUrl;
         }
         if (HiSettingsHelper.getInstance().isCircleAvatar()) {
-            glide.load(avatarUrl)
+            glide.load(new AvatarModel(avatarUrl))
                     .signature(new ObjectKey(cacheKey))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .circleCrop()
@@ -76,7 +69,7 @@ public class GlideHelper {
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(view);
         } else {
-            glide.load(avatarUrl)
+            glide.load(new AvatarModel(avatarUrl))
                     .signature(new ObjectKey(cacheKey))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .transform(new CenterCrop(), new RoundedCorners(Utils.dpToPx(HiApplication.getAppContext(), 4)))
@@ -98,10 +91,6 @@ public class GlideHelper {
             Logger.e(e);
         }
         return f;
-    }
-
-    public static void markAvatarNotFound(String avatarUrl) {
-        NOT_FOUND_AVATARS.put(avatarUrl, "");
     }
 
     public static File getAvatarFile(String url) {

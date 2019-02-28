@@ -29,13 +29,11 @@ public class ImageStreamFetcher implements DataFetcher<InputStream> {
     private InputStream stream;
     private ResponseBody responseBody;
 
-    private boolean isForumUrl;
     private String stringUrl;
 
-    public ImageStreamFetcher(OkHttpClient client, GlideUrl url, boolean isForumUrl) {
+    public ImageStreamFetcher(OkHttpClient client, GlideUrl url) {
         this.client = client;
         this.url = url;
-        this.isForumUrl = isForumUrl;
         stringUrl = url.toStringUrl();
     }
 
@@ -78,7 +76,7 @@ public class ImageStreamFetcher implements DataFetcher<InputStream> {
         }
 
         //hack, replace User-Agent
-        if (isForumUrl) {
+        if (stringUrl.contains("." + HiUtils.CookieDomain + "/")) {
             requestBuilder.removeHeader("User-Agent");
             requestBuilder.header("User-Agent", HiUtils.getUserAgent());
         }
@@ -102,6 +100,5 @@ public class ImageStreamFetcher implements DataFetcher<InputStream> {
 
     @Override
     public void cancel() {
-        // TODO: call cancel on the client when this method is called on a background thread. See #257
     }
 }
