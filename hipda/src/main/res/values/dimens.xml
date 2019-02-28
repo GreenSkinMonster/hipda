@@ -11,6 +11,7 @@
 
     <dimen name="avatar_size">40dp</dimen>
     <dimen name="avatar_info_size">56dp</dimen>
+    <dimen name="thread_detail_padding">8dp</dimen>
 
     <dimen name="launch_screen_logo_bottom">16.0dip</dimen>
     <dimen name="post_type_spinner_width">100dp</dimen>

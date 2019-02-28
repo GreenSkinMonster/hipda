@@ -1,65 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/image_viewer"
-              xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/black"
-              android:orientation="vertical">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/image_viewer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_image_info"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginLeft="16dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/md_grey_300"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_floor_info"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/md_grey_300"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/tv_image_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageButton
+        android:id="@+id/btn_download_image"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp">
+        android:layout_marginRight="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:minHeight="36dp"
+        android:minWidth="36dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:layout_constraintEnd_toStartOf="@id/btn_share_image"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-        <TextView
-            android:id="@+id/tv_image_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="4dp"
-            android:textColor="@color/md_grey_300"
-            android:textSize="16sp"/>
-
-        <TextView
-            android:id="@+id/tv_floor_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="@color/md_grey_300"
-            android:textSize="16sp"/>
-
-        <ImageButton
-            android:id="@+id/btn_download_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackground"
-            android:minHeight="36dp"
-            android:minWidth="36dp"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
-
-        <ImageButton
-            android:id="@+id/btn_share_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="6dp"
-            android:layout_toLeftOf="@+id/btn_download_image"
-            android:background="?attr/selectableItemBackground"
-            android:minHeight="36dp"
-            android:minWidth="36dp"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
-    </RelativeLayout>
+    <ImageButton
+        android:id="@+id/btn_share_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:minHeight="36dp"
+        android:minWidth="36dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <net.jejer.hipda.ui.widget.ImageViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_floor_info"/>
 
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

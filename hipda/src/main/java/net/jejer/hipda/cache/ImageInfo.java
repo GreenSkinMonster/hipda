@@ -2,6 +2,7 @@ package net.jejer.hipda.cache;
 
 import android.text.TextUtils;
 
+import net.jejer.hipda.R;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Utils;
 
@@ -14,7 +15,8 @@ public class ImageInfo {
     private final static int MAX_WIDTH = Math.min(getMaxBitmapWidth(), (int) (Utils.getScreenWidth() * 0.8));
     private final static int MAX_HEIGHT = Utils.getScreenHeight();
 
-    private final static int MAX_VIEW_WIDTH = Utils.getScreenWidth() - Utils.dpToPx(HiApplication.getAppContext(), 12 * 2);
+    private final static int MAX_VIEW_WIDTH = Utils.getScreenWidth()
+            - 2 * (int) HiApplication.getAppContext().getResources().getDimension(R.dimen.thread_detail_padding);
     private final static int MAX_VIEW_HEIGHT = (int) (Utils.getScreenHeight() * 0.8);
 
 
