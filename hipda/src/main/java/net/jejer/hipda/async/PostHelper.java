@@ -9,6 +9,7 @@ import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
+import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.utils.Constants;
@@ -36,6 +37,8 @@ public class PostHelper {
     private static long LAST_POST_TIME = 0;
     private static final long POST_DELAY_IN_SECS = 30;
 
+    private boolean ERR_502_TMP_FIXED = false;
+
     private int mMode;
     private String mResult;
     private int mStatus = Constants.STATUS_FAIL;
@@ -53,6 +56,7 @@ public class PostHelper {
         mMode = mode;
         mInfo = info;
         mPostArg = postArg;
+        mTid = postArg.getTid();
     }
 
     public PostBean post() {
@@ -167,19 +171,54 @@ public class PostHelper {
             }
         }
 
+        String resp = null;
+        String requestUrl = null;
+        Exception exception = null;
         try {
             Response response = OkHttpHelper.getInstance().postAsResponse(url, params);
-            String resp = OkHttpHelper.getResponseBody(response);
-            String requestUrl = response.request().url().toString();
+            resp = OkHttpHelper.getResponseBody(response);
+            requestUrl = response.request().url().toString();
+        } catch (Exception e1) {
+            exception = e1;
+            Logger.e(e1);
+            NetworkError networkError = OkHttpHelper.getErrorMessage(e1);
+            if (isReply()
+                    && !TextUtils.isEmpty(mTid)
+                    && networkError.getErrCode() == 502) {
+                if (!ERR_502_TMP_FIXED) {
+                    ERR_502_TMP_FIXED = true;
+                    //temp fix for reply 502 error
+                    OkHttpHelper.getInstance().clearCookies();
+                    Utils.clearOkhttpCache();
+                    int status = new LoginHelper(mCtx).login();
+                    if (status == Constants.STATUS_SUCCESS) {
+                        try {
+                            Response response = OkHttpHelper.getInstance().getAsResponse(HiUtils.LastPageUrl + mTid);
+                            resp = OkHttpHelper.getResponseBody(response);
+                            requestUrl = response.request().url().toString();
+                            Document doc = Jsoup.parse(resp);
+                            DetailListBean data = HiParserThreadDetail.parse(mCtx, doc, mTid);
+                            if (data != null && data.getCount() > 0) {
+                                exception = null;
+                            }
+                        } catch (Exception e2) {
+                            Logger.e(e2);
+                        }
+                    }
+                }
+            }
+        }
 
+        if (exception == null) {
             if (delete && requestUrl.contains("forumdisplay.php")) {
                 //delete first post == whole tread, forward to forum url
-                mResult = "发表成功!";
+                mResult = "删除成功!";
                 mStatus = Constants.STATUS_SUCCESS;
             } else {
                 //when success, okhttp will follow 302 redirect get the page content
                 String tid = Utils.getMiddleString(requestUrl, "tid=", "&");
-                if (requestUrl.contains("viewthread.php") && HiUtils.isValidId(tid)) {
+                if ((requestUrl.contains("viewthread.php") || requestUrl.contains("redirect.php"))
+                        && HiUtils.isValidId(tid)) {
                     mTid = tid;
                     mResult = "发表成功!";
                     mStatus = Constants.STATUS_SUCCESS;
@@ -197,17 +236,19 @@ public class PostHelper {
                     Logger.e(resp);
                     mResult = "发表失败! ";
                     mStatus = Constants.STATUS_FAIL;
-
-                    Document doc = Jsoup.parse(resp);
-                    Elements error = doc.select("div.alert_info");
-                    if (error != null && error.size() > 0) {
-                        mResult += "\n" + error.text();
+                    try {
+                        Document doc = Jsoup.parse(resp);
+                        Elements error = doc.select("div.alert_info");
+                        if (error != null && error.size() > 0) {
+                            mResult += "\n" + error.text();
+                        }
+                    } catch (Exception ignored) {
                     }
                 }
             }
-        } catch (Exception e) {
-            Logger.e(e);
-            mResult = "发表失败 : " + OkHttpHelper.getErrorMessage(e);
+        } else {
+            Logger.e(exception);
+            mResult = "发表失败 : " + OkHttpHelper.getErrorMessage(exception);
             mStatus = Constants.STATUS_FAIL;
         }
 
@@ -225,6 +266,13 @@ public class PostHelper {
             return (int) (POST_DELAY_IN_SECS - delta);
         }
         return 0;
+    }
+
+    private boolean isReply() {
+        return mMode == MODE_QUOTE_POST
+                || mMode == MODE_REPLY_POST
+                || mMode == MODE_REPLY_THREAD
+                || mMode == MODE_QUICK_REPLY;
     }
 
     private String replaceToTags(final String replyText) {

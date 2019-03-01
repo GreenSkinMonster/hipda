@@ -196,6 +196,13 @@ public class OkHttpHelper {
         return get(url, null);
     }
 
+    public Response getAsResponse(String url) throws IOException {
+        Request request = buildGetRequest(url, null, CacheControl.FORCE_NETWORK);
+
+        Call call = mClient.newCall(request);
+        return call.execute();
+    }
+
     public String get(String url, String tag) throws IOException {
         return get(url, tag, FORCE_NETWORK);
     }
@@ -331,10 +338,7 @@ public class OkHttpHelper {
     };
 
     public static NetworkError getErrorMessage(Exception e) {
-        return getErrorMessage(e, true);
-    }
-
-    public static NetworkError getErrorMessage(Exception e, boolean longVersion) {
+        int errCode = 0;
         String msg = e.getClass().getSimpleName();
         if (HiApplication.getAppContext() != null
                 && !Connectivity.isConnected(HiApplication.getAppContext())) {
@@ -346,12 +350,12 @@ public class OkHttpHelper {
         } else if (e instanceof IOException) {
             String emsg = e.getMessage();
             if (emsg != null && emsg.contains(ERROR_CODE_PREFIX)) {
-                msg = "错误代码 (" + Utils.getMiddleString(emsg, ERROR_CODE_PREFIX, ",").trim() + ")";
+                errCode = Utils.parseInt(Utils.getMiddleString(emsg, ERROR_CODE_PREFIX, ",").trim());
+                if (errCode > 0)
+                    msg = "错误代码 (" + errCode + ")";
             }
         }
-        if (longVersion)
-            msg = "加载失败 : " + msg;
-        return new NetworkError(msg, e.getClass().getName() + "\n" + e.getMessage());
+        return new NetworkError(errCode, msg, e.getClass().getName() + "\n" + e.getMessage());
     }
 
     public void clearCookies() {

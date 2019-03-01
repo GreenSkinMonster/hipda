@@ -6,11 +6,14 @@ package net.jejer.hipda.okhttp;
 public class NetworkError {
     private String message;
     private String detail;
+    private int errCode;
 
-    NetworkError(String message, String detail) {
+    NetworkError(int errCode, String message, String detail) {
         this.message = message;
         this.detail = detail;
+        this.errCode = errCode;
     }
+
 
     public String getDetail() {
         return detail;
@@ -18,6 +21,10 @@ public class NetworkError {
 
     public String getMessage() {
         return message;
+    }
+
+    public int getErrCode() {
+        return errCode;
     }
 
     @Override

@@ -135,7 +135,7 @@ public class UploadImgHelper {
             }
         } catch (Exception e) {
             Logger.e(e);
-            mMessage = OkHttpHelper.getErrorMessage(e, false).getMessage();
+            mMessage = OkHttpHelper.getErrorMessage(e).getMessage();
         } finally {
             try {
                 baos.close();
