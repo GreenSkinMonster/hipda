@@ -37,8 +37,8 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/tv_image_indicator"
             android:layout_toRightOf="@+id/tv_author"
-            android:maxLines="1"
             android:gravity="right"
+            android:maxLines="1"
             android:paddingBottom="1dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
@@ -47,16 +47,13 @@
             android:textColor="?android:textColorSecondary"
             android:textSize="12sp"/>
 
-        <com.mikepenz.iconics.view.IconicsTextView
+        <ImageView
             android:id="@+id/tv_image_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/tv_replycounter"
-            android:padding="2dp"
-            android:text="{faw-picture-o}"
-            android:textColor="?attr/colorAccent"
-            android:textSize="@dimen/info_text_size"
+            android:src="@drawable/ic_picture"
             android:visibility="gone"/>
 
         <TextView

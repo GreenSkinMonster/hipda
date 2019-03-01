@@ -29,7 +29,7 @@ public class ThreadItemLayout extends LinearLayout {
     private TextView mTvTitle;
     private TextView mTvReplycounter;
     private TextView mTvCreateTime;
-    private TextView mTvImageIndicator;
+    private ImageView mTvImageIndicator;
 
     private RequestManager mGlide;
 
@@ -48,7 +48,7 @@ public class ThreadItemLayout extends LinearLayout {
         mTvTitle = (TextView) findViewById(R.id.tv_title);
         mTvReplycounter = (TextView) findViewById(R.id.tv_replycounter);
         mTvCreateTime = (TextView) findViewById(R.id.tv_create_time);
-        mTvImageIndicator = (TextView) findViewById(R.id.tv_image_indicator);
+        mTvImageIndicator = (ImageView) findViewById(R.id.tv_image_indicator);
         mGlide = glide;
     }
 

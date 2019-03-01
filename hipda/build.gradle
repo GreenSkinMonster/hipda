@@ -76,7 +76,6 @@ dependencies {
 
     implementation "com.mikepenz:materialdrawer:6.1.2"
     implementation "com.mikepenz:iconics-core:3.2.1"
-    implementation "com.mikepenz:iconics-views:3.2.1"
 
     implementation 'com.mikepenz:google-material-typeface:2.2.0.2.original@aar'
     implementation 'com.mikepenz:fontawesome-typeface:4.6.0.2@aar'

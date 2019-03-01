@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,7 +27,6 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.mikepenz.iconics.view.IconicsImageView;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
@@ -574,8 +574,8 @@ public class ThreadListFragment extends BaseFragment
             } else {
                 row = convertView;
             }
-            IconicsImageView icon = (IconicsImageView) row.findViewById(R.id.forum_type_icon);
-            TextView text = (TextView) row.findViewById(R.id.forum_type_text);
+            ImageView icon = row.findViewById(R.id.forum_type_icon);
+            TextView text = row.findViewById(R.id.forum_type_text);
 
             text.setText(HiUtils.BS_TYPES[position]);
             if (position == HiUtils.getBSTypeIndexByFid(HiSettingsHelper.getInstance().getBSTypeId())) {
@@ -630,6 +630,7 @@ public class ThreadListFragment extends BaseFragment
 
             if (!mDataReceived) {
                 mDataReceived = true;
+                mMainFab.setImageResource(R.drawable.ic_refresh_white_24dp);
                 mMainFab.show();
                 if (HiSettingsHelper.getInstance().isAppBarCollapsible())
                     ((MainFrameActivity) getActivity()).mAppBarLayout.setExpanded(true, true);
