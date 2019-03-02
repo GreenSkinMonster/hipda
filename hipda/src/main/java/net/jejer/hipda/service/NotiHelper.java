@@ -216,7 +216,6 @@ public class NotiHelper {
     public static void scheduleJob() {
         new JobRequest.Builder(NotiJob.TAG)
                 .setPeriodic(TimeUnit.MINUTES.toMillis(NOTI_REPEAT_MINUTTE), TimeUnit.MINUTES.toMillis(5))
-                .setPersisted(true)
                 .setUpdateCurrent(true)
                 .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                 .build()

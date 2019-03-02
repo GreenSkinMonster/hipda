@@ -93,7 +93,7 @@ dependencies {
     implementation 'it.sephiroth.android.library.imagezoom:library:1.0.4'
     //implementation(name: 'matisse-release-0.5.0', ext: 'aar')
 
-    implementation 'com.evernote:android-job:1.1.11'
+    implementation 'com.evernote:android-job:1.2.6'
 
     //implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation(name: 'calligraphy-release-2.3.0', ext: 'aar')
