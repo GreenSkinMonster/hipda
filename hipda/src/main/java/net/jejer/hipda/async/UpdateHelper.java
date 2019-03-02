@@ -179,12 +179,12 @@ public class UpdateHelper {
         }
     }
 
-    private static boolean newer(String version, String newVersion) {
+    private static boolean newer(String version1, String version2) {
         //version format #.#.##
-        if (TextUtils.isEmpty(newVersion))
+        if (TextUtils.isEmpty(version2))
             return false;
         try {
-            return Integer.parseInt(newVersion.replace(".", "")) > Integer.parseInt(version.replace(".", ""));
+            return Integer.parseInt(version1.replace(".", "")) > Integer.parseInt(version2.replace(".", ""));
         } catch (Exception ignored) {
         }
         return false;
@@ -195,6 +195,31 @@ public class UpdateHelper {
         String currentVersion = HiApplication.getAppVersion();
 
         if (!currentVersion.equals(installedVersion)) {
+            if (newer(currentVersion, "4.3.06")) {
+                boolean wifiAutoload = HiSettingsHelper.getInstance().getStringValue("PERF_IMAGE_LOAD_TYPE", "").equals("2");
+                boolean allAutoload = HiSettingsHelper.getInstance().getStringValue("PERF_IMAGE_LOAD_TYPE", "").equals("0");
+                boolean loadSmall = !HiSettingsHelper.getInstance().getStringValue("PERF_IMAGE_AUTO_LOAD_SIZE", "0").equals("0");
+                boolean loadThumb = HiSettingsHelper.getInstance().getBooleanValue("PERF_AUTO_LOAD_THUMB", false);
+                if (loadThumb) {
+                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
+                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
+                }
+                if (loadSmall) {
+                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_SMALL);
+                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_SMALL);
+                }
+                if (wifiAutoload && !loadSmall) {
+                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
+                }
+                if (allAutoload && !loadSmall) {
+                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
+                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
+                }
+                if (!wifiAutoload && !allAutoload && !loadSmall && !loadThumb) {
+                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_NONE);
+                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_NONE);
+                }
+            }
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
         }
         return newer(installedVersion, currentVersion);

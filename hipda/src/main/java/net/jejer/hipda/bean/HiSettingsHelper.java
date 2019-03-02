@@ -38,10 +38,8 @@ public class HiSettingsHelper {
     public static final String PERF_SECQUESTION = "PERF_SECQUESTION";
     public static final String PERF_SECANSWER = "PERF_SECANSWER";
     public static final String PERF_SHOWSTICKTHREADS = "PERF_SHOWSTICKTHREADS";
-    public static final String PERF_SHOW_POST_TYPE = "PERF_SHOW_POST_TYPE";
-    public static final String PERF_IMAGE_LOAD_TYPE = "PERF_IMAGE_LOAD_TYPE";
-    public static final String PERF_IMAGE_AUTO_LOAD_SIZE = "PERF_IMAGE_AUTO_LOAD_SIZE";
-    public static final String PERF_AUTO_LOAD_THUMB = "PERF_AUTO_LOAD_THUMB";
+    public static final String PERF_WIFI_IMAGE_POLICY = "PERF_WIFI_IMAGE_POLICY";
+    public static final String PERF_MOBILE_IMAGE_POLICY = "PERF_MOBILE_IMAGE_POLICY";
     public static final String PERF_AVATAR_LOAD_TYPE = "PERF_AVATAR_LOAD_TYPE";
     public static final String PERF_SORTBYPOSTTIME_BY_FORUM = "PERF_SORTBYPOSTTIME_BY_FORUM";
     public static final String PERF_ADDTAIL = "PERF_ADDTAIL";
@@ -104,6 +102,12 @@ public class HiSettingsHelper {
     public static final String THEME_BLACK = "black";
     public static final int MAX_TAIL_TEXT_LENGTH = 12;
 
+    public static final int SMALL_IMAGE_SIZE = 500 * 1024; //500K
+    public static final String IMAGE_POLICY_NONE = "none";
+    public static final String IMAGE_POLICY_SMALL = "small_images";
+    public static final String IMAGE_POLICY_THUMB = "prefer_thumb";
+    public static final String IMAGE_POLICY_ORIGINAL = "prefer_original";
+
     private Context mCtx;
     private SharedPreferences mSharedPref;
 
@@ -114,9 +118,6 @@ public class HiSettingsHelper {
     private String mUid = "";
 
     private boolean mShowStickThreads = false;
-    private String mImageLoadType = "0";
-    private long mImageAutoLoadSize = -1;
-    private boolean mAutoLoadThumb = false;
     private String mAvatarLoadType = "0";
     private Set<String> mSortByPostTimeByForum;
 
@@ -177,30 +178,19 @@ public class HiSettingsHelper {
         return mMobileNetwork;
     }
 
-    public boolean isPreferOriginalImage() {
-        return Constants.LOAD_TYPE_ALWAYS.equals(mImageLoadType)
-                || (!isMobileNetwork() && Constants.LOAD_TYPE_ONLY_WIFI.equals(mImageLoadType));
-    }
-
     public boolean isImageLoadable(long imageSize, boolean isThumb) {
-        return Constants.LOAD_TYPE_ALWAYS.equals(mImageLoadType)
-                || (!isMobileNetwork() && Constants.LOAD_TYPE_ONLY_WIFI.equals(mImageLoadType))
-                || (imageSize > 0 && imageSize <= getImageAutoLoadSize())
-                || (mAutoLoadThumb && isThumb);
+        String policy = getCurrectImagePolicy();
+        return IMAGE_POLICY_ORIGINAL.equals(policy)
+                || (IMAGE_POLICY_THUMB.equals(policy) && isThumb)
+                || (IMAGE_POLICY_SMALL.equals(policy) && (isThumb || imageSize <= SMALL_IMAGE_SIZE));
     }
 
-    public long getImageAutoLoadSize() {
-        if (mImageAutoLoadSize == -1) {
-            try {
-                String value = getStringValue(PERF_IMAGE_AUTO_LOAD_SIZE, "0");
-                if (TextUtils.isEmpty(value) || !TextUtils.isDigitsOnly(value))
-                    value = "0";
-                mImageAutoLoadSize = Integer.parseInt(value) * 1024;
-            } catch (Exception ignored) {
-                mImageAutoLoadSize = 0;
-            }
+    public String getCurrectImagePolicy() {
+        if (mMobileNetwork) {
+            return getStringValue(PERF_MOBILE_IMAGE_POLICY, IMAGE_POLICY_NONE);
+        } else {
+            return getStringValue(PERF_WIFI_IMAGE_POLICY, IMAGE_POLICY_THUMB);
         }
-        return mImageAutoLoadSize;
     }
 
     public boolean isLoadAvatar() {
@@ -251,8 +241,6 @@ public class HiSettingsHelper {
         getSecAnswerFromPref();
         isShowStickThreadsFromPref();
         getAvatarLoadTypeFromPref();
-        getImageLoadTypeFromPref();
-        isAutoLoadThumbFromPref();
         isSortByPostTimeByForumFromPref();
         isAddTailFromPref();
         getTailTextFromPref();
@@ -281,7 +269,6 @@ public class HiSettingsHelper {
         getOldBlacklistsFromPref();
         getBlacklistsFromPref();
 
-        mImageAutoLoadSize = -1;
         updateMobileNetworkStatus(mCtx);
     }
 
@@ -392,36 +379,6 @@ public class HiSettingsHelper {
         this.mAvatarLoadType = avatarLoadType;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_AVATAR_LOAD_TYPE, avatarLoadType).apply();
-    }
-
-    private String getImageLoadTypeFromPref() {
-        mImageLoadType = mSharedPref.getString(PERF_IMAGE_LOAD_TYPE, Constants.LOAD_TYPE_ONLY_WIFI);
-        return mImageLoadType;
-    }
-
-    public String getImageLoadType() {
-        return mImageLoadType;
-    }
-
-    public void setImageLoadType(String imageLoadType) {
-        this.mImageLoadType = imageLoadType;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_IMAGE_LOAD_TYPE, imageLoadType).apply();
-    }
-
-    private boolean isAutoLoadThumbFromPref() {
-        mAutoLoadThumb = mSharedPref.getBoolean(PERF_AUTO_LOAD_THUMB, false);
-        return mAutoLoadThumb;
-    }
-
-    public boolean isAutoLoadThumb() {
-        return mAutoLoadThumb;
-    }
-
-    public void setAutoLoadThumb(boolean autoLoadThumb) {
-        mAutoLoadThumb = autoLoadThumb;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_AUTO_LOAD_THUMB, mAutoLoadThumb).apply();
     }
 
     public boolean isSortByPostTime(int fid) {

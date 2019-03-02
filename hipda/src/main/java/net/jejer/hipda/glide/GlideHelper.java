@@ -15,8 +15,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.ObjectKey;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -82,11 +80,10 @@ public class GlideHelper {
     public static File getAvatarFile(Context ctx, String avatarUrl) {
         File f = null;
         try {
-            FutureTarget<File> future = Glide.with(ctx)
-                    .load(avatarUrl)
-                    .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
-            f = future.get();
-            Glide.with(ctx).clear(future);
+            f = Glide.with(ctx)
+                    .download(avatarUrl)
+                    .submit()
+                    .get();
         } catch (Exception e) {
             Logger.e(e);
         }

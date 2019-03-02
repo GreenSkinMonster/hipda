@@ -2,7 +2,6 @@ package net.jejer.hipda.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
 import net.jejer.hipda.utils.Utils;
 
@@ -70,16 +69,6 @@ public class ContentImg extends ContentAbs implements Parcelable {
 
     public String getThumbUrl() {
         return mThumbUrl;
-    }
-
-    public String getActiveUrl() {
-        String imageUrl;
-        if (HiSettingsHelper.getInstance().isPreferOriginalImage()) {
-            imageUrl = getContent();
-        } else {
-            imageUrl = TextUtils.isEmpty(getThumbUrl()) ? getContent() : getThumbUrl();
-        }
-        return imageUrl;
     }
 
     public static final Creator<ContentImg> CREATOR = new Creator<ContentImg>() {

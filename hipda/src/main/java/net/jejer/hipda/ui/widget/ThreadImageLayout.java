@@ -45,6 +45,7 @@ public class ThreadImageLayout extends RelativeLayout {
     private ProgressBar mProgressBar;
     private TextView mTextView;
     private String mUrl;
+    private boolean mIsThumb;
     private long mParsedFileSize;
     private RequestManager mRequestManager;
     private String mParentSessionId;
@@ -58,12 +59,25 @@ public class ThreadImageLayout extends RelativeLayout {
         LayoutInflater.from(fragment.getActivity()).inflate(R.layout.layout_thread_image, this, true);
 
         mFragment = fragment;
-        mImageView = (GlideImageView) findViewById(R.id.thread_image);
-        mProgressBar = (ProgressBar) findViewById(R.id.thread_image_progress);
-        mTextView = (TextView) findViewById(R.id.thread_image_info);
-        mRequestManager = Glide.with(mFragment.getActivity());
+        mImageView = findViewById(R.id.thread_image);
+        mProgressBar = findViewById(R.id.thread_image_progress);
+        mTextView = findViewById(R.id.thread_image_info);
+        mRequestManager = Glide.with(getContext());
         mContentImg = contentImg;
-        mUrl = contentImg.getActiveUrl();
+
+        String policy = HiSettingsHelper.getInstance().getCurrectImagePolicy();
+        String thumbUrl = mContentImg.getThumbUrl();
+        String url = mContentImg.getContent();
+        if (HiSettingsHelper.IMAGE_POLICY_ORIGINAL.equals(policy)
+                || TextUtils.isEmpty(thumbUrl)
+                || url.equals(thumbUrl)
+                || ImageContainer.getImageInfo(url).isReady()) {
+            mUrl = url;
+            mIsThumb = false;
+        } else {
+            mUrl = thumbUrl;
+            mIsThumb = true;
+        }
 
         mImageIndex = contentImg.getIndexInPage();
         mImageView.setImageIndex(mImageIndex);
@@ -71,7 +85,7 @@ public class ThreadImageLayout extends RelativeLayout {
 
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         if (!imageInfo.isReady()) {
-            mImageView.setImageDrawable(ContextCompat.getDrawable(mFragment.getActivity(), R.drawable.ic_action_image));
+            mImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_action_image));
         }
         mImageView.setFragment(mFragment);
         mImageView.setVisibility(View.VISIBLE);
@@ -129,9 +143,6 @@ public class ThreadImageLayout extends RelativeLayout {
 
         EventBus.getDefault().register(this);
 
-        boolean isThumb = !TextUtils.isEmpty(mContentImg.getThumbUrl())
-                && !mContentImg.getThumbUrl().equals(mContentImg.getContent());
-
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
             LinearLayout.LayoutParams params
@@ -143,7 +154,7 @@ public class ThreadImageLayout extends RelativeLayout {
             setLayoutParams(params);
             if (mParsedFileSize > 0 && mTextView.getVisibility() != VISIBLE) {
                 mTextView.setVisibility(View.VISIBLE);
-                if (isThumb)
+                if (mIsThumb)
                     mTextView.setText(Utils.toSizeText(mParsedFileSize) + "↑");
                 else
                     mTextView.setText(Utils.toSizeText(mParsedFileSize));
@@ -158,7 +169,7 @@ public class ThreadImageLayout extends RelativeLayout {
             mProgressBar.setVisibility(View.VISIBLE);
             mProgressBar.setProgress(imageInfo.getProgress());
         } else {
-            boolean autoload = HiSettingsHelper.getInstance().isImageLoadable(mParsedFileSize, isThumb);
+            boolean autoload = HiSettingsHelper.getInstance().isImageLoadable(mParsedFileSize, mIsThumb);
             JobMgr.addJob(new GlideImageJob(
                     mUrl,
                     JobMgr.PRIORITY_LOW,

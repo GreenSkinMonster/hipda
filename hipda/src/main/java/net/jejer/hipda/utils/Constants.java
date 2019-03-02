@@ -36,14 +36,9 @@ public class Constants {
     public static final String EXTRA_UID = "uid";
 
     public static final String LOAD_TYPE_ALWAYS = "0";
-    public static final String LOAD_TYPE_MAUNAL = "1";
     public static final String LOAD_TYPE_ONLY_WIFI = "2";
 
     public static final int MIN_CLICK_INTERVAL = 600;
 
     public static final String FILE_SHARE_PREFIX = "Hi_Share_";
-
-    public static final int ICON_ORIGINAL = 0;
-    public static final int ICON_ROUND = 1;
-    public static final int ICON_BIGGER = 2;
 }

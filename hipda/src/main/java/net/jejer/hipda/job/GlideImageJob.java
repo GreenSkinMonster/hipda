@@ -5,14 +5,11 @@ import android.media.ExifInterface;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.target.Target;
 import com.path.android.jobqueue.Params;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
-import net.jejer.hipda.glide.CacheModel;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Logger;
@@ -22,7 +19,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -30,8 +26,6 @@ import java.util.concurrent.TimeUnit;
  * Created by GreenSkinMonster on 2015-08-27.
  */
 public class GlideImageJob extends BaseJob {
-
-    private final static int MAX_TIME_SECS = 180;
 
     private String mUrl;
     private RequestManager mRequestManager;
@@ -57,19 +51,12 @@ public class GlideImageJob extends BaseJob {
     @Override
     public void onRun() throws Throwable {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        FutureTarget<File> future = null;
         try {
-            if (mNetworkFetch) {
-                future = mRequestManager
-                        .load(mUrl)
-                        .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
-            } else {
-                future = mRequestManager
-                        .load(new CacheModel(mUrl))
-                        .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
-            }
-
-            File cacheFile = future.get(MAX_TIME_SECS, TimeUnit.SECONDS);
+            File cacheFile = mRequestManager
+                    .download(mUrl)
+                    .onlyRetrieveFromCache(!mNetworkFetch)
+                    .submit()
+                    .get();
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
@@ -124,12 +111,6 @@ public class GlideImageJob extends BaseJob {
                     }
                 }
                 EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, ImageInfo.FAIL, message));
-            }
-        } finally {
-            try {
-                if (future != null)
-                    mRequestManager.clear(future);
-            } catch (Exception ignored) {
             }
         }
     }
