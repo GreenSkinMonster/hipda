@@ -522,7 +522,6 @@ public class ThreadDetailFragment extends BaseFragment {
                 mMainFab.show();
             }
 
-            mMainFab.setImageResource(R.drawable.ic_reply_white_24dp);
             mMainFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

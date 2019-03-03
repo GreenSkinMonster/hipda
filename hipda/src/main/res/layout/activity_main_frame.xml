@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:visibility="gone"
+        android:src="@drawable/ic_refresh_white_24dp"
         app:backgroundTint="?attr/fab_background_tint"
         app:fabSize="mini"
         app:layout_anchor="@id/main_frame_container"

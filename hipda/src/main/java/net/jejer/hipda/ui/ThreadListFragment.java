@@ -297,7 +297,6 @@ public class ThreadListFragment extends BaseFragment
     @Override
     void setupFab() {
         if (mMainFab != null) {
-            mMainFab.setImageResource(R.drawable.ic_refresh_white_24dp);
             mMainFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -630,7 +629,6 @@ public class ThreadListFragment extends BaseFragment
 
             if (!mDataReceived) {
                 mDataReceived = true;
-                mMainFab.setImageResource(R.drawable.ic_refresh_white_24dp);
                 mMainFab.show();
                 if (HiSettingsHelper.getInstance().isAppBarCollapsible())
                     ((MainFrameActivity) getActivity()).mAppBarLayout.setExpanded(true, true);
