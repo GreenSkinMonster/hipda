@@ -34,6 +34,7 @@ import net.jejer.hipda.utils.Utils;
 import java.util.List;
 
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -259,12 +260,12 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
 
                     text = Utils.removeLeadingBlank(text);
 
-                    LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text, null, false);
+                    ConstraintLayout quoteLayout = (ConstraintLayout) mInflater.inflate(R.layout.item_quote_text, null, false);
 
-                    TextView tvAuthor = (TextView) quoteLayout.findViewById(R.id.quote_author);
-                    TextView tvNote = (TextView) quoteLayout.findViewById(R.id.quote_note);
-                    TextViewWithEmoticon tvContent = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
-                    TextView tvTime = (TextView) quoteLayout.findViewById(R.id.quote_post_time);
+                    TextView tvAuthor = quoteLayout.findViewById(R.id.quote_author);
+                    TextView tvNote = quoteLayout.findViewById(R.id.quote_note);
+                    TextViewWithEmoticon tvContent = quoteLayout.findViewById(R.id.quote_content);
+                    TextView tvTime = quoteLayout.findViewById(R.id.quote_post_time);
 
                     tvContent.setFragment(mDetailFragment);
                     tvContent.setTrim(true);
@@ -329,12 +330,12 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
 
         ViewHolderImpl(View itemView) {
             super(itemView);
-            avatar = (ImageView) itemView.findViewById(R.id.iv_avatar);
-            author = (TextView) itemView.findViewById(R.id.tv_username);
-            time = (TextView) itemView.findViewById(R.id.time);
-            floor = (TextView) itemView.findViewById(R.id.floor);
-            postStatus = (TextView) itemView.findViewById(R.id.post_status);
-            contentView = (LinearLayout) itemView.findViewById(R.id.content_layout);
+            avatar = itemView.findViewById(R.id.iv_avatar);
+            author = itemView.findViewById(R.id.tv_username);
+            time = itemView.findViewById(R.id.time);
+            floor = itemView.findViewById(R.id.floor);
+            postStatus = itemView.findViewById(R.id.post_status);
+            contentView = itemView.findViewById(R.id.content_layout);
         }
     }
 

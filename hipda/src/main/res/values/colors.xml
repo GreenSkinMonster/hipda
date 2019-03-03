@@ -7,8 +7,8 @@
     <item name="grey" type="color">#FF808080</item>
     <item name="silver" type="color">#FFC0C0C0</item>
 
-    <item name="background_grey" type="color">#4E808080</item>
-    <item name="background_silver" type="color">#4EC0C0C0</item>
+    <item name="background_grey" type="color">#3E808080</item>
+    <item name="background_silver" type="color">#3EC0C0C0</item>
 
     <item name="textColorPrimaryLight" type="color">#333333</item>
     <item name="textColorSecondaryLight" type="color">#999999</item>
