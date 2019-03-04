@@ -107,12 +107,12 @@ public class SimpleListAdapter extends BaseRvAdapter<SimpleListItemBean> {
 
         ViewHolderImpl(View itemView) {
             super(itemView);
-            tv_title = (TextView) itemView.findViewById(R.id.tv_title);
-            tv_info = (TextView) itemView.findViewById(R.id.tv_info);
-            tv_forum = (TextView) itemView.findViewById(R.id.tv_forum);
-            tv_time = (TextView) itemView.findViewById(R.id.tv_time);
-            tv_author = (TextView) itemView.findViewById(R.id.tv_author);
-            iv_avatar = (ImageView) itemView.findViewById(R.id.iv_avatar);
+            tv_title = itemView.findViewById(R.id.tv_title);
+            tv_info = itemView.findViewById(R.id.tv_info);
+            tv_forum = itemView.findViewById(R.id.tv_forum);
+            tv_time = itemView.findViewById(R.id.tv_time);
+            tv_author = itemView.findViewById(R.id.tv_username);
+            iv_avatar = itemView.findViewById(R.id.iv_avatar);
         }
     }
 

@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
@@ -18,10 +17,12 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Utils;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 /**
  * Created by GreenSkinMonster on 2016-04-21.
  */
-public class ThreadItemLayout extends LinearLayout {
+public class ThreadItemLayout extends ConstraintLayout {
 
     private ImageView mAvatar;
     private TextView mTvAuthor;
@@ -39,16 +40,15 @@ public class ThreadItemLayout extends LinearLayout {
 
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         setLayoutParams(layoutParams);
-        setOrientation(VERTICAL);
         setPadding(Utils.dpToPx(context, 8), Utils.dpToPx(context, 4), Utils.dpToPx(context, 8), Utils.dpToPx(context, 4));
 
-        mAvatar = (ImageView) findViewById(R.id.iv_avatar);
-        mTvAuthor = (TextView) findViewById(R.id.tv_author);
-        mTvThreadType = (TextView) findViewById(R.id.tv_thread_type);
-        mTvTitle = (TextView) findViewById(R.id.tv_title);
-        mTvReplycounter = (TextView) findViewById(R.id.tv_replycounter);
-        mTvCreateTime = (TextView) findViewById(R.id.tv_create_time);
-        mTvImageIndicator = (ImageView) findViewById(R.id.tv_image_indicator);
+        mAvatar = findViewById(R.id.iv_avatar);
+        mTvAuthor = findViewById(R.id.tv_username);
+        mTvThreadType = findViewById(R.id.tv_thread_type);
+        mTvTitle = findViewById(R.id.tv_title);
+        mTvReplycounter = findViewById(R.id.tv_replycounter);
+        mTvCreateTime = findViewById(R.id.tv_create_time);
+        mTvImageIndicator = findViewById(R.id.tv_image_indicator);
         mGlide = glide;
     }
 

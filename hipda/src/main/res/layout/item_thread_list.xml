@@ -1,94 +1,95 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
        xmlns:tools="http://schemas.android.com/tools"
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
        tools:orientation="vertical"
-       tools:parentTag="LinearLayout">
+       tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
+        android:padding="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_username"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:minHeight="32dp"
-        android:paddingBottom="2dp">
+        android:layout_height="@dimen/avatar_size"
+        android:gravity="center_vertical"
+        android:padding="2dp"
+        android:text=""
+        android:textColor="?attr/colorAccent"
+        android:textSize="@dimen/author_text_size"
+        app:layout_constraintStart_toEndOf="@+id/iv_avatar"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-        <ImageView
-            android:id="@+id/iv_avatar"
-            android:layout_width="@dimen/avatar_size"
-            android:layout_height="@dimen/avatar_size"
-            android:layout_alignParentLeft="true"
-            android:padding="2dp"/>
+    <TextView
+        android:id="@+id/tv_thread_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/tv_image_indicator"
+        android:layout_toRightOf="@+id/tv_username"
+        android:gravity="right"
+        android:maxLines="1"
+        android:paddingBottom="1dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingTop="1dp"
+        android:text=""
+        android:textColor="?android:textColorSecondary"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_replycounter"
+        app:layout_constraintEnd_toStartOf="@+id/tv_image_indicator"
+        app:layout_constraintTop_toTopOf="@+id/tv_replycounter"/>
 
-        <TextView
-            android:id="@+id/tv_author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/iv_avatar"
-            android:maxLines="1"
-            android:padding="4dp"
-            android:text=""
-            android:textColor="?attr/colorAccent"
-            android:textSize="@dimen/info_text_size"/>
+    <ImageView
+        android:id="@+id/tv_image_indicator"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_toLeftOf="@+id/tv_replycounter"
+        android:src="@drawable/ic_picture"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_replycounter"
+        app:layout_constraintEnd_toStartOf="@+id/tv_replycounter"
+        app:layout_constraintTop_toTopOf="@+id/tv_replycounter"/>
 
-        <TextView
-            android:id="@+id/tv_thread_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/tv_image_indicator"
-            android:layout_toRightOf="@+id/tv_author"
-            android:gravity="right"
-            android:maxLines="1"
-            android:paddingBottom="1dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:paddingTop="1dp"
-            android:text=""
-            android:textColor="?android:textColorSecondary"
-            android:textSize="12sp"/>
+    <TextView
+        android:id="@+id/tv_replycounter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/tv_create_time"
+        android:maxLines="1"
+        android:padding="2dp"
+        android:text=""
+        android:textColor="?android:textColorSecondary"
+        android:textSize="@dimen/info_text_size"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_username"
+        app:layout_constraintEnd_toStartOf="@+id/tv_create_time"/>
 
-        <ImageView
-            android:id="@+id/tv_image_indicator"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/tv_replycounter"
-            android:src="@drawable/ic_picture"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/tv_replycounter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/tv_create_time"
-            android:maxLines="1"
-            android:padding="2dp"
-            android:text=""
-            android:textColor="?android:textColorSecondary"
-            android:textSize="@dimen/info_text_size"/>
-
-        <TextView
-            android:id="@+id/tv_create_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:maxLines="1"
-            android:padding="2dp"
-            android:text=""
-            android:textColor="?android:textColorSecondary"
-            android:textSize="@dimen/info_text_size"/>
-
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/tv_create_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:padding="2dp"
+        android:text=""
+        android:textColor="?android:textColorSecondary"
+        android:textSize="@dimen/info_text_size"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_username"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top"
         android:padding="2dp"
         android:text=""
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_username"/>
 
 </merge>
