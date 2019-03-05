@@ -167,12 +167,13 @@ public class ImageViewerAdapter extends PagerAdapter {
                         glideImageView.setVisibility(View.GONE);
                         scaleImageView.setVisibility(View.VISIBLE);
                         if (imageInfo.isLongImage()) {
-                            float scale = 1f * scaleImageView.getWidth() / imageInfo.getWidth();
+                            float scale = (float) scaleImageView.getWidth() / imageInfo.getWidth();
                             scaleImageView.animateScaleAndCenter(scale, new PointF(scaleImageView.getWidth() / 2, 0))
                                     .withDuration(500)
                                     .withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)
                                     .withInterruptible(false)
                                     .start();
+                            scaleImageView.setDoubleTapZoomScale(scale);
                         }
                     }
 
