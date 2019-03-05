@@ -41,6 +41,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.PostHelper;
+import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -48,7 +49,6 @@ import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.cache.ThreadDetailCache;
 import net.jejer.hipda.db.ContentDao;
 import net.jejer.hipda.db.HistoryDao;
-import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.PostEvent;
@@ -89,8 +89,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -587,6 +585,14 @@ public class ThreadDetailFragment extends BaseFragment {
 
     public DetailBean getCachedPost(String postId) {
         return mCache.getPostByPostId(postId);
+    }
+
+    public ArrayList<ContentImg> getImagesInPage(int page) {
+        DetailListBean detailListBean = mCache.get(mCurrentPage);
+        if (detailListBean != null) {
+            return detailListBean.getContentImages();
+        }
+        return null;
     }
 
     private class OnItemClickListener implements RecyclerItemClickListener.OnItemClickListener {
@@ -1277,27 +1283,6 @@ public class ThreadDetailFragment extends BaseFragment {
                     && mRecyclerView.isNearBottom()) {
                 showMainFab();
             }
-        }
-    }
-
-    public void startImageGallery(int imageIndex, GlideImageView imageView) {
-        if (getActivity() == null) {
-            return;
-        }
-
-        DetailListBean detailListBean = mCache.get(mCurrentPage);
-        if (detailListBean == null) {
-            return;
-        }
-
-        imageView.stopCurrentGif();
-        if (detailListBean.getContentImages().size() > 0) {
-            Intent intent = new Intent(getActivity(), ImageViewerActivity.class);
-            ActivityOptionsCompat options = ActivityOptionsCompat.
-                    makeScaleUpAnimation(imageView, 0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
-            intent.putExtra(ImageViewerActivity.KEY_IMAGE_INDEX, imageIndex);
-            intent.putParcelableArrayListExtra(ImageViewerActivity.KEY_IMAGES, mCache.get(mCurrentPage).getContentImages());
-            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
         }
     }
 

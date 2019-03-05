@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DownloadProgressBar">
+        <attr name="state" format="enum">
+            <enum name="IDLE" value="1"/>
+            <enum name="INDETERMINATE" value="2"/>
+            <enum name="DETERMINATE" value="3"/>
+            <enum name="FINISHED" value="4"/>
+        </attr>
+        <attr name="cancelable" format="boolean"/>
+        <attr name="hideOnFinish" format="boolean"/>
+        <attr name="progressIndeterminateSweepAngle" format="integer"/>
+        <attr name="idleBackgroundColor" format="color"/>
+        <attr name="finishBackgroundColor" format="color"/>
+        <attr name="indeterminateBackgroundColor" format="color"/>
+        <attr name="determinateBackgroundColor" format="color"/>
+        <attr name="idleBackgroundDrawable" format="reference"/>
+        <attr name="finishBackgroundDrawable" format="reference"/>
+        <attr name="indeterminateBackgroundDrawable" format="reference"/>
+        <attr name="determinateBackgroundDrawable" format="reference"/>
+        <attr name="currentProgress" format="integer"/>
+        <attr name="maxProgress" format="integer"/>
+        <attr name="progressWidth" format="dimension"/>
+        <attr name="progressMargin" format="dimension"/>
+        <attr name="progressDeterminateColor" format="color"/>
+        <attr name="progressIndeterminateColor" format="color"/>
+        <attr name="idleIconDrawable" format="reference"/>
+        <attr name="idleIconWidth" format="dimension"/>
+        <attr name="idleIconHeight" format="dimension"/>
+        <attr name="cancelIconDrawable" format="reference"/>
+        <attr name="cancelIconWidth" format="dimension"/>
+        <attr name="cancelIconHeight" format="dimension"/>
+        <attr name="finishIconDrawable" format="reference"/>
+        <attr name="finishIconWidth" format="dimension"/>
+        <attr name="finishIconHeight" format="dimension"/>
+    </declare-styleable>
+</resources>

@@ -58,7 +58,7 @@ dependencies {
     implementation "com.google.android.material:material:1.0.0"
 
     implementation 'org.jsoup:jsoup:1.10.2'
-//    implementation('com.squareup.okhttp3:okhttp:3.8.1')
+    //implementation('com.squareup.okhttp3:okhttp:3.8.1')
 
     implementation 'com.google.code.gson:gson:2.8.2'
 

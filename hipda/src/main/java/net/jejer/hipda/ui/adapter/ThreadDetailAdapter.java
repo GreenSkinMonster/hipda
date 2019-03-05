@@ -192,8 +192,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                     }
                 } else if (content instanceof ContentImg) {
                     final ContentImg contentImg = ((ContentImg) content);
-                    ThreadImageLayout threadImageLayout = new ThreadImageLayout(mDetailFragment, contentImg);
-                    threadImageLayout.setParentSessionId(mDetailFragment.mSessionId);
+                    ThreadImageLayout threadImageLayout = new ThreadImageLayout(mDetailFragment.getActivity(), contentImg, mDetailFragment.getImagesInPage(detail.getPage()));
 
                     contentView.addView(threadImageLayout);
                 } else if (content instanceof ContentAttach) {

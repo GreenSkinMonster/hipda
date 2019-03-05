@@ -34,8 +34,13 @@
             android:layout_below="@+id/userinfo_username"
             android:layout_marginLeft="6dp"
             android:layout_toRightOf="@+id/userinfo_avatar"
-            android:background="@drawable/rounded_corner"
-            android:padding="2dp"
+            android:background="@drawable/round_textview"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:paddingEnd="6dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingStart="6dp"
             android:text="@string/user_online"/>
 
         <Button

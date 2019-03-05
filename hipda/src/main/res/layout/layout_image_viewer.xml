@@ -1,24 +1,24 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/scale_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <net.jejer.hipda.glide.GlideImageView
+    <ImageView
         android:id="@+id/glide_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <ProgressBar
+    <net.jejer.hipda.ui.widget.DownloadProgressBar
         android:id="@+id/progressbar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:indeterminate="false"
-        android:max="100"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:cancelable="false"
+        app:finishIconDrawable="@drawable/ic_action_play"/>
 
 </merge>

@@ -1,17 +1,26 @@
 package net.jejer.hipda.ui.widget;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
@@ -21,10 +30,9 @@ import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.glide.GifTransformation;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
-import net.jejer.hipda.glide.GlideImageView;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
-import net.jejer.hipda.ui.ThreadDetailFragment;
+import net.jejer.hipda.ui.ImageViewerActivity;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -32,6 +40,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 
 /**
@@ -41,29 +55,32 @@ public class ThreadImageLayout extends RelativeLayout {
 
     private static final int MIN_WIDTH = 120;
 
-    private GlideImageView mImageView;
-    private ProgressBar mProgressBar;
+    private static WeakReference<ThreadImageLayout> mCurrentViewHolder;
+
+    private Activity mActivity;
+    private ImageView mImageView;
+    private DownloadProgressBar mProgressBar;
     private TextView mTextView;
     private String mUrl;
     private boolean mIsThumb;
     private long mParsedFileSize;
     private RequestManager mRequestManager;
-    private String mParentSessionId;
     private int mImageIndex;
-    private ThreadDetailFragment mFragment;
     private ContentImg mContentImg;
+    private ArrayList<ContentImg> mImages;
 
-    public ThreadImageLayout(ThreadDetailFragment fragment, ContentImg contentImg) {
-        super(fragment.getActivity(), null);
+    public ThreadImageLayout(Activity activity, ContentImg contentImg, ArrayList<ContentImg> images) {
+        super(activity, null);
+        LayoutInflater.from(activity).inflate(R.layout.layout_thread_image, this, true);
 
-        LayoutInflater.from(fragment.getActivity()).inflate(R.layout.layout_thread_image, this, true);
-
-        mFragment = fragment;
         mImageView = findViewById(R.id.thread_image);
         mProgressBar = findViewById(R.id.thread_image_progress);
         mTextView = findViewById(R.id.thread_image_info);
-        mRequestManager = Glide.with(getContext());
+
+        mActivity = activity;
+        mRequestManager = Glide.with(mActivity);
         mContentImg = contentImg;
+        mImages = images;
 
         String policy = HiSettingsHelper.getInstance().getCurrectImagePolicy();
         String thumbUrl = mContentImg.getThumbUrl();
@@ -80,27 +97,20 @@ public class ThreadImageLayout extends RelativeLayout {
         }
 
         mImageIndex = contentImg.getIndexInPage();
-        mImageView.setImageIndex(mImageIndex);
         mParsedFileSize = contentImg.getFileSize();
 
-        ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        if (!imageInfo.isReady()) {
-            mImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_action_image));
-        }
-        mImageView.setFragment(mFragment);
         mImageView.setVisibility(View.VISIBLE);
-        mImageView.setImageIndex(mImageIndex);
-        mImageView.setUrl(mUrl);
-        mImageView.setSingleClickListener();
-    }
 
-    public void setParentSessionId(String parentSessionId) {
-        mParentSessionId = parentSessionId;
+        setOnClickListener(new ImageViewClickHandler());
     }
 
     private void loadImage() {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        mProgressBar.setVisibility(View.GONE);
+        if (imageInfo.isGif()) {
+            mProgressBar.setFinishIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_action_play));
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+        }
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
             mTextView.setVisibility(GONE);
             if (getLayoutParams().height != imageInfo.getViewHeight()) {
@@ -108,7 +118,7 @@ public class ThreadImageLayout extends RelativeLayout {
                 setLayoutParams(params);
             }
             if (imageInfo.getWidth() >= MIN_WIDTH || imageInfo.isGif()) {
-                mImageView.setOnLongClickListener(new OnLongClickListener() {
+                setOnLongClickListener(new OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
                         showImageActionDialog();
@@ -118,11 +128,13 @@ public class ThreadImageLayout extends RelativeLayout {
             }
 
             if (imageInfo.isGif()) {
+                mProgressBar.setFinish();
                 mRequestManager
                         .asBitmap()
                         .load(mUrl)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
                         .transform(new GifTransformation(getContext()))
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(mImageView);
             } else {
                 mRequestManager
@@ -138,6 +150,11 @@ public class ThreadImageLayout extends RelativeLayout {
     }
 
     @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return true;
+    }
+
+    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
@@ -147,10 +164,13 @@ public class ThreadImageLayout extends RelativeLayout {
         if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
             LinearLayout.LayoutParams params
                     = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getViewHeight());
+
             setLayoutParams(params);
         } else {
+            int margin = Utils.dpToPx(getContext(), 1);
             LinearLayout.LayoutParams params
                     = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.dpToPx(getContext(), 150));
+            params.setMargins(0, margin, 0, margin);
             setLayoutParams(params);
             if (mParsedFileSize > 0 && mTextView.getVisibility() != VISIBLE) {
                 mTextView.setVisibility(View.VISIBLE);
@@ -166,14 +186,15 @@ public class ThreadImageLayout extends RelativeLayout {
             mImageView.setImageResource(R.drawable.image_broken);
             mProgressBar.setVisibility(View.GONE);
         } else if (imageInfo.getStatus() == ImageInfo.IN_PROGRESS) {
+            mProgressBar.setDeterminate();
             mProgressBar.setVisibility(View.VISIBLE);
-            mProgressBar.setProgress(imageInfo.getProgress());
+            mProgressBar.setCurrentProgress(imageInfo.getProgress());
         } else {
             boolean autoload = HiSettingsHelper.getInstance().isImageLoadable(mParsedFileSize, mIsThumb);
             JobMgr.addJob(new GlideImageJob(
                     mUrl,
                     JobMgr.PRIORITY_LOW,
-                    mParentSessionId,
+                    String.valueOf(hashCode()),
                     autoload));
         }
     }
@@ -184,24 +205,99 @@ public class ThreadImageLayout extends RelativeLayout {
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        UIUtils.saveImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mContentImg.getContent());
+                        UIUtils.saveImage(mActivity, UIUtils.getSnackView(mActivity), mContentImg.getContent());
                     }
                 });
         popupMenu.add("share", getResources().getString(R.string.action_share),
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        UIUtils.shareImage(mFragment.getActivity(), UIUtils.getSnackView(mFragment.getActivity()), mUrl);
+                        UIUtils.shareImage(mActivity, UIUtils.getSnackView(mActivity), mUrl);
                     }
                 });
         popupMenu.add("gallery", getResources().getString(R.string.action_image_gallery),
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        mFragment.startImageGallery(mImageIndex, mImageView);
+                        stopGif();
+                        startImageGallery();
                     }
                 });
         popupMenu.show();
+    }
+
+    private class ImageViewClickHandler implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+            ThreadImageLayout lastGifLayout = mCurrentViewHolder != null ? mCurrentViewHolder.get() : null;
+            if (lastGifLayout != null) {
+                lastGifLayout.stopGif();
+            }
+
+            if (!ThreadImageLayout.this.equals(lastGifLayout)) {
+                if (imageInfo.isReady()) {
+                    if (imageInfo.isGif()) {
+                        loadGif();
+                    } else {
+                        startImageGallery();
+                    }
+                } else if (imageInfo.getStatus() == ImageInfo.FAIL || imageInfo.getStatus() == ImageInfo.IDLE) {
+                    JobMgr.addJob(new GlideImageJob(mUrl, JobMgr.PRIORITY_LOW, String.valueOf(hashCode()), true));
+                }
+            }
+        }
+    }
+
+    private void startImageGallery() {
+        if (mImages.size() > 0) {
+            Intent intent = new Intent(getContext(), ImageViewerActivity.class);
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeScaleUpAnimation(mImageView, 0, 0, mImageView.getMeasuredWidth(), mImageView.getMeasuredHeight());
+            intent.putExtra(ImageViewerActivity.KEY_IMAGE_INDEX, mImageIndex);
+            intent.putParcelableArrayListExtra(ImageViewerActivity.KEY_IMAGES, mImages);
+            ActivityCompat.startActivity(getContext(), intent, options.toBundle());
+        }
+    }
+
+    private void loadGif() {
+        if (GlideHelper.isOkToLoad(getContext())) {
+            mCurrentViewHolder = new WeakReference<>(ThreadImageLayout.this);
+            mProgressBar.setVisibility(GONE);
+            ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+            mRequestManager
+                    .asGif()
+                    .load(mUrl)
+                    .priority(Priority.IMMEDIATE)
+                    .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
+                    .listener(new RequestListener<GifDrawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<GifDrawable> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GifDrawable resource, Object model, Target<GifDrawable> target, DataSource dataSource, boolean isFirstResource) {
+                            resource.startFromFirstFrame();
+                            return false;
+                        }
+                    })
+                    .into(mImageView);
+        }
+    }
+
+    public void stopGif() {
+        if (mCurrentViewHolder != null)
+            mCurrentViewHolder.clear();
+        ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+        mProgressBar.setVisibility(VISIBLE);
+        mRequestManager.clear(mImageView);
+        mRequestManager
+                .asBitmap()
+                .load(mUrl)
+                .transform(new GifTransformation(getContext()))
+                .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
+                .into(mImageView);
     }
 
     @Override
@@ -221,32 +317,29 @@ public class ThreadImageLayout extends RelativeLayout {
 
         if (event.getStatus() == ImageInfo.SUCCESS
                 || imageInfo.getStatus() == ImageInfo.SUCCESS) {
-            if (mProgressBar.getVisibility() == View.VISIBLE)
-                mProgressBar.setVisibility(View.GONE);
+            mProgressBar.setCurrentProgress(100);
+            if (!imageInfo.isGif())
+                mProgressBar.setVisibility(GONE);
             if (mTextView.getVisibility() == View.VISIBLE)
                 mTextView.setVisibility(View.GONE);
-            if (GlideHelper.isOkToLoad(mFragment))
+            if (GlideHelper.isOkToLoad(getContext()))
                 loadImage();
         } else if (event.getStatus() == ImageInfo.IN_PROGRESS) {
             if (mProgressBar.getVisibility() != View.VISIBLE)
                 mProgressBar.setVisibility(View.VISIBLE);
-            mProgressBar.setProgress(event.getProgress());
+            if (event.getProgress() == 0) {
+                mProgressBar.setIndeterminate();
+            } else if (event.getProgress() > mProgressBar.getCurrentProgress()) {
+                if (mProgressBar.getCurrState() != DownloadProgressBar.STATE_DETERMINATE)
+                    mProgressBar.setDeterminate();
+                mProgressBar.setCurrentProgress(event.getProgress());
+            }
 
             imageInfo.setProgress(event.getProgress());
             imageInfo.setStatus(ImageInfo.IN_PROGRESS);
         } else {
             mProgressBar.setVisibility(GONE);
             mImageView.setImageResource(R.drawable.image_broken);
-            if (!TextUtils.isEmpty(imageInfo.getMessage())) {
-                mTextView.setText("加载错误");
-                mTextView.setClickable(true);
-                mTextView.setOnClickListener(new OnSingleClickListener() {
-                    @Override
-                    public void onSingleClick(View v) {
-                        UIUtils.showMessageDialog(mFragment.getActivity(), "错误信息", imageInfo.getMessage(), true);
-                    }
-                });
-            }
         }
     }
 

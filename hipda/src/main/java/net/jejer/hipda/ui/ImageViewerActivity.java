@@ -18,8 +18,6 @@ import net.jejer.hipda.ui.widget.swipeback.SwipeBackLayout;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 
 import androidx.core.content.ContextCompat;
@@ -61,8 +59,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
 
         mPagerAdapter = new ImageViewerAdapter(this, images);
         viewPager.setAdapter(mPagerAdapter);
-
-        EventBus.getDefault().register(mPagerAdapter);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -147,7 +143,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
     @Override
     public void onDestroy() {
         if (mPagerAdapter != null) {
-            EventBus.getDefault().unregister(mPagerAdapter);
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {

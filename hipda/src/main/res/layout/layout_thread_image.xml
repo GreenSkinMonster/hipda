@@ -1,35 +1,33 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       tools:parentTag="android.widget.RelativeLayout">
 
-    <net.jejer.hipda.glide.GlideImageView
+    <ImageView
         android:id="@+id/thread_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:clickable="true"
-        android:focusable="true"/>
+        android:src="@drawable/rounded_corner"/>
 
-    <ProgressBar
+    <net.jejer.hipda.ui.widget.DownloadProgressBar
         android:id="@+id/thread_image_progress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:indeterminate="false"
-        android:max="100"
-        android:visibility="gone"/>
+        app:finishIconDrawable="@drawable/ic_action_play"
+        app:cancelable="false"/>
 
     <TextView
         android:id="@+id/thread_image_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/thread_image"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_corner"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:textColor="@color/grey"
-        android:textSize="12sp"
+        android:layout_marginBottom="8dp"
+        android:padding="4dp"
+        android:textSize="13sp"
         android:visibility="gone"/>
 
 </merge>

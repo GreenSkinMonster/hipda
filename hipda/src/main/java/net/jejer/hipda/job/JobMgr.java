@@ -70,7 +70,7 @@ public class JobMgr {
 
     private void addJobImpl(BaseJob job) {
         if (job instanceof GlideImageJob) {
-            glideJobManager.addJob(job);
+            glideJobManager.addJobInBackground(job);
         } else {
             jobManager.addJob(job);
         }
