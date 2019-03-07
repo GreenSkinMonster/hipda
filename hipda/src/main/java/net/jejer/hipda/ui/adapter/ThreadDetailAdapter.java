@@ -22,6 +22,7 @@ import net.jejer.hipda.bean.ContentQuote;
 import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.ui.ThreadDetailFragment;
 import net.jejer.hipda.ui.widget.TextViewWithEmoticon;
@@ -192,7 +193,21 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                     }
                 } else if (content instanceof ContentImg) {
                     final ContentImg contentImg = ((ContentImg) content);
-                    ThreadImageLayout threadImageLayout = new ThreadImageLayout(mDetailFragment.getActivity(), contentImg, mDetailFragment.getImagesInPage(detail.getPage()));
+
+                    String policy = HiSettingsHelper.getInstance().getCurrectImagePolicy();
+                    String thumbUrl = contentImg.getThumbUrl();
+                    String fullUrl = contentImg.getContent();
+                    boolean mIsThumb;
+                    if (HiSettingsHelper.IMAGE_POLICY_ORIGINAL.equals(policy)
+                            || TextUtils.isEmpty(thumbUrl)
+                            || fullUrl.equals(thumbUrl)
+                            || ImageContainer.getImageInfo(fullUrl).isSuccess()) {
+                        mIsThumb = false;
+                    } else {
+                        mIsThumb = true;
+                    }
+
+                    ThreadImageLayout threadImageLayout = new ThreadImageLayout(mDetailFragment.getActivity(), contentImg, mDetailFragment.getImagesInPage(detail.getPage()), mIsThumb);
 
                     contentView.addView(threadImageLayout);
                 } else if (content instanceof ContentAttach) {
@@ -205,7 +220,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                 } else if (content instanceof ContentQuote && !((ContentQuote) content).isReplyQuote()) {
 
                     LinearLayout quoteLayout = (LinearLayout) mInflater.inflate(R.layout.item_quote_text_simple, null, false);
-                    TextViewWithEmoticon tv = (TextViewWithEmoticon) quoteLayout.findViewById(R.id.quote_content);
+                    TextViewWithEmoticon tv = quoteLayout.findViewById(R.id.quote_content);
                     tv.setFragment(mDetailFragment);
 
                     tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
@@ -284,6 +299,10 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                         tvNote.setOnClickListener(mGoToFloorListener);
                         tvNote.setFocusable(false);
                         tvNote.setClickable(true);
+                        tvAuthor.setTag(floor);
+                        tvAuthor.setOnClickListener(mGoToFloorListener);
+                        tvAuthor.setFocusable(false);
+                        tvAuthor.setClickable(true);
                     }
 
                     contentView.addView(quoteLayout);

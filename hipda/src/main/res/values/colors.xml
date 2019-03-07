@@ -21,9 +21,9 @@
     <item name="day_background" type="color">#E8E8E8</item>
     <item name="night_background" type="color">#1C1D1E</item>
     <item name="quote_text_background" type="color">#2AC0C0C0</item>
-    <item name="quote_background_light" type="color">#22C0C0C0</item>
-    <item name="quote_background_dark" type="color">#15C0C0C0</item>
-    <item name="quote_background_black" type="color">#1FC0C0C0</item>
+    <item name="quote_background_light" type="color">#F4F4F4</item>
+    <item name="quote_background_dark" type="color">#282828</item>
+    <item name="quote_background_black" type="color">#111111</item>
 
     <color name="nearly_black">#161616</color>
 

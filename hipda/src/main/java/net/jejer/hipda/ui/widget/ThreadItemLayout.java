@@ -40,7 +40,7 @@ public class ThreadItemLayout extends ConstraintLayout {
 
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         setLayoutParams(layoutParams);
-        setPadding(Utils.dpToPx(context, 8), Utils.dpToPx(context, 4), Utils.dpToPx(context, 8), Utils.dpToPx(context, 4));
+        setPadding(Utils.dpToPx(8), Utils.dpToPx(4), Utils.dpToPx(8), Utils.dpToPx(4));
 
         mAvatar = findViewById(R.id.iv_avatar);
         mTvAuthor = findViewById(R.id.tv_username);

@@ -113,7 +113,7 @@ public class SimpleGridMenu {
             ImageView imageView = (ImageView) view.findViewById(R.id.action_image);
             if (menuItem.icon != null) {
                 imageView.setVisibility(View.VISIBLE);
-                int pading = Utils.dpToPx(mContext, 16);
+                int pading = Utils.dpToPx(16);
                 imageView.setPadding(pading, pading, pading, pading);
                 imageView.setClickable(true);
                 imageView.setImageDrawable(new IconicsDrawable(mContext, menuItem.icon)

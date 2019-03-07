@@ -7,14 +7,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
 public class OnSwipeTouchListener implements OnTouchListener {
 
-    private static final int SWIPE_THRESHOLD = Utils.dpToPx(HiApplication.getAppContext(), 36);
-    private static final int SWIPE_VELOCITY_THRESHOLD = Utils.dpToPx(HiApplication.getAppContext(), 36);
+    private static final int SWIPE_THRESHOLD = Utils.dpToPx(36);
+    private static final int SWIPE_VELOCITY_THRESHOLD = Utils.dpToPx(36);
 
     private final GestureDetector gestureDetector;
 

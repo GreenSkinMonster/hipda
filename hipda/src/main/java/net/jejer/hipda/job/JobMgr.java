@@ -68,15 +68,15 @@ public class JobMgr {
         return JobMgr.SingletonHolder.INSTANCE;
     }
 
-    private void addJobImpl(BaseJob job) {
+    private long addJobImpl(BaseJob job) {
         if (job instanceof GlideImageJob) {
-            glideJobManager.addJobInBackground(job);
+            return glideJobManager.addJob(job);
         } else {
-            jobManager.addJob(job);
+            return jobManager.addJob(job);
         }
     }
 
-    public static void addJob(BaseJob job) {
-        getInstance().addJobImpl(job);
+    public static long addJob(BaseJob job) {
+        return getInstance().addJobImpl(job);
     }
 }

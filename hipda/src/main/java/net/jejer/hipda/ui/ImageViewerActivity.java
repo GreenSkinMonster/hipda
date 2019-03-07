@@ -8,9 +8,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.ui.adapter.ImageViewerAdapter;
@@ -20,7 +17,6 @@ import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
 
-import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -28,7 +24,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 /**
  * Created by GreenSkinMonster on 2016-11-30.
  */
-
 public class ImageViewerActivity extends SwipeBackActivity {
 
     public static final String KEY_IMAGES = "images";
@@ -84,11 +79,9 @@ public class ImageViewerActivity extends SwipeBackActivity {
         tvImageInfo.setText((imageIndex + 1) + " / " + images.size());
 
         updateSwipeEdges(images.size(), imageIndex);
-        getSwipeBackLayout().setEdgeSize(Utils.dpToPx(this, 50));
+        getSwipeBackLayout().setEdgeSize(Utils.dpToPx(50));
 
         ImageButton btnDownload = (ImageButton) findViewById(R.id.btn_download_image);
-        btnDownload.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_file_download)
-                .sizeDp(20).color(ContextCompat.getColor(this, R.color.md_grey_300)));
         btnDownload.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -101,8 +94,6 @@ public class ImageViewerActivity extends SwipeBackActivity {
         );
 
         ImageButton btnShare = (ImageButton) findViewById(R.id.btn_share_image);
-        btnShare.setImageDrawable(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_share)
-                .sizeDp(20).color(ContextCompat.getColor(this, R.color.md_grey_300)));
 
         btnShare.setOnClickListener(
                 new View.OnClickListener() {

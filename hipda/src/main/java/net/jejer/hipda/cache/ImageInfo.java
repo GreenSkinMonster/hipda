@@ -15,7 +15,7 @@ public class ImageInfo {
 
     private final static int MAX_VIEW_WIDTH = Utils.getScreenWidth()
             - 2 * (int) HiApplication.getAppContext().getResources().getDimension(R.dimen.thread_detail_padding);
-    private final static int MAX_VIEW_HEIGHT = (int) (Utils.getScreenHeight() * 0.8);
+    private final static int MAX_VIEW_HEIGHT = (int) (Utils.getScreenHeight() * 1.2);
 
 
     public static final int IDLE = 0;

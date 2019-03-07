@@ -46,10 +46,11 @@ public class ImageViewerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        final ImageViewerLayout imageLayout = new ImageViewerLayout(mActivity);
         final ContentImg contentImg = mImages.get(position);
         final String imageUrl = contentImg.getContent();
         ImageInfo imageInfo = ImageContainer.getImageInfo(imageUrl);
+
+        final ImageViewerLayout imageLayout = new ImageViewerLayout(mActivity, contentImg);
 
         //ScaleImageView has about 100ms delay, so show image with normal ImageView first
         if (mFirstShow) {
@@ -69,7 +70,6 @@ public class ImageViewerAdapter extends PagerAdapter {
             }
         }
 
-        imageLayout.setUrl(imageUrl);
         container.addView(imageLayout);
         return imageLayout;
     }

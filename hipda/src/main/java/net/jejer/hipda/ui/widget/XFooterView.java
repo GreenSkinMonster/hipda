@@ -39,7 +39,7 @@ public class XFooterView extends RelativeLayout {
         super(context, attrs);
         mLayout = inflate(getContext(), R.layout.vw_footer, null);
         mLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                Utils.dpToPx(context, XRecyclerView.HEIGHT_IN_DP)));
+                Utils.dpToPx(XRecyclerView.HEIGHT_IN_DP)));
         addView(mLayout);
 
         mProgressBar = (ProgressBar) mLayout.findViewById(R.id.footer_progressbar);

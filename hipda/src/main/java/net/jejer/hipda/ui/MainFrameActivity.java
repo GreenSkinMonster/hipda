@@ -92,7 +92,7 @@ import androidx.fragment.app.FragmentManager;
 public class MainFrameActivity extends BaseActivity {
 
     public final static int PERMISSIONS_REQUEST_CODE_STORAGE = 200;
-    private final static int DRAG_SENSITIVITY = Utils.dpToPx(HiApplication.getAppContext(), 32);
+    private final static int DRAG_SENSITIVITY = Utils.dpToPx(32);
 
     private Drawer mDrawer;
     private AccountHeader mAccountHeader;
@@ -211,6 +211,7 @@ public class MainFrameActivity extends BaseActivity {
         mAccountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
+                .withTextColor(Color.WHITE)
                 .withDividerBelowHeader(false)
                 .withCompactStyle(true)
                 .withSelectionListEnabled(false)

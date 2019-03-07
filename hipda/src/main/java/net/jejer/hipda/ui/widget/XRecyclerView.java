@@ -59,7 +59,7 @@ public class XRecyclerView extends RecyclerView {
     }
 
     private void initWithContext(Context context) {
-        mPullDelta = Utils.dpToPx(context, PULL_DELTA_IN_DP);
+        mPullDelta = Utils.dpToPx(PULL_DELTA_IN_DP);
         mScroller = new Scroller(context, new DecelerateInterpolator());
         mHeaderView = new XHeaderView(context);
         mFooterView = new XFooterView(context);

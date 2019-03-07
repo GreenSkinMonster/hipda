@@ -11,12 +11,14 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -47,6 +49,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Pattern;
+
+import androidx.annotation.AttrRes;
 
 /**
  * Common utils
@@ -227,9 +231,16 @@ public class Utils {
                 "$1<a href=\"$2\">$2</a>$4");
     }
 
-    public static int dpToPx(Context context, int dp) {
-        float density = context.getResources().getDisplayMetrics().density;
+    public static int dpToPx(int dp) {
+        float density = HiApplication.getAppContext().getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);
+    }
+
+    public static Drawable getDrawableFromAttr(Context context, @AttrRes int attributeId) {
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(attributeId, typedValue, true);
+        int drawableRes = typedValue.resourceId;
+        return context.getResources().getDrawable(drawableRes);
     }
 
     public static int getScreenWidth() {

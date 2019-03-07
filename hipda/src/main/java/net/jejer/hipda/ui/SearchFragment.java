@@ -170,7 +170,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
         mRecyclerView.setAdapter(mSimpleListAdapter);
 
         mSearchFilterLayout = (RelativeLayout) view.findViewById(R.id.search_filter_layout);
-        ViewCompat.setElevation(mSearchFilterLayout, Utils.dpToPx(getActivity(), 4));
+        ViewCompat.setElevation(mSearchFilterLayout, Utils.dpToPx(4));
         mSearchFilterLayout.setAlpha(0);
 
         mSpForum = (Spinner) view.findViewById(R.id.sp_forum);

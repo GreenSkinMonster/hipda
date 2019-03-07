@@ -37,7 +37,7 @@ public class XHeaderView extends RelativeLayout {
         super(context, attrs);
         mLayout = inflate(getContext(), R.layout.vw_header, null);
         mLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                Utils.dpToPx(context, XRecyclerView.HEIGHT_IN_DP)));
+                Utils.dpToPx(XRecyclerView.HEIGHT_IN_DP)));
         addView(mLayout);
 
         mProgressBar = (ProgressBar) findViewById(R.id.header_progressbar);

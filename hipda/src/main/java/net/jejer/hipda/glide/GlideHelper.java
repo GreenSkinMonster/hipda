@@ -70,7 +70,7 @@ public class GlideHelper {
             glide.load(new AvatarModel(avatarUrl))
                     .signature(new ObjectKey(cacheKey))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .transform(new CenterCrop(), new RoundedCorners(Utils.dpToPx(HiApplication.getAppContext(), 4)))
+                    .transform(new CenterCrop(), new RoundedCorners(Utils.dpToPx(4)))
                     .error(DEFAULT_USER_ICON)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(view);

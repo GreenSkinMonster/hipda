@@ -79,7 +79,7 @@
 
         <meta-data
             android:name="android.max_aspect"
-            android:value="2.1"/>
+            android:value="2.4"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

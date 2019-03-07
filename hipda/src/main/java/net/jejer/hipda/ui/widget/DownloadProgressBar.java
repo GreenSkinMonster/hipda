@@ -170,22 +170,22 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
             mCurrProgress = a.getInteger(R.styleable.DownloadProgressBar_currentProgress, 0);
             mMaxProgress = a.getInteger(R.styleable.DownloadProgressBar_maxProgress, 100);
 
-            int icIdleDrawableId = a.getResourceId(R.styleable.DownloadProgressBar_idleIconDrawable, R.drawable.ic_default_download);
+            int icIdleDrawableId = a.getResourceId(R.styleable.DownloadProgressBar_idleIconDrawable, R.drawable.ic_action_download);
             mIdleIcon = res.getDrawable(icIdleDrawableId);
             mIdleIconWidth = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_idleIconWidth, mIdleIcon.getMinimumWidth());
             mIdleIconHeight = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_idleIconHeight, mIdleIcon.getMinimumHeight());
 
-            int icCancelDrawableId = a.getResourceId(R.styleable.DownloadProgressBar_cancelIconDrawable, R.drawable.ic_default_cancel);
+            int icCancelDrawableId = a.getResourceId(R.styleable.DownloadProgressBar_cancelIconDrawable, R.drawable.ic_action_cancel);
             mCancelIcon = res.getDrawable(icCancelDrawableId);
             mCancelIconWidth = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_cancelIconWidth, mCancelIcon.getMinimumWidth());
             mCancelIconHeight = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_cancelIconHeight, mCancelIcon.getMinimumHeight());
 
-            int icFinishDrawableId = a.getResourceId(R.styleable.DownloadProgressBar_finishIconDrawable, R.drawable.ic_default_finish);
+            int icFinishDrawableId = a.getResourceId(R.styleable.DownloadProgressBar_finishIconDrawable, R.drawable.ic_action_finish);
             mFinishIcon = res.getDrawable(icFinishDrawableId);
             mFinishIconWidth = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_finishIconWidth, mFinishIcon.getMinimumWidth());
             mFinishIconHeight = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_finishIconHeight, mFinishIcon.getMinimumHeight());
 
-            int icErrorDrawableId = a.getResourceId(R.styleable.DownloadProgressBar_errorIconDrawable, R.drawable.ic_default_error);
+            int icErrorDrawableId = a.getResourceId(R.styleable.DownloadProgressBar_errorIconDrawable, R.drawable.ic_action_refresh);
             mErrorIcon = res.getDrawable(icErrorDrawableId);
             mErrorIconWidth = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_errorIconWidth, mErrorIcon.getMinimumWidth());
             mErrorIconHeight = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_errorIconHeight, mErrorIcon.getMinimumHeight());
@@ -209,19 +209,19 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
             mIndeterminateBgColor = DEF_BG_COLOR;
             mDeterminateBgColor = DEF_BG_COLOR;
 
-            mIdleIcon = res.getDrawable(R.drawable.ic_default_download);
+            mIdleIcon = res.getDrawable(R.drawable.ic_action_download);
             mIdleIconWidth = mIdleIcon.getMinimumWidth();
             mIdleIconHeight = mIdleIcon.getMinimumHeight();
 
-            mCancelIcon = res.getDrawable(R.drawable.ic_default_cancel);
+            mCancelIcon = res.getDrawable(R.drawable.ic_action_cancel);
             mCancelIconWidth = mCancelIcon.getMinimumWidth();
             mCancelIconHeight = mCancelIcon.getMinimumHeight();
 
-            mFinishIcon = res.getDrawable(R.drawable.ic_default_finish);
+            mFinishIcon = res.getDrawable(R.drawable.ic_action_finish);
             mFinishIconWidth = mFinishIcon.getMinimumWidth();
             mFinishIconHeight = mFinishIcon.getMinimumHeight();
 
-            mErrorIcon = res.getDrawable(R.drawable.ic_default_error);
+            mErrorIcon = res.getDrawable(R.drawable.ic_action_refresh);
             mErrorIconWidth = mErrorIcon.getMinimumWidth();
             mErrorIconHeight = mErrorIcon.getMinimumHeight();
         }

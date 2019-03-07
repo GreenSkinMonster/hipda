@@ -68,7 +68,7 @@ public class BaseActivity extends AppCompatActivity {
                 && mAppBarLayout != null) {
             if (HiSettingsHelper.getInstance().isWhiteTheme()) {
                 mAppBarLayout.setStateListAnimator(null);
-                mAppBarLayout.setElevation(Utils.dpToPx(this, 2));
+                mAppBarLayout.setElevation(Utils.dpToPx(2));
             }
         }
     }

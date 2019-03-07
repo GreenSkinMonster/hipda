@@ -1,6 +1,5 @@
 package net.jejer.hipda.glide;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
@@ -19,7 +18,7 @@ public class GifTransformation extends BitmapTransformation {
 
     private final static int GIF_DECODE_WIDTH = 460;
 
-    public GifTransformation(Context context) {
+    public GifTransformation() {
     }
 
     @Override
