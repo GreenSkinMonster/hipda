@@ -1,7 +1,5 @@
 package net.jejer.hipda.cache;
 
-import android.text.TextUtils;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Utils;
@@ -80,8 +78,20 @@ public class ImageInfo {
         return mFileSize;
     }
 
-    public boolean isReady() {
-        return !TextUtils.isEmpty(mPath) && mWidth > 0 && mHeight > 0;
+    public boolean isSuccess() {
+        return mStatus == SUCCESS;
+    }
+
+    public boolean isInProgress() {
+        return mStatus == IN_PROGRESS;
+    }
+
+    public boolean isFail() {
+        return mStatus == FAIL;
+    }
+
+    public boolean isIdle() {
+        return mStatus == IDLE;
     }
 
     public boolean isGif() {

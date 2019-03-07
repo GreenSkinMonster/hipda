@@ -53,8 +53,11 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
     private static final String INSTANCE_CANCEL_HEIGHT = "cancel_height";
     private static final String INSTANCE_FINISH_WIDTH = "finish_width";
     private static final String INSTANCE_FINISH_HEIGHT = "finish_height";
+    private static final String INSTANCE_ERROR_WIDTH = "error_width";
+    private static final String INSTANCE_ERROR_HEIGHT = "error_height";
     private static final String INSTANCE_IDLE_BG_COLOR = "idle_bg_color";
     private static final String INSTANCE_FINISH_BG_COLOR = "finish_bg_color";
+    private static final String INSTANCE_ERROR_BG_COLOR = "error_bg_color";
     private static final String INSTANCE_INDETERMINATE_BG_COLOR = "indeterminate_bg_color";
     private static final String INSTANCE_DETERMINATE_BG_COLOR = "determinate_bg_color";
     private static final String INSTANCE_PROGRESS_DETERMINATE_COLOR = "prog_det_color";
@@ -65,6 +68,7 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
     public static final int STATE_INDETERMINATE = 2;
     public static final int STATE_DETERMINATE = 3;
     public static final int STATE_FINISHED = 4;
+    public static final int STATE_ERROR = 5;
 
     private static final int BASE_START_ANGLE = -90;
     private static final int DEF_BG_COLOR = 0xB4000000;
@@ -78,6 +82,7 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
     private Drawable mIdleIcon;
     private Drawable mCancelIcon;
     private Drawable mFinishIcon;
+    private Drawable mErrorIcon;
 
     private boolean mCancelable;
     private boolean mHideOnFinish;
@@ -88,6 +93,8 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
     private int mCancelIconHeight;
     private int mFinishIconWidth;
     private int mFinishIconHeight;
+    private int mErrorIconWidth;
+    private int mErrorIconHeight;
 
     private int mCurrState;
     private int mMaxProgress;
@@ -98,11 +105,13 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
 
     private int mIdleBgColor;
     private int mFinishBgColor;
+    private int mErrorBgColor;
     private int mIndeterminateBgColor;
     private int mDeterminateBgColor;
 
     private Drawable mIdleBgDrawable;
     private Drawable mFinishBgDrawable;
+    private Drawable mErrorBgDrawable;
     private Drawable mIndeterminateBgDrawable;
     private Drawable mDeterminateBgDrawable;
 
@@ -176,6 +185,11 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
             mFinishIconWidth = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_finishIconWidth, mFinishIcon.getMinimumWidth());
             mFinishIconHeight = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_finishIconHeight, mFinishIcon.getMinimumHeight());
 
+            int icErrorDrawableId = a.getResourceId(R.styleable.DownloadProgressBar_errorIconDrawable, R.drawable.ic_default_error);
+            mErrorIcon = res.getDrawable(icErrorDrawableId);
+            mErrorIconWidth = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_errorIconWidth, mErrorIcon.getMinimumWidth());
+            mErrorIconHeight = a.getDimensionPixelSize(R.styleable.DownloadProgressBar_errorIconHeight, mErrorIcon.getMinimumHeight());
+
             a.recycle();
         } else {
             mCurrState = STATE_IDLE;
@@ -191,6 +205,7 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
 
             mIdleBgColor = DEF_BG_COLOR;
             mFinishBgColor = DEF_BG_COLOR;
+            mErrorBgColor = DEF_BG_COLOR;
             mIndeterminateBgColor = DEF_BG_COLOR;
             mDeterminateBgColor = DEF_BG_COLOR;
 
@@ -205,6 +220,10 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
             mFinishIcon = res.getDrawable(R.drawable.ic_default_finish);
             mFinishIconWidth = mFinishIcon.getMinimumWidth();
             mFinishIconHeight = mFinishIcon.getMinimumHeight();
+
+            mErrorIcon = res.getDrawable(R.drawable.ic_default_error);
+            mErrorIconWidth = mErrorIcon.getMinimumWidth();
+            mErrorIconHeight = mErrorIcon.getMinimumHeight();
         }
 
         if (mCurrState == STATE_INDETERMINATE)
@@ -216,17 +235,20 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
     private void initBackgroundDrawableFromAttribs(Resources res, TypedArray attrs) {
         int idleResId = attrs.getResourceId(R.styleable.DownloadProgressBar_idleBackgroundDrawable, -1);
         int finishResId = attrs.getResourceId(R.styleable.DownloadProgressBar_finishBackgroundDrawable, -1);
+        int errorResId = attrs.getResourceId(R.styleable.DownloadProgressBar_errorBackgroundDrawable, -1);
         int indeterminateResId = attrs.getResourceId(R.styleable.DownloadProgressBar_indeterminateBackgroundDrawable, -1);
         int determinateResId = attrs.getResourceId(R.styleable.DownloadProgressBar_determinateBackgroundDrawable, -1);
 
         if (idleResId != -1) mIdleBgDrawable = res.getDrawable(idleResId);
         if (finishResId != -1) mFinishBgDrawable = res.getDrawable(finishResId);
+        if (errorResId != -1) mFinishBgDrawable = res.getDrawable(errorResId);
         if (indeterminateResId != -1)
             mIndeterminateBgDrawable = res.getDrawable(indeterminateResId);
         if (determinateResId != -1) mDeterminateBgDrawable = res.getDrawable(determinateResId);
 
         mIdleBgColor = attrs.getColor(R.styleable.DownloadProgressBar_idleBackgroundColor, DEF_BG_COLOR);
         mFinishBgColor = attrs.getColor(R.styleable.DownloadProgressBar_finishBackgroundColor, DEF_BG_COLOR);
+        mErrorBgColor = attrs.getColor(R.styleable.DownloadProgressBar_errorBackgroundColor, DEF_BG_COLOR);
         mIndeterminateBgColor = attrs.getColor(R.styleable.DownloadProgressBar_indeterminateBackgroundColor, DEF_BG_COLOR);
         mDeterminateBgColor = attrs.getColor(R.styleable.DownloadProgressBar_determinateBackgroundColor, DEF_BG_COLOR);
     }
@@ -259,6 +281,10 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
         return mFinishIcon;
     }
 
+    public Drawable getErrorIcon() {
+        return mErrorIcon;
+    }
+
     public boolean isCancelable() {
         return mCancelable;
     }
@@ -287,12 +313,24 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
         return mFinishIconHeight;
     }
 
+    public int getErrorIconWidth() {
+        return mErrorIconWidth;
+    }
+
+    public int getErrorIconHeight() {
+        return mErrorIconHeight;
+    }
+
     public int getIdleBgColor() {
         return mIdleBgColor;
     }
 
     public int getFinishBgColor() {
         return mFinishBgColor;
+    }
+
+    public int getErrorBgColor() {
+        return mErrorBgColor;
     }
 
     public int getIndeterminateBgColor() {
@@ -309,6 +347,10 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
 
     public Drawable getFinishBgDrawable() {
         return mFinishBgDrawable;
+    }
+
+    public Drawable getErrorBgDrawable() {
+        return mErrorBgDrawable;
     }
 
     public Drawable getIndeterminateBgDrawable() {
@@ -373,6 +415,12 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
         invalidate();
     }
 
+    public void setError() {
+        mCurrProgress = 0;
+        mCurrState = STATE_ERROR;
+        invalidate();
+    }
+
     public void setHideOnFinish(boolean hide) {
         mHideOnFinish = hide;
         if (mCurrState == STATE_FINISHED) {
@@ -395,6 +443,11 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
 
     public void setFinishIcon(Drawable finishIcon) {
         mFinishIcon = finishIcon;
+        invalidate();
+    }
+
+    public void setErrorIcon(Drawable errorIcon) {
+        mErrorIcon = errorIcon;
         invalidate();
     }
 
@@ -433,6 +486,16 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
         invalidate();
     }
 
+    public void setErrorIconWidth(int errorIconWidth) {
+        mErrorIconWidth = errorIconWidth;
+        invalidate();
+    }
+
+    public void setErrorIconHeight(int errorIconHeight) {
+        mErrorIconHeight = errorIconHeight;
+        invalidate();
+    }
+
     public void setMaxProgress(int maxProgress) {
         mMaxProgress = maxProgress;
         invalidate();
@@ -445,6 +508,11 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
 
     public void setFinishBgColor(int finishBgColor) {
         mFinishBgColor = finishBgColor;
+        invalidate();
+    }
+
+    public void setErrorBgColor(int errorBgColor) {
+        mErrorBgColor = errorBgColor;
         invalidate();
     }
 
@@ -465,6 +533,11 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
 
     public void setFinishBgDrawable(Drawable finishBgDrawable) {
         mFinishBgDrawable = finishBgDrawable;
+        invalidate();
+    }
+
+    public void setErrorBgDrawable(Drawable errorBgDrawable) {
+        mErrorBgDrawable = errorBgDrawable;
         invalidate();
     }
 
@@ -550,6 +623,19 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
         drawDrawableInCenter(mFinishIcon, canvas, mFinishIconWidth, mFinishIconHeight);
     }
 
+    private void drawErrorState(Canvas canvas) {
+        if (mErrorBgDrawable != null) {
+            mErrorBgDrawable.setBounds(0, 0, getWidth(), getHeight());
+            mErrorBgDrawable.draw(canvas);
+        } else {
+            mBgRect.set(0, 0, getWidth(), getHeight());
+            mBgPaint.setColor(mErrorBgColor);
+            canvas.drawOval(mBgRect, mBgPaint);
+        }
+
+        drawDrawableInCenter(mErrorIcon, canvas, mErrorIconWidth, mErrorIconHeight);
+    }
+
     private void drawIndeterminateState(Canvas canvas) {
         if (mIndeterminateBgDrawable != null) {
             mIndeterminateBgDrawable.setBounds(0, 0, getWidth(), getHeight());
@@ -598,6 +684,8 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
             drawDeterminateState(canvas);
         } else if (mCurrState == STATE_FINISHED) {
             drawFinishState(canvas);
+        } else if (mCurrState == STATE_ERROR) {
+            drawErrorState(canvas);
         }
     }
 
@@ -616,8 +704,11 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
         bundle.putInt(INSTANCE_CANCEL_HEIGHT, getCancelIconHeight());
         bundle.putInt(INSTANCE_FINISH_WIDTH, getFinishIconWidth());
         bundle.putInt(INSTANCE_FINISH_HEIGHT, getFinishIconHeight());
+        bundle.putInt(INSTANCE_ERROR_WIDTH, getErrorIconWidth());
+        bundle.putInt(INSTANCE_ERROR_HEIGHT, getErrorIconHeight());
         bundle.putInt(INSTANCE_IDLE_BG_COLOR, getIdleBgColor());
         bundle.putInt(INSTANCE_FINISH_BG_COLOR, getFinishBgColor());
+        bundle.putInt(INSTANCE_ERROR_BG_COLOR, getErrorBgColor());
         bundle.putInt(INSTANCE_INDETERMINATE_BG_COLOR, getIndeterminateBgColor());
         bundle.putInt(INSTANCE_DETERMINATE_BG_COLOR, getDeterminateBgColor());
         bundle.putInt(INSTANCE_PROGRESS_DETERMINATE_COLOR, getProgressDeterminateColor());
@@ -641,8 +732,11 @@ public class DownloadProgressBar extends View implements View.OnClickListener {
             mCancelIconHeight = bundle.getInt(INSTANCE_CANCEL_HEIGHT);
             mFinishIconWidth = bundle.getInt(INSTANCE_FINISH_WIDTH);
             mFinishIconHeight = bundle.getInt(INSTANCE_FINISH_HEIGHT);
+            mErrorIconWidth = bundle.getInt(INSTANCE_ERROR_WIDTH);
+            mErrorIconHeight = bundle.getInt(INSTANCE_ERROR_HEIGHT);
             mIdleBgColor = bundle.getInt(INSTANCE_IDLE_BG_COLOR);
             mFinishBgColor = bundle.getInt(INSTANCE_FINISH_BG_COLOR);
+            mErrorBgColor = bundle.getInt(INSTANCE_ERROR_BG_COLOR);
             mIndeterminateBgColor = bundle.getInt(INSTANCE_INDETERMINATE_BG_COLOR);
             mDeterminateBgColor = bundle.getInt(INSTANCE_DETERMINATE_BG_COLOR);
             mProgressDeterminateColor = bundle.getInt(INSTANCE_PROGRESS_DETERMINATE_COLOR);

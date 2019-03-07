@@ -44,7 +44,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.lang.ref.WeakReference;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 /**
  * Created by GreenSkinMonster on 2015-11-07.
@@ -76,9 +75,6 @@ public class ImageViewerLayout extends RelativeLayout {
         mImageView = findViewById(R.id.glide_image);
         mProgressBar = findViewById(R.id.progressbar);
         mRequestManager = Glide.with(context);
-
-        mProgressBar.setFinishIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_action_play));
-        mProgressBar.setFinish();
     }
 
     public ImageView getImageView() {
@@ -103,7 +99,7 @@ public class ImageViewerLayout extends RelativeLayout {
             }
 
             if (!ImageViewerLayout.this.equals(lastGifLayout)) {
-                if (imageInfo.isReady() && imageInfo.isGif()) {
+                if (imageInfo.isSuccess() && imageInfo.isGif()) {
                     loadGif();
                 }
             }
@@ -157,11 +153,11 @@ public class ImageViewerLayout extends RelativeLayout {
         EventBus.getDefault().register(this);
 
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        if (imageInfo.getStatus() == ImageInfo.SUCCESS || imageInfo.isReady()) {
+        if (imageInfo.isSuccess()) {
             loadImage();
         } else if (imageInfo.getStatus() == ImageInfo.FAIL) {
-            mImageView.setImageResource(R.drawable.image_broken);
-            mProgressBar.setVisibility(View.GONE);
+            mProgressBar.setVisibility(VISIBLE);
+            mProgressBar.setError();
         } else if (imageInfo.getStatus() == ImageInfo.IN_PROGRESS) {
             mProgressBar.setVisibility(View.VISIBLE);
             mProgressBar.setDeterminate();
@@ -190,10 +186,9 @@ public class ImageViewerLayout extends RelativeLayout {
 
     private void loadImage() {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        if (imageInfo.getStatus() == ImageInfo.SUCCESS || imageInfo.isReady()) {
+        if (imageInfo.isSuccess()) {
             if (imageInfo.isGif()) {
                 setOnClickListener(new ImageViewClickHandler());
-                mProgressBar.setFinishIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_action_play));
                 mProgressBar.setFinish();
                 mProgressBar.setVisibility(VISIBLE);
                 mRequestManager
@@ -207,7 +202,8 @@ public class ImageViewerLayout extends RelativeLayout {
                 displayImage();
             }
         } else {
-            mImageView.setImageResource(R.drawable.image_broken);
+            mProgressBar.setError();
+            mProgressBar.setVisibility(VISIBLE);
         }
     }
 
@@ -252,7 +248,7 @@ public class ImageViewerLayout extends RelativeLayout {
             public void onImageLoadError(Exception e) {
                 mRequestManager.clear(mImageView);
                 mImageView.setVisibility(View.GONE);
-                mScaleImageView.setImage(ImageSource.resource(R.drawable.image_broken));
+                mProgressBar.setError();
             }
         });
     }
@@ -286,8 +282,7 @@ public class ImageViewerLayout extends RelativeLayout {
             imageInfo.setProgress(event.getProgress());
             imageInfo.setStatus(ImageInfo.IN_PROGRESS);
         } else {
-            mProgressBar.fadeOut();
-            mImageView.setImageResource(R.drawable.image_broken);
+            mProgressBar.setError();
         }
     }
 }

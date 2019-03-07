@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.content.ContextCompat;
 
 /**
  * Created by GreenSkinMonster on 2015-11-07.
@@ -88,7 +87,7 @@ public class ThreadImageLayout extends RelativeLayout {
         if (HiSettingsHelper.IMAGE_POLICY_ORIGINAL.equals(policy)
                 || TextUtils.isEmpty(thumbUrl)
                 || url.equals(thumbUrl)
-                || ImageContainer.getImageInfo(url).isReady()) {
+                || ImageContainer.getImageInfo(url).isSuccess()) {
             mUrl = url;
             mIsThumb = false;
         } else {
@@ -106,12 +105,7 @@ public class ThreadImageLayout extends RelativeLayout {
 
     private void loadImage() {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        if (imageInfo.isGif()) {
-            mProgressBar.setFinishIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_action_play));
-        } else {
-            mProgressBar.setVisibility(View.GONE);
-        }
-        if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
+        if (imageInfo.isSuccess()) {
             mTextView.setVisibility(GONE);
             if (getLayoutParams().height != imageInfo.getViewHeight()) {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getViewHeight());
@@ -137,6 +131,7 @@ public class ThreadImageLayout extends RelativeLayout {
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(mImageView);
             } else {
+                mProgressBar.setVisibility(View.GONE);
                 mRequestManager
                         .asBitmap()
                         .load(mUrl)
@@ -145,7 +140,7 @@ public class ThreadImageLayout extends RelativeLayout {
                         .into(mImageView);
             }
         } else {
-            mImageView.setImageResource(R.drawable.image_broken);
+            mProgressBar.setError();
         }
     }
 
@@ -161,7 +156,7 @@ public class ThreadImageLayout extends RelativeLayout {
         EventBus.getDefault().register(this);
 
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
+        if (imageInfo.isSuccess()) {
             LinearLayout.LayoutParams params
                     = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageInfo.getViewHeight());
 
@@ -180,15 +175,15 @@ public class ThreadImageLayout extends RelativeLayout {
                     mTextView.setText(Utils.toSizeText(mParsedFileSize));
             }
         }
-        if (imageInfo.getStatus() == ImageInfo.SUCCESS) {
+        if (imageInfo.isSuccess()) {
             loadImage();
-        } else if (imageInfo.getStatus() == ImageInfo.FAIL) {
-            mImageView.setImageResource(R.drawable.image_broken);
-            mProgressBar.setVisibility(View.GONE);
-        } else if (imageInfo.getStatus() == ImageInfo.IN_PROGRESS) {
-            mProgressBar.setDeterminate();
+        } else if (imageInfo.isFail()) {
+            mProgressBar.setError();
             mProgressBar.setVisibility(View.VISIBLE);
+        } else if (imageInfo.isInProgress()) {
+            mProgressBar.setDeterminate();
             mProgressBar.setCurrentProgress(imageInfo.getProgress());
+            mProgressBar.setVisibility(View.VISIBLE);
         } else {
             boolean autoload = HiSettingsHelper.getInstance().isImageLoadable(mParsedFileSize, mIsThumb);
             JobMgr.addJob(new GlideImageJob(
@@ -236,13 +231,13 @@ public class ThreadImageLayout extends RelativeLayout {
             }
 
             if (!ThreadImageLayout.this.equals(lastGifLayout)) {
-                if (imageInfo.isReady()) {
+                if (imageInfo.isSuccess()) {
                     if (imageInfo.isGif()) {
                         loadGif();
                     } else {
                         startImageGallery();
                     }
-                } else if (imageInfo.getStatus() == ImageInfo.FAIL || imageInfo.getStatus() == ImageInfo.IDLE) {
+                } else if (imageInfo.isFail() || imageInfo.isIdle()) {
                     JobMgr.addJob(new GlideImageJob(mUrl, JobMgr.PRIORITY_LOW, String.valueOf(hashCode()), true));
                 }
             }
@@ -316,7 +311,7 @@ public class ThreadImageLayout extends RelativeLayout {
         imageInfo.setMessage(event.getMessage());
 
         if (event.getStatus() == ImageInfo.SUCCESS
-                || imageInfo.getStatus() == ImageInfo.SUCCESS) {
+                || imageInfo.isSuccess()) {
             mProgressBar.setCurrentProgress(100);
             if (!imageInfo.isGif())
                 mProgressBar.setVisibility(GONE);
@@ -325,8 +320,6 @@ public class ThreadImageLayout extends RelativeLayout {
             if (GlideHelper.isOkToLoad(getContext()))
                 loadImage();
         } else if (event.getStatus() == ImageInfo.IN_PROGRESS) {
-            if (mProgressBar.getVisibility() != View.VISIBLE)
-                mProgressBar.setVisibility(View.VISIBLE);
             if (event.getProgress() == 0) {
                 mProgressBar.setIndeterminate();
             } else if (event.getProgress() > mProgressBar.getCurrentProgress()) {
@@ -334,12 +327,15 @@ public class ThreadImageLayout extends RelativeLayout {
                     mProgressBar.setDeterminate();
                 mProgressBar.setCurrentProgress(event.getProgress());
             }
-
+            if (mProgressBar.getVisibility() != View.VISIBLE)
+                mProgressBar.setVisibility(View.VISIBLE);
+            
             imageInfo.setProgress(event.getProgress());
             imageInfo.setStatus(ImageInfo.IN_PROGRESS);
         } else {
-            mProgressBar.setVisibility(GONE);
-            mImageView.setImageResource(R.drawable.image_broken);
+            mProgressBar.setError();
+            if (mProgressBar.getVisibility() != View.VISIBLE)
+                mProgressBar.setVisibility(View.VISIBLE);
         }
     }
 

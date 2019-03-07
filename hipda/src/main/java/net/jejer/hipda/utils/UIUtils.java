@@ -207,12 +207,12 @@ public class UIUtils {
             return;
 
         final ImageInfo imageInfo = ImageContainer.getImageInfo(url);
-        if (!imageInfo.isReady()) {
+        if (!imageInfo.isSuccess()) {
             FileDownTask fileDownTask = new FileDownTask(activity) {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     super.onPostExecute(aVoid);
-                    if (imageInfo.isReady())
+                    if (imageInfo.isSuccess())
                         shareImage(activity, view, imageInfo);
                     else
                         errorSnack(view, "分享时发生错误", mException != null ? mException.getMessage() : "");
@@ -259,12 +259,12 @@ public class UIUtils {
             return;
 
         final ImageInfo imageInfo = ImageContainer.getImageInfo(url);
-        if (!imageInfo.isReady()) {
+        if (!imageInfo.isSuccess()) {
             FileDownTask fileDownTask = new FileDownTask(activity) {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     super.onPostExecute(aVoid);
-                    if (imageInfo.isReady()) {
+                    if (imageInfo.isSuccess()) {
                         saveImage(activity, view, imageInfo);
                     } else {
                         errorSnack(view, "分享时发生错误", mException != null ? mException.getMessage() : "");

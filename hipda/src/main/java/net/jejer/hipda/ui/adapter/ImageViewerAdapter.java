@@ -56,9 +56,9 @@ public class ImageViewerAdapter extends PagerAdapter {
             mFirstShow = false;
             if (!imageInfo.isGif() && GlideHelper.isOkToLoad(mActivity)) {
                 ImageInfo thumbInfo = ImageContainer.getImageInfo(contentImg.getThumbUrl());
-                ImageInfo info = thumbInfo.isReady() ? thumbInfo : imageInfo;
+                ImageInfo info = thumbInfo.isSuccess() ? thumbInfo : imageInfo;
                 //load argument must match ThreadDetailFragment to hit memory cache
-                if (info.isReady()) {
+                if (info.isSuccess()) {
                     Glide.with(mActivity)
                             .asBitmap()
                             .load(info.getUrl())

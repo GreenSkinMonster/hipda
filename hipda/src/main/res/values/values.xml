@@ -6,16 +6,19 @@
             <enum name="INDETERMINATE" value="2"/>
             <enum name="DETERMINATE" value="3"/>
             <enum name="FINISHED" value="4"/>
+            <enum name="ERROR" value="5"/>
         </attr>
         <attr name="cancelable" format="boolean"/>
         <attr name="hideOnFinish" format="boolean"/>
         <attr name="progressIndeterminateSweepAngle" format="integer"/>
         <attr name="idleBackgroundColor" format="color"/>
         <attr name="finishBackgroundColor" format="color"/>
+        <attr name="errorBackgroundColor" format="color"/>
         <attr name="indeterminateBackgroundColor" format="color"/>
         <attr name="determinateBackgroundColor" format="color"/>
         <attr name="idleBackgroundDrawable" format="reference"/>
         <attr name="finishBackgroundDrawable" format="reference"/>
+        <attr name="errorBackgroundDrawable" format="reference"/>
         <attr name="indeterminateBackgroundDrawable" format="reference"/>
         <attr name="determinateBackgroundDrawable" format="reference"/>
         <attr name="currentProgress" format="integer"/>
@@ -33,5 +36,8 @@
         <attr name="finishIconDrawable" format="reference"/>
         <attr name="finishIconWidth" format="dimension"/>
         <attr name="finishIconHeight" format="dimension"/>
+        <attr name="errorIconDrawable" format="reference"/>
+        <attr name="errorIconWidth" format="dimension"/>
+        <attr name="errorIconHeight" format="dimension"/>
     </declare-styleable>
 </resources>
