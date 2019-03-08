@@ -181,7 +181,7 @@ public class HiSettingsHelper {
     public boolean isImageLoadable(long imageSize, boolean isThumb) {
         String policy = getCurrectImagePolicy();
         return IMAGE_POLICY_ORIGINAL.equals(policy)
-                || (IMAGE_POLICY_THUMB.equals(policy) && isThumb)
+                || (IMAGE_POLICY_THUMB.equals(policy))
                 || (IMAGE_POLICY_SMALL.equals(policy) && (isThumb || (imageSize > 0 && imageSize <= SMALL_IMAGE_SIZE)));
     }
 

@@ -1086,14 +1086,11 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private void blinkItemView(final String postId) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                int pos = mDetailAdapter.getPositionByPostId(postId);
-                View view = mLayoutManager.findViewByPosition(pos);
-                if (view != null && ViewCompat.isAttachedToWindow(view)) {
-                    view.startAnimation(mBlinkAnim);
-                }
+        new Handler().postDelayed(() -> {
+            int pos = mDetailAdapter.getPositionByPostId(postId);
+            View view = mLayoutManager.findViewByPosition(pos);
+            if (view != null && ViewCompat.isAttachedToWindow(view)) {
+                view.findViewById(R.id.floor).startAnimation(mBlinkAnim);
             }
         }, 150);
     }

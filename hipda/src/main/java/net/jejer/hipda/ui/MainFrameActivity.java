@@ -642,13 +642,20 @@ public class MainFrameActivity extends BaseActivity {
                 HiSettingsHelper.getInstance().getActiveTheme(),
                 HiSettingsHelper.getInstance().getPrimaryColor());
         setTheme(theme);
+        View view = getWindow().getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (theme == R.style.ThemeLight_White) {
-                View view = getWindow().getDecorView();
                 view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             } else {
-                View view = getWindow().getDecorView();
                 view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && HiSettingsHelper.getInstance().isNavBarColored()) {
+            if (theme == R.style.ThemeLight_White) {
+                view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+            } else {
+                view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
             }
         }
         //avoid “RuntimeException: Performing pause of activity that is not resumed”
