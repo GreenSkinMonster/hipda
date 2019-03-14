@@ -69,15 +69,13 @@
                 android:layout_gravity="center_vertical"
                 android:visibility="gone"/>
 
-            <com.mikepenz.iconics.view.IconicsTextView
-                android:id="@+id/tv_isnew"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/iv_isnew"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:layout_gravity="center_vertical"
-                android:text="{gmd-email}"
-                android:textColor="@color/red"
-                android:textSize="20sp"
-                android:visibility="gone"/>
+                android:src="@drawable/ic_mail_white_24dp"
+                android:tint="@color/red"/>
 
             <TextView
                 android:id="@+id/tv_time"

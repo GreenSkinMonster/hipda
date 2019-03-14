@@ -122,9 +122,9 @@ public class SmsAdapter extends BaseRvAdapter<SimpleListItemBean> {
         holder.tv_content.setTextColor(ContextCompat.getColor(mFragment.getActivity(), R.color.black));
 
         if (item.isNew()) {
-            holder.tv_isnew.setVisibility(View.VISIBLE);
+            holder.iv_isnew.setVisibility(View.VISIBLE);
         } else {
-            holder.tv_isnew.setVisibility(View.GONE);
+            holder.iv_isnew.setVisibility(View.GONE);
         }
 
         if (item.getStatus() == Constants.STATUS_IN_PROGRESS) {
@@ -137,7 +137,7 @@ public class SmsAdapter extends BaseRvAdapter<SimpleListItemBean> {
     private static class ViewHolderImpl extends RecyclerView.ViewHolder {
         TextViewWithEmoticon tv_content;
         TextView tv_time;
-        TextView tv_isnew;
+        ImageView iv_isnew;
         ImageView iv_my_avatar;
         ImageView iv_friend_avatar;
         LinearLayout info_layout;
@@ -147,14 +147,14 @@ public class SmsAdapter extends BaseRvAdapter<SimpleListItemBean> {
         ViewHolderImpl(View itemView) {
             super(itemView);
 
-            tv_content = (TextViewWithEmoticon) itemView.findViewById(R.id.tv_content);
-            tv_time = (TextView) itemView.findViewById(R.id.tv_time);
-            tv_isnew = (TextView) itemView.findViewById(R.id.tv_isnew);
-            iv_my_avatar = (ImageView) itemView.findViewById(R.id.iv_my_avatar);
-            iv_friend_avatar = (ImageView) itemView.findViewById(R.id.iv_friend_avatar);
-            info_layout = (LinearLayout) itemView.findViewById(R.id.sms_info_layout);
-            bubble_layout = (BubbleLayout) itemView.findViewById(R.id.bl_bubble);
-            progressBar = (ProgressBar) itemView.findViewById(R.id.pb_sms);
+            tv_content = itemView.findViewById(R.id.tv_content);
+            tv_time = itemView.findViewById(R.id.tv_time);
+            iv_isnew = itemView.findViewById(R.id.iv_isnew);
+            iv_my_avatar = itemView.findViewById(R.id.iv_my_avatar);
+            iv_friend_avatar = itemView.findViewById(R.id.iv_friend_avatar);
+            info_layout = itemView.findViewById(R.id.sms_info_layout);
+            bubble_layout = itemView.findViewById(R.id.bl_bubble);
+            progressBar = itemView.findViewById(R.id.pb_sms);
         }
     }
 
