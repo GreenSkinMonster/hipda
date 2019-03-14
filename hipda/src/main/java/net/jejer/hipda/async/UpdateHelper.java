@@ -112,7 +112,7 @@ public class UpdateHelper {
 
         boolean found = !TextUtils.isEmpty(newVersion)
                 && !TextUtils.isEmpty(updateNotes)
-                && newer(version, newVersion);
+                && newer(newVersion, version);
 
         if (found) {
             if (!mSilent) {
