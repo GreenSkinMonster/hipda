@@ -37,10 +37,10 @@ import okhttp3.Response;
 public class UploadImgHelper {
 
     private final static int MAX_QUALITY = 90;
-    private final static int MAX_IMAGE_FILE_SIZE = 400 * 1024;
+    private final static int MAX_IMAGE_FILE_SIZE = 800 * 1024;
     private static final int THUMB_SIZE = 256;
 
-    private final static int MAX_PIXELS = 1600 * 900;
+    private final static int MAX_PIXELS = 2560 * 1600;
 
     private UploadImgListener mListener;
 
