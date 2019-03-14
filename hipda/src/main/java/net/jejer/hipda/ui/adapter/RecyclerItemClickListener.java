@@ -97,7 +97,7 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
                             } catch (Exception ingored) {
                             }
                         }
-                    }, 150);
+                    }, 200);
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:

@@ -43,7 +43,7 @@ public class UpdateHelper {
         mSilent = isSilent;
 
         checkSite = "coding";
-        checkUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda-ng.md";
+        checkUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda-ng-v5.md";
         downloadUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/releases/hipda-ng-release-{version}.apk";
     }
 
@@ -191,8 +191,8 @@ public class UpdateHelper {
     }
 
     public static boolean updateApp() {
-        String installedVersion = HiSettingsHelper.getInstance().getInstalledVersion();
-        String currentVersion = HiApplication.getAppVersion();
+        final String installedVersion = HiSettingsHelper.getInstance().getInstalledVersion();
+        final String currentVersion = HiApplication.getAppVersion();
 
         if (!currentVersion.equals(installedVersion)) {
             if (newer(currentVersion, "4.3.06")) {
@@ -222,7 +222,7 @@ public class UpdateHelper {
             }
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
         }
-        return newer(installedVersion, currentVersion);
+        return newer(currentVersion, installedVersion);
     }
 
 }

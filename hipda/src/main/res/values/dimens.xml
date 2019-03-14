@@ -4,8 +4,8 @@
     <dimen name="footer_height">90dp</dimen>
     <dimen name="footer_padding">10dp</dimen>
 
-    <integer name="post_text_size">18</integer>
-    <integer name="title_text_size">18</integer>
+    <integer name="post_text_size">17</integer>
+    <integer name="title_text_size">17</integer>
     <dimen name="author_text_size">15sp</dimen>
     <dimen name="info_text_size">14sp</dimen>
 
