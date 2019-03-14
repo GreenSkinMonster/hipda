@@ -44,67 +44,66 @@ public class ImageViewerActivity extends SwipeBackActivity {
         int imageIndex = intent.getExtras().getInt(KEY_IMAGE_INDEX);
         final ArrayList<ContentImg> images = intent.getExtras().getParcelableArrayList(KEY_IMAGES);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        final TextView tvImageInfo = (TextView) findViewById(R.id.tv_image_info);
-        final TextView tvFloorInfo = (TextView) findViewById(R.id.tv_floor_info);
-
         if (images == null || images.size() == 0) {
             finish();
+        } else {
+            final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+            final TextView tvImageInfo = (TextView) findViewById(R.id.tv_image_info);
+            final TextView tvFloorInfo = (TextView) findViewById(R.id.tv_floor_info);
+
+            mPagerAdapter = new ImageViewerAdapter(this, images);
+            viewPager.setAdapter(mPagerAdapter);
+
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    ContentImg contentImg = images.get(position);
+                    tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
+                    tvImageInfo.setText((position + 1) + " / " + images.size());
+                    updateSwipeEdges(images.size(), position);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                }
+            });
+
+            viewPager.setCurrentItem(imageIndex);
+            ContentImg contentImg = images.get(imageIndex);
+            tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
+            tvImageInfo.setText((imageIndex + 1) + " / " + images.size());
+
+            updateSwipeEdges(images.size(), imageIndex);
+            getSwipeBackLayout().setEdgeSize(Utils.dpToPx(50));
+
+            ImageButton btnDownload = (ImageButton) findViewById(R.id.btn_download_image);
+            btnDownload.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View arg0) {
+                            String url = images.get(viewPager.getCurrentItem()).getContent();
+                            UIUtils.saveImage(ImageViewerActivity.this, findViewById(R.id.image_viewer), url);
+                        }
+                    }
+
+            );
+
+            ImageButton btnShare = (ImageButton) findViewById(R.id.btn_share_image);
+
+            btnShare.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View arg0) {
+                            String url = images.get(viewPager.getCurrentItem()).getContent();
+                            UIUtils.shareImage(ImageViewerActivity.this, findViewById(R.id.image_viewer), url);
+                        }
+                    }
+            );
         }
-
-        mPagerAdapter = new ImageViewerAdapter(this, images);
-        viewPager.setAdapter(mPagerAdapter);
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                ContentImg contentImg = images.get(position);
-                tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
-                tvImageInfo.setText((position + 1) + " / " + images.size());
-                updateSwipeEdges(images.size(), position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-
-        viewPager.setCurrentItem(imageIndex);
-        ContentImg contentImg = images.get(imageIndex);
-        tvFloorInfo.setText(contentImg.getFloor() + "# " + contentImg.getAuthor());
-        tvImageInfo.setText((imageIndex + 1) + " / " + images.size());
-
-        updateSwipeEdges(images.size(), imageIndex);
-        getSwipeBackLayout().setEdgeSize(Utils.dpToPx(50));
-
-        ImageButton btnDownload = (ImageButton) findViewById(R.id.btn_download_image);
-        btnDownload.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View arg0) {
-                        String url = images.get(viewPager.getCurrentItem()).getContent();
-                        UIUtils.saveImage(ImageViewerActivity.this, findViewById(R.id.image_viewer), url);
-                    }
-                }
-
-        );
-
-        ImageButton btnShare = (ImageButton) findViewById(R.id.btn_share_image);
-
-        btnShare.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View arg0) {
-                        String url = images.get(viewPager.getCurrentItem()).getContent();
-                        UIUtils.shareImage(ImageViewerActivity.this, findViewById(R.id.image_viewer), url);
-                    }
-                }
-        );
-
     }
 
     @Override

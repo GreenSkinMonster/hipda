@@ -31,7 +31,6 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 public class GlideHelper {
@@ -53,7 +52,8 @@ public class GlideHelper {
         }
     }
 
-    public static void loadAvatar(RequestManager glide, ImageView view, @NonNull String avatarUrl) {
+    public static void loadAvatar(RequestManager glide, ImageView view, String avatarUrl) {
+        avatarUrl = Utils.nullToText(avatarUrl);
         String cacheKey = AVATAR_CACHE_KEYS.get(avatarUrl);
         if (cacheKey == null) {
             cacheKey = avatarUrl;
