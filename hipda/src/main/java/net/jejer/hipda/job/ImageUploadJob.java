@@ -19,13 +19,15 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
     private String mUid;
     private String mHash;
     private Uri[] mUris;
+    private boolean mOriginal;
     private Collection<ImageUploadEvent> mHoldEvents = new ArrayList<>();
 
-    public ImageUploadJob(String sessionId, String uid, String hash, Uri[] uris) {
+    public ImageUploadJob(String sessionId, String uid, String hash, Uri[] uris, boolean original) {
         super(sessionId);
         mUid = uid;
         mHash = hash;
         mUris = uris;
+        mOriginal = original;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
 
     @Override
     public void onRun() throws Throwable {
-        new UploadImgHelper(getApplicationContext(), this, mUid, mHash, mUris).upload();
+        new UploadImgHelper(getApplicationContext(), this, mUid, mHash, mUris, mOriginal).upload();
 
         ImageUploadEvent event = new ImageUploadEvent();
         event.mSessionId = mSessionId;

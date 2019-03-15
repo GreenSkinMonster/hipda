@@ -48,6 +48,7 @@ public class UploadImgHelper {
     private String mHash;
     private Context mCtx;
     private Uri[] mUris;
+    private boolean mOriginal;
 
     private String mMessage = "";
     private Bitmap mThumb;
@@ -55,12 +56,13 @@ public class UploadImgHelper {
     private int mCurrent;
     private String mCurrentFileName = "";
 
-    public UploadImgHelper(Context ctx, UploadImgListener v, String uid, String hash, Uri[] uris) {
+    public UploadImgHelper(Context ctx, UploadImgListener v, String uid, String hash, Uri[] uris, boolean original) {
         mCtx = ctx;
         mListener = v;
         mUid = uid;
         mHash = hash;
         mUris = uris;
+        mOriginal = original;
     }
 
     public interface UploadImgListener {
@@ -238,6 +240,9 @@ public class UploadImgHelper {
     }
 
     private boolean isDirectUploadable(ImageFileInfo imageFileInfo) {
+        if (mOriginal)
+            return true;
+
         long fileSize = imageFileInfo.getFileSize();
         int w = imageFileInfo.getWidth();
         int h = imageFileInfo.getHeight();

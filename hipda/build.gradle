@@ -57,7 +57,8 @@ dependencies {
     implementation "androidx.preference:preference:1.0.0"
     implementation "com.google.android.material:material:1.0.0"
 
-    implementation 'org.jsoup:jsoup:1.10.2'
+    implementation 'org.jsoup:jsoup:1.11.3'
+
     implementation 'com.squareup.okhttp3:okhttp:3.12.2'
 
     implementation 'com.google.code.gson:gson:2.8.2'
@@ -90,8 +91,9 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
 
+    //implementation 'com.zhihu.android:matisse:0.5.2-beta4'
     implementation 'it.sephiroth.android.library.imagezoom:library:1.0.4'
-    //implementation(name: 'matisse-release-0.5.0', ext: 'aar')
+    implementation(name: 'matisse-release-0.5.2-beta4', ext: 'aar')
 
     implementation 'com.evernote:android-job:1.2.6'
 
@@ -99,8 +101,6 @@ dependencies {
     implementation(name: 'calligraphy-release-2.3.0', ext: 'aar')
     implementation(name: 'filepicker-release-1.1.1', ext: 'aar')
     implementation project(':emoji')
-
-    implementation 'com.zhihu.android:matisse:0.5.2-beta3'
 
     implementation('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
         transitive = true

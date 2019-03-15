@@ -130,7 +130,6 @@ public class PostFragment extends BaseFragment {
     private HiProgressDialog mProgressDialog;
     private boolean mImageUploading = false;
     private Map<Uri, UploadImage> mUploadImages = new LinkedHashMap<>();
-    private Collection<Uri> mHoldedImages = new ArrayList<>();
     private long mLastSavedTime = -1;
     private boolean mDeleteMode = false;
 
@@ -173,11 +172,11 @@ public class PostFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
-        mEtContent = (EmojiEditText) view.findViewById(R.id.et_reply);
-        mTvQuoteText = (TextView) view.findViewById(R.id.tv_quote_text);
-        mTvType = (TextView) view.findViewById(R.id.tv_type);
-        mTvImagesInfo = (TextView) view.findViewById(R.id.tv_image_info);
-        mProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.preinfo_loading);
+        mEtContent = view.findViewById(R.id.et_reply);
+        mTvQuoteText = view.findViewById(R.id.tv_quote_text);
+        mTvType = view.findViewById(R.id.tv_type);
+        mTvImagesInfo = view.findViewById(R.id.tv_image_info);
+        mProgressBar = view.findViewById(R.id.preinfo_loading);
 
         mImageAdapter = new GridImageAdapter(getActivity());
 
@@ -195,7 +194,7 @@ public class PostFragment extends BaseFragment {
         if (forum != null)
             mForumName = forum.getName();
 
-        mEtSubject = (EditText) view.findViewById(R.id.et_subject);
+        mEtSubject = view.findViewById(R.id.et_subject);
         mEtContent.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         UIUtils.setLineSpacing(mEtContent);
 
@@ -236,7 +235,7 @@ public class PostFragment extends BaseFragment {
             mEtContent.setText(mText);
         }
 
-        final CountdownButton countdownButton = (CountdownButton) view.findViewById(R.id.countdown_button);
+        final CountdownButton countdownButton = view.findViewById(R.id.countdown_button);
         countdownButton.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
         countdownButton.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -248,7 +247,7 @@ public class PostFragment extends BaseFragment {
         if (mMode != PostHelper.MODE_EDIT_POST)
             countdownButton.setCountdown(PostHelper.getWaitTimeToPost());
 
-        mIbEmojiSwitch = (ImageButton) view.findViewById(R.id.ib_emoji_switch);
+        mIbEmojiSwitch = view.findViewById(R.id.ib_emoji_switch);
         setUpEmojiPopup(mEtContent, mIbEmojiSwitch);
 
         setActionBarTitle(R.string.action_reply);
@@ -431,6 +430,8 @@ public class PostFragment extends BaseFragment {
                 .maxSelectable(9)
                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
                 .thumbnailScale(0.85f)
+                .originalEnable(true)
+                .maxOriginalSize(HiSettingsHelper.getInstance().getMaxUploadFileSize() / 1024 / 1024)
                 .imageEngine(new MatisseGlideEngine())
                 .theme(HiSettingsHelper.getInstance().getImageActivityTheme(getActivity()))
                 .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
@@ -576,12 +577,12 @@ public class PostFragment extends BaseFragment {
                 return;
             }
 
+            boolean original = Matisse.obtainOriginalState(intent);
             mProgressDialog = HiProgressDialog.show(getActivity(), "正在上传...");
             if (mPrePostInfo != null) {
-                JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), uris.toArray(new Uri[uris.size()])));
+                JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), uris.toArray(new Uri[0]), original));
             } else {
-                //hold selected images, upload them after fetch pre post info success
-                mHoldedImages.addAll(uris);
+                UIUtils.toast("无法获取发帖信息");
             }
         }
     }
@@ -751,12 +752,6 @@ public class PostFragment extends BaseFragment {
                     UIUtils.showMessageDialog(getActivity(), mFloor + "# " + mFloorAuthor, mQuoteText, true);
                 }
             });
-        }
-
-        //try to upload holded images when pre post info is ready
-        if (mHoldedImages != null && mHoldedImages.size() > 0) {
-            JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), mHoldedImages.toArray(new Uri[mHoldedImages.size()])));
-            mHoldedImages.clear();
         }
     }
 
@@ -931,8 +926,8 @@ public class PostFragment extends BaseFragment {
             }
             Content content = contents[position];
 
-            TextView tvContent = (TextView) row.findViewById(R.id.tv_content);
-            TextView tvDesc = (TextView) row.findViewById(R.id.tv_desc);
+            TextView tvContent = row.findViewById(R.id.tv_content);
+            TextView tvDesc = row.findViewById(R.id.tv_desc);
 
             tvContent.setText(content.getContent().replace("\n", " "));
             tvDesc.setText(content.getDesc());

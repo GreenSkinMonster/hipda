@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -36,15 +35,18 @@ public class ImageViewerActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_viewer);
 
+        int imageIndex = -1;
+        ArrayList<ContentImg> images = new ArrayList<>();
+
         Intent intent = getIntent();
         if (intent == null || intent.getExtras() == null) {
             finish();
+        } else {
+            imageIndex = intent.getExtras().getInt(KEY_IMAGE_INDEX);
+            images.addAll(intent.getExtras().getParcelableArrayList(KEY_IMAGES));
         }
 
-        int imageIndex = intent.getExtras().getInt(KEY_IMAGE_INDEX);
-        final ArrayList<ContentImg> images = intent.getExtras().getParcelableArrayList(KEY_IMAGES);
-
-        if (images == null || images.size() == 0) {
+        if (images.size() == 0) {
             finish();
         } else {
             final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -82,25 +84,18 @@ public class ImageViewerActivity extends SwipeBackActivity {
 
             ImageButton btnDownload = (ImageButton) findViewById(R.id.btn_download_image);
             btnDownload.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View arg0) {
-                            String url = images.get(viewPager.getCurrentItem()).getContent();
-                            UIUtils.saveImage(ImageViewerActivity.this, findViewById(R.id.image_viewer), url);
-                        }
+                    view -> {
+                        String url = images.get(viewPager.getCurrentItem()).getContent();
+                        UIUtils.saveImage(ImageViewerActivity.this, findViewById(R.id.image_viewer), url);
                     }
-
             );
 
             ImageButton btnShare = (ImageButton) findViewById(R.id.btn_share_image);
 
             btnShare.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View arg0) {
-                            String url = images.get(viewPager.getCurrentItem()).getContent();
-                            UIUtils.shareImage(ImageViewerActivity.this, findViewById(R.id.image_viewer), url);
-                        }
+                    view -> {
+                        String url = images.get(viewPager.getCurrentItem()).getContent();
+                        UIUtils.shareImage(ImageViewerActivity.this, findViewById(R.id.image_viewer), url);
                     }
             );
         }
@@ -133,12 +128,7 @@ public class ImageViewerActivity extends SwipeBackActivity {
     @Override
     public void onDestroy() {
         if (mPagerAdapter != null) {
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    Utils.cleanShareTempFiles();
-                }
-            });
+            new Handler().post(Utils::cleanShareTempFiles);
         }
         super.onDestroy();
     }
