@@ -5,6 +5,12 @@
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault
 
+# OKHttp 3.14.0
+-dontwarn javax.annotation.**
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+-dontwarn org.codehaus.mojo.animal_sniffer.*
+-dontwarn okhttp3.internal.platform.ConscryptPlatform
+
 #google stuff
 -dontwarn android.support.**
 -keep class android.support.v7.** { *; }
