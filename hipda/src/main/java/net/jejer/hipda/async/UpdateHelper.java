@@ -3,9 +3,9 @@ package net.jejer.hipda.async;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -34,7 +34,6 @@ public class UpdateHelper {
 
     private HiProgressDialog pd;
 
-    private String checkSite = "";
     private String checkUrl = "";
     private String downloadUrl = "";
 
@@ -42,8 +41,11 @@ public class UpdateHelper {
         mCtx = ctx;
         mSilent = isSilent;
 
-        checkSite = "coding";
-        checkUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda-ng-v5.md";
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            checkUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda-ng.md";
+        } else {
+            checkUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda-ng-v5.md";
+        }
         downloadUrl = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/releases/hipda-ng-release-{version}.apk";
     }
 
@@ -54,23 +56,13 @@ public class UpdateHelper {
         if (mSilent) {
             doCheck();
         } else {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    doCheck();
-                }
-            }).start();
+            new Thread(this::doCheck).start();
         }
     }
 
     private void doCheck() {
         if (!mSilent) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    pd = HiProgressDialog.show(mCtx, "正在检查新版本，请稍候...");
-                }
-            });
+            new Handler(Looper.getMainLooper()).post(() -> pd = HiProgressDialog.show(mCtx, "正在检查新版本，请稍候..."));
         }
         OkHttpHelper.getInstance().asyncGet(checkUrl, new UpdateCheckCallback());
     }
@@ -124,28 +116,20 @@ public class UpdateHelper {
                 final String filename = (url.contains("/")) ? url.substring(url.lastIndexOf("/") + 1) : "";
 
                 Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
-                        .setMessage(updateNotes).
-                                setPositiveButton("下载",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                try {
-                                                    Utils.download(mCtx, url, filename);
-                                                } catch (Exception e) {
-                                                    Logger.e(e);
-                                                    UIUtils.toast("下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage());
-                                                }
-                                            }
-                                        }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        }).setNeutralButton("不再提醒", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                HiSettingsHelper.getInstance().setAutoUpdateCheck(false);
-                            }
-                        }).create();
+                        .setMessage(updateNotes)
+                        .setPositiveButton("下载",
+                                (dialog1, which) -> {
+                                    try {
+                                        Utils.download(mCtx, url, filename);
+                                    } catch (Exception e) {
+                                        Logger.e(e);
+                                        UIUtils.toast("下载出现错误，请到客户端发布帖中手动下载。\n" + e.getMessage());
+                                    }
+                                })
+                        .setNegativeButton("暂不", (dialog2, which) -> {
+                        })
+                        .setNeutralButton("不再提醒", (dialog3, which) -> HiSettingsHelper.getInstance().setAutoUpdateCheck(false))
+                        .create();
 
                 if (!mCtx.isFinishing())
                     dialog.show();
@@ -153,12 +137,7 @@ public class UpdateHelper {
                 Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
                         .setMessage(updateNotes).
                                 setPositiveButton("前往Google Play",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                openGooglePlay(mCtx);
-                                            }
-                                        }).create();
+                                        (dialog4, which) -> openGooglePlay(mCtx)).create();
 
                 if (!mCtx.isFinishing())
                     dialog.show();
