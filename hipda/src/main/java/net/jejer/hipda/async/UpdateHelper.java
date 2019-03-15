@@ -216,7 +216,7 @@ public class UpdateHelper {
                     HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
                 }
                 if (!wifiAutoload && !allAutoload && !loadSmall && !loadThumb) {
-                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_NONE);
+                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
                     HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_NONE);
                 }
             }
