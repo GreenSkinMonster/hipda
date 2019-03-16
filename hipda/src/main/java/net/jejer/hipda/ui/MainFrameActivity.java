@@ -25,7 +25,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.github.angads25.filepicker.view.FilePickerDialog;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -59,6 +58,7 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.service.NotiHelper;
+import net.jejer.hipda.service.NotiWorker;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.LoginDialog;
@@ -82,7 +82,6 @@ import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -107,19 +106,21 @@ public class MainFrameActivity extends BaseActivity {
         setContentView(R.layout.activity_main_frame);
         mRootView = findViewById(R.id.main_activity_root_view);
         mMainFrameContainer = findViewById(R.id.main_frame_container);
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
+        mAppBarLayout = findViewById(R.id.appbar_layout);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
         GlideHelper.initDefaultFiles();
         EmojiHandler.init(HiSettingsHelper.getInstance().isUsingLightTheme());
+        NotiHelper.initNotificationChannel();
+
         EventBus.getDefault().register(this);
         setupDrawer();
         updateAppBarScrollFlag();
 
-        mMainFab = (FloatingActionButton) findViewById(R.id.fab_main);
-        mNotiificationFab = (FloatingActionButton) findViewById(R.id.fab_notification);
+        mMainFab = findViewById(R.id.fab_main);
+        mNotiificationFab = findViewById(R.id.fab_notification);
 
         //hack, to avoid MainFrameActivity be created more than once
         if (HiApplication.getMainActivityCount() > 1) {
@@ -157,6 +158,7 @@ public class MainFrameActivity extends BaseActivity {
             }
 
             TaskHelper.runDailyTask(false);
+            NotiWorker.scheduleOrCancelWork();
 
             if (HiApplication.isUpdated()) {
                 HiApplication.setUpdated(false);

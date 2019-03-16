@@ -29,7 +29,7 @@ public class FABHideOnScrollBehavior extends FloatingActionButton.Behavior {
     public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
 
-        boolean isNearBottom = target != null && (target instanceof XRecyclerView) && ((XRecyclerView) target).isNearBottom();
+        boolean isNearBottom = target instanceof XRecyclerView && ((XRecyclerView) target).isNearBottom();
         if (isNearBottom && child.getVisibility() == View.INVISIBLE) {
             child.show();
         } else {

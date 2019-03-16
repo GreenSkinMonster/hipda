@@ -126,7 +126,7 @@ public class ThreadListFragment extends BaseFragment
         setHasOptionsMenu(OkHttpHelper.getInstance().isLoggedIn());
 
         View view = inflater.inflate(R.layout.fragment_thread_list, parent, false);
-        mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_threads);
+        mRecyclerView = view.findViewById(R.id.rv_threads);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mCtx));
         mRecyclerView.addItemDecoration(new SimpleDivider(getActivity()));
@@ -139,12 +139,12 @@ public class ThreadListFragment extends BaseFragment
         mRecyclerView.setAdapter(mThreadListAdapter);
         mRecyclerView.addOnScrollListener(new OnScrollListener());
 
-        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        swipeLayout = view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeColors(ColorHelper.getSwipeColor(getActivity()));
         swipeLayout.setProgressBackgroundColorSchemeColor(ColorHelper.getSwipeBackgroundColor(getActivity()));
 
-        mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
+        mLoadingView = view.findViewById(R.id.content_loading);
         mLoadingView.setErrorStateListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -428,7 +428,7 @@ public class ThreadListFragment extends BaseFragment
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_thread_list_settings, null);
 
-        final ValueChagerView valueChagerView = (ValueChagerView) view.findViewById(R.id.value_changer);
+        final ValueChagerView valueChagerView = view.findViewById(R.id.value_changer);
 
         valueChagerView.setCurrentValue(HiSettingsHelper.getInstance().getTitleTextSizeAdj());
 
@@ -454,7 +454,7 @@ public class ThreadListFragment extends BaseFragment
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View viewlayout = inflater.inflate(R.layout.dialog_forum_types, null);
 
-        final ListView listView = (ListView) viewlayout.findViewById(R.id.lv_forum_types);
+        final ListView listView = viewlayout.findViewById(R.id.lv_forum_types);
 
         listView.setAdapter(new ForumTypesAdapter(getActivity()));
 
@@ -492,7 +492,7 @@ public class ThreadListFragment extends BaseFragment
                 urlFromClip = text;
         }
 
-        final EditText etUrl = (EditText) viewlayout.findViewById(R.id.et_url);
+        final EditText etUrl = viewlayout.findViewById(R.id.et_url);
         etUrl.setText(urlFromClip);
         etUrl.selectAll();
         etUrl.requestFocus();

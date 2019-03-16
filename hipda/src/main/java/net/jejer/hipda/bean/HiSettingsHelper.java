@@ -76,7 +76,6 @@ public class HiSettingsHelper {
     public static final String PERF_CLEAR_IMAGE_CACHE = "PERF_CLEAR_IMAGE_CACHE";
     public static final String PERF_NOTI_TASK_ENABLED = "PERF_NOTI_TASK_ENABLED";
     public static final String PERF_NOTI_JOB_LAST_TIME = "PERF_NOTI_JOB_LAST_TIME";
-    public static final String PERF_NOTI_LED_LIGHT = "PERF_NOTI_LED_LIGHT";
     public static final String PERF_NOTI_SOUND = "PERF_NOTI_SOUND";
     public static final String PERF_NOTI_SILENT_MODE = "PERF_NOTI_SILENT_MODE";
     public static final String PERF_NOTI_SILENT_BEGIN = "PERF_NOTI_SILENT_BEGIN";
@@ -149,7 +148,6 @@ public class HiSettingsHelper {
     private boolean mErrorReportMode;
 
     private boolean mNotiTaskEnabled;
-    private boolean mNotiLedLight;
     private String mBSTypeId;
 
     private String mForumServer;
@@ -261,7 +259,6 @@ public class HiSettingsHelper {
         isErrorReportModeFromPref();
         getForumsFromPref();
         getFreqMenusFromPref();
-        isNotiLedLightFromPref();
         isNotiTaskEnabledFromPref();
         getBSTypeIdFromPref();
         getForumServerFromPref();
@@ -656,21 +653,6 @@ public class HiSettingsHelper {
     private boolean isNotiTaskEnabledFromPref() {
         mNotiTaskEnabled = mSharedPref.getBoolean(PERF_NOTI_TASK_ENABLED, false);
         return mNotiTaskEnabled;
-    }
-
-    public boolean isNotiLedLight() {
-        return mNotiLedLight;
-    }
-
-    public void setNotiLedLight(boolean notiLedLight) {
-        mNotiLedLight = notiLedLight;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_NOTI_LED_LIGHT, mNotiLedLight).apply();
-    }
-
-    private boolean isNotiLedLightFromPref() {
-        mNotiLedLight = mSharedPref.getBoolean(PERF_NOTI_LED_LIGHT, true);
-        return mNotiLedLight;
     }
 
     public List<String> getOldBlacklists() {

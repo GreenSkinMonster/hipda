@@ -1,6 +1,7 @@
 package net.jejer.hipda.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,9 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.text.TextUtils;
-
-import com.evernote.android.job.JobManager;
-import com.evernote.android.job.JobRequest;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -35,7 +33,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
@@ -46,9 +43,10 @@ import androidx.core.content.ContextCompat;
  */
 public class NotiHelper {
 
-    public final static int NOTI_REPEAT_MINUTTE = 15;
     public final static String DEFAUL_SLIENT_BEGIN = "22:00";
     public final static String DEFAUL_SLIENT_END = "08:00";
+    public final static String CHANNEL_ID = "HIPDA_NOTI";
+    public final static String CHANNEL_NAME = "论坛通知";
 
     private final static NotificationBean mCurrentBean = new NotificationBean();
 
@@ -175,8 +173,6 @@ public class NotiHelper {
         String content = getContentText(threadCount, smsCount);
         Bitmap icon = null;
 
-        int color = ContextCompat.getColor(context, R.color.icon_blue);
-
         if (smsCount == 1 && threadCount == 0) {
             title = username + " 的短消息";
             content = smsContent;
@@ -191,7 +187,8 @@ public class NotiHelper {
         if (icon == null)
             icon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        int color = ContextCompat.getColor(context, R.color.icon_blue);
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setContentIntent(pendingIntent)
@@ -199,30 +196,35 @@ public class NotiHelper {
                 .setOnlyAlertOnce(true)
                 .setSmallIcon(R.drawable.ic_stat_hi)
                 .setLargeIcon(icon)
-                .setColor(color);
+                .setColor(color)
+                .setLights(color, 1000, 3000);
 
         String sound = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_NOTI_SOUND, "");
         if (!TextUtils.isEmpty(sound))
             builder.setSound(Uri.parse(sound));
-        if (HiSettingsHelper.getInstance().isNotiLedLight())
-            builder.setLights(color, 1000, 3000);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
             builder.setPriority(Notification.PRIORITY_HIGH)
                     .setVibrate(new long[0]);
+
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0, builder.build());
     }
 
-    public static void scheduleJob() {
-        new JobRequest.Builder(NotiJob.TAG)
-                .setPeriodic(TimeUnit.MINUTES.toMillis(NOTI_REPEAT_MINUTTE), TimeUnit.MINUTES.toMillis(5))
-                .setUpdateCurrent(true)
-                .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
-                .build()
-                .schedule();
+    public static void initNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Context context = HiApplication.getAppContext();
+
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
+                int color = ContextCompat.getColor(context, R.color.icon_blue);
+                NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(color);
+                notificationChannel.enableVibration(false);
+                notificationChannel.setBypassDnd(false);
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
     }
 
-    public static void cancelJob() {
-        JobManager.instance().cancelAll();
-    }
 }

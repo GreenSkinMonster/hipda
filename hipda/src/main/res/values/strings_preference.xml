@@ -257,7 +257,6 @@
     <string name="pref_summary_clear_cache">遇到发帖502错误时可以尝试使用</string>
     <string name="pref_summary_clear_image_cache">清除下载的图片和头像缓存</string>
     <string name="pref_noti_task_enabled">接收通知(需允许自启)</string>
-    <string name="pref_noti_led_light">LED通知灯</string>
     <string name="pref_noti_sound">通知声音</string>
     <string name="pref_noti_silent_mode">免打扰时段</string>
     <string name="pref_noti_silent_begin">免打扰开始</string>

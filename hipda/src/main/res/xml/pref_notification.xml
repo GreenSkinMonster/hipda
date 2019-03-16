@@ -6,18 +6,11 @@
         android:key="PERF_NOTI_TASK_ENABLED"
         android:title="@string/pref_noti_task_enabled"/>
 
-    <PreferenceCategory android:title="@string/pref_category_notification_style">
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="PERF_NOTI_LED_LIGHT"
-            android:title="@string/pref_noti_led_light"/>
-
-        <Preference
-            android:key="PERF_NOTI_SOUND"
-            android:ringtoneType="notification"
-            android:showDefault="true"
-            android:title="@string/pref_noti_sound"/>
-    </PreferenceCategory>
+    <Preference
+        android:key="PERF_NOTI_SOUND"
+        android:ringtoneType="notification"
+        android:showDefault="true"
+        android:title="@string/pref_noti_sound"/>
 
     <PreferenceCategory android:title="@string/pref_category_silent_mode">
         <SwitchPreference

@@ -8,7 +8,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
-import net.jejer.hipda.service.NotiHelper;
+import net.jejer.hipda.service.NotiWorker;
 import net.jejer.hipda.ui.FragmentUtils;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.SettingActivity;
@@ -113,11 +113,7 @@ public class SettingMainFragment extends BaseSettingFragment {
             HiSettingsHelper.getInstance().setNightMode(false);
 
         if (mNotiTaskEnabled != HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-            if (HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
-                NotiHelper.scheduleJob();
-            } else {
-                NotiHelper.cancelJob();
-            }
+            NotiWorker.scheduleOrCancelWork();
         }
 
         if (mCacheCleared

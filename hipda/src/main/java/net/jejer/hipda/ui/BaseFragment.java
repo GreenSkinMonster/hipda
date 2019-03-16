@@ -155,8 +155,8 @@ public abstract class BaseFragment extends Fragment {
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View viewlayout = inflater.inflate(R.layout.dialog_send_sms, null);
 
-        final EditText etSmsContent = (EditText) viewlayout.findViewById(R.id.et_sms_content);
-        final EditText etRecipient = (EditText) viewlayout.findViewById(R.id.et_sms_receipient);
+        final EditText etSmsContent = viewlayout.findViewById(R.id.et_sms_content);
+        final EditText etRecipient = viewlayout.findViewById(R.id.et_sms_receipient);
         final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
 
         if (!TextUtils.isEmpty(uid)) {
