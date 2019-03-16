@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="net.jejer.hipda"
           xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="4392"
-          android:versionName="4.3.92"
-          xmlns:tools="http://schemas.android.com/tools">
+          android:versionCode="4393"
+          android:versionName="4.3.93">
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -105,10 +104,6 @@
         <activity
             android:name=".ui.SimpleListActivity"
             android:launchMode="singleTask"/>
-
-        <service
-            android:name="com.evernote.android.job.gcm.PlatformGcmService"
-            tools:node="remove"/>
 
     </application>
 
