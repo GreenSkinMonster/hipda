@@ -44,7 +44,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mSessionId = UUID.randomUUID().toString();
 
-        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+        try {
             if (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT == HiSettingsHelper.getInstance().getScreenOrietation()) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             } else if (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE == HiSettingsHelper.getInstance().getScreenOrietation()) {
@@ -52,6 +52,8 @@ public class BaseActivity extends AppCompatActivity {
             } else {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
             }
+        } catch (Exception ignored) {
+            //avoid android 8.0 bug
         }
 
         int theme = HiUtils.getThemeValue(this,
@@ -110,7 +112,8 @@ public class BaseActivity extends AppCompatActivity {
                 (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
         if (collapsible) {
             params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-                    | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+                    | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+                    | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
         } else {
             params.setScrollFlags(0);
         }
