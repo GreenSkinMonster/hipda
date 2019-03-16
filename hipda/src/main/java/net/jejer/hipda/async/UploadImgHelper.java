@@ -40,7 +40,7 @@ public class UploadImgHelper {
     private final static int MAX_IMAGE_FILE_SIZE = 800 * 1024;
     private static final int THUMB_SIZE = 256;
 
-    private final static int MAX_PIXELS = 2560 * 1600;
+    private final static int MAX_PIXELS = 2560 * 2560;
 
     private UploadImgListener mListener;
 
@@ -183,7 +183,7 @@ public class UploadImgHelper {
         int height = opts.outHeight;
 
         //inSampleSize is needed to avoid OOM
-        int be = (int) (Math.max(width, height) * 1.0 / 1500);
+        int be = width * height / MAX_PIXELS;
         if (be <= 0)
             be = 1; //be=1表示不缩放
         BitmapFactory.Options newOpts = new BitmapFactory.Options();
@@ -209,7 +209,8 @@ public class UploadImgHelper {
             Matrix matrix = new Matrix();
             if (imageFileInfo.getOrientation() > 0)
                 matrix.postRotate(imageFileInfo.getOrientation());
-            matrix.postScale(scale, scale);
+            if (scale < 1)
+                matrix.postScale(scale, scale);
 
             Bitmap scaledBitmap = Bitmap.createBitmap(newbitmap, 0, 0, newbitmap.getWidth(),
                     newbitmap.getHeight(), matrix, true);
