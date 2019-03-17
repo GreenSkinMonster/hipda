@@ -149,7 +149,7 @@ public class DetailBean {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < list.size(); i++) {
                 ContentAbs o = list.get(i);
-                if (o instanceof ContentText || o instanceof ContentQuote)
+                if (o instanceof ContentText || o instanceof ContentQuote || o instanceof ContentImg)
                     sb.append(o.getCopyText());
             }
             return Utils.trim(sb.toString());
@@ -161,6 +161,8 @@ public class DetailBean {
                 ContentAbs o = list.get(i);
                 if (o instanceof ContentText)
                     sb.append(o.getContent());
+                if (o instanceof ContentImg)
+                    sb.append("<i>[图片]</i>");
             }
             return sb.toString();
         }
