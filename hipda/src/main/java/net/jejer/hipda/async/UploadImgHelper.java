@@ -37,10 +37,10 @@ import okhttp3.Response;
 public class UploadImgHelper {
 
     private final static int MAX_QUALITY = 90;
-    private final static int MAX_IMAGE_FILE_SIZE = 800 * 1024;
     private static final int THUMB_SIZE = 256;
 
-    private final static int MAX_PIXELS = 2560 * 2560;
+    private int mMaxImageFileSize = 800 * 1024;
+    private int mMaxPixels = 2560 * 2560;
 
     private UploadImgListener mListener;
 
@@ -63,6 +63,12 @@ public class UploadImgHelper {
         mHash = hash;
         mUris = uris;
         mOriginal = original;
+
+        int maxUploadSize = HiSettingsHelper.getInstance().getMaxUploadFileSize();
+        if (maxUploadSize > 0 && mMaxImageFileSize > maxUploadSize) {
+            mMaxPixels = (int) (0.6 * mMaxPixels);
+            mMaxImageFileSize = maxUploadSize;
+        }
     }
 
     public interface UploadImgListener {
@@ -183,7 +189,7 @@ public class UploadImgHelper {
         int height = opts.outHeight;
 
         //inSampleSize is needed to avoid OOM
-        int be = width * height / MAX_PIXELS;
+        int be = width * height / mMaxPixels;
         if (be <= 0)
             be = 1; //be=1表示不缩放
         BitmapFactory.Options newOpts = new BitmapFactory.Options();
@@ -198,12 +204,12 @@ public class UploadImgHelper {
 
         //scale bitmap so later compress could run less times, once is the best result
         //rotate if needed
-        if (width * height > MAX_PIXELS
+        if (width * height > mMaxPixels
                 || imageFileInfo.getOrientation() > 0) {
 
             float scale = 1.0f;
-            if (width * height > MAX_PIXELS) {
-                scale = (float) Math.sqrt(MAX_PIXELS * 1.0 / (width * height));
+            if (width * height > mMaxPixels) {
+                scale = (float) Math.sqrt(mMaxPixels * 1.0 / (width * height));
             }
 
             Matrix matrix = new Matrix();
@@ -222,10 +228,10 @@ public class UploadImgHelper {
         int quality = MAX_QUALITY;
         baos.reset();
         newbitmap.compress(CompressFormat.JPEG, quality, baos);
-        while (baos.size() > MAX_IMAGE_FILE_SIZE) {
+        while (baos.size() > mMaxImageFileSize) {
             quality -= 10;
-            if (quality <= 0) {
-                mMessage = "无法压缩图片至指定大小 " + Utils.toSizeText(MAX_IMAGE_FILE_SIZE);
+            if (quality <= 50) {
+                mMessage = "无法压缩图片至指定大小 " + Utils.toSizeText(mMaxImageFileSize);
                 return null;
             }
             baos.reset();
@@ -265,7 +271,7 @@ public class UploadImgHelper {
         }
 
         //normal image
-        return fileSize <= MAX_IMAGE_FILE_SIZE && w * h <= MAX_PIXELS;
+        return fileSize <= mMaxImageFileSize && w * h <= mMaxPixels;
     }
 
     private static ByteArrayOutputStream readFileToStream(String file) {

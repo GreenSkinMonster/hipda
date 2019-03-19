@@ -7,8 +7,8 @@
     android:background="?attr/quote_background"
     android:orientation="vertical"
     android:paddingBottom="8dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
     android:paddingTop="8dp">
 
     <TextView
