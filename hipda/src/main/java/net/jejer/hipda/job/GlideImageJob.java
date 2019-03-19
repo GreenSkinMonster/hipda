@@ -67,10 +67,8 @@ public class GlideImageJob extends BaseJob {
                             if (mNetworkFetch) {
                                 Logger.e(e);
                                 imageInfo.setStatus(ImageInfo.FAIL);
-                                String message = "";
-                                if (HiSettingsHelper.getInstance().isErrorReportMode()) {
-                                    message = "url : " + mUrl + "\n\nmessage : " + e.getMessage();
-                                }
+                                String message = "url : " + mUrl + "\n\nmessage : " + (e != null ? e.getMessage() : "NULL");
+                                imageInfo.setMessage(message);
                                 EventBus.getDefault().post(new GlideImageEvent(mUrl, -1, ImageInfo.FAIL, message));
                             }
                             return false;

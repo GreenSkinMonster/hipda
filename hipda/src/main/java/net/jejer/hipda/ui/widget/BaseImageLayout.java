@@ -22,6 +22,7 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
+import net.jejer.hipda.utils.UIUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -161,8 +162,12 @@ public abstract class BaseImageLayout extends RelativeLayout {
         setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (getOnLongClickListener() != null)
+                ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+                if (imageInfo.isFail()) {
+                    UIUtils.showMessageDialog(getContext(), "错误信息", imageInfo.getMessage(), true);
+                } else if (imageInfo.isSuccess() && getOnLongClickListener() != null) {
                     getOnLongClickListener().onLongClick(view);
+                }
                 return true;
             }
         });
@@ -214,7 +219,6 @@ public abstract class BaseImageLayout extends RelativeLayout {
         if (!event.getImageUrl().equals(mUrl))
             return;
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        imageInfo.setMessage(event.getMessage());
 
         if (event.getStatus() == ImageInfo.SUCCESS || imageInfo.isSuccess()) {
             displayImage();
