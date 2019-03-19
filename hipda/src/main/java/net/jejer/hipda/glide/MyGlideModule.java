@@ -9,7 +9,7 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
+import com.bumptech.glide.load.engine.cache.ExternalPreferredCacheDiskCacheFactory;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.AppGlideModule;
 import com.bumptech.glide.request.RequestOptions;
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -45,7 +46,7 @@ public class MyGlideModule extends AppGlideModule {
 
 
     @Override
-    public void applyOptions(Context context, GlideBuilder gb) {
+    public void applyOptions(@NonNull Context context, @NonNull GlideBuilder gb) {
         String cacheSizeStr = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB, DEFAULT_CACHE_SIZE + "");
         int cacheSize = DEFAULT_CACHE_SIZE;
         if (TextUtils.isDigitsOnly(cacheSizeStr)) {
@@ -54,7 +55,7 @@ public class MyGlideModule extends AppGlideModule {
                 cacheSize = DEFAULT_CACHE_SIZE;
             }
         }
-        gb.setDiskCache(new ExternalCacheDiskCacheFactory(context, cacheSize * 1024 * 1024));
+        gb.setDiskCache(new ExternalPreferredCacheDiskCacheFactory(context, cacheSize * 1024 * 1024));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             gb.setDefaultRequestOptions(new RequestOptions().format(DecodeFormat.PREFER_RGB_565));
 
@@ -62,7 +63,7 @@ public class MyGlideModule extends AppGlideModule {
     }
 
     @Override
-    public void registerComponents(Context context, Glide glide, Registry registry) {
+    public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)

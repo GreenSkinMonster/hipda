@@ -362,6 +362,7 @@ public class Utils {
 
     public static void clearExternalCache() {
         try {
+            Glide.get(HiApplication.getAppContext()).clearDiskCache();
             File cache = HiApplication.getAppContext().getExternalCacheDir();
             if (cache != null && cache.isDirectory()) {
                 deleteDir(cache);
