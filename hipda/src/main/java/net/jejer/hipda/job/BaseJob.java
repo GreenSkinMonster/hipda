@@ -1,8 +1,11 @@
 package net.jejer.hipda.job;
 
-import com.path.android.jobqueue.Job;
-import com.path.android.jobqueue.Params;
-import com.path.android.jobqueue.RetryConstraint;
+import com.birbit.android.jobqueue.CancelReason;
+import com.birbit.android.jobqueue.Job;
+import com.birbit.android.jobqueue.Params;
+import com.birbit.android.jobqueue.RetryConstraint;
+
+import androidx.annotation.Nullable;
 
 /**
  * Created by GreenSkinMonster on 2016-03-28.
@@ -28,7 +31,7 @@ public abstract class BaseJob extends Job {
     }
 
     @Override
-    protected void onCancel() {
+    protected void onCancel(@CancelReason int cancelReason, @Nullable Throwable throwable) {
     }
 
     @Override

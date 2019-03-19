@@ -2,9 +2,9 @@ package net.jejer.hipda.job;
 
 import android.util.Log;
 
-import com.path.android.jobqueue.JobManager;
-import com.path.android.jobqueue.config.Configuration;
-import com.path.android.jobqueue.log.CustomLogger;
+import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.config.Configuration;
+import com.birbit.android.jobqueue.log.CustomLogger;
 
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Logger;
@@ -45,15 +45,19 @@ public class JobMgr {
             public void e(String text, Object... args) {
                 Log.e(TAG, String.format(text, args));
             }
+
+            @Override
+            public void v(String text, Object... args) {
+            }
         };
 
-        jobManager = new JobManager(HiApplication.getAppContext(), new Configuration.Builder(HiApplication.getAppContext())
+        jobManager = new JobManager(new Configuration.Builder(HiApplication.getAppContext())
                 .customLogger(logger)
                 .minConsumerCount(1)
                 .maxConsumerCount(3)
                 .loadFactor(2)
                 .build());
-        glideJobManager = new JobManager(HiApplication.getAppContext(), new Configuration.Builder(HiApplication.getAppContext())
+        glideJobManager = new JobManager(new Configuration.Builder(HiApplication.getAppContext())
                 .customLogger(logger)
                 .maxConsumerCount(5)
                 .loadFactor(1)
@@ -68,15 +72,15 @@ public class JobMgr {
         return JobMgr.SingletonHolder.INSTANCE;
     }
 
-    private long addJobImpl(BaseJob job) {
+    private void addJobImpl(BaseJob job) {
         if (job instanceof GlideImageJob) {
-            return glideJobManager.addJob(job);
+            glideJobManager.addJobInBackground(job);
         } else {
-            return jobManager.addJob(job);
+            jobManager.addJobInBackground(job);
         }
     }
 
-    public static long addJob(BaseJob job) {
-        return getInstance().addJobImpl(job);
+    public static void addJob(BaseJob job) {
+        getInstance().addJobImpl(job);
     }
 }

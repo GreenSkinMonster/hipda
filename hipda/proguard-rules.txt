@@ -39,6 +39,8 @@
     <fields>;
 }
 
+-dontwarn com.birbit.android.jobqueue.scheduling.Gcm*
+
 #EventBus 3.x
 -keepclassmembers class ** {
     @org.greenrobot.eventbus.Subscribe <methods>;

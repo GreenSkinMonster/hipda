@@ -42,7 +42,7 @@ public abstract class BaseImageLayout extends RelativeLayout {
 
     protected ImageView mImageView;
     protected DownloadProgressBar mProgressBar;
-    protected long mJobId;
+    protected String mJobId;
     protected String mUrl;
     protected ContentImg mContentImg;
 
@@ -78,7 +78,7 @@ public abstract class BaseImageLayout extends RelativeLayout {
             displayImage();
         } else if (imageInfo.isFail()) {
             onError();
-        } else if (imageInfo.isInProgress() && mJobId != 0) {
+        } else if (imageInfo.isInProgress() && mJobId != null) {
             onProgress(imageInfo);
         } else {
             if (mProgressBar.getVisibility() != View.VISIBLE)
@@ -94,11 +94,13 @@ public abstract class BaseImageLayout extends RelativeLayout {
             if (mProgressBar.getVisibility() != View.VISIBLE)
                 mProgressBar.setVisibility(View.VISIBLE);
         }
-        mJobId = JobMgr.addJob(new GlideImageJob(
+        GlideImageJob job = new GlideImageJob(
                 mUrl,
                 JobMgr.PRIORITY_LOW,
                 String.valueOf(hashCode()),
-                networkFetch));
+                networkFetch);
+        mJobId = job.getId();
+        JobMgr.addJob(job);
     }
 
     private void onProgress(ImageInfo imageInfo) {

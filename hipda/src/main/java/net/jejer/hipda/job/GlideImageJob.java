@@ -3,13 +3,14 @@ package net.jejer.hipda.job;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 
+import com.birbit.android.jobqueue.CancelReason;
+import com.birbit.android.jobqueue.Params;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.path.android.jobqueue.Params;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
@@ -146,7 +147,7 @@ public class GlideImageJob extends BaseJob {
     }
 
     @Override
-    protected void onCancel() {
+    protected void onCancel(@CancelReason int cancelReason, @Nullable Throwable throwable) {
         ImageContainer.markImageIdle(mUrl);
     }
 
