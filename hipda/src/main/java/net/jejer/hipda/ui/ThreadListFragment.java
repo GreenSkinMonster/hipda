@@ -538,9 +538,11 @@ public class ThreadListFragment extends BaseFragment
             int smsCount = NotiHelper.getCurrentNotification().getSmsCount();
             int threadCount = NotiHelper.getCurrentNotification().getThreadCount();
             if (smsCount > 0) {
+                mNotificationFab.hide(); //avoid desgin lib bug cause image lost
                 mNotificationFab.setImageResource(R.drawable.ic_mail_white_24dp);
                 mNotificationFab.show();
             } else if (threadCount > 0) {
+                mNotificationFab.hide(); //avoid desgin lib bug cause image lost
                 mNotificationFab.setImageResource(R.drawable.ic_notifications_white_24dp);
                 mNotificationFab.show();
             } else {
