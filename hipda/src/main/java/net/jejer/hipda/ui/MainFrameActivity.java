@@ -419,7 +419,6 @@ public class MainFrameActivity extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 UIUtils.hideSoftKeyboard(this);
-                //popFragment();
                 break;
             default:
                 break;
@@ -677,14 +676,12 @@ public class MainFrameActivity extends BaseActivity {
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LoginEvent event) {
-        if (event.mManual) {
-            //clearBackStacks(true);
-            Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
-            if (fg instanceof ThreadListFragment) {
-                fg.setHasOptionsMenu(true);
-                invalidateOptionsMenu();
+        Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+        if (fg instanceof ThreadListFragment) {
+            fg.setHasOptionsMenu(true);
+            invalidateOptionsMenu();
+            if (event.mManual)
                 ((ThreadListFragment) fg).onRefresh();
-            }
         }
         updateAccountHeader();
         dismissLoginDialog();
