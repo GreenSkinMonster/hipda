@@ -174,7 +174,7 @@ public class UpdateHelper {
         final String currentVersion = HiApplication.getAppVersion();
 
         if (!currentVersion.equals(installedVersion)) {
-            if (newer(currentVersion, "4.3.06")) {
+            if (newer("4.3.07", installedVersion)) {
                 boolean wifiAutoload = HiSettingsHelper.getInstance().getStringValue("PERF_IMAGE_LOAD_TYPE", "").equals("2");
                 boolean allAutoload = HiSettingsHelper.getInstance().getStringValue("PERF_IMAGE_LOAD_TYPE", "").equals("0");
                 boolean loadSmall = !HiSettingsHelper.getInstance().getStringValue("PERF_IMAGE_AUTO_LOAD_SIZE", "0").equals("0");
