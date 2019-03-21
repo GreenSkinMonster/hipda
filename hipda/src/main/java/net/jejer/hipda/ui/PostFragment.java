@@ -872,7 +872,7 @@ public class PostFragment extends BaseFragment {
             mEmojiPopup.addImage(image.getImgId(), image.getThumb());
             appendImage(image.getImgId());
         } else {
-            UIUtils.errorSnack(getView(), "图片上传失败：" + Utils.nullToText(event.message), event.mDetail);
+            UIUtils.errorSnack(getView(), "图片上传失败：" + Utils.nullToText(event.mMessage), event.mDetail);
         }
         updateImageInfo();
     }
@@ -896,11 +896,11 @@ public class PostFragment extends BaseFragment {
         events.add(event);
 
         for (ImageUploadEvent evt : events) {
-            if (evt.type == ImageUploadEvent.UPLOADING) {
-                imageProcess(evt.total, evt.current, evt.percentage);
-            } else if (evt.type == ImageUploadEvent.ITEM_DONE) {
+            if (evt.mType == ImageUploadEvent.UPLOADING) {
+                imageProcess(evt.mTotal, evt.mCurrent, evt.mPercentage);
+            } else if (evt.mType == ImageUploadEvent.ITEM_DONE) {
                 imageDone(evt);
-            } else if (evt.type == ImageUploadEvent.ALL_DONE) {
+            } else if (evt.mType == ImageUploadEvent.ALL_DONE) {
                 imageAllDone();
             }
         }

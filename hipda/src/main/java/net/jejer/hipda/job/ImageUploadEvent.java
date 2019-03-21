@@ -13,11 +13,10 @@ public class ImageUploadEvent extends BaseEvent {
 
     public Collection<ImageUploadEvent> holdEvents;
 
-    public int type;
-    public int total;
-    public int current;
-    public int percentage;
-    public String message;
+    public int mType;
+    public int mTotal;
+    public int mCurrent;
+    public int mPercentage;
     public UploadImage mImage;
 
 }

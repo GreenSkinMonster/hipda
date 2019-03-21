@@ -51,6 +51,7 @@ public class UploadImgHelper {
     private boolean mOriginal;
 
     private String mMessage = "";
+    private String mDetail = "";
     private Bitmap mThumb;
     private int mTotal;
     private int mCurrent;
@@ -74,7 +75,7 @@ public class UploadImgHelper {
     public interface UploadImgListener {
         void updateProgress(int total, int current, int percentage);
 
-        void itemComplete(Uri uri, int total, int current, String currentFileName, String message, String imgId, Bitmap thumbtail);
+        void itemComplete(Uri uri, int total, int current, String currentFileName, String message, String detail, String imgId, Bitmap thumbtail);
     }
 
     public void upload() {
@@ -90,7 +91,7 @@ public class UploadImgHelper {
             mCurrent = i++;
             mListener.updateProgress(mTotal, mCurrent, -1);
             String imgId = uploadImage(HiUtils.UploadImgUrl, post_param, uri);
-            mListener.itemComplete(uri, mTotal, mCurrent, mCurrentFileName, mMessage, imgId, mThumb);
+            mListener.itemComplete(uri, mTotal, mCurrent, mCurrentFileName, mMessage, mDetail, imgId, mThumb);
         }
     }
 
@@ -102,7 +103,7 @@ public class UploadImgHelper {
         ImageFileInfo imageFileInfo = CursorUtils.getImageFileInfo(mCtx, uri);
         mCurrentFileName = imageFileInfo.getFileName();
 
-        ByteArrayOutputStream baos = compressImage(uri, imageFileInfo);
+        ByteArrayOutputStream baos = getImageStream(uri, imageFileInfo);
         if (baos == null) {
             mMessage = "处理图片发生错误";
             return null;
@@ -134,16 +135,28 @@ public class UploadImgHelper {
             if (responseText.contains("DISCUZUPLOAD")) {
                 String[] s = responseText.split("\\|");
                 if (s.length < 3 || s[2].equals("0")) {
-                    mMessage = "无法获取图片ID";
+                    mMessage = "无效上传图片ID";
+                    mDetail = "原图限制：" + Utils.toSizeText(HiSettingsHelper.getInstance().getMaxUploadFileSize())
+                            + "\n压缩目标：" + Utils.toSizeText(mMaxImageFileSize)
+                            + "\n实际大小：" + Utils.toSizeText(baos.size())
+                            + "\n" + responseText;
                 } else {
                     imgId = s[2];
                 }
             } else {
                 mMessage = "无法获取图片ID";
+                mDetail = "原图限制：" + Utils.toSizeText(HiSettingsHelper.getInstance().getMaxUploadFileSize())
+                        + "\n压缩目标：" + Utils.toSizeText(mMaxImageFileSize)
+                        + "\n实际大小：" + Utils.toSizeText(baos.size())
+                        + "\n" + responseText;
             }
         } catch (Exception e) {
             Logger.e(e);
             mMessage = OkHttpHelper.getErrorMessage(e).getMessage();
+            mDetail = "原图限制：" + Utils.toSizeText(HiSettingsHelper.getInstance().getMaxUploadFileSize())
+                    + "\n压缩目标：" + Utils.toSizeText(mMaxImageFileSize)
+                    + "\n实际大小：" + Utils.toSizeText(baos.size())
+                    + "\n" + e.getMessage();
         } finally {
             try {
                 baos.close();
@@ -153,7 +166,7 @@ public class UploadImgHelper {
         return imgId;
     }
 
-    private ByteArrayOutputStream compressImage(Uri uri, ImageFileInfo imageFileInfo) {
+    private ByteArrayOutputStream getImageStream(Uri uri, ImageFileInfo imageFileInfo) {
         if (imageFileInfo.isGif()
                 && imageFileInfo.getFileSize() > HiSettingsHelper.getInstance().getMaxUploadFileSize()) {
             mMessage = "GIF图片大小不能超过" + Utils.toSizeText(HiSettingsHelper.getInstance().getMaxUploadFileSize());
@@ -242,7 +255,6 @@ public class UploadImgHelper {
         newbitmap.recycle();
         newbitmap = null;
 
-        System.gc();
         return baos;
     }
 

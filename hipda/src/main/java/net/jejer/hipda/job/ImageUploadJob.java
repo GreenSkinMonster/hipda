@@ -41,7 +41,7 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
 
         ImageUploadEvent event = new ImageUploadEvent();
         event.mSessionId = mSessionId;
-        event.type = ImageUploadEvent.ALL_DONE;
+        event.mType = ImageUploadEvent.ALL_DONE;
         event.holdEvents = mHoldEvents;
         EventBus.getDefault().postSticky(event);
     }
@@ -50,15 +50,15 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
     public void updateProgress(int total, int current, int percentage) {
         ImageUploadEvent event = new ImageUploadEvent();
         event.mSessionId = mSessionId;
-        event.type = ImageUploadEvent.UPLOADING;
-        event.total = total;
-        event.current = current;
-        event.percentage = percentage;
+        event.mType = ImageUploadEvent.UPLOADING;
+        event.mTotal = total;
+        event.mCurrent = current;
+        event.mPercentage = percentage;
         EventBus.getDefault().postSticky(event);
     }
 
     @Override
-    public void itemComplete(Uri uri, int total, int current, String currentFileName, String message, String imgId, Bitmap thumbtail) {
+    public void itemComplete(Uri uri, int total, int current, String currentFileName, String message, String detail, String imgId, Bitmap thumbtail) {
         UploadImage image = new UploadImage();
         image.setFileName(currentFileName);
         image.setImgId(imgId);
@@ -67,10 +67,11 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
 
         ImageUploadEvent event = new ImageUploadEvent();
         event.mSessionId = mSessionId;
-        event.type = ImageUploadEvent.ITEM_DONE;
-        event.total = total;
-        event.current = current;
-        event.message = message;
+        event.mType = ImageUploadEvent.ITEM_DONE;
+        event.mTotal = total;
+        event.mCurrent = current;
+        event.mMessage = message;
+        event.mDetail = detail;
         event.mImage = image;
 
         if (HiApplication.isAppVisible()) {
