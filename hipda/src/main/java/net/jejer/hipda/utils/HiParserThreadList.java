@@ -47,15 +47,28 @@ public class HiParserThreadList {
             }
         }
 
-        Elements tbodyES = doc.select("tbody[id]");
+        Elements tbodyES = doc.select("#moderate > table > tbody");
         for (int i = 0; i < tbodyES.size(); ++i) {
 
             threads.setParsed(true);
 
+            boolean isShowStickThreads = HiSettingsHelper.getInstance().isShowStickThreads();
+            if (!isShowStickThreads) {
+                // query the tbody has not id "版块主题"
+                String cssQuery = "#moderate > table > tbody:not([id])";
+                Elements tbody = doc.select(cssQuery);
+                if (tbody != null && tbody.size() > 0) {
+                    int index = tbodyES.indexOf(tbody.get(0));
+                    if (i < index) {
+                        continue;
+                    }
+                }
+            }
+
             Element tbodyE = tbodyES.get(i);
             ThreadBean thread = new ThreadBean();
 
-			/* title and tid */
+            /* title and tid */
             String[] idSpil = tbodyE.attr("id").split("_");
             if (idSpil.length != 2) {
                 continue;
@@ -64,13 +77,6 @@ public class HiParserThreadList {
             String idNum = idSpil[1];
 
             thread.setTid(idNum);
-            // is stick thread or normal thread
-            Boolean isStick = idType.startsWith("stickthread");
-            thread.setIsStick(isStick);
-
-            if (isStick && !HiSettingsHelper.getInstance().isShowStickThreads()) {
-                continue;
-            }
 
             Elements titleES = tbodyE.select("span#thread_" + idNum + " a");
             if (titleES.size() == 0) {
@@ -96,7 +102,7 @@ public class HiParserThreadList {
                 thread.setNew(imgSrc.contains("new"));
             }
 
-			/*  author, authorId and create_time  */
+            /*  author, authorId and create_time  */
             Elements authorES = tbodyE.select("td.author");
             if (authorES.size() == 0) {
                 continue;
@@ -133,7 +139,7 @@ public class HiParserThreadList {
                 thread.setTimeUpdate(threadUpdateTime);
             }
 
-			/*  comments and views  */
+            /*  comments and views  */
             Elements nums = tbodyE.select("td.nums");
             if (nums.size() == 0) {
                 continue;
