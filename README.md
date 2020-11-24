@@ -1,5 +1,8 @@
 # HiPDA·NG
 
+# **本项目停止维护**
+
+
 **HiPDA论坛非官方客户端**
 
 论坛帖子地址 https://www.hi-pda.com/forum/viewthread.php?tid=1579403
