@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.thebluealliance.spectrum.SpectrumPreferenceCompat;
+//import com.thebluealliance.spectrum.SpectrumPreferenceCompat;
 
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Utils;
@@ -139,9 +139,9 @@ public class BaseSettingFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
-        if (!SpectrumPreferenceCompat.onDisplayPreferenceDialog(preference, this)) {
-            super.onDisplayPreferenceDialog(preference);
-        }
+//        if (!SpectrumPreferenceCompat.onDisplayPreferenceDialog(preference, this)) {
+//            super.onDisplayPreferenceDialog(preference);
+//        }
     }
 
 }

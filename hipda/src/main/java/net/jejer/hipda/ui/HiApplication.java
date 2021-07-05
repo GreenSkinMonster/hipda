@@ -5,8 +5,6 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.crashlytics.android.Crashlytics;
-
 import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
@@ -15,7 +13,6 @@ import net.jejer.hipda.utils.HiUtils;
 
 import java.io.File;
 
-import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
@@ -40,8 +37,8 @@ public class HiApplication extends Application implements Application.ActivityLi
         context = getApplicationContext();
         registerActivityLifecycleCallbacks(this);
 
-        if (!BuildConfig.DEBUG)
-            Fabric.with(this, new Crashlytics());
+//        if (!BuildConfig.DEBUG)
+//            Fabric.with(this, new Crashlytics());
 
         updated = UpdateHelper.updateApp();
 

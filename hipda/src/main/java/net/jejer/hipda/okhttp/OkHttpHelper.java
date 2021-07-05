@@ -5,9 +5,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
-import com.crashlytics.android.Crashlytics;
 
-import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
@@ -139,8 +137,8 @@ public class OkHttpHelper {
                 }
             });
         } catch (Exception e) {
-            if (!BuildConfig.DEBUG)
-                Crashlytics.logException(e);
+//            if (!BuildConfig.DEBUG)
+//                Crashlytics.logException(e);
         }
     }
 

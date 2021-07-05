@@ -424,7 +424,7 @@ public class PostFragment extends BaseFragment {
     protected void showImageSelector() {
         mContentPosition = mEtContent.getSelectionStart();
 
-        Matisse.from(PostFragment.this)
+        Matisse.from(PostFragment.this.getActivity())
                 .choose(MimeType.ofImage())
                 .countable(true)
                 .maxSelectable(9)

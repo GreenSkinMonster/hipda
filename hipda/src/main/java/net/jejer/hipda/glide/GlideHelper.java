@@ -48,7 +48,7 @@ public class GlideHelper {
 
     public static void loadAvatar(BaseFragment fragment, ImageView view, String avatarUrl) {
         if (isOkToLoad(fragment)) {
-            loadAvatar(Glide.with(fragment), view, avatarUrl);
+            loadAvatar(Glide.with(fragment.getActivity()), view, avatarUrl);
         }
     }
 
