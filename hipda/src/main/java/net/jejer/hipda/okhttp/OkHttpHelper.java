@@ -99,8 +99,10 @@ public class OkHttpHelper {
             setupTrustAllCerts(builder);
         }
 
-        if (Logger.isDebug())
+        if (Logger.isDebug()) {
             builder.addInterceptor(new LoggingInterceptor());
+            builder.eventListener(new PrintingEventListener());
+        }
 
         mClient = builder.build();
         handler = new Handler(Looper.getMainLooper());

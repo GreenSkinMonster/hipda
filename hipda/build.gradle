@@ -49,7 +49,9 @@ dependencies {
 
     implementation 'org.jsoup:jsoup:1.11.3'
 
-    implementation 'com.squareup.okhttp3:okhttp:3.12.2'
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.1"))
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
 
     implementation 'com.google.code.gson:gson:2.8.2'
 
