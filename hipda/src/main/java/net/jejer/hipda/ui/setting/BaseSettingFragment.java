@@ -6,14 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-//import com.thebluealliance.spectrum.SpectrumPreferenceCompat;
-
-import net.jejer.hipda.utils.ColorHelper;
-import net.jejer.hipda.utils.Utils;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +15,14 @@ import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
+
+import com.thebluealliance.spectrum.SpectrumPreferenceCompat;
+
+import net.jejer.hipda.utils.ColorHelper;
+import net.jejer.hipda.utils.Utils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * base setting fragment
@@ -139,9 +139,9 @@ public class BaseSettingFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
-//        if (!SpectrumPreferenceCompat.onDisplayPreferenceDialog(preference, this)) {
-//            super.onDisplayPreferenceDialog(preference);
-//        }
+        if (!SpectrumPreferenceCompat.onDisplayPreferenceDialog(preference, this)) {
+            super.onDisplayPreferenceDialog(preference);
+        }
     }
 
 }

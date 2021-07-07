@@ -12,11 +12,13 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_theme"/>
 
-        <Preference
+        <com.thebluealliance.spectrum.SpectrumPreferenceCompat
             android:defaultValue="@color/md_blue_grey_700"
             android:key="PERF_PRIMARY_COLOR"
             android:summary="@string/pref_summary_primary_color"
-            android:title="@string/pref_title_primary_color"/>
+            android:title="@string/pref_title_primary_color"
+            app:spectrum_colors="@array/material_colors"
+            app:spectrum_outlineWidth="1px" />
 
         <ListPreference
             android:defaultValue="dark"
