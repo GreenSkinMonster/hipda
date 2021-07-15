@@ -55,7 +55,7 @@ public class HiParserThreadList {
             Element tbodyE = tbodyES.get(i);
             ThreadBean thread = new ThreadBean();
 
-			/* title and tid */
+            /* title and tid */
             String[] idSpil = tbodyE.attr("id").split("_");
             if (idSpil.length != 2) {
                 continue;
@@ -65,7 +65,12 @@ public class HiParserThreadList {
 
             thread.setTid(idNum);
             // is stick thread or normal thread
-            Boolean isStick = idType.startsWith("stickthread");
+            boolean isStick = idType.startsWith("stickthread");
+            Elements images = tbodyE.select("img");
+            if (images.size() > 0) {
+                String src = images.get(0).attr("src");
+                isStick = src.contains("/pin");
+            }
             thread.setIsStick(isStick);
 
             if (isStick && !HiSettingsHelper.getInstance().isShowStickThreads()) {
