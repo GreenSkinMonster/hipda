@@ -35,7 +35,6 @@ public class SettingMainFragment extends BaseSettingFragment {
     private int mPrimaryColor;
     private List<Integer> mForums;
     private Set<String> mFreqMenus;
-    private boolean mNavBarColored;
     private String mFont;
     static boolean mCacheCleared;
     private boolean mNightSwitchEnabled;
@@ -82,7 +81,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         mPrimaryColor = HiSettingsHelper.getInstance().getPrimaryColor();
         mForums = HiSettingsHelper.getInstance().getForums();
         mFreqMenus = HiSettingsHelper.getInstance().getFreqMenus();
-        mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
         mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
         mFont = HiSettingsHelper.getInstance().getFont();
         mForumServer = HiSettingsHelper.getInstance().getForumServer();
@@ -124,7 +122,6 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || (HiSettingsHelper.getInstance().isUsingLightTheme() && HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || !HiSettingsHelper.getInstance().getFreqMenus().equals(mFreqMenus)
-                || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
                 || !HiSettingsHelper.getInstance().getForumServer().equals(mForumServer)
                 || HiSettingsHelper.getInstance().isTrustAllCerts() != mTrustAllCerts) {

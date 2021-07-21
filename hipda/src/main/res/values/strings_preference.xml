@@ -241,7 +241,6 @@
     <string name="pref_title_theme">界面主题</string>
     <string name="pref_title_primary_color">界面主色调</string>
     <string name="pref_title_night_theme">夜间模式主题</string>
-    <string name="pref_title_navbar_colored">导航栏着色</string>
     <string name="pref_title_font">自定义字体</string>
     <string name="title_choose_font">选择字体 (*ttf, *.otf)</string>
     <string name="pref_title_forum">版面选择</string>

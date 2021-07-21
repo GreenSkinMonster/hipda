@@ -49,7 +49,6 @@ public class HiSettingsHelper {
     public static final String PERF_PRIMARY_COLOR = "PERF_PRIMARY_COLOR";
     public static final String PERF_NIGHT_THEME = "PERF_NIGHT_THEME";
     public static final String PERF_NIGHT_MODE = "PERF_NIGHT_MODE";
-    public static final String PERF_NAVBAR_COLORED = "PERF_NAVBAR_COLORED";
     public static final String PERF_FONT = "PERF_FONT";
     public static final String PERF_FORUMS = "PERF_FORUMS2";
     public static final String PERF_FREQ_MENUS = "PERF_FREQ_MENUS";
@@ -128,7 +127,6 @@ public class HiSettingsHelper {
     private int mPrimaryColor = 0;
     private String mNightTheme = "";
     private boolean mNightMode = false;
-    private boolean mNavBarColor = false;
     private String mFont = "";
     private List<Integer> mForums = new ArrayList<>();
     private Set<String> mFreqMenus = new HashSet<>();
@@ -247,7 +245,6 @@ public class HiSettingsHelper {
         getPrimaryColorFromPref();
         getNightThemeFromPref();
         isNightModeFromPref();
-        isNavBarColoredFromPref();
         getFontFromPref();
         isEncodeUtf8FromPref();
         getPostTextSizeAdjFromPref();
@@ -535,21 +532,6 @@ public class HiSettingsHelper {
         mFont = font;
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(PERF_FONT, font).apply();
-    }
-
-    public boolean isNavBarColored() {
-        return mNavBarColor;
-    }
-
-    private boolean isNavBarColoredFromPref() {
-        mNavBarColor = mSharedPref.getBoolean(PERF_NAVBAR_COLORED, false);
-        return mNavBarColor;
-    }
-
-    public void setNavBarColored(boolean navBarColored) {
-        mNavBarColor = navBarColored;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_NAVBAR_COLORED, navBarColored).apply();
     }
 
     public List<Integer> getForums() {

@@ -29,11 +29,6 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_night_theme"/>
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="PERF_NAVBAR_COLORED"
-            android:title="@string/pref_title_navbar_colored"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_avatar">
