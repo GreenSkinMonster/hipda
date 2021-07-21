@@ -222,7 +222,7 @@
         <item name="emojiBackground">@color/md_grey_900</item>
         <item name="swipe_background">@color/md_grey_800</item>
         <item name="swipe_color">@color/white</item>
-        <item name="dialog_background">#2B2C2D</item>
+        <item name="dialog_background">#2A2A2A</item>
 
         <!-- Matisse begin -->
         <item name="toolbar">@style/Toolbar.Dracula</item>
@@ -341,6 +341,17 @@
     <style name="ThemeTransitionAnimation">
         <item name="android:windowEnterAnimation">@anim/window_fade_in</item>
         <item name="android:windowExitAnimation">@anim/window_fade_out</item>
+    </style>
+
+    <style name="BottomDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <!--<item name="android:windowCloseOnTouchOutside">false</item>-->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:backgroundDimAmount">0.3</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
     </style>
 
 </resources>
