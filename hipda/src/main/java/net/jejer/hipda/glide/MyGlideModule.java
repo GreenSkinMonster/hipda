@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.Registry;
@@ -31,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -69,10 +68,6 @@ public class MyGlideModule extends AppGlideModule {
         builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
-
-        if (HiSettingsHelper.getInstance().isTrustAllCerts()) {
-            OkHttpHelper.setupTrustAllCerts(builder);
-        }
 
         if (Logger.isDebug()) {
             builder.addInterceptor(new LoggingInterceptor());

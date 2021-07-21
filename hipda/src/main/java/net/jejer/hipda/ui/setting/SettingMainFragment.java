@@ -39,7 +39,6 @@ public class SettingMainFragment extends BaseSettingFragment {
     static boolean mCacheCleared;
     private boolean mNightSwitchEnabled;
     private String mForumServer;
-    private boolean mTrustAllCerts;
     private boolean mCircleAvatar;
     private boolean mNotiTaskEnabled;
 
@@ -84,7 +83,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
         mFont = HiSettingsHelper.getInstance().getFont();
         mForumServer = HiSettingsHelper.getInstance().getForumServer();
-        mTrustAllCerts = HiSettingsHelper.getInstance().isTrustAllCerts();
         mCircleAvatar = HiSettingsHelper.getInstance().isCircleAvatar();
         mNotiTaskEnabled = HiSettingsHelper.getInstance().isNotiTaskEnabled();
 
@@ -123,8 +121,7 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || !HiSettingsHelper.getInstance().getFreqMenus().equals(mFreqMenus)
                 || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
-                || !HiSettingsHelper.getInstance().getForumServer().equals(mForumServer)
-                || HiSettingsHelper.getInstance().isTrustAllCerts() != mTrustAllCerts) {
+                || !HiSettingsHelper.getInstance().getForumServer().equals(mForumServer)) {
             HiApplication.setSettingStatus(HiApplication.RECREATE);
         } else {
             HiApplication.setSettingStatus(HiApplication.RELOAD);

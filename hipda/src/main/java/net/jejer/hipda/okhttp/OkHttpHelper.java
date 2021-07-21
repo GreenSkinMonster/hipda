@@ -24,16 +24,9 @@ import java.net.HttpCookie;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Cache;
 import okhttp3.CacheControl;
@@ -86,10 +79,6 @@ public class OkHttpHelper {
                 .cache(cache)
                 .cookieJar(cookieJar);
 
-        if (HiSettingsHelper.getInstance().isTrustAllCerts()) {
-            setupTrustAllCerts(builder);
-        }
-
         if (Logger.isDebug()) {
             builder.addInterceptor(new LoggingInterceptor());
             builder.eventListener(new PrintingEventListener());
@@ -101,38 +90,6 @@ public class OkHttpHelper {
 
     public OkHttpClient getClient() {
         return mClient;
-    }
-
-    public static void setupTrustAllCerts(OkHttpClient.Builder builder) {
-        try {
-            X509TrustManager trustManager = new X509TrustManager() {
-                @Override
-                public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                @Override
-                public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                @Override
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return new java.security.cert.X509Certificate[]{};
-                }
-            };
-            final SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, new TrustManager[]{trustManager}, null);
-            builder.sslSocketFactory(sslContext.getSocketFactory(),
-                    trustManager);
-            builder.hostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-        } catch (Exception e) {
-//            if (!BuildConfig.DEBUG)
-//                Crashlytics.logException(e);
-        }
     }
 
     private static class SingletonHolder {

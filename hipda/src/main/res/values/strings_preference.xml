@@ -265,8 +265,6 @@
     <string name="pref_cache_size_title">图片缓存大小</string>
     <string name="pref_image_host">图片服务器</string>
     <string name="pref_title_forum_server">论坛服务器</string>
-    <string name="pref_title_trust_all_certs">信任所有证书</string>
-    <string name="pref_summary_trust_all_certs">启用此项可能导致中间人攻击，详情请自行搜索</string>
     <string name="pref_summary_auto_load_thumb">缩略图为论坛自动生成，一般为200KB以下，点击缩略图或者保存、分享时会加载原图</string>
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
     <string name="pref_summary_primary_color">仅浅色主题有效</string>

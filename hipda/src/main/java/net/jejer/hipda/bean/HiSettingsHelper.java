@@ -87,7 +87,6 @@ public class HiSettingsHelper {
     public static final String PERF_FORUM_SERVER = "PERF_FORUM_SERVER";
     public static final String PERF_IMAGE_HOST = "PERF_IMAGE_HOST";
     public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
-    public static final String PERF_TRUST_ALL_CERTS = "PERF_TRUST_ALL_CERTS";
     public static final String PERF_MAX_UPLOAD_FILE_SIZE = "PERF_MAX_UPLOAD_FILE_SIZE";
     public static final String PERF_SHOW_TAIL = "PERF_SHOW_TAIL";
     public static final String PERF_CAMERA_PERM_ASKED = "PERF_CAMERA_PERM_ASKED";
@@ -990,10 +989,6 @@ public class HiSettingsHelper {
 
     public boolean isFabAutoHide() {
         return getBooleanValue(PERF_FAB_AUTO_HIDE, true);
-    }
-
-    public boolean isTrustAllCerts() {
-        return getBooleanValue(PERF_TRUST_ALL_CERTS, false);
     }
 
     public boolean isClickEffect() {
