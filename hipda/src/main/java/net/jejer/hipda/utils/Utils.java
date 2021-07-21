@@ -22,6 +22,8 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
 
+import androidx.annotation.AttrRes;
+
 import com.bumptech.glide.Glide;
 
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -40,6 +42,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -49,8 +53,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
-import androidx.annotation.AttrRes;
 
 /**
  * Common utils
@@ -633,6 +635,13 @@ public class Utils {
         } else {
             return Bitmap.Config.HARDWARE;
         }
+    }
+
+    public static String getStackTrace(Throwable e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
     }
 
 }

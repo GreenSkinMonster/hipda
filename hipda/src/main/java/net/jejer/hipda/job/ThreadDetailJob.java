@@ -65,36 +65,39 @@ public class ThreadDetailJob extends BaseJob {
         String eventMessage = "";
         String eventDetail = "";
 
-        for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
-            try {
-                String resp = fetchDetail();
-                if (resp != null) {
-                    if (!LoginHelper.checkLoggedin(mCtx, resp)) {
-                        int status = new LoginHelper(mCtx).login();
-                        if (status == Constants.STATUS_FAIL_ABORT) {
-                            eventStatus = Constants.STATUS_FAIL_RELOGIN;
-                            eventMessage = "请重新登录";
-                            break;
-                        }
-                    } else {
-                        Document doc = Jsoup.parse(resp);
-                        String tid = HiUtils.isValidId(mTid) ? mTid : Utils.getMiddleString(resp, "tid = parseInt('", "')");
-                        data = HiParserThreadDetail.parse(mCtx, doc, tid);
-                        if (data == null || data.getCount() == 0) {
-                            eventStatus = Constants.STATUS_FAIL_ABORT;
-                            eventMessage = "页面加载失败";
-                        }
+        try {
+            String resp = fetchDetail();
+            boolean loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+            if (!loggedin) {
+                for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
+                    int status = new LoginHelper(mCtx).login();
+                    if (status == Constants.STATUS_FAIL_ABORT) {
+                        eventStatus = Constants.STATUS_FAIL_RELOGIN;
+                        eventMessage = "请重新登录";
+                        break;
+                    } else if (status == Constants.STATUS_SUCCESS) {
+                        resp = fetchDetail();
+                        loggedin = LoginHelper.checkLoggedin(mCtx, resp);
                         break;
                     }
                 }
-            } catch (Exception e) {
-                NetworkError networkError = OkHttpHelper.getErrorMessage(e);
-                eventStatus = Constants.STATUS_FAIL;
-                eventMessage = networkError.getMessage();
-                eventDetail = networkError.getDetail();
-                if (isCancelled())
-                    break;
             }
+            if (loggedin) {
+                Document doc = Jsoup.parse(resp);
+                String tid = HiUtils.isValidId(mTid) ? mTid : Utils.getMiddleString(resp, "tid = parseInt('", "')");
+                data = HiParserThreadDetail.parse(mCtx, doc, tid);
+                if (data == null || data.getCount() == 0) {
+                    eventStatus = Constants.STATUS_FAIL_ABORT;
+                    eventMessage = "页面加载失败";
+                } else {
+                    eventStatus = Constants.STATUS_SUCCESS;
+                }
+            }
+        } catch (Exception e) {
+            NetworkError networkError = OkHttpHelper.getErrorMessage(e);
+            eventStatus = Constants.STATUS_FAIL;
+            eventMessage = networkError.getMessage();
+            eventDetail = networkError.getDetail();
         }
 
         long delta = System.currentTimeMillis() - start;

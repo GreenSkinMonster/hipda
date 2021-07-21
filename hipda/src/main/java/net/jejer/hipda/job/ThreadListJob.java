@@ -53,33 +53,38 @@ public class ThreadListJob extends BaseJob {
         String eventMessage = "";
         String eventDetail = "";
 
-        for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
-            try {
-                String resp = fetchForumList();
-                if (!LoginHelper.checkLoggedin(mCtx, resp)) {
+        try {
+            String resp = fetchForumList();
+            boolean loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+            if (!loggedin) {
+                for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
                     int status = new LoginHelper(mCtx).login();
                     if (status == Constants.STATUS_FAIL_ABORT) {
                         eventStatus = Constants.STATUS_FAIL_RELOGIN;
                         eventMessage = "请重新登录";
                         break;
+                    } else if (status == Constants.STATUS_SUCCESS) {
+                        resp = fetchForumList();
+                        loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+                        break;
                     }
-                } else {
-                    Document doc = Jsoup.parse(resp);
-                    data = HiParserThreadList.parse(mCtx, doc);
-                    if (data == null || !data.isParsed()) {
-                        eventStatus = Constants.STATUS_FAIL_ABORT;
-                        eventMessage = "页面加载失败";
-                    }
-                    break;
                 }
-            } catch (Exception e) {
-                NetworkError networkError = OkHttpHelper.getErrorMessage(e);
-                eventStatus = Constants.STATUS_FAIL;
-                eventMessage = networkError.getMessage();
-                eventDetail = networkError.getDetail();
-                if (isCancelled())
-                    break;
             }
+            if (loggedin) {
+                Document doc = Jsoup.parse(resp);
+                data = HiParserThreadList.parse(mCtx, doc);
+                if (!data.isParsed()) {
+                    eventStatus = Constants.STATUS_FAIL_ABORT;
+                    eventMessage = "页面加载失败";
+                } else {
+                    eventStatus = Constants.STATUS_SUCCESS;
+                }
+            }
+        } catch (Exception e) {
+            NetworkError networkError = OkHttpHelper.getErrorMessage(e);
+            eventStatus = Constants.STATUS_FAIL;
+            eventMessage = networkError.getMessage();
+            eventDetail = networkError.getDetail();
         }
 
         mEvent.mData = data;

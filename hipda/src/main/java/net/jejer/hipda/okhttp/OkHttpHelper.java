@@ -46,7 +46,7 @@ import okhttp3.Response;
 public class OkHttpHelper {
 
     public final static int NETWORK_TIMEOUT_SECS = 10;
-    public final static int MAX_RETRY_TIMES = 3;
+    public final static int MAX_RETRY_TIMES = 2;
 
     public final static int FORCE_NETWORK = 1;
     public final static int FORCE_CACHE = 2;
@@ -81,8 +81,9 @@ public class OkHttpHelper {
 
         if (Logger.isDebug()) {
             builder.addInterceptor(new LoggingInterceptor());
-            builder.eventListener(new PrintingEventListener());
+//            builder.eventListener(new PrintingEventListener());
         }
+        builder.addInterceptor(new RetryIntercepter());
 
         mClient = builder.build();
         handler = new Handler(Looper.getMainLooper());
@@ -303,7 +304,9 @@ public class OkHttpHelper {
                     msg = "错误代码 (" + errCode + ")";
             }
         }
-        return new NetworkError(errCode, msg, e.getClass().getName() + "\n" + e.getMessage());
+        return new NetworkError(errCode, msg, e.getClass().getName()
+                + "\n" + e.getMessage()
+                + "\n" + Utils.getStackTrace(e));
     }
 
     public void clearCookies() {

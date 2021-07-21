@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.Registry;
@@ -16,10 +18,10 @@ import com.bumptech.glide.request.RequestOptions;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageInfo;
-import net.jejer.hipda.okhttp.LoggingInterceptor;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.okhttp.ProgressListener;
 import net.jejer.hipda.okhttp.ProgressResponseBody;
+import net.jejer.hipda.okhttp.RetryIntercepter;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 
@@ -29,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -70,9 +71,10 @@ public class MyGlideModule extends AppGlideModule {
                 .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS);
 
         if (Logger.isDebug()) {
-            builder.addInterceptor(new LoggingInterceptor());
+            //builder.addInterceptor(new LoggingInterceptor());
             //builder.eventListener(new PrintingEventListener());
         }
+        builder.addInterceptor(new RetryIntercepter());
 
         final ProgressListener progressListener = new ProgressListener() {
             @Override

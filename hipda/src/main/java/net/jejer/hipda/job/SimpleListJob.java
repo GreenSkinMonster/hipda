@@ -112,30 +112,34 @@ public class SimpleListJob extends BaseJob {
                 data.add(bean);
             }
         } else {
-            for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
-                try {
-                    String resp = fetchSimpleList(mType);
-                    if (!LoginHelper.checkLoggedin(mCtx, resp)) {
+            try {
+                String resp = fetchSimpleList(mType);
+                boolean loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+                if (!loggedin) {
+                    for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
                         int status = new LoginHelper(mCtx).login();
                         if (status == Constants.STATUS_FAIL_ABORT) {
                             eventStatus = Constants.STATUS_FAIL_RELOGIN;
                             eventMessage = "请重新登录";
                             break;
+                        } else if (status == Constants.STATUS_SUCCESS) {
+                            resp = fetchSimpleList(mType);
+                            loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+                            break;
                         }
-                    } else {
-                        Document doc = Jsoup.parse(resp);
-                        data = HiParser.parseSimpleList(mCtx, mType, doc, (mType == TYPE_SEARCH && mSearchBean != null && mSearchBean.isFulltext()));
-                        formhash = HiParser.parseFormhash(doc);
-                        break;
                     }
-                } catch (Exception e) {
-                    NetworkError message = OkHttpHelper.getErrorMessage(e);
-                    eventStatus = Constants.STATUS_FAIL;
-                    eventMessage = message.getMessage();
-                    eventDetail = message.getDetail();
-                    if (isCancelled())
-                        break;
                 }
+                if (loggedin) {
+                    Document doc = Jsoup.parse(resp);
+                    data = HiParser.parseSimpleList(mCtx, mType, doc, (mType == TYPE_SEARCH && mSearchBean != null && mSearchBean.isFulltext()));
+                    formhash = HiParser.parseFormhash(doc);
+                    eventStatus = Constants.STATUS_SUCCESS;
+                }
+            } catch (Exception e) {
+                NetworkError message = OkHttpHelper.getErrorMessage(e);
+                eventStatus = Constants.STATUS_FAIL;
+                eventMessage = message.getMessage();
+                eventDetail = message.getDetail();
             }
         }
 
