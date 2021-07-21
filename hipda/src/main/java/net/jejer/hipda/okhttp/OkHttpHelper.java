@@ -6,6 +6,8 @@ import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
 
+import net.gotev.cookiestore.SharedPreferencesCookieStore;
+import net.gotev.cookiestore.okhttp.JavaNetCookieJar;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
@@ -15,6 +17,10 @@ import net.jejer.hipda.utils.Utils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
@@ -33,10 +39,8 @@ import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -59,33 +63,20 @@ public class OkHttpHelper {
 
     public static final String ERROR_CODE_PREFIX = "Unexpected code ";
 
-    private OkHttpClient mClient;
-    private PersistentCookieStore mCookiestore;
-    private CookieJar mCookieJar;
+    private final OkHttpClient mClient;
+    private final CookieStore mCookiestore;
 
-    private Handler handler;
+    private final Handler handler;
 
     private final static CacheControl PREFER_CACHE_CTL = new CacheControl.Builder()
             .maxStale(3 * 60, TimeUnit.SECONDS)
             .build();
 
     private OkHttpHelper() {
-        mCookiestore = new PersistentCookieStore(HiApplication.getAppContext(), HiUtils.CookieDomain);
-        mCookieJar = new CookieJar() {
-            @Override
-            public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                if (cookies != null && cookies.size() > 0) {
-                    for (Cookie item : cookies) {
-                        mCookiestore.add(url, item);
-                    }
-                }
-            }
+        mCookiestore = new SharedPreferencesCookieStore(HiApplication.getAppContext(), "cookie");
+        CookieManager cookieManager = new CookieManager(mCookiestore, CookiePolicy.ACCEPT_ALL);
+        CookieJar cookieJar = new JavaNetCookieJar(cookieManager);
 
-            @Override
-            public List<Cookie> loadForRequest(HttpUrl url) {
-                return mCookiestore.get(url);
-            }
-        };
         Cache cache = new Cache(Glide.getPhotoCacheDir(HiApplication.getAppContext(), CACHE_DIR_NAME), 10 * 1024 * 1024);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -93,7 +84,7 @@ public class OkHttpHelper {
                 .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .cache(cache)
-                .cookieJar(mCookieJar);
+                .cookieJar(cookieJar);
 
         if (HiSettingsHelper.getInstance().isTrustAllCerts()) {
             setupTrustAllCerts(builder);
@@ -364,9 +355,9 @@ public class OkHttpHelper {
     }
 
     public boolean isLoggedIn() {
-        List<Cookie> cookies = mCookiestore.getCookies();
-        for (Cookie cookie : cookies) {
-            if ("cdb_auth".equals(cookie.name())) {
+        List<HttpCookie> cookies = mCookiestore.getCookies();
+        for (HttpCookie cookie : cookies) {
+            if ("cdb_auth".equals(cookie.getName())) {
                 return true;
             }
         }
@@ -374,10 +365,10 @@ public class OkHttpHelper {
     }
 
     public String getAuthCookie() {
-        List<Cookie> cookies = mCookiestore.getCookies();
-        for (Cookie cookie : cookies) {
-            if ("cdb_auth".equals(cookie.name())) {
-                return cookie.value();
+        List<HttpCookie> cookies = mCookiestore.getCookies();
+        for (HttpCookie cookie : cookies) {
+            if ("cdb_auth".equals(cookie.getName())) {
+                return cookie.getValue();
             }
         }
         return null;
