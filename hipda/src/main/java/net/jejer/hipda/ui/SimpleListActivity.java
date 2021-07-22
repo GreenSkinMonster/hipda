@@ -49,6 +49,16 @@ public class SimpleListActivity extends SwipeBaseActivity {
     }
 
     @Override
+    public void finish() {
+        Fragment fg = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
+        if (fg instanceof SearchFragment) {
+            finishWithNoSlide();
+        } else {
+            super.finish();
+        }
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (intent != null) {

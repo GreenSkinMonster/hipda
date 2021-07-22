@@ -226,7 +226,6 @@ public class MainFrameActivity extends BaseActivity {
                 .build();
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
-        drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SEARCH));
         drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SMS));
         drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.THREAD_NOTIFY));
         drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.HISTORIES));
@@ -477,9 +476,6 @@ public class MainFrameActivity extends BaseActivity {
                 return false;
 
             switch ((int) iDrawerItem.getIdentifier()) {
-                case Constants.DRAWER_SEARCH:
-                    FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_SEARCH);
-                    break;
                 case Constants.DRAWER_NEW_POSTS:
                     FragmentUtils.showSimpleListActivity(MainFrameActivity.this, false, SimpleListJob.TYPE_NEW_POSTS);
                     break;
@@ -689,6 +685,7 @@ public class MainFrameActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSIONS_REQUEST_CODE_STORAGE: {
                 // If request is cancelled, the result arrays are empty.

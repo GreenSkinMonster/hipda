@@ -25,6 +25,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import net.jejer.hipda.BuildConfig;
@@ -38,11 +44,6 @@ import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.ui.PostActivity;
 
 import java.io.File;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 
 /**
  * Created by GreenSkinMonster on 2016-04-05.
@@ -358,6 +359,24 @@ public class UIUtils {
         ClipboardManager clipboard = (ClipboardManager) HiApplication.getAppContext().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", text);
         clipboard.setPrimaryClip(clip);
+    }
+
+    public static void trimChildMargins(@NonNull ViewGroup vg) {
+        final int childCount = vg.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = vg.getChildAt(i);
+
+            if (child instanceof ViewGroup) {
+                trimChildMargins((ViewGroup) child);
+            }
+
+            final ViewGroup.LayoutParams lp = child.getLayoutParams();
+            if (lp instanceof ViewGroup.MarginLayoutParams) {
+                ((ViewGroup.MarginLayoutParams) lp).leftMargin = 0;
+            }
+            child.setBackground(null);
+            child.setPadding(0, 0, 0, 0);
+        }
     }
 
 }

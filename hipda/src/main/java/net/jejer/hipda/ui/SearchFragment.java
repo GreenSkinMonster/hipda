@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -78,9 +79,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private final int mType = SimpleListJob.TYPE_SEARCH;
+    public static final String ARG_QUERY = "QUERY";
+    public static final String ARG_FID = "FID";
+
     private static final String PREFERENCE_NAME = "saved_historty";
     private static final String PREFERENCE_KEY = "queries";
-    private static final int MAX_HISTORY = 6;
+    private static final int MAX_HISTORY = 5;
 
     private XRecyclerView mRecyclerView;
     private SimpleListAdapter mSimpleListAdapter;
@@ -155,6 +159,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
         mIbDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_close).sizeDp(12).color(Color.GRAY);
 
         loadQueries();
+
     }
 
     @Override
@@ -178,6 +183,17 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
         mSpAdapter.setEntryValues(getForumIds());
         mSpAdapter.setEntries(getForumNames());
         mSpForum.setAdapter(mSpAdapter);
+        mSpForum.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSearchBean.setForum(mSpAdapter.getEntryValue(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         mEtAuthor = (EditText) view.findViewById(R.id.et_author);
         mEtAuthor.setOnEditorActionListener(mSearchEditorActionListener);
@@ -212,26 +228,6 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
         mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
         mLoadingView.setState(ContentLoadingView.NO_DATA);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //hide then show mSearchFilterLayout, cannot get it's height on first show
-                //so I use a fixed value here, tell me if you know a better way
-                mSearchFilterLayout.animate()
-                        .alpha(0)
-                        .setDuration(100)
-                        .translationYBy(-300)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                mSearchFilterLayout.setVisibility(View.GONE);
-                                mSearchFilterAnimating = false;
-                                showSearchFilter();
-                            }
-                        });
-            }
-        }, 150);
         return view;
     }
 
@@ -269,7 +265,10 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
             }
         });
 
+        mSearchView.setMaxWidth(Integer.MAX_VALUE);
+        UIUtils.trimChildMargins(mSearchView);
         ImageView closeButton = (ImageView) mSearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
+        closeButton.setPadding(0, 0, Utils.dpToPx(4), 0);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -281,17 +280,50 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
                     mSearchView.onActionViewCollapsed();
                     mSearchMenuItem.collapseActionView();
                     mEtAuthor.setText("");
-                    mSpForum.setSelection(0);
                     mCbFulltext.setChecked(false);
                     hideSearchFilter();
                 } else {
                     mSearchTextView.setText("");
                     mEtAuthor.setText("");
-                    mSpForum.setSelection(0);
                     mCbFulltext.setChecked(false);
                 }
             }
         });
+
+        Bundle args = getArguments();
+        String query = "";
+        if (args != null) {
+            int fid = args.containsKey(ARG_FID) ? getArguments().getInt(ARG_FID) : 0;
+            query = args.containsKey(ARG_QUERY) ? args.getString(ARG_QUERY) : "";
+            mSearchView.setQuery(query, false);
+            mSearchBean.setForum(fid + "");
+            restoreSpForum();
+        }
+        if (mSearchView.getQuery().length() > 0) {
+            makeSearchBean();
+            startSearch();
+        } else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //hide then show mSearchFilterLayout, cannot get it's height on first show
+                    //so I use a fixed value here, tell me if you know a better way
+                    mSearchFilterLayout.animate()
+                            .alpha(0)
+                            .setDuration(100)
+                            .translationYBy(-300)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    mSearchFilterLayout.setVisibility(View.GONE);
+                                    mSearchFilterAnimating = false;
+                                    showSearchFilter();
+                                }
+                            });
+                }
+            }, 150);
+        }
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -330,6 +362,11 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     private void restoreSearchBean() {
         mEtAuthor.setText(mSearchBean.getAuthor());
         mCbFulltext.setChecked(mSearchBean.isFulltext());
+        restoreSpForum();
+        mSearchView.setQuery(mSearchBean.getQuery(), false);
+    }
+
+    private void restoreSpForum() {
         int position = 0;
         int i = 0;
         for (String fid : getForumIds()) {
@@ -340,7 +377,6 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
             i++;
         }
         mSpForum.setSelection(position);
-        mSearchView.setQuery(mSearchBean.getQuery(), false);
     }
 
     @Override
@@ -357,6 +393,16 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     public void onPause() {
         EventBus.getDefault().unregister(this);
         super.onPause();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (!mSearchView.isIconified()) {
+            collapseSearchView();
+            hideSearchFilter();
+            return true;
+        }
+        return false;
     }
 
     private void refresh() {
@@ -403,6 +449,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
             return;
 
         mSearchFilterLayout.setVisibility(View.VISIBLE);
+        restoreSpForum();
         mSearchFilterLayout.animate()
                 .setDuration(250)
                 .alpha(1)
@@ -570,7 +617,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     private String[] getForumIds() {
         List<Integer> forums = HiSettingsHelper.getInstance().getForums();
         String[] forumIds = new String[forums.size() + 1];
-        forumIds[0] = "all";
+        forumIds[0] = "0";
         int i = 1;
         for (Integer id : forums) {
             forumIds[i++] = String.valueOf(id);

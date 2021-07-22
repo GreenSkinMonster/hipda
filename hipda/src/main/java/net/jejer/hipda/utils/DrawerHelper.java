@@ -17,7 +17,6 @@ import net.jejer.hipda.R;
 public class DrawerHelper {
 
     public enum DrawerItem {
-        SEARCH(Constants.DRAWER_SEARCH, R.string.title_drawer_search, GoogleMaterial.Icon.gmd_search),
         NEW_POSTS(Constants.DRAWER_NEW_POSTS, R.string.title_drawer_new_posts, GoogleMaterial.Icon.gmd_wb_sunny),
         MY_POST(Constants.DRAWER_MYPOST, R.string.title_drawer_mypost, GoogleMaterial.Icon.gmd_assignment_ind),
         MY_REPLY(Constants.DRAWER_MYREPLY, R.string.title_drawer_myreply, GoogleMaterial.Icon.gmd_assignment),

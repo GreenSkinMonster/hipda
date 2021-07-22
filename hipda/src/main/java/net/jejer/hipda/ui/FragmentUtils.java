@@ -6,19 +6,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import net.jejer.hipda.R;
-import net.jejer.hipda.async.PostHelper;
-import net.jejer.hipda.job.SimpleListJob;
-import net.jejer.hipda.utils.Constants;
-import net.jejer.hipda.utils.HiUtils;
-import net.jejer.hipda.utils.Utils;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import net.jejer.hipda.R;
+import net.jejer.hipda.async.PostHelper;
+import net.jejer.hipda.job.SimpleListJob;
+import net.jejer.hipda.utils.Constants;
+import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Utils;
 
 /**
  * utils to deal with fragments
@@ -268,6 +268,14 @@ public class FragmentUtils {
         Intent intent = new Intent(activity, SmsActivity.class);
         intent.putExtra(SmsFragment.ARG_AUTHOR, author);
         intent.putExtra(SmsFragment.ARG_UID, uid);
+        ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, skipEnterAnim));
+    }
+
+    public static void showSearchActivity(Activity activity, boolean skipEnterAnim, int fid, String query) {
+        Intent intent = new Intent(activity, SimpleListActivity.class);
+        intent.putExtra(SimpleListFragment.ARG_TYPE, SimpleListJob.TYPE_SEARCH);
+        intent.putExtra(SearchFragment.ARG_FID, fid);
+        intent.putExtra(SearchFragment.ARG_QUERY, query);
         ActivityCompat.startActivity(activity, intent, getAnimBundle(activity, skipEnterAnim));
     }
 

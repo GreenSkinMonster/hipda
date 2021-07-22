@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
@@ -97,6 +98,7 @@ public class ThreadListFragment extends BaseFragment
 
     private MenuItem mForumTypeMenuItem;
     private final int[] mFidHolder = new int[1];
+    private MenuItem mSearchMenuItem;
 
     private ThreadListEventCallback mEventCallback = new ThreadListEventCallback();
 
@@ -232,12 +234,18 @@ public class ThreadListFragment extends BaseFragment
             if (typeIdIndex == -1) typeIdIndex = 0;
             if (mCtx != null)
                 mForumTypeMenuItem.setIcon(new IconicsDrawable(mCtx, HiUtils.BS_TYPE_ICONS[typeIdIndex])
-                        .color(HiSettingsHelper.getInstance().getToolbarTextColor()).actionBar());
+                        .color(HiSettingsHelper.getInstance().getToolbarTextColor()).sizeDp(18));
         }
+
+        mSearchMenuItem = menu.findItem(R.id.action_search);
+        mSearchMenuItem.setIcon(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_search)
+                .color(HiSettingsHelper.getInstance().getToolbarTextColor()).sizeDp(18));
+
         MenuItem showStickItem = menu.findItem(R.id.action_show_stick_threads);
         showStickItem.setChecked(HiSettingsHelper.getInstance().isShowStickThreads());
         super.onCreateOptionsMenu(menu, inflater);
     }
+
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
@@ -251,9 +259,6 @@ public class ThreadListFragment extends BaseFragment
             case android.R.id.home:
                 // Implemented in activity
                 return false;
-//            case R.id.action_refresh_list:
-//                refresh();
-//                return true;
             case R.id.action_thread_list_settings:
                 showThreadListSettingsDialog();
                 return true;
@@ -262,6 +267,9 @@ public class ThreadListFragment extends BaseFragment
                 return true;
             case R.id.action_filter_by_type:
                 showForumTypesDialog();
+                return true;
+            case R.id.action_search:
+                FragmentUtils.showSearchActivity(getActivity(), true, mForumId, "");
                 return true;
             case R.id.action_order_by:
                 if (!mInloading) {

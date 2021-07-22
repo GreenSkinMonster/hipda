@@ -11,7 +11,6 @@ public class Constants {
     public static final int STATUS_FAIL_ABORT = 8;
     public static final int STATUS_FAIL_RELOGIN = 9;
 
-    public static final int DRAWER_SEARCH = 1000;
     public static final int DRAWER_MYPOST = 1001;
     public static final int DRAWER_MYREPLY = 1002;
     public static final int DRAWER_FAVORITES = 1003;

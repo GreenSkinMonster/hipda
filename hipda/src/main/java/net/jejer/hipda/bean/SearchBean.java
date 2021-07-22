@@ -13,7 +13,7 @@ public class SearchBean {
     private String mQuery = "";
     private String mAuthor = "";
     private String mUid = "";
-    private String mForum = "all";
+    private String mForum = "0";
     private String mSearchId = "";
     private boolean mFulltext;
 

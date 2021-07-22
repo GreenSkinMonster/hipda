@@ -2,18 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--
-    <item
-        android:id="@+id/action_refresh_list"
-        android:icon="?icon_refresh"
-        android:title="@string/action_refresh"
-        app:showAsAction="ifRoom" />
-      -->
-
     <item
         android:id="@+id/action_filter_by_type"
         android:title="@string/action_filter_by_type"
         android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_search"
+        android:title="@string/action_search"
         app:showAsAction="always" />
 
     <item
@@ -23,7 +20,7 @@
     <item
         android:id="@+id/action_order_by"
         android:checkable="true"
-        android:title="@string/action_order_by_thread"/>
+        android:title="@string/action_order_by_thread" />
 
     <item
         android:id="@+id/action_show_stick_threads"
