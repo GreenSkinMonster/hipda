@@ -76,7 +76,7 @@ dependencies {
 
     //implementation 'com.zhihu.android:matisse:0.5.2-beta4'
     implementation 'it.sephiroth.android.library.imagezoom:library:1.0.4'
-    implementation(name: 'matisse-release-0.5.2-beta4', ext: 'aar')
+    implementation(name: 'matisse-release-0.5.3-beta3', ext: 'aar')
 
     //implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation(name: 'calligraphy-release-2.3.0', ext: 'aar')

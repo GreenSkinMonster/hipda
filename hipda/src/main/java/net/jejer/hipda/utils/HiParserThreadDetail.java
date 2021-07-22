@@ -561,6 +561,8 @@ public class HiParserThreadDetail {
                 content.addText("<img src=\"" + src + "\"/>");
         } else if (src.contains(HiUtils.ForumImagePattern)) {
             //skip common/default/attach icons
+        } else if (src.contains("data:image/")) {
+            //skip base64 images
         } else if (src.contains("://")) {
             //external image
             content.addImg(src);
