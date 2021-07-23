@@ -304,9 +304,11 @@ public class OkHttpHelper {
                     msg = "错误代码 (" + errCode + ")";
             }
         }
-        return new NetworkError(errCode, msg, e.getClass().getName()
-                + "\n" + e.getMessage()
-                + "\n" + Utils.getStackTrace(e));
+        String errorMsg = e.getClass().getName()
+                + "\n" + e.getMessage();
+        if (HiSettingsHelper.getInstance().isErrorReportMode())
+            errorMsg += "\n" + Utils.getStackTrace(e);
+        return new NetworkError(errCode, msg, errorMsg);
     }
 
     public void clearCookies() {

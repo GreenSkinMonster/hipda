@@ -246,7 +246,7 @@
     <string name="pref_title_forum">版面选择</string>
     <string name="pref_title_freq_menus">展开常用菜单</string>
     <string name="pref_screen_orientation">屏幕方向</string>
-    <string name="pref_error_report_mode">显示详细错误信息</string>
+    <string name="pref_error_report_mode">排错调试模式</string>
     <string name="pref_title_about">关于HiPDA·NG</string>
     <string name="pref_title_check_update">检查更新</string>
     <string name="pref_title_support">客户端发布帖</string>
@@ -268,5 +268,6 @@
     <string name="pref_summary_auto_load_thumb">缩略图为论坛自动生成，一般为200KB以下，点击缩略图或者保存、分享时会加载原图</string>
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
     <string name="pref_summary_primary_color">仅浅色主题有效</string>
+    <string name="pref_summary_error_report">显示更详细的错误信息，程序崩溃时尝试将错误信息保存至粘贴板</string>
 
 </resources>

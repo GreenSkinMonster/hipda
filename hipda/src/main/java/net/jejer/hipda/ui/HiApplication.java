@@ -5,11 +5,11 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 
-import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.SimpleExceptionHandler;
 
 import java.io.File;
 
@@ -37,8 +37,9 @@ public class HiApplication extends Application implements Application.ActivityLi
         context = getApplicationContext();
         registerActivityLifecycleCallbacks(this);
 
-//        if (!BuildConfig.DEBUG)
-//            Fabric.with(this, new Crashlytics());
+        if (HiSettingsHelper.getInstance().isErrorReportMode()) {
+            Thread.setDefaultUncaughtExceptionHandler(new SimpleExceptionHandler());
+        }
 
         updated = UpdateHelper.updateApp();
 
