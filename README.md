@@ -15,7 +15,7 @@ HiPDA·NG是使用MD风格的版本，即master分支，为目前主要维护版
 
 
 多谢原作者 jejer 的分享   
-原项目发布于 http://www.hi-pda.com/forum/viewthread.php?tid=1408844   
+原项目发布于 https://www.hi-pda.com/forum/viewthread.php?tid=1408844
 
 # 开发者注意
 

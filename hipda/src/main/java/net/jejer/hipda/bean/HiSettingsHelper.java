@@ -447,7 +447,7 @@ public class HiSettingsHelper {
             String tailUrl = getTailUrl();
             if (!TextUtils.isEmpty(tailUrl)) {
                 if ((!tailUrl.startsWith("http")) && (!tailUrl.startsWith("https"))) {
-                    tailUrl = "http://" + tailUrl;
+                    tailUrl = "https://" + tailUrl;
                 }
                 tailStr = "[url=" + tailUrl + "][size=1]" + tailText + "[/size][/url]";
             } else {

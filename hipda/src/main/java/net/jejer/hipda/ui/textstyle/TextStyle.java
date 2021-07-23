@@ -135,7 +135,7 @@ public class TextStyle {
         //there are 140+ color names
         //http://www.w3schools.com/html/html_colornames.asp
         //choose only what we need
-        // http://www.hi-pda.com/forum/forumdata/cache/common.js
+        // https://www.hi-pda.com/forum/forumdata/cache/common.js
         //var coloroptions line
 
 //        COLORS.put("aliceblue", "#f0f8ff");
