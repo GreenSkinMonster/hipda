@@ -20,10 +20,9 @@ import java.util.List;
 
 public class HiParser {
 
-    public static SimpleListBean parseSimpleList(Context ctx, int type, Document doc, boolean isFullTextSearch) {
+    public static SimpleListBean parseSimpleList(Context context, int type, Document doc, boolean isFullTextSearch) {
 
-        // Async check notify
-        new HiParserThreadList.parseNotifyRunnable(ctx, doc).run();
+        new Thread(new HiParserThreadList.ParseNotifyRunnable(context, doc)).start();
 
         switch (type) {
             case SimpleListJob.TYPE_MYREPLY:

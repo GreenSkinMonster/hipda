@@ -40,6 +40,7 @@ import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.db.HistoryDao;
 import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
+import net.jejer.hipda.job.NotificationEvent;
 import net.jejer.hipda.job.PostEvent;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.job.ThreadListEvent;
@@ -749,6 +750,13 @@ public class ThreadListFragment extends BaseFragment
             return;
         EventBus.getDefault().removeStickyEvent(event);
         mEventCallback.process(event);
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(NotificationEvent event) {
+        EventBus.getDefault().removeStickyEvent(event);
+        showNotification();
     }
 
     @SuppressWarnings("unused")

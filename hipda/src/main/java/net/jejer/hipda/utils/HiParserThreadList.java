@@ -19,8 +19,8 @@ public class HiParserThreadList {
     private static long HOLD_FETCH_NOTIFY = 0;
 
     public static ThreadListBean parse(Context context, Document doc) {
-        // Async check notify
-        new parseNotifyRunnable(context, doc).run();
+
+        new Thread(new ParseNotifyRunnable(context, doc)).start();
         HiSettingsHelper.updateMobileNetworkStatus(context);
 
         ThreadListBean threads = new ThreadListBean();
@@ -200,12 +200,12 @@ public class HiParserThreadList {
         return threads;
     }
 
-    public static class parseNotifyRunnable implements Runnable {
+    public static class ParseNotifyRunnable implements Runnable {
 
         private Document mDoc;
         private Context mCtx;
 
-        public parseNotifyRunnable(Context context, Document doc) {
+        public ParseNotifyRunnable(Context context, Document doc) {
             mDoc = doc;
             mCtx = context;
         }

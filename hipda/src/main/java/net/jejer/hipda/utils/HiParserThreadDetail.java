@@ -36,7 +36,7 @@ public class HiParserThreadDetail {
         return "";
     }
 
-    public static DetailListBean parse(Context ctx, Document doc, String tid) {
+    public static DetailListBean parse(Context context, Document doc, String tid) {
         // get last page
         Elements pagesES = doc.select("div#wrap div.forumcontrol div.pages");
         // thread have only 1 page don't have "div.pages"
@@ -54,9 +54,8 @@ public class HiParserThreadDetail {
             }
         }
 
-        // Async check notify
-        new HiParserThreadList.parseNotifyRunnable(ctx, doc).run();
-        HiSettingsHelper.updateMobileNetworkStatus(ctx);
+        new Thread(new HiParserThreadList.ParseNotifyRunnable(context, doc)).start();
+        HiSettingsHelper.updateMobileNetworkStatus(context);
 
         DetailListBean details = new DetailListBean();
         details.setPage(page);

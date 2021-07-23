@@ -19,6 +19,7 @@ import net.jejer.hipda.bean.NotificationBean;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.job.NotificationEvent;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.IntentActivity;
@@ -28,6 +29,7 @@ import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -104,6 +106,11 @@ public class NotiHelper {
                 mCurrentBean.setUid("");
                 mCurrentBean.setContent("");
             }
+        }
+
+        if (threadCount > 0 || smsCount > 0) {
+            NotificationEvent event = new NotificationEvent();
+            EventBus.getDefault().postSticky(event);
         }
     }
 
