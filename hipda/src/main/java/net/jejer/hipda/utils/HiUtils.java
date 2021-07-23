@@ -111,7 +111,7 @@ public class HiUtils {
 
     private final static Map<Integer, Forum> FORUMS_MAP;
 
-    public final static int[] DEFAULT_FORUMS = {FID_DISCOVERY, FID_BS, 7, 59};
+    public final static int[] DEFAULT_FORUMS = {FID_DISCOVERY, FID_BS, 7};
 
     static {
         FORUMS_MAP = new LinkedHashMap<>(FORUMS.length);
@@ -125,9 +125,9 @@ public class HiUtils {
         String forumServer = HiSettingsHelper.getInstance().getForumServer();
 
         BaseUrl = forumServer + "/forum/";
-
         ImageBaseUrl = imageHost + "/forum/";
-        AvatarBaseUrl = BaseUrl + AvatarPath;
+
+        AvatarBaseUrl = ImageBaseUrl + AvatarPath;
 
         ThreadListUrl = BaseUrl + "forumdisplay.php?fid=";
         DetailListUrl = BaseUrl + "viewthread.php?tid=";
