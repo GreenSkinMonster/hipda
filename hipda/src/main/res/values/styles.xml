@@ -262,6 +262,11 @@
         <item name="quote_background">@drawable/quote_background_black</item>
     </style>
 
+    <style name="ThemeImageViewer" parent="ThemeBlack">
+        <item name="colorPrimary">@color/md_black_1000</item>
+        <item name="colorPrimaryDark">@color/md_black_1000</item>
+    </style>
+
     <style name="MyAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
         <item name="android:popupBackground">?background</item>
     </style>

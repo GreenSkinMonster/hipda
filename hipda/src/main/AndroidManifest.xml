@@ -94,7 +94,7 @@
 
         <activity
             android:name=".ui.ImageViewerActivity"
-            android:theme="@style/ThemeBlack"/>
+            android:theme="@style/ThemeImageViewer" />
         <activity android:name=".ui.PostActivity"/>
         <activity android:name=".ui.ThreadDetailActivity"/>
         <activity android:name=".ui.UserInfoActivity"/>
