@@ -1,5 +1,8 @@
+-keepattributes SourceFile,LineNumberTable
 -keepattributes EnclosingMethod
 -keepattributes *Annotation*
+
+-keep class net.jejer.hipda.** { *; }
 
 -dontwarn okio.**
 -dontwarn javax.annotation.Nullable
@@ -31,8 +34,6 @@
   public *;
 }
 
--keep class net.jejer.hipda.** { *; }
-
 #Android-Iconics
 -keep class .R
 -keep class **.R$* {
@@ -52,10 +53,6 @@
     <init>(java.lang.Throwable);
 }
 
--keepattributes SourceFile,LineNumberTable
--keep class com.crashlytics.** { *; }
--dontwarn com.crashlytics.**
-
 -keepclassmembers class * implements android.os.Parcelable {
     static ** CREATOR;
 }
@@ -63,13 +60,3 @@
 #Matisse
 -dontwarn com.squareup.picasso.**
 -dontwarn com.zhihu.matisse.**
-
-#evernote android job
--dontwarn com.evernote.android.job.gcm.**
--dontwarn com.evernote.android.job.util.GcmAvailableHelper
-
--keep public class com.evernote.android.job.v21.PlatformJobService
--keep public class com.evernote.android.job.v14.PlatformAlarmService
--keep public class com.evernote.android.job.v14.PlatformAlarmReceiver
--keep public class com.evernote.android.job.JobBootReceiver
--keep public class com.evernote.android.job.JobRescheduleService

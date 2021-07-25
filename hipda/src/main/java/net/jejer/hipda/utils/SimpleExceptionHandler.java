@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Looper;
+import android.widget.Toast;
 
 import net.jejer.hipda.ui.HiApplication;
 
@@ -27,12 +28,14 @@ public class SimpleExceptionHandler implements Thread.UncaughtExceptionHandler {
             @Override
             public void run() {
                 Looper.prepare();
-                UIUtils.toast("抱歉，程序崩溃，相关信息已经保存到粘贴板");
+                Toast.makeText(HiApplication.getAppContext(),
+                        "抱歉，程序崩溃，信息已保存到粘贴板",
+                        Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
         }.start();
         try {
-            Thread.sleep(1500);
+            Thread.sleep(2000);
         } catch (Exception ignored) {
         }
         mDefaultHandler.uncaughtException(t, e);
