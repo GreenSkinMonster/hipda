@@ -646,7 +646,8 @@ public class MainFrameActivity extends BaseActivity {
                 view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && HiSettingsHelper.getInstance().isNavBarColored()) {
             if (theme == R.style.ThemeLight_White) {
                 view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
             } else {

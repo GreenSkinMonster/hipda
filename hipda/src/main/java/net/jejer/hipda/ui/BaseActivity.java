@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -63,14 +62,15 @@ public class BaseActivity extends AppCompatActivity {
                 HiSettingsHelper.getInstance().getPrimaryColor());
         setTheme(theme);
 
-        Window window = getWindow();
-        window.setNavigationBarColor(ColorHelper.getColorPrimary(this));
-        View view = getWindow().getDecorView();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (theme == R.style.ThemeLight_White) {
-                view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-            } else {
-                view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && HiSettingsHelper.getInstance().isNavBarColored()) {
+            getWindow().setNavigationBarColor(ColorHelper.getColorPrimary(this));
+            View view = getWindow().getDecorView();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (theme == R.style.ThemeLight_White) {
+                    view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                } else {
+                    view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                }
             }
         }
     }
