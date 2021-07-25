@@ -12,7 +12,9 @@ import net.jejer.hipda.utils.SimpleExceptionHandler;
 
 import java.io.File;
 
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import io.github.inflationx.calligraphy3.CalligraphyConfig;
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor;
+import io.github.inflationx.viewpump.ViewPump;
 
 /**
  * Created by GreenSkinMonster on 2015-03-28.
@@ -45,11 +47,13 @@ public class HiApplication extends Application implements Application.ActivityLi
         String font = HiSettingsHelper.getInstance().getFont();
         if (new File(font).exists()) {
             fontSet = true;
-            CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                    .setDefaultFontPath(font)
-                    .setFontAttrId(R.attr.fontPath)
-                    .build()
-            );
+            ViewPump.init(ViewPump.builder()
+                    .addInterceptor(new CalligraphyInterceptor(
+                            new CalligraphyConfig.Builder()
+                                    .setDefaultFontPath(font)
+                                    .setFontAttrId(R.attr.fontPath)
+                                    .build()))
+                    .build());
         } else {
             HiSettingsHelper.getInstance().setFont("");
         }

@@ -8,6 +8,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.vanniktech.emoji.EmojiPopup;
@@ -20,11 +25,7 @@ import net.jejer.hipda.utils.Utils;
 
 import java.util.UUID;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 /**
  * Created by GreenSkinMonster on 2017-06-14.
@@ -89,7 +90,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         if (HiApplication.isFontSet())
-            super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+            super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
         else
             super.attachBaseContext(newBase);
     }
