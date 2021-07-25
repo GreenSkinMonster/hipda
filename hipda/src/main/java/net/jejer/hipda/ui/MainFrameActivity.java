@@ -23,6 +23,14 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.bumptech.glide.Glide;
 import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -51,7 +59,6 @@ import net.jejer.hipda.async.LoginEvent;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.TaskHelper;
-import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.Forum;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
@@ -79,14 +86,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 public class MainFrameActivity extends BaseActivity {
 
@@ -165,7 +164,7 @@ public class MainFrameActivity extends BaseActivity {
                 UIUtils.showReleaseNotesDialog(this);
             } else {
                 if (HiSettingsHelper.getInstance().isAutoUpdateCheckable()) {
-                    new UpdateHelper(this, true).check();
+                    //new UpdateHelper(this, true).check();
                 }
             }
         }
