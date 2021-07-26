@@ -45,7 +45,9 @@ import okhttp3.Response;
  */
 public class OkHttpHelper {
 
-    public final static int NETWORK_TIMEOUT_SECS = 10;
+    public final static int CONNECT_TIMEOUT_SECS = 10;
+    public final static int READ_TIMEOUT_SECS = 10;
+    public final static int WRITE_TIMEOUT_SECS = 30;
     public final static int MAX_RETRY_TIMES = 2;
 
     public final static int FORCE_NETWORK = 1;
@@ -73,9 +75,9 @@ public class OkHttpHelper {
         Cache cache = new Cache(Glide.getPhotoCacheDir(HiApplication.getAppContext(), CACHE_DIR_NAME), 10 * 1024 * 1024);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
-                .readTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
-                .writeTimeout(OkHttpHelper.NETWORK_TIMEOUT_SECS, TimeUnit.SECONDS)
+        builder.connectTimeout(OkHttpHelper.CONNECT_TIMEOUT_SECS, TimeUnit.SECONDS)
+                .readTimeout(OkHttpHelper.READ_TIMEOUT_SECS, TimeUnit.SECONDS)
+                .writeTimeout(OkHttpHelper.WRITE_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .cache(cache)
                 .cookieJar(cookieJar);
 
