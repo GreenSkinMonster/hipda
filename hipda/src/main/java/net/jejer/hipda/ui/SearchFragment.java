@@ -310,7 +310,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
                     //so I use a fixed value here, tell me if you know a better way
                     mSearchFilterLayout.animate()
                             .alpha(0)
-                            .setDuration(50)
+                            .setDuration(100)
                             .translationYBy(-300)
                             .setListener(new AnimatorListenerAdapter() {
                                 @Override
