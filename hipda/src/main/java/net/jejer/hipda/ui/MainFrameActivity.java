@@ -194,11 +194,7 @@ public class MainFrameActivity extends BaseActivity {
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-                Glide.with(MainFrameActivity.this)
-                        .load(uri)
-                        .placeholder(placeholder)
-                        .error(placeholder)
-                        .into(imageView);
+                GlideHelper.loadAvatar(Glide.with(MainFrameActivity.this), imageView, uri.toString());
             }
 
             @Override

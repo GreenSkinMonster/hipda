@@ -10,9 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -21,7 +18,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.bumptech.glide.signature.ObjectKey;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -37,7 +33,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
-import java.util.Map;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 public class GlideHelper {
 
@@ -51,8 +49,6 @@ public class GlideHelper {
     final static long AVATAR_CACHE_MILLS = 3 * 24 * 60 * 60 * 1000;
     final static long AVATAR_404_CACHE_MILLS = 24 * 60 * 60 * 1000;
 
-    private static Map<String, String> AVATAR_CACHE_KEYS = new HashMap<>();
-
     public static void loadAvatar(BaseFragment fragment, ImageView view, String avatarUrl) {
         if (isOkToLoad(fragment)) {
             loadAvatar(Glide.with(fragment.getActivity()), view, avatarUrl);
@@ -61,13 +57,8 @@ public class GlideHelper {
 
     public static void loadAvatar(RequestManager glide, ImageView view, String avatarUrl) {
         avatarUrl = Utils.nullToText(avatarUrl);
-        String cacheKey = AVATAR_CACHE_KEYS.get(avatarUrl);
-        if (cacheKey == null) {
-            cacheKey = avatarUrl;
-        }
         if (HiSettingsHelper.getInstance().isCircleAvatar()) {
             glide.load(new AvatarModel(avatarUrl))
-                    .signature(new ObjectKey(cacheKey))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .circleCrop()
                     .error(DEFAULT_USER_ICON)
@@ -75,7 +66,6 @@ public class GlideHelper {
                     .into(view);
         } else {
             glide.load(new AvatarModel(avatarUrl))
-                    .signature(new ObjectKey(cacheKey))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .transform(new CenterCrop(), new RoundedCorners(Utils.dpToPx(4)))
                     .error(DEFAULT_USER_ICON)
@@ -99,7 +89,15 @@ public class GlideHelper {
 
     public static File getAvatarFile(String url) {
         if (url.contains(HiUtils.AvatarPath)) {
-            return new File(AVATAR_CACHE_DIR, url.substring(url.indexOf(HiUtils.AvatarPath) + HiUtils.AvatarPath.length()).replace("/", "_"));
+            int pathIndex = url.indexOf(HiUtils.AvatarPath);
+            int markIndex = url.indexOf("?", pathIndex);
+            String fn;
+            if (markIndex > pathIndex) {
+                fn = url.substring(pathIndex + HiUtils.AvatarPath.length(), markIndex);
+            } else {
+                fn = url.substring(pathIndex + HiUtils.AvatarPath.length());
+            }
+            return new File(AVATAR_CACHE_DIR, fn.replace("/", "_"));
         }
         return null;
     }
@@ -109,7 +107,7 @@ public class GlideHelper {
         if (f != null && f.exists()) {
             f.delete();
         }
-        AVATAR_CACHE_KEYS.put(url, System.currentTimeMillis() + "");
+        AvatarModel.markClearCache(url);
     }
 
     public static void clearAvatarFiles() throws Exception {
@@ -183,9 +181,10 @@ public class GlideHelper {
         String avatarUrl = HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid());
         if (TextUtils.isEmpty(avatarUrl))
             return;
-        Glide.with(context).
-                asDrawable()
+        Glide.with(context)
+                .asDrawable()
                 .load(new AvatarModel(avatarUrl))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .circleCrop()
                 .error(DEFAULT_USER_ICON)
                 .into(new CustomTarget<Drawable>() {
