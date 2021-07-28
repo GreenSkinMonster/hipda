@@ -28,6 +28,11 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -88,10 +93,6 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Request;
 
 public class ThreadDetailFragment extends BaseFragment {
@@ -316,7 +317,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
 
-        ImageButton ibEmojiSwitch = (ImageButton) mQuickReply.findViewById(R.id.ib_goto_post);
+        ImageButton ibEmojiSwitch = (ImageButton) mQuickReply.findViewById(R.id.ib_emoji_switch);
         setUpEmojiPopup(mEtReply, ibEmojiSwitch);
 
         setActionBarTitle(mTitle);
@@ -1523,7 +1524,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (postProgressDialog != null) {
                 postProgressDialog.dismissError(message);
             } else {
-                UIUtils.toast(message);
+                UIUtils.errorSnack(getView(), message, "");
             }
         }
     }

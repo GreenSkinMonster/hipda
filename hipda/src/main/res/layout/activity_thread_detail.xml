@@ -46,20 +46,21 @@
             android:background="@color/background_grey"/>
 
         <ImageButton
-            android:id="@+id/ib_goto_post"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:id="@+id/ib_emoji_switch"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_alignBottom="@+id/tv_reply_text"
             android:layout_alignParentLeft="true"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/action_reply"/>
+            android:background="@android:color/transparent"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter" />
 
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/tv_reply_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/countdown_button"
-            android:layout_toRightOf="@+id/ib_goto_post"
+            android:layout_toRightOf="@+id/ib_emoji_switch"
             android:background="@android:color/transparent"
             android:gravity="bottom"
             android:hint="@string/action_quick_reply"

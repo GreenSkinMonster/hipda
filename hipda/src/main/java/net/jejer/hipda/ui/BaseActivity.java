@@ -141,6 +141,12 @@ public class BaseActivity extends AppCompatActivity {
         return mToolbar;
     }
 
+    public void expandAppBar() {
+        if (mAppBarLayout != null && HiSettingsHelper.getInstance().isAppBarCollapsible()) {
+            mAppBarLayout.setExpanded(true, true);
+        }
+    }
+
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);

@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?list_item_background"
     android:orientation="vertical">
-
-    <net.jejer.hipda.ui.widget.XRecyclerView
-        android:id="@+id/rv_sms"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/border_line"
-        android:divider="@android:color/transparent"
-        android:transcriptMode="normal"/>
-
-    <View
-        android:id="@+id/border_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@+id/rl_input"
-        android:background="@color/background_grey"/>
 
     <RelativeLayout
         android:id="@+id/rl_input"
@@ -32,11 +16,13 @@
 
         <ImageButton
             android:id="@+id/ib_emoji_switch"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_alignBottom="@+id/et_sms"
             android:layout_alignParentLeft="true"
-            android:background="?attr/selectableItemBackground"/>
+            android:background="@android:color/transparent"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter" />
 
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/et_sms"
@@ -55,7 +41,7 @@
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
             android:text=""
-            app:emojiSize="26sp"/>
+            app:emojiSize="26sp" />
 
         <net.jejer.hipda.ui.widget.CountdownButton
             android:id="@+id/countdown_button"
@@ -63,15 +49,30 @@
             android:layout_height="48dp"
             android:layout_alignBottom="@+id/et_sms"
             android:layout_alignParentRight="true"
-            android:padding="8dp"/>
+            android:padding="8dp" />
 
     </RelativeLayout>
+
+    <View
+        android:id="@+id/border_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/rl_input"
+        android:background="@color/background_grey" />
 
     <net.jejer.hipda.ui.widget.ContentLoadingView
         android:id="@+id/content_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:orientation="vertical"/>
+        android:orientation="vertical" />
+
+    <net.jejer.hipda.ui.widget.XRecyclerView
+        android:id="@+id/rv_sms"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/border_line"
+        android:divider="@android:color/transparent"
+        android:transcriptMode="normal" />
 
 </RelativeLayout>

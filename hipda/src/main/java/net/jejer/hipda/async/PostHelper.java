@@ -45,6 +45,7 @@ public class PostHelper {
     private DetailListBean mDetailListBean;
     private Context mCtx;
     private PrePostInfoBean mInfo;
+    private PrePostAsyncTask mPrePostAsyncTask;
     private PostBean mPostArg;
 
     private String mTid;
@@ -69,11 +70,8 @@ public class PostHelper {
         String subject = postBean.getSubject();
         String typeid = postBean.getTypeid();
 
-        int count = 0;
-        while (mInfo == null && count < 3) {
-            count++;
-            mInfo = new PrePostAsyncTask(mCtx, null, mMode).doInBackground(postBean);
-        }
+        mPrePostAsyncTask = new PrePostAsyncTask(mCtx, null, mMode);
+        mInfo = mPrePostAsyncTask.doInBackground(postBean);
 
         mFloor = floor;
 
@@ -126,7 +124,11 @@ public class PostHelper {
         String formhash = mInfo != null ? mInfo.getFormhash() : null;
 
         if (TextUtils.isEmpty(formhash)) {
-            mResult = "发表失败，无法获取必要信息 ！";
+            if (mPrePostAsyncTask != null && !TextUtils.isEmpty(mPrePostAsyncTask.getMessage())) {
+                mResult = mPrePostAsyncTask.getMessage();
+            } else {
+                mResult = "发表失败，无法获取必要信息 ！";
+            }
             mStatus = Constants.STATUS_FAIL;
             return;
         }

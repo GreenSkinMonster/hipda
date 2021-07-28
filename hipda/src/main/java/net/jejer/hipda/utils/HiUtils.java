@@ -3,6 +3,8 @@ package net.jejer.hipda.utils;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.core.content.ContextCompat;
+
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.iconics.typeface.IIcon;
 
@@ -15,8 +17,6 @@ import net.jejer.hipda.ui.HiApplication;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.core.content.ContextCompat;
 
 public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";
@@ -164,7 +164,7 @@ public class HiUtils {
         SearchByIdUrl = BaseUrl + "search.php?searchid={searchid}&orderby=lastpost&ascdesc=desc&searchsubmit=yes";
 
         LoginSubmit = BaseUrl + "logging.php?action=login&loginsubmit=yes&inajax=1";
-        LoginGetFormHash = BaseUrl + "logging.php?action=login&referer=http%3A//www.hi-pda.com/forum/logging.php";
+        LoginGetFormHash = BaseUrl + "logging.php?action=login";
 
         SmallImages.clear();
     }

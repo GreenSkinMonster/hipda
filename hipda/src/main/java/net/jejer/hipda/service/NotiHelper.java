@@ -13,6 +13,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.NotificationBean;
@@ -35,9 +38,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.File;
-
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 /**
  * parse and fetch notifications
@@ -234,4 +234,8 @@ public class NotiHelper {
         }
     }
 
+    public static void clearNotification() {
+        mCurrentBean.clearSmsCount();
+        mCurrentBean.clearThreadCount();
+    }
 }

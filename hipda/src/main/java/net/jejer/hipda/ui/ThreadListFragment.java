@@ -23,6 +23,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -38,6 +44,7 @@ import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.db.HistoryDao;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.NotificationEvent;
@@ -72,12 +79,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 public class ThreadListFragment extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -95,7 +96,6 @@ public class ThreadListFragment extends BaseFragment
     private SwipeRefreshLayout swipeLayout;
     private ContentLoadingView mLoadingView;
     private int mFirstVisibleItem = 0;
-    private boolean mDataReceived = false;
 
     private MenuItem mForumTypeMenuItem;
     private final int[] mFidHolder = new int[1];
@@ -361,8 +361,11 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onRefresh() {
         refresh();
-        if (mThreadBeans.size() > 0)
+        if (mThreadBeans.size() > 0) {
             mLoadingView.setState(ContentLoadingView.CONTENT);
+        } else {
+            mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+        }
     }
 
     public void notifyDataSetChanged() {
@@ -612,6 +615,8 @@ public class ThreadListFragment extends BaseFragment
             if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())
                     && !TextUtils.isEmpty(threads.getUid())) {
                 HiSettingsHelper.getInstance().setUid(threads.getUid());
+                HiSettingsHelper.getInstance().saveCurrentProfile();
+                GlideHelper.refreshUserIcon(getActivity());
                 if (getActivity() != null)
                     ((MainFrameActivity) getActivity()).updateAccountHeader();
             }
@@ -621,6 +626,9 @@ public class ThreadListFragment extends BaseFragment
                 mThreadBeans.addAll(threads.getThreads());
                 mThreadListAdapter.setDatas(mThreadBeans);
                 mRecyclerView.scrollToTop();
+                mMainFab.show();
+                if (getActivity() != null)
+                    ((MainFrameActivity) getActivity()).expandAppBar();
             } else {
                 for (ThreadBean newthread : threads.getThreads()) {
                     boolean duplicate = false;
@@ -638,12 +646,6 @@ public class ThreadListFragment extends BaseFragment
                 mThreadListAdapter.setDatas(mThreadBeans);
             }
 
-            if (!mDataReceived) {
-                mDataReceived = true;
-                mMainFab.show();
-                if (HiSettingsHelper.getInstance().isAppBarCollapsible())
-                    ((MainFrameActivity) getActivity()).mAppBarLayout.setExpanded(true, true);
-            }
             showNotification();
 
             if (mPage <= 5 && mThreadBeans.size() < MIN_TREADS_IN_PAGE) {

@@ -12,18 +12,25 @@ import android.text.TextUtils;
 
 import androidx.core.content.ContextCompat;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class HiSettingsHelper {
@@ -37,6 +44,8 @@ public class HiSettingsHelper {
     public static final String PERF_UID = "PERF_UID";
     public static final String PERF_SECQUESTION = "PERF_SECQUESTION";
     public static final String PERF_SECANSWER = "PERF_SECANSWER";
+    public static final String PERF_PROFILES = "PERF_PROFILES";
+
     public static final String PERF_SHOWSTICKTHREADS = "PERF_SHOWSTICKTHREADS";
     public static final String PERF_WIFI_IMAGE_POLICY = "PERF_WIFI_IMAGE_POLICY";
     public static final String PERF_MOBILE_IMAGE_POLICY = "PERF_MOBILE_IMAGE_POLICY";
@@ -1099,6 +1108,56 @@ public class HiSettingsHelper {
 
     public void setNotiJobLastRunTime() {
         setLongValue(PERF_NOTI_JOB_LAST_TIME, System.currentTimeMillis());
+    }
+
+    public Map<String, Profile> getProfiles() {
+        String profilesValue = getStringValue(PERF_PROFILES, "{}");
+        Gson gson = new Gson();
+        Type profilesType = new TypeToken<Map<String, Profile>>() {
+        }.getType();
+        Map<String, Profile> profiles;
+        try {
+            profiles = gson.fromJson(profilesValue, profilesType);
+        } catch (Exception e) {
+            profiles = new HashMap<>();
+            Logger.e(e);
+        }
+        return profiles;
+    }
+
+    public Profile getProfile(String username) {
+        return getProfiles().get(username.toUpperCase());
+    }
+
+    public void saveCurrentProfile() {
+        if (TextUtils.isEmpty(getUsername()))
+            return;
+        Profile profile = new Profile(getUsername(),
+                getPassword(),
+                getUid(),
+                getSecQuestion(),
+                getSecAnswer());
+
+        Gson gson = new Gson();
+        Type profilesType = new TypeToken<Map<String, Profile>>() {
+        }.getType();
+        Map<String, Profile> profiles = getProfiles();
+        profiles.put(profile.getUsername().toUpperCase(), profile);
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        String v = gson.toJson(profiles, profilesType);
+        editor.putString(PERF_PROFILES, v).apply();
+    }
+
+    public void removeProfile(String username) {
+        Map<String, Profile> profiles = getProfiles();
+        profiles.remove(username.toUpperCase());
+
+        Gson gson = new Gson();
+        Type profilesType = new TypeToken<Map<String, Profile>>() {
+        }.getType();
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        String v = gson.toJson(profiles, profilesType);
+        editor.putString(PERF_PROFILES, v).apply();
     }
 
 }

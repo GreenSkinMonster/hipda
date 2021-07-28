@@ -9,7 +9,6 @@ import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
-import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -20,6 +19,8 @@ import org.jsoup.select.Elements;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import okhttp3.Response;
 
 public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean> {
 
@@ -63,26 +64,21 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
         }
 
 
-        for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
-            try {
-                String resp = OkHttpHelper.getInstance().get(url);
-                if (resp != null) {
-                    if (!LoginHelper.checkLoggedin(mCtx, resp)) {
-                        int status = new LoginHelper(mCtx).login();
-                        if (status == Constants.STATUS_FAIL_ABORT) {
-                            break;
-                        }
-                    } else {
-                        Document doc = Jsoup.parse(resp);
-                        return parseRsp(doc);
-                    }
+        try {
+            Response respObj = OkHttpHelper.getInstance().getAsResponse(url);
+            if (respObj.isSuccessful()) {
+                if (respObj.request().url().toString().contains("memcp.php?action=bind")) {
+                    mMessage = "需要通过网页完成实名验证才可以发帖";
+                } else {
+                    String resp = respObj.body().string();
+                    Document doc = Jsoup.parse(resp);
+                    return parseRsp(doc);
                 }
-            } catch (Exception e) {
-                NetworkError message = OkHttpHelper.getErrorMessage(e);
-                mMessage = message.getMessage();
             }
+        } catch (Exception e) {
+            NetworkError message = OkHttpHelper.getErrorMessage(e);
+            mMessage = message.getMessage();
         }
-
         return null;
     }
 

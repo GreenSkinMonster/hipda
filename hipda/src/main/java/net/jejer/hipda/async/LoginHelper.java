@@ -7,6 +7,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.okhttp.ParamsMap;
+import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -71,7 +72,7 @@ public class LoginHelper {
                     if (alartES.size() > 0) {
                         mErrorMsg = alartES.first().text();
                     } else {
-                        mErrorMsg = "Can NOT get formhash";
+                        mErrorMsg = "无法获取登录凭据";
                     }
                     return "";
                 }
@@ -100,10 +101,10 @@ public class LoginHelper {
 
             // response is in XML format
             if (rspStr.contains(mCtx.getString(R.string.login_success))) {
-                Logger.v("Login success!");
+                Logger.v("Login SUCCESS!");
                 return Constants.STATUS_SUCCESS;
             } else if (rspStr.contains(mCtx.getString(R.string.login_fail))) {
-                Logger.e("Login FAIL");
+                Logger.v("Login FAIL");
                 int msgIndex = rspStr.indexOf(mCtx.getString(R.string.login_fail));
                 int msgIndexEnd = rspStr.indexOf("次", msgIndex) + 1;
                 if (msgIndexEnd > msgIndex) {
@@ -123,10 +124,7 @@ public class LoginHelper {
     }
 
     public static boolean checkLoggedin(Context context, String mRsp) {
-        boolean loggedIn = !mRsp.contains(context.getString(R.string.not_login));
-        if (!loggedIn)
-            logout();
-        return loggedIn;
+        return !mRsp.contains(context.getString(R.string.not_login));
     }
 
     public static boolean isLoggedIn() {
@@ -134,6 +132,12 @@ public class LoginHelper {
     }
 
     public static void logout() {
+        HiSettingsHelper.getInstance().setUsername("");
+        HiSettingsHelper.getInstance().setPassword("");
+        HiSettingsHelper.getInstance().setSecQuestion("");
+        HiSettingsHelper.getInstance().setSecAnswer("");
+        HiSettingsHelper.getInstance().setUid("");
+        NotiHelper.clearNotification();
         OkHttpHelper.getInstance().clearCookies();
         FavoriteHelper.getInstance().clearAll();
         HiSettingsHelper.getInstance().setBlacklists(new ArrayList<String>());

@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -61,9 +63,10 @@ import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.Forum;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.Profile;
+import net.jejer.hipda.bean.ProfileComparator;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.job.SimpleListJob;
-import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.service.NotiWorker;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
@@ -85,7 +88,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class MainFrameActivity extends BaseActivity {
 
@@ -97,6 +102,7 @@ public class MainFrameActivity extends BaseActivity {
 
     private NetworkStateReceiver mNetworkReceiver;
     private LoginDialog mLoginDialog;
+    private HiProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +117,7 @@ public class MainFrameActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
 
         GlideHelper.initDefaultFiles();
+        GlideHelper.refreshUserIcon(MainFrameActivity.this);
         EmojiHandler.init(HiSettingsHelper.getInstance().isUsingLightTheme());
         NotiHelper.initNotificationChannel();
 
@@ -205,24 +212,34 @@ public class MainFrameActivity extends BaseActivity {
         });
 
         // Create the AccountHeader
-        String username = OkHttpHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
-        String avatarUrl = OkHttpHelper.getInstance().isLoggedIn()
-                ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid())
-                : (GlideHelper.DEFAULT_AVATAR_FILE != null ? GlideHelper.DEFAULT_AVATAR_FILE.getAbsolutePath() : "");
         mAccountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
+                .withAccountHeader(R.layout.material_drawer_account_header)
                 .withHeaderBackground(R.drawable.header)
-                .withTextColor(Color.WHITE)
+                .withTextColor(ContextCompat.getColor(this, R.color.md_grey_300))
                 .withDividerBelowHeader(false)
-                .withCompactStyle(true)
+                .withCompactStyle(false)
                 .withSelectionListEnabled(false)
-                .addProfiles(
-                        new ProfileDrawerItem()
-                                .withEmail(username)
-                                .withIcon(avatarUrl)
-                )
+                .withThreeSmallProfileImages(true)
                 .withOnAccountHeaderProfileImageListener(new ProfileImageListener())
                 .build();
+
+        ImageView loginImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_login);
+        if (loginImageView != null) {
+            loginImageView.setOnClickListener(new OnSingleClickListener() {
+                @Override
+                public void onSingleClick(View v) {
+                    closeDrawer();
+                    if (LoginHelper.isLoggedIn()) {
+                        showLogoutDialog();
+                    } else {
+                        showLoginDialog();
+                    }
+                }
+            });
+        }
+
+        updateAccountHeader();
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
         drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SMS));
@@ -255,7 +272,7 @@ public class MainFrameActivity extends BaseActivity {
                             .withIcon(GoogleMaterial.Icon.gmd_more_horiz)
                             .withIdentifier(Constants.DRAWER_NO_ACTION)
                             .withSelectable(false)
-                            .withSubItems(subItems.toArray(new IDrawerItem[subItems.size()])
+                            .withSubItems(subItems.toArray(new IDrawerItem[0])
                             ));
 
         drawerItems.add(new DividerDrawerItem());
@@ -363,12 +380,17 @@ public class MainFrameActivity extends BaseActivity {
 
     public void updateAccountHeader() {
         if (mAccountHeader != null) {
-            String username = OkHttpHelper.getInstance().isLoggedIn() ? HiSettingsHelper.getInstance().getUsername() : "<未登录>";
-            String avatarUrl = OkHttpHelper.getInstance().isLoggedIn() ? HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()) : "";
-            mAccountHeader.removeProfile(0);
-            mAccountHeader.addProfile(new ProfileDrawerItem()
-                    .withEmail(username)
-                    .withIcon(avatarUrl), 0);
+            ProfileDrawerItem[] items = getProfileDrawerItems();
+            mAccountHeader.clear();
+            mAccountHeader.addProfiles(items);
+        }
+        ImageView loginImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_login);
+        if (loginImageView != null) {
+            if (LoginHelper.isLoggedIn()) {
+                loginImageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.outline_logout_24));
+            } else {
+                loginImageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.outline_login_24));
+            }
         }
     }
 
@@ -515,55 +537,155 @@ public class MainFrameActivity extends BaseActivity {
     private class ProfileImageListener implements AccountHeader.OnAccountHeaderProfileImageListener {
 
         @Override
-        public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
-            if (LoginHelper.isLoggedIn()) {
-                Dialog dialog = new AlertDialog.Builder(MainFrameActivity.this)
-                        .setTitle("退出登录？")
-                        .setMessage("确认退出当前登录用户 <" + HiSettingsHelper.getInstance().getUsername() + "> ，并清除保存的登录信息？\n")
-                        .setPositiveButton(getResources().getString(android.R.string.ok),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        HiProgressDialog progressDialog = HiProgressDialog.show(MainFrameActivity.this, "正在退出...");
-                                        HiSettingsHelper.getInstance().setUsername("");
-                                        HiSettingsHelper.getInstance().setPassword("");
-                                        HiSettingsHelper.getInstance().setSecQuestion("");
-                                        HiSettingsHelper.getInstance().setSecAnswer("");
-                                        HiSettingsHelper.getInstance().setUid("");
-                                        LoginHelper.logout();
-                                        updateAccountHeader();
+        public boolean onProfileImageClick(View view, IProfile drawerProfile, boolean current) {
+            ProfileDrawerItem item = (ProfileDrawerItem) drawerProfile;
+            String username = item.getName().toString();
+            Profile profile = HiSettingsHelper.getInstance().getProfile(username);
+            if (current) {
+                if (LoginHelper.isLoggedIn()) {
+                    UIUtils.toast("长按头像退出登录");
+                } else {
+                    showLoginDialog();
+                }
+            } else if (profile != null) {
+                LoginHelper.logout();
+                if (mNotiificationFab != null)
+                    mNotiificationFab.hide();
 
-                                        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
-                                        if (fragment != null && fragment instanceof ThreadListFragment) {
-                                            ((ThreadListFragment) fragment).enterNotLoginState();
-                                        }
+                HiSettingsHelper.getInstance().setUsername(profile.getUsername());
+                HiSettingsHelper.getInstance().setPassword(profile.getPassword());
+                HiSettingsHelper.getInstance().setSecQuestion(profile.getSecQuestion());
+                HiSettingsHelper.getInstance().setSecAnswer(profile.getSecAnswer());
+                HiSettingsHelper.getInstance().setUid("");
 
-                                        progressDialog.dismiss("已退出登录状态", 2000);
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                showLoginDialog();
-                                            }
-                                        }, 2000);
-                                    }
-                                })
-                        .setNegativeButton(getResources().getString(android.R.string.cancel),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                    }
-                                }).create();
-                dialog.show();
-            } else {
-                showLoginDialog();
+                progressDialog = HiProgressDialog.show(MainFrameActivity.this,
+                        "<" + HiSettingsHelper.getInstance().getUsername() + "> 正在登录...");
+
+                final LoginHelper loginHelper = new LoginHelper(MainFrameActivity.this);
+
+                new AsyncTask<Void, Void, Integer>() {
+
+                    @Override
+                    protected Integer doInBackground(Void... voids) {
+                        return loginHelper.login(true);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Integer result) {
+                        if (result == Constants.STATUS_SUCCESS) {
+                            UIUtils.toast("登录成功");
+                            TaskHelper.runDailyTask(true);
+                            progressDialog.dismiss();
+                        } else {
+                            if (result == Constants.STATUS_FAIL_ABORT) {
+                                HiSettingsHelper.getInstance().removeProfile(username);
+                            }
+                            HiSettingsHelper.getInstance().setUsername("");
+                            HiSettingsHelper.getInstance().setPassword("");
+                            HiSettingsHelper.getInstance().setSecQuestion("");
+                            HiSettingsHelper.getInstance().setSecAnswer("");
+                            updateAccountHeader();
+                            progressDialog.dismissError(loginHelper.getErrorMsg());
+                        }
+                    }
+                }.execute();
             }
-            return false;
+            closeDrawer();
+            expandAppBar();
+            return true;
         }
 
         @Override
-        public boolean onProfileImageLongClick(View view, IProfile profile, boolean current) {
-            return false;
+        public boolean onProfileImageLongClick(View view, IProfile drawerProfile, boolean current) {
+            ProfileDrawerItem item = (ProfileDrawerItem) drawerProfile;
+            final String username = item.getName().toString();
+            if (LoginHelper.isLoggedIn() && username.equalsIgnoreCase(HiSettingsHelper.getInstance().getUsername())) {
+                showLogoutDialog();
+            } else if (!current) {
+                showRemoveProfileDialog(username);
+            } else {
+                showLoginDialog();
+            }
+            closeDrawer();
+            return true;
         }
+    }
+
+    private void showRemoveProfileDialog(String username) {
+        Dialog dialog = new AlertDialog.Builder(MainFrameActivity.this)
+                .setTitle("清除登录信息？")
+                .setMessage("确认清除用户 <" + username + "> 的登录信息？\n")
+                .setPositiveButton(getResources().getString(android.R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                HiSettingsHelper.getInstance().removeProfile(username);
+                                updateAccountHeader();
+                                UIUtils.toast("<" + username + "> 登录信息已经清除");
+                            }
+                        })
+                .setNegativeButton(getResources().getString(android.R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                .create();
+        dialog.show();
+    }
+
+    private void showLogoutDialog() {
+        Dialog dialog = new AlertDialog.Builder(MainFrameActivity.this)
+                .setTitle("退出登录？")
+                .setMessage("退出当前登录用户 <" + HiSettingsHelper.getInstance().getUsername() + "> ？\n")
+                .setPositiveButton(getResources().getString(android.R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                logout(HiSettingsHelper.getInstance().getUsername(), false);
+                            }
+                        })
+                .setNegativeButton(getResources().getString(android.R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                .setNeutralButton("退出并清除登录信息", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        logout(HiSettingsHelper.getInstance().getUsername(), true);
+                    }
+                }).create();
+        dialog.show();
+    }
+
+    private void logout(final String username, boolean removeProfile) {
+        HiProgressDialog progressDialog = HiProgressDialog.show(MainFrameActivity.this, "正在退出...");
+        LoginHelper.logout();
+        if (mNotiificationFab != null)
+            mNotiificationFab.hide();
+
+        String message = "已退出登录";
+        if (removeProfile) {
+            HiSettingsHelper.getInstance().removeProfile(username);
+            message += "并清除登录信息";
+        }
+
+        updateAccountHeader();
+
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
+        if (fragment != null && fragment instanceof ThreadListFragment) {
+            ((ThreadListFragment) fragment).enterNotLoginState();
+        }
+
+        progressDialog.dismiss(message, 2000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showLoginDialog();
+            }
+        }, 2000);
     }
 
     private class NetworkStateReceiver extends BroadcastReceiver {
@@ -719,6 +841,57 @@ public class MainFrameActivity extends BaseActivity {
                 mLoginDialog.dismiss();
             mLoginDialog = null;
         }
+    }
+
+    private ProfileDrawerItem[] getProfileDrawerItems() {
+        List<ProfileDrawerItem> profileDrawerItems = new ArrayList<>();
+        Profile activeProfile;
+        if (LoginHelper.isLoggedIn()) {
+            String username = HiSettingsHelper.getInstance().getUsername();
+            activeProfile = HiSettingsHelper.getInstance().getProfile(username);
+            if (activeProfile == null) {
+                HiSettingsHelper.getInstance().saveCurrentProfile();
+                activeProfile = HiSettingsHelper.getInstance().getProfile(username);
+            }
+            if (activeProfile != null) {
+                profileDrawerItems.add(
+                        new ProfileDrawerItem()
+                                .withName(activeProfile.getUsername())
+                                .withEmail("UID:" + activeProfile.getUid())
+                                .withIcon(HiUtils.getAvatarUrlByUid(activeProfile.getUid()))
+                );
+            } else {
+                //shouldn't happend
+                profileDrawerItems.add(
+                        new ProfileDrawerItem()
+                                .withName(HiSettingsHelper.getInstance().getUsername())
+                                .withEmail("UID:" + HiSettingsHelper.getInstance().getUid())
+                                .withIcon(HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid()))
+                );
+            }
+        } else {
+            profileDrawerItems.add(
+                    new ProfileDrawerItem()
+                            .withName("<未登录>")
+                            .withEmail("")
+                            .withIcon(GlideHelper.DEFAULT_AVATAR_FILE != null ? GlideHelper.DEFAULT_AVATAR_FILE.getAbsolutePath() : "")
+            );
+        }
+        Map<String, Profile> profiles = HiSettingsHelper.getInstance().getProfiles();
+        ProfileComparator comparator = new ProfileComparator(HiSettingsHelper.getInstance().getProfiles());
+        TreeMap<String, Profile> sortedProfiles = new TreeMap<>(comparator);
+        sortedProfiles.putAll(profiles);
+        for (Profile profile : sortedProfiles.values()) {
+            if (!profile.getUsername().equalsIgnoreCase(HiSettingsHelper.getInstance().getUsername())) {
+                profileDrawerItems.add(
+                        new ProfileDrawerItem()
+                                .withName(profile.getUsername())
+                                .withEmail("UID:" + profile.getUid())
+                                .withIcon(HiUtils.getAvatarUrlByUid(profile.getUid()))
+                );
+            }
+        }
+        return profileDrawerItems.toArray(new ProfileDrawerItem[0]);
     }
 
 }

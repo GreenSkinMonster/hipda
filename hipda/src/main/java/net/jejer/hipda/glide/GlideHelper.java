@@ -7,7 +7,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.widget.ImageView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -15,6 +19,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.signature.ObjectKey;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -26,18 +32,19 @@ import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import androidx.fragment.app.Fragment;
 
 public class GlideHelper {
 
     private static File AVATAR_CACHE_DIR;
 
     private static Drawable DEFAULT_USER_ICON;
+    private static Drawable CURRENT_USER_ICON;
     public static File SYSTEM_AVATAR_FILE;
     public static File DEFAULT_AVATAR_FILE;
 
@@ -163,6 +170,34 @@ public class GlideHelper {
         drawable.draw(canvas);
 
         return bitmap;
+    }
+
+    public static Drawable getCurrentUserIcon() {
+        if (CURRENT_USER_ICON == null)
+            refreshUserIcon(HiApplication.getAppContext());
+        return CURRENT_USER_ICON;
+    }
+
+    public static void refreshUserIcon(Context context) {
+        CURRENT_USER_ICON = null;
+        String avatarUrl = HiUtils.getAvatarUrlByUid(HiSettingsHelper.getInstance().getUid());
+        if (TextUtils.isEmpty(avatarUrl))
+            return;
+        Glide.with(context).
+                asDrawable()
+                .load(new AvatarModel(avatarUrl))
+                .circleCrop()
+                .error(DEFAULT_USER_ICON)
+                .into(new CustomTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(@NotNull Drawable resource, Transition<? super Drawable> transition) {
+                        CURRENT_USER_ICON = resource;
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                    }
+                });
     }
 
 }

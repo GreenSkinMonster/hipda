@@ -16,6 +16,7 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.ui.adapter.KeyValueArrayAdapter;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.UIUtils;
@@ -65,6 +66,12 @@ public class LoginDialog extends Dialog {
             @Override
             public void onSingleClick(View v) {
 
+                if (etUsername.getText().toString().length() < 3
+                        || etPassword.getText().toString().length() < 3) {
+                    UIUtils.toast("请填写有效用户名和密码");
+                    return;
+                }
+
                 if (mCtx instanceof Activity)
                     UIUtils.hideSoftKeyboard((Activity) mCtx);
 
@@ -74,7 +81,8 @@ public class LoginDialog extends Dialog {
                 HiSettingsHelper.getInstance().setSecAnswer(etSecAnswer.getText().toString());
                 HiSettingsHelper.getInstance().setUid("");
 
-                progressDialog = HiProgressDialog.show(mCtx, "正在登录...");
+                progressDialog = HiProgressDialog.show(mCtx,
+                        "<" + HiSettingsHelper.getInstance().getUsername() + "> 正在登录...");
 
                 final LoginHelper loginHelper = new LoginHelper(mCtx);
 
@@ -90,14 +98,17 @@ public class LoginDialog extends Dialog {
                         if (result == Constants.STATUS_SUCCESS) {
                             UIUtils.toast("登录成功");
                             TaskHelper.runDailyTask(true);
+                            progressDialog.dismiss();
                         } else {
-                            UIUtils.toast(loginHelper.getErrorMsg());
                             HiSettingsHelper.getInstance().setUsername("");
                             HiSettingsHelper.getInstance().setPassword("");
                             HiSettingsHelper.getInstance().setSecQuestion("");
                             HiSettingsHelper.getInstance().setSecAnswer("");
+                            if (mCtx instanceof MainFrameActivity) {
+                                ((MainFrameActivity) mCtx).updateAccountHeader();
+                            }
+                            progressDialog.dismissError(loginHelper.getErrorMsg());
                         }
-                        progressDialog.dismiss();
                     }
                 }.execute();
             }
