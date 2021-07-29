@@ -30,7 +30,7 @@
             android:title="@string/pref_title_night_theme" />
 
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="PERF_NAVBAR_COLORED"
             android:title="@string/pref_title_navbar_colored" />
 

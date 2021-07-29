@@ -10,8 +10,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import androidx.core.content.ContextCompat;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -33,18 +31,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.core.content.ContextCompat;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
+
 public class HiSettingsHelper {
-    /*
-     *
-     * NOTE! PLEASE LINE-UP WITH PREFERENCE.XML
-     *
-     * */
-    public static final String PERF_USERNAME = "PERF_USERNAME";
-    public static final String PERF_PASSWORD = "PERF_PASSWORD";
-    public static final String PERF_UID = "PERF_UID";
-    public static final String PERF_SECQUESTION = "PERF_SECQUESTION";
-    public static final String PERF_SECANSWER = "PERF_SECANSWER";
-    public static final String PERF_PROFILES = "PERF_PROFILES";
+
+    /* begin of encrypted user info */
+    private static final String PERF_USERNAME = "PERF_USERNAME";
+    private static final String PERF_PASSWORD = "PERF_PASSWORD";
+    private static final String PERF_UID = "PERF_UID";
+    private static final String PERF_SECQUESTION = "PERF_SECQUESTION";
+    private static final String PERF_SECANSWER = "PERF_SECANSWER";
+    private static final String PERF_PROFILES = "PERF_PROFILES";
+    /* end of encrypted user info */
 
     public static final String PERF_SHOWSTICKTHREADS = "PERF_SHOWSTICKTHREADS";
     public static final String PERF_WIFI_IMAGE_POLICY = "PERF_WIFI_IMAGE_POLICY";
@@ -117,6 +117,7 @@ public class HiSettingsHelper {
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
+    private SharedPreferences mEncrytedSharedPref;
 
     private String mUsername = "";
     private String mPassword = "";
@@ -228,7 +229,28 @@ public class HiSettingsHelper {
     private HiSettingsHelper() {
         mCtx = HiApplication.getAppContext();
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(mCtx);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                String masterKey = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+                mEncrytedSharedPref = EncryptedSharedPreferences.create(
+                        "encrypted_shared_prefs",
+                        masterKey,
+                        mCtx,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                );
+            } else {
+                mEncrytedSharedPref = mSharedPref;
+            }
+        } catch (NoClassDefFoundError | Exception e) {
+            Logger.e(e.getClass().getName() + " : " + e.getMessage() + ", use default shared preference ");
+            mEncrytedSharedPref = mSharedPref;
+        }
         reload();
+    }
+
+    public SharedPreferences getSharedPref() {
+        return mSharedPref;
     }
 
     private static class SingletonHolder {
@@ -286,13 +308,13 @@ public class HiSettingsHelper {
     }
 
     private String getUsernameFromPref() {
-        mUsername = mSharedPref.getString(PERF_USERNAME, "");
+        mUsername = mEncrytedSharedPref.getString(PERF_USERNAME, "");
         return mUsername;
     }
 
     public void setUsername(String username) {
         mUsername = username;
-        SharedPreferences.Editor editor = mSharedPref.edit();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
         editor.putString(PERF_USERNAME, username).apply();
     }
 
@@ -301,13 +323,13 @@ public class HiSettingsHelper {
     }
 
     private String getPasswordFromPref() {
-        mPassword = mSharedPref.getString(PERF_PASSWORD, "");
+        mPassword = mEncrytedSharedPref.getString(PERF_PASSWORD, "");
         return mPassword;
     }
 
     public void setPassword(String password) {
         mPassword = password;
-        SharedPreferences.Editor editor = mSharedPref.edit();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
         editor.putString(PERF_PASSWORD, password).apply();
     }
 
@@ -316,13 +338,13 @@ public class HiSettingsHelper {
     }
 
     private String getUidFromPref() {
-        mUid = mSharedPref.getString(PERF_UID, "");
+        mUid = mEncrytedSharedPref.getString(PERF_UID, "");
         return mUid;
     }
 
     public void setUid(String uid) {
         mUid = uid;
-        SharedPreferences.Editor editor = mSharedPref.edit();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
         editor.putString(PERF_UID, uid).apply();
     }
 
@@ -331,13 +353,13 @@ public class HiSettingsHelper {
     }
 
     private String getSecQuestionFromPref() {
-        mSecQuestion = mSharedPref.getString(PERF_SECQUESTION, "");
+        mSecQuestion = mEncrytedSharedPref.getString(PERF_SECQUESTION, "");
         return mSecQuestion;
     }
 
     public void setSecQuestion(String secQuestion) {
         mSecQuestion = secQuestion;
-        SharedPreferences.Editor editor = mSharedPref.edit();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
         editor.putString(PERF_SECQUESTION, secQuestion).apply();
     }
 
@@ -346,14 +368,85 @@ public class HiSettingsHelper {
     }
 
     private String getSecAnswerFromPref() {
-        mSecAnswer = mSharedPref.getString(PERF_SECANSWER, "");
+        mSecAnswer = mEncrytedSharedPref.getString(PERF_SECANSWER, "");
         return mSecAnswer;
     }
 
     public void setSecAnswer(String secAnswer) {
         mSecAnswer = secAnswer;
-        SharedPreferences.Editor editor = mSharedPref.edit();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
         editor.putString(PERF_SECANSWER, secAnswer).apply();
+    }
+
+    public Map<String, Profile> getProfiles() {
+        String profilesValue = mEncrytedSharedPref.getString(PERF_PROFILES, "{}");
+        Gson gson = new Gson();
+        Type profilesType = new TypeToken<Map<String, Profile>>() {
+        }.getType();
+        Map<String, Profile> profiles;
+        try {
+            profiles = gson.fromJson(profilesValue, profilesType);
+        } catch (Exception e) {
+            profiles = new HashMap<>();
+            Logger.e(e);
+        }
+        return profiles;
+    }
+
+    public Profile getProfile(String username) {
+        return getProfiles().get(username.toUpperCase());
+    }
+
+    public void saveCurrentProfile() {
+        if (TextUtils.isEmpty(getUsername()))
+            return;
+        Profile profile = new Profile(getUsername(),
+                getPassword(),
+                getUid(),
+                getSecQuestion(),
+                getSecAnswer());
+
+        Gson gson = new Gson();
+        Type profilesType = new TypeToken<Map<String, Profile>>() {
+        }.getType();
+        Map<String, Profile> profiles = getProfiles();
+        profiles.put(profile.getUsername().toUpperCase(), profile);
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
+        String v = gson.toJson(profiles, profilesType);
+        editor.putString(PERF_PROFILES, v).apply();
+    }
+
+    public void removeProfile(String username) {
+        Map<String, Profile> profiles = getProfiles();
+        profiles.remove(username.toUpperCase());
+
+        Gson gson = new Gson();
+        Type profilesType = new TypeToken<Map<String, Profile>>() {
+        }.getType();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
+        String v = gson.toJson(profiles, profilesType);
+        editor.putString(PERF_PROFILES, v).apply();
+    }
+
+    public void migrateEncrytSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mEncrytedSharedPref instanceof EncryptedSharedPreferences
+                    && !TextUtils.isEmpty(mSharedPref.getString(PERF_USERNAME, ""))) {
+                setUsername(mSharedPref.getString(PERF_USERNAME, ""));
+                setPassword(mSharedPref.getString(PERF_PASSWORD, ""));
+                setUid(mSharedPref.getString(PERF_UID, ""));
+                setSecQuestion(mSharedPref.getString(PERF_SECQUESTION, ""));
+                setSecAnswer(mSharedPref.getString(PERF_SECANSWER, ""));
+
+                SharedPreferences.Editor editor = mSharedPref.edit();
+                editor.remove(PERF_USERNAME);
+                editor.remove(PERF_PASSWORD);
+                editor.remove(PERF_UID);
+                editor.remove(PERF_SECQUESTION);
+                editor.remove(PERF_SECANSWER);
+                editor.apply();
+            }
+        }
     }
 
     public boolean isShowStickThreads() {
@@ -550,7 +643,7 @@ public class HiSettingsHelper {
     }
 
     private boolean isNavBarColoredFromPref() {
-        mNavBarColor = mSharedPref.getBoolean(PERF_NAVBAR_COLORED, false);
+        mNavBarColor = mSharedPref.getBoolean(PERF_NAVBAR_COLORED, true);
         return mNavBarColor;
     }
 
@@ -1108,56 +1201,6 @@ public class HiSettingsHelper {
 
     public void setNotiJobLastRunTime() {
         setLongValue(PERF_NOTI_JOB_LAST_TIME, System.currentTimeMillis());
-    }
-
-    public Map<String, Profile> getProfiles() {
-        String profilesValue = getStringValue(PERF_PROFILES, "{}");
-        Gson gson = new Gson();
-        Type profilesType = new TypeToken<Map<String, Profile>>() {
-        }.getType();
-        Map<String, Profile> profiles;
-        try {
-            profiles = gson.fromJson(profilesValue, profilesType);
-        } catch (Exception e) {
-            profiles = new HashMap<>();
-            Logger.e(e);
-        }
-        return profiles;
-    }
-
-    public Profile getProfile(String username) {
-        return getProfiles().get(username.toUpperCase());
-    }
-
-    public void saveCurrentProfile() {
-        if (TextUtils.isEmpty(getUsername()))
-            return;
-        Profile profile = new Profile(getUsername(),
-                getPassword(),
-                getUid(),
-                getSecQuestion(),
-                getSecAnswer());
-
-        Gson gson = new Gson();
-        Type profilesType = new TypeToken<Map<String, Profile>>() {
-        }.getType();
-        Map<String, Profile> profiles = getProfiles();
-        profiles.put(profile.getUsername().toUpperCase(), profile);
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        String v = gson.toJson(profiles, profilesType);
-        editor.putString(PERF_PROFILES, v).apply();
-    }
-
-    public void removeProfile(String username) {
-        Map<String, Profile> profiles = getProfiles();
-        profiles.remove(username.toUpperCase());
-
-        Gson gson = new Gson();
-        Type profilesType = new TypeToken<Map<String, Profile>>() {
-        }.getType();
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        String v = gson.toJson(profiles, profilesType);
-        editor.putString(PERF_PROFILES, v).apply();
     }
 
 }

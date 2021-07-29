@@ -318,7 +318,7 @@ public class OkHttpHelper {
             mCookiestore.removeAll();
     }
 
-    public boolean isLoggedIn() {
+    public boolean hasAuthCookie() {
         List<HttpCookie> cookies = mCookiestore.getCookies();
         for (HttpCookie cookie : cookies) {
             if ("cdb_auth".equals(cookie.getName())) {

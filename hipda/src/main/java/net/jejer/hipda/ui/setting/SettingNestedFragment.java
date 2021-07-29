@@ -10,11 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.preference.Preference;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -27,6 +22,11 @@ import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.preference.Preference;
 
 /**
  * nested setting fragment
@@ -124,9 +124,6 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_NIGHT_THEME));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FONT));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_AVATAR_LOAD_TYPE));
-                Preference navBarColoredPreference = findPreference(HiSettingsHelper.PERF_NAVBAR_COLORED);
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && navBarColoredPreference != null)
-                    navBarColoredPreference.setEnabled(false);
 
                 Preference fontPreference = findPreference(HiSettingsHelper.PERF_FONT);
                 fontPreference.setOnPreferenceClickListener(new FilePickerListener(getActivity(), FilePickerListener.FONT_FILE));

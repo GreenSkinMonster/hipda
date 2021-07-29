@@ -23,12 +23,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -53,7 +47,6 @@ import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.job.ThreadListEvent;
 import net.jejer.hipda.job.ThreadListJob;
 import net.jejer.hipda.job.ThreadUpdatedEvent;
-import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadListAdapter;
@@ -78,6 +71,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ThreadListFragment extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener {
@@ -126,7 +125,7 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        setHasOptionsMenu(OkHttpHelper.getInstance().isLoggedIn());
+        setHasOptionsMenu(LoginHelper.isLoggedIn());
 
         View view = inflater.inflate(R.layout.fragment_thread_list, parent, false);
         mRecyclerView = view.findViewById(R.id.rv_threads);

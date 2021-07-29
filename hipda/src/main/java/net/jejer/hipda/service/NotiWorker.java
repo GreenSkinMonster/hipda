@@ -2,8 +2,8 @@ package net.jejer.hipda.service;
 
 import android.content.Context;
 
+import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Logger;
 
@@ -39,7 +39,7 @@ public class NotiWorker extends Worker {
     public Result doWork() {
         try {
             if (!HiApplication.isAppVisible()
-                    && OkHttpHelper.getInstance().isLoggedIn()
+                    && LoginHelper.isLoggedIn()
                     && !HiSettingsHelper.getInstance().isInSilentMode()) {
                 HiSettingsHelper.getInstance().setNotiJobLastRunTime();
                 NotiHelper.fetchNotification(null);

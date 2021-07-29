@@ -6,7 +6,9 @@ import android.content.Context;
 import android.os.Bundle;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.SimpleExceptionHandler;
 
@@ -42,7 +44,11 @@ public class HiApplication extends Application implements Application.ActivityLi
             Thread.setDefaultUncaughtExceptionHandler(new SimpleExceptionHandler());
         }
 
-        //updated = UpdateHelper.updateApp();
+        updated = UpdateHelper.updateApp();
+
+        if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {
+            OkHttpHelper.getInstance().clearCookies();
+        }
 
         String font = HiSettingsHelper.getInstance().getFont();
         if (new File(font).exists()) {

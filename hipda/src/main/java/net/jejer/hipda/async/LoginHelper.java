@@ -128,7 +128,8 @@ public class LoginHelper {
     }
 
     public static boolean isLoggedIn() {
-        return OkHttpHelper.getInstance().isLoggedIn();
+        return !TextUtils.isEmpty(HiSettingsHelper.getInstance().getUsername())
+                && OkHttpHelper.getInstance().hasAuthCookie();
     }
 
     public static void logout() {
