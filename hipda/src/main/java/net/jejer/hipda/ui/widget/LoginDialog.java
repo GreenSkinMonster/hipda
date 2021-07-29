@@ -1,9 +1,7 @@
 package net.jejer.hipda.ui.widget;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,12 +11,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.async.LoginHelper;
-import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.ui.adapter.KeyValueArrayAdapter;
-import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.UIUtils;
 
 /**
@@ -27,12 +22,11 @@ import net.jejer.hipda.utils.UIUtils;
  */
 public class LoginDialog extends Dialog {
 
-    private Context mCtx;
-    private HiProgressDialog progressDialog;
+    private MainFrameActivity mActivity;
 
-    public LoginDialog(Context context) {
-        super(context);
-        mCtx = context;
+    public LoginDialog(MainFrameActivity activity) {
+        super(activity);
+        mActivity = activity;
     }
 
     @Override
@@ -46,9 +40,9 @@ public class LoginDialog extends Dialog {
         final Spinner spSecQuestion = (Spinner) view.findViewById(R.id.login_question);
         final EditText etSecAnswer = (EditText) view.findViewById(R.id.login_answer);
 
-        final KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(mCtx, R.layout.spinner_row);
-        adapter.setEntryValues(mCtx.getResources().getStringArray(R.array.pref_login_question_list_values));
-        adapter.setEntries(mCtx.getResources().getStringArray(R.array.pref_login_question_list_titles));
+        final KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(mActivity, R.layout.spinner_row);
+        adapter.setEntryValues(mActivity.getResources().getStringArray(R.array.pref_login_question_list_values));
+        adapter.setEntries(mActivity.getResources().getStringArray(R.array.pref_login_question_list_titles));
         spSecQuestion.setAdapter(adapter);
 
         etUsername.setText(HiSettingsHelper.getInstance().getUsername());
@@ -72,8 +66,7 @@ public class LoginDialog extends Dialog {
                     return;
                 }
 
-                if (mCtx instanceof Activity)
-                    UIUtils.hideSoftKeyboard((Activity) mCtx);
+                UIUtils.hideSoftKeyboard(mActivity);
 
                 HiSettingsHelper.getInstance().setUsername(etUsername.getText().toString());
                 HiSettingsHelper.getInstance().setPassword(etPassword.getText().toString());
@@ -81,36 +74,8 @@ public class LoginDialog extends Dialog {
                 HiSettingsHelper.getInstance().setSecAnswer(etSecAnswer.getText().toString());
                 HiSettingsHelper.getInstance().setUid("");
 
-                progressDialog = HiProgressDialog.show(mCtx,
-                        "<" + HiSettingsHelper.getInstance().getUsername() + "> 正在登录...");
-
-                final LoginHelper loginHelper = new LoginHelper(mCtx);
-
-                new AsyncTask<Void, Void, Integer>() {
-
-                    @Override
-                    protected Integer doInBackground(Void... voids) {
-                        return loginHelper.login(true);
-                    }
-
-                    @Override
-                    protected void onPostExecute(Integer result) {
-                        if (result == Constants.STATUS_SUCCESS) {
-                            UIUtils.toast("登录成功");
-                            TaskHelper.runDailyTask(true);
-                            progressDialog.dismiss();
-                        } else {
-                            HiSettingsHelper.getInstance().setUsername("");
-                            HiSettingsHelper.getInstance().setPassword("");
-                            HiSettingsHelper.getInstance().setSecQuestion("");
-                            HiSettingsHelper.getInstance().setSecAnswer("");
-                            if (mCtx instanceof MainFrameActivity) {
-                                ((MainFrameActivity) mCtx).updateAccountHeader();
-                            }
-                            progressDialog.dismissError(loginHelper.getErrorMsg());
-                        }
-                    }
-                }.execute();
+                mActivity.doLoginProgress();
+                dismiss();
             }
         });
 

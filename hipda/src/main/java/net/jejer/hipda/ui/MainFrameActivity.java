@@ -24,15 +24,6 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import com.bumptech.glide.Glide;
 import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -91,6 +82,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 public class MainFrameActivity extends BaseActivity {
 
@@ -554,37 +554,7 @@ public class MainFrameActivity extends BaseActivity {
                 HiSettingsHelper.getInstance().setSecAnswer(profile.getSecAnswer());
                 HiSettingsHelper.getInstance().setUid("");
 
-                progressDialog = HiProgressDialog.show(MainFrameActivity.this,
-                        "<" + HiSettingsHelper.getInstance().getUsername() + "> 正在登录...");
-
-                final LoginHelper loginHelper = new LoginHelper(MainFrameActivity.this);
-
-                new AsyncTask<Void, Void, Integer>() {
-
-                    @Override
-                    protected Integer doInBackground(Void... voids) {
-                        return loginHelper.login(true);
-                    }
-
-                    @Override
-                    protected void onPostExecute(Integer result) {
-                        if (result == Constants.STATUS_SUCCESS) {
-                            UIUtils.toast("登录成功");
-                            TaskHelper.runDailyTask(true);
-                            progressDialog.dismiss();
-                        } else {
-                            if (result == Constants.STATUS_FAIL_ABORT) {
-                                HiSettingsHelper.getInstance().removeProfile(username);
-                            }
-                            HiSettingsHelper.getInstance().setUsername("");
-                            HiSettingsHelper.getInstance().setPassword("");
-                            HiSettingsHelper.getInstance().setSecQuestion("");
-                            HiSettingsHelper.getInstance().setSecAnswer("");
-                            updateAccountHeader();
-                            progressDialog.dismissError(loginHelper.getErrorMsg());
-                        }
-                    }
-                }.execute();
+                doLoginProgress();
             }
             closeDrawer();
             expandAppBar();
@@ -605,6 +575,40 @@ public class MainFrameActivity extends BaseActivity {
             closeDrawer();
             return true;
         }
+    }
+
+    public void doLoginProgress() {
+        final String username = HiSettingsHelper.getInstance().getUsername();
+        progressDialog = HiProgressDialog.show(this, "<" + username + "> 正在登录...");
+
+        final LoginHelper loginHelper = new LoginHelper(this);
+
+        new AsyncTask<Void, Void, Integer>() {
+
+            @Override
+            protected Integer doInBackground(Void... voids) {
+                return loginHelper.login(true);
+            }
+
+            @Override
+            protected void onPostExecute(Integer result) {
+                if (result == Constants.STATUS_SUCCESS) {
+                    UIUtils.toast("登录成功");
+                    TaskHelper.runDailyTask(true);
+                    progressDialog.dismiss();
+                } else {
+                    if (result == Constants.STATUS_FAIL_ABORT) {
+                        HiSettingsHelper.getInstance().removeProfile(username);
+                        HiSettingsHelper.getInstance().setUsername("");
+                        HiSettingsHelper.getInstance().setPassword("");
+                        HiSettingsHelper.getInstance().setSecQuestion("");
+                        HiSettingsHelper.getInstance().setSecAnswer("");
+                    }
+                    updateAccountHeader();
+                    progressDialog.dismissError(loginHelper.getErrorMsg());
+                }
+            }
+        }.execute();
     }
 
     private void showRemoveProfileDialog(String username) {
