@@ -124,8 +124,9 @@
 
     <com.mikepenz.materialdrawer.view.BezelImageView
         android:id="@+id/material_drawer_account_login"
-        android:layout_width="@dimen/material_drawer_account_header_secondary"
-        android:layout_height="@dimen/material_drawer_account_header_secondary"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/circle_background"
         android:clickable="true"
         android:focusable="true"
@@ -133,7 +134,6 @@
         android:scaleType="fitCenter"
         android:src="@drawable/outline_login_white_24"
         android:tint="@color/md_grey_300"
-        android:layout_marginEnd="@dimen/material_drawer_vertical_padding"
         app:layout_constraintBottom_toBottomOf="@id/material_drawer_account_header_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/material_drawer_account_header_name" />

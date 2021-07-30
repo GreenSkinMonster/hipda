@@ -679,13 +679,13 @@ public class MainFrameActivity extends BaseActivity {
             ((ThreadListFragment) fragment).enterNotLoginState();
         }
 
-        progressDialog.dismiss(message, 2000);
+        progressDialog.dismiss(message);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 showLoginDialog();
             }
-        }, 2000);
+        }, 1000);
     }
 
     private class NetworkStateReceiver extends BroadcastReceiver {
