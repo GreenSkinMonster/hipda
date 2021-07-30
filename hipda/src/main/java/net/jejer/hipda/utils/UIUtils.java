@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +17,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -44,11 +47,17 @@ import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.ui.PostActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Created by GreenSkinMonster on 2016-04-05.
  */
 public class UIUtils {
+
+    private final static String IMAGES_DIR = "HiPDA";
 
     public static void infoSnack(View view, CharSequence message) {
         if (view != null) {
@@ -204,7 +213,8 @@ public class UIUtils {
     public static void shareImage(final Activity activity, final View view, String url) {
         if (activity == null || view == null)
             return;
-        if (askForStoragePermission(activity))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N
+                && askForStoragePermission(activity))
             return;
 
         final ImageInfo imageInfo = ImageContainer.getImageInfo(url);
@@ -256,7 +266,8 @@ public class UIUtils {
     public static void saveImage(final Activity activity, final View view, String url) {
         if (activity == null || view == null)
             return;
-        if (askForStoragePermission(activity))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+                && askForStoragePermission(activity))
             return;
 
         final ImageInfo imageInfo = ImageContainer.getImageInfo(url);
@@ -268,7 +279,7 @@ public class UIUtils {
                     if (imageInfo.isSuccess()) {
                         saveImage(activity, view, imageInfo);
                     } else {
-                        errorSnack(view, "分享时发生错误", mException != null ? mException.getMessage() : "");
+                        errorSnack(view, "保存时发生错误", mException != null ? mException.getMessage() : "");
                     }
                 }
             };
@@ -279,51 +290,106 @@ public class UIUtils {
     }
 
     private static void saveImage(final Activity activity, final View view, final ImageInfo imageInfo) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            saveImageQ(activity, view, imageInfo);
+            return;
+        }
         try {
             String filename = Utils.getImageFileName("Hi_IMG", imageInfo.getMime());
-            final File destFile = new File(getSaveFolder(), filename);
+
+            File imagesDir = getImagesDir();
+            final File destFile = new File(imagesDir, filename);
             Utils.copy(new File(imageInfo.getPath()), destFile);
             MediaScannerConnection.scanFile(activity, new String[]{destFile.getPath()}, null, null);
 
-            Snackbar snackbar = Snackbar.make(view, "文件已保存", Snackbar.LENGTH_LONG);
-            View snackbarView = snackbar.getView();
-            ((TextView) snackbarView.findViewById(R.id.snackbar_text)).setTextColor(Color.WHITE);
-
-            snackbar.setAction("查看", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            Uri contentUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", destFile);
-                            intent.setDataAndType(contentUri, imageInfo.getMime());
-                        } else {
-                            intent.setDataAndType(Uri.fromFile(destFile), imageInfo.getMime());
-                        }
-                        activity.startActivity(intent);
-                    } catch (Exception e) {
-                        errorSnack(view, "打开文件发生错误", "请尝试将保存路径设置到内置存储\n" + e.getMessage());
-                    }
-                }
-            });
-            snackbar.show();
+            Uri destUri;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                destUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", destFile);
+            } else {
+                destUri = Uri.fromFile(destFile);
+            }
+            snackViewSaveImage(activity, view, destUri, imageInfo.getMime());
         } catch (Exception e) {
             Logger.e(e);
-            errorSnack(view, "保存图片文件时发生错误", e.getMessage());
+            errorSnack(view, "保存文件时发生错误", e.getMessage());
         }
     }
 
-    public static File getSaveFolder() {
-        String saveFolder = HiSettingsHelper.getInstance().getStringValue(HiSettingsHelper.PERF_SAVE_FOLDER, "");
-        File dir = new File(saveFolder);
-        if (saveFolder.startsWith("/") && dir.exists() && dir.isDirectory() && dir.canWrite()) {
-            return dir;
+    private static void saveImageQ(final Activity activity, final View view, ImageInfo imageInfo) {
+        try {
+            String filename = Utils.getImageFileName("Hi_IMG", imageInfo.getMime());
+            FileInputStream fis = new FileInputStream(imageInfo.getPath());
+            final File destFile;
+            final Uri destUri;
+
+            OutputStream fos;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ContentResolver resolver = activity.getContentResolver();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
+                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, imageInfo.getMime());
+                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/" + IMAGES_DIR);
+                destUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                fos = resolver.openOutputStream(destUri);
+            } else {
+                String imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+                destFile = new File(imagesDir, filename);
+                fos = new FileOutputStream(destFile);
+                destUri = Uri.fromFile(destFile);
+            }
+
+            int i;
+            do {
+                byte[] buf = new byte[1024];
+                i = fis.read(buf);
+                fos.write(buf);
+            } while (i != -1);
+
+            fos.close();
+
+            snackViewSaveImage(activity, view, destUri, imageInfo.getMime());
+        } catch (Exception e) {
+            Logger.e(e);
+            errorSnack(view, "保存文件时发生错误", e.getMessage());
         }
-        dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_SAVE_FOLDER, dir.getAbsolutePath());
-        return dir;
+    }
+
+    private static void snackViewSaveImage(Activity activity, View view, Uri destUri, String mime) {
+        Snackbar snackbar = Snackbar.make(view, "文件已保存至 Pictures/" + IMAGES_DIR + " 目录", Snackbar.LENGTH_LONG);
+        View snackbarView = snackbar.getView();
+        ((TextView) snackbarView.findViewById(R.id.snackbar_text)).setTextColor(Color.WHITE);
+
+        snackbar.setAction("查看", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    }
+                    intent.setDataAndType(destUri, mime);
+                    activity.startActivity(intent);
+                } catch (Exception e) {
+                    errorSnack(view, "打开文件发生错误", e.getMessage());
+                }
+            }
+        });
+        snackbar.show();
+    }
+
+    private static File getImagesDir() throws IOException {
+        String imagesDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()
+                        + "/" + IMAGES_DIR;
+        File destDir = new File(imagesDir);
+        if (destDir.isFile())
+            destDir.delete();
+        if (!destDir.exists()) {
+            if (!destDir.mkdirs())
+                throw new IOException("不能创建目录 " + imagesDir);
+        }
+        return destDir;
     }
 
     public static Boolean isTablet(Context context) {

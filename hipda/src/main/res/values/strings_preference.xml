@@ -207,7 +207,7 @@
     <string name="pref_category_notification_style">通知方式</string>
     <string name="pref_category_silent_mode">免打扰</string>
 
-    <string name="pref_category_network">图片与下载</string>
+    <string name="pref_category_network">图片与缓存</string>
     <string name="pref_category_more">分类设置</string>
 
     <string name="pref_category_other">其它</string>

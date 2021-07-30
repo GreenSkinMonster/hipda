@@ -10,6 +10,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.preference.Preference;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -22,11 +27,6 @@ import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.preference.Preference;
 
 /**
  * nested setting fragment
@@ -56,7 +56,6 @@ public class SettingNestedFragment extends BaseSettingFragment {
     @Override
     public void onStop() {
         super.onStop();
-        UIUtils.getSaveFolder();
     }
 
     @Override
@@ -197,13 +196,9 @@ public class SettingNestedFragment extends BaseSettingFragment {
             case SCREEN_NETWORK:
                 setActionBarTitle(R.string.pref_category_network);
                 addPreferencesFromResource(R.xml.pref_network);
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SAVE_FOLDER));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY));
-
-                Preference saveFolderPreference = findPreference(HiSettingsHelper.PERF_SAVE_FOLDER);
-                saveFolderPreference.setOnPreferenceClickListener(new FilePickerListener(getActivity(), FilePickerListener.SAVE_DIR));
 
                 break;
 

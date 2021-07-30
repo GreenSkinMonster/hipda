@@ -10,6 +10,10 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import androidx.core.content.ContextCompat;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,10 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import androidx.core.content.ContextCompat;
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
 
 public class HiSettingsHelper {
 
@@ -90,7 +90,6 @@ public class HiSettingsHelper {
     public static final String PERF_NOTI_SILENT_BEGIN = "PERF_NOTI_SILENT_BEGIN";
     public static final String PERF_NOTI_SILENT_END = "PERF_NOTI_SILENT_END";
     public static final String PERF_BS_TYPE_ID = "PERF_BS_TYPE_ID";
-    public static final String PERF_SAVE_FOLDER = "PERF_SAVE_FOLDER";
     public static final String PERF_CIRCLE_AVATAR = "PERF_CIRCLE_AVATAR";
     public static final String PERF_LAST_TASK_TIME = "PERF_LAST_TASK_TIME";
     public static final String PERF_CACHE_SIZE_IN_MB = "PERF_CACHE_SIZE_IN_MB";
