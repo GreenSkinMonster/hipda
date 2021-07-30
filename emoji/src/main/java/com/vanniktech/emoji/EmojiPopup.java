@@ -9,9 +9,11 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.view.DisplayCutout;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.PopupWindow;
@@ -23,6 +25,8 @@ import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
 import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,14 +67,7 @@ public final class EmojiPopup {
             final Rect rect = new Rect();
             rootView.getWindowVisibleDisplayFrame(rect);
 
-            int heightDifference = getUsableScreenHeight() - (rect.bottom - rect.top);
-
-            final Resources resources = context.getResources();
-            final int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-
-            if (resourceId > 0) {
-                heightDifference -= resources.getDimensionPixelSize(resourceId);
-            }
+            int heightDifference = getUsableScreenHeight() + getCutoutHeight() - rect.bottom;
 
             if (heightDifference > MIN_KEYBOARD_HEIGHT) {
                 if (keyBoardHeight != heightDifference) {
@@ -83,7 +80,6 @@ public final class EmojiPopup {
                 if (!isKeyboardOpen && onSoftKeyboardOpenListener != null) {
                     onSoftKeyboardOpenListener.onKeyboardOpen(keyBoardHeight);
                 }
-
                 isKeyboardOpen = true;
             } else {
                 if (isKeyboardOpen) {
@@ -190,18 +186,42 @@ public final class EmojiPopup {
         recentEmoji.persist();
     }
 
-    private int getUsableScreenHeight() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            final DisplayMetrics metrics = new DisplayMetrics();
-
-            final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-            windowManager.getDefaultDisplay().getMetrics(metrics);
-
-            return metrics.heightPixels;
-
-        } else {
-            return rootView.getRootView().getHeight();
+    private int getCutoutHeight() {
+        int cutoutHeight = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowInsets windowInsets = rootView.getRootWindowInsets();
+            if (windowInsets != null) {
+                DisplayCutout displayCutout = windowInsets.getDisplayCutout();
+                if (displayCutout != null) {
+                    List<Rect> rects = displayCutout.getBoundingRects();
+                    for (Rect rect : rects) {
+                        if (rect.top == 0) {
+                            cutoutHeight += rect.bottom - rect.top;
+                        }
+                    }
+                }
+            }
         }
+        return cutoutHeight;
+    }
+
+    private int getUsableScreenHeight() {
+        final DisplayMetrics metrics = new DisplayMetrics();
+
+        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+
+        return metrics.heightPixels;
+    }
+
+    private int getStatusBarHeight() {
+        int statusBarHeight = 0;
+        final Resources resources = context.getResources();
+        final int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = resources.getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
     }
 
     public static final class Builder {
