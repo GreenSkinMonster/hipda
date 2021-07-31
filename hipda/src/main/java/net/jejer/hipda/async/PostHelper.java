@@ -71,7 +71,11 @@ public class PostHelper {
         String typeid = postBean.getTypeid();
 
         mPrePostAsyncTask = new PrePostAsyncTask(mCtx, null, mMode);
-        mInfo = mPrePostAsyncTask.doInBackground(postBean);
+        int count = 0;
+        while (mInfo == null && count < 3) {
+            count++;
+            mInfo = new PrePostAsyncTask(mCtx, null, mMode).doInBackground(postBean);
+        }
 
         mFloor = floor;
 
@@ -144,6 +148,7 @@ public class PostHelper {
         for (String attach : mInfo.getNewAttaches()) {
             params.put("attachnew[][description]", attach);
         }
+        Logger.e("xxxxxxxxxxxxx");
         for (String attach : mInfo.getDeleteAttaches()) {
             params.put("attachdel[]", attach);
         }
