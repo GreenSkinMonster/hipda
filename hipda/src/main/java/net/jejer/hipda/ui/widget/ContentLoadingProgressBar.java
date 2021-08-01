@@ -16,11 +16,11 @@ import android.widget.ProgressBar;
  * This version is similar to the support library version but implemented "the right way".
  *
  * @author Christophe Beyls
- *         https://gist.github.com/cbeyls/133164625e06b16520c1
+ * https://gist.github.com/cbeyls/133164625e06b16520c1
  */
 public class ContentLoadingProgressBar extends ProgressBar {
-    private static final long MIN_SHOW_TIME = 250L; // ms
-    private static final long MIN_DELAY = 750L; // ms
+    private static final long MIN_SHOW_TIME = 500L; // ms
+    private static final long MIN_DELAY = 500L; // ms
 
     private boolean mIsAttachedToWindow = false;
     private boolean mIsShown;

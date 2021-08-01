@@ -399,7 +399,7 @@ public class SimpleListFragment extends BaseFragment
             postId = item.getPid();
         } else {
             page = ThreadDetailFragment.LAST_PAGE;
-            floor = ThreadDetailFragment.LAST_FLOOR;
+            floor = ThreadDetailFragment.LAST_FLOOR_OF_PAGE;
         }
         FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), page, floor, postId, -1);
     }

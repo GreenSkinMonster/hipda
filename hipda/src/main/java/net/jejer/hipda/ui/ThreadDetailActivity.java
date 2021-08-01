@@ -3,6 +3,7 @@ package net.jejer.hipda.ui;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -13,6 +14,7 @@ import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.utils.UIUtils;
 
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
@@ -25,6 +27,7 @@ import androidx.fragment.app.FragmentManager;
 public class ThreadDetailActivity extends SwipeBaseActivity {
 
     private View mQuickReply;
+    private AppCompatTextView mPageLabel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,7 @@ public class ThreadDetailActivity extends SwipeBaseActivity {
         mMainFrameContainer = findViewById(R.id.main_frame_container);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
         mQuickReply = findViewById(R.id.quick_reply);
+        mPageLabel = (AppCompatTextView) findViewById(R.id.tv_page_label);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -89,6 +93,10 @@ public class ThreadDetailActivity extends SwipeBaseActivity {
 
     public View getQuickReplyView() {
         return mQuickReply;
+    }
+
+    public TextView getPageLabel() {
+        return mPageLabel;
     }
 
 }

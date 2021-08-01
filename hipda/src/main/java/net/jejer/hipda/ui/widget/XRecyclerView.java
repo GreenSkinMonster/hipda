@@ -299,6 +299,10 @@ public class XRecyclerView extends RecyclerView {
         mLayoutManager.scrollToPositionWithOffset(mLayoutManager.getItemCount() - 1, 0);
     }
 
+    public void smoothScrollToTop() {
+        smoothScrollToPosition(0);
+    }
+
     public void smoothScrollToBottom() {
         smoothScrollToPosition(mLayoutManager.getItemCount() - 1);
     }

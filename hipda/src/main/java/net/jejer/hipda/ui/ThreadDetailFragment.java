@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -27,11 +28,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -79,6 +75,7 @@ import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -93,6 +90,12 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Request;
 
 public class ThreadDetailFragment extends BaseFragment {
@@ -104,15 +107,14 @@ public class ThreadDetailFragment extends BaseFragment {
     public static final String ARG_PAGE_KEY = "page";
     public static final String ARG_MAX_PAGE_KEY = "maxPage";
 
-    public static final int LAST_FLOOR = Integer.MIN_VALUE;
-    public static final int FIRST_FLOOR = Integer.MIN_VALUE + 1;
+    public static final int LAST_FLOOR_OF_PAGE = Integer.MIN_VALUE;
+    public static final int FIRST_FLOOR_OF_PAGE = Integer.MIN_VALUE + 1;
     public static final int LAST_PAGE = Integer.MIN_VALUE;
 
     public final static int FETCH_NORMAL = 0;
     public final static int FETCH_NEXT = 1;
     public final static int FETCH_PREVIOUS = 2;
     public final static int FETCH_REFRESH = 3;
-    public final static int FETCH_SILENT = 4;
 
     public static final int POSITION_NORMAL = 0;
     public static final int POSITION_HEADER = 1;
@@ -120,25 +122,28 @@ public class ThreadDetailFragment extends BaseFragment {
 
     private Context mCtx;
     private String mTid;
-    private String mGotoPostId;
     private String mAuthorId;
     private String mTitle;
     private int mFid;
     private XRecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private ThreadDetailAdapter mDetailAdapter;
-    private ThreadDetailCache mCache = new ThreadDetailCache();
-    private List<DetailBean> mDetailBeans = new ArrayList<>();
+    final private ThreadDetailCache mCache = new ThreadDetailCache();
 
-    private int mCurrentPage = 1;
     private int mMaxPage = 0;
-    private int mGoToPage = 1;
     private int mMaxPostInPage = HiSettingsHelper.getInstance().getMaxPostsInPage();    // user can configure max posts per page in forum setting
+
+    private int mGotoPage = 1;
     private int mGotoFloor = -1;    // actual floor number in thread, start from 1
+    private String mGotoPostId;
+
+    private int mViewBeginPage = 0;
+    private int mViewEndPage = 0;
 
     private View mQuickReply;
     private EmojiEditText mEtReply;
     private CountdownButton mCountdownButton;
+    private AppCompatTextView mPageLabel;
 
     private DetailBean mQuickReplyToPost;
     private int mQuickReplyMode;
@@ -156,7 +161,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
     private HiProgressDialog postProgressDialog;
     private ContentLoadingView mLoadingView;
-    private ThreadDetailEventCallback mEventCallback = new ThreadDetailEventCallback();
+    final private ThreadDetailEventCallback mEventCallback = new ThreadDetailEventCallback();
     private MenuItem mShowAllMenuItem;
 
     private boolean mHistorySaved = false;
@@ -164,7 +169,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
     private SimpleGridMenu mGridMenu;
 
-    private View.OnLayoutChangeListener mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
+    final private View.OnLayoutChangeListener mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
         @Override
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             if (oldTop - top > Utils.dpToPx(96)) {
@@ -195,13 +200,13 @@ public class ThreadDetailFragment extends BaseFragment {
             if (getArguments().containsKey(ARG_TITLE_KEY)) {
                 mTitle = getArguments().getString(ARG_TITLE_KEY);
             }
-            if (getArguments().containsKey(ARG_PAGE_KEY)) {
-                mCurrentPage = getArguments().getInt(ARG_PAGE_KEY);
-                if (mCurrentPage <= 0 && mCurrentPage != LAST_PAGE)
-                    mCurrentPage = 1;
-            }
             if (getArguments().containsKey(ARG_MAX_PAGE_KEY)) {
                 mMaxPage = getArguments().getInt(ARG_MAX_PAGE_KEY);
+            }
+            if (getArguments().containsKey(ARG_PAGE_KEY)) {
+                mGotoPage = getArguments().getInt(ARG_PAGE_KEY);
+                if (mGotoPage <= 0 && mGotoPage != LAST_PAGE)
+                    mGotoPage = 1;
             }
             if (getArguments().containsKey(ARG_FLOOR_KEY)) {
                 mGotoFloor = getArguments().getInt(ARG_FLOOR_KEY);
@@ -215,7 +220,7 @@ public class ThreadDetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_thread_detail, parent, false);
 
-        mRecyclerView = (XRecyclerView) view.findViewById(R.id.rv_thread_details);
+        mRecyclerView = view.findViewById(R.id.rv_thread_details);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(null);
         mLayoutManager = new SmoothLinearLayoutManager(mCtx);
@@ -223,27 +228,29 @@ public class ThreadDetailFragment extends BaseFragment {
         mRecyclerView.addItemDecoration(new SimpleDivider(getActivity()));
 
         mRecyclerView.addOnScrollListener(new OnScrollListener());
+        mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
+        mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
 
         RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(mCtx, new OnItemClickListener());
         mDetailAdapter = new ThreadDetailAdapter(mCtx, this, itemClickListener,
                 new GoToFloorOnClickListener(), new AvatarOnClickListener(), new WarningOnClickListener());
-        mDetailAdapter.setDatas(mDetailBeans);
 
         mRecyclerView.setAdapter(mDetailAdapter);
 
         mRecyclerView.setXRecyclerListener(new XRecyclerView.XRecyclerListener() {
             @Override
             public void onHeaderReady() {
-                mCurrentPage--;
-                mGotoFloor = LAST_FLOOR;
-                showOrLoadPage();
+//                mCurrentPage--;
+//                mGotoFloor = LAST_FLOOR;
+//                showOrLoadPage();
+//                prefetchPreviousPage();
             }
 
             @Override
             public void onFooterReady() {
-                mCurrentPage++;
-                mGotoFloor = FIRST_FLOOR;
-                showOrLoadPage();
+//                mCurrentPage++;
+//                mGotoFloor = FIRST_FLOOR;
+//                showOrLoadPage();
             }
 
             @Override
@@ -254,7 +261,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
             @Override
             public void onFooterError() {
-                if (mCurrentPage == mMaxPage) {
+                if (mViewEndPage == mMaxPage) {
                     atEnd();
                 } else {
                     prefetchNextPage();
@@ -267,7 +274,7 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
 
-        mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
+        mLoadingView = view.findViewById(R.id.content_loading);
         mLoadingView.setErrorStateListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -279,10 +286,11 @@ public class ThreadDetailFragment extends BaseFragment {
         });
 
         mQuickReply = ((ThreadDetailActivity) getActivity()).getQuickReplyView();
-        mEtReply = (EmojiEditText) mQuickReply.findViewById(R.id.tv_reply_text);
+        mEtReply = mQuickReply.findViewById(R.id.tv_reply_text);
         mEtReply.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+        mPageLabel = view.findViewById(R.id.tv_page_label);
 
-        mCountdownButton = (CountdownButton) mQuickReply.findViewById(R.id.countdown_button);
+        mCountdownButton = mQuickReply.findViewById(R.id.countdown_button);
         mCountdownButton.setImageDrawable(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_send).sizeDp(28).color(Color.GRAY));
         mCountdownButton.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -317,11 +325,11 @@ public class ThreadDetailFragment extends BaseFragment {
             }
         });
 
-        ImageButton ibEmojiSwitch = (ImageButton) mQuickReply.findViewById(R.id.ib_emoji_switch);
+        ImageButton ibEmojiSwitch = mQuickReply.findViewById(R.id.ib_emoji_switch);
         setUpEmojiPopup(mEtReply, ibEmojiSwitch);
 
         setActionBarTitle(mTitle);
-        setActionBarSubtitle(mCurrentPage > 0 && mMaxPage > 0 ? mCurrentPage + "/" + mMaxPage : "?");
+//        setActionBarSubtitle(mCurrentPage > 0 && mMaxPage > 0 ? mCurrentPage + "/" + mMaxPage : "?");
 
         return view;
     }
@@ -340,7 +348,7 @@ public class ThreadDetailFragment extends BaseFragment {
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         if (!mInloading) {
-            if (mDetailBeans.size() == 0) {
+            if (mDetailAdapter.getDataCount() == 0) {
                 refresh();
             } else {
                 mLoadingView.setState(ContentLoadingView.CONTENT);
@@ -367,7 +375,7 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         MenuItem favoritesMenuItem = menu.findItem(R.id.action_add_favorite);
         if (favoritesMenuItem != null) {
@@ -397,14 +405,11 @@ public class ThreadDetailFragment extends BaseFragment {
         }
 
         if (mShowAllMenuItem != null) {
-            if (TextUtils.isEmpty(mAuthorId)) {
-                mShowAllMenuItem.setVisible(false);
-            } else {
-                mShowAllMenuItem.setVisible(true);
-            }
+            mShowAllMenuItem.setVisible(!TextUtils.isEmpty(mAuthorId));
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -425,8 +430,8 @@ public class ThreadDetailFragment extends BaseFragment {
                 return true;
             case R.id.action_open_url:
                 String url = HiUtils.DetailListUrl + mTid;
-                if (mCurrentPage > 1)
-                    url += "&page=" + mCurrentPage;
+                if (mViewBeginPage > 1)
+                    url += "&page=" + mViewBeginPage;
                 try {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.parse(url), "text/html");
@@ -450,7 +455,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
                         if (targetIntents.size() > 0) {
                             Intent chooserIntent = Intent.createChooser(targetIntents.remove(0), getString(R.string.action_open_url));
-                            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[targetIntents.size()]));
+                            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[0]));
                             startActivity(chooserIntent);
                         } else {
                             UIUtils.toast("没有找到浏览器应用");
@@ -533,13 +538,13 @@ public class ThreadDetailFragment extends BaseFragment {
     private void showPost(String text) {
         if (mQuickReplyToPost != null) {
             FragmentUtils.showPostActivity(getActivity(), mQuickReplyMode,
-                    mSessionId, mFid, mTid,
+                    mSessionId, mFid, mTid, -1,
                     mQuickReplyToPost.getPostId(),
                     mQuickReplyToPost.getFloor(),
                     mQuickReplyToPost.getAuthor(), text, mQuickReplyToPost.getContents().getCopyText());
         } else {
             FragmentUtils.showPostActivity(getActivity(), mQuickReplyMode,
-                    mSessionId, mFid, mTid,
+                    mSessionId, mFid, mTid, -1,
                     null, -1, null, text, null);
         }
     }
@@ -547,12 +552,12 @@ public class ThreadDetailFragment extends BaseFragment {
     private void refresh() {
         mInloading = true;
         mLoadingView.setState(ContentLoadingView.LOADING);
-        startJob(mCurrentPage, FETCH_REFRESH, POSITION_NORMAL);
+        startJob(mGotoPage, FETCH_REFRESH, POSITION_NORMAL);
     }
 
     private void refreshAtEnd() {
         mFooterLoading = true;
-        startJob(mCurrentPage, FETCH_REFRESH, POSITION_FOOTER);
+        startJob(mViewEndPage, FETCH_REFRESH, POSITION_FOOTER);
     }
 
     private void startJob(int page, int fetchType, int loadingPosition) {
@@ -566,22 +571,24 @@ public class ThreadDetailFragment extends BaseFragment {
 
     public void enterAuthorOnlyMode(String authorId) {
         mCache.clear();
+        mDetailAdapter.clear();
         mAuthorId = authorId;
-        mCurrentPage = 1;
-        mGotoFloor = FIRST_FLOOR;
+        mGotoPage = 1;
+        mGotoFloor = FIRST_FLOOR_OF_PAGE;
         mLoadingView.setState(ContentLoadingView.LOAD_NOW);
         mShowAllMenuItem.setVisible(true);
-        startJob(mCurrentPage, FETCH_REFRESH, POSITION_NORMAL);
+        startJob(mGotoPage, FETCH_REFRESH, POSITION_NORMAL);
     }
 
     public void cancelAuthorOnlyMode() {
         mCache.clear();
+        mDetailAdapter.clear();
         mAuthorId = "";
-        mCurrentPage = 1;
-        mGotoFloor = FIRST_FLOOR;
+        mGotoPage = 1;
+        mGotoFloor = FIRST_FLOOR_OF_PAGE;
         mLoadingView.setState(ContentLoadingView.LOAD_NOW);
         mShowAllMenuItem.setVisible(false);
-        startJob(mCurrentPage, FETCH_REFRESH, POSITION_NORMAL);
+        startJob(mGotoPage, FETCH_REFRESH, POSITION_NORMAL);
     }
 
     public DetailBean getCachedPost(String postId) {
@@ -589,7 +596,8 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     public ArrayList<ContentImg> getImagesInPage(int page) {
-        DetailListBean detailListBean = mCache.get(mCurrentPage);
+        //TODO 图片查看范围？
+        DetailListBean detailListBean = mCache.get(page);
         if (detailListBean != null) {
             return detailListBean.getContentImages();
         }
@@ -612,11 +620,12 @@ public class ThreadDetailFragment extends BaseFragment {
                 if (!TextUtils.isEmpty(floor) && TextUtils.isDigitsOnly(floor)) {
                     int pos = mDetailAdapter.getPositionByFloor(Integer.parseInt(floor));
                     detailBean = mDetailAdapter.getItem(pos);
+                    if (pos != position)
+                        UIUtils.toast("position1 : " + position + ", position2=" + pos);
                 }
             }
-            if (detailBean == null) {
+            if (detailBean == null)
                 return;
-            }
 
             showGridMenu(detailBean);
         }
@@ -699,7 +708,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         FragmentUtils.showPostActivity(getActivity(), PostHelper.MODE_REPLY_POST,
-                                mSessionId, mFid, mTid,
+                                mSessionId, mFid, mTid, -1,
                                 detailBean.getPostId(), detailBean.getFloor(),
                                 detailBean.getAuthor(), null, detailBean.getContents().getCopyText());
                         hideQuickReply(true);
@@ -716,7 +725,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         FragmentUtils.showPostActivity(getActivity(), PostHelper.MODE_QUOTE_POST,
-                                mSessionId, mFid, mTid,
+                                mSessionId, mFid, mTid, -1,
                                 detailBean.getPostId(), detailBean.getFloor(),
                                 detailBean.getAuthor(), null, detailBean.getContents().getCopyText());
                         hideQuickReply(true);
@@ -736,7 +745,7 @@ public class ThreadDetailFragment extends BaseFragment {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             FragmentUtils.showPostActivity(getActivity(), PostHelper.MODE_EDIT_POST,
-                                    mSessionId, mFid, mTid,
+                                    mSessionId, mFid, mTid, detailBean.getPage(),
                                     detailBean.getPostId(), detailBean.getFloor(),
                                     null, null, null);
                         }
@@ -787,8 +796,11 @@ public class ThreadDetailFragment extends BaseFragment {
 
     public void scrollToTop() {
         stopScroll();
-        prefetchPreviousPage();
-        mRecyclerView.scrollToTop();
+        mGotoPage = mViewEndPage - 1;
+        if (mGotoPage < 1)
+            mGotoPage = 1;
+        mGotoFloor = FIRST_FLOOR_OF_PAGE;
+        showOrLoadPage();
     }
 
     public void scrollToBottom() {
@@ -803,29 +815,35 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private synchronized void prefetchNextPage() {
-        if (mCurrentPage < mMaxPage) {
-            if (mCache.get(mCurrentPage + 1) == null) {
+        if (mViewEndPage <= 0)
+            return;
+        final int currentPage = mViewEndPage;
+        if (currentPage < mMaxPage) {
+            if (mCache.get(currentPage + 1) == null) {
                 if (!mFooterLoading) {
                     mFooterLoading = true;
-                    prefetchPage(mCurrentPage + 1, FETCH_NEXT, POSITION_FOOTER);
+                    prefetchPage(currentPage + 1, FETCH_NEXT, POSITION_FOOTER);
                     mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
                 }
             } else {
-                mRecyclerView.setFooterState(XFooterView.STATE_READY);
+                mDetailAdapter.addDatas(mCache.get(currentPage + 1));
             }
         }
     }
 
     private synchronized void prefetchPreviousPage() {
-        if (mCurrentPage > 1) {
-            if (mCache.get(mCurrentPage - 1) == null) {
+        if (mViewBeginPage <= 0)
+            return;
+        final int currentPage = mViewBeginPage;
+        if (currentPage > 1) {
+            if (mCache.get(currentPage - 1) == null) {
                 if (!mHeaderLoading) {
                     mHeaderLoading = true;
-                    prefetchPage(mCurrentPage - 1, FETCH_PREVIOUS, POSITION_HEADER);
+                    prefetchPage(currentPage - 1, FETCH_PREVIOUS, POSITION_HEADER);
                     mRecyclerView.setHeaderState(XHeaderView.STATE_LOADING);
                 }
             } else {
-                mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
+                mDetailAdapter.addDatas(mCache.get(currentPage - 1));
             }
         }
     }
@@ -839,18 +857,19 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private void showGotoPageDialog() {
-        mGoToPage = mCurrentPage;
+        final int[] gotoPageHolder = new int[1];
+        gotoPageHolder[0] = mViewBeginPage;
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_goto_page, null);
-        TextView tvTitle = (TextView) view.findViewById(R.id.tv_title);
-        final TextView tvPage = (TextView) view.findViewById(R.id.tv_page);
-        final ImageButton btnFirstPage = (ImageButton) view.findViewById(R.id.btn_fisrt_page);
-        final ImageButton btnLastPage = (ImageButton) view.findViewById(R.id.btn_last_page);
-        final ImageButton btnNextPage = (ImageButton) view.findViewById(R.id.btn_next_page);
-        final ImageButton btnPreviousPage = (ImageButton) view.findViewById(R.id.btn_previous_page);
-        final SeekBar sbGotoPage = (SeekBar) view.findViewById(R.id.sb_page);
-        Button btnPageBottom = (Button) view.findViewById(R.id.btn_page_bottom);
-        Button btnGoto = (Button) view.findViewById(R.id.btn_goto_page);
+        TextView tvTitle = view.findViewById(R.id.tv_title);
+        final TextView tvPage = view.findViewById(R.id.tv_page);
+        final ImageButton btnFirstPage = view.findViewById(R.id.btn_fisrt_page);
+        final ImageButton btnLastPage = view.findViewById(R.id.btn_last_page);
+        final ImageButton btnNextPage = view.findViewById(R.id.btn_next_page);
+        final ImageButton btnPreviousPage = view.findViewById(R.id.btn_previous_page);
+        final SeekBar sbGotoPage = view.findViewById(R.id.sb_page);
+        Button btnPageBottom = view.findViewById(R.id.btn_page_bottom);
+        Button btnGoto = view.findViewById(R.id.btn_goto_page);
 
         final BottomSheetDialog dialog = new BottomDialog(getActivity());
 
@@ -860,7 +879,7 @@ public class ThreadDetailFragment extends BaseFragment {
         btnNextPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_forward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
         btnPreviousPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_backward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
 
-        tvPage.setText("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
+        tvPage.setText("第 " + String.valueOf(gotoPageHolder[0]) + " / " + (mMaxPage) + " 页");
 
         btnPageBottom.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -873,20 +892,20 @@ public class ThreadDetailFragment extends BaseFragment {
         btnGoto.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                mCurrentPage = mGoToPage;
-                mGotoFloor = FIRST_FLOOR;
+                mGotoPage = gotoPageHolder[0];
+                mGotoFloor = FIRST_FLOOR_OF_PAGE;
                 showOrLoadPage();
                 dialog.dismiss();
             }
         });
 
         sbGotoPage.setMax(mMaxPage - 1);
-        sbGotoPage.setProgress(mCurrentPage - 1);
+        sbGotoPage.setProgress(mViewBeginPage - 1);
         sbGotoPage.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mGoToPage = progress + 1; //start from 0
-                tvPage.setText("第 " + String.valueOf(mGoToPage) + " / " + (mMaxPage) + " 页");
+                gotoPageHolder[0] = progress + 1; //start from 0
+                tvPage.setText("第 " + String.valueOf(gotoPageHolder[0]) + " / " + (mMaxPage) + " 页");
             }
 
             @Override
@@ -901,8 +920,8 @@ public class ThreadDetailFragment extends BaseFragment {
         btnFirstPage.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCurrentPage = 1;
-                mGotoFloor = FIRST_FLOOR;
+                mGotoPage = 1;
+                mGotoFloor = FIRST_FLOOR_OF_PAGE;
                 showOrLoadPage();
                 dialog.dismiss();
             }
@@ -911,8 +930,8 @@ public class ThreadDetailFragment extends BaseFragment {
         btnLastPage.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCurrentPage = mMaxPage;
-                mGotoFloor = LAST_FLOOR;
+                mGotoPage = mMaxPage;
+                mGotoFloor = LAST_FLOOR_OF_PAGE;
                 showOrLoadPage();
                 dialog.dismiss();
             }
@@ -921,9 +940,10 @@ public class ThreadDetailFragment extends BaseFragment {
         btnNextPage.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mCurrentPage < mMaxPage) {
-                    mCurrentPage++;
-                    mGotoFloor = FIRST_FLOOR;
+                mGotoPage = mViewBeginPage;
+                if (mGotoPage < mMaxPage) {
+                    mGotoPage++;
+                    mGotoFloor = FIRST_FLOOR_OF_PAGE;
                     showOrLoadPage();
                 }
                 dialog.dismiss();
@@ -933,9 +953,10 @@ public class ThreadDetailFragment extends BaseFragment {
         btnPreviousPage.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mCurrentPage > 1) {
-                    mCurrentPage--;
-                    mGotoFloor = FIRST_FLOOR;
+                mGotoPage = mViewBeginPage;
+                if (mGotoPage > 1) {
+                    mGotoPage--;
+                    mGotoFloor = FIRST_FLOOR_OF_PAGE;
                     showOrLoadPage();
                 }
                 dialog.dismiss();
@@ -1025,8 +1046,8 @@ public class ThreadDetailFragment extends BaseFragment {
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_thread_font_size, null);
 
-        final ValueChagerView valueChangerSize = (ValueChagerView) view.findViewById(R.id.value_changer_size);
-        final ValueChagerView valueChangerLs = (ValueChagerView) view.findViewById(R.id.value_changer_ls);
+        final ValueChagerView valueChangerSize = view.findViewById(R.id.value_changer_size);
+        final ValueChagerView valueChangerLs = view.findViewById(R.id.value_changer_ls);
 
         valueChangerSize.setCurrentValue(HiSettingsHelper.getInstance().getPostTextSizeAdj());
         valueChangerSize.setOnChangeListener(new ValueChagerView.OnChangeListener() {
@@ -1068,21 +1089,20 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     public void gotoFloor(int floor) {
-        mGoToPage = (floor - 1) / mMaxPostInPage + 1; // page start from 1
+        mGotoPage = (floor - 1) / mMaxPostInPage + 1; // page start from 1
         mGotoFloor = floor;
 
-        if (mGoToPage != mCurrentPage) {
-            mCurrentPage = mGoToPage;
-            mPendingBlinkFloor = floor;
-            showOrLoadPage();
-        } else {
-            int position = mDetailAdapter.getPositionByFloor(floor);
+        int position = mDetailAdapter.getPositionByFloor(floor);
+        if (position != -1) {
             mRecyclerView.scrollToPosition(position);
             DetailBean detailBean = mDetailAdapter.getItem(position);
             if (detailBean != null) {
                 blinkItemView(detailBean.getPostId());
             }
             mGotoFloor = -1;
+        } else {
+            mPendingBlinkFloor = floor;
+            showOrLoadPage();
         }
     }
 
@@ -1128,33 +1148,30 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private void showOrLoadPage(boolean refresh) {
+
         setActionBarTitle(mTitle);
-        setActionBarSubtitle(mCurrentPage > 0 && mMaxPage > 0 ? mCurrentPage + "/" + mMaxPage : "?");
 
-        if (mCache.get(mCurrentPage) != null) {
-            mDetailBeans = mCache.get(mCurrentPage).getAll();
-            mDetailAdapter.setDatas(mDetailBeans);
+        if (mCache.get(mGotoPage) != null) {
+            mDetailAdapter.addDatas(mCache.get(mGotoPage));
 
-            if (mCurrentPage == 1) {
+            if (mGotoPage == 1) {
                 mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
-            } else {
-                mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
             }
-            if (mCurrentPage == mMaxPage) {
+            if (mGotoPage == mMaxPage) {
                 mRecyclerView.setFooterState(XFooterView.STATE_END);
-            } else {
-                mRecyclerView.setFooterState(XFooterView.STATE_READY);
             }
+//            else {
+//                mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
+//            }
 
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
                     int position = -1;
-                    final boolean toBottom = (mGotoFloor == LAST_FLOOR);
-                    if (mGotoFloor == LAST_FLOOR) {
-                        position = mDetailAdapter.getItemCount() - 1 - mDetailAdapter.getFooterCount();
-                    } else if (mGotoFloor == FIRST_FLOOR) {
-                        position = 0;
+                    if (mGotoFloor == LAST_FLOOR_OF_PAGE) {
+                        position = mDetailAdapter.getPositionByFloor(mCache.getLastFloorOfPage(mGotoPage));
+                    } else if (mGotoFloor == FIRST_FLOOR_OF_PAGE) {
+                        position = mDetailAdapter.getPositionByFloor(mCache.getFirstFloorOfPage(mGotoPage));
                     } else if (mGotoFloor != -1) {
                         position = mDetailAdapter.getPositionByFloor(mGotoFloor);
                     } else if (HiUtils.isValidId(mGotoPostId)) {
@@ -1162,14 +1179,9 @@ public class ThreadDetailFragment extends BaseFragment {
                         blinkItemView(mGotoPostId);
                     }
 
-                    if (toBottom) {
-                        mRecyclerView.scrollToBottom();
-                    } else if (position >= 0) {
+                    if (position >= 0) {
                         mRecyclerView.scrollToPosition(position);
                     }
-
-                    mGotoPostId = null;
-                    mGotoFloor = -1;
 
                     if (mPendingBlinkFloor > 0) {
                         int pos = mDetailAdapter.getPositionByFloor(mPendingBlinkFloor);
@@ -1179,11 +1191,9 @@ public class ThreadDetailFragment extends BaseFragment {
                         mPendingBlinkFloor = 0;
                     }
 
-                    if (position < 8) {
-                        prefetchPreviousPage();
-                    } else if (position > mDetailAdapter.getItemCount() - 8) {
-                        prefetchNextPage();
-                    }
+                    mGotoPostId = null;
+                    mGotoFloor = -1;
+                    mGotoPage = -1;
                 }
             });
 
@@ -1191,12 +1201,12 @@ public class ThreadDetailFragment extends BaseFragment {
 
         } else {
             int fetchType = FETCH_NORMAL;
-            if (refresh || mCurrentPage == mMaxPage || mCurrentPage == LAST_PAGE) {
+            if (refresh || mGotoPage == mMaxPage || mGotoPage == LAST_PAGE) {
                 fetchType = FETCH_REFRESH;
             }
             mInloading = true;
-            mLoadingView.setState(ContentLoadingView.LOADING);
-            startJob(mCurrentPage, fetchType, POSITION_NORMAL);
+            mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+            startJob(mGotoPage, fetchType, POSITION_NORMAL);
         }
     }
 
@@ -1255,26 +1265,77 @@ public class ThreadDetailFragment extends BaseFragment {
         int firstVisiblesItem, lastVisibleItem, visibleItemCount, totalItemCount;
 
         @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             firstVisiblesItem = mLayoutManager.findFirstVisibleItemPosition();
             lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
             if (dy > 0) {
                 visibleItemCount = mLayoutManager.getChildCount();
                 totalItemCount = mLayoutManager.getItemCount();
-                if ((visibleItemCount + firstVisiblesItem) >= totalItemCount - 3) {
-                    if (!mFooterLoading && mCurrentPage < mMaxPage) {
-                        prefetchNextPage();
+
+            } else if (dy < 0) {
+
+            }
+
+            int beginPage = 0;
+            int endPage = 0;
+            DetailBean firstBean = mDetailAdapter.getItem(firstVisiblesItem);
+            DetailBean lastBean = mDetailAdapter.getItem(lastVisibleItem);
+            if (firstBean == null)
+                firstBean = mDetailAdapter.getItem(firstVisiblesItem + 1);
+            if (lastBean == null)
+                lastBean = mDetailAdapter.getItem(lastVisibleItem - 1);
+            if (firstBean != null)
+                beginPage = firstBean.getPage();
+            if (lastBean != null)
+                endPage = lastBean.getPage();
+            if (beginPage != mViewBeginPage || endPage != mViewEndPage) {
+                mViewBeginPage = beginPage;
+                mViewEndPage = endPage;
+                if (mViewBeginPage > 0 && mMaxPage > 0) {
+                    Logger.e(mViewEndPage + " / " + mMaxPage);
+                    mPageLabel.setText(mViewEndPage + " / " + mMaxPage);
+                    if (mPageLabel.getVisibility() != View.VISIBLE) {
+                        recyclerView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+                                anim.reset();
+                                mPageLabel.clearAnimation();
+                                mPageLabel.startAnimation(anim);
+                                mPageLabel.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+                } else {
+                    mPageLabel.setText("");
+                    if (mPageLabel.getVisibility() != View.INVISIBLE) {
+                        recyclerView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+                                anim.reset();
+                                mPageLabel.clearAnimation();
+                                mPageLabel.startAnimation(anim);
+                                mPageLabel.setVisibility(View.INVISIBLE);
+                            }
+                        });
                     }
                 }
-            } else if (dy < 0) {
-                if (!mHeaderLoading && firstVisiblesItem < 3 && mCurrentPage > 1) {
-                    prefetchPreviousPage();
+            }
+
+            if ((visibleItemCount + firstVisiblesItem) >= totalItemCount - 3) {
+                if (!mFooterLoading && mViewEndPage < mMaxPage) {
+                    prefetchNextPage();
                 }
             }
+            if (!mHeaderLoading && firstVisiblesItem < 3 && mViewBeginPage > 1) {
+                prefetchPreviousPage();
+            }
+
         }
 
         @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
             if (newState == RecyclerView.SCROLL_STATE_IDLE
                     && HiSettingsHelper.getInstance().isFabAutoHide()
@@ -1340,7 +1401,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 mRecyclerView.setFooterState(XFooterView.STATE_ERROR);
             } else {
                 mInloading = false;
-                if (mDetailBeans.size() == 0) {
+                if (mDetailAdapter.getDataCount() == 0) {
                     mLoadingView.setState(ContentLoadingView.ERROR);
                 }
                 UIUtils.errorSnack(getView(), event.mMessage, event.mDetail);
@@ -1367,16 +1428,22 @@ public class ThreadDetailFragment extends BaseFragment {
             // Set MaxPage earlier than showOrLoadPage()
             mMaxPage = details.getLastPage();
 
-            mCache.put(details.getPage(), details);
+            mCache.put(details);
 
             if (event.mLoadingPosition == POSITION_HEADER) {
                 mHeaderLoading = false;
-                mRecyclerView.setHeaderState(XHeaderView.STATE_READY);
+                mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
+                if (details.getPage() == mViewBeginPage - 1) {
+                    mDetailAdapter.addDatas(details);
+                }
             } else if (event.mLoadingPosition == POSITION_FOOTER) {
                 mFooterLoading = false;
                 if (event.mFectchType == FETCH_NEXT) {
-                    mRecyclerView.setFooterState(mCurrentPage < mMaxPage ? XFooterView.STATE_READY : XFooterView.STATE_END);
+                    mRecyclerView.setFooterState(details.getPage() < mMaxPage ? XFooterView.STATE_READY : XFooterView.STATE_END);
                 }
+                mDetailAdapter.addDatas(details);
+                if (details.getPage() == mMaxPage)
+                    mRecyclerView.setFooterState(XFooterView.STATE_END);
             } else {
                 mInloading = false;
                 mLoadingView.setState(ContentLoadingView.CONTENT);
@@ -1389,9 +1456,8 @@ public class ThreadDetailFragment extends BaseFragment {
                     getActivity().invalidateOptionsMenu();
                     showMainFab();
                 }
-                mDetailBeans = details.getAll();
-                mDetailAdapter.setDatas(mDetailBeans);
-                mCurrentPage = details.getPage();
+                mDetailAdapter.addDatas(details);
+                mGotoPage = details.getPage();
 
                 showOrLoadPage();
             }
@@ -1412,8 +1478,7 @@ public class ThreadDetailFragment extends BaseFragment {
         @Override
         public void onFailRelogin(ThreadDetailEvent event) {
             mInloading = false;
-            mDetailBeans.clear();
-            mDetailAdapter.notifyDataSetChanged();
+            mDetailAdapter.clear();
             mLoadingView.setState(ContentLoadingView.NOT_LOGIN);
         }
 
@@ -1451,13 +1516,8 @@ public class ThreadDetailFragment extends BaseFragment {
 
             mGotoFloor = postResult.getFloor();
             DetailListBean details = postResult.getDetailListBean();
-            if (details != null) {
-                if (mCurrentPage != details.getPage()) {
-                    mCache.remove(mCurrentPage);
-                    mMaxPage = details.getLastPage();
-                }
-                mCache.put(details.getPage(), details);
-            }
+            if (details != null)
+                mCache.put(details);
 
             if (postResult.isDelete()) {
                 if (mGotoFloor == 1) {
@@ -1471,44 +1531,24 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
             } else if (isInAuthorOnlyMode() && event.mMode != PostHelper.MODE_EDIT_POST) {
                 mCache.clear();
+                mDetailAdapter.clear();
                 if (details != null) {
-                    mCache.put(details.getPage(), details);
+                    mCache.put(details);
                 }
-                mCurrentPage = LAST_PAGE;
-                mGotoFloor = LAST_FLOOR;
+                mGotoPage = LAST_PAGE;
+                mGotoFloor = LAST_FLOOR_OF_PAGE;
                 mAuthorId = "";
                 mShowAllMenuItem.setVisible(false);
                 showOrLoadPage(true);
             } else {
-                boolean append = false;
-                DetailBean lastpost = null;
-                if (mDetailBeans.size() > 0)
-                    lastpost = mDetailBeans.get(mDetailBeans.size() - 1);
-                if (lastpost != null && event.fromQuickReply && details != null
-                        && mCurrentPage == details.getPage() && mCurrentPage == details.getLastPage()) {
-                    List<DetailBean> newBeans = details.getAll();
-                    if (newBeans.size() > mDetailBeans.size()) {
-                        DetailBean oldLastpost = newBeans.get(mDetailBeans.size() - 1);
-                        append = oldLastpost.getPostId().equals(lastpost.getPostId());
-                    }
-                }
-                if (append) {
-                    List<DetailBean> newBeans = details.getAll();
-                    for (int i = mDetailBeans.size(); i < newBeans.size(); i++) {
-                        DetailBean bean = newBeans.get(i);
-                        mDetailBeans.add(bean);
-                        mDetailAdapter.notifyItemInserted(mDetailBeans.size() + mDetailAdapter.getHeaderCount() - 1);
-                        if (bean.getAuthor().equals(HiSettingsHelper.getInstance().getUsername())) {
-                            blinkItemView(bean.getPostId());
-                        }
-                    }
-                    mRecyclerView.smoothScrollToPosition(mDetailAdapter.getItemCount() - 1 - mDetailAdapter.getFooterCount());
-                    mRecyclerView.setFooterState(XFooterView.STATE_END);
+                if (details != null)
+                    mDetailAdapter.addDatas(details);
+                if (event.mMode == PostHelper.MODE_EDIT_POST) {
+                    String postId = postResult.getPid();
+                    blinkItemView(postId);
                 } else {
-                    if (event.mMode != PostHelper.MODE_EDIT_POST) {
-                        mCurrentPage = mMaxPage;
-                        mGotoFloor = LAST_FLOOR;
-                    }
+                    mGotoPage = mMaxPage;
+                    mGotoFloor = LAST_FLOOR_OF_PAGE;
                     showOrLoadPage(false);
                 }
             }
@@ -1532,7 +1572,7 @@ public class ThreadDetailFragment extends BaseFragment {
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(NetworkReadyEvent event) {
-        if (!mInloading && mDetailBeans.size() == 0) {
+        if (!mInloading && mDetailAdapter.getDataCount() == 0) {
             refresh();
         }
     }

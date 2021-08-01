@@ -160,7 +160,7 @@ public class TextViewWithEmoticon extends AppCompatTextView {
                         }
                     }
 
-                    if (floor > 0 || floor == ThreadDetailFragment.LAST_FLOOR) {
+                    if (floor > 0 || floor == ThreadDetailFragment.LAST_FLOOR_OF_PAGE) {
                         //redirect in same thread
                         ((ThreadDetailFragment) mFragment).gotoFloor(floor);
                     } else {

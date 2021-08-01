@@ -325,7 +325,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 return;
             }
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
-            FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), ThreadDetailFragment.LAST_PAGE, ThreadDetailFragment.LAST_FLOOR, null, -1);
+            FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), ThreadDetailFragment.LAST_PAGE, ThreadDetailFragment.LAST_FLOOR_OF_PAGE, null, -1);
         }
 
         @Override

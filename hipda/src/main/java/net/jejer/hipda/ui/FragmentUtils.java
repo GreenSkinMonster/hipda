@@ -6,19 +6,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * utils to deal with fragments
@@ -122,7 +122,7 @@ public class FragmentUtils {
 
                         args.setTid(tid);
                         args.setPage(ThreadDetailFragment.LAST_PAGE);
-                        args.setFloor(ThreadDetailFragment.LAST_FLOOR);
+                        args.setFloor(ThreadDetailFragment.LAST_FLOOR_OF_PAGE);
 
                         return args;
                     }
@@ -294,13 +294,14 @@ public class FragmentUtils {
     }
 
     public static void showPostActivity(Activity activity, int mode, String parentSessionId,
-                                        int fid, String tid, String postId, int floor,
+                                        int fid, String tid, int page, String postId, int floor,
                                         String author, String text, String quoteText) {
         Intent intent = new Intent(activity, PostActivity.class);
         intent.putExtra(PostFragment.ARG_MODE_KEY, mode);
         intent.putExtra(PostFragment.ARG_FID_KEY, fid);
         intent.putExtra(PostFragment.ARG_PARENT_ID, parentSessionId);
         intent.putExtra(PostFragment.ARG_TID_KEY, tid);
+        intent.putExtra(PostFragment.ARG_PAGE_KEY, page);
         intent.putExtra(PostFragment.ARG_PID_KEY, postId);
         intent.putExtra(PostFragment.ARG_FLOOR_KEY, floor);
         if (text != null)

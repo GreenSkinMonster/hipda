@@ -108,7 +108,7 @@ public class PostHelper {
                 doPost(url, replyText, subject, null, false);
                 break;
             case MODE_EDIT_POST:
-                url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
+                url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=" + mPostArg.getPage();
                 doPost(url, replyText, subject, typeid, postBean.isDelete());
                 break;
         }
@@ -148,7 +148,6 @@ public class PostHelper {
         for (String attach : mInfo.getNewAttaches()) {
             params.put("attachnew[][description]", attach);
         }
-        Logger.e("xxxxxxxxxxxxx");
         for (String attach : mInfo.getDeleteAttaches()) {
             params.put("attachdel[]", attach);
         }

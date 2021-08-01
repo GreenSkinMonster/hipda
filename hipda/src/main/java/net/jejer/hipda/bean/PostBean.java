@@ -10,6 +10,7 @@ public class PostBean {
     private String pid;
     private int fid;
     private int floor;
+    private int page;
     private String subject;
     private String content;
     private String typeid;
@@ -24,6 +25,14 @@ public class PostBean {
 
     public void setTid(String tid) {
         this.tid = tid;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
 
     public String getPid() {

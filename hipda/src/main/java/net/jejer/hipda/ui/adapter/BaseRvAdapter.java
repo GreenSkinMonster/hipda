@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui.adapter;
 
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -19,7 +20,7 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
 
     private View mHeaderView;
     private View mFooterView;
-    protected RecyclerItemClickListener mListener;
+    protected RecyclerItemClickListener mItemClickListener;
 
     private List<V> mDatas = new ArrayList<>();
 
@@ -78,8 +79,8 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
 
     public void removeHeaderView() {
         if (mHeaderView != null) {
+            new Handler().post(() -> notifyItemRemoved(0));
             mHeaderView = null;
-            notifyItemRemoved(0);
         }
     }
 
@@ -97,8 +98,8 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
 
     public void removeFooterView() {
         if (mFooterView != null) {
+            new Handler().post(() -> notifyItemRemoved(getItemCount() - 1));
             mFooterView = null;
-            notifyItemRemoved(getItemCount() - 1);
         }
     }
 
@@ -134,7 +135,7 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
         }
         onBindViewHolderImpl(holder, position);
         holder.itemView.setTag(position);
-        holder.itemView.setOnTouchListener(mListener);
+        holder.itemView.setOnTouchListener(mItemClickListener);
     }
 
 }

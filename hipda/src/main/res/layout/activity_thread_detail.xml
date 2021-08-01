@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/include_appbar_layout"/>
+    <include layout="@layout/include_appbar_layout" />
 
     <FrameLayout
         android:id="@+id/main_frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?list_item_background"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_main"

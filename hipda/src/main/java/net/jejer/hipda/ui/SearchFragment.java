@@ -29,13 +29,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.SearchView;
-import androidx.core.view.MenuItemCompat;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -71,6 +64,13 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * Created by GreenSkinMonster on 2017-07-17.
@@ -589,7 +589,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
             postId = item.getPid();
         } else {
             page = ThreadDetailFragment.LAST_PAGE;
-            floor = ThreadDetailFragment.LAST_FLOOR;
+            floor = ThreadDetailFragment.LAST_FLOOR_OF_PAGE;
         }
         FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), page, floor, postId, -1);
     }
@@ -698,7 +698,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
 
         SearchHistoryAdapter(Context context, RecyclerItemClickListener itemClickListener) {
             mInflater = LayoutInflater.from(context);
-            mListener = itemClickListener;
+            mItemClickListener = itemClickListener;
         }
 
         @Override

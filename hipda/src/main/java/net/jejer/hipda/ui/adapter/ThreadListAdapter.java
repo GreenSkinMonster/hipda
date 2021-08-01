@@ -16,7 +16,7 @@ public class ThreadListAdapter extends BaseRvAdapter<ThreadBean> {
 
     public ThreadListAdapter(RequestManager glide, RecyclerItemClickListener listener) {
         mGlide = glide;
-        mListener = listener;
+        mItemClickListener = listener;
     }
 
     @Override

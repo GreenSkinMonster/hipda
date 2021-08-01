@@ -87,6 +87,7 @@ public class PostFragment extends BaseFragment {
 
     public static final String ARG_FID_KEY = "fid";
     public static final String ARG_TID_KEY = "tid";
+    public static final String ARG_PAGE_KEY = "page";
     public static final String ARG_PID_KEY = "pid";
     public static final String ARG_FLOOR_KEY = "floor";
     public static final String ARG_FLOOR_AUTHOR_KEY = "floor_author";
@@ -99,6 +100,7 @@ public class PostFragment extends BaseFragment {
 
     private int mFid;
     private String mTid;
+    private int mPage;
     private String mPid;
     private int mFloor;
     private String mFloorAuthor;
@@ -144,6 +146,9 @@ public class PostFragment extends BaseFragment {
         }
         if (getArguments().containsKey(ARG_TID_KEY)) {
             mTid = getArguments().getString(ARG_TID_KEY);
+        }
+        if (getArguments().containsKey(ARG_PAGE_KEY)) {
+            mPage = getArguments().getInt(ARG_PAGE_KEY);
         }
         if (getArguments().containsKey(ARG_PID_KEY)) {
             mPid = getArguments().getString(ARG_PID_KEY);
@@ -531,6 +536,7 @@ public class PostFragment extends BaseFragment {
         PostBean postBean = new PostBean();
         postBean.setContent(replyText);
         postBean.setTid(mTid);
+        postBean.setPage(mPage);
         postBean.setPid(mPid);
         postBean.setFid(mFid);
         postBean.setTypeid(mTypeId);
@@ -704,6 +710,7 @@ public class PostFragment extends BaseFragment {
             mPrePostAsyncTask = new PrePostAsyncTask(getActivity(), mPrePostListener, mMode);
             PostBean postBean = new PostBean();
             postBean.setTid(mTid);
+            postBean.setPage(mPage);
             postBean.setPid(mPid);
             postBean.setFid(mFid);
             mPrePostAsyncTask.execute(postBean);

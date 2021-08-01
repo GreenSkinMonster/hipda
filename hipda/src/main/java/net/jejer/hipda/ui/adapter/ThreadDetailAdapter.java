@@ -2,9 +2,10 @@ package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.text.util.Linkify;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.ContentQuote;
 import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
+import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.GlideHelper;
@@ -29,6 +31,7 @@ import net.jejer.hipda.ui.widget.TextViewWithEmoticon;
 import net.jejer.hipda.ui.widget.ThreadImageLayout;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -45,24 +48,28 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
 
-    private Context mCtx;
-    private LayoutInflater mInflater;
-    private Button.OnClickListener mGoToFloorListener;
-    private View.OnClickListener mAvatarListener;
-    private View.OnClickListener mWarningListener;
-    private ThreadDetailFragment mDetailFragment;
-    private int mBackgroundResource;
-    private int mBackgroundColor;
+    private final Context mCtx;
+    private final LayoutInflater mInflater;
+    private final Button.OnClickListener mGoToFloorListener;
+    private final View.OnClickListener mAvatarListener;
+    private final View.OnClickListener mWarningListener;
+    private final ThreadDetailFragment mDetailFragment;
+    private final int mBackgroundResource;
+    private final int mBackgroundColor;
+
+    private final Handler handler = new Handler();
+
+    final private SparseArray<DetailListBean> threadPages = new SparseArray<>();
 
     public ThreadDetailAdapter(Context context,
                                ThreadDetailFragment detailFragment,
-                               RecyclerItemClickListener listener,
+                               RecyclerItemClickListener itemClickListener,
                                Button.OnClickListener gotoFloorListener,
                                View.OnClickListener avatarListener,
                                View.OnClickListener warningListener) {
         mCtx = context;
         mInflater = LayoutInflater.from(context);
-        mListener = listener;
+        mItemClickListener = itemClickListener;
         mGoToFloorListener = gotoFloorListener;
         mAvatarListener = avatarListener;
         mWarningListener = warningListener;
@@ -78,6 +85,134 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
     }
 
     @Override
+    public int getItemCount() {
+        return getDataCount() + getHeaderCount() + getFooterCount();
+    }
+
+    public int getDataCount() {
+        int size = 0;
+        for (int i = 0; i < threadPages.size(); i++) {
+            DetailListBean detailBeans = threadPages.get(threadPages.keyAt(i));
+            size += detailBeans.getCount();
+        }
+        return size;
+    }
+
+    @Override
+    public void setDatas(List<DetailBean> datas) {
+        throw new RuntimeException("Don't set datas here");
+    }
+
+    public void addDatas(DetailListBean detailListBean) {
+        final int page = detailListBean.getPage();
+        if (threadPages.size() == 0) {
+            threadPages.put(page, detailListBean);
+            notifyItemRangeInserted(getHeaderCount(), detailListBean.getCount());
+            Logger.e("page range " + 0 + " - " + 0 + ", insert new page " + page);
+            return;
+        }
+        int firstPage = threadPages.keyAt(0);
+        int lastPage = threadPages.keyAt(threadPages.size() - 1);
+        if (page == firstPage - 1) {
+            threadPages.put(page, detailListBean);
+//            handler.post(new Runnable() {
+//                @Override
+//                public void run() {
+            notifyItemRangeInserted(getHeaderCount(), detailListBean.getCount());
+//                }
+//            });
+            Logger.e("page range " + firstPage + " - " + lastPage + ", insert new page " + page);
+        } else if (page == lastPage + 1) {
+            final int startPos = getItemCount() - getFooterCount();
+            threadPages.put(page, detailListBean);
+//            handler.post(new Runnable() {
+//                @Override
+//                public void run() {
+            notifyItemRangeInserted(startPos, detailListBean.getCount());
+//                }
+//            });
+            Logger.e("page range " + firstPage + " - " + lastPage + ", append new page " + page);
+        } else if (page >= firstPage && page <= lastPage) {
+            if (threadPages.get(page) == detailListBean) {
+                Logger.e("page range " + firstPage + " - " + lastPage + ", same skip exist page " + page);
+            } else {
+                threadPages.put(page, detailListBean);
+                int pos = getHeaderCount();
+                for (int i = 0; i < threadPages.size(); i++) {
+                    int tpage = threadPages.keyAt(i);
+                    if (tpage < page) {
+                        pos += threadPages.get(tpage).getCount();
+                    } else {
+                        break;
+                    }
+                }
+                final int startPos = pos;
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+                notifyItemRangeChanged(startPos, detailListBean.getCount());
+//                    }
+//                });
+                Logger.e("page range " + firstPage + " - " + lastPage + ", update exist page " + page);
+            }
+        } else {
+            threadPages.clear();
+            threadPages.put(page, detailListBean);
+            notifyDataSetChanged();
+            Logger.e("page range " + firstPage + " - " + lastPage + ", not continoius page " + page + ", CLEAR ALL");
+        }
+    }
+
+    @Override
+    public List<DetailBean> getDatas() {
+        throw new RuntimeException("Don't set datas here");
+    }
+
+    @Override
+    public DetailBean getItem(int position) {
+        int pos = position - getHeaderCount();
+        if (pos < 0)
+            return null;
+        for (int i = 0; i < threadPages.size(); i++) {
+            DetailListBean detailBeans = threadPages.get(threadPages.keyAt(i));
+            if (pos < detailBeans.getCount()) {
+                return detailBeans.getAll().get(pos);
+            }
+            pos -= detailBeans.getCount();
+            if (pos < 0)
+                return null;
+        }
+        return null;
+    }
+
+    public int getPositionByFloor(int floor) {
+        for (int i = 0; i < getItemCount(); i++) {
+            DetailBean bean = getItem(i);
+            if (bean != null && bean.getFloor() == floor) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getPositionByPostId(String postId) {
+        for (int i = 0; i < getItemCount(); i++) {
+            DetailBean bean = getItem(i);
+            if (bean != null && bean.getPostId().equals(postId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void clear() {
+        removeFooterView();
+        removeHeaderView();
+        threadPages.clear();
+        notifyDataSetChanged();
+    }
+
+    @Override
     public ViewHolderImpl onCreateViewHolderImpl(ViewGroup parent, int position) {
         return new ViewHolderImpl(mInflater.inflate(R.layout.item_thread_detail, parent, false));
     }
@@ -90,22 +225,14 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         else return;
 
         viewHolder.itemView.setTag(position);
-        viewHolder.itemView.setOnTouchListener(mListener);
+        viewHolder.itemView.setOnTouchListener(mItemClickListener);
 
         final DetailBean detail = getItem(position);
 
-        int pLeft = viewHolder.itemView.getPaddingLeft();
-        int pRight = viewHolder.itemView.getPaddingRight();
-        int pTop = viewHolder.itemView.getPaddingTop();
-        int pBottom = viewHolder.itemView.getPaddingBottom();
         if (detail.isHighlightMode()) {
             viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(mCtx, mBackgroundColor));
         } else {
             viewHolder.itemView.setBackgroundResource(mBackgroundResource);
-        }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            //set background cause padding values lost, reset them
-            viewHolder.itemView.setPadding(pLeft, pTop, pRight, pBottom);
         }
 
         holder.author.setText(detail.getAuthor());
@@ -314,28 +441,6 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
 
     private void loadAvatar(final String avatarUrl, final ImageView imageView) {
         GlideHelper.loadAvatar(mDetailFragment, imageView, avatarUrl);
-    }
-
-    public int getPositionByFloor(int floor) {
-        List<DetailBean> datas = getDatas();
-        for (int i = 0; i < datas.size(); i++) {
-            DetailBean bean = datas.get(i);
-            if (bean.getFloor() == floor) {
-                return i + getHeaderCount();
-            }
-        }
-        return -1;
-    }
-
-    public int getPositionByPostId(String postId) {
-        List<DetailBean> datas = getDatas();
-        for (int i = 0; i < datas.size(); i++) {
-            DetailBean bean = datas.get(i);
-            if (bean.getPostId().equals(postId)) {
-                return i + getHeaderCount();
-            }
-        }
-        return -1;
     }
 
     private static class ViewHolderImpl extends RecyclerView.ViewHolder {

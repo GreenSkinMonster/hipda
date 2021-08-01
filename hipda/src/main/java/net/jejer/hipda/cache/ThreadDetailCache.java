@@ -13,13 +13,13 @@ import java.util.HashMap;
  */
 public class ThreadDetailCache {
 
-    private SparseArray<DetailListBean> mCache = new SparseArray<>();
-    private HashMap<String, Integer> mPostIdToPageMap = new HashMap<>();
+    private final SparseArray<DetailListBean> mCache = new SparseArray<>();
+    private final HashMap<String, Integer> mPostIdToPageMap = new HashMap<>();
 
-    public void put(int page, DetailListBean detailListBean) {
-        mCache.put(page, detailListBean);
+    public void put(DetailListBean detailListBean) {
+        mCache.put(detailListBean.getPage(), detailListBean);
         for (DetailBean detailBean : detailListBean.getAll()) {
-            mPostIdToPageMap.put(detailBean.getPostId(), page);
+            mPostIdToPageMap.put(detailBean.getPostId(), detailListBean.getPage());
         }
     }
 
@@ -29,6 +29,7 @@ public class ThreadDetailCache {
 
     public void clear() {
         mCache.clear();
+        mPostIdToPageMap.clear();
     }
 
     public DetailListBean get(int page) {
@@ -41,6 +42,18 @@ public class ThreadDetailCache {
             return mCache.get(page).getPostInPage(postId);
         }
         return null;
+    }
+
+    public int getFirstFloorOfPage(int page) {
+        DetailListBean detailListBean = mCache.get(page);
+        if (detailListBean == null) return -1;
+        return detailListBean.getAll().get(0).getFloor();
+    }
+
+    public int getLastFloorOfPage(int page) {
+        DetailListBean detailListBean = mCache.get(page);
+        if (detailListBean == null) return -1;
+        return detailListBean.getAll().get(detailListBean.getCount() - 1).getFloor();
     }
 
 }
