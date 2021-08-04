@@ -174,32 +174,6 @@ public class UpdateHelper {
         final String currentVersion = HiApplication.getAppVersion();
 
         if (!currentVersion.equals(installedVersion)) {
-            if (newer("4.3.07", installedVersion)) {
-                boolean wifiAutoload = HiSettingsHelper.getInstance().getStringValue("PERF_IMAGE_LOAD_TYPE", "").equals("2");
-                boolean allAutoload = HiSettingsHelper.getInstance().getStringValue("PERF_IMAGE_LOAD_TYPE", "").equals("0");
-                boolean loadSmall = !HiSettingsHelper.getInstance().getStringValue("PERF_IMAGE_AUTO_LOAD_SIZE", "0").equals("0");
-                boolean loadThumb = HiSettingsHelper.getInstance().getBooleanValue("PERF_AUTO_LOAD_THUMB", false);
-                if (loadThumb) {
-                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
-                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
-                }
-                if (loadSmall) {
-                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_SMALL);
-                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_SMALL);
-                }
-                if (wifiAutoload && !loadSmall) {
-                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
-                }
-                if (allAutoload && !loadSmall) {
-                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
-                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
-                }
-                if (!wifiAutoload && !allAutoload && !loadSmall && !loadThumb) {
-                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_THUMB);
-                    HiSettingsHelper.getInstance().setStringValue(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY, HiSettingsHelper.IMAGE_POLICY_NONE);
-                }
-            }
-            HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
         }
         return newer(currentVersion, installedVersion);
     }
