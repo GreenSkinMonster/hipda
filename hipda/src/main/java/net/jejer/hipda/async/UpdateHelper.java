@@ -10,6 +10,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import androidx.appcompat.app.AlertDialog;
+
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
@@ -20,7 +22,6 @@ import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
 
-import androidx.appcompat.app.AlertDialog;
 import okhttp3.Request;
 
 /**
@@ -174,6 +175,7 @@ public class UpdateHelper {
         final String currentVersion = HiApplication.getAppVersion();
 
         if (!currentVersion.equals(installedVersion)) {
+            HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
         }
         return newer(currentVersion, installedVersion);
     }
