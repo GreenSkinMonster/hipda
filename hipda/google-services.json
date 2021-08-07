@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "823510898706",
+    "project_id": "fir-hipda",
+    "storage_bucket": "fir-hipda.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823510898706:android:c5d7b0467a7b5567d2a0cb",
+        "android_client_info": {
+          "package_name": "net.jejer.hipda.ng"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "823510898706-tp4b6cv1636upbf55srfprgtvg74be11.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkUdneLjDMzOwr5Gv4crW7Jnc5Z9Z1Ofw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "823510898706-tp4b6cv1636upbf55srfprgtvg74be11.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
