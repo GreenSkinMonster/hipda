@@ -27,6 +27,14 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -85,13 +93,6 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Request;
 
 public class ThreadDetailFragment extends BaseFragment {
@@ -566,7 +567,6 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     public ArrayList<ContentImg> getImagesInPage(int page) {
-        //TODO 图片查看范围？
         DetailListBean detailListBean = mCache.get(page);
         if (detailListBean != null) {
             return detailListBean.getContentImages();
@@ -1122,31 +1122,29 @@ public class ThreadDetailFragment extends BaseFragment {
         setActionBarTitle(mTitle);
 
         if (mCache.get(mGotoPage) != null) {
-            mDetailAdapter.addDatas(mCache.get(mGotoPage));
 
-            if (mGotoPage == 1) {
-                mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
-            }
-            if (mGotoPage == mMaxPage) {
-                mRecyclerView.setFooterState(XFooterView.STATE_END);
-            }
-//            else {
-//                mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
-//            }
+            final int gotoFloor = mGotoFloor;
+            final String gotoPostId = mGotoPostId;
+            final int gotoPage = mGotoPage;
+            mGotoPostId = null;
+            mGotoFloor = -1;
+            mGotoPage = -1;
+
+            mDetailAdapter.addDatas(mCache.get(gotoPage));
 
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
                     int position = -1;
-                    if (mGotoFloor == LAST_FLOOR_OF_PAGE) {
-                        position = mDetailAdapter.getPositionByFloor(mCache.getLastFloorOfPage(mGotoPage));
-                    } else if (mGotoFloor == FIRST_FLOOR_OF_PAGE) {
-                        position = mDetailAdapter.getPositionByFloor(mCache.getFirstFloorOfPage(mGotoPage));
-                    } else if (mGotoFloor != -1) {
-                        position = mDetailAdapter.getPositionByFloor(mGotoFloor);
-                    } else if (HiUtils.isValidId(mGotoPostId)) {
-                        position = mDetailAdapter.getPositionByPostId(mGotoPostId);
-                        blinkItemView(mGotoPostId);
+                    if (gotoFloor == LAST_FLOOR_OF_PAGE) {
+                        position = mDetailAdapter.getPositionByFloor(mCache.getLastFloorOfPage(gotoPage));
+                    } else if (gotoFloor == FIRST_FLOOR_OF_PAGE) {
+                        position = mDetailAdapter.getPositionByFloor(mCache.getFirstFloorOfPage(gotoPage));
+                    } else if (gotoFloor != -1) {
+                        position = mDetailAdapter.getPositionByFloor(gotoFloor);
+                    } else if (HiUtils.isValidId(gotoPostId)) {
+                        position = mDetailAdapter.getPositionByPostId(gotoPostId);
+                        blinkItemView(gotoPostId);
                     }
 
                     if (position >= 0) {
@@ -1160,14 +1158,20 @@ public class ThreadDetailFragment extends BaseFragment {
                             blinkItemView(detailBean.getPostId());
                         mPendingBlinkFloor = 0;
                     }
-
-                    mGotoPostId = null;
-                    mGotoFloor = -1;
-                    mGotoPage = -1;
                 }
             });
 
             showMainFab();
+
+            if (gotoPage == 1) {
+                mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
+            }
+            if (gotoPage == mMaxPage) {
+                mRecyclerView.setFooterState(XFooterView.STATE_END);
+            }
+//            else {
+//                mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
+//            }
 
         } else {
             int fetchType = FETCH_NORMAL;
@@ -1407,16 +1411,16 @@ public class ThreadDetailFragment extends BaseFragment {
                 mHeaderLoading = false;
                 mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
                 if (details.getPage() == mViewBeginPage - 1) {
-                    mDetailAdapter.addDatas(details);
+                    mRecyclerView.post(() -> mDetailAdapter.addDatas(details));
                 }
             } else if (event.mLoadingPosition == POSITION_FOOTER) {
                 mFooterLoading = false;
+                if (details.getPage() == mMaxPage)
+                    mRecyclerView.setFooterState(XFooterView.STATE_END);
                 if (event.mFectchType == FETCH_NEXT) {
                     mRecyclerView.setFooterState(details.getPage() < mMaxPage ? XFooterView.STATE_READY : XFooterView.STATE_END);
                 }
-                mDetailAdapter.addDatas(details);
-                if (details.getPage() == mMaxPage)
-                    mRecyclerView.setFooterState(XFooterView.STATE_END);
+                mRecyclerView.post(() -> mDetailAdapter.addDatas(details));
             } else {
                 mInloading = false;
                 mLoadingView.setState(ContentLoadingView.CONTENT);
@@ -1429,9 +1433,7 @@ public class ThreadDetailFragment extends BaseFragment {
                     getActivity().invalidateOptionsMenu();
                     showMainFab();
                 }
-                mDetailAdapter.addDatas(details);
                 mGotoPage = details.getPage();
-
                 showOrLoadPage();
             }
 
