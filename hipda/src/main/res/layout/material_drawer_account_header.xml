@@ -91,39 +91,43 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_end="40dp" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/material_drawer_account_header_name"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/header_label"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/material_drawer_vertical_padding"
-        android:layout_marginLeft="@dimen/material_drawer_vertical_padding"
-        android:layout_marginBottom="2dp"
-        android:fontFamily="sans-serif-medium"
-        android:lines="1"
-        android:maxLines="1"
-        android:textSize="@dimen/material_drawer_account_header_title"
-        app:layout_constraintBottom_toTopOf="@id/material_drawer_text_guideline2"
-        app:layout_constraintEnd_toStartOf="@id/material_drawer_account_login"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/material_drawer_account_header_email"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/material_drawer_vertical_padding"
-        android:layout_marginLeft="@dimen/material_drawer_vertical_padding"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="@dimen/material_drawer_padding"
-        android:fontFamily="sans-serif"
-        android:lines="1"
-        android:maxLines="1"
-        android:textSize="@dimen/material_drawer_account_header_subtext"
-        app:layout_constraintEnd_toStartOf="@id/material_drawer_account_login"
+        android:orientation="vertical"
+        android:paddingRight="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/material_drawer_text_guideline2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/material_drawer_text_guideline2" />
+        app:layout_constraintTop_toTopOf="@id/material_drawer_text_guideline2">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/material_drawer_account_header_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/material_drawer_vertical_padding"
+            android:layout_marginLeft="@dimen/material_drawer_vertical_padding"
+            android:layout_marginBottom="1dp"
+            android:fontFamily="sans-serif-medium"
+            android:lines="1"
+            android:maxLines="1"
+            android:textSize="@dimen/material_drawer_account_header_title" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/material_drawer_account_header_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/material_drawer_vertical_padding"
+            android:layout_marginLeft="@dimen/material_drawer_vertical_padding"
+            android:layout_marginTop="1dp"
+            android:fontFamily="sans-serif"
+            android:lines="1"
+            android:maxLines="1"
+            android:textSize="@dimen/material_drawer_account_header_subtext" />
+    </LinearLayout>
 
     <com.mikepenz.materialdrawer.view.BezelImageView
-        android:id="@+id/material_drawer_account_login"
+        android:id="@+id/material_drawer_account_logout"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginEnd="20dp"
@@ -132,11 +136,27 @@
         android:focusable="true"
         android:padding="6dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/outline_login_white_24"
+        android:src="@drawable/outline_logout_24"
         android:tint="@color/md_grey_300"
-        app:layout_constraintBottom_toBottomOf="@id/material_drawer_account_header_email"
+        app:layout_constraintBottom_toBottomOf="@id/header_label"
+        app:layout_constraintStart_toEndOf="@id/header_label"
+        app:layout_constraintTop_toTopOf="@id/header_label" />
+
+    <com.mikepenz.materialdrawer.view.BezelImageView
+        android:id="@+id/material_drawer_account_add"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/circle_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="6dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/outline_person_add_white_24"
+        android:tint="@color/md_grey_300"
+        app:layout_constraintBottom_toBottomOf="@id/header_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/material_drawer_account_header_name" />
+        app:layout_constraintTop_toTopOf="@id/header_label" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/material_drawer_account_header_text_switcher"
@@ -148,5 +168,5 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/material_drawer_account_login" />
+        app:layout_constraintStart_toEndOf="@+id/material_drawer_account_add" />
 </androidx.constraintlayout.widget.ConstraintLayout>

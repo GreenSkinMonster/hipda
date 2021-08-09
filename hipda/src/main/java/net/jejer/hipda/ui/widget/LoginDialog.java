@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.async.LoginHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.ui.MainFrameActivity;
 import net.jejer.hipda.ui.adapter.KeyValueArrayAdapter;
@@ -24,6 +26,11 @@ public class LoginDialog extends Dialog {
 
     private MainFrameActivity mActivity;
 
+    private String mUsername = "";
+    private String mPassword = "";
+    private String mSecQuestion = "";
+    private String mSecAnswer = "";
+
     public LoginDialog(MainFrameActivity activity) {
         super(activity);
         mActivity = activity;
@@ -35,27 +42,27 @@ public class LoginDialog extends Dialog {
                 Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_login, null);
 
-        final EditText etUsername = (EditText) view.findViewById(R.id.login_username);
-        final EditText etPassword = (EditText) view.findViewById(R.id.login_password);
-        final Spinner spSecQuestion = (Spinner) view.findViewById(R.id.login_question);
-        final EditText etSecAnswer = (EditText) view.findViewById(R.id.login_answer);
+        final EditText etUsername = view.findViewById(R.id.login_username);
+        final EditText etPassword = view.findViewById(R.id.login_password);
+        final Spinner spSecQuestion = view.findViewById(R.id.login_question);
+        final EditText etSecAnswer = view.findViewById(R.id.login_answer);
 
-        final KeyValueArrayAdapter adapter = new KeyValueArrayAdapter(mActivity, R.layout.spinner_row);
+        final KeyValueArrayAdapter adapter = new MyKeyValueArrayAdapter(mActivity, R.layout.spinner_row);
         adapter.setEntryValues(mActivity.getResources().getStringArray(R.array.pref_login_question_list_values));
         adapter.setEntries(mActivity.getResources().getStringArray(R.array.pref_login_question_list_titles));
         spSecQuestion.setAdapter(adapter);
 
-        etUsername.setText(HiSettingsHelper.getInstance().getUsername());
-        etPassword.setText(HiSettingsHelper.getInstance().getPassword());
-        if (!TextUtils.isEmpty(HiSettingsHelper.getInstance().getSecQuestion())
-                && TextUtils.isDigitsOnly(HiSettingsHelper.getInstance().getSecQuestion())) {
-            int idx = Integer.parseInt(HiSettingsHelper.getInstance().getSecQuestion());
+        etUsername.setText(mUsername);
+        etPassword.setText(mPassword);
+        if (!TextUtils.isEmpty(mSecQuestion)
+                && TextUtils.isDigitsOnly(mSecQuestion)) {
+            int idx = Integer.parseInt(mSecQuestion);
             if (idx > 0 && idx < adapter.getCount())
                 spSecQuestion.setSelection(idx);
         }
-        etSecAnswer.setText(HiSettingsHelper.getInstance().getSecAnswer());
+        etSecAnswer.setText(mSecAnswer);
 
-        Button btnLogin = (Button) view.findViewById(R.id.login_btn);
+        Button btnLogin = view.findViewById(R.id.login_btn);
         btnLogin.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
@@ -68,10 +75,18 @@ public class LoginDialog extends Dialog {
 
                 UIUtils.hideSoftKeyboard(mActivity);
 
-                HiSettingsHelper.getInstance().setUsername(etUsername.getText().toString());
-                HiSettingsHelper.getInstance().setPassword(etPassword.getText().toString());
-                HiSettingsHelper.getInstance().setSecQuestion(adapter.getEntryValue(spSecQuestion.getSelectedItemPosition()));
-                HiSettingsHelper.getInstance().setSecAnswer(etSecAnswer.getText().toString());
+                mUsername = etUsername.getText().toString();
+                mPassword = etPassword.getText().toString();
+                mSecQuestion = adapter.getEntryValue(spSecQuestion.getSelectedItemPosition());
+                mSecAnswer = etSecAnswer.getText().toString();
+
+                if (LoginHelper.isLoggedIn())
+                    LoginHelper.logout();
+
+                HiSettingsHelper.getInstance().setUsername(mUsername);
+                HiSettingsHelper.getInstance().setPassword(mPassword);
+                HiSettingsHelper.getInstance().setSecQuestion(mSecQuestion);
+                HiSettingsHelper.getInstance().setSecAnswer(mSecAnswer);
                 HiSettingsHelper.getInstance().setUid("");
 
                 mActivity.doLoginProgress();
@@ -80,6 +95,19 @@ public class LoginDialog extends Dialog {
         });
 
         setContentView(view);
+    }
+
+    private static class MyKeyValueArrayAdapter extends KeyValueArrayAdapter {
+        public MyKeyValueArrayAdapter(Context context, int textViewResourceId) {
+            super(context, textViewResourceId);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            view.setPadding(0, view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom());
+            return view;
+        }
     }
 
 }

@@ -220,20 +220,26 @@ public class MainFrameActivity extends BaseActivity {
                 .withOnAccountHeaderProfileImageListener(new ProfileImageListener())
                 .build();
 
-        ImageView loginImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_login);
-        if (loginImageView != null) {
-            loginImageView.setOnClickListener(new OnSingleClickListener() {
-                @Override
-                public void onSingleClick(View v) {
-                    closeDrawer();
-                    if (LoginHelper.isLoggedIn()) {
-                        showLogoutDialog();
-                    } else {
-                        showLoginDialog();
-                    }
+        ImageView addAccountImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_add);
+        ImageView logoutAccountImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_logout);
+
+        addAccountImageView.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                closeDrawer();
+                showLoginDialog();
+            }
+        });
+
+        logoutAccountImageView.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                closeDrawer();
+                if (LoginHelper.isLoggedIn()) {
+                    showLogoutDialog();
                 }
-            });
-        }
+            }
+        });
 
         updateAccountHeader();
 
@@ -380,12 +386,12 @@ public class MainFrameActivity extends BaseActivity {
             mAccountHeader.clear();
             mAccountHeader.addProfiles(items);
         }
-        ImageView loginImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_login);
+        ImageView loginImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_logout);
         if (loginImageView != null) {
             if (LoginHelper.isLoggedIn()) {
-                loginImageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.outline_logout_24));
+                loginImageView.setVisibility(View.VISIBLE);
             } else {
-                loginImageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.outline_login_24));
+                loginImageView.setVisibility(View.INVISIBLE);
             }
         }
     }
