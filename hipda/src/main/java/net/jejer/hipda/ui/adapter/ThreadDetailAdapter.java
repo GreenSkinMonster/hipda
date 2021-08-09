@@ -2,7 +2,6 @@ package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.SparseArray;
@@ -57,9 +56,8 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
     private final int mBackgroundResource;
     private final int mBackgroundColor;
 
-    private final Handler handler = new Handler();
-
-    final private SparseArray<DetailListBean> threadPages = new SparseArray<>();
+    final private SparseArray<DetailListBean> mThreadPages = new SparseArray<>();
+    private int mDataSize = 0;
 
     public ThreadDetailAdapter(Context context,
                                ThreadDetailFragment detailFragment,
@@ -86,16 +84,20 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
 
     @Override
     public int getItemCount() {
-        return getDataCount() + getHeaderCount() + getFooterCount();
+        return mDataSize + getHeaderCount() + getFooterCount();
     }
 
     public int getDataCount() {
+        return mDataSize;
+    }
+
+    private void cacheDataSize() {
         int size = 0;
-        for (int i = 0; i < threadPages.size(); i++) {
-            DetailListBean detailBeans = threadPages.get(threadPages.keyAt(i));
+        for (int i = 0; i < mThreadPages.size(); i++) {
+            DetailListBean detailBeans = mThreadPages.get(mThreadPages.keyAt(i));
             size += detailBeans.getCount();
         }
-        return size;
+        mDataSize = size;
     }
 
     @Override
@@ -105,59 +107,49 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
 
     public void addDatas(DetailListBean detailListBean) {
         final int page = detailListBean.getPage();
-        if (threadPages.size() == 0) {
-            threadPages.put(page, detailListBean);
+        if (mThreadPages.size() == 0) {
+            mThreadPages.put(page, detailListBean);
+            cacheDataSize();
             notifyItemRangeInserted(getHeaderCount(), detailListBean.getCount());
             Logger.e("page range " + 0 + " - " + 0 + ", insert new page " + page);
             return;
         }
-        int firstPage = threadPages.keyAt(0);
-        int lastPage = threadPages.keyAt(threadPages.size() - 1);
+        int firstPage = mThreadPages.keyAt(0);
+        int lastPage = mThreadPages.keyAt(mThreadPages.size() - 1);
         if (page == firstPage - 1) {
-            threadPages.put(page, detailListBean);
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
+            mThreadPages.put(page, detailListBean);
+            cacheDataSize();
             notifyItemRangeInserted(getHeaderCount(), detailListBean.getCount());
-//                }
-//            });
             Logger.e("page range " + firstPage + " - " + lastPage + ", insert new page " + page);
         } else if (page == lastPage + 1) {
             final int startPos = getItemCount() - getFooterCount();
-            threadPages.put(page, detailListBean);
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
+            mThreadPages.put(page, detailListBean);
+            cacheDataSize();
             notifyItemRangeInserted(startPos, detailListBean.getCount());
-//                }
-//            });
             Logger.e("page range " + firstPage + " - " + lastPage + ", append new page " + page);
         } else if (page >= firstPage && page <= lastPage) {
-            if (threadPages.get(page) == detailListBean) {
+            if (mThreadPages.get(page) == detailListBean) {
                 Logger.e("page range " + firstPage + " - " + lastPage + ", same skip exist page " + page);
             } else {
-                threadPages.put(page, detailListBean);
+                mThreadPages.put(page, detailListBean);
+                cacheDataSize();
                 int pos = getHeaderCount();
-                for (int i = 0; i < threadPages.size(); i++) {
-                    int tpage = threadPages.keyAt(i);
+                for (int i = 0; i < mThreadPages.size(); i++) {
+                    int tpage = mThreadPages.keyAt(i);
                     if (tpage < page) {
-                        pos += threadPages.get(tpage).getCount();
+                        pos += mThreadPages.get(tpage).getCount();
                     } else {
                         break;
                     }
                 }
                 final int startPos = pos;
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
                 notifyItemRangeChanged(startPos, detailListBean.getCount());
-//                    }
-//                });
                 Logger.e("page range " + firstPage + " - " + lastPage + ", update exist page " + page);
             }
         } else {
-            threadPages.clear();
-            threadPages.put(page, detailListBean);
+            mThreadPages.clear();
+            mThreadPages.put(page, detailListBean);
+            cacheDataSize();
             notifyDataSetChanged();
             Logger.e("page range " + firstPage + " - " + lastPage + ", not continoius page " + page + ", CLEAR ALL");
         }
@@ -173,8 +165,8 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         int pos = position - getHeaderCount();
         if (pos < 0)
             return null;
-        for (int i = 0; i < threadPages.size(); i++) {
-            DetailListBean detailBeans = threadPages.get(threadPages.keyAt(i));
+        for (int i = 0; i < mThreadPages.size(); i++) {
+            DetailListBean detailBeans = mThreadPages.get(mThreadPages.keyAt(i));
             if (pos < detailBeans.getCount()) {
                 return detailBeans.getAll().get(pos);
             }
@@ -208,7 +200,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
     public void clear() {
         removeFooterView();
         removeHeaderView();
-        threadPages.clear();
+        mThreadPages.clear();
         notifyDataSetChanged();
     }
 

@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui.adapter;
 
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -79,7 +78,7 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
 
     public void removeHeaderView() {
         if (mHeaderView != null) {
-            new Handler().post(() -> notifyItemRemoved(0));
+            notifyItemRemoved(0);
             mHeaderView = null;
         }
     }
@@ -98,7 +97,7 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
 
     public void removeFooterView() {
         if (mFooterView != null) {
-            new Handler().post(() -> notifyItemRemoved(getItemCount() - 1));
+            notifyItemRemoved(getItemCount() - 1);
             mFooterView = null;
         }
     }

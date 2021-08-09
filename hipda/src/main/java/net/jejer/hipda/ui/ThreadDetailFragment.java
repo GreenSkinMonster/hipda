@@ -75,7 +75,6 @@ import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.HtmlCompat;
-import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -1263,6 +1262,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
     private class OnScrollListener extends RecyclerView.OnScrollListener {
         int firstVisiblesItem, lastVisibleItem, visibleItemCount, totalItemCount;
+        long lastFetchNextTime, lastFetchPreTime;
 
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -1292,7 +1292,6 @@ public class ThreadDetailFragment extends BaseFragment {
                 mViewBeginPage = beginPage;
                 mViewEndPage = endPage;
                 if (mViewBeginPage > 0 && mMaxPage > 0) {
-                    Logger.e(mViewEndPage + " / " + mMaxPage);
                     mPageLabel.setText(mViewEndPage + " / " + mMaxPage);
                     if (mPageLabel.getVisibility() != View.VISIBLE) {
                         recyclerView.post(new Runnable() {
@@ -1323,12 +1322,15 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
             }
 
+            long now = System.currentTimeMillis();
             if ((visibleItemCount + firstVisiblesItem) >= totalItemCount - 3) {
-                if (!mFooterLoading && mViewEndPage < mMaxPage) {
+                if (!mFooterLoading && now > lastFetchNextTime + 500 && mViewEndPage < mMaxPage) {
+                    lastFetchNextTime = now;
                     prefetchNextPage();
                 }
             }
-            if (!mHeaderLoading && firstVisiblesItem < 3 && mViewBeginPage > 1) {
+            if (!mHeaderLoading && now > lastFetchPreTime + 500 && firstVisiblesItem < 3 && mViewBeginPage > 1) {
+                lastFetchPreTime = now;
                 prefetchPreviousPage();
             }
 
