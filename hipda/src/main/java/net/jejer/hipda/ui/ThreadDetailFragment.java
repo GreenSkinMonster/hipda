@@ -6,12 +6,10 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -37,7 +35,6 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.vanniktech.emoji.EmojiEditText;
 
-import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
@@ -87,11 +84,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -432,37 +429,11 @@ public class ThreadDetailFragment extends BaseFragment {
                 if (mViewBeginPage > 1)
                     url += "&page=" + mViewBeginPage;
                 try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.parse(url), "text/html");
-                    List<ResolveInfo> list = mCtx.getPackageManager().queryIntentActivities(intent, 0);
-
-                    if (list.size() == 0) {
-                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        list = mCtx.getPackageManager().queryIntentActivities(intent, 0);
-
-                        ArrayList<Intent> targetIntents = new ArrayList<>();
-                        String myPkgName = BuildConfig.APPLICATION_ID;
-                        for (ResolveInfo currentInfo : list) {
-                            String packageName = currentInfo.activityInfo.packageName;
-                            if (!myPkgName.equals(packageName)) {
-                                Intent targetIntent = new Intent(android.content.Intent.ACTION_VIEW);
-                                targetIntent.setData(Uri.parse(url));
-                                targetIntent.setPackage(packageName);
-                                targetIntents.add(targetIntent);
-                            }
-                        }
-
-                        if (targetIntents.size() > 0) {
-                            Intent chooserIntent = Intent.createChooser(targetIntents.remove(0), getString(R.string.action_open_url));
-                            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[0]));
-                            startActivity(chooserIntent);
-                        } else {
-                            UIUtils.toast("没有找到浏览器应用");
-                        }
-
-                    } else {
-                        startActivity(intent);
-                    }
+                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                    builder.setStartAnimations(getActivity(), R.anim.slide_in_right, 0);
+                    builder.setExitAnimations(getActivity(), 0, R.anim.slide_out_right);
+                    CustomTabsIntent customTabsIntent = builder.build();
+                    customTabsIntent.launchUrl(getActivity(), Uri.parse(url));
                 } catch (Exception e) {
                     UIUtils.toast("没有找到浏览器应用 : " + e.getMessage());
                 }
