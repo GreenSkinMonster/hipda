@@ -1,5 +1,7 @@
 package net.jejer.hipda.db;
 
+import android.text.TextUtils;
+
 import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
@@ -10,13 +12,15 @@ import java.util.Date;
 public class Content {
 
     private String mSessionId;
+    private String mUsername;
     private long mTime;
     private String mContent;
 
-    public Content(String sessionId, String content, long time) {
+    public Content(String sessionId, String username, String content, long time) {
         mContent = content;
         mSessionId = sessionId;
         mTime = time;
+        mUsername = username;
     }
 
     public String getContent() {
@@ -43,8 +47,16 @@ public class Content {
         mTime = time;
     }
 
+    public String getUsername() {
+        return mUsername;
+    }
+
+    public void setUsername(String username) {
+        mUsername = username;
+    }
+
     public String getDesc() {
-        return "输入于 "
+        return (TextUtils.isEmpty(mUsername) ? "" : "<" + mUsername + "> ") + "输入于 "
                 + Utils.shortyTime(new Date(mTime))
                 + "，共 " + Utils.getWordCount(mContent) + " 字";
     }

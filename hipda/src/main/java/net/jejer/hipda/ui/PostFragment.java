@@ -139,7 +139,7 @@ public class PostFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(false);
+        setHasOptionsMenu(true);
 
         if (getArguments().containsKey(ARG_FID_KEY)) {
             mFid = getArguments().getInt(ARG_FID_KEY);
@@ -371,14 +371,6 @@ public class PostFragment extends BaseFragment {
                 GoogleMaterial.Icon.gmd_add_a_photo).actionBar()
                 .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
 
-        if (HiUtils.CLIENT_TID == Utils.parseInt(mTid)) {
-            MenuItem menuItem = menu.findItem(R.id.action_device_info);
-            menuItem.setIcon(new IconicsDrawable(getActivity(),
-                    GoogleMaterial.Icon.gmd_bug_report).actionBar()
-                    .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
-            menuItem.setVisible(true);
-        }
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -410,9 +402,6 @@ public class PostFragment extends BaseFragment {
 
                     showImageSelector();
                 }
-                return true;
-            case R.id.action_device_info:
-                showAppendDeviceInfoDialog();
                 return true;
             case R.id.action_restore_content:
                 mEtContent.requestFocus();
@@ -720,9 +709,6 @@ public class PostFragment extends BaseFragment {
     private void setupPrePostInfo() {
         if (mPrePostInfo == null)
             return;
-
-        setHasOptionsMenu(true);
-        getActivity().invalidateOptionsMenu();
 
         mTypeValues = mPrePostInfo.getTypeValues();
         mTypeId = mPrePostInfo.getTypeId();

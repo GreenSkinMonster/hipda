@@ -11,13 +11,14 @@ import net.jejer.hipda.ui.HiApplication;
  */
 public class ContentDBHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "content.db";
     public static final String TABLE_NAME = "Contents";
 
     private static final String CONTENTS_TABLE_CREATE =
             "CREATE TABLE " + TABLE_NAME + " (" +
                     "session_id TEXT PRIMARY KEY, " +
+                    "username TEXT," +
                     "time NUMERIC, " +
                     "content TEXT);";
 
@@ -40,7 +41,9 @@ public class ContentDBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (newVersion > oldVersion) {
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN username TEXT");
+        }
     }
 }

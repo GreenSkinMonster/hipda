@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.utils.Logger;
 
 import java.util.LinkedHashSet;
@@ -17,12 +18,11 @@ public class ContentDao {
     private final static int MAX_SIZE = 10;
 
     public synchronized static void saveContent(String sessionId, String content) {
-        SQLiteDatabase db = null;
-        try {
-            db = ContentDBHelper.getHelper().getWritableDatabase();
+        try (SQLiteDatabase db = ContentDBHelper.getHelper().getWritableDatabase()) {
             if (!TextUtils.isEmpty(content)) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("session_id", sessionId);
+                contentValues.put("username", HiSettingsHelper.getInstance().getUsername());
                 contentValues.put("time", System.currentTimeMillis());
                 contentValues.put("content", content);
                 db.replace(ContentDBHelper.TABLE_NAME, null, contentValues);
@@ -31,16 +31,11 @@ public class ContentDao {
             }
         } catch (Exception e) {
             Logger.e(e);
-        } finally {
-            if (db != null)
-                db.close();
         }
     }
 
     public synchronized static void cleanup() {
-        SQLiteDatabase db = null;
-        try {
-            db = ContentDBHelper.getHelper().getWritableDatabase();
+        try (SQLiteDatabase db = ContentDBHelper.getHelper().getWritableDatabase()) {
             db.execSQL("delete from " + ContentDBHelper.TABLE_NAME
                     + " where session_id not in " +
                     "(select session_id from " + ContentDBHelper.TABLE_NAME +
@@ -49,9 +44,6 @@ public class ContentDao {
                     " or session_id=''");
         } catch (Exception e) {
             Logger.e(e);
-        } finally {
-            if (db != null)
-                db.close();
         }
     }
 
@@ -64,6 +56,7 @@ public class ContentDao {
             db = ContentDBHelper.getHelper().getReadableDatabase();
 
             String[] projection = {
+                    "username",
                     "session_id",
                     "time",
                     "content"
@@ -82,11 +75,12 @@ public class ContentDao {
 
             LinkedHashSet<Content> cnts = new LinkedHashSet<>();
             while (cursor.moveToNext()) {
+                String username = cursor.getString(cursor.getColumnIndex("username"));
                 long time = cursor.getLong(cursor.getColumnIndex("time"));
                 String sessionId = cursor.getString(cursor.getColumnIndex("session_id"));
                 String content = cursor.getString(cursor.getColumnIndex("content"));
 
-                cnts.add(new Content(sessionId, content, time));
+                cnts.add(new Content(sessionId, username, content, time));
             }
 
             contents = cnts.toArray(new Content[cnts.size()]);
