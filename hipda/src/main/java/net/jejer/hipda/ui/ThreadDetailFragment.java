@@ -27,14 +27,6 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -93,6 +85,13 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Request;
 
 public class ThreadDetailFragment extends BaseFragment {
@@ -182,7 +181,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         mCtx = getActivity();
 
-        setHasOptionsMenu(false);
+        setHasOptionsMenu(true);
 
         if (getArguments() != null) {
             if (getArguments().containsKey(ARG_TID_KEY)) {
@@ -1429,8 +1428,6 @@ public class ThreadDetailFragment extends BaseFragment {
             if (event.mFectchType == FETCH_NORMAL || event.mFectchType == FETCH_REFRESH) {
                 if (!mDataReceived) {
                     mDataReceived = true;
-                    setHasOptionsMenu(true);
-                    getActivity().invalidateOptionsMenu();
                     showMainFab();
                 }
                 mGotoPage = details.getPage();
