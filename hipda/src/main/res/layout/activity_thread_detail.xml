@@ -11,7 +11,7 @@
         android:id="@+id/main_frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?list_item_background"
+        android:background="?attr/window_background"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -19,20 +19,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        android:visibility="gone"
         android:src="@drawable/ic_reply_white_24dp"
-        app:backgroundTint="?attr/fab_background_tint"
+        android:visibility="gone"
+        app:backgroundTint="@color/fab_background_tint"
         app:fabSize="mini"
         app:layout_anchor="@id/main_frame_container"
         app:layout_anchorGravity="bottom|right|end"
-        app:layout_behavior="net.jejer.hipda.ui.widget.FABHideOnScrollBehavior"/>
+        app:layout_behavior="net.jejer.hipda.ui.widget.FABHideOnScrollBehavior"
+        app:tint="@color/fab_icon_color" />
 
     <RelativeLayout
         android:id="@+id/quick_reply"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="?list_item_background"
+        android:background="?attr/window_background"
         android:clickable="true"
         android:visibility="invisible"
         app:layout_anchor="@id/main_frame_container"

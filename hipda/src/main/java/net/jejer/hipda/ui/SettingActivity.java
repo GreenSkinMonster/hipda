@@ -59,5 +59,4 @@ public class SettingActivity extends SwipeBaseActivity {
             }
         }
     }
-
 }

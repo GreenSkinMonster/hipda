@@ -1,15 +1,14 @@
 package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
-import android.os.Build;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.core.view.GestureDetectorCompat;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
-
-import androidx.core.view.GestureDetectorCompat;
 
 /**
  * Created by GreenSkinMonster on 2016-11-10.
@@ -81,10 +80,7 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
 
         //hack to delay ripple effect, should be replaced by better way
         if (HiSettingsHelper.getInstance().isClickEffect()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                view.drawableHotspotChanged(x, y);
-            }
-
+            view.drawableHotspotChanged(x, y);
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     view.setTag(R.id.rippleKey, "");
@@ -94,7 +90,7 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
                             try {
                                 if (view.getTag(R.id.rippleKey) != null)
                                     view.setPressed(true);
-                            } catch (Exception ingored) {
+                            } catch (Exception ignored) {
                             }
                         }
                     }, 200);

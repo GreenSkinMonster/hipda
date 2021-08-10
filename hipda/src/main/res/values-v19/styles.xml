@@ -1,7 +1,0 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <style name="Preference.Category.Material">
-        <item name="android:layout">@layout/preference_category_material</item>
-    </style>
-
-</resources>

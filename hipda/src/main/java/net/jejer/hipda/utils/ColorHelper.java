@@ -5,10 +5,9 @@ import android.graphics.Color;
 import android.util.TypedValue;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.ui.HiApplication;
 
-import java.util.HashMap;
-
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 
 /**
@@ -17,46 +16,31 @@ import androidx.core.graphics.ColorUtils;
  */
 public class ColorHelper {
 
-    private static HashMap<Integer, Integer> COLOR_IDS = new HashMap<>();
     private final static int DAY_REF_COLOR = Color.parseColor("#ffffff");
     private final static int NIGHT_REF_COLOR = Color.parseColor("#000000");
 
-    public static void clear() {
-        COLOR_IDS.clear();
-    }
-
     public static int getColorIdByAttr(Context ctx, int attrId) {
-        if (COLOR_IDS.containsKey(attrId))
-            return COLOR_IDS.get(attrId);
-
-        int colorId = getColor(ctx, attrId);
-
-        COLOR_IDS.put(attrId, colorId);
-        return colorId;
+        return getColor(ctx, attrId);
     }
 
     public static int getTextColorPrimary(Context ctx) {
-        return getColorIdByAttr(ctx, android.R.attr.textColorPrimary);
+        return ContextCompat.getColor(ctx, R.color.textColorPrimary);
     }
 
     public static int getTextColorSecondary(Context ctx) {
-        return getColorIdByAttr(ctx, android.R.attr.textColorSecondary);
+        return ContextCompat.getColor(ctx, R.color.textColorSecondary);
     }
 
     public static int getColorAccent(Context ctx) {
-        return getColorIdByAttr(ctx, R.attr.colorAccent);
+        return ContextCompat.getColor(ctx, R.color.colorAccent);
     }
 
     public static int getColorPrimary(Context ctx) {
         return getColorIdByAttr(ctx, R.attr.colorPrimary);
     }
 
-    public static int getColorPrimaryDark(Context ctx) {
-        return getColorIdByAttr(ctx, R.attr.colorPrimaryDark);
-    }
-
-    public static int getListBackgroundColor(Context ctx) {
-        return getColorIdByAttr(ctx, R.attr.list_item_background);
+    public static int getWindowBackgroundColor(Context ctx) {
+        return getColorIdByAttr(ctx, R.attr.window_background);
     }
 
     public static int getSwipeBackgroundColor(Context ctx) {
@@ -74,10 +58,10 @@ public class ColorHelper {
     }
 
     public static boolean isTextColorReadable(String color) {
-        float delta = HiSettingsHelper.getInstance().isNightMode() ? 0.35f : 0.1f;
+        float delta = UIUtils.isNightTheme(HiApplication.getAppContext()) ? 0.35f : 0.1f;
         float[] textHslColor = new float[3], refHslColor = new float[3];
         ColorUtils.colorToHSL(Color.parseColor(color), textHslColor);
-        ColorUtils.colorToHSL(HiSettingsHelper.getInstance().isNightMode() ? NIGHT_REF_COLOR : DAY_REF_COLOR, refHslColor);
+        ColorUtils.colorToHSL(UIUtils.isNightTheme(HiApplication.getAppContext()) ? NIGHT_REF_COLOR : DAY_REF_COLOR, refHslColor);
         return Math.abs(textHslColor[2] - refHslColor[2]) >= delta;
     }
 

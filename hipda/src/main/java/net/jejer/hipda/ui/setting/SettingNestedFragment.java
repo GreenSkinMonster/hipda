@@ -6,14 +6,8 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.preference.Preference;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.TaskHelper;
@@ -27,6 +21,11 @@ import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.preference.Preference;
 
 /**
  * nested setting fragment
@@ -126,10 +125,6 @@ public class SettingNestedFragment extends BaseSettingFragment {
 
                 Preference fontPreference = findPreference(HiSettingsHelper.PERF_FONT);
                 fontPreference.setOnPreferenceClickListener(new FilePickerListener(getActivity(), FilePickerListener.FONT_FILE));
-
-                Preference swipeCompatPreference = findPreference(HiSettingsHelper.PERF_SWIPE_COMPAT_MODE);
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && swipeCompatPreference != null)
-                    swipeCompatPreference.setEnabled(false);
 
                 break;
 

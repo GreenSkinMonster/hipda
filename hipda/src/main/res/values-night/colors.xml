@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="textColorPrimary" type="color">#AAAAAA</item>
+    <item name="textColorSecondary" type="color">#666666</item>
+
+    <item name="fab_background_tint" type="color">@color/md_grey_700</item>
+    <item name="fab_icon_color" type="color">@color/white</item>
+
+    <item name="window_background" type="color">#1C1D1E</item>
+    <item name="quote_background" type="color">#20C0C0C0</item>
+    <item name="list_item_divider" type="color">@color/quote_background</item>
+
+</resources>

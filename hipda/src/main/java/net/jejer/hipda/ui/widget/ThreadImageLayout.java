@@ -53,7 +53,7 @@ public class ThreadImageLayout extends BaseImageLayout {
         mImageIndex = contentImg.getIndexInPage();
 
         mImageView = new ImageView(getContext());
-        mImageView.setImageDrawable(Utils.getDrawableFromAttr(getContext(), R.attr.quote_background));
+        mImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.quote_background));
         addView(mImageView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         mProgressBar = new DownloadProgressBar(getContext());

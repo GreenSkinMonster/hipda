@@ -13,7 +13,7 @@
             android:title="@string/pref_title_theme"/>
 
         <com.thebluealliance.spectrum.SpectrumPreferenceCompat
-            android:defaultValue="@color/md_blue_grey_700"
+            android:defaultValue="@color/md_grey_200"
             android:key="PERF_PRIMARY_COLOR"
             android:summary="@string/pref_summary_primary_color"
             android:title="@string/pref_title_primary_color"
@@ -75,14 +75,6 @@
             android:defaultValue="true"
             android:key="PERF_GESTURE_BACK"
             android:title="@string/pref_title_gesture_back"/>
-
-        <!--
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="PERF_SWIPE_COMPAT_MODE"
-            android:summary="@string/pref_summary_swipe_compat_mode"
-            android:title="@string/pref_title_swipe_compat_mode"/>
-            -->
 
         <SwitchPreference
             android:defaultValue="true"

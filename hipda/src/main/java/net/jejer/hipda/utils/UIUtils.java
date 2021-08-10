@@ -28,12 +28,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-
 import com.google.android.material.snackbar.Snackbar;
 
 import net.jejer.hipda.BuildConfig;
@@ -51,6 +45,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 /**
  * Created by GreenSkinMonster on 2016-04-05.
@@ -78,6 +79,8 @@ public class UIUtils {
     private static Snackbar makeSnack(final View view, final CharSequence message, final CharSequence detail, int length, int textColor) {
         final Snackbar snackbar = Snackbar.make(view, message, length);
         setSnackbarMessageTextColor(snackbar, textColor);
+        snackbar.setBackgroundTint(Color.DKGRAY);
+        snackbar.setActionTextColor(Color.WHITE);
 
         if (!TextUtils.isEmpty(detail)) {
             snackbar.setAction("详情", new View.OnClickListener() {
@@ -91,6 +94,14 @@ public class UIUtils {
                 }
             });
         }
+        return snackbar;
+    }
+
+    public static Snackbar makeSnackbar(View view, CharSequence sequence, int duration) {
+        Snackbar snackbar = Snackbar.make(view, sequence, duration);
+        setSnackbarMessageTextColor(snackbar, Color.WHITE);
+        snackbar.setBackgroundTint(ContextCompat.getColor(view.getContext(), R.color.md_grey_800));
+        snackbar.setActionTextColor(Color.WHITE);
         return snackbar;
     }
 
@@ -355,9 +366,7 @@ public class UIUtils {
     }
 
     private static void snackViewSaveImage(Activity activity, View view, Uri destUri, String mime) {
-        Snackbar snackbar = Snackbar.make(view, "文件已保存至 Pictures/" + IMAGES_DIR + " 目录", Snackbar.LENGTH_LONG);
-        View snackbarView = snackbar.getView();
-        ((TextView) snackbarView.findViewById(R.id.snackbar_text)).setTextColor(Color.WHITE);
+        Snackbar snackbar = makeSnackbar(view, "文件已保存至 Pictures/" + IMAGES_DIR + " 目录", Snackbar.LENGTH_LONG);
 
         snackbar.setAction("查看", new View.OnClickListener() {
             @Override
@@ -443,6 +452,124 @@ public class UIUtils {
             child.setBackground(null);
             child.setPadding(0, 0, 0, 0);
         }
+    }
+
+    public static void setDayNightTheme() {
+        if (HiSettingsHelper.THEME_AUTO.equals(HiSettingsHelper.getInstance().getTheme())) {
+            AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        } else if (HiSettingsHelper.THEME_LIGHT.equals(HiSettingsHelper.getInstance().getTheme())) {
+            AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_NO);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_YES);
+        }
+    }
+
+    public static void setActivityTheme(Activity activity) {
+        activity.setTheme(getThemeValue(activity));
+
+        Window window = activity.getWindow();
+        View view = activity.getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (isWhiteTheme(activity)) {
+                view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            } else {
+                view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+        }
+        if (HiSettingsHelper.getInstance().isNavBarColored()) {
+            window.setNavigationBarColor(ColorHelper.getColorPrimary(activity));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (UIUtils.isWhiteTheme(activity)) {
+                    view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                } else {
+                    view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                }
+            }
+        }
+    }
+
+    public static boolean isDayTheme(Context context) {
+        int currentNightMode = context.getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
+        switch (currentNightMode) {
+            case Configuration.UI_MODE_NIGHT_NO:
+                return true;
+            case Configuration.UI_MODE_NIGHT_YES:
+                return false;
+        }
+        return true;
+    }
+
+    public static boolean isNightTheme(Context context) {
+        return !isDayTheme(context);
+    }
+
+    public static int getToolbarTextColor(Activity context) {
+        return isWhiteTheme(context) ? Color.BLACK : Color.WHITE;
+    }
+
+    public static boolean isWhiteTheme(Activity activity) {
+        return UIUtils.isDayTheme(activity)
+                && HiSettingsHelper.getInstance().getPrimaryColor() == ContextCompat.getColor(activity, R.color.md_grey_200);
+    }
+
+    public static int getThemeValue(Context context) {
+        String theme = UIUtils.isDayTheme(context) ? HiSettingsHelper.THEME_LIGHT : HiSettingsHelper.THEME_DARK;
+        if (HiSettingsHelper.THEME_DARK.equals(theme)) {
+            if (HiSettingsHelper.THEME_BLACK.equals(HiSettingsHelper.getInstance().getNightTheme()))
+                return R.style.ThemeBlack;
+            return R.style.ThemeDark;
+        } else {
+            int primaryColor = HiSettingsHelper.getInstance().getPrimaryColor();
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_red_700))
+                return R.style.ThemeLight_Red;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_pink_700))
+                return R.style.ThemeLight_Pink;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_purple_700))
+                return R.style.ThemeLight_Purple;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_deep_purple_700))
+                return R.style.ThemeLight_DeepPurple;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_indigo_700))
+                return R.style.ThemeLight_Indigo;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_blue_700))
+                return R.style.ThemeLight_Blue;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_light_blue_700))
+                return R.style.ThemeLight_LightBlue;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_cyan_700))
+                return R.style.ThemeLight_Cyan;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_teal_700))
+                return R.style.ThemeLight_Teal;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_green_700))
+                return R.style.ThemeLight_Green;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_light_green_700))
+                return R.style.ThemeLight_LightGreen;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_lime_700))
+                return R.style.ThemeLight_Lime;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_yellow_700))
+                return R.style.ThemeLight_Yellow;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_amber_700))
+                return R.style.ThemeLight_Amber;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_orange_700))
+                return R.style.ThemeLight_Orange;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_deep_orange_700))
+                return R.style.ThemeLight_DeepOrange;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_brown_700))
+                return R.style.ThemeLight_Brown;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_grey_700))
+                return R.style.ThemeLight_Grey;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_blue_grey_700))
+                return R.style.ThemeLight_BlueGrey;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_grey_200))
+                return R.style.ThemeLight_White;
+            if (primaryColor == ContextCompat.getColor(context, R.color.md_black_1000))
+                return R.style.ThemeLight_Black;
+        }
+        HiSettingsHelper.getInstance().setTheme(HiSettingsHelper.THEME_LIGHT);
+        HiSettingsHelper.getInstance().setPrimaryColor(ContextCompat.getColor(context, R.color.md_grey_200));
+        return R.style.ThemeLight_White;
     }
 
 }

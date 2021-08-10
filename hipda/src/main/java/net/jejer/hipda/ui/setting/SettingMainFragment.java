@@ -4,10 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.preference.Preference;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
@@ -17,10 +13,15 @@ import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.SettingActivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.List;
 import java.util.Set;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.preference.Preference;
 
 /**
  * main setting fragment
@@ -30,6 +31,7 @@ public class SettingMainFragment extends BaseSettingFragment {
 
     private int mScreenOrietation;
     private String mTheme;
+    private String mNgihtTheme;
     private int mPrimaryColor;
     private List<Integer> mForums;
     private Set<String> mFreqMenus;
@@ -75,7 +77,8 @@ public class SettingMainFragment extends BaseSettingFragment {
         }
 
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
-        mTheme = HiSettingsHelper.getInstance().getActiveTheme();
+        mTheme = HiSettingsHelper.getInstance().getTheme();
+        mNgihtTheme = HiSettingsHelper.getInstance().getNightTheme();
         mPrimaryColor = HiSettingsHelper.getInstance().getPrimaryColor();
         mForums = HiSettingsHelper.getInstance().getForums();
         mFreqMenus = HiSettingsHelper.getInstance().getFreqMenus();
@@ -105,8 +108,8 @@ public class SettingMainFragment extends BaseSettingFragment {
         if (HiSettingsHelper.getInstance().isCircleAvatar() != mCircleAvatar)
             GlideHelper.initDefaultFiles();
 
-        if (HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
-            HiSettingsHelper.getInstance().setNightMode(false);
+//        if (HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
+//            HiSettingsHelper.getInstance().setNightMode(false);
 
         if (mNotiTaskEnabled != HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
             NotiWorker.scheduleOrCancelWork();
@@ -116,8 +119,9 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
             HiApplication.setSettingStatus(HiApplication.RESTART);
         } else if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
-                || !HiSettingsHelper.getInstance().getActiveTheme().equals(mTheme)
-                || (HiSettingsHelper.getInstance().isUsingLightTheme() && HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
+                || !HiSettingsHelper.getInstance().getTheme().equals(mTheme)
+                || (UIUtils.isNightTheme(getActivity()) && !HiSettingsHelper.getInstance().getNightTheme().equals(mNgihtTheme))
+                || (UIUtils.isDayTheme(getActivity()) && HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || !HiSettingsHelper.getInstance().getFreqMenus().equals(mFreqMenus)
                 || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored

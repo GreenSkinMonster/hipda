@@ -369,7 +369,7 @@ public class PostFragment extends BaseFragment {
 
         menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(),
                 GoogleMaterial.Icon.gmd_add_a_photo).actionBar()
-                .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
+                .color(UIUtils.getToolbarTextColor(getActivity())));
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -427,7 +427,7 @@ public class PostFragment extends BaseFragment {
                 .originalEnable(true)
                 .maxOriginalSize(HiSettingsHelper.getInstance().getMaxUploadFileSize() / 1024 / 1024)
                 .imageEngine(new MatisseGlideEngine())
-                .theme(HiSettingsHelper.getInstance().getImageActivityTheme(getActivity()))
+                .theme(UIUtils.getThemeValue(getActivity()))
                 .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
                 .captureStrategy(new CaptureStrategy(false, BuildConfig.APPLICATION_ID + ".provider"))
                 .forResult(SELECT_PICTURE);
@@ -673,7 +673,7 @@ public class PostFragment extends BaseFragment {
                     UIUtils.toast("收集信息成功");
             } else {
                 if (getView() != null) {
-                    mSnackbar = Snackbar.make(getView(), "收集信息失败 : " + message, Snackbar.LENGTH_LONG);
+                    mSnackbar = UIUtils.makeSnackbar(getView(), "收集信息失败 : " + message, Snackbar.LENGTH_LONG);
                     UIUtils.setSnackbarMessageTextColor(mSnackbar, ContextCompat.getColor(getActivity(), R.color.md_yellow_500));
                     mSnackbar.setAction("重试", new View.OnClickListener() {
                         @Override

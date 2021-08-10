@@ -1,16 +1,12 @@
 package net.jejer.hipda.bean;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import androidx.core.content.ContextCompat;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
@@ -99,10 +95,10 @@ public class HiSettingsHelper {
     public static final String PERF_MAX_UPLOAD_FILE_SIZE = "PERF_MAX_UPLOAD_FILE_SIZE";
     public static final String PERF_SHOW_TAIL = "PERF_SHOW_TAIL";
     public static final String PERF_CAMERA_PERM_ASKED = "PERF_CAMERA_PERM_ASKED";
-    public static final String PERF_SWIPE_COMPAT_MODE = "PERF_SWIPE_COMPAT_MODE";
     public static final String PERF_BLACKLIST = "PERF_BLACKLIST";
     public static final String PERF_BLACKLIST_SYNC_TIME = "PERF_BLACKLIST_SYNC_TIME";
 
+    public static final String THEME_AUTO = "auto";
     public static final String THEME_LIGHT = "light";
     public static final String THEME_DARK = "dark";
     public static final String THEME_BLACK = "black";
@@ -135,7 +131,6 @@ public class HiSettingsHelper {
     private String mTheme = "";
     private int mPrimaryColor = 0;
     private String mNightTheme = "";
-    private boolean mNightMode = false;
     private boolean mNavBarColor = false;
     private String mFont = "";
     private List<Integer> mForums = new ArrayList<>();
@@ -275,7 +270,6 @@ public class HiSettingsHelper {
         getThemeFromPref();
         getPrimaryColorFromPref();
         getNightThemeFromPref();
-        isNightModeFromPref();
         isNavBarColoredFromPref();
         getFontFromPref();
         isEncodeUtf8FromPref();
@@ -598,28 +592,6 @@ public class HiSettingsHelper {
     private String getNightThemeFromPref() {
         mNightTheme = mSharedPref.getString(PERF_NIGHT_THEME, THEME_DARK);
         return mNightTheme;
-    }
-
-    public void setNightTheme(String theme) {
-        mNightTheme = theme;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_NIGHT_THEME, theme).apply();
-    }
-
-    public boolean isNightMode() {
-        return mNightMode;
-    }
-
-    private boolean isNightModeFromPref() {
-        mNightMode = mSharedPref.getBoolean(PERF_NIGHT_MODE, false);
-        return mNightMode;
-    }
-
-    @SuppressLint("ApplySharedPref")
-    public void setNightMode(boolean nightMode) {
-        mNightMode = nightMode;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_NIGHT_MODE, nightMode).commit();
     }
 
     public String getFont() {
@@ -1087,17 +1059,6 @@ public class HiSettingsHelper {
                 && Utils.isInTimeRange(getSilentBegin(), getSilentEnd());
     }
 
-    public String getActiveTheme() {
-        if (isNightMode() && !TextUtils.isEmpty(getNightTheme()))
-            return getNightTheme();
-        else
-            return getTheme();
-    }
-
-    public boolean isUsingLightTheme() {
-        return HiSettingsHelper.THEME_LIGHT.equals(getActiveTheme());
-    }
-
     public boolean isAppBarCollapsible() {
         return getBooleanValue(PERF_APP_BAR_COLLAPSIBLE, true);
     }
@@ -1136,28 +1097,6 @@ public class HiSettingsHelper {
 
     public void setCameraPermAsked(boolean asked) {
         setBooleanValue(PERF_CAMERA_PERM_ASKED, asked);
-    }
-
-    public boolean isHackStatusBar() {
-        return !mSharedPref.getBoolean(PERF_SWIPE_COMPAT_MODE, true);
-    }
-
-    public boolean isWhiteTheme() {
-        return THEME_LIGHT.equals(getActiveTheme())
-                && getPrimaryColor() == ContextCompat.getColor(mCtx, R.color.md_grey_200);
-    }
-
-    public int getToolbarTextColor() {
-        return isWhiteTheme() ? Color.BLACK : Color.WHITE;
-    }
-
-    public int getImageActivityTheme(Activity activity) {
-        if (isWhiteTheme()) {
-            return R.style.Matisse_Zhihu;
-        }
-        return HiUtils.getThemeValue(activity,
-                HiSettingsHelper.getInstance().getActiveTheme(),
-                HiSettingsHelper.getInstance().getPrimaryColor());
     }
 
     public String getSilentBegin() {

@@ -78,8 +78,8 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         mBackgroundResource = typedArray.getResourceId(0, 0);
         typedArray.recycle();
 
-        mBackgroundColor = HiSettingsHelper.getInstance().getActiveTheme().equals(HiSettingsHelper.THEME_LIGHT)
-                ? R.color.md_light_green_100 : R.color.md_blue_grey_900;
+        mBackgroundColor = UIUtils.isDayTheme(context)
+                ? R.color.md_green_50 : R.color.md_blue_grey_900;
     }
 
     @Override

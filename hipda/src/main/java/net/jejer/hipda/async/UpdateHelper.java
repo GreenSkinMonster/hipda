@@ -134,7 +134,8 @@ public class UpdateHelper {
                 if (!mCtx.isFinishing())
                     dialog.show();
             } else {
-                Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
+                Dialog dialog = new AlertDialog.Builder(mCtx)
+                        .setTitle("发现新版本 : " + newVersion)
                         .setMessage(updateNotes).
                                 setPositiveButton("前往Google Play",
                                         (dialog4, which) -> openGooglePlay(mCtx)).create();

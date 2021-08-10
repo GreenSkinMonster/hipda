@@ -22,8 +22,6 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
 
-import androidx.annotation.AttrRes;
-
 import com.bumptech.glide.Glide;
 
 import net.jejer.hipda.okhttp.OkHttpHelper;
@@ -53,6 +51,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Pattern;
+
+import androidx.annotation.AttrRes;
 
 /**
  * Common utils
@@ -270,7 +270,6 @@ public class Utils {
     }
 
     public static void restartActivity(Activity activity) {
-        ColorHelper.clear();
         activity.finish();
         Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

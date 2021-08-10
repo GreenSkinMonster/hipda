@@ -93,23 +93,21 @@
     </string-array>
 
     <string-array name="pref_title_theme_names">
-        <item>浅色</item>
-        <item>深色</item>
-        <item>纯黑</item>
+        <item>跟随系统</item>
+        <item>浅色主题</item>
+        <item>深色主题</item>
     </string-array>
     <string-array name="pref_title_theme_values">
+        <item>auto</item>
         <item>light</item>
         <item>dark</item>
-        <item>black</item>
     </string-array>
 
     <string-array name="pref_title_night_theme_names">
-        <item>不使用夜间模式</item>
-        <item>深色</item>
+        <item>深黑</item>
         <item>纯黑</item>
     </string-array>
     <string-array name="pref_title_night_theme_values">
-        <item></item>
         <item>dark</item>
         <item>black</item>
     </string-array>
@@ -229,8 +227,6 @@
     <string name="pref_title_encode_utf8">使用UTF8编码</string>
     <string name="pref_title_long_click_save_image">长按保存图片</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
-    <string name="pref_title_swipe_compat_mode">手势返回兼容模式</string>
-    <string name="pref_summary_swipe_compat_mode">适用Android 5.0或以上。状态栏出现异常白边、黑边，输入法遮挡输入框时可以尝试启用</string>
     <string name="pref_title_app_bar_collapsible">标题栏动态隐藏</string>
     <string name="pref_title_fab_auto_hide">浮动按钮动态隐藏</string>
     <string name="pref_title_fab_left_side">浮动按钮放在左侧</string>
@@ -238,9 +234,9 @@
     <string name="pref_title_circle_avatar">圆形头像</string>
     <string name="pref_title_blacklist">黑名单</string>
     <string name="pref_summary_blacklist">目前黑名单已经与论坛同步</string>
-    <string name="pref_title_theme">界面主题</string>
-    <string name="pref_title_primary_color">界面主色调</string>
-    <string name="pref_title_night_theme">夜间模式主题</string>
+    <string name="pref_title_theme">主题模式</string>
+    <string name="pref_title_primary_color">浅色主题色调</string>
+    <string name="pref_title_night_theme">深色主题色调</string>
     <string name="pref_title_navbar_colored">导航栏着色</string>
     <string name="pref_title_font">自定义字体</string>
     <string name="title_choose_font">选择字体 (*ttf, *.otf)</string>

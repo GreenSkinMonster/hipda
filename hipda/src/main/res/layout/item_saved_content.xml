@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         android:layout_margin="4dp"
-        android:background="?attr/quote_background"
+        android:background="@drawable/quote_background"
         android:textSize="14sp"/>
 
     <TextView

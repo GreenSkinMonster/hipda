@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:visibility="gone"
-        app:backgroundTint="?attr/fab_background_tint"
+        app:backgroundTint="@color/fab_background_tint"
         app:fabSize="mini"
         app:layout_anchor="@id/main_frame_container"
         app:layout_anchorGravity="bottom|right|end"

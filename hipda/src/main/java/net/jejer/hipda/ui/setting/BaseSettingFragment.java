@@ -6,6 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.thebluealliance.spectrum.SpectrumPreferenceCompat;
+
+import net.jejer.hipda.utils.ColorHelper;
+import net.jejer.hipda.utils.Utils;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,14 +23,6 @@ import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
-
-import com.thebluealliance.spectrum.SpectrumPreferenceCompat;
-
-import net.jejer.hipda.utils.ColorHelper;
-import net.jejer.hipda.utils.Utils;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * base setting fragment
@@ -39,7 +39,7 @@ public class BaseSettingFragment extends PreferenceFragmentCompat {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         if (view != null)
-            view.setBackgroundColor(ColorHelper.getListBackgroundColor(getActivity()));
+            view.setBackgroundColor(ColorHelper.getWindowBackgroundColor(getActivity()));
         return view;
     }
 

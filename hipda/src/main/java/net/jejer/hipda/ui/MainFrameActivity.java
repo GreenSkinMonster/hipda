@@ -1,6 +1,5 @@
 package net.jejer.hipda.ui;
 
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,10 +11,8 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -64,7 +61,6 @@ import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.LoginDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
-import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
@@ -107,6 +103,7 @@ public class MainFrameActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UIUtils.setActivityTheme(this);
 
         setContentView(R.layout.activity_main_frame);
         mRootView = findViewById(R.id.main_activity_root_view);
@@ -118,7 +115,7 @@ public class MainFrameActivity extends BaseActivity {
 
         GlideHelper.initDefaultFiles();
         GlideHelper.refreshUserIcon(MainFrameActivity.this);
-        EmojiHandler.init(HiSettingsHelper.getInstance().isUsingLightTheme());
+        EmojiHandler.init(UIUtils.isDayTheme(MainFrameActivity.this));
         NotiHelper.initNotificationChannel();
 
         EventBus.getDefault().register(this);
@@ -278,18 +275,18 @@ public class MainFrameActivity extends BaseActivity {
                             ));
 
         drawerItems.add(new DividerDrawerItem());
-        if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme())) {
+        if (HiSettingsHelper.THEME_AUTO.equals(HiSettingsHelper.getInstance().getTheme())) {
             drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SETTINGS));
         } else {
             drawerItems.add(new SwitchDrawerItem()
                     .withName(R.string.title_drawer_setting)
                     .withIdentifier(Constants.DRAWER_SETTINGS)
                     .withIcon(GoogleMaterial.Icon.gmd_settings)
-                    .withChecked(HiSettingsHelper.getInstance().isNightMode())
+                    .withChecked(UIUtils.isNightTheme(MainFrameActivity.this))
                     .withOnCheckedChangeListener(new OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
-                            if (HiSettingsHelper.getInstance().isNightMode() != isChecked) {
+                            if (UIUtils.isNightTheme(MainFrameActivity.this) != isChecked) {
                                 final DrawerLayout.DrawerListener nightModeDrawerListener = new DrawerLayout.DrawerListener() {
                                     @Override
                                     public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -302,14 +299,15 @@ public class MainFrameActivity extends BaseActivity {
                                     @Override
                                     public void onDrawerClosed(View drawerView) {
                                         mDrawer.getDrawerLayout().removeDrawerListener(this);
-                                        recreateActivity();
+                                        UIUtils.setDayNightTheme();
                                     }
 
                                     @Override
                                     public void onDrawerStateChanged(int newState) {
                                     }
                                 };
-                                HiSettingsHelper.getInstance().setNightMode(isChecked);
+                                HiSettingsHelper.getInstance().setTheme(UIUtils.isDayTheme(MainFrameActivity.this) ? HiSettingsHelper.THEME_DARK : HiSettingsHelper.THEME_LIGHT);
+
                                 mDrawer.getDrawerLayout().addDrawerListener(nightModeDrawerListener);
                                 mDrawer.closeDrawer();
                             }
@@ -618,7 +616,7 @@ public class MainFrameActivity extends BaseActivity {
     }
 
     private void showRemoveProfileDialog(String username) {
-        Dialog dialog = new AlertDialog.Builder(MainFrameActivity.this)
+        AlertDialog dialog = new AlertDialog.Builder(MainFrameActivity.this)
                 .setTitle("清除登录信息？")
                 .setMessage("确认清除用户 <" + username + "> 的登录信息？\n")
                 .setPositiveButton(getResources().getString(android.R.string.ok),
@@ -641,17 +639,17 @@ public class MainFrameActivity extends BaseActivity {
     }
 
     private void showLogoutDialog() {
-        Dialog dialog = new AlertDialog.Builder(MainFrameActivity.this)
+        AlertDialog dialog = new AlertDialog.Builder(MainFrameActivity.this)
                 .setTitle("退出登录？")
                 .setMessage("退出当前登录用户 <" + HiSettingsHelper.getInstance().getUsername() + "> ？\n")
-                .setPositiveButton(getResources().getString(android.R.string.ok),
+                .setPositiveButton("退出",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 logout(HiSettingsHelper.getInstance().getUsername(), false);
                             }
                         })
-                .setNegativeButton(getResources().getString(android.R.string.cancel),
+                .setNegativeButton("取消",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -761,27 +759,7 @@ public class MainFrameActivity extends BaseActivity {
 
     private void recreateActivity() {
         HiUtils.updateBaseUrls();
-        ColorHelper.clear();
-        int theme = HiUtils.getThemeValue(this,
-                HiSettingsHelper.getInstance().getActiveTheme(),
-                HiSettingsHelper.getInstance().getPrimaryColor());
-        setTheme(theme);
-        View view = getWindow().getDecorView();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (theme == R.style.ThemeLight_White) {
-                view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            } else {
-                view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            }
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && HiSettingsHelper.getInstance().isNavBarColored()) {
-            if (theme == R.style.ThemeLight_White) {
-                view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-            } else {
-                view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-            }
-        }
+        UIUtils.setDayNightTheme();
         //avoid “RuntimeException: Performing pause of activity that is not resumed”
         new Handler().postDelayed(new Runnable() {
             @Override

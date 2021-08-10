@@ -11,6 +11,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.SimpleExceptionHandler;
+import net.jejer.hipda.utils.UIUtils;
 
 import java.io.File;
 
@@ -44,6 +45,7 @@ public class HiApplication extends Application implements Application.ActivityLi
             Thread.setDefaultUncaughtExceptionHandler(new SimpleExceptionHandler());
         }
 
+        UIUtils.setDayNightTheme();
         updated = UpdateHelper.updateApp();
 
         if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {

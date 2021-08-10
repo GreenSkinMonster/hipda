@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?list_item_background"
+    android:background="?attr/window_background"
     android:clickable="true"
     android:orientation="vertical"
     android:paddingBottom="2dp">
@@ -124,7 +124,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
-        android:background="?attr/quote_background"
+        android:background="@drawable/quote_background"
         android:ellipsize="end"
         android:maxLines="2"
         android:padding="4dp"

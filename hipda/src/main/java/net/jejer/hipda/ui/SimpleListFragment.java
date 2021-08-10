@@ -11,6 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -18,7 +23,6 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.async.FavoriteHelper;
 import net.jejer.hipda.async.NetworkReadyEvent;
 import net.jejer.hipda.async.PostSmsAsyncTask;
-import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.SimpleListBean;
 import net.jejer.hipda.bean.SimpleListItemBean;
 import net.jejer.hipda.job.EventCallback;
@@ -48,11 +52,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class SimpleListFragment extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener, PostSmsAsyncTask.SmsPostListener {
@@ -174,7 +173,7 @@ public class SimpleListFragment extends BaseFragment
                 inflater.inflate(R.menu.menu_sms_list, menu);
                 menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(),
                         GoogleMaterial.Icon.gmd_insert_comment).actionBar()
-                        .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
+                        .color(UIUtils.getToolbarTextColor(getActivity())));
                 break;
             case SimpleListJob.TYPE_THREAD_NOTIFY:
                 setActionBarTitle(R.string.title_drawer_notify);

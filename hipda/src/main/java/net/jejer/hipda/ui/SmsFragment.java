@@ -203,7 +203,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         inflater.inflate(R.menu.menu_sms_detail, menu);
         menu.findItem(R.id.action_clear_sms)
                 .setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_trash).actionBar()
-                        .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
+                        .color(UIUtils.getToolbarTextColor(getActivity())));
 
         setActionBarTitle(mAuthor);
         mEtSms.setHint(getString(R.string.txt_quick_hint) + " · " + mAuthor);

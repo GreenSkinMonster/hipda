@@ -234,12 +234,12 @@ public class ThreadListFragment extends BaseFragment
             if (typeIdIndex == -1) typeIdIndex = 0;
             if (mCtx != null)
                 mForumTypeMenuItem.setIcon(new IconicsDrawable(mCtx, HiUtils.BS_TYPE_ICONS[typeIdIndex])
-                        .color(HiSettingsHelper.getInstance().getToolbarTextColor()).sizeDp(18));
+                        .color(UIUtils.getToolbarTextColor(getActivity())).sizeDp(18));
         }
 
         mSearchMenuItem = menu.findItem(R.id.action_search);
         mSearchMenuItem.setIcon(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_search)
-                .color(HiSettingsHelper.getInstance().getToolbarTextColor()).sizeDp(18));
+                .color(UIUtils.getToolbarTextColor(getActivity())).sizeDp(18));
 
         MenuItem showStickItem = menu.findItem(R.id.action_show_stick_threads);
         showStickItem.setChecked(HiSettingsHelper.getInstance().isShowStickThreads());
@@ -483,7 +483,7 @@ public class ThreadListFragment extends BaseFragment
                     HiSettingsHelper.getInstance().setBSTypeId(HiUtils.BS_TYPE_IDS[position]);
                     if (mForumTypeMenuItem != null) {
                         mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position])
-                                .color(HiSettingsHelper.getInstance().getToolbarTextColor()).actionBar());
+                                .color(UIUtils.getToolbarTextColor(getActivity())).actionBar());
                     }
                     refresh();
                 }

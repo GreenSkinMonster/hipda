@@ -365,7 +365,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         mShowAllMenuItem = menu.findItem(R.id.action_show_all);
         mShowAllMenuItem.setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_eject)
-                .color(HiSettingsHelper.getInstance().getToolbarTextColor()).sizeDp(16));
+                .color(UIUtils.getToolbarTextColor(getActivity())).sizeDp(16));
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -1185,7 +1185,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
     private void showMainFab() {
         if (mMainFab != null
-                && mMainFab.getVisibility() == View.INVISIBLE
+                && mMainFab.getVisibility() != View.VISIBLE
                 && mQuickReply.getVisibility() != View.VISIBLE)
             mMainFab.show();
     }
