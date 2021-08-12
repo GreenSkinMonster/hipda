@@ -18,8 +18,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
 import com.github.angads25.filepicker.view.FilePickerDialog;
@@ -32,12 +40,10 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.holder.StringHolder;
-import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.ExpandableDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
@@ -61,6 +67,7 @@ import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.LoginDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
+import net.jejer.hipda.ui.widget.SettingSwitchDrawerItem;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
@@ -78,15 +85,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 public class MainFrameActivity extends BaseActivity {
 
@@ -278,39 +276,37 @@ public class MainFrameActivity extends BaseActivity {
         if (HiSettingsHelper.THEME_AUTO.equals(HiSettingsHelper.getInstance().getTheme())) {
             drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SETTINGS));
         } else {
-            drawerItems.add(new SwitchDrawerItem()
+            drawerItems.add(new SettingSwitchDrawerItem()
                     .withName(R.string.title_drawer_setting)
                     .withIdentifier(Constants.DRAWER_SETTINGS)
                     .withIcon(GoogleMaterial.Icon.gmd_settings)
                     .withChecked(UIUtils.isNightTheme(MainFrameActivity.this))
-                    .withOnCheckedChangeListener(new OnCheckedChangeListener() {
+                    .withOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
-                            if (UIUtils.isNightTheme(MainFrameActivity.this) != isChecked) {
-                                final DrawerLayout.DrawerListener nightModeDrawerListener = new DrawerLayout.DrawerListener() {
-                                    @Override
-                                    public void onDrawerSlide(View drawerView, float slideOffset) {
-                                    }
+                        public void onClick(View view) {
+                            final DrawerLayout.DrawerListener nightModeDrawerListener = new DrawerLayout.DrawerListener() {
+                                @Override
+                                public void onDrawerSlide(View drawerView, float slideOffset) {
+                                }
 
-                                    @Override
-                                    public void onDrawerOpened(View drawerView) {
-                                    }
+                                @Override
+                                public void onDrawerOpened(View drawerView) {
+                                }
 
-                                    @Override
-                                    public void onDrawerClosed(View drawerView) {
-                                        mDrawer.getDrawerLayout().removeDrawerListener(this);
-                                        UIUtils.setDayNightTheme();
-                                    }
+                                @Override
+                                public void onDrawerClosed(View drawerView) {
+                                    mDrawer.getDrawerLayout().removeDrawerListener(this);
+                                    UIUtils.setDayNightTheme();
+                                }
 
-                                    @Override
-                                    public void onDrawerStateChanged(int newState) {
-                                    }
-                                };
-                                HiSettingsHelper.getInstance().setTheme(UIUtils.isDayTheme(MainFrameActivity.this) ? HiSettingsHelper.THEME_DARK : HiSettingsHelper.THEME_LIGHT);
+                                @Override
+                                public void onDrawerStateChanged(int newState) {
+                                }
+                            };
+                            HiSettingsHelper.getInstance().setTheme(UIUtils.isDayTheme(MainFrameActivity.this) ? HiSettingsHelper.THEME_DARK : HiSettingsHelper.THEME_LIGHT);
 
-                                mDrawer.getDrawerLayout().addDrawerListener(nightModeDrawerListener);
-                                mDrawer.closeDrawer();
-                            }
+                            mDrawer.getDrawerLayout().addDrawerListener(nightModeDrawerListener);
+                            mDrawer.closeDrawer();
                         }
                     }));
         }

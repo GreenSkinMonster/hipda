@@ -13,10 +13,5 @@
     <dimen name="avatar_size">48dp</dimen>
     <dimen name="avatar_info_size">64dp</dimen>
 
-    <dimen name="material_drawer_width">360dp</dimen>
-    <dimen name="material_drawer_item_primary_text">18sp</dimen>
-    <dimen name="material_drawer_item_secondary_text">18sp</dimen>
-    <dimen name="material_drawer_item_primary">56dp</dimen>
-
     <dimen name="post_type_spinner_width">150dp</dimen>
 </resources>
