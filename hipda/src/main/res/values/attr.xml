@@ -2,9 +2,6 @@
 <resources>
 
     <attr name="window_background" format="color" />
-    <attr name="swipe_color" format="color"/>
-    <attr name="swipe_background" format="color"/>
-    <attr name="dialog_background" format="color"/>
 
     <attr name="actionBarMargin" format="dimension"/>
 

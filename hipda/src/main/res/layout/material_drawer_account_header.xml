@@ -131,7 +131,6 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/circle_background"
         android:clickable="true"
         android:focusable="true"
         android:padding="6dp"
@@ -143,20 +142,35 @@
         app:layout_constraintTop_toTopOf="@id/header_label" />
 
     <com.mikepenz.materialdrawer.view.BezelImageView
+        android:id="@+id/material_drawer_theme_setting"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="6dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/outline_palette_white_24"
+        android:tint="@color/md_grey_300"
+        app:layout_constraintBottom_toBottomOf="@id/header_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/header_label" />
+
+    <com.mikepenz.materialdrawer.view.BezelImageView
         android:id="@+id/material_drawer_account_add"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/circle_background"
+        android:layout_marginStart="20dp"
         android:clickable="true"
         android:focusable="true"
         android:padding="6dp"
         android:scaleType="fitCenter"
         android:src="@drawable/outline_person_add_white_24"
         android:tint="@color/md_grey_300"
-        app:layout_constraintBottom_toBottomOf="@id/header_label"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/header_label" />
+        app:layout_constraintTop_toBottomOf="@+id/material_drawer_statusbar_guideline"
+        app:layout_constraintBottom_toTopOf="@+id/material_drawer_text_guideline"
+        app:layout_constraintEnd_toStartOf="@id/material_drawer_account_header_small_first" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/material_drawer_account_header_text_switcher"

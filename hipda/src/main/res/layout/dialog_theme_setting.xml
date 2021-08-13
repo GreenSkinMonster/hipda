@@ -1,0 +1,90 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottome_theme_sheet_dialog_background"
+    android:orientation="vertical"
+    android:padding="@dimen/theme_dialog_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:padding="4dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_theme_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:drawableTint="@color/black"
+            android:tag="light"
+            android:text="浅色主题"
+            android:textColor="@color/black" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_theme_auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/icon_blue"
+            android:tag="auto"
+            android:text="跟随系统"
+            android:textColor="@color/white" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_theme_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
+            android:tag="dark"
+            android:text="深色主题"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dark_theme_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_title_dark_theme_color"
+            android:textSize="12sp" />
+
+        <GridLayout
+            android:id="@+id/dark_theme_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="@integer/theme_grid_column_count" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/light_theme_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/pref_title_ligth_theme_color"
+            android:textSize="12sp" />
+
+        <GridLayout
+            android:id="@+id/light_theme_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="clip_horizontal"
+            android:columnCount="@integer/theme_grid_column_count" />
+
+    </LinearLayout>
+
+</LinearLayout>

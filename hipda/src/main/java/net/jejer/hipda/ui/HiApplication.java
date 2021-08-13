@@ -45,7 +45,7 @@ public class HiApplication extends Application implements Application.ActivityLi
             Thread.setDefaultUncaughtExceptionHandler(new SimpleExceptionHandler());
         }
 
-        UIUtils.setDayNightTheme();
+        UIUtils.setLightDarkThemeMode();
         updated = UpdateHelper.updateApp();
 
         if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {

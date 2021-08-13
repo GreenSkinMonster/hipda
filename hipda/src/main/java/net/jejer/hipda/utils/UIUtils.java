@@ -28,12 +28,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.FileDownTask;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.Theme;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.ui.HiApplication;
@@ -45,13 +53,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 
 /**
  * Created by GreenSkinMonster on 2016-04-05.
@@ -454,11 +455,11 @@ public class UIUtils {
         }
     }
 
-    public static void setDayNightTheme() {
-        if (HiSettingsHelper.THEME_AUTO.equals(HiSettingsHelper.getInstance().getTheme())) {
+    public static void setLightDarkThemeMode() {
+        if (HiSettingsHelper.THEME_MODE_AUTO.equals(HiSettingsHelper.getInstance().getTheme())) {
             AppCompatDelegate.setDefaultNightMode(
                     AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        } else if (HiSettingsHelper.THEME_LIGHT.equals(HiSettingsHelper.getInstance().getTheme())) {
+        } else if (HiSettingsHelper.THEME_MODE_LIGHT.equals(HiSettingsHelper.getInstance().getTheme())) {
             AppCompatDelegate.setDefaultNightMode(
                     AppCompatDelegate.MODE_NIGHT_NO);
         } else {
@@ -491,7 +492,7 @@ public class UIUtils {
         }
     }
 
-    public static boolean isDayTheme(Context context) {
+    public static boolean isInLightThemeMode(Context context) {
         int currentNightMode = context.getResources().getConfiguration().uiMode
                 & Configuration.UI_MODE_NIGHT_MASK;
         switch (currentNightMode) {
@@ -503,8 +504,8 @@ public class UIUtils {
         return true;
     }
 
-    public static boolean isNightTheme(Context context) {
-        return !isDayTheme(context);
+    public static boolean isInDarkThemeMode(Context context) {
+        return !isInLightThemeMode(context);
     }
 
     public static int getToolbarTextColor(Activity context) {
@@ -512,64 +513,26 @@ public class UIUtils {
     }
 
     public static boolean isWhiteTheme(Activity activity) {
-        return UIUtils.isDayTheme(activity)
-                && HiSettingsHelper.getInstance().getPrimaryColor() == ContextCompat.getColor(activity, R.color.md_grey_200);
+        return UIUtils.isInLightThemeMode(activity)
+                && HiSettingsHelper.THEME_WHITE.equals(HiSettingsHelper.getInstance().getLightTheme());
     }
 
     public static int getThemeValue(Context context) {
-        String theme = UIUtils.isDayTheme(context) ? HiSettingsHelper.THEME_LIGHT : HiSettingsHelper.THEME_DARK;
-        if (HiSettingsHelper.THEME_DARK.equals(theme)) {
-            if (HiSettingsHelper.THEME_BLACK.equals(HiSettingsHelper.getInstance().getNightTheme()))
+        String theme = UIUtils.isInLightThemeMode(context) ? HiSettingsHelper.THEME_MODE_LIGHT : HiSettingsHelper.THEME_MODE_DARK;
+        if (HiSettingsHelper.THEME_MODE_DARK.equals(theme)) {
+            if (HiSettingsHelper.THEME_BLACK.equals(HiSettingsHelper.getInstance().getDarkTheme()))
                 return R.style.ThemeBlack;
             return R.style.ThemeDark;
         } else {
-            int primaryColor = HiSettingsHelper.getInstance().getPrimaryColor();
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_red_700))
-                return R.style.ThemeLight_Red;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_pink_700))
-                return R.style.ThemeLight_Pink;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_purple_700))
-                return R.style.ThemeLight_Purple;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_deep_purple_700))
-                return R.style.ThemeLight_DeepPurple;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_indigo_700))
-                return R.style.ThemeLight_Indigo;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_blue_700))
-                return R.style.ThemeLight_Blue;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_light_blue_700))
-                return R.style.ThemeLight_LightBlue;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_cyan_700))
-                return R.style.ThemeLight_Cyan;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_teal_700))
-                return R.style.ThemeLight_Teal;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_green_700))
-                return R.style.ThemeLight_Green;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_light_green_700))
-                return R.style.ThemeLight_LightGreen;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_lime_700))
-                return R.style.ThemeLight_Lime;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_yellow_700))
-                return R.style.ThemeLight_Yellow;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_amber_700))
-                return R.style.ThemeLight_Amber;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_orange_700))
-                return R.style.ThemeLight_Orange;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_deep_orange_700))
-                return R.style.ThemeLight_DeepOrange;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_brown_700))
-                return R.style.ThemeLight_Brown;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_grey_700))
-                return R.style.ThemeLight_Grey;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_blue_grey_700))
-                return R.style.ThemeLight_BlueGrey;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_grey_200))
-                return R.style.ThemeLight_White;
-            if (primaryColor == ContextCompat.getColor(context, R.color.md_black_1000))
-                return R.style.ThemeLight_Black;
+            String lightTheme = HiSettingsHelper.getInstance().getLightTheme();
+            for (Theme t : HiSettingsHelper.LIGHT_THEMES) {
+                if (t.getName().equals(lightTheme))
+                    return t.getThemeId();
+            }
+            HiSettingsHelper.getInstance().setTheme(HiSettingsHelper.THEME_MODE_LIGHT);
+            HiSettingsHelper.getInstance().setLightTheme(HiSettingsHelper.THEME_WHITE);
+            return R.style.ThemeLight_White;
         }
-        HiSettingsHelper.getInstance().setTheme(HiSettingsHelper.THEME_LIGHT);
-        HiSettingsHelper.getInstance().setPrimaryColor(ContextCompat.getColor(context, R.color.md_grey_200));
-        return R.style.ThemeLight_White;
     }
 
 }

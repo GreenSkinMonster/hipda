@@ -82,12 +82,9 @@
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="panelMenuListTheme">@style/Theme.CompactMenu</item>
 
-        <item name="background">@color/day_background</item>
+        <item name="background">@color/light_theme_background</item>
         <item name="window_background">@color/window_background</item>
         <item name="emojiBackground">@color/md_grey_200</item>
-        <item name="swipe_background">@color/white</item>
-        <item name="swipe_color">@color/icon_blue</item>
-        <item name="dialog_background">@color/md_grey_100</item>
 
         <!-- Matisse begin -->
         <item name="toolbar">@style/Toolbar.Zhihu</item>
@@ -226,8 +223,8 @@
     </style>
 
     <style name="ThemeLight.Black" parent="ThemeLight">
-        <item name="colorPrimary">#2A2A2A</item>
-        <item name="colorPrimaryDark">#2A2A2A</item>
+        <item name="colorPrimary">@color/theme_dark</item>
+        <item name="colorPrimaryDark">@color/theme_dark</item>
     </style>
 
     <style name="ThemeImageViewer" parent="ThemeLight">

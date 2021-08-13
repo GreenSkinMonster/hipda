@@ -9,6 +9,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.preference.Preference;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.TaskHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -21,11 +26,6 @@ import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.preference.Preference;
 
 /**
  * nested setting fragment
@@ -118,8 +118,8 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_TITLE_ADJ));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_POST_LINE_SPACING));
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_THEME));
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_NIGHT_THEME));
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_THEME_MODE));
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_DARK_THEME));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FONT));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_AVATAR_LOAD_TYPE));
 

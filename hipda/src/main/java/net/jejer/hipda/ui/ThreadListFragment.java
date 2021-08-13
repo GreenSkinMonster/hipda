@@ -435,7 +435,7 @@ public class ThreadListFragment extends BaseFragment
         mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
     }
 
-    private void showThreadListSettingsDialog() {
+    public void showThreadListSettingsDialog() {
         final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_thread_list_settings, null);
 

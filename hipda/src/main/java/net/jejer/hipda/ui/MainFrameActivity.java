@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -31,6 +32,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
 import com.github.angads25.filepicker.view.FilePickerDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -68,6 +70,7 @@ import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.LoginDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.SettingSwitchDrawerItem;
+import net.jejer.hipda.ui.widget.ThemeSettingDialog;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
@@ -113,7 +116,7 @@ public class MainFrameActivity extends BaseActivity {
 
         GlideHelper.initDefaultFiles();
         GlideHelper.refreshUserIcon(MainFrameActivity.this);
-        EmojiHandler.init(UIUtils.isDayTheme(MainFrameActivity.this));
+        EmojiHandler.init(UIUtils.isInLightThemeMode(MainFrameActivity.this));
         NotiHelper.initNotificationChannel();
 
         EventBus.getDefault().register(this);
@@ -217,6 +220,7 @@ public class MainFrameActivity extends BaseActivity {
 
         ImageView addAccountImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_add);
         ImageView logoutAccountImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_logout);
+        ImageView themeSettingImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_theme_setting);
 
         addAccountImageView.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -233,6 +237,14 @@ public class MainFrameActivity extends BaseActivity {
                 if (LoginHelper.isLoggedIn()) {
                     showLogoutDialog();
                 }
+            }
+        });
+
+        themeSettingImageView.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                mDrawer.closeDrawer();
+                showThemeSettingsDialog();
             }
         });
 
@@ -273,38 +285,25 @@ public class MainFrameActivity extends BaseActivity {
                             ));
 
         drawerItems.add(new DividerDrawerItem());
-        if (HiSettingsHelper.THEME_AUTO.equals(HiSettingsHelper.getInstance().getTheme())) {
+        if (HiSettingsHelper.THEME_MODE_AUTO.equals(HiSettingsHelper.getInstance().getTheme())) {
             drawerItems.add(DrawerHelper.getPrimaryMenuItem(DrawerHelper.DrawerItem.SETTINGS));
         } else {
             drawerItems.add(new SettingSwitchDrawerItem()
                     .withName(R.string.title_drawer_setting)
                     .withIdentifier(Constants.DRAWER_SETTINGS)
                     .withIcon(GoogleMaterial.Icon.gmd_settings)
-                    .withChecked(UIUtils.isNightTheme(MainFrameActivity.this))
+                    .withChecked(UIUtils.isInDarkThemeMode(MainFrameActivity.this))
                     .withOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            final DrawerLayout.DrawerListener nightModeDrawerListener = new DrawerLayout.DrawerListener() {
-                                @Override
-                                public void onDrawerSlide(View drawerView, float slideOffset) {
-                                }
-
-                                @Override
-                                public void onDrawerOpened(View drawerView) {
-                                }
-
+                            final DrawerLayout.DrawerListener nightModeDrawerListener = new DrawerLayout.SimpleDrawerListener() {
                                 @Override
                                 public void onDrawerClosed(View drawerView) {
                                     mDrawer.getDrawerLayout().removeDrawerListener(this);
-                                    UIUtils.setDayNightTheme();
-                                }
-
-                                @Override
-                                public void onDrawerStateChanged(int newState) {
+                                    UIUtils.setLightDarkThemeMode();
                                 }
                             };
-                            HiSettingsHelper.getInstance().setTheme(UIUtils.isDayTheme(MainFrameActivity.this) ? HiSettingsHelper.THEME_DARK : HiSettingsHelper.THEME_LIGHT);
-
+                            HiSettingsHelper.getInstance().setTheme(UIUtils.isInLightThemeMode(MainFrameActivity.this) ? HiSettingsHelper.THEME_MODE_DARK : HiSettingsHelper.THEME_MODE_LIGHT);
                             mDrawer.getDrawerLayout().addDrawerListener(nightModeDrawerListener);
                             mDrawer.closeDrawer();
                         }
@@ -379,13 +378,17 @@ public class MainFrameActivity extends BaseActivity {
             ProfileDrawerItem[] items = getProfileDrawerItems();
             mAccountHeader.clear();
             mAccountHeader.addProfiles(items);
-        }
-        ImageView loginImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_logout);
-        if (loginImageView != null) {
-            if (LoginHelper.isLoggedIn()) {
-                loginImageView.setVisibility(View.VISIBLE);
-            } else {
-                loginImageView.setVisibility(View.INVISIBLE);
+
+            ImageView addAccountImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_add);
+            addAccountImageView.setVisibility(items.length >= 4 ? View.INVISIBLE : View.VISIBLE);
+
+            ImageView logoutImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_logout);
+            if (logoutImageView != null) {
+                if (LoginHelper.isLoggedIn()) {
+                    logoutImageView.setVisibility(View.VISIBLE);
+                } else {
+                    logoutImageView.setVisibility(View.INVISIBLE);
+                }
             }
         }
     }
@@ -753,9 +756,9 @@ public class MainFrameActivity extends BaseActivity {
             mDrawer.closeDrawer();
     }
 
-    private void recreateActivity() {
+    public void recreateActivity() {
         HiUtils.updateBaseUrls();
-        UIUtils.setDayNightTheme();
+        UIUtils.setLightDarkThemeMode();
         //avoid “RuntimeException: Performing pause of activity that is not resumed”
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -872,6 +875,18 @@ public class MainFrameActivity extends BaseActivity {
             }
         }
         return profileDrawerItems.toArray(new ProfileDrawerItem[0]);
+    }
+
+
+    public void showThemeSettingsDialog() {
+        final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View view = inflater.inflate(R.layout.dialog_theme_setting, null);
+
+        final BottomSheetDialog dialog = new ThemeSettingDialog(this);
+
+        dialog.setContentView(view);
+
+        dialog.show();
     }
 
 }

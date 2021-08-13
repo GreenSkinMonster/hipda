@@ -8,7 +8,10 @@
     <item name="fab_icon_color" type="color">@color/white</item>
 
     <item name="window_background" type="color">#1C1D1E</item>
+    <item name="dialog_background" type="color">#2A2A2A</item>
     <item name="quote_background" type="color">#20C0C0C0</item>
     <item name="list_item_divider" type="color">@color/quote_background</item>
+    <item name="swipe_background" type="color">@color/md_grey_800</item>
+    <item name="swipe_color" type="color">@color/white</item>
 
 </resources>

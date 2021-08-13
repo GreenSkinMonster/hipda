@@ -18,41 +18,23 @@
     <item name="fab_icon_color" type="color">@color/md_grey_600</item>
 
     <item name="window_background" type="color">#FFFFFF</item>
+    <item name="dialog_background" type="color">@color/md_grey_100</item>
     <item name="quote_background" type="color">#22C0C0C0</item>
     <item name="list_item_divider" type="color">@color/quote_background</item>
+    <item name="swipe_background" type="color">@color/white</item>
+    <item name="swipe_color" type="color">@color/icon_blue</item>
 
     <item name="hipda" type="color">#33B6EA</item>
     <item name="icon_blue" type="color">#2196F3</item>
-    <item name="day_background" type="color">#E8E8E8</item>
-    <item name="night_background" type="color">#1C1D1E</item>
+    <item name="light_theme_background" type="color">#E8E8E8</item>
+    <item name="dark_theme_background" type="color">#1C1D1E</item>
     <item name="quote_text_background" type="color">#2AC0C0C0</item>
 
     <color name="nearly_black">#080808</color>
 
     <color name="splash_background">@color/md_grey_800</color>
 
-    <array name="material_colors">
-        <item>@color/md_grey_200</item>
-        <item>@color/md_red_700</item>
-        <item>@color/md_pink_700</item>
-        <item>@color/md_purple_700</item>
-        <item>@color/md_deep_purple_700</item>
-        <item>@color/md_indigo_700</item>
-        <item>@color/md_blue_700</item>
-        <item>@color/md_light_blue_700</item>
-        <item>@color/md_cyan_700</item>
-        <item>@color/md_teal_700</item>
-        <item>@color/md_green_700</item>
-        <item>@color/md_light_green_700</item>
-        <item>@color/md_lime_700</item>
-        <item>@color/md_yellow_700</item>
-        <item>@color/md_amber_700</item>
-        <item>@color/md_orange_700</item>
-        <item>@color/md_deep_orange_700</item>
-        <item>@color/md_brown_700</item>
-        <item>@color/md_grey_700</item>
-        <item>@color/md_blue_grey_700</item>
-        <item>@color/md_black_1000</item>
-    </array>
+    <color name="theme_dark">#2A2A2A</color>
+    <color name="theme_black">#1A1A1A</color>
 
 </resources>

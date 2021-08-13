@@ -50,10 +50,9 @@ public class HiSettingsHelper {
     public static final String PERF_ADDTAIL = "PERF_ADDTAIL";
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
     public static final String PERF_TAILURL = "PERF_TAILURL";
-    public static final String PERF_THEME = "PERF_THEME";
-    public static final String PERF_PRIMARY_COLOR = "PERF_PRIMARY_COLOR";
-    public static final String PERF_NIGHT_THEME = "PERF_NIGHT_THEME";
-    public static final String PERF_NIGHT_MODE = "PERF_NIGHT_MODE";
+    public static final String PERF_THEME_MODE = "PERF_THEME";
+    public static final String PERF_DARK_THEME = "PERF_NIGHT_THEME";
+    public static final String PERF_LIGHT_THEME = "PERF_DAY_THEME";
     public static final String PERF_NAVBAR_COLORED = "PERF_NAVBAR_COLORED";
     public static final String PERF_FONT = "PERF_FONT";
     public static final String PERF_FORUMS = "PERF_FORUMS2";
@@ -98,10 +97,11 @@ public class HiSettingsHelper {
     public static final String PERF_BLACKLIST = "PERF_BLACKLIST";
     public static final String PERF_BLACKLIST_SYNC_TIME = "PERF_BLACKLIST_SYNC_TIME";
 
-    public static final String THEME_AUTO = "auto";
-    public static final String THEME_LIGHT = "light";
-    public static final String THEME_DARK = "dark";
+    public static final String THEME_MODE_AUTO = "auto";
+    public static final String THEME_MODE_LIGHT = "light";
+    public static final String THEME_MODE_DARK = "dark";
     public static final String THEME_BLACK = "black";
+    public static final String THEME_WHITE = "white";
     public static final int MAX_TAIL_TEXT_LENGTH = 12;
 
     public static final int SMALL_IMAGE_SIZE = 500 * 1024; //500K
@@ -129,8 +129,8 @@ public class HiSettingsHelper {
     private String mTailUrl = "";
 
     private String mTheme = "";
-    private int mPrimaryColor = 0;
-    private String mNightTheme = "";
+    private String mDarkTheme = "";
+    private String mLightTheme = "";
     private boolean mNavBarColor = false;
     private String mFont = "";
     private List<Integer> mForums = new ArrayList<>();
@@ -243,6 +243,35 @@ public class HiSettingsHelper {
         reload();
     }
 
+    public final static Theme[] DARK_THEMES = {
+            new Theme("dark", R.style.ThemeDark, R.color.theme_dark, R.color.white),
+            new Theme("black", R.style.ThemeBlack, R.color.theme_black, R.color.white)
+    };
+
+    public final static Theme[] LIGHT_THEMES = {
+            new Theme("white", R.style.ThemeLight_White, R.color.md_grey_200, R.color.black),
+            new Theme("red", R.style.ThemeLight_Red, R.color.md_red_700, R.color.white),
+            new Theme("pink", R.style.ThemeLight_Pink, R.color.md_pink_700, R.color.white),
+            new Theme("purple", R.style.ThemeLight_Purple, R.color.md_purple_700, R.color.white),
+            new Theme("deep_purple", R.style.ThemeLight_DeepPurple, R.color.md_deep_purple_700, R.color.white),
+            new Theme("indigo", R.style.ThemeLight_Orange, R.color.md_indigo_700, R.color.white),
+            new Theme("blue", R.style.ThemeLight_Blue, R.color.md_blue_700, R.color.white),
+            new Theme("light_blue", R.style.ThemeLight_LightBlue, R.color.md_light_blue_700, R.color.white),
+            new Theme("cyan", R.style.ThemeLight_Cyan, R.color.md_cyan_700, R.color.white),
+            new Theme("teal", R.style.ThemeLight_Teal, R.color.md_teal_700, R.color.white),
+            new Theme("green", R.style.ThemeLight_Green, R.color.md_green_700, R.color.white),
+            new Theme("light_green", R.style.ThemeLight_LightGreen, R.color.md_light_green_700, R.color.white),
+            new Theme("lime", R.style.ThemeLight_Lime, R.color.md_lime_700, R.color.white),
+            new Theme("yellow", R.style.ThemeLight_Yellow, R.color.md_yellow_700, R.color.white),
+            new Theme("amber", R.style.ThemeLight_Amber, R.color.md_amber_700, R.color.white),
+            new Theme("orange", R.style.ThemeLight_Orange, R.color.md_orange_700, R.color.white),
+            new Theme("deep_orange", R.style.ThemeLight_DeepOrange, R.color.md_deep_orange_700, R.color.white),
+            new Theme("brown", R.style.ThemeLight_Brown, R.color.md_brown_700, R.color.white),
+            new Theme("grey", R.style.ThemeLight_Grey, R.color.md_grey_700, R.color.white),
+            new Theme("blue_grey", R.style.ThemeLight_BlueGrey, R.color.md_blue_grey_700, R.color.white),
+            new Theme("black", R.style.ThemeLight_Black, R.color.md_black_1000, R.color.white),
+    };
+
     public SharedPreferences getSharedPref() {
         return mSharedPref;
     }
@@ -268,8 +297,8 @@ public class HiSettingsHelper {
         getTailTextFromPref();
         getTailUrlFromPref();
         getThemeFromPref();
-        getPrimaryColorFromPref();
-        getNightThemeFromPref();
+        getDarkThemeFromPref();
+        getLightThemeFromPref();
         isNavBarColoredFromPref();
         getFontFromPref();
         isEncodeUtf8FromPref();
@@ -560,38 +589,44 @@ public class HiSettingsHelper {
     }
 
     private String getThemeFromPref() {
-        mTheme = mSharedPref.getString(PERF_THEME, THEME_LIGHT);
+        mTheme = mSharedPref.getString(PERF_THEME_MODE, THEME_MODE_LIGHT);
         return mTheme;
     }
 
     public void setTheme(String theme) {
         mTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_THEME, theme).apply();
+        editor.putString(PERF_THEME_MODE, theme).apply();
     }
 
-    public int getPrimaryColor() {
-        return mPrimaryColor;
+    public String getDarkTheme() {
+        return mDarkTheme;
     }
 
-    private int getPrimaryColorFromPref() {
-        mPrimaryColor = mSharedPref.getInt(PERF_PRIMARY_COLOR, 0);
-        return mPrimaryColor;
+    private String getDarkThemeFromPref() {
+        mDarkTheme = mSharedPref.getString(PERF_DARK_THEME, THEME_MODE_DARK);
+        return mDarkTheme;
     }
 
-    public void setPrimaryColor(int primaryColor) {
-        mPrimaryColor = primaryColor;
+    public void setDarkTheme(String theme) {
+        mDarkTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putInt(PERF_PRIMARY_COLOR, primaryColor).apply();
+        editor.putString(PERF_DARK_THEME, theme).apply();
     }
 
-    public String getNightTheme() {
-        return mNightTheme;
+    public String getLightTheme() {
+        return mLightTheme;
     }
 
-    private String getNightThemeFromPref() {
-        mNightTheme = mSharedPref.getString(PERF_NIGHT_THEME, THEME_DARK);
-        return mNightTheme;
+    private String getLightThemeFromPref() {
+        mLightTheme = mSharedPref.getString(PERF_LIGHT_THEME, THEME_WHITE);
+        return mLightTheme;
+    }
+
+    public void setLightTheme(String theme) {
+        mLightTheme = theme;
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(PERF_LIGHT_THEME, theme).apply();
     }
 
     public String getFont() {

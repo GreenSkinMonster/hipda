@@ -13,6 +13,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentAbs;
 import net.jejer.hipda.bean.ContentAttach;
@@ -35,11 +40,6 @@ import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.List;
-
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by GreenSkinMonster on 2016-11-08.
@@ -78,7 +78,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         mBackgroundResource = typedArray.getResourceId(0, 0);
         typedArray.recycle();
 
-        mBackgroundColor = UIUtils.isDayTheme(context)
+        mBackgroundColor = UIUtils.isInLightThemeMode(context)
                 ? R.color.md_green_50 : R.color.md_blue_grey_900;
     }
 

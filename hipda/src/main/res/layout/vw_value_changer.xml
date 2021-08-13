@@ -11,7 +11,8 @@
         android:layout_alignParentLeft="true"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
-        android:gravity="center_vertical"/>
+        android:gravity="center_vertical"
+        android:textSize="17sp" />
 
     <Button
         android:id="@+id/btn_minus"
@@ -31,6 +32,7 @@
         android:layout_gravity="center_vertical"
         android:layout_toLeftOf="@+id/btn_plus"
         android:gravity="center"
+        android:textSize="17sp"
         android:text="0"/>
 
     <Button
