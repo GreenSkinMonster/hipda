@@ -540,24 +540,42 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     public void enterAuthorOnlyMode(String authorId) {
-        mCache.clear();
-        mDetailAdapter.clear();
+        mViewBeginPage = 0;
+        mViewEndPage = 0;
+        mMaxPage = 0;
         mAuthorId = authorId;
         mGotoPage = 1;
         mGotoFloor = FIRST_FLOOR_OF_PAGE;
-        mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+
+        updatePageLabel();
         mShowAllMenuItem.setVisible(true);
+        expandAppBar();
+        hideQuickReply(true);
+
+        mCache.clear();
+        mDetailAdapter.clear();
+
+        mLoadingView.setState(ContentLoadingView.LOAD_NOW);
         startJob(mGotoPage, FETCH_REFRESH, POSITION_NORMAL);
     }
 
     public void cancelAuthorOnlyMode() {
-        mCache.clear();
-        mDetailAdapter.clear();
+        mViewBeginPage = 0;
+        mViewEndPage = 0;
+        mMaxPage = 0;
         mAuthorId = "";
         mGotoPage = 1;
         mGotoFloor = FIRST_FLOOR_OF_PAGE;
-        mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+
+        updatePageLabel();
         mShowAllMenuItem.setVisible(false);
+        expandAppBar();
+        hideQuickReply(true);
+
+        mCache.clear();
+        mDetailAdapter.clear();
+
+        mLoadingView.setState(ContentLoadingView.LOAD_NOW);
         startJob(mGotoPage, FETCH_REFRESH, POSITION_NORMAL);
     }
 
@@ -1265,35 +1283,7 @@ public class ThreadDetailFragment extends BaseFragment {
             if (beginPage != mViewBeginPage || endPage != mViewEndPage) {
                 mViewBeginPage = beginPage;
                 mViewEndPage = endPage;
-                if (mViewBeginPage > 0 && mMaxPage > 0) {
-                    mPageLabel.setText(mViewEndPage + " / " + mMaxPage);
-                    if (mPageLabel.getVisibility() != View.VISIBLE) {
-                        recyclerView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
-                                anim.reset();
-                                mPageLabel.clearAnimation();
-                                mPageLabel.startAnimation(anim);
-                                mPageLabel.setVisibility(View.VISIBLE);
-                            }
-                        });
-                    }
-                } else {
-                    mPageLabel.setText("");
-                    if (mPageLabel.getVisibility() != View.INVISIBLE) {
-                        recyclerView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
-                                anim.reset();
-                                mPageLabel.clearAnimation();
-                                mPageLabel.startAnimation(anim);
-                                mPageLabel.setVisibility(View.INVISIBLE);
-                            }
-                        });
-                    }
-                }
+                updatePageLabel();
             }
 
             long now = System.currentTimeMillis();
@@ -1317,6 +1307,28 @@ public class ThreadDetailFragment extends BaseFragment {
                     && HiSettingsHelper.getInstance().isFabAutoHide()
                     && mRecyclerView.isNearBottom()) {
                 showMainFab();
+            }
+        }
+    }
+
+    private void updatePageLabel() {
+        if (mViewBeginPage > 0 && mMaxPage > 0) {
+            mPageLabel.setText(mViewEndPage + " / " + mMaxPage);
+            if (mPageLabel.getVisibility() != View.VISIBLE) {
+                Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+                anim.reset();
+                mPageLabel.clearAnimation();
+                mPageLabel.startAnimation(anim);
+                mPageLabel.setVisibility(View.VISIBLE);
+            }
+        } else {
+            mPageLabel.setText("");
+            if (mPageLabel.getVisibility() != View.INVISIBLE) {
+                Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+                anim.reset();
+                mPageLabel.clearAnimation();
+                mPageLabel.startAnimation(anim);
+                mPageLabel.setVisibility(View.INVISIBLE);
             }
         }
     }

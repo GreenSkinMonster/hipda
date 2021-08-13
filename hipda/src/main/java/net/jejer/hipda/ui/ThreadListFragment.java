@@ -626,8 +626,7 @@ public class ThreadListFragment extends BaseFragment
                 mThreadListAdapter.setDatas(mThreadBeans);
                 mRecyclerView.scrollToTop();
                 mMainFab.show();
-                if (getActivity() != null)
-                    ((MainFrameActivity) getActivity()).expandAppBar();
+                expandAppBar();
             } else {
                 for (ThreadBean newthread : threads.getThreads()) {
                     boolean duplicate = false;

@@ -201,6 +201,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         removeFooterView();
         removeHeaderView();
         mThreadPages.clear();
+        cacheDataSize();
         notifyDataSetChanged();
     }
 

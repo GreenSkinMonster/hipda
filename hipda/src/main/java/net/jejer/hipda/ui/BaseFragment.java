@@ -142,6 +142,12 @@ public abstract class BaseFragment extends Fragment {
     public void stopScroll() {
     }
 
+    public void expandAppBar() {
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).expandAppBar();
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
