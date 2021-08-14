@@ -12,7 +12,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
         android:gravity="center_vertical"
-        android:textSize="17sp" />
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/btn_minus"

@@ -97,4 +97,15 @@
         \n\n谢谢
     </string>
 
+    <string name="sample_title_text">
+        痔垫（英语：Hemorrhoids），是位于肛管的血管组织
+    </string>
+
+    <string name="sample_post_text">
+        在正常情形下可协助控制排便[2]。\n
+        但当它肿胀或发炎时，会呈现病态或变成痔疮（英语：Hemorrhoids，英文与痔垫为同一字）[8]。\n
+        痔疮的症状依其发生位置及种类而定[4]。\n
+        来源：维基百科
+    </string>
+
 </resources>

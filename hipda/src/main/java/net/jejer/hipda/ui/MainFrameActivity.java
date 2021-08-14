@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -32,6 +33,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
 import com.github.angads25.filepicker.view.FilePickerDialog;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -65,12 +67,14 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.service.NotiWorker;
+import net.jejer.hipda.ui.widget.BottomDialog;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.LoginDialog;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.SettingSwitchDrawerItem;
 import net.jejer.hipda.ui.widget.ThemeSettingDialog;
+import net.jejer.hipda.ui.widget.ValueChagerView;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.DrawerHelper;
 import net.jejer.hipda.utils.HiParserThreadList;
@@ -221,6 +225,7 @@ public class MainFrameActivity extends BaseActivity {
         ImageView addAccountImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_add);
         ImageView logoutAccountImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_account_logout);
         ImageView themeSettingImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_theme_setting);
+        ImageView fontSettingImageView = mAccountHeader.getView().findViewById(R.id.material_drawer_font_setting);
 
         addAccountImageView.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -245,6 +250,14 @@ public class MainFrameActivity extends BaseActivity {
             public void onSingleClick(View v) {
                 mDrawer.closeDrawer();
                 showThemeSettingsDialog();
+            }
+        });
+
+        fontSettingImageView.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                mDrawer.closeDrawer();
+                showFontSettingDialog();
             }
         });
 
@@ -885,7 +898,63 @@ public class MainFrameActivity extends BaseActivity {
         final BottomSheetDialog dialog = new ThemeSettingDialog(this);
 
         dialog.setContentView(view);
+        dialog.show();
+    }
 
+    private void showFontSettingDialog() {
+        final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View view = inflater.inflate(R.layout.dialog_thread_font_size, null);
+
+        final ValueChagerView titleSizeValueChanger = view.findViewById(R.id.title_size_value_changer);
+        final ValueChagerView postSizeValueChanger = view.findViewById(R.id.post_size_value_changer);
+        final ValueChagerView postSpacingValueChanger = view.findViewById(R.id.post_spacing_value_changer);
+        final TextView sampleTitleTextView = view.findViewById(R.id.tv_sample_title_text);
+        final TextView samplePostTextView = view.findViewById(R.id.tv_sample_post_text);
+
+        sampleTitleTextView.setTextSize(HiSettingsHelper.getInstance().getTitleTextSize());
+        samplePostTextView.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+        UIUtils.setLineSpacing(samplePostTextView);
+
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
+
+        titleSizeValueChanger.setCurrentValue(HiSettingsHelper.getInstance().getTitleTextSizeAdj());
+        titleSizeValueChanger.setOnChangeListener(new ValueChagerView.OnChangeListener() {
+            @Override
+            public void onChange(int currentValue) {
+                HiSettingsHelper.getInstance().setTitleTextSizeAdj(currentValue);
+                sampleTitleTextView.setTextSize(HiSettingsHelper.getInstance().getTitleTextSize());
+                if (fragment instanceof ThreadListFragment)
+                    ((ThreadListFragment) fragment).notifyDataChanged();
+            }
+        });
+
+        postSizeValueChanger.setCurrentValue(HiSettingsHelper.getInstance().getPostTextSizeAdj());
+        postSizeValueChanger.setOnChangeListener(new ValueChagerView.OnChangeListener() {
+            @Override
+            public void onChange(int currentValue) {
+                HiSettingsHelper.getInstance().setPostTextSizeAdj(currentValue);
+                samplePostTextView.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+                UIUtils.setLineSpacing(samplePostTextView);
+                if (fragment instanceof ThreadListFragment)
+                    ((ThreadListFragment) fragment).notifyDataChanged();
+            }
+        });
+
+        postSpacingValueChanger.setCurrentValue(HiSettingsHelper.getInstance().getPostLineSpacing());
+        postSpacingValueChanger.setOnChangeListener(new ValueChagerView.OnChangeListener() {
+            @Override
+            public void onChange(int currentValue) {
+                HiSettingsHelper.getInstance().setPostLineSpacing(currentValue);
+                UIUtils.setLineSpacing(samplePostTextView);
+                if (fragment instanceof ThreadListFragment)
+                    ((ThreadListFragment) fragment).notifyDataChanged();
+            }
+        });
+
+        final BottomSheetDialog dialog = new BottomDialog(this);
+        dialog.setContentView(view);
+        BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) view.getParent());
+        mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         dialog.show();
     }
 

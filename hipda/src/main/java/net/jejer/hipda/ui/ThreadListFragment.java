@@ -23,9 +23,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.bumptech.glide.Glide;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -50,13 +54,11 @@ import net.jejer.hipda.job.ThreadUpdatedEvent;
 import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadListAdapter;
-import net.jejer.hipda.ui.widget.BottomDialog;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.OnViewItemSingleClickListener;
 import net.jejer.hipda.ui.widget.SimpleDivider;
-import net.jejer.hipda.ui.widget.ValueChagerView;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.ColorHelper;
@@ -71,12 +73,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ThreadListFragment extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener {
@@ -215,6 +211,10 @@ public class ThreadListFragment extends BaseFragment
         }
     }
 
+    public void notifyDataChanged() {
+        if (mThreadListAdapter != null)
+            mThreadListAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onStop() {
@@ -259,9 +259,6 @@ public class ThreadListFragment extends BaseFragment
             case android.R.id.home:
                 // Implemented in activity
                 return false;
-            case R.id.action_thread_list_settings:
-                showThreadListSettingsDialog();
-                return true;
             case R.id.action_new_thread:
                 FragmentUtils.showNewPostActivity(getActivity(), mForumId, mSessionId);
                 return true;
@@ -433,31 +430,6 @@ public class ThreadListFragment extends BaseFragment
 
     private void hideFooter() {
         mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
-    }
-
-    public void showThreadListSettingsDialog() {
-        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View view = inflater.inflate(R.layout.dialog_thread_list_settings, null);
-
-        final ValueChagerView valueChagerView = view.findViewById(R.id.value_changer);
-
-        valueChagerView.setCurrentValue(HiSettingsHelper.getInstance().getTitleTextSizeAdj());
-
-        final BottomSheetDialog dialog = new BottomDialog(getActivity());
-
-        valueChagerView.setOnChangeListener(new ValueChagerView.OnChangeListener() {
-            @Override
-            public void onChange(int currentValue) {
-                HiSettingsHelper.getInstance().setTitleTextSizeAdj(currentValue);
-                if (mThreadListAdapter != null)
-                    mThreadListAdapter.notifyDataSetChanged();
-            }
-        });
-
-        dialog.setContentView(view);
-        BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) view.getParent());
-        mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        dialog.show();
     }
 
     private void showForumTypesDialog() {

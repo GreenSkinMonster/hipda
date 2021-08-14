@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/pref_category_theme">
+    <PreferenceCategory
+        android:title="@string/pref_category_theme"
+        android:summary="主题及颜色设置已移至左侧菜单栏上方">
 
         <SwitchPreference
             android:defaultValue="true"

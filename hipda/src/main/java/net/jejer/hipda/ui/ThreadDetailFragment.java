@@ -27,6 +27,14 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -64,7 +72,6 @@ import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.SimpleDivider;
 import net.jejer.hipda.ui.widget.SimpleGridMenu;
 import net.jejer.hipda.ui.widget.SmoothLinearLayoutManager;
-import net.jejer.hipda.ui.widget.ValueChagerView;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XHeaderView;
 import net.jejer.hipda.ui.widget.XRecyclerView;
@@ -85,13 +92,6 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Request;
 
 public class ThreadDetailFragment extends BaseFragment {
@@ -478,9 +478,6 @@ public class ThreadDetailFragment extends BaseFragment {
                 return true;
             case R.id.action_show_all:
                 cancelAuthorOnlyMode();
-                return true;
-            case R.id.action_font_size:
-                showTextLayoutDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -1027,40 +1024,6 @@ public class ThreadDetailFragment extends BaseFragment {
                 mEtReply.setSelection(mEtReply.getText().length());
             }
         }, 100);
-    }
-
-    private void showTextLayoutDialog() {
-        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View view = inflater.inflate(R.layout.dialog_thread_font_size, null);
-
-        final ValueChagerView valueChangerSize = view.findViewById(R.id.value_changer_size);
-        final ValueChagerView valueChangerLs = view.findViewById(R.id.value_changer_ls);
-
-        valueChangerSize.setCurrentValue(HiSettingsHelper.getInstance().getPostTextSizeAdj());
-        valueChangerSize.setOnChangeListener(new ValueChagerView.OnChangeListener() {
-            @Override
-            public void onChange(int currentValue) {
-                HiSettingsHelper.getInstance().setPostTextSizeAdj(currentValue);
-                if (mDetailAdapter != null)
-                    mDetailAdapter.notifyDataSetChanged();
-            }
-        });
-
-        valueChangerLs.setCurrentValue(HiSettingsHelper.getInstance().getPostLineSpacing());
-        valueChangerLs.setOnChangeListener(new ValueChagerView.OnChangeListener() {
-            @Override
-            public void onChange(int currentValue) {
-                HiSettingsHelper.getInstance().setPostLineSpacing(currentValue);
-                if (mDetailAdapter != null)
-                    mDetailAdapter.notifyDataSetChanged();
-            }
-        });
-
-        final BottomSheetDialog dialog = new BottomDialog(getActivity());
-        dialog.setContentView(view);
-        BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) view.getParent());
-        mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        dialog.show();
     }
 
     private class GoToFloorOnClickListener implements Button.OnClickListener {
