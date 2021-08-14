@@ -111,7 +111,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
             mThreadPages.put(page, detailListBean);
             cacheDataSize();
             notifyItemRangeInserted(getHeaderCount(), detailListBean.getCount());
-            Logger.e("page range " + 0 + " - " + 0 + ", insert new page " + page);
+            Logger.v("page range " + 0 + " - " + 0 + ", insert new page " + page);
             return;
         }
         int firstPage = mThreadPages.keyAt(0);
@@ -120,16 +120,16 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
             mThreadPages.put(page, detailListBean);
             cacheDataSize();
             notifyItemRangeInserted(getHeaderCount(), detailListBean.getCount());
-            Logger.e("page range " + firstPage + " - " + lastPage + ", insert new page " + page);
+            Logger.v("page range " + firstPage + " - " + lastPage + ", insert new page " + page);
         } else if (page == lastPage + 1) {
             final int startPos = getItemCount() - getFooterCount();
             mThreadPages.put(page, detailListBean);
             cacheDataSize();
             notifyItemRangeInserted(startPos, detailListBean.getCount());
-            Logger.e("page range " + firstPage + " - " + lastPage + ", append new page " + page);
+            Logger.v("page range " + firstPage + " - " + lastPage + ", append new page " + page);
         } else if (page >= firstPage && page <= lastPage) {
             if (mThreadPages.get(page) == detailListBean) {
-                Logger.e("page range " + firstPage + " - " + lastPage + ", same skip exist page " + page);
+                Logger.v("page range " + firstPage + " - " + lastPage + ", same skip exist page " + page);
             } else {
                 mThreadPages.put(page, detailListBean);
                 cacheDataSize();
@@ -144,14 +144,14 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                 }
                 final int startPos = pos;
                 notifyItemRangeChanged(startPos, detailListBean.getCount());
-                Logger.e("page range " + firstPage + " - " + lastPage + ", update exist page " + page);
+                Logger.v("page range " + firstPage + " - " + lastPage + ", update exist page " + page);
             }
         } else {
             mThreadPages.clear();
             mThreadPages.put(page, detailListBean);
             cacheDataSize();
             notifyDataSetChanged();
-            Logger.e("page range " + firstPage + " - " + lastPage + ", not continoius page " + page + ", CLEAR ALL");
+            Logger.v("page range " + firstPage + " - " + lastPage + ", not continoius page " + page + ", CLEAR ALL");
         }
     }
 

@@ -604,8 +604,8 @@ public class ThreadDetailFragment extends BaseFragment {
                 if (!TextUtils.isEmpty(floor) && TextUtils.isDigitsOnly(floor)) {
                     int pos = mDetailAdapter.getPositionByFloor(Integer.parseInt(floor));
                     detailBean = mDetailAdapter.getItem(pos);
-                    if (pos != position)
-                        UIUtils.toast("position1 : " + position + ", position2=" + pos);
+//                    if (pos != position)
+//                        UIUtils.toast("position1 : " + position + ", position2=" + pos);
                 }
             }
             if (detailBean == null)
