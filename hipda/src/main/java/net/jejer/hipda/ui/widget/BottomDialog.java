@@ -5,14 +5,15 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup;
+import android.view.Window;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import net.jejer.hipda.R;
 
 import org.jetbrains.annotations.NotNull;
-
-import androidx.annotation.NonNull;
 
 /**
  * Created by GreenSkinMonster on 2016-11-23.
@@ -30,23 +31,16 @@ public class BottomDialog extends BottomSheetDialog {
 
         int orientation = getContext().getResources().getConfiguration().orientation;
 
+        Window window = getWindow();
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         } else {
             DisplayMetrics metrics = new DisplayMetrics();
-            getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            window.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
             int width = metrics.widthPixels;
-            getWindow().setLayout((int) (width * 0.7), ViewGroup.LayoutParams.MATCH_PARENT);
+            window.setLayout((int) (width * 0.7), ViewGroup.LayoutParams.MATCH_PARENT);
         }
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            final WindowManager.LayoutParams params = getWindow().getAttributes();
-//            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-//            getWindow().setAttributes(params);
-//        }
-//        getWindow()
-//                .getAttributes().windowAnimations = R.style.BottomDialogAnimation;
     }
 
 }

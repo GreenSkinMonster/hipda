@@ -2,6 +2,7 @@ package net.jejer.hipda.ui.setting;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +94,7 @@ public class BaseSettingFragment extends PreferenceFragmentCompat {
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
-                preference.setSummary(stringValue);
+                preference.setSummary(TextUtils.isEmpty(stringValue) ? "无" : stringValue);
             }
 
             return true;

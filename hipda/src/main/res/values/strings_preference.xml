@@ -210,6 +210,7 @@
     <string name="pref_title_dark_theme_color">深色主题色调</string>
     <string name="pref_title_navbar_colored">导航栏着色</string>
     <string name="pref_title_font">自定义字体</string>
+    <string name="pref_title_import_font">导入字体</string>
     <string name="title_choose_font">选择字体 (*ttf, *.otf)</string>
     <string name="pref_title_forum">版面选择</string>
     <string name="pref_title_freq_menus">展开常用菜单</string>

@@ -32,7 +32,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
-import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -810,13 +809,6 @@ public class MainFrameActivity extends BaseActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     UIUtils.toast("授权成功");
-                }
-                break;
-            }
-            case FilePickerDialog.EXTERNAL_READ_PERMISSION_GRANT: {
-                if (grantResults.length == 0
-                        || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    UIUtils.askForStoragePermission(this);
                 }
                 break;
             }

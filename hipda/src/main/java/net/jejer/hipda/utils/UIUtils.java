@@ -80,8 +80,8 @@ public class UIUtils {
     private static Snackbar makeSnack(final View view, final CharSequence message, final CharSequence detail, int length, int textColor) {
         final Snackbar snackbar = Snackbar.make(view, message, length);
         setSnackbarMessageTextColor(snackbar, textColor);
-        snackbar.setBackgroundTint(Color.DKGRAY);
-        snackbar.setActionTextColor(Color.WHITE);
+//        snackbar.setBackgroundTint(Color.DKGRAY);
+//        snackbar.setActionTextColor(Color.WHITE);
 
         if (!TextUtils.isEmpty(detail)) {
             snackbar.setAction("详情", new View.OnClickListener() {
@@ -100,9 +100,9 @@ public class UIUtils {
 
     public static Snackbar makeSnackbar(View view, CharSequence sequence, int duration) {
         Snackbar snackbar = Snackbar.make(view, sequence, duration);
-        setSnackbarMessageTextColor(snackbar, Color.WHITE);
-        snackbar.setBackgroundTint(ContextCompat.getColor(view.getContext(), R.color.md_grey_800));
-        snackbar.setActionTextColor(Color.WHITE);
+//        setSnackbarMessageTextColor(snackbar, Color.WHITE);
+//        snackbar.setBackgroundTint(ContextCompat.getColor(view.getContext(), R.color.md_grey_800));
+//        snackbar.setActionTextColor(Color.WHITE);
         return snackbar;
     }
 
@@ -472,7 +472,7 @@ public class UIUtils {
         activity.setTheme(getThemeValue(activity));
 
         Window window = activity.getWindow();
-        View view = activity.getWindow().getDecorView();
+        View view = window.getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (isWhiteTheme(activity)) {
                 view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
@@ -508,12 +508,12 @@ public class UIUtils {
         return !isInLightThemeMode(context);
     }
 
-    public static int getToolbarTextColor(Activity context) {
+    public static int getToolbarTextColor(Context context) {
         return isWhiteTheme(context) ? Color.BLACK : Color.WHITE;
     }
 
-    public static boolean isWhiteTheme(Activity activity) {
-        return UIUtils.isInLightThemeMode(activity)
+    public static boolean isWhiteTheme(Context context) {
+        return UIUtils.isInLightThemeMode(context)
                 && HiSettingsHelper.THEME_WHITE.equals(HiSettingsHelper.getInstance().getLightTheme());
     }
 

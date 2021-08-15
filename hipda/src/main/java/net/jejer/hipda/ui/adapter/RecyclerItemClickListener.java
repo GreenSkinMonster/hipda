@@ -21,6 +21,7 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
     private OnItemClickListener mListener;
     private View mChildView;
     private long mLastClickTime;
+    private GestureDetectorCompat mGestureDetector;
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
@@ -30,7 +31,23 @@ public class RecyclerItemClickListener implements View.OnTouchListener {
         void onDoubleTap(View view, int position);
     }
 
-    private GestureDetectorCompat mGestureDetector;
+    public static abstract class SimpleOnItemClickListener implements OnItemClickListener {
+
+        @Override
+        public void onItemClick(View view, int position) {
+
+        }
+
+        @Override
+        public void onLongItemClick(View view, int position) {
+
+        }
+
+        @Override
+        public void onDoubleTap(View view, int position) {
+
+        }
+    }
 
     public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
         mListener = listener;

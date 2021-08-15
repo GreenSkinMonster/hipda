@@ -10,8 +10,10 @@ import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.SimpleExceptionHandler;
 import net.jejer.hipda.utils.UIUtils;
+import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
 
@@ -52,18 +54,23 @@ public class HiApplication extends Application implements Application.ActivityLi
             OkHttpHelper.getInstance().clearCookies();
         }
 
-        String font = HiSettingsHelper.getInstance().getFont();
-        if (new File(font).exists()) {
-            fontSet = true;
-            ViewPump.init(ViewPump.builder()
-                    .addInterceptor(new CalligraphyInterceptor(
-                            new CalligraphyConfig.Builder()
-                                    .setDefaultFontPath(font)
-                                    .setFontAttrId(R.attr.fontPath)
-                                    .build()))
-                    .build());
-        } else {
+        try {
+            File font = new File(Utils.getFontsDir(), HiSettingsHelper.getInstance().getFont());
+            if (font.exists()) {
+                fontSet = true;
+                ViewPump.init(ViewPump.builder()
+                        .addInterceptor(new CalligraphyInterceptor(
+                                new CalligraphyConfig.Builder()
+                                        .setDefaultFontPath(font.getAbsolutePath())
+                                        .setFontAttrId(R.attr.fontPath)
+                                        .build()))
+                        .build());
+            } else {
+                HiSettingsHelper.getInstance().setFont("");
+            }
+        } catch (Exception e) {
             HiSettingsHelper.getInstance().setFont("");
+            Logger.e(e);
         }
         HiUtils.updateBaseUrls();
     }

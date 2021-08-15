@@ -2,6 +2,7 @@ package net.jejer.hipda.utils;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,6 +22,8 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
+
+import androidx.annotation.AttrRes;
 
 import com.bumptech.glide.Glide;
 
@@ -51,8 +54,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
-import androidx.annotation.AttrRes;
 
 /**
  * Common utils
@@ -145,6 +146,21 @@ public class Utils {
 
     public static void copy(File src, File dst) throws IOException {
         InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+
+    public static void copy(Uri src, File dst) throws IOException {
+        ContentResolver res = HiApplication.getAppContext().getContentResolver();
+        InputStream in = res.openInputStream(src);
         OutputStream out = new FileOutputStream(dst);
 
         // Transfer bytes from in to out
@@ -641,6 +657,19 @@ public class Utils {
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         return sw.toString();
+    }
+
+    public static File getSubCacheDir(String subDir) throws IOException {
+        File cacheDir = HiApplication.getAppContext().getCacheDir();
+        File subCacheDir = new File(cacheDir, subDir);
+        if (!subCacheDir.exists()) {
+            subCacheDir.mkdirs();
+        }
+        return subCacheDir;
+    }
+
+    public static File getFontsDir() throws IOException {
+        return getSubCacheDir("fonts");
     }
 
 }
