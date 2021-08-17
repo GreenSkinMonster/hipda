@@ -31,6 +31,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -78,9 +81,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 
 public class PostFragment extends BaseFragment {
     private static final int SELECT_PICTURE = 1;
@@ -673,8 +673,7 @@ public class PostFragment extends BaseFragment {
                     UIUtils.toast("收集信息成功");
             } else {
                 if (getView() != null) {
-                    mSnackbar = UIUtils.makeSnackbar(getView(), "收集信息失败 : " + message, Snackbar.LENGTH_LONG);
-                    UIUtils.setSnackbarMessageTextColor(mSnackbar, ContextCompat.getColor(getActivity(), R.color.md_yellow_500));
+                    mSnackbar = UIUtils.makeSnackbar(getView(), "收集信息失败 : " + message, Snackbar.LENGTH_LONG, R.color.md_yellow_500);
                     mSnackbar.setAction("重试", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

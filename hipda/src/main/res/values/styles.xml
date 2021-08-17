@@ -228,9 +228,13 @@
     </style>
 
     <style name="ThemeImageViewer" parent="ThemeLight">
-        <item name="colorPrimary">@color/md_black_1000</item>
-        <item name="colorPrimaryDark">@color/md_black_1000</item>
-        <item name="android:navigationBarColor">@color/md_black_1000</item>
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:navigationBarColor">@color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>
     </style>
 
     <style name="MyAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">

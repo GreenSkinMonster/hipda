@@ -2,13 +2,18 @@ package net.jejer.hipda.ui.widget;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -24,10 +29,6 @@ import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.content.ContextCompat;
 
 /**
  * Created by GreenSkinMonster on 2015-11-07.
@@ -52,7 +53,7 @@ public class ThreadImageLayout extends BaseImageLayout {
         mUrl = isThumb ? contentImg.getThumbUrl() : contentImg.getContent();
         mImageIndex = contentImg.getIndexInPage();
 
-        mImageView = new ImageView(getContext());
+        mImageView = new AppCompatImageView(getContext());
         mImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.quote_background));
         addView(mImageView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
@@ -83,32 +84,38 @@ public class ThreadImageLayout extends BaseImageLayout {
         addView(mTextView, tvLayoutParams);
 
         doLayout();
+
+        setOnClickListener(view -> {
+            ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+            if (imageInfo.isSuccess()) {
+                if (imageInfo.isGif()) {
+                    playGif();
+                } else {
+                    startImageGallery();
+                }
+            } else if (imageInfo.isFail() || imageInfo.isIdle()) {
+                fetchImage(true);
+            }
+        });
+
+        setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+                if (imageInfo.isFail()) {
+                    UIUtils.showMessageDialog(getContext(), "错误信息", imageInfo.getMessage(), true);
+                } else if (imageInfo.isSuccess()) {
+                    showImageActionDialog();
+                }
+                return true;
+            }
+        });
+
     }
 
     @Override
     protected boolean isNetworkFetch() {
         return HiSettingsHelper.getInstance().isImageLoadable(mContentImg.getFileSize(), mIsThumb);
-    }
-
-    @Override
-    protected OnClickListener getOnClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startImageGallery();
-            }
-        };
-    }
-
-    @Override
-    protected OnLongClickListener getOnLongClickListener() {
-        return new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                showImageActionDialog();
-                return true;
-            }
-        };
     }
 
     private void doLayout() {
@@ -187,9 +194,30 @@ public class ThreadImageLayout extends BaseImageLayout {
 
     private void startImageGallery() {
         if (mImages.size() > 0) {
+            Rect rectf = new Rect();
+            mImageView.getGlobalVisibleRect(rectf);
+
+            int x = rectf.left;
+            int y = rectf.top;
+            int w = rectf.width();
+            int h = rectf.height();
+
+            int screenWidth = UIUtils.getScreenWidth(getContext());
+            int screenHeight = UIUtils.getScreenHeight(getContext());
+
+            int startWidth = w;
+            int startHeight = Math.round((float) startWidth / screenWidth * screenHeight);
+
+            int imageCenterX = x + w / 2;
+            int imageCenterY = y + h / 2;
+            int newActivityX = imageCenterX - startWidth / 2;
+            int newActivityY = imageCenterY - startHeight / 2;
+            int startX = newActivityX - x;
+            int startY = newActivityY - y;
+
             Intent intent = new Intent(getContext(), ImageViewerActivity.class);
             ActivityOptionsCompat options = ActivityOptionsCompat.
-                    makeScaleUpAnimation(mImageView, 0, 0, mImageView.getMeasuredWidth(), mImageView.getMeasuredHeight());
+                    makeScaleUpAnimation(mImageView, startX, startY, startWidth, startHeight);
             intent.putExtra(ImageViewerActivity.KEY_IMAGE_INDEX, mImageIndex);
             intent.putParcelableArrayListExtra(ImageViewerActivity.KEY_IMAGES, mImages);
             ActivityCompat.startActivity(getContext(), intent, options.toBundle());

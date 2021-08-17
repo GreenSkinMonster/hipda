@@ -98,9 +98,9 @@ public class UIUtils {
         return snackbar;
     }
 
-    public static Snackbar makeSnackbar(View view, CharSequence sequence, int duration) {
+    public static Snackbar makeSnackbar(View view, CharSequence sequence, int duration, int textColor) {
         Snackbar snackbar = Snackbar.make(view, sequence, duration);
-//        setSnackbarMessageTextColor(snackbar, Color.WHITE);
+        setSnackbarMessageTextColor(snackbar, textColor);
 //        snackbar.setBackgroundTint(ContextCompat.getColor(view.getContext(), R.color.md_grey_800));
 //        snackbar.setActionTextColor(Color.WHITE);
         return snackbar;
@@ -367,7 +367,8 @@ public class UIUtils {
     }
 
     private static void snackViewSaveImage(Activity activity, View view, Uri destUri, String mime) {
-        Snackbar snackbar = makeSnackbar(view, "文件已保存至 Pictures/" + IMAGES_DIR + " 目录", Snackbar.LENGTH_LONG);
+        Snackbar snackbar = makeSnackbar(view, "文件已保存至 Pictures/" + IMAGES_DIR + " 目录",
+                Snackbar.LENGTH_LONG, Color.WHITE);
 
         snackbar.setAction("查看", new View.OnClickListener() {
             @Override
@@ -418,6 +419,16 @@ public class UIUtils {
         window.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         return metrics.widthPixels;
+    }
+
+    public static int getScreenWidth(Context context) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return metrics.widthPixels;
+    }
+
+    public static int getScreenHeight(Context context) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return metrics.heightPixels;
     }
 
     public static void toast(String text) {
@@ -533,6 +544,27 @@ public class UIUtils {
             HiSettingsHelper.getInstance().setLightTheme(HiSettingsHelper.THEME_WHITE);
             return R.style.ThemeLight_White;
         }
+    }
+
+    public static void hideSystemUI(Activity activity) {
+        Window window = activity.getWindow();
+        View decorView = window.getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    public static void showSystemUI(Activity activity) {
+        Window window = activity.getWindow();
+        View decorView = window.getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
 }

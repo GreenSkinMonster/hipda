@@ -1,69 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/image_viewer"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/image_viewer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
-
-    <TextView
-        android:id="@+id/tv_image_info"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_marginLeft="16dp"
-        android:gravity="center_vertical"
-        android:textColor="@color/md_grey_300"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/tv_floor_info"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:gravity="center_vertical"
-        android:textColor="@color/md_grey_300"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/tv_image_info"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <ImageButton
-        android:id="@+id/btn_download_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:background="?attr/selectableItemBackground"
-        android:minHeight="36dp"
-        android:minWidth="36dp"
-        android:src="@drawable/ic_action_download"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        app:layout_constraintEnd_toStartOf="@id/btn_share_image"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <ImageButton
-        android:id="@+id/btn_share_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:background="?attr/selectableItemBackground"
-        android:minHeight="36dp"
-        android:minWidth="36dp"
-        android:src="@drawable/ic_action_share"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    android:background="@color/transparent">
 
     <net.jejer.hipda.ui.widget.ImageViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_floor_info"/>
+        android:layout_height="match_parent"
+        android:background="@color/transparent" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@id/guideline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/image_viewer_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintBottom_toTopOf="@id/guideline">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/tv_image_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:background="@drawable/rectangle_background"
+            android:textSize="14sp"
+            android:layout_margin="2dp"
+            app:layout_constraintBottom_toTopOf="@id/guideline2"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_floor_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:layout_margin="2dp"
+            android:background="@drawable/rectangle_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline2" />
+
+        <com.mikepenz.materialdrawer.view.BezelImageView
+            android:id="@+id/btn_download_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:background="@drawable/circle_background"
+            android:src="@drawable/outline_file_download_white_24"
+            app:layout_constraintEnd_toStartOf="@+id/btn_share_image"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.mikepenz.materialdrawer.view.BezelImageView
+            android:id="@+id/btn_share_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:background="@drawable/circle_background"
+            android:src="@drawable/outline_share_white_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
