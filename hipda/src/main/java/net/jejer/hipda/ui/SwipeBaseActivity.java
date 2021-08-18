@@ -25,7 +25,7 @@ public class SwipeBaseActivity extends BaseActivity implements SwipeBackActivity
             mHelper = new SwipeBackActivityHelper(this);
             mHelper.onActivityCreate();
 
-            getSwipeBackLayout().setEdgeSize((UIUtils.getWindowWidth(getWindow())));
+            getSwipeBackLayout().setEdgeSize((UIUtils.getScreenWidth(this)));
             setSwipeBackEnable(HiSettingsHelper.getInstance().isGestureBack());
         }
     }

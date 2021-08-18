@@ -51,6 +51,7 @@ public class ImageViewerAdapter extends PagerAdapter {
         ImageInfo imageInfo = ImageContainer.getImageInfo(imageUrl);
 
         final ImageViewerLayout imageLayout = new ImageViewerLayout(mActivity, contentImg);
+        imageLayout.setTag(position);
 
         //ScaleImageView has about 100ms delay, so show image with normal ImageView first
         if (mFirstShow) {

@@ -28,13 +28,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-
 import com.google.android.material.snackbar.Snackbar;
 
 import net.jejer.hipda.BuildConfig;
@@ -53,6 +46,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 /**
  * Created by GreenSkinMonster on 2016-04-05.
@@ -412,13 +412,6 @@ public class UIUtils {
         if (activity != null)
             return activity.getWindow().getDecorView().getRootView().findViewById(R.id.main_frame_container);
         return null;
-    }
-
-    public static int getWindowWidth(Window window) {
-        DisplayMetrics metrics = new DisplayMetrics();
-        window.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        return metrics.widthPixels;
     }
 
     public static int getScreenWidth(Context context) {

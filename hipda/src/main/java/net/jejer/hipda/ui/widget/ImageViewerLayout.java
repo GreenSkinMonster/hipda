@@ -43,7 +43,7 @@ public class ImageViewerLayout extends BaseImageLayout {
     private final int mScreenHeight;
     private float mMinScale = 0;
 
-    private final static int MIN_DRAG_DISTANCE = Utils.dpToPx(4);
+    private final static int MIN_DRAG_DISTANCE = Utils.dpToPx(8);
     private float mOldX, mOldY, mMovY;
     private float mAlphaPercent = 1f;
     private boolean mToClose = false;
@@ -57,16 +57,22 @@ public class ImageViewerLayout extends BaseImageLayout {
             if (mImageInfo.isGif()) {
                 playGif();
             } else {
-                ImageViewerActivity activity = (ImageViewerActivity) getContext();
-                activity.toggleFullscreen();
+                if (mScaleImageView.isImageLoaded()) {
+                    ImageViewerActivity activity = (ImageViewerActivity) getContext();
+                    activity.animImageThenFinish(ImageViewerLayout.this);
+                }
             }
             return true;
         }
 
         @Override
         public void onLongPress(MotionEvent e) {
-            if (mImageInfo.isFail())
+            if (mImageInfo.isFail()) {
                 UIUtils.showMessageDialog(getContext(), "错误信息", mImageInfo.getMessage(), true);
+            } else {
+                ImageViewerActivity activity = (ImageViewerActivity) getContext();
+                activity.toggleFullscreen();
+            }
         }
     };
 
@@ -106,6 +112,10 @@ public class ImageViewerLayout extends BaseImageLayout {
 
     public ImageView getImageView() {
         return mImageView;
+    }
+
+    public String getUrl() {
+        return mUrl;
     }
 
     @Override
@@ -148,7 +158,7 @@ public class ImageViewerLayout extends BaseImageLayout {
         mScaleImageView.setOnStateChangedListener(new SubsamplingScaleImageView.OnStateChangedListener() {
             @Override
             public void onScaleChanged(float newScale, int origin) {
-                mDragCloseable = newScale < mMinScale;
+                mDragCloseable = newScale < mMinScale + 0.01f;
             }
 
             @Override
@@ -166,7 +176,7 @@ public class ImageViewerLayout extends BaseImageLayout {
                 mScaleImageView.setVisibility(View.VISIBLE);
 
                 mMinScale = Math.min(((float) mScaleImageView.getWidth() / mImageInfo.getWidth()),
-                        ((float) mScaleImageView.getHeight() / mImageInfo.getHeight())) + 0.01f;
+                        ((float) mScaleImageView.getHeight() / mImageInfo.getHeight()));
 
                 if (mImageInfo.isLongImage()) {
                     float scale = (float) mScaleImageView.getWidth() / mImageInfo.getWidth();
@@ -189,6 +199,19 @@ public class ImageViewerLayout extends BaseImageLayout {
         });
     }
 
+    public boolean resetScaleAndCenter(int animTime) {
+        if (mScaleImageView != null
+                && mScaleImageView.getVisibility() == VISIBLE
+                && mScaleImageView.isImageLoaded()
+                && Math.abs(mScaleImageView.getScale() - mMinScale) > 0.1) {
+            mScaleImageView.animateScaleAndCenter(mMinScale, new PointF(0, 0))
+                    .withDuration(animTime)
+                    .start();
+            return true;
+        }
+        return false;
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -205,7 +228,7 @@ public class ImageViewerLayout extends BaseImageLayout {
             case MotionEvent.ACTION_CANCEL:
                 if (mToClose) {
                     mToClose = false;
-                    ((ImageViewerActivity) getContext()).finish();
+                    ((ImageViewerActivity) getContext()).animImageThenFinish(this);
                 } else {
                     animRestoreImage();
                 }
@@ -216,7 +239,11 @@ public class ImageViewerLayout extends BaseImageLayout {
                     mMovY = event.getRawY() - mOldY;
                     float absMovX = Math.abs(movX);
                     mDragMoving = mMovY > absMovX && absMovX > MIN_DRAG_DISTANCE;
-                    animMoveImage(movX, mMovY);
+                    if (absMovX > MIN_DRAG_DISTANCE || Math.abs(mMovY) > MIN_DRAG_DISTANCE) {
+                        float mx = movX >= 0 ? Math.max(0, movX - MIN_DRAG_DISTANCE) : Math.min(0, movX + MIN_DRAG_DISTANCE);
+                        float my = mMovY >= 0 ? Math.max(0, mMovY - MIN_DRAG_DISTANCE) : Math.min(0, mMovY + MIN_DRAG_DISTANCE);
+                        animMoveImage(mx, my);
+                    }
                     mToClose = mMovY > absMovX
                             && mMovY > ((float) mScreenHeight / 8);
                 }

@@ -137,18 +137,28 @@ public abstract class BaseImageLayout extends RelativeLayout {
     }
 
     public void stopGif() {
-        if (mCurrentViewHolder != null)
-            mCurrentViewHolder.clear();
-        ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        if (imageInfo.isGif()) {
-            mProgressBar.setVisibility(VISIBLE);
-            mRequestManager.clear(mImageView);
-            mRequestManager
-                    .asBitmap()
-                    .load(mUrl)
-                    .transform(new GifTransformation())
-                    .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
-                    .into(mImageView);
+        if (mCurrentViewHolder != null) {
+            BaseImageLayout imageLayout = mCurrentViewHolder.get();
+            if (imageLayout != null) {
+                mCurrentViewHolder.clear();
+                stopGif(mRequestManager, imageLayout);
+            }
+        }
+    }
+
+    private static void stopGif(RequestManager requestManager, BaseImageLayout imageLayout) {
+        if (imageLayout != null && imageLayout.isAttachedToWindow()) {
+            ImageInfo imageInfo = ImageContainer.getImageInfo(imageLayout.mUrl);
+            if (imageInfo.isGif()) {
+                imageLayout.mProgressBar.setVisibility(VISIBLE);
+                requestManager.clear(imageLayout.mImageView);
+                requestManager
+                        .asBitmap()
+                        .load(imageLayout.mUrl)
+                        .transform(new GifTransformation())
+                        .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
+                        .into(imageLayout.mImageView);
+            }
         }
     }
 

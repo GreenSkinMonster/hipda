@@ -232,6 +232,7 @@
         <item name="colorPrimaryDark">@color/transparent</item>
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:navigationBarColor">@color/transparent</item>
+        <item name="android:statusBarColor">@color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>

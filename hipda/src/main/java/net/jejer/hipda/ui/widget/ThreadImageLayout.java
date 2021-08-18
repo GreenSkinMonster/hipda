@@ -2,6 +2,7 @@ package net.jejer.hipda.ui.widget;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,11 +10,6 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -29,6 +25,11 @@ import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
+
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
 
 /**
  * Created by GreenSkinMonster on 2015-11-07.
@@ -185,7 +186,6 @@ public class ThreadImageLayout extends BaseImageLayout {
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        stopGif();
                         startImageGallery();
                     }
                 });
@@ -193,15 +193,17 @@ public class ThreadImageLayout extends BaseImageLayout {
     }
 
     private void startImageGallery() {
+        stopGif();
         if (mImages.size() > 0) {
-            Rect rectf = new Rect();
-            mImageView.getGlobalVisibleRect(rectf);
+            Point globalOffset = new Point();
+            mImageView.getGlobalVisibleRect(new Rect(), globalOffset);
 
-            int x = rectf.left;
-            int y = rectf.top;
-            int w = rectf.width();
-            int h = rectf.height();
+            int x = globalOffset.x;
+            int y = globalOffset.y;
+            int w = mImageView.getMeasuredWidth();
+            int h = mImageView.getMeasuredHeight();
 
+            Rect rect = new Rect(x, y, x + w, y + h);
             int screenWidth = UIUtils.getScreenWidth(getContext());
             int screenHeight = UIUtils.getScreenHeight(getContext());
 
@@ -219,6 +221,7 @@ public class ThreadImageLayout extends BaseImageLayout {
             ActivityOptionsCompat options = ActivityOptionsCompat.
                     makeScaleUpAnimation(mImageView, startX, startY, startWidth, startHeight);
             intent.putExtra(ImageViewerActivity.KEY_IMAGE_INDEX, mImageIndex);
+            intent.putExtra(ImageViewerActivity.KEY_ORI_IMAGE_RECT, rect);
             intent.putParcelableArrayListExtra(ImageViewerActivity.KEY_IMAGES, mImages);
             ActivityCompat.startActivity(getContext(), intent, options.toBundle());
         }
