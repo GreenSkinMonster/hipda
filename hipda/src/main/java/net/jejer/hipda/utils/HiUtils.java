@@ -3,6 +3,8 @@ package net.jejer.hipda.utils;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.core.content.ContextCompat;
+
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.iconics.typeface.IIcon;
 
@@ -15,8 +17,6 @@ import net.jejer.hipda.ui.HiApplication;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.core.content.ContextCompat;
 
 public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";
@@ -273,8 +273,8 @@ public class HiUtils {
                 return R.style.ThemeLight_Black;
         }
         HiSettingsHelper.getInstance().setTheme(HiSettingsHelper.THEME_LIGHT);
-        HiSettingsHelper.getInstance().setPrimaryColor(ContextCompat.getColor(context, R.color.md_blue_grey_700));
-        return R.style.ThemeLight_BlueGrey;
+        HiSettingsHelper.getInstance().setPrimaryColor(ContextCompat.getColor(context, R.color.md_grey_200));
+        return R.style.ThemeLight_White;
     }
 
     public static boolean isValidId(String id) {

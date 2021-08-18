@@ -541,7 +541,7 @@ public class HiSettingsHelper {
     }
 
     private boolean isNavBarColoredFromPref() {
-        mNavBarColor = mSharedPref.getBoolean(PERF_NAVBAR_COLORED, false);
+        mNavBarColor = mSharedPref.getBoolean(PERF_NAVBAR_COLORED, true);
         return mNavBarColor;
     }
 
@@ -590,7 +590,11 @@ public class HiSettingsHelper {
     }
 
     private Set<String> getFreqMenusFromPref() {
-        mFreqMenus = mSharedPref.getStringSet(PERF_FREQ_MENUS, new HashSet<String>());
+        Set<String> menus = new HashSet<>();
+        menus.add(String.valueOf(Constants.DRAWER_MYPOST));
+        menus.add(String.valueOf(Constants.DRAWER_MYREPLY));
+        menus.add(String.valueOf(Constants.DRAWER_FAVORITES));
+        mFreqMenus = mSharedPref.getStringSet(PERF_FREQ_MENUS, menus);
         return mFreqMenus;
     }
 

@@ -13,7 +13,7 @@
             android:title="@string/pref_title_theme"/>
 
         <com.thebluealliance.spectrum.SpectrumPreferenceCompat
-            android:defaultValue="@color/md_blue_grey_700"
+            android:defaultValue="@color/md_grey_200"
             android:key="PERF_PRIMARY_COLOR"
             android:summary="@string/pref_summary_primary_color"
             android:title="@string/pref_title_primary_color"
@@ -30,7 +30,7 @@
             android:title="@string/pref_title_night_theme" />
 
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="PERF_NAVBAR_COLORED"
             android:title="@string/pref_title_navbar_colored" />
 
