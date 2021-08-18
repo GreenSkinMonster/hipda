@@ -13,6 +13,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.NotificationBean;
@@ -36,9 +39,6 @@ import org.jsoup.select.Elements;
 
 import java.io.File;
 
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-
 /**
  * parse and fetch notifications
  * Created by GreenSkinMonster on 2015-09-08.
@@ -61,10 +61,11 @@ public class NotiHelper {
         int threadCount = -1;
         SimpleListItemBean smsBean = null;
 
-        //check new sms
-        if (doc == null || HiSettingsHelper.getInstance().isCheckSms()) {
-            HiSettingsHelper.getInstance().setLastCheckSmsTime(System.currentTimeMillis());
-            try {
+        try {
+            //check new sms
+            if (doc == null || HiSettingsHelper.getInstance().isCheckSms()) {
+                HiSettingsHelper.getInstance().setLastCheckSmsTime(System.currentTimeMillis());
+
                 String response = OkHttpHelper.getInstance().get(HiUtils.NewSMS);
                 if (!TextUtils.isEmpty(response)) {
                     doc = Jsoup.parse(response);
@@ -76,20 +77,21 @@ public class NotiHelper {
                         }
                     }
                 }
-            } catch (Exception e) {
-                Logger.e(e);
-            }
-        }
 
-        if (doc != null) {
-            threadCount = 0;
-            String[] prompts = {"prompt_threads", "prompt_systempm", "prompt_friend"};
-            for (String prompt : prompts) {
-                Elements promptES = doc.select("div.promptcontent a#" + prompt);
-                if (promptES.size() > 0) {
-                    threadCount += Utils.parseInt(Utils.getMiddleString(promptES.first().text(), "(", ")"));
+            }
+
+            if (doc != null) {
+                threadCount = 0;
+                String[] prompts = {"prompt_threads", "prompt_systempm", "prompt_friend"};
+                for (String prompt : prompts) {
+                    Elements promptES = doc.select("div.promptcontent a#" + prompt);
+                    if (promptES.size() > 0) {
+                        threadCount += Utils.parseInt(Utils.getMiddleString(promptES.first().text(), "(", ")"));
+                    }
                 }
             }
+        } catch (Exception e) {
+            Logger.e(e);
         }
 
         if (threadCount >= 0)
