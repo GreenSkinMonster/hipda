@@ -51,7 +51,9 @@ import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.PollBean;
 import net.jejer.hipda.bean.PostBean;
+import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.cache.ThreadDetailCache;
 import net.jejer.hipda.db.ContentDao;
 import net.jejer.hipda.db.HistoryDao;
@@ -91,6 +93,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Request;
 
@@ -229,7 +232,10 @@ public class ThreadDetailFragment extends BaseFragment {
 
         RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(mCtx, new OnItemClickListener());
         mDetailAdapter = new ThreadDetailAdapter(mCtx, this, itemClickListener,
-                new GoToFloorOnClickListener(), new AvatarOnClickListener(), new WarningOnClickListener());
+                new GoToFloorOnClickListener(),
+                new AvatarOnClickListener(),
+                new WarningOnClickListener(),
+                new VotePollClickListener());
 
         mRecyclerView.setAdapter(mDetailAdapter);
 
@@ -1101,7 +1107,7 @@ public class ThreadDetailFragment extends BaseFragment {
 
         setActionBarTitle(mTitle);
 
-        if (mCache.get(mGotoPage) != null) {
+        if (!refresh && mCache.get(mGotoPage) != null) {
 
             final int gotoFloor = mGotoFloor;
             final String gotoPostId = mGotoPostId;
@@ -1212,6 +1218,24 @@ public class ThreadDetailFragment extends BaseFragment {
                             }
                         });
             }
+        }
+    }
+
+    private class VotePollClickListener extends OnSingleClickListener {
+        @Override
+        public void onSingleClick(View view) {
+            List<String> answers = (List<String>) view.getTag();
+
+            PostBean postBean = new PostBean();
+            postBean.setFid(mFid);
+            postBean.setTid(mTid);
+            postBean.setPollAnswers(answers);
+            PrePostInfoBean prePostInfo = new PrePostInfoBean();
+            if (mCache.get(1) != null && mCache.get(1).getAll().size() > 0) {
+                PollBean pollBean = mCache.get(1).getAll().get(0).getPoll();
+                prePostInfo.setFormhash(pollBean.getFormhash());
+            }
+            JobMgr.addJob(new PostJob(mSessionId, PostHelper.MODE_VOTE_POLL, prePostInfo, postBean, false));
         }
     }
 
@@ -1466,7 +1490,11 @@ public class ThreadDetailFragment extends BaseFragment {
             if (details != null)
                 mCache.put(details);
 
-            if (postResult.isDelete()) {
+            if (event.mMode == PostHelper.MODE_VOTE_POLL) {
+                mGotoPage = 1;
+                mGotoFloor = FIRST_FLOOR_OF_PAGE;
+                showOrLoadPage(true);
+            } else if (postResult.isDelete()) {
                 if (mGotoFloor == 1) {
                     //re-post event to thread list
                     event.mSessionId = "";

@@ -10,6 +10,8 @@ import androidx.core.graphics.ColorUtils;
 import net.jejer.hipda.R;
 import net.jejer.hipda.ui.HiApplication;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * get color id from theme attr id
  * Created by GreenSkinMonster on 2015-05-09.
@@ -63,6 +65,29 @@ public class ColorHelper {
         ColorUtils.colorToHSL(Color.parseColor(color), textHslColor);
         ColorUtils.colorToHSL(UIUtils.isInDarkThemeMode(HiApplication.getAppContext()) ? NIGHT_REF_COLOR : DAY_REF_COLOR, refHslColor);
         return Math.abs(textHslColor[2] - refHslColor[2]) >= delta;
+    }
+
+    public static int getRandomColor() {
+        int[] colors = {
+                R.color.md_red_700
+                , R.color.md_pink_700
+                , R.color.md_purple_700
+                , R.color.md_deep_purple_700
+                , R.color.md_indigo_700
+                , R.color.md_blue_700
+                , R.color.md_light_blue_700
+                , R.color.md_cyan_700
+                , R.color.md_teal_700
+                , R.color.md_green_700
+                , R.color.md_light_green_700
+                , R.color.md_lime_700
+                , R.color.md_yellow_700
+                , R.color.md_amber_700
+                , R.color.md_orange_700
+                , R.color.md_deep_orange_700
+                , R.color.md_brown_700
+        };
+        return colors[ThreadLocalRandom.current().nextInt(0, colors.length)];
     }
 
 }

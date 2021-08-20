@@ -21,6 +21,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import java.util.Collections;
+import java.util.List;
+
 import okhttp3.Response;
 
 public class PostHelper {
@@ -32,6 +35,7 @@ public class PostHelper {
     public static final int MODE_QUICK_REPLY = 4;
     public static final int MODE_EDIT_POST = 5;
     public static final int MODE_QUICK_DELETE = 6;
+    public static final int MODE_VOTE_POLL = 7;
 
     private static long LAST_POST_TIME = 0;
     private static final long POST_DELAY_IN_SECS = 30;
@@ -108,6 +112,10 @@ public class PostHelper {
                 url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=" + mPostArg.getPage();
                 doPost(url, replyText, subject, typeid, postBean.isDelete());
                 break;
+            case MODE_VOTE_POLL:
+                url = HiUtils.VotePollUrl.replace("{fid}", postBean.getFid() + "").replace("{tid}", postBean.getTid());
+                doPost(url, replyText, subject, null, false);
+                break;
         }
 
         postBean.setSubject(mTitle);
@@ -159,6 +167,12 @@ public class PostHelper {
                 if (!TextUtils.isEmpty(typeid)) {
                     params.put("typeid", typeid);
                 }
+            }
+        } else if (mMode == MODE_VOTE_POLL) {
+            List<String> answers = mPostArg.getPollAnswers();
+            Collections.sort(answers);
+            for (String answer : answers) {
+                params.put("pollanswers[]", answer);
             }
         }
 

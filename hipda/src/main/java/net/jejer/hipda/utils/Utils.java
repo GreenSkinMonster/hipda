@@ -504,9 +504,17 @@ public class Utils {
 
     public static int parseInt(String s) {
         try {
-            return Integer.parseInt(s);
-        } catch (NumberFormatException e) {
+            return Integer.parseInt(s.trim());
+        } catch (Exception e) {
             return 0;
+        }
+    }
+
+    public static float parseFloat(String s) {
+        try {
+            return Float.parseFloat(s.trim());
+        } catch (Exception e) {
+            return 0f;
         }
     }
 

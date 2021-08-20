@@ -2,15 +2,23 @@ package net.jejer.hipda.ui.adapter;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatTextView;
@@ -28,9 +36,12 @@ import net.jejer.hipda.bean.ContentText;
 import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.PollBean;
+import net.jejer.hipda.bean.PollOptionBean;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.ui.ThreadDetailFragment;
+import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.ui.widget.TextViewWithEmoticon;
 import net.jejer.hipda.ui.widget.ThreadImageLayout;
 import net.jejer.hipda.utils.ColorHelper;
@@ -39,7 +50,10 @@ import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * Created by GreenSkinMonster on 2016-11-08.
@@ -52,6 +66,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
     private final Button.OnClickListener mGoToFloorListener;
     private final View.OnClickListener mAvatarListener;
     private final View.OnClickListener mWarningListener;
+    private final View.OnClickListener mVotePollListener;
     private final ThreadDetailFragment mDetailFragment;
     private final int mBackgroundResource;
     private final int mBackgroundColor;
@@ -59,18 +74,23 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
     final private SparseArray<DetailListBean> mThreadPages = new SparseArray<>();
     private int mDataSize = 0;
 
+    private WeakHashMap<CompoundButton, Object> mPollOptionsHolder;
+    private WeakReference<TextView> mVoteButtonHolder;
+
     public ThreadDetailAdapter(Context context,
                                ThreadDetailFragment detailFragment,
                                RecyclerItemClickListener itemClickListener,
                                Button.OnClickListener gotoFloorListener,
                                View.OnClickListener avatarListener,
-                               View.OnClickListener warningListener) {
+                               View.OnClickListener warningListener,
+                               View.OnClickListener votePollListener) {
         mCtx = context;
         mInflater = LayoutInflater.from(context);
         mItemClickListener = itemClickListener;
         mGoToFloorListener = gotoFloorListener;
         mAvatarListener = avatarListener;
         mWarningListener = warningListener;
+        mVotePollListener = votePollListener;
         mDetailFragment = detailFragment;
 
         int[] attrs = new int[]{R.attr.selectableItemBackground};
@@ -430,6 +450,163 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                 }
             }
         }
+
+        renderPollLayout(holder, detail);
+    }
+
+    private void renderPollLayout(ViewHolderImpl holder, DetailBean detail) {
+        if (detail.getPoll() != null) {
+            holder.pollView.setVisibility(View.VISIBLE);
+            holder.pollView.removeAllViews();
+
+            mPollOptionsHolder = new WeakHashMap<>();
+            int pxOf4Dp = Utils.dpToPx(4);
+            int layoutFullWidth = UIUtils.getScreenWidth(mCtx)
+                    - (int) mCtx.getResources().getDimension(R.dimen.thread_detail_padding);
+
+            final PollBean pollBean = detail.getPoll();
+            TextViewWithEmoticon tvPoll = new TextViewWithEmoticon(mCtx);
+            tvPoll.setText(pollBean.getTitle());
+            tvPoll.setPadding(pxOf4Dp, 2 * pxOf4Dp, pxOf4Dp, 2 * pxOf4Dp);
+            tvPoll.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+            holder.pollView.addView(tvPoll);
+
+            View.OnClickListener onOptionButtonCheckedListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mPollOptionsHolder != null && mVoteButtonHolder != null) {
+                        int count = 0;
+                        for (CompoundButton optionButton : mPollOptionsHolder.keySet()) {
+                            if (optionButton instanceof RadioButton && !optionButton.equals(v)) {
+                                optionButton.setChecked(false);
+                            }
+                            if (optionButton != null && optionButton.isChecked())
+                                count++;
+                        }
+                        if (mVoteButtonHolder.get() != null) {
+                            TextView voteButton = mVoteButtonHolder.get();
+                            if (count >= 1 && count <= pollBean.getMaxAnswer()) {
+                                voteButton.setEnabled(true);
+                                voteButton.getBackground().setColorFilter(null);
+                            } else {
+                                voteButton.setEnabled(false);
+                                voteButton.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+                            }
+                        }
+                    }
+                }
+            };
+
+            List<PollOptionBean> options = pollBean.getPollOptions();
+            if (options != null && options.size() > 1) {
+                boolean voteable = !TextUtils.isEmpty(options.get(0).getOptionId());
+                for (PollOptionBean option : options) {
+                    RelativeLayout optionLayout = (RelativeLayout) mInflater.inflate(R.layout.item_poll_option, null, false);
+
+                    CheckBox checkBox = optionLayout.findViewById(R.id.cb_option);
+                    RadioButton radioButton = optionLayout.findViewById(R.id.rb_option);
+                    TextView tvText = optionLayout.findViewById(R.id.tv_text);
+                    TextView tvRates = optionLayout.findViewById(R.id.tv_rates);
+                    View vRatePercent = optionLayout.findViewById(R.id.rate_percent);
+
+                    if (voteable) {
+                        voteable = !TextUtils.isEmpty(option.getOptionId());
+                        if (pollBean.getMaxAnswer() > 1) {
+                            checkBox.setVisibility(View.VISIBLE);
+                            radioButton.setVisibility(View.GONE);
+                            tvText.setVisibility(View.GONE);
+                            checkBox.setText(option.getText());
+                            checkBox.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+                            checkBox.setTextColor(ColorHelper.getTextColorPrimary(mCtx));
+                            checkBox.setTag(option.getOptionId());
+                            checkBox.setOnClickListener(onOptionButtonCheckedListener);
+                            mPollOptionsHolder.put(checkBox, null);
+                        } else {
+                            checkBox.setVisibility(View.GONE);
+                            radioButton.setVisibility(View.VISIBLE);
+                            tvText.setVisibility(View.GONE);
+                            radioButton.setText(option.getText());
+                            radioButton.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+                            radioButton.setTextColor(ColorHelper.getTextColorPrimary(mCtx));
+                            radioButton.setTag(option.getOptionId());
+                            radioButton.setOnClickListener(onOptionButtonCheckedListener);
+                            mPollOptionsHolder.put(radioButton, null);
+                        }
+                    } else {
+                        checkBox.setVisibility(View.GONE);
+                        radioButton.setVisibility(View.GONE);
+                        tvText.setText(option.getText());
+                        tvText.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+                    }
+
+                    tvRates.setText(option.getRates());
+                    tvRates.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
+                    int indexOfP = option.getRates().indexOf('%');
+                    if (indexOfP > 0) {
+                        float percent = Utils.parseFloat(option.getRates().substring(0, indexOfP)) / 100f;
+                        vRatePercent.setVisibility(View.VISIBLE);
+                        vRatePercent.setBackgroundColor(ContextCompat.getColor(mCtx, ColorHelper.getRandomColor()));
+                        ViewGroup.LayoutParams layoutParams = vRatePercent.getLayoutParams();
+                        if (percent <= 0)
+                            layoutParams.width = pxOf4Dp / 2;
+                        else
+                            layoutParams.width = (int) (layoutFullWidth * percent);
+                        vRatePercent.setLayoutParams(layoutParams);
+                    } else {
+                        vRatePercent.setVisibility(View.GONE);
+                    }
+                    holder.pollView.addView(optionLayout);
+                }
+
+                if (!TextUtils.isEmpty(pollBean.getFooter())) {
+                    AppCompatTextView footer = new AppCompatTextView(mCtx);
+                    footer.setPadding(pxOf4Dp, 2 * pxOf4Dp, pxOf4Dp, 2 * pxOf4Dp);
+                    footer.setText(pollBean.getFooter());
+                    footer.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
+                    footer.setTypeface(null, Typeface.BOLD);
+                    footer.setGravity(Gravity.CENTER);
+                    holder.pollView.addView(footer);
+                }
+
+                if (voteable) {
+                    TextView button = new AppCompatTextView(mCtx);
+                    button.setText("投票");
+                    button.setTextColor(ContextCompat.getColor(mCtx, R.color.md_white_1000));
+                    button.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
+                    button.setBackground(ContextCompat.getDrawable(mCtx, R.drawable.lable_background));
+                    button.setEnabled(false);
+                    button.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+                    LinearLayout.LayoutParams layoutParams
+                            = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setMargins(pxOf4Dp, 4 * pxOf4Dp, pxOf4Dp, pxOf4Dp);
+                    button.setLayoutParams(layoutParams);
+                    button.setGravity(Gravity.CENTER);
+                    button.setOnClickListener(new OnSingleClickListener() {
+                        @Override
+                        public void onSingleClick(View v) {
+                            List<String> values = new ArrayList<>();
+                            for (CompoundButton button : mPollOptionsHolder.keySet()) {
+                                if (button.isChecked()) {
+                                    values.add(button.getTag().toString());
+                                }
+                            }
+                            if (values.size() == 0) {
+                                UIUtils.toast("请选择选项");
+                            } else if (values.size() > pollBean.getMaxAnswer()) {
+                                UIUtils.toast("最多可选 " + pollBean.getMaxAnswer() + " 个选项，已选 " + values.size() + " 项");
+                            } else {
+                                v.setTag(values);
+                                mVotePollListener.onClick(v);
+                            }
+                        }
+                    });
+                    mVoteButtonHolder = new WeakReference<>(button);
+                    holder.pollView.addView(button);
+                }
+            }
+        } else {
+            holder.pollView.setVisibility(View.GONE);
+        }
     }
 
     private void loadAvatar(final String avatarUrl, final ImageView imageView) {
@@ -443,6 +620,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         TextView postStatus;
         TextView time;
         LinearLayout contentView;
+        LinearLayout pollView;
 
         ViewHolderImpl(View itemView) {
             super(itemView);
@@ -452,6 +630,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
             floor = itemView.findViewById(R.id.floor);
             postStatus = itemView.findViewById(R.id.post_status);
             contentView = itemView.findViewById(R.id.content_layout);
+            pollView = itemView.findViewById(R.id.poll_layout);
         }
     }
 

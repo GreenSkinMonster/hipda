@@ -36,6 +36,7 @@ public class HiUtils {
     public static String DetailListUrl;
     public static String ReplyUrl;
     public static String EditUrl;
+    public static String VotePollUrl;
     public static String NewThreadUrl;
     public static String MyReplyUrl;
     public static String MyPostUrl;
@@ -129,6 +130,7 @@ public class HiUtils {
         DetailListUrl = BaseUrl + "viewthread.php?tid=";
         ReplyUrl = BaseUrl + "post.php?action=reply&tid=";
         EditUrl = BaseUrl + "post.php?action=edit";
+        VotePollUrl = BaseUrl + "misc.php?action=votepoll&fid={fid}&tid={tid}&pollsubmit=yes&quickforward=yes&inajax=1";
         NewThreadUrl = BaseUrl + "post.php?action=newthread&fid=";
         MyReplyUrl = BaseUrl + "my.php?item=posts";
         MyPostUrl = BaseUrl + "my.php?item=threads";

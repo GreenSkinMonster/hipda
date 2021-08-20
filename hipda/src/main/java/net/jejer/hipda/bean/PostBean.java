@@ -1,5 +1,7 @@
 package net.jejer.hipda.bean;
 
+import java.util.List;
+
 /**
  * Used for post arguments
  * Created by GreenSkinMonster on 2015-03-14.
@@ -18,6 +20,7 @@ public class PostBean {
     private String message;
     private boolean delete;
     private DetailListBean detailListBean;
+    private List<String> pollAnswers;
 
     public String getTid() {
         return tid;
@@ -113,5 +116,13 @@ public class PostBean {
 
     public void setDetailListBean(DetailListBean detailListBean) {
         this.detailListBean = detailListBean;
+    }
+
+    public List<String> getPollAnswers() {
+        return pollAnswers;
+    }
+
+    public void setPollAnswers(List<String> pollAnswers) {
+        this.pollAnswers = pollAnswers;
     }
 }
