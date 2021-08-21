@@ -103,6 +103,9 @@
         <item>1003</item>
     </string-array>
     <string-array name="default_freq_menu_values">
+        <item>1001</item>
+        <item>1002</item>
+        <item>1003</item>
     </string-array>
 
     <!--  value should match ActivityInfo.SCREEN_ORIENTATION_*-->
