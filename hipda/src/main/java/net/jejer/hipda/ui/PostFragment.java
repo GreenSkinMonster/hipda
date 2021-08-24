@@ -673,7 +673,8 @@ public class PostFragment extends BaseFragment {
                     UIUtils.toast("收集信息成功");
             } else {
                 if (getView() != null) {
-                    mSnackbar = UIUtils.makeSnackbar(getView(), "收集信息失败 : " + message, Snackbar.LENGTH_LONG, R.color.md_yellow_500);
+                    mSnackbar = UIUtils.makeSnackbar(getView(), "收集信息失败 : " + message, Snackbar.LENGTH_LONG,
+                            ContextCompat.getColor(getContext(), R.color.md_yellow_500));
                     mSnackbar.setAction("重试", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

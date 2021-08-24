@@ -28,6 +28,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import net.jejer.hipda.BuildConfig;
@@ -47,13 +54,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-
 /**
  * Created by GreenSkinMonster on 2016-04-05.
  */
@@ -71,8 +71,7 @@ public class UIUtils {
     public static void errorSnack(View view, CharSequence message, CharSequence detail) {
         if (view != null) {
             makeSnack(view, message, detail, Snackbar.LENGTH_LONG,
-                    ContextCompat.getColor(HiApplication.getAppContext(),
-                            R.color.md_yellow_500))
+                    ContextCompat.getColor(HiApplication.getAppContext(), R.color.md_yellow_500))
                     .show();
         }
     }
@@ -80,8 +79,6 @@ public class UIUtils {
     private static Snackbar makeSnack(final View view, final CharSequence message, final CharSequence detail, int length, int textColor) {
         final Snackbar snackbar = Snackbar.make(view, message, length);
         setSnackbarMessageTextColor(snackbar, textColor);
-//        snackbar.setBackgroundTint(Color.DKGRAY);
-//        snackbar.setActionTextColor(Color.WHITE);
 
         if (!TextUtils.isEmpty(detail)) {
             snackbar.setAction("详情", new View.OnClickListener() {
@@ -101,8 +98,6 @@ public class UIUtils {
     public static Snackbar makeSnackbar(View view, CharSequence sequence, int duration, int textColor) {
         Snackbar snackbar = Snackbar.make(view, sequence, duration);
         setSnackbarMessageTextColor(snackbar, textColor);
-//        snackbar.setBackgroundTint(ContextCompat.getColor(view.getContext(), R.color.md_grey_800));
-//        snackbar.setActionTextColor(Color.WHITE);
         return snackbar;
     }
 
