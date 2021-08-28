@@ -119,7 +119,6 @@ public class ThreadDetailFragment extends BaseFragment {
     public static final int POSITION_HEADER = 1;
     public static final int POSITION_FOOTER = 2;
 
-    private Context mCtx;
     private String mTid;
     private String mAuthorId;
     private String mTitle;
@@ -182,8 +181,6 @@ public class ThreadDetailFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mCtx = getActivity();
-
         setHasOptionsMenu(true);
 
         if (getArguments() != null) {
@@ -222,7 +219,7 @@ public class ThreadDetailFragment extends BaseFragment {
         mRecyclerView = view.findViewById(R.id.rv_thread_details);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(null);
-        mLayoutManager = new SmoothLinearLayoutManager(mCtx);
+        mLayoutManager = new SmoothLinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new SimpleDivider(getActivity()));
 
@@ -230,8 +227,9 @@ public class ThreadDetailFragment extends BaseFragment {
         mRecyclerView.setHeaderState(XHeaderView.STATE_HIDDEN);
         mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
 
-        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(mCtx, new OnItemClickListener());
-        mDetailAdapter = new ThreadDetailAdapter(mCtx, this, itemClickListener,
+        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(), new OnItemClickListener());
+        mDetailAdapter = new ThreadDetailAdapter(this,
+                itemClickListener,
                 new GoToFloorOnClickListener(),
                 new AvatarOnClickListener(),
                 new WarningOnClickListener(),
@@ -242,17 +240,10 @@ public class ThreadDetailFragment extends BaseFragment {
         mRecyclerView.setXRecyclerListener(new XRecyclerView.XRecyclerListener() {
             @Override
             public void onHeaderReady() {
-//                mCurrentPage--;
-//                mGotoFloor = LAST_FLOOR;
-//                showOrLoadPage();
-//                prefetchPreviousPage();
             }
 
             @Override
             public void onFooterReady() {
-//                mCurrentPage++;
-//                mGotoFloor = FIRST_FLOOR;
-//                showOrLoadPage();
             }
 
             @Override
@@ -334,14 +325,6 @@ public class ThreadDetailFragment extends BaseFragment {
 //        setActionBarSubtitle(mCurrentPage > 0 && mMaxPage > 0 ? mCurrentPage + "/" + mMaxPage : "?");
 
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            mCtx = getActivity();
-        }
     }
 
     @Override
@@ -445,7 +428,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
                 return true;
             case R.id.action_copy_url:
-                ClipboardManager clipboard = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("THREAD URL FROM HiPDA", HiUtils.DetailListUrl + mTid);
                 clipboard.setPrimaryClip(clip);
                 UIUtils.toast("帖子地址已经复制到粘贴板");
@@ -472,15 +455,15 @@ public class ThreadDetailFragment extends BaseFragment {
                 return true;
             case R.id.action_add_favorite:
                 if (FavoriteHelper.getInstance().isInFavorite(mTid))
-                    FavoriteHelper.getInstance().removeFavorite(mCtx, FavoriteHelper.TYPE_FAVORITE, mTid);
+                    FavoriteHelper.getInstance().removeFavorite(getActivity(), FavoriteHelper.TYPE_FAVORITE, mTid);
                 else
-                    FavoriteHelper.getInstance().addFavorite(mCtx, FavoriteHelper.TYPE_FAVORITE, mTid);
+                    FavoriteHelper.getInstance().addFavorite(getActivity(), FavoriteHelper.TYPE_FAVORITE, mTid);
                 return true;
             case R.id.action_add_attention:
                 if (FavoriteHelper.getInstance().isInAttention(mTid))
-                    FavoriteHelper.getInstance().removeFavorite(mCtx, FavoriteHelper.TYPE_ATTENTION, mTid);
+                    FavoriteHelper.getInstance().removeFavorite(getActivity(), FavoriteHelper.TYPE_ATTENTION, mTid);
                 else
-                    FavoriteHelper.getInstance().addFavorite(mCtx, FavoriteHelper.TYPE_ATTENTION, mTid);
+                    FavoriteHelper.getInstance().addFavorite(getActivity(), FavoriteHelper.TYPE_ATTENTION, mTid);
                 return true;
             case R.id.action_show_all:
                 cancelAuthorOnlyMode();
@@ -534,7 +517,7 @@ public class ThreadDetailFragment extends BaseFragment {
     }
 
     private void startJob(int page, int fetchType, int loadingPosition) {
-        ThreadDetailJob job = new ThreadDetailJob(mCtx, mSessionId, mTid, mAuthorId, mGotoPostId, page, fetchType, loadingPosition);
+        ThreadDetailJob job = new ThreadDetailJob(getActivity(), mSessionId, mTid, mAuthorId, mGotoPostId, page, fetchType, loadingPosition);
         JobMgr.addJob(job);
     }
 
@@ -1211,7 +1194,7 @@ public class ThreadDetailFragment extends BaseFragment {
                                     }
                                     sb.append("\n\n");
                                     sb.append(doc.select("div.moreconf").text());
-                                    UIUtils.showMessageDialog(mCtx, title, sb.toString(), false);
+                                    UIUtils.showMessageDialog(getActivity(), title, sb.toString(), false);
                                 } catch (Exception e) {
                                     UIUtils.toast(OkHttpHelper.getErrorMessage(e).getMessage());
                                 }
@@ -1473,7 +1456,7 @@ public class ThreadDetailFragment extends BaseFragment {
                 hideQuickReply(false);
                 mMainFab.hide();
             } else {
-                postProgressDialog = HiProgressDialog.show(mCtx, "请稍候...");
+                postProgressDialog = HiProgressDialog.show(getActivity(), "请稍候...");
             }
         } else if (event.mStatus == Constants.STATUS_SUCCESS) {
             mEtReply.setText("");

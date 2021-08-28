@@ -77,15 +77,14 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
     private WeakHashMap<CompoundButton, Object> mPollOptionsHolder;
     private WeakReference<TextView> mVoteButtonHolder;
 
-    public ThreadDetailAdapter(Context context,
-                               ThreadDetailFragment detailFragment,
+    public ThreadDetailAdapter(ThreadDetailFragment detailFragment,
                                RecyclerItemClickListener itemClickListener,
                                Button.OnClickListener gotoFloorListener,
                                View.OnClickListener avatarListener,
                                View.OnClickListener warningListener,
                                View.OnClickListener votePollListener) {
-        mCtx = context;
-        mInflater = LayoutInflater.from(context);
+        mCtx = detailFragment.getActivity();
+        mInflater = LayoutInflater.from(mCtx);
         mItemClickListener = itemClickListener;
         mGoToFloorListener = gotoFloorListener;
         mAvatarListener = avatarListener;
@@ -98,7 +97,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         mBackgroundResource = typedArray.getResourceId(0, 0);
         typedArray.recycle();
 
-        mBackgroundColor = UIUtils.isInLightThemeMode(context)
+        mBackgroundColor = UIUtils.isInLightThemeMode(mCtx)
                 ? R.color.md_green_50 : R.color.md_blue_grey_900;
     }
 
@@ -351,7 +350,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
 
                     contentView.addView(threadImageLayout);
                 } else if (content instanceof ContentAttach) {
-                    TextViewWithEmoticon tv = (TextViewWithEmoticon) mInflater.inflate(R.layout.item_textview_withemoticon, null, false);
+                    TextViewWithEmoticon tv = new TextViewWithEmoticon(mCtx);
                     tv.setFragment(mDetailFragment);
                     tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                     tv.setText(content.getContent());
