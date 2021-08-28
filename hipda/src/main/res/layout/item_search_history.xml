@@ -21,19 +21,8 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
-        android:layout_toLeftOf="@+id/ib_remove"
         android:layout_toRightOf="@+id/icon"
-        android:textSize="18sp"/>
-
-    <ImageButton
-        android:id="@+id/ib_remove"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="4dp"
-        android:background="?selectableItemBackground"
-        android:padding="8dp"
-        android:scaleType="centerInside"/>
+        android:textSize="18sp"/>
 
 </RelativeLayout>
