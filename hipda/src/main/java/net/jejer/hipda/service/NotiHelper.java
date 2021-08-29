@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.text.TextUtils;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
@@ -35,9 +37,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.File;
-
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * parse and fetch notifications
@@ -156,14 +157,10 @@ public class NotiHelper {
     }
 
     public static void sendNotification(final Context context, final int threadCount, final int smsCount, final String username, final String uid, final String smsContent) {
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                sendNotificationInBackground(context, threadCount, smsCount, username, uid, smsContent);
-                return null;
-            }
-        }.execute();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            sendNotificationInBackground(context, threadCount, smsCount, username, uid, smsContent);
+        });
     }
 
 

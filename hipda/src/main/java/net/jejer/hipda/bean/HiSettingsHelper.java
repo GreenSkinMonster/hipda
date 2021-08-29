@@ -58,7 +58,6 @@ public class HiSettingsHelper {
     public static final String PERF_FORUMS = "PERF_FORUMS2";
     public static final String PERF_FREQ_MENUS = "PERF_FREQ_MENUS";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
-    public static final String PERF_OLD_BLACKLIST = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
     public static final String PERF_TEXTSIZE_TITLE_ADJ = "PERF_TEXTSIZE_TITLE_ADJ";
     public static final String PERF_SCREEN_ORIENTATION = "PERF_SCREEN_ORIENTATION";
@@ -138,7 +137,6 @@ public class HiSettingsHelper {
 
     private boolean mEncodeUtf8 = false;
 
-    private List<String> mOldBlacklists;
     private List<String> mBlacklists;
 
     private int mPostTextSizeAdj = 0;
@@ -315,7 +313,6 @@ public class HiSettingsHelper {
         getBSTypeIdFromPref();
         getForumServerFromPref();
         getImageHostFromPref();
-        getOldBlacklistsFromPref();
         getBlacklistsFromPref();
 
         updateMobileNetworkStatus(mCtx);
@@ -766,34 +763,6 @@ public class HiSettingsHelper {
         return mNotiTaskEnabled;
     }
 
-    public List<String> getOldBlacklists() {
-        return mOldBlacklists;
-    }
-
-    public void setOldBlacklists(List<String> blacklists) {
-        mOldBlacklists = blacklists;
-        StringBuilder sb = new StringBuilder();
-        for (String username : blacklists) {
-            if (!TextUtils.isEmpty(username)) {
-                if (sb.length() > 0)
-                    sb.append("\n");
-                sb.append(username);
-            }
-        }
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_OLD_BLACKLIST, sb.toString()).apply();
-    }
-
-    private List<String> getOldBlacklistsFromPref() {
-        String[] usernames = mSharedPref.getString(PERF_OLD_BLACKLIST, "").split("\n");
-        mOldBlacklists = new ArrayList<>();
-        for (String username : usernames) {
-            if (!TextUtils.isEmpty(username) && !mOldBlacklists.contains(username))
-                mOldBlacklists.add(username);
-        }
-        return mOldBlacklists;
-    }
-
     public List<String> getBlacklists() {
         if (mBlacklists == null)
             mBlacklists = new ArrayList<>();
@@ -825,7 +794,7 @@ public class HiSettingsHelper {
     }
 
     public boolean isInBlacklist(String username) {
-        return mBlacklists.contains(username) || mOldBlacklists.contains(username);
+        return mBlacklists.contains(username);
     }
 
     public void addToBlacklist(String username) {

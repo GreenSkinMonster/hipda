@@ -10,9 +10,9 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -91,6 +91,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainFrameActivity extends BaseActivity {
 
@@ -596,17 +598,12 @@ public class MainFrameActivity extends BaseActivity {
         final String username = HiSettingsHelper.getInstance().getUsername();
         progressDialog = HiProgressDialog.show(this, "<" + username + "> 正在登录...");
 
-        final LoginHelper loginHelper = new LoginHelper(this);
-
-        new AsyncTask<Void, Void, Integer>() {
-
-            @Override
-            protected Integer doInBackground(Void... voids) {
-                return loginHelper.login(true);
-            }
-
-            @Override
-            protected void onPostExecute(Integer result) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            final LoginHelper loginHelper = new LoginHelper(MainFrameActivity.this);
+            final int result = loginHelper.login(true);
+            handler.post(() -> {
                 if (result == Constants.STATUS_SUCCESS) {
                     UIUtils.toast("登录成功");
                     TaskHelper.runDailyTask(true);
@@ -614,16 +611,16 @@ public class MainFrameActivity extends BaseActivity {
                 } else {
                     if (result == Constants.STATUS_FAIL_ABORT) {
                         HiSettingsHelper.getInstance().removeProfile(username);
-                        HiSettingsHelper.getInstance().setUsername("");
-                        HiSettingsHelper.getInstance().setPassword("");
-                        HiSettingsHelper.getInstance().setSecQuestion("");
-                        HiSettingsHelper.getInstance().setSecAnswer("");
                     }
+                    HiSettingsHelper.getInstance().setUsername("");
+                    HiSettingsHelper.getInstance().setPassword("");
+                    HiSettingsHelper.getInstance().setSecQuestion("");
+                    HiSettingsHelper.getInstance().setSecAnswer("");
                     updateAccountHeader();
                     progressDialog.dismissError(loginHelper.getErrorMsg());
                 }
-            }
-        }.execute();
+            });
+        });
     }
 
     private void showRemoveProfileDialog(String username) {

@@ -37,7 +37,7 @@ public class LoginHelper {
     }
 
     public int login(boolean manual) {
-        int status = Constants.STATUS_FAIL_ABORT;
+        int status = Constants.STATUS_FAIL;
 
         if (HiSettingsHelper.getInstance().isLoginInfoValid()) {
             String formhash = getFormhash();

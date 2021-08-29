@@ -8,8 +8,9 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -54,6 +55,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan;
 import io.github.inflationx.calligraphy3.TypefaceUtils;
@@ -320,36 +323,28 @@ public class SettingNestedFragment extends BaseSettingFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                new AsyncTask<Void, Void, Exception>() {
-                                    @Override
-                                    protected Exception doInBackground(Void... voids) {
-                                        SettingMainFragment.mCacheCleared = true;
-                                        try {
-                                            OkHttpHelper.getInstance().clearCookies();
-                                            Utils.clearOkhttpCache();
-                                        } catch (Exception e) {
-                                            return e;
-                                        }
-                                        return null;
+                                mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
+                                ExecutorService executor = Executors.newSingleThreadExecutor();
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                executor.execute(() -> {
+                                    SettingMainFragment.mCacheCleared = true;
+                                    Exception error = null;
+                                    try {
+                                        OkHttpHelper.getInstance().clearCookies();
+                                        Utils.clearOkhttpCache();
+                                    } catch (Exception ex) {
+                                        error = ex;
                                     }
-
-                                    @Override
-                                    protected void onPreExecute() {
-                                        super.onPreExecute();
-                                        mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
-                                    }
-
-                                    @Override
-                                    protected void onPostExecute(Exception e) {
-                                        super.onPostExecute(e);
+                                    final Exception e = error;
+                                    handler.post(() -> {
                                         if (mProgressDialog != null) {
                                             if (e == null)
                                                 mProgressDialog.dismiss("网络缓存已经清除");
                                             else
                                                 mProgressDialog.dismissError("发生错误 : " + e.getMessage());
                                         }
-                                    }
-                                }.execute();
+                                    });
+                                });
                             }
                         })
                 .setNegativeButton(getResources().getString(android.R.string.cancel),
@@ -369,36 +364,28 @@ public class SettingNestedFragment extends BaseSettingFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                new AsyncTask<Void, Void, Exception>() {
-                                    @Override
-                                    protected Exception doInBackground(Void... voids) {
-                                        SettingMainFragment.mCacheCleared = true;
-                                        try {
-                                            GlideHelper.clearAvatarFiles();
-                                            Utils.clearExternalCache();
-                                        } catch (Exception e) {
-                                            return e;
-                                        }
-                                        return null;
+                                mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
+                                ExecutorService executor = Executors.newSingleThreadExecutor();
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                executor.execute(() -> {
+                                    Exception ee = null;
+                                    SettingMainFragment.mCacheCleared = true;
+                                    try {
+                                        GlideHelper.clearAvatarFiles();
+                                        Utils.clearExternalCache();
+                                    } catch (Exception ex) {
+                                        ee = ex;
                                     }
-
-                                    @Override
-                                    protected void onPreExecute() {
-                                        super.onPreExecute();
-                                        mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
-                                    }
-
-                                    @Override
-                                    protected void onPostExecute(Exception e) {
-                                        super.onPostExecute(e);
+                                    final Exception e = ee;
+                                    handler.post(() -> {
                                         if (mProgressDialog != null) {
                                             if (e == null)
                                                 mProgressDialog.dismiss("图片和头像缓存已经清除");
                                             else
                                                 mProgressDialog.dismissError("发生错误 : " + e.getMessage());
                                         }
-                                    }
-                                }.execute();
+                                    });
+                                });
                             }
                         })
                 .setNegativeButton(getResources().getString(android.R.string.cancel),
