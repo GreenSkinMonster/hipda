@@ -27,14 +27,6 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -95,6 +87,13 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Request;
 
 public class ThreadDetailFragment extends BaseFragment {
@@ -239,14 +238,6 @@ public class ThreadDetailFragment extends BaseFragment {
 
         mRecyclerView.setXRecyclerListener(new XRecyclerView.XRecyclerListener() {
             @Override
-            public void onHeaderReady() {
-            }
-
-            @Override
-            public void onFooterReady() {
-            }
-
-            @Override
             public void atEnd() {
                 mRecyclerView.setFooterState(XFooterView.STATE_LOADING);
                 refreshAtEnd();
@@ -322,7 +313,6 @@ public class ThreadDetailFragment extends BaseFragment {
         setUpEmojiPopup(mEtReply, ibEmojiSwitch);
 
         setActionBarTitle(mTitle);
-//        setActionBarSubtitle(mCurrentPage > 0 && mMaxPage > 0 ? mCurrentPage + "/" + mMaxPage : "?");
 
         return view;
     }
@@ -852,7 +842,7 @@ public class ThreadDetailFragment extends BaseFragment {
         btnNextPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_forward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
         btnPreviousPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_backward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
 
-        tvPage.setText("第 " + String.valueOf(gotoPageHolder[0]) + " / " + (mMaxPage) + " 页");
+        tvPage.setText("第 " + gotoPageHolder[0] + " / " + (mMaxPage) + " 页");
 
         btnPageBottom.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -1119,6 +1109,8 @@ public class ThreadDetailFragment extends BaseFragment {
                     if (position >= 0) {
                         mRecyclerView.scrollToPosition(position);
                     }
+                    //hack, make sure onScrollListener is called
+                    mRecyclerView.scrollBy(0, 1);
 
                     if (mPendingBlinkFloor > 0) {
                         int pos = mDetailAdapter.getPositionByFloor(mPendingBlinkFloor);
@@ -1138,9 +1130,6 @@ public class ThreadDetailFragment extends BaseFragment {
             if (gotoPage == mMaxPage) {
                 mRecyclerView.setFooterState(XFooterView.STATE_END);
             }
-//            else {
-//                mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
-//            }
 
         } else {
             int fetchType = FETCH_NORMAL;
@@ -1396,10 +1385,10 @@ public class ThreadDetailFragment extends BaseFragment {
                 }
             } else if (event.mLoadingPosition == POSITION_FOOTER) {
                 mFooterLoading = false;
-                if (details.getPage() == mMaxPage)
+                if (details.getPage() == mMaxPage) {
                     mRecyclerView.setFooterState(XFooterView.STATE_END);
-                if (event.mFectchType == FETCH_NEXT) {
-                    mRecyclerView.setFooterState(details.getPage() < mMaxPage ? XFooterView.STATE_READY : XFooterView.STATE_END);
+                } else if (event.mFectchType == FETCH_NEXT) {
+                    mRecyclerView.setFooterState(details.getPage() < mMaxPage ? XFooterView.STATE_HIDDEN : XFooterView.STATE_END);
                 }
                 mRecyclerView.post(() -> mDetailAdapter.addDatas(details));
             } else {

@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.jejer.hipda.R;
-import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Utils;
 
 import androidx.core.content.ContextCompat;
@@ -21,8 +20,7 @@ public class XHeaderView extends RelativeLayout {
 
     public final static int STATE_HIDDEN = 0;
     public final static int STATE_LOADING = 1;
-    public final static int STATE_READY = 2;
-    public final static int STATE_ERROR = 4;
+    public final static int STATE_ERROR = 2;
 
     private int mState = STATE_HIDDEN;
     private View mLayout;
@@ -49,12 +47,6 @@ public class XHeaderView extends RelativeLayout {
     protected void setState(int state) {
         mState = state;
         switch (state) {
-            case STATE_READY:
-                mProgressBar.setVisibility(GONE);
-                mTitle.setTextColor(ColorHelper.getTextColorSecondary(getContext()));
-                mTitle.setVisibility(VISIBLE);
-                break;
-
             case STATE_LOADING:
                 mTitle.setVisibility(GONE);
                 mProgressBar.setVisibility(VISIBLE);
@@ -81,11 +73,6 @@ public class XHeaderView extends RelativeLayout {
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mLayout.getLayoutParams();
         lp.topMargin = margin;
         mLayout.setLayoutParams(lp);
-    }
-
-    protected int getTopMargin() {
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mLayout.getLayoutParams();
-        return lp.topMargin;
     }
 
 }
