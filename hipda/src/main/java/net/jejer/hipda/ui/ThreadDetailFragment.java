@@ -24,6 +24,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -826,49 +827,33 @@ public class ThreadDetailFragment extends BaseFragment {
         final View view = inflater.inflate(R.layout.dialog_goto_page, null);
         TextView tvTitle = view.findViewById(R.id.tv_title);
         final TextView tvPage = view.findViewById(R.id.tv_page);
-        final ImageButton btnFirstPage = view.findViewById(R.id.btn_fisrt_page);
-        final ImageButton btnLastPage = view.findViewById(R.id.btn_last_page);
-        final ImageButton btnNextPage = view.findViewById(R.id.btn_next_page);
-        final ImageButton btnPreviousPage = view.findViewById(R.id.btn_previous_page);
+        final ImageView btnFirstPage = view.findViewById(R.id.btn_fisrt_page);
+        final ImageView btnLastPage = view.findViewById(R.id.btn_last_page);
+        final ImageView btnNextPage = view.findViewById(R.id.btn_next_page);
+        final ImageView btnPreviousPage = view.findViewById(R.id.btn_previous_page);
         final SeekBar sbGotoPage = view.findViewById(R.id.sb_page);
-        Button btnPageBottom = view.findViewById(R.id.btn_page_bottom);
-        Button btnGoto = view.findViewById(R.id.btn_goto_page);
 
         final BottomSheetDialog dialog = new BottomDialog(getActivity());
 
         tvTitle.setText(mTitle);
-        btnFirstPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_fast_backward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
-        btnLastPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_fast_forward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
-        btnNextPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_forward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
-        btnPreviousPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_backward).sizeDp(24).color(ColorHelper.getColorAccent(getActivity())));
+        btnFirstPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_fast_backward).sizeDp(24).paddingDp(4)
+                .color(ColorHelper.getColorAccent(getActivity())));
+        btnLastPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_fast_forward).sizeDp(24).paddingDp(4)
+                .color(ColorHelper.getColorAccent(getActivity())));
+        btnNextPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_forward).sizeDp(24).paddingDp(4)
+                .color(ColorHelper.getColorAccent(getActivity())));
+        btnPreviousPage.setImageDrawable(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_step_backward).sizeDp(24).paddingDp(4)
+                .color(ColorHelper.getColorAccent(getActivity())));
 
         tvPage.setText("第 " + gotoPageHolder[0] + " / " + (mMaxPage) + " 页");
 
-        btnPageBottom.setOnClickListener(new OnSingleClickListener() {
-            @Override
-            public void onSingleClick(View v) {
-                prefetchNextPage();
-                scrollToBottom();
-                dialog.dismiss();
-            }
-        });
-        btnGoto.setOnClickListener(new OnSingleClickListener() {
-            @Override
-            public void onSingleClick(View v) {
-                mGotoPage = gotoPageHolder[0];
-                mGotoFloor = FIRST_FLOOR_OF_PAGE;
-                showOrLoadPage();
-                dialog.dismiss();
-            }
-        });
-
         sbGotoPage.setMax(mMaxPage - 1);
-        sbGotoPage.setProgress(mViewBeginPage - 1);
+        sbGotoPage.setProgress(mViewEndPage - 1);
         sbGotoPage.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 gotoPageHolder[0] = progress + 1; //start from 0
-                tvPage.setText("第 " + String.valueOf(gotoPageHolder[0]) + " / " + (mMaxPage) + " 页");
+                tvPage.setText("第 " + gotoPageHolder[0] + " / " + (mMaxPage) + " 页");
             }
 
             @Override
@@ -877,6 +862,9 @@ public class ThreadDetailFragment extends BaseFragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar arg0) {
+                mGotoPage = gotoPageHolder[0];
+                mGotoFloor = FIRST_FLOOR_OF_PAGE;
+                showOrLoadPage();
             }
         });
 
@@ -906,10 +894,10 @@ public class ThreadDetailFragment extends BaseFragment {
                 mGotoPage = mViewBeginPage;
                 if (mGotoPage < mMaxPage) {
                     mGotoPage++;
+                    sbGotoPage.setProgress(mGotoPage - 1);
                     mGotoFloor = FIRST_FLOOR_OF_PAGE;
                     showOrLoadPage();
                 }
-                dialog.dismiss();
             }
         });
 
@@ -919,10 +907,10 @@ public class ThreadDetailFragment extends BaseFragment {
                 mGotoPage = mViewBeginPage;
                 if (mGotoPage > 1) {
                     mGotoPage--;
+                    sbGotoPage.setProgress(mGotoPage - 1);
                     mGotoFloor = FIRST_FLOOR_OF_PAGE;
                     showOrLoadPage();
                 }
-                dialog.dismiss();
             }
         });
 
