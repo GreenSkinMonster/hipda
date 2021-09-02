@@ -21,11 +21,6 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentAbs;
 import net.jejer.hipda.bean.ContentAttach;
@@ -54,6 +49,11 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
+
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by GreenSkinMonster on 2016-11-08.
@@ -461,7 +461,8 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
             mPollOptionsHolder = new WeakHashMap<>();
             int pxOf4Dp = Utils.dpToPx(4);
             int layoutFullWidth = UIUtils.getScreenWidth(mCtx)
-                    - (int) mCtx.getResources().getDimension(R.dimen.thread_detail_padding);
+                    - (int) mCtx.getResources().getDimension(R.dimen.thread_detail_padding)
+                    - 2 * pxOf4Dp;
 
             final PollBean pollBean = detail.getPoll();
             TextViewWithEmoticon tvPoll = new TextViewWithEmoticon(mCtx);
@@ -487,9 +488,11 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                             if (count >= 1 && count <= pollBean.getMaxAnswer()) {
                                 voteButton.setEnabled(true);
                                 voteButton.getBackground().setColorFilter(null);
+                                voteButton.setTextColor(Color.WHITE);
                             } else {
                                 voteButton.setEnabled(false);
                                 voteButton.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+                                voteButton.setTextColor(Color.GRAY);
                             }
                         }
                     }
@@ -570,7 +573,6 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                 if (voteable) {
                     TextView button = new AppCompatTextView(mCtx);
                     button.setText("投票");
-                    button.setTextColor(ContextCompat.getColor(mCtx, R.color.md_white_1000));
                     button.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
                     button.setBackground(ContextCompat.getDrawable(mCtx, R.drawable.lable_background));
                     button.setEnabled(false);
@@ -579,7 +581,6 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                             = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     layoutParams.setMargins(pxOf4Dp, 4 * pxOf4Dp, pxOf4Dp, pxOf4Dp);
                     button.setLayoutParams(layoutParams);
-                    button.setGravity(Gravity.CENTER);
                     button.setOnClickListener(new OnSingleClickListener() {
                         @Override
                         public void onSingleClick(View v) {

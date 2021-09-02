@@ -82,6 +82,7 @@
         android:orientation="vertical"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
+        android:gravity="center_horizontal"
         app:layout_constraintTop_toBottomOf="@+id/post_status" />
 
     <LinearLayout

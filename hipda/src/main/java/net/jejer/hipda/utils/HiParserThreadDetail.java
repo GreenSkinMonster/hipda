@@ -3,8 +3,6 @@ package net.jejer.hipda.utils;
 import android.content.Context;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-
 import com.vdurmont.emoji.EmojiParser;
 
 import net.jejer.hipda.bean.ContentImg;
@@ -28,6 +26,8 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+
+import androidx.annotation.NonNull;
 
 public class HiParserThreadDetail {
 
@@ -239,8 +239,12 @@ public class HiParserThreadDetail {
                             }
                         }
                         Element lastTr = pollEl.select("div.pollchart > table > tbody > tr").last();
-                        if (lastTr != null && lastTr.select("td").size() == 1) {
-                            pollBean.setFooter(lastTr.select("td").first().html());
+                        if (lastTr != null && lastTr.select("td").size() >= 1) {
+                            Element lastTd = lastTr.select("td").last();
+                            if (lastTd != null) {
+                                lastTd.select("button").remove();
+                                pollBean.setFooter(lastTd.text());
+                            }
                         }
 
                         pollBean.setPollOptions(options);
