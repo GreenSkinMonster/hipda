@@ -198,23 +198,29 @@ public class ThreadImageLayout extends BaseImageLayout {
             Point globalOffset = new Point();
             mImageView.getGlobalVisibleRect(new Rect(), globalOffset);
 
+            ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
+
             int x = globalOffset.x;
             int y = globalOffset.y;
             int w = mImageView.getMeasuredWidth();
             int h = mImageView.getMeasuredHeight();
 
-            Rect rect = new Rect(x, y, x + w, y + h);
+            int bitmapWidth = Math.round((float) imageInfo.getBitmapWidth() * imageInfo.getViewHeight() / imageInfo.getBitmapHeight());
+            if (bitmapWidth > w)
+                bitmapWidth = w;
+
+            int bitmapX = x + (w - bitmapWidth) / 2;
+            Rect rect = new Rect(bitmapX, y, bitmapX + bitmapWidth, y + h);
+
             int screenWidth = UIUtils.getScreenWidth(getContext());
             int screenHeight = UIUtils.getScreenHeight(getContext());
 
-            int startWidth = w;
+            int startWidth = bitmapWidth;
             int startHeight = Math.round((float) startWidth / screenWidth * screenHeight);
 
-            int imageCenterX = x + w / 2;
             int imageCenterY = y + h / 2;
-            int newActivityX = imageCenterX - startWidth / 2;
             int newActivityY = imageCenterY - startHeight / 2;
-            int startX = newActivityX - x;
+            int startX = bitmapX - x;
             int startY = newActivityY - y;
 
             Intent intent = new Intent(getContext(), ImageViewerActivity.class);

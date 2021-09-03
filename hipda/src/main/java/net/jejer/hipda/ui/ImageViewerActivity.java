@@ -154,7 +154,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         Rect rect = getSourceRect(view.getUrl());
         int x = 0;
         int y = 0;
-        float scale = 0.2f;
+        float scale = 0.5f;
 
         if (rect != null) {
             x = rect.centerX() - view.getMeasuredWidth() / 2;
