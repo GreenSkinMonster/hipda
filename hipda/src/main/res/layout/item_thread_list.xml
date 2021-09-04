@@ -1,10 +1,10 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:app="http://schemas.android.com/apk/res-auto"
-       xmlns:tools="http://schemas.android.com/tools"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       tools:orientation="vertical"
-       tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:orientation="vertical"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <ImageView
         android:id="@+id/iv_avatar"
@@ -12,7 +12,7 @@
         android:layout_height="@dimen/avatar_size"
         android:padding="2dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_username"
@@ -24,37 +24,39 @@
         android:textColor="?attr/colorAccent"
         android:textSize="@dimen/author_text_size"
         app:layout_constraintStart_toEndOf="@+id/iv_avatar"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_thread_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/tv_image_indicator"
+        android:layout_toLeftOf="@+id/iv_indicator"
         android:layout_toRightOf="@+id/tv_username"
         android:gravity="right"
         android:maxLines="1"
-        android:paddingBottom="1dp"
         android:paddingLeft="4dp"
-        android:paddingRight="4dp"
         android:paddingTop="1dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="1dp"
         android:text=""
         android:textColor="?android:textColorSecondary"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_replycounter"
-        app:layout_constraintEnd_toStartOf="@+id/tv_image_indicator"
-        app:layout_constraintTop_toTopOf="@+id/tv_replycounter"/>
+        app:layout_constraintEnd_toStartOf="@+id/iv_indicator"
+        app:layout_constraintTop_toTopOf="@+id/tv_replycounter" />
 
     <ImageView
-        android:id="@+id/tv_image_indicator"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
+        android:id="@+id/iv_indicator"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_toLeftOf="@+id/tv_replycounter"
-        android:src="@drawable/ic_picture"
+        android:padding="1dp"
+        android:scaleType="fitCenter"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/tv_replycounter"
         app:layout_constraintEnd_toStartOf="@+id/tv_replycounter"
-        app:layout_constraintTop_toTopOf="@+id/tv_replycounter"/>
+        app:layout_constraintTop_toTopOf="@+id/tv_replycounter"
+        app:tint="@color/hipda" />
 
     <TextView
         android:id="@+id/tv_replycounter"
@@ -67,7 +69,7 @@
         android:textColor="?android:textColorSecondary"
         android:textSize="@dimen/info_text_size"
         app:layout_constraintBaseline_toBaselineOf="@+id/tv_username"
-        app:layout_constraintEnd_toStartOf="@+id/tv_create_time"/>
+        app:layout_constraintEnd_toStartOf="@+id/tv_create_time" />
 
     <TextView
         android:id="@+id/tv_create_time"
@@ -79,7 +81,7 @@
         android:textColor="?android:textColorSecondary"
         android:textSize="@dimen/info_text_size"
         app:layout_constraintBaseline_toBaselineOf="@+id/tv_username"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/tv_title"
@@ -90,6 +92,6 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_username"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_username" />
 
 </merge>

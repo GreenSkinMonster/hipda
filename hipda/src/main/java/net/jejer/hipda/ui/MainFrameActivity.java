@@ -109,7 +109,6 @@ public class MainFrameActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UIUtils.setActivityTheme(this);
 
         setContentView(R.layout.activity_main_frame);
         mRootView = findViewById(R.id.main_activity_root_view);

@@ -21,6 +21,11 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentAbs;
 import net.jejer.hipda.bean.ContentAttach;
@@ -49,11 +54,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
-
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by GreenSkinMonster on 2016-11-08.
@@ -461,7 +461,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
             mPollOptionsHolder = new WeakHashMap<>();
             int pxOf4Dp = Utils.dpToPx(4);
             int layoutFullWidth = UIUtils.getScreenWidth(mCtx)
-                    - (int) mCtx.getResources().getDimension(R.dimen.thread_detail_padding)
+                    - 2 * (int) mCtx.getResources().getDimension(R.dimen.thread_detail_padding)
                     - 2 * pxOf4Dp;
 
             final PollBean pollBean = detail.getPoll();

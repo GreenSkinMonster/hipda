@@ -55,34 +55,36 @@ public class HiParserThreadList {
             Element tbodyE = tbodyES.get(i);
             ThreadBean thread = new ThreadBean();
 
-            /* title and tid */
-            String[] idSpil = tbodyE.attr("id").split("_");
-            if (idSpil.length != 2) {
-                continue;
+            boolean sticky = false;
+            Element folderTd = tbodyE.select("td.folder").first();
+            if (folderTd != null) {
+                Element imgEl = folderTd.select("img").first();
+                sticky = imgEl != null && imgEl.attr("src").contains("/pin_");
             }
-            String idType = idSpil[0];
-            String idNum = idSpil[1];
-
-            thread.setTid(idNum);
-            // is stick thread or normal thread
-            boolean isStick = idType.startsWith("stickthread");
-            Elements images = tbodyE.select("img");
-            if (images.size() > 0) {
-                String src = images.get(0).attr("src");
-                isStick = src.contains("/pin");
-            }
-            thread.setIsStick(isStick);
-
-            if (isStick && !HiSettingsHelper.getInstance().isShowStickThreads()) {
+            thread.setSticky(sticky);
+            if (sticky && !HiSettingsHelper.getInstance().isShowStickThreads()) {
                 continue;
             }
 
-            Elements titleES = tbodyE.select("span#thread_" + idNum + " a");
-            if (titleES.size() == 0) {
-                continue;
+            boolean isPoll = false;
+            Element iconTd = tbodyE.select("td.icon").first();
+            if (iconTd != null) {
+                Element imgEl = iconTd.select("img").first();
+                isPoll = imgEl != null && imgEl.attr("src").contains("/poll");
             }
+            thread.setPoll(isPoll);
+
+            Element subjectTh = tbodyE.select("th.subject").first();
+            if (subjectTh == null)
+                continue;
+            Elements titleES = subjectTh.select("span a");
+            if (titleES.size() == 0)
+                continue;
+
             Element titleLink = titleES.first();
             String title = titleLink.text();
+            String tid = Utils.getMiddleString(titleLink.attr("href"), "tid=", "&");
+            thread.setTid(tid);
             thread.setTitle(EmojiParser.parseToUnicode(title));
 
             String linkStyle = titleLink.attr("style");
@@ -90,18 +92,20 @@ public class HiParserThreadList {
                 thread.setTitleColor(Utils.getMiddleString(linkStyle, "color:", "").trim());
             }
 
-            Elements typeES = tbodyE.select("th.subject em a");
+            Elements typeES = subjectTh.select("em a");
             if (typeES.size() > 0) {
                 thread.setType(typeES.text());
             }
 
-            Elements threadIsNewES = tbodyE.select("td.folder img");
-            if (threadIsNewES.size() > 0) {
-                String imgSrc = Utils.nullToText(threadIsNewES.first().attr("src"));
-                thread.setNew(imgSrc.contains("new"));
+            if (folderTd != null) {
+                Elements threadIsNewES = folderTd.select("img");
+                if (threadIsNewES.size() > 0) {
+                    String imgSrc = Utils.nullToText(threadIsNewES.first().attr("src"));
+                    thread.setNew(imgSrc.contains("new"));
+                }
             }
 
-			/*  author, authorId and create_time  */
+            /*  author, authorId and create_time  */
             Elements authorES = tbodyE.select("td.author");
             if (authorES.size() == 0) {
                 continue;
@@ -138,7 +142,7 @@ public class HiParserThreadList {
                 thread.setTimeUpdate(threadUpdateTime);
             }
 
-			/*  comments and views  */
+            /*  comments and views  */
             Elements nums = tbodyE.select("td.nums");
             if (nums.size() == 0) {
                 continue;
@@ -174,10 +178,7 @@ public class HiParserThreadList {
                     continue;
                 }
                 if (attach_img_url.endsWith("image_s.gif")) {
-                    thread.setHavePic(true);
-                }
-                if (attach_img_url.endsWith("common.gif")) {
-                    thread.setHaveAttach(true);
+                    thread.setWithPic(true);
                 }
             }
 
