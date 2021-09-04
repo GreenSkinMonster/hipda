@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
             android:drawableTint="@color/black"
+            android:minWidth="108dp"
             android:tag="light"
             android:text="浅色主题"
             android:textColor="@color/black" />
@@ -27,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/icon_blue"
+            android:minWidth="108dp"
             android:tag="auto"
             android:text="跟随系统"
             android:textColor="@color/white" />
@@ -36,6 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/black"
+            android:minWidth="108dp"
             android:tag="dark"
             android:text="深色主题"
             android:textColor="@color/white" />
@@ -86,5 +89,29 @@
             android:columnCount="@integer/theme_grid_column_count" />
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_navbar_colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="导航栏着色" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_apply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:backgroundTint="@color/icon_blue"
+            android:text="应用"
+            android:textColor="@color/white" />
+
+    </RelativeLayout>
 
 </LinearLayout>

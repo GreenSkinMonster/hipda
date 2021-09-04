@@ -766,12 +766,12 @@ public class MainFrameActivity extends BaseActivity {
 
     public void recreateActivity() {
         HiUtils.updateBaseUrls();
-        UIUtils.setLightDarkThemeMode();
         //avoid “RuntimeException: Performing pause of activity that is not resumed”
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 try {
+                    UIUtils.setLightDarkThemeMode();
                     getWindow().setWindowAnimations(R.style.ThemeTransitionAnimation);
                     recreate();
                 } catch (Exception e) {

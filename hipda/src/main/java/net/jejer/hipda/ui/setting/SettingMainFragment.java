@@ -30,7 +30,6 @@ public class SettingMainFragment extends BaseSettingFragment {
     private int mScreenOrietation;
     private List<Integer> mForums;
     private Set<String> mFreqMenus;
-    private boolean mNavBarColored;
     private String mFont;
     static boolean mCacheCleared;
     private String mForumServer;
@@ -73,7 +72,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
         mForums = HiSettingsHelper.getInstance().getForums();
         mFreqMenus = HiSettingsHelper.getInstance().getFreqMenus();
-        mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
         mFont = HiSettingsHelper.getInstance().getFont();
         mForumServer = HiSettingsHelper.getInstance().getForumServer();
         mCircleAvatar = HiSettingsHelper.getInstance().isCircleAvatar();
@@ -108,7 +106,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         } else if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || !HiSettingsHelper.getInstance().getFreqMenus().equals(mFreqMenus)
-                || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
                 || !HiSettingsHelper.getInstance().getForumServer().equals(mForumServer)) {
             HiApplication.setSettingStatus(HiApplication.RECREATE);
         } else {

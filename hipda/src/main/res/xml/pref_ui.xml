@@ -5,11 +5,6 @@
         android:title="@string/pref_category_theme"
         android:summary="主题及颜色设置已移至左侧菜单栏上方">
 
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="PERF_NAVBAR_COLORED"
-            android:title="@string/pref_title_navbar_colored" />
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_avatar">
