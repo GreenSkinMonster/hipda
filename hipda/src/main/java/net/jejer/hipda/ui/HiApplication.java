@@ -44,9 +44,9 @@ public class HiApplication extends Application implements Application.ActivityLi
         context = getApplicationContext();
         registerActivityLifecycleCallbacks(this);
 
-        if (HiSettingsHelper.getInstance().isErrorReportMode()) {
-            Thread.setDefaultUncaughtExceptionHandler(new SimpleExceptionHandler());
-        }
+//        if (HiSettingsHelper.getInstance().isErrorReportMode()) {
+        Thread.setDefaultUncaughtExceptionHandler(new SimpleExceptionHandler());
+//        }
 
         UIUtils.setLightDarkThemeMode();
         updated = UpdateHelper.updateApp();

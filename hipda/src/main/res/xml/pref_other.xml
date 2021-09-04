@@ -5,7 +5,7 @@
 
         <Preference
             android:key="PERF_FORUM_SERVER"
-            android:title="@string/pref_title_forum_server"/>
+            android:title="@string/pref_title_forum_server" />
 
         <SwitchPreference
             android:defaultValue="false"
@@ -13,11 +13,16 @@
             android:title="@string/pref_error_report_mode"
             android:summary="@string/pref_summary_error_report" />
 
+        <Preference
+            android:key="PERF_CRASH_LOGS"
+            android:title="@string/pref_crash_logs"
+            android:summary="@string/pref_summary_crash_logs" />
+
         <SwitchPreference
             android:defaultValue="false"
             android:key="PERF_ENCODEUTF8"
             android:summary="@string/pref_summary_encode_utf8"
-            android:title="@string/pref_title_encode_utf8"/>
+            android:title="@string/pref_title_encode_utf8" />
 
     </PreferenceCategory>
 

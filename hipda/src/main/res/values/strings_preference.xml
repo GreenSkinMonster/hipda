@@ -164,7 +164,7 @@
         <item>1024</item>
     </string-array>
 
-    <string-array name="empty_array"/>
+    <string-array name="empty_array" />
 
     <string name="pref_category_forum">论坛选项</string>
     <string name="pref_category_tail">小尾巴</string>
@@ -239,6 +239,8 @@
     <string name="pref_title_forum_server">论坛服务器</string>
     <string name="pref_summary_auto_load_thumb">缩略图为论坛自动生成，一般为200KB以下，点击缩略图或者保存、分享时会加载原图</string>
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
-    <string name="pref_summary_error_report">显示更详细的错误信息，程序崩溃时尝试将错误信息保存至粘贴板</string>
+    <string name="pref_summary_error_report">显示更详细的错误信息</string>
+    <string name="pref_crash_logs">应用错误日志</string>
+    <string name="pref_summary_crash_logs">应用崩溃时自动产生的日志，请在客户端帖子中反馈给开发者</string>
 
 </resources>

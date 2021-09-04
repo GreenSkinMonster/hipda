@@ -25,6 +25,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.documentfile.provider.DocumentFile;
@@ -281,6 +282,16 @@ public class SettingNestedFragment extends BaseSettingFragment {
                         return true;
                     }
                 });
+
+                Preference crashLogsPreference = findPreference(HiSettingsHelper.PERF_CRASH_LOGS);
+                crashLogsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        showCrashLogsDialog();
+                        return true;
+                    }
+                });
+
                 break;
             default:
                 break;
@@ -573,6 +584,125 @@ public class SettingNestedFragment extends BaseSettingFragment {
             ViewHolderImpl(View itemView) {
                 super(itemView);
                 btnFont = itemView.findViewById(R.id.btn_font);
+            }
+        }
+    }
+
+    private void showCrashLogsDialog() {
+        List<File> logs = new ArrayList<>();
+        try {
+            File dir = Utils.getLogsDir();
+            File[] files = dir.listFiles();
+            if (files != null) {
+                Arrays.sort(files, (f1, f2) ->
+                        Long.compare(f2.lastModified(), f1.lastModified()));
+                logs.addAll(Arrays.asList(files));
+            }
+        } catch (Exception e) {
+            UIUtils.errorSnack(getView(), "发生错误", Utils.getStackTrace(e));
+            return;
+        }
+
+        if (logs.size() == 0) {
+            UIUtils.showMessageDialog(getContext(), "", "没有应用错误日志", false);
+            return;
+        }
+
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View viewlayout = inflater.inflate(R.layout.dialog_crash_logs, null);
+
+        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(),
+                new RecyclerItemClickListener.SimpleOnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        super.onItemClick(view, position);
+                        try {
+                            File logFile = logs.get(position);
+                            String content = Utils.readFileContent(logFile);
+                            UIUtils.showMessageDialog(getContext(), logFile.getName(), content, true);
+                        } catch (Exception e) {
+                            UIUtils.toast("不能打开文件 : " + e.getMessage());
+                        }
+                    }
+                });
+        BaseRvAdapter<File> logsAdapter = new LogsAdapter(getContext(), itemClickListener);
+        logsAdapter.setDatas(logs);
+        final RecyclerView recyclerView = viewlayout.findViewById(R.id.rv_logs);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(logsAdapter);
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback
+                = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int position = viewHolder.getAdapterPosition();
+                File logFile = logs.get(position);
+                try {
+                    boolean result = logFile.delete();
+                    if (result) {
+                        UIUtils.toast(logFile.getName() + " 已经删除");
+                        logs.remove(position);
+                        logsAdapter.notifyItemRemoved(position);
+                    } else {
+                        UIUtils.toast(logFile.getName() + " 删除失败");
+                    }
+                } catch (Exception exception) {
+                    UIUtils.errorSnack(getView(), logFile.getName() + " 删除失败", exception.getMessage());
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(viewlayout);
+
+        builder.setTitle(R.string.pref_crash_logs)
+                .setPositiveButton(getResources().getString(android.R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private static class LogsAdapter extends BaseRvAdapter<File> {
+
+        private final LayoutInflater mInflater;
+
+        LogsAdapter(Context context, RecyclerItemClickListener itemClickListener) {
+            mInflater = LayoutInflater.from(context);
+            mItemClickListener = itemClickListener;
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolderImpl(ViewGroup parent, int viewType) {
+            return new LogsAdapter.ViewHolderImpl(mInflater.inflate(R.layout.item_log, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolderImpl(RecyclerView.ViewHolder viewHolder, final int position) {
+            final LogsAdapter.ViewHolderImpl holder = (LogsAdapter.ViewHolderImpl) viewHolder;
+            holder.tvLog.setText(getItem(position).getName());
+        }
+
+        private class ViewHolderImpl extends RecyclerView.ViewHolder {
+            AppCompatTextView tvLog;
+
+            ViewHolderImpl(View itemView) {
+                super(itemView);
+                tvLog = itemView.findViewById(R.id.tv_log);
             }
         }
     }

@@ -38,6 +38,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -559,6 +561,18 @@ public class Utils {
         return sb.toString();
     }
 
+    public static String readFileContent(File file) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            StringBuilder sb = new StringBuilder();
+            String line = reader.readLine();
+            while (line != null) {
+                sb.append(line).append(System.lineSeparator());
+                line = reader.readLine();
+            }
+            return sb.toString();
+        }
+    }
+
     public static String getDeviceInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append("设备名称 : ");
@@ -667,9 +681,9 @@ public class Utils {
         return sw.toString();
     }
 
-    public static File getSubCacheDir(String subDir) throws IOException {
-        File cacheDir = HiApplication.getAppContext().getCacheDir();
-        File subCacheDir = new File(cacheDir, subDir);
+    public static File getFilesSubDir(String subDir) throws IOException {
+        File filesDir = HiApplication.getAppContext().getFilesDir();
+        File subCacheDir = new File(filesDir, subDir);
         if (!subCacheDir.exists()) {
             subCacheDir.mkdirs();
         }
@@ -677,7 +691,23 @@ public class Utils {
     }
 
     public static File getFontsDir() throws IOException {
-        return getSubCacheDir("fonts");
+        return getFilesSubDir("fonts");
+    }
+
+    public static File getLogsDir() throws IOException {
+        return getFilesSubDir("logs");
+    }
+
+    public static void saveCrashLog(Throwable t) {
+        try {
+            String dateTime = Utils.formatDate(new Date(), "yyyyMMdd-HHmmss");
+            File logFile = new File(getLogsDir(), "crash-" + dateTime + ".log");
+            FileWriter writer = new FileWriter(logFile);
+            writer.write(Utils.getDeviceInfo() + System.lineSeparator() + getStackTrace(t));
+            writer.close();
+        } catch (Exception e) {
+            Logger.e(e);
+        }
     }
 
 }

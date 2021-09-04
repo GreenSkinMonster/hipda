@@ -134,6 +134,7 @@ public class UIUtils {
                             ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                             ClipData clip = ClipData.newPlainText("COPY FROM HiPDA", detail);
                             clipboard.setPrimaryClip(clip);
+                            UIUtils.toast("内容已复制");
                         }
                     });
         }
