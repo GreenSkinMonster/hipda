@@ -1,8 +1,12 @@
 package net.jejer.hipda.async;
 
-import android.content.Context;
+import static net.jejer.hipda.okhttp.OkHttpHelper.getErrorMessage;
+import static net.jejer.hipda.okhttp.OkHttpHelper.getInstance;
+
 import android.os.AsyncTask;
 import android.text.TextUtils;
+
+import androidx.appcompat.app.AlertDialog;
 
 import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.utils.Constants;
@@ -16,17 +20,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
-import androidx.appcompat.app.AlertDialog;
-
-import static net.jejer.hipda.okhttp.OkHttpHelper.getErrorMessage;
-import static net.jejer.hipda.okhttp.OkHttpHelper.getInstance;
-
 public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
 
     private static long LAST_SMS_TIME = 0;
     private static final long SMS_DELAY_IN_SECS = 15;
 
-    private Context mCtx;
     private String mUid;
     private String mUsername;
 
@@ -36,8 +34,7 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
     private SmsPostListener mPostListenerCallback;
     private AlertDialog mDialog;
 
-    public PostSmsAsyncTask(Context ctx, String uid, String username, SmsPostListener postListener, AlertDialog dialog) {
-        mCtx = ctx;
+    public PostSmsAsyncTask(String uid, String username, SmsPostListener postListener, AlertDialog dialog) {
         mUid = uid;
         mUsername = username;
         mPostListenerCallback = postListener;
@@ -49,41 +46,23 @@ public class PostSmsAsyncTask extends AsyncTask<String, Void, Void> {
         String content = arg0[0];
 
         // fetch a new page and parse formhash
-        String rsp_str = "";
-        Boolean done = false;
-        int retry = 0;
-        do {
-            try {
-                rsp_str = getInstance().get((HiUtils.SMSPreparePostUrl + mUid));
-                if (!TextUtils.isEmpty(rsp_str)) {
-                    if (!LoginHelper.checkLoggedin(mCtx, rsp_str)) {
-                        int status = new LoginHelper(mCtx).login();
-                        if (status == Constants.STATUS_FAIL_ABORT) {
-                            break;
-                        }
-                    } else {
-                        done = true;
-                    }
-                }
-            } catch (Exception e) {
-                mResult = getErrorMessage(e).getMessage();
-            }
-            retry++;
-        } while (!done && retry < 3);
+        try {
+            String rspStr = getInstance().get((HiUtils.SMSPreparePostUrl + mUid));
 
-        if (done) {
-            Document doc = Jsoup.parse(rsp_str);
+            Document doc = Jsoup.parse(rspStr);
             Elements formhashES = doc.select("input#formhash");
             if (formhashES.size() == 0) {
-                mResult = "SMS send fail, can not get formhash.";
+                mResult = "无法获取发送凭据";
                 return null;
             } else {
                 mFormhash = formhashES.first().attr("value");
             }
-            // do post
-            doPost(content);
+        } catch (Exception e) {
+            Logger.e(e);
+            mResult = "无法获取发送凭据，" + getErrorMessage(e).getMessage();
         }
 
+        doPost(content);
         return null;
     }
 

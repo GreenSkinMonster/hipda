@@ -12,7 +12,6 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -104,7 +103,7 @@ public class MainFrameActivity extends BaseActivity {
 
     private NetworkStateReceiver mNetworkReceiver;
     private LoginDialog mLoginDialog;
-    private HiProgressDialog progressDialog;
+    private HiProgressDialog mLoginProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -425,8 +424,8 @@ public class MainFrameActivity extends BaseActivity {
                 ((ThreadListFragment) fg).notifyDataSetChanged();
             }
         } else {
-            if (!LoginHelper.isLoggedIn())
-                showLoginDialog();
+//            if (!LoginHelper.isLoggedIn())
+//                showLoginDialog();
         }
     }
 
@@ -594,31 +593,10 @@ public class MainFrameActivity extends BaseActivity {
     }
 
     public void doLoginProgress() {
-        final String username = HiSettingsHelper.getInstance().getUsername();
-        progressDialog = HiProgressDialog.show(this, "<" + username + "> 正在登录...");
-
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
-            final LoginHelper loginHelper = new LoginHelper(MainFrameActivity.this);
-            final int result = loginHelper.login(true);
-            handler.post(() -> {
-                if (result == Constants.STATUS_SUCCESS) {
-                    UIUtils.toast("登录成功");
-                    TaskHelper.runDailyTask(true);
-                    progressDialog.dismiss();
-                } else {
-                    if (result == Constants.STATUS_FAIL_ABORT) {
-                        HiSettingsHelper.getInstance().removeProfile(username);
-                    }
-                    HiSettingsHelper.getInstance().setUsername("");
-                    HiSettingsHelper.getInstance().setPassword("");
-                    HiSettingsHelper.getInstance().setSecQuestion("");
-                    HiSettingsHelper.getInstance().setSecAnswer("");
-                    updateAccountHeader();
-                    progressDialog.dismissError(loginHelper.getErrorMsg());
-                }
-            });
+            final LoginHelper loginHelper = new LoginHelper();
+            loginHelper.login(true);
         });
     }
 
@@ -782,17 +760,41 @@ public class MainFrameActivity extends BaseActivity {
     }
 
     @SuppressWarnings("unused")
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(LoginEvent event) {
-        Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
-        if (fg instanceof ThreadListFragment) {
-            fg.setHasOptionsMenu(true);
-            invalidateOptionsMenu();
-            if (event.mManual)
-                ((ThreadListFragment) fg).onRefresh();
+        if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
+            if (mLoginProgressDialog == null || !mLoginProgressDialog.isShowing()) {
+                final String username = HiSettingsHelper.getInstance().getUsername();
+                mLoginProgressDialog = HiProgressDialog.show(this, "<" + username + "> 正在登录...");
+            }
+        } else if (event.mStatus == Constants.STATUS_SUCCESS) {
+            UIUtils.toast("登录成功");
+            Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
+            if (fg instanceof ThreadListFragment) {
+                fg.setHasOptionsMenu(true);
+                invalidateOptionsMenu();
+                if (event.mManual)
+                    ((ThreadListFragment) fg).onRefresh();
+            }
+            updateAccountHeader();
+            dismissLoginDialog();
+            if (mLoginProgressDialog != null && mLoginProgressDialog.isShowing()) {
+                mLoginProgressDialog.dismiss();
+            }
+            TaskHelper.runDailyTask(true);
+        } else {
+            String username = HiSettingsHelper.getInstance().getUsername();
+            if (event.mStatus == Constants.STATUS_FAIL_ABORT) {
+                HiSettingsHelper.getInstance().removeProfile(username);
+                HiSettingsHelper.getInstance().setUsername("");
+                HiSettingsHelper.getInstance().setPassword("");
+                HiSettingsHelper.getInstance().setSecQuestion("");
+                HiSettingsHelper.getInstance().setSecAnswer("");
+            }
+            updateAccountHeader();
+            if (mLoginProgressDialog != null && mLoginProgressDialog.isShowing())
+                mLoginProgressDialog.dismissError(event.mMessage);
         }
-        updateAccountHeader();
-        dismissLoginDialog();
     }
 
     @Override

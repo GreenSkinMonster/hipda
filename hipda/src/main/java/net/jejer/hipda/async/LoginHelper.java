@@ -8,6 +8,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.service.NotiHelper;
+import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -24,12 +25,11 @@ import java.util.ArrayList;
 
 public class LoginHelper {
 
-    private Context mCtx;
+    private final static int MAX_RETRY_TIMES = 3;
 
     private String mErrorMsg = "";
 
-    public LoginHelper(Context ctx) {
-        mCtx = ctx;
+    public LoginHelper() {
     }
 
     public int login() {
@@ -39,20 +39,34 @@ public class LoginHelper {
     public int login(boolean manual) {
         int status = Constants.STATUS_FAIL;
 
+        LoginEvent event1 = new LoginEvent();
+        event1.mManual = manual;
+        event1.mStatus = Constants.STATUS_IN_PROGRESS;
+        EventBus.getDefault().post(event1);
+
+        String formhash = getFormhash();
+        if (TextUtils.isEmpty(formhash))
+            return status;
+
         if (HiSettingsHelper.getInstance().isLoginInfoValid()) {
-            String formhash = getFormhash();
-            if (!TextUtils.isEmpty(formhash)) {
+            for (int i = 1; i <= MAX_RETRY_TIMES; i++) {
                 status = doLogin(formhash);
+                if (status == Constants.STATUS_FAIL_ABORT) {
+                    break;
+                } else if (status == Constants.STATUS_SUCCESS) {
+                    break;
+                }
             }
         } else {
             mErrorMsg = "登录信息不完整";
         }
 
-        if (status == Constants.STATUS_SUCCESS) {
-            LoginEvent event = new LoginEvent();
-            event.mManual = manual;
-            EventBus.getDefault().post(event);
-        }
+        LoginEvent event2 = new LoginEvent();
+        event2.mManual = manual;
+        event2.mStatus = status;
+        event2.mMessage = mErrorMsg;
+        EventBus.getDefault().postSticky(event2);
+
         return status;
     }
 
@@ -100,12 +114,12 @@ public class LoginHelper {
             Logger.v(rspStr);
 
             // response is in XML format
-            if (rspStr.contains(mCtx.getString(R.string.login_success))) {
+            if (rspStr.contains(HiApplication.getAppContext().getString(R.string.login_success))) {
                 Logger.v("Login SUCCESS!");
                 return Constants.STATUS_SUCCESS;
-            } else if (rspStr.contains(mCtx.getString(R.string.login_fail))) {
+            } else if (rspStr.contains(HiApplication.getAppContext().getString(R.string.login_fail))) {
                 Logger.v("Login FAIL");
-                int msgIndex = rspStr.indexOf(mCtx.getString(R.string.login_fail));
+                int msgIndex = rspStr.indexOf(HiApplication.getAppContext().getString(R.string.login_fail));
                 int msgIndexEnd = rspStr.indexOf("次", msgIndex) + 1;
                 if (msgIndexEnd > msgIndex) {
                     mErrorMsg = rspStr.substring(msgIndex, msgIndexEnd);
