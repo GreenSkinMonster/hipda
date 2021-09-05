@@ -1,7 +1,11 @@
 package net.jejer.hipda.ui.widget;
 
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.PointF;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +26,11 @@ import net.jejer.hipda.R;
 import net.jejer.hipda.bean.ContentImg;
 import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
+import net.jejer.hipda.ui.ImageViewerActivity;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 
 /**
@@ -31,7 +38,43 @@ import androidx.core.content.ContextCompat;
  */
 public class ImageViewerLayout extends BaseImageLayout {
 
+    private final ImageInfo mImageInfo;
     private final SubsamplingScaleImageView mScaleImageView;
+    private final int mScreenHeight;
+    private float mMinScale = 0;
+
+    private final static int MIN_DRAG_DISTANCE = Utils.dpToPx(8);
+    private float mOldX, mOldY, mMovY;
+    private float mAlphaPercent = 1f;
+    private boolean mToClose = false;
+    private boolean mDragCloseable = true;
+    private boolean mDragMoving = false;
+
+    private final GestureDetector mDetector;
+    GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (mImageInfo.isGif()) {
+                playGif();
+            } else {
+                if (mScaleImageView.isImageLoaded()) {
+                    ImageViewerActivity activity = (ImageViewerActivity) getContext();
+                    activity.animImageThenFinish(ImageViewerLayout.this);
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            if (mImageInfo.isFail()) {
+                UIUtils.showMessageDialog(getContext(), "错误信息", mImageInfo.getMessage(), true);
+            } else {
+                ImageViewerActivity activity = (ImageViewerActivity) getContext();
+                activity.toggleFullscreen();
+            }
+        }
+    };
 
     public ImageViewerLayout(Activity activity, ContentImg contentImg) {
         super(activity);
@@ -39,12 +82,15 @@ public class ImageViewerLayout extends BaseImageLayout {
         mRequestManager = Glide.with(activity);
         mUrl = contentImg.getContent();
         mContentImg = contentImg;
+        mImageInfo = ImageContainer.getImageInfo(mUrl);
 
-        mImageView = new ImageView(getContext());
-        addView(mImageView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mImageView = new AppCompatImageView(getContext());
+        addView(mImageView, new ViewGroup.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         mScaleImageView = new SubsamplingScaleImageView(getContext());
-        addView(mScaleImageView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        addView(mScaleImageView, new ViewGroup.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         mProgressBar = new DownloadProgressBar(getContext());
         int progressbarWidth = Utils.dpToPx(45);
@@ -54,6 +100,9 @@ public class ImageViewerLayout extends BaseImageLayout {
         mProgressBar.setFinishIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_action_play));
         mProgressBar.setVisibility(GONE);
         addView(mProgressBar, pbLayoutParams);
+
+        mScreenHeight = UIUtils.getScreenHeight(activity);
+        mDetector = new GestureDetector(activity, mGestureListener);
     }
 
     @Override
@@ -61,28 +110,12 @@ public class ImageViewerLayout extends BaseImageLayout {
         return true;
     }
 
-    @Override
-    protected OnClickListener getOnClickListener() {
-        return v -> {
-            if (getContext() instanceof Activity) {
-                Activity activity = (Activity) getContext();
-                activity.finish();
-            }
-        };
-    }
-
-    @Override
-    protected OnLongClickListener getOnLongClickListener() {
-        return null;
-    }
-
     public ImageView getImageView() {
         return mImageView;
     }
 
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return !mScaleImageView.isImageLoaded();
+    public String getUrl() {
+        return mUrl;
     }
 
     @Override
@@ -93,9 +126,8 @@ public class ImageViewerLayout extends BaseImageLayout {
 
     @Override
     protected void displayImage() {
-        ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        if (imageInfo.isSuccess()) {
-            if (imageInfo.isGif()) {
+        if (mImageInfo.isSuccess()) {
+            if (mImageInfo.isGif()) {
                 mProgressBar.setFinish();
                 mProgressBar.setVisibility(VISIBLE);
                 mImageView.setVisibility(VISIBLE);
@@ -103,7 +135,7 @@ public class ImageViewerLayout extends BaseImageLayout {
                 mRequestManager
                         .load(mUrl)
                         .dontAnimate()
-                        .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
+                        .override(mImageInfo.getBitmapWidth(), mImageInfo.getBitmapHeight())
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(mImageView);
             } else {
@@ -117,14 +149,22 @@ public class ImageViewerLayout extends BaseImageLayout {
     }
 
     protected void displayScaleImage() {
-        ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
         mScaleImageView.setMinimumDpi(36);
         mScaleImageView.setMinimumTileDpi(160);
         mScaleImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
-        mScaleImageView.setImage(ImageSource.uri(imageInfo.getPath()));
+        mScaleImageView.setImage(ImageSource.uri(mImageInfo.getPath()));
         mScaleImageView.setBitmapDecoderFactory(new CompatDecoderFactory<ImageDecoder>(SkiaImageDecoder.class, Utils.getBitmapConfig()));
         mScaleImageView.setRegionDecoderFactory(new CompatDecoderFactory<ImageRegionDecoder>(SkiaImageRegionDecoder.class, Utils.getBitmapConfig()));
-        mScaleImageView.setOnClickListener(getOnClickListener());
+        mScaleImageView.setOnStateChangedListener(new SubsamplingScaleImageView.OnStateChangedListener() {
+            @Override
+            public void onScaleChanged(float newScale, int origin) {
+                mDragCloseable = newScale < mMinScale + 0.01f;
+            }
+
+            @Override
+            public void onCenterChanged(PointF newCenter, int origin) {
+            }
+        });
 
         mScaleImageView.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener() {
             @Override
@@ -134,9 +174,14 @@ public class ImageViewerLayout extends BaseImageLayout {
                     mImageView.setVisibility(View.GONE);
                 }
                 mScaleImageView.setVisibility(View.VISIBLE);
-                if (imageInfo.isLongImage()) {
-                    float scale = (float) mScaleImageView.getWidth() / imageInfo.getWidth();
-                    mScaleImageView.animateScaleAndCenter(scale, new PointF(mScaleImageView.getWidth() / 2, 0))
+
+                mMinScale = Math.min(((float) mScaleImageView.getWidth() / mImageInfo.getWidth()),
+                        ((float) mScaleImageView.getHeight() / mImageInfo.getHeight()));
+
+                if (mImageInfo.isLongImage()) {
+                    float scale = (float) mScaleImageView.getWidth() / mImageInfo.getWidth();
+                    mScaleImageView
+                            .animateScaleAndCenter(scale, new PointF((float) mScaleImageView.getWidth() / 2, 0))
                             .withDuration(500)
                             .withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)
                             .withInterruptible(false)
@@ -152,6 +197,97 @@ public class ImageViewerLayout extends BaseImageLayout {
                 mProgressBar.setError();
             }
         });
+    }
+
+    public boolean resetScaleAndCenter(int animTime) {
+        if (mScaleImageView != null
+                && mScaleImageView.getVisibility() == VISIBLE
+                && mScaleImageView.isImageLoaded()
+                && Math.abs(mScaleImageView.getScale() - mMinScale) > 0.1) {
+            mScaleImageView.animateScaleAndCenter(mMinScale, new PointF(0, 0))
+                    .withDuration(animTime)
+                    .start();
+            return true;
+        }
+        return false;
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        mDetector.onTouchEvent(event);
+        if (!mDragMoving)
+            mScaleImageView.onTouchEvent(event);
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mOldX = event.getRawX();
+                mOldY = event.getRawY();
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                if (mToClose) {
+                    mToClose = false;
+                    ((ImageViewerActivity) getContext()).animImageThenFinish(this);
+                } else {
+                    animRestoreImage();
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (mDragCloseable) {
+                    float movX = event.getRawX() - mOldX;
+                    mMovY = event.getRawY() - mOldY;
+                    float absMovX = Math.abs(movX);
+                    mDragMoving = mMovY > absMovX && absMovX > MIN_DRAG_DISTANCE;
+                    if (absMovX > MIN_DRAG_DISTANCE || Math.abs(mMovY) > MIN_DRAG_DISTANCE) {
+                        float mx = movX >= 0 ? Math.max(0, movX - MIN_DRAG_DISTANCE) : Math.min(0, movX + MIN_DRAG_DISTANCE);
+                        float my = mMovY >= 0 ? Math.max(0, mMovY - MIN_DRAG_DISTANCE) : Math.min(0, mMovY + MIN_DRAG_DISTANCE);
+                        animMoveImage(mx, my);
+                    }
+                    mToClose = mMovY > absMovX
+                            && mMovY > ((float) mScreenHeight / 8);
+                }
+                return false;
+        }
+        return true;
+    }
+
+    private void animRestoreImage() {
+        mDragMoving = false;
+        animate().setDuration(200)
+                .scaleX(1)
+                .scaleY(1)
+                .translationX(0)
+                .translationY(0)
+                .setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        if (mAlphaPercent < animation.getAnimatedFraction()) {
+                            ((ViewGroup) getParent()).setBackgroundColor(convertPercentToBlackAlphaColor(animation.getAnimatedFraction()));
+                        }
+                    }
+                })
+                .start();
+    }
+
+    private void animMoveImage(float deltaX, float deltaY) {
+        if (Math.abs(mMovY) < ((float) mScreenHeight / 4)) {
+            float scale = 1 - Math.abs(mMovY) / mScreenHeight;
+            mAlphaPercent = 1 - Math.abs(deltaY) / ((float) mScreenHeight / 2);
+            setScaleX(scale);
+            setScaleY(scale);
+            ((ViewGroup) getParent()).setBackgroundColor(convertPercentToBlackAlphaColor(mAlphaPercent));
+        }
+        setTranslationX(deltaX);
+        setTranslationY(deltaY);
+    }
+
+    private int convertPercentToBlackAlphaColor(float percent) {
+        percent = Math.min(1, Math.max(0, percent));
+        int intAlpha = (int) (percent * 255);
+        String stringAlpha = Integer.toHexString(intAlpha).toLowerCase();
+        String color = "#" + (stringAlpha.length() < 2 ? "0" : "") + stringAlpha + "000000";
+        return Color.parseColor(color);
     }
 
 }

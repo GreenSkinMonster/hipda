@@ -69,17 +69,13 @@ public class ThreadDetailJob extends BaseJob {
             String resp = fetchDetail();
             boolean loggedin = LoginHelper.checkLoggedin(mCtx, resp);
             if (!loggedin) {
-                for (int i = 0; i < OkHttpHelper.MAX_RETRY_TIMES; i++) {
-                    int status = new LoginHelper(mCtx).login();
-                    if (status == Constants.STATUS_FAIL_ABORT) {
-                        eventStatus = Constants.STATUS_FAIL_RELOGIN;
-                        eventMessage = "请重新登录";
-                        break;
-                    } else if (status == Constants.STATUS_SUCCESS) {
-                        resp = fetchDetail();
-                        loggedin = LoginHelper.checkLoggedin(mCtx, resp);
-                        break;
-                    }
+                int status = new LoginHelper().login();
+                if (status == Constants.STATUS_FAIL_ABORT) {
+                    eventStatus = Constants.STATUS_FAIL_RELOGIN;
+                    eventMessage = "请重新登录";
+                } else if (status == Constants.STATUS_SUCCESS) {
+                    resp = fetchDetail();
+                    loggedin = LoginHelper.checkLoggedin(mCtx, resp);
                 }
             }
             if (loggedin) {

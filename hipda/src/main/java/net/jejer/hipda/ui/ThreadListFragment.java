@@ -23,9 +23,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.bumptech.glide.Glide;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -38,6 +42,7 @@ import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.bean.ThreadListBean;
 import net.jejer.hipda.db.HistoryDao;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.job.EventCallback;
 import net.jejer.hipda.job.JobMgr;
 import net.jejer.hipda.job.NotificationEvent;
@@ -46,17 +51,14 @@ import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.job.ThreadListEvent;
 import net.jejer.hipda.job.ThreadListJob;
 import net.jejer.hipda.job.ThreadUpdatedEvent;
-import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.service.NotiHelper;
 import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.adapter.ThreadListAdapter;
-import net.jejer.hipda.ui.widget.BottomDialog;
 import net.jejer.hipda.ui.widget.ContentLoadingView;
 import net.jejer.hipda.ui.widget.FABHideOnScrollBehavior;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.ui.widget.OnViewItemSingleClickListener;
 import net.jejer.hipda.ui.widget.SimpleDivider;
-import net.jejer.hipda.ui.widget.ValueChagerView;
 import net.jejer.hipda.ui.widget.XFooterView;
 import net.jejer.hipda.ui.widget.XRecyclerView;
 import net.jejer.hipda.utils.ColorHelper;
@@ -72,19 +74,12 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 public class ThreadListFragment extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener {
 
     private final static int MIN_TREADS_IN_PAGE = 10;
     public static final String ARG_FID_KEY = "fid";
 
-    private Context mCtx;
     private int mForumId = 0;
     private int mPage = 1;
     private ThreadListAdapter mThreadListAdapter;
@@ -95,7 +90,6 @@ public class ThreadListFragment extends BaseFragment
     private SwipeRefreshLayout swipeLayout;
     private ContentLoadingView mLoadingView;
     private int mFirstVisibleItem = 0;
-    private boolean mDataReceived = false;
 
     private MenuItem mForumTypeMenuItem;
     private final int[] mFidHolder = new int[1];
@@ -106,8 +100,6 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mCtx = getActivity();
 
         if (getArguments() != null && getArguments().containsKey(ARG_FID_KEY)) {
             mForumId = getArguments().getInt(ARG_FID_KEY);
@@ -126,15 +118,15 @@ public class ThreadListFragment extends BaseFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        setHasOptionsMenu(OkHttpHelper.getInstance().isLoggedIn());
+        setHasOptionsMenu(LoginHelper.isLoggedIn());
 
         View view = inflater.inflate(R.layout.fragment_thread_list, parent, false);
         mRecyclerView = view.findViewById(R.id.rv_threads);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mCtx));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new SimpleDivider(getActivity()));
 
-        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(mCtx, new OnItemClickListener());
+        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(), new OnItemClickListener());
 
         mThreadListAdapter = new ThreadListAdapter(Glide.with(getActivity()), itemClickListener);
         mThreadListAdapter.setDatas(mThreadBeans);
@@ -181,9 +173,6 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            mCtx = getActivity();
-        }
         startLoading();
     }
 
@@ -216,6 +205,10 @@ public class ThreadListFragment extends BaseFragment
         }
     }
 
+    public void notifyDataChanged() {
+        if (mThreadListAdapter != null)
+            mThreadListAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onStop() {
@@ -233,14 +226,13 @@ public class ThreadListFragment extends BaseFragment
             String typeId = HiSettingsHelper.getInstance().getBSTypeId();
             int typeIdIndex = HiUtils.getBSTypeIndexByFid(typeId);
             if (typeIdIndex == -1) typeIdIndex = 0;
-            if (mCtx != null)
-                mForumTypeMenuItem.setIcon(new IconicsDrawable(mCtx, HiUtils.BS_TYPE_ICONS[typeIdIndex])
-                        .color(HiSettingsHelper.getInstance().getToolbarTextColor()).sizeDp(18));
+            mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[typeIdIndex])
+                    .color(UIUtils.getToolbarTextColor(getActivity())).sizeDp(18));
         }
 
         mSearchMenuItem = menu.findItem(R.id.action_search);
-        mSearchMenuItem.setIcon(new IconicsDrawable(mCtx, GoogleMaterial.Icon.gmd_search)
-                .color(HiSettingsHelper.getInstance().getToolbarTextColor()).sizeDp(18));
+        mSearchMenuItem.setIcon(new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_search)
+                .color(UIUtils.getToolbarTextColor(getActivity())).sizeDp(18));
 
         MenuItem showStickItem = menu.findItem(R.id.action_show_stick_threads);
         showStickItem.setChecked(HiSettingsHelper.getInstance().isShowStickThreads());
@@ -260,9 +252,6 @@ public class ThreadListFragment extends BaseFragment
             case android.R.id.home:
                 // Implemented in activity
                 return false;
-            case R.id.action_thread_list_settings:
-                showThreadListSettingsDialog();
-                return true;
             case R.id.action_new_thread:
                 FragmentUtils.showNewPostActivity(getActivity(), mForumId, mSessionId);
                 return true;
@@ -361,8 +350,11 @@ public class ThreadListFragment extends BaseFragment
     @Override
     public void onRefresh() {
         refresh();
-        if (mThreadBeans.size() > 0)
+        if (mThreadBeans.size() > 0) {
             mLoadingView.setState(ContentLoadingView.CONTENT);
+        } else {
+            mLoadingView.setState(ContentLoadingView.LOAD_NOW);
+        }
     }
 
     public void notifyDataSetChanged() {
@@ -419,7 +411,7 @@ public class ThreadListFragment extends BaseFragment
                 if (maxPostsInPage > 0 && TextUtils.isDigitsOnly(thread.getCountCmts())) {
                     page = (int) Math.ceil((Integer.parseInt(thread.getCountCmts()) + 1) * 1.0f / maxPostsInPage);
                 }
-                FragmentUtils.showThreadActivity(getActivity(), false, tid, title, page, ThreadDetailFragment.LAST_FLOOR, null, thread.getMaxPage());
+                FragmentUtils.showThreadActivity(getActivity(), false, tid, title, page, ThreadDetailFragment.LAST_FLOOR_OF_PAGE, null, thread.getMaxPage());
                 HistoryDao.saveHistoryInBackground(tid, "", title, thread.getAuthorId(), thread.getAuthor(), thread.getTimeCreate());
             }
         }
@@ -431,31 +423,6 @@ public class ThreadListFragment extends BaseFragment
 
     private void hideFooter() {
         mRecyclerView.setFooterState(XFooterView.STATE_HIDDEN);
-    }
-
-    private void showThreadListSettingsDialog() {
-        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View view = inflater.inflate(R.layout.dialog_thread_list_settings, null);
-
-        final ValueChagerView valueChagerView = view.findViewById(R.id.value_changer);
-
-        valueChagerView.setCurrentValue(HiSettingsHelper.getInstance().getTitleTextSizeAdj());
-
-        final BottomSheetDialog dialog = new BottomDialog(getActivity());
-
-        valueChagerView.setOnChangeListener(new ValueChagerView.OnChangeListener() {
-            @Override
-            public void onChange(int currentValue) {
-                HiSettingsHelper.getInstance().setTitleTextSizeAdj(currentValue);
-                if (mThreadListAdapter != null)
-                    mThreadListAdapter.notifyDataSetChanged();
-            }
-        });
-
-        dialog.setContentView(view);
-        BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) view.getParent());
-        mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        dialog.show();
     }
 
     private void showForumTypesDialog() {
@@ -481,7 +448,7 @@ public class ThreadListFragment extends BaseFragment
                     HiSettingsHelper.getInstance().setBSTypeId(HiUtils.BS_TYPE_IDS[position]);
                     if (mForumTypeMenuItem != null) {
                         mForumTypeMenuItem.setIcon(new IconicsDrawable(getActivity(), HiUtils.BS_TYPE_ICONS[position])
-                                .color(HiSettingsHelper.getInstance().getToolbarTextColor()).actionBar());
+                                .color(UIUtils.getToolbarTextColor(getActivity())).actionBar());
                     }
                     refresh();
                 }
@@ -507,7 +474,7 @@ public class ThreadListFragment extends BaseFragment
         etUrl.requestFocus();
 
         final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
-        popDialog.setTitle(mCtx.getResources().getString(R.string.action_open_by_url));
+        popDialog.setTitle(getActivity().getResources().getString(R.string.action_open_by_url));
         popDialog.setView(viewlayout);
         popDialog.setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
             @Override
@@ -612,6 +579,8 @@ public class ThreadListFragment extends BaseFragment
             if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUid())
                     && !TextUtils.isEmpty(threads.getUid())) {
                 HiSettingsHelper.getInstance().setUid(threads.getUid());
+                HiSettingsHelper.getInstance().saveCurrentProfile();
+                GlideHelper.refreshUserIcon(getActivity());
                 if (getActivity() != null)
                     ((MainFrameActivity) getActivity()).updateAccountHeader();
             }
@@ -621,6 +590,8 @@ public class ThreadListFragment extends BaseFragment
                 mThreadBeans.addAll(threads.getThreads());
                 mThreadListAdapter.setDatas(mThreadBeans);
                 mRecyclerView.scrollToTop();
+                mMainFab.show();
+                expandAppBar();
             } else {
                 for (ThreadBean newthread : threads.getThreads()) {
                     boolean duplicate = false;
@@ -638,12 +609,6 @@ public class ThreadListFragment extends BaseFragment
                 mThreadListAdapter.setDatas(mThreadBeans);
             }
 
-            if (!mDataReceived) {
-                mDataReceived = true;
-                mMainFab.show();
-                if (HiSettingsHelper.getInstance().isAppBarCollapsible())
-                    ((MainFrameActivity) getActivity()).mAppBarLayout.setExpanded(true, true);
-            }
             showNotification();
 
             if (mPage <= 5 && mThreadBeans.size() < MIN_TREADS_IN_PAGE) {
@@ -718,7 +683,7 @@ public class ThreadListFragment extends BaseFragment
         String message = event.mMessage;
 
         if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
-            postProgressDialog = HiProgressDialog.show(mCtx, "正在发表...");
+            postProgressDialog = HiProgressDialog.show(getActivity(), "正在发表...");
         } else if (event.mStatus == Constants.STATUS_SUCCESS) {
             if (postProgressDialog != null) {
                 postProgressDialog.dismiss(message);

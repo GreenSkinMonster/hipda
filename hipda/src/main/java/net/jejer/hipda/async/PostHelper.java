@@ -9,7 +9,6 @@ import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
-import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.okhttp.ParamsMap;
 import net.jejer.hipda.utils.Constants;
@@ -22,6 +21,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import java.util.Collections;
+import java.util.List;
+
 import okhttp3.Response;
 
 public class PostHelper {
@@ -33,11 +35,10 @@ public class PostHelper {
     public static final int MODE_QUICK_REPLY = 4;
     public static final int MODE_EDIT_POST = 5;
     public static final int MODE_QUICK_DELETE = 6;
+    public static final int MODE_VOTE_POLL = 7;
 
     private static long LAST_POST_TIME = 0;
     private static final long POST_DELAY_IN_SECS = 30;
-
-    private boolean ERR_502_TMP_FIXED = false;
 
     private int mMode;
     private String mResult;
@@ -45,6 +46,7 @@ public class PostHelper {
     private DetailListBean mDetailListBean;
     private Context mCtx;
     private PrePostInfoBean mInfo;
+    private PrePostAsyncTask mPrePostAsyncTask;
     private PostBean mPostArg;
 
     private String mTid;
@@ -69,6 +71,7 @@ public class PostHelper {
         String subject = postBean.getSubject();
         String typeid = postBean.getTypeid();
 
+        mPrePostAsyncTask = new PrePostAsyncTask(mCtx, null, mMode);
         int count = 0;
         while (mInfo == null && count < 3) {
             count++;
@@ -106,8 +109,12 @@ public class PostHelper {
                 doPost(url, replyText, subject, null, false);
                 break;
             case MODE_EDIT_POST:
-                url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=1";
+                url = HiUtils.EditUrl + "&extra=&editsubmit=yes&mod=&editsubmit=yes" + "&fid=" + fid + "&tid=" + tid + "&pid=" + pid + "&page=" + mPostArg.getPage();
                 doPost(url, replyText, subject, typeid, postBean.isDelete());
+                break;
+            case MODE_VOTE_POLL:
+                url = HiUtils.VotePollUrl.replace("{fid}", postBean.getFid() + "").replace("{tid}", postBean.getTid());
+                doPost(url, replyText, subject, null, false);
                 break;
         }
 
@@ -126,7 +133,11 @@ public class PostHelper {
         String formhash = mInfo != null ? mInfo.getFormhash() : null;
 
         if (TextUtils.isEmpty(formhash)) {
-            mResult = "发表失败，无法获取必要信息 ！";
+            if (mPrePostAsyncTask != null && !TextUtils.isEmpty(mPrePostAsyncTask.getMessage())) {
+                mResult = mPrePostAsyncTask.getMessage();
+            } else {
+                mResult = "发表失败，无法获取必要信息 ！";
+            }
             mStatus = Constants.STATUS_FAIL;
             return;
         }
@@ -157,6 +168,12 @@ public class PostHelper {
                     params.put("typeid", typeid);
                 }
             }
+        } else if (mMode == MODE_VOTE_POLL) {
+            List<String> answers = mPostArg.getPollAnswers();
+            Collections.sort(answers);
+            for (String answer : answers) {
+                params.put("pollanswers[]", answer);
+            }
         }
 
         if (mMode == MODE_QUOTE_POST
@@ -181,32 +198,6 @@ public class PostHelper {
         } catch (Exception e1) {
             exception = e1;
             Logger.e(e1);
-            NetworkError networkError = OkHttpHelper.getErrorMessage(e1);
-            if (isReply()
-                    && !TextUtils.isEmpty(mTid)
-                    && networkError.getErrCode() == 502) {
-                if (!ERR_502_TMP_FIXED) {
-                    ERR_502_TMP_FIXED = true;
-                    //temp fix for reply 502 error
-                    OkHttpHelper.getInstance().clearCookies();
-                    Utils.clearOkhttpCache();
-                    int status = new LoginHelper(mCtx).login();
-                    if (status == Constants.STATUS_SUCCESS) {
-                        try {
-                            Response response = OkHttpHelper.getInstance().getAsResponse(HiUtils.LastPageUrl + mTid);
-                            resp = OkHttpHelper.getResponseBody(response);
-                            requestUrl = response.request().url().toString();
-                            Document doc = Jsoup.parse(resp);
-                            DetailListBean data = HiParserThreadDetail.parse(mCtx, doc, mTid);
-                            if (data != null && data.getCount() > 0) {
-                                exception = null;
-                            }
-                        } catch (Exception e2) {
-                            Logger.e(e2);
-                        }
-                    }
-                }
-            }
         }
 
         if (exception == null) {

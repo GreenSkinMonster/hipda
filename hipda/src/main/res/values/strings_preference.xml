@@ -92,28 +92,6 @@
         <item>8</item>
     </string-array>
 
-    <string-array name="pref_title_theme_names">
-        <item>浅色</item>
-        <item>深色</item>
-        <item>纯黑</item>
-    </string-array>
-    <string-array name="pref_title_theme_values">
-        <item>light</item>
-        <item>dark</item>
-        <item>black</item>
-    </string-array>
-
-    <string-array name="pref_title_night_theme_names">
-        <item>不使用夜间模式</item>
-        <item>深色</item>
-        <item>纯黑</item>
-    </string-array>
-    <string-array name="pref_title_night_theme_values">
-        <item></item>
-        <item>dark</item>
-        <item>black</item>
-    </string-array>
-
     <string-array name="pref_title_freq_menu_names">
         <item>@string/title_drawer_mypost</item>
         <item>@string/title_drawer_myreply</item>
@@ -155,15 +133,6 @@
         <item>prefer_original</item>
     </string-array>
 
-    <string-array name="pref_forum_server">
-        <item>主力 www.hi-pda.com (http)</item>
-        <item>测试 dev.hi-pda.com (https)</item>
-    </string-array>
-    <string-array name="pref_forum_server_values">
-        <item>https://www.hi-pda.com</item>
-        <item>https://dev.hi-pda.com</item>
-    </string-array>
-
     <string-array name="pref_avatar_load_type">
         <item>始终显示</item>
         <item>始终关闭</item>
@@ -195,7 +164,7 @@
         <item>1024</item>
     </string-array>
 
-    <string-array name="empty_array"/>
+    <string-array name="empty_array" />
 
     <string name="pref_category_forum">论坛选项</string>
     <string name="pref_category_tail">小尾巴</string>
@@ -210,7 +179,7 @@
     <string name="pref_category_notification_style">通知方式</string>
     <string name="pref_category_silent_mode">免打扰</string>
 
-    <string name="pref_category_network">图片与下载</string>
+    <string name="pref_category_network">图片与缓存</string>
     <string name="pref_category_more">分类设置</string>
 
     <string name="pref_category_other">其它</string>
@@ -232,8 +201,6 @@
     <string name="pref_title_encode_utf8">使用UTF8编码</string>
     <string name="pref_title_long_click_save_image">长按保存图片</string>
     <string name="pref_title_gesture_back">右划手势返回</string>
-    <string name="pref_title_swipe_compat_mode">手势返回兼容模式</string>
-    <string name="pref_summary_swipe_compat_mode">适用Android 5.0或以上。状态栏出现异常白边、黑边，输入法遮挡输入框时可以尝试启用</string>
     <string name="pref_title_app_bar_collapsible">标题栏动态隐藏</string>
     <string name="pref_title_fab_auto_hide">浮动按钮动态隐藏</string>
     <string name="pref_title_fab_left_side">浮动按钮放在左侧</string>
@@ -241,11 +208,12 @@
     <string name="pref_title_circle_avatar">圆形头像</string>
     <string name="pref_title_blacklist">黑名单</string>
     <string name="pref_summary_blacklist">目前黑名单已经与论坛同步</string>
-    <string name="pref_title_theme">界面主题</string>
-    <string name="pref_title_primary_color">界面主色调</string>
-    <string name="pref_title_night_theme">夜间模式主题</string>
+    <string name="pref_title_theme">主题模式</string>
+    <string name="pref_title_ligth_theme_color">浅色主题色调</string>
+    <string name="pref_title_dark_theme_color">深色主题色调</string>
     <string name="pref_title_navbar_colored">导航栏着色</string>
     <string name="pref_title_font">自定义字体</string>
+    <string name="pref_title_import_font">导入字体</string>
     <string name="title_choose_font">选择字体 (*ttf, *.otf)</string>
     <string name="pref_title_forum">版面选择</string>
     <string name="pref_title_freq_menus">展开常用菜单</string>
@@ -271,7 +239,8 @@
     <string name="pref_title_forum_server">论坛服务器</string>
     <string name="pref_summary_auto_load_thumb">缩略图为论坛自动生成，一般为200KB以下，点击缩略图或者保存、分享时会加载原图</string>
     <string name="pref_summary_encode_utf8">当文字为乱码时可以尝试启用</string>
-    <string name="pref_summary_primary_color">仅浅色主题有效</string>
-    <string name="pref_summary_error_report">显示更详细的错误信息，程序崩溃时尝试将错误信息保存至粘贴板</string>
+    <string name="pref_summary_error_report">显示更详细的错误信息</string>
+    <string name="pref_crash_logs">应用错误日志</string>
+    <string name="pref_summary_crash_logs">应用崩溃时自动产生的日志，请在客户端帖子中反馈给开发者</string>
 
 </resources>

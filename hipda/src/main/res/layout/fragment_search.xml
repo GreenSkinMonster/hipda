@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/fragment_threadlist"
+<RelativeLayout android:id="@+id/fragment_threadlist"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?list_item_background">
+    android:background="?attr/window_background">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
@@ -32,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/swipe_container"
         android:layout_centerHorizontal="true"
-        android:background="?attr/dialog_background"
+        android:background="@color/dialog_background"
         android:padding="8dp"
         android:visibility="gone">
 

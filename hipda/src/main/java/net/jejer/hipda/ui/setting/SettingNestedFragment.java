@@ -1,19 +1,41 @@
 package net.jejer.hipda.ui.setting;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.Preference;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.TaskHelper;
@@ -21,12 +43,24 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.SettingActivity;
+import net.jejer.hipda.ui.adapter.BaseRvAdapter;
+import net.jejer.hipda.ui.adapter.RecyclerItemClickListener;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan;
+import io.github.inflationx.calligraphy3.TypefaceUtils;
 
 /**
  * nested setting fragment
@@ -46,17 +80,32 @@ public class SettingNestedFragment extends BaseSettingFragment {
     private HiProgressDialog mProgressDialog;
     private Preference ringtonePreference;
     private Preference mBlackListPreference;
+    private ActivityResultLauncher<String> mGetFontFile;
+    private Drawable mCheckDrawable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkPreferenceResource();
+
+        mGetFontFile = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                new ActivityResultCallback<Uri>() {
+                    @Override
+                    public void onActivityResult(Uri uri) {
+                        importFontFile(uri);
+                    }
+                });
+
+        mCheckDrawable = new IconicsDrawable(getContext(), GoogleMaterial.Icon.gmd_check)
+                .color(UIUtils.isInLightThemeMode(getContext()) ? Color.BLACK : Color.WHITE)
+                .sizeDp(20).paddingDp(4);
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        UIUtils.getSaveFolder();
     }
 
     @Override
@@ -120,21 +169,19 @@ public class SettingNestedFragment extends BaseSettingFragment {
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_TEXTSIZE_TITLE_ADJ));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SCREEN_ORIENTATION));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_POST_LINE_SPACING));
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_THEME));
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_NIGHT_THEME));
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_THEME_MODE));
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_DARK_THEME));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FONT));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_AVATAR_LOAD_TYPE));
-                Preference navBarColoredPreference = findPreference(HiSettingsHelper.PERF_NAVBAR_COLORED);
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && navBarColoredPreference != null)
-                    navBarColoredPreference.setEnabled(false);
 
                 Preference fontPreference = findPreference(HiSettingsHelper.PERF_FONT);
-                fontPreference.setOnPreferenceClickListener(new FilePickerListener(getActivity(), FilePickerListener.FONT_FILE));
-
-                Preference swipeCompatPreference = findPreference(HiSettingsHelper.PERF_SWIPE_COMPAT_MODE);
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && swipeCompatPreference != null)
-                    swipeCompatPreference.setEnabled(false);
-
+                fontPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        showFontSelectDialog();
+                        return true;
+                    }
+                });
                 break;
 
             case SCREEN_NOTIFICATION:
@@ -200,13 +247,9 @@ public class SettingNestedFragment extends BaseSettingFragment {
             case SCREEN_NETWORK:
                 setActionBarTitle(R.string.pref_category_network);
                 addPreferencesFromResource(R.xml.pref_network);
-                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_SAVE_FOLDER));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_CACHE_SIZE_IN_MB));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_WIFI_IMAGE_POLICY));
                 bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_MOBILE_IMAGE_POLICY));
-
-                Preference saveFolderPreference = findPreference(HiSettingsHelper.PERF_SAVE_FOLDER);
-                saveFolderPreference.setOnPreferenceClickListener(new FilePickerListener(getActivity(), FilePickerListener.SAVE_DIR));
 
                 break;
 
@@ -239,6 +282,16 @@ public class SettingNestedFragment extends BaseSettingFragment {
                         return true;
                     }
                 });
+
+                Preference crashLogsPreference = findPreference(HiSettingsHelper.PERF_CRASH_LOGS);
+                crashLogsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        showCrashLogsDialog();
+                        return true;
+                    }
+                });
+
                 break;
             default:
                 break;
@@ -272,6 +325,7 @@ public class SettingNestedFragment extends BaseSettingFragment {
         }
     }
 
+
     private void showClearCacheDialog() {
         Dialog dialog = new AlertDialog.Builder(getActivity())
                 .setTitle("清除网络缓存？")
@@ -280,36 +334,28 @@ public class SettingNestedFragment extends BaseSettingFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                new AsyncTask<Void, Void, Exception>() {
-                                    @Override
-                                    protected Exception doInBackground(Void... voids) {
-                                        SettingMainFragment.mCacheCleared = true;
-                                        try {
-                                            OkHttpHelper.getInstance().clearCookies();
-                                            Utils.clearOkhttpCache();
-                                        } catch (Exception e) {
-                                            return e;
-                                        }
-                                        return null;
+                                mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
+                                ExecutorService executor = Executors.newSingleThreadExecutor();
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                executor.execute(() -> {
+                                    SettingMainFragment.mCacheCleared = true;
+                                    Exception error = null;
+                                    try {
+                                        OkHttpHelper.getInstance().clearCookies();
+                                        Utils.clearOkhttpCache();
+                                    } catch (Exception ex) {
+                                        error = ex;
                                     }
-
-                                    @Override
-                                    protected void onPreExecute() {
-                                        super.onPreExecute();
-                                        mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
-                                    }
-
-                                    @Override
-                                    protected void onPostExecute(Exception e) {
-                                        super.onPostExecute(e);
+                                    final Exception e = error;
+                                    handler.post(() -> {
                                         if (mProgressDialog != null) {
                                             if (e == null)
                                                 mProgressDialog.dismiss("网络缓存已经清除");
                                             else
                                                 mProgressDialog.dismissError("发生错误 : " + e.getMessage());
                                         }
-                                    }
-                                }.execute();
+                                    });
+                                });
                             }
                         })
                 .setNegativeButton(getResources().getString(android.R.string.cancel),
@@ -329,36 +375,28 @@ public class SettingNestedFragment extends BaseSettingFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                new AsyncTask<Void, Void, Exception>() {
-                                    @Override
-                                    protected Exception doInBackground(Void... voids) {
-                                        SettingMainFragment.mCacheCleared = true;
-                                        try {
-                                            GlideHelper.clearAvatarFiles();
-                                            Utils.clearExternalCache();
-                                        } catch (Exception e) {
-                                            return e;
-                                        }
-                                        return null;
+                                mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
+                                ExecutorService executor = Executors.newSingleThreadExecutor();
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                executor.execute(() -> {
+                                    Exception ee = null;
+                                    SettingMainFragment.mCacheCleared = true;
+                                    try {
+                                        GlideHelper.clearAvatarFiles();
+                                        Utils.clearExternalCache();
+                                    } catch (Exception ex) {
+                                        ee = ex;
                                     }
-
-                                    @Override
-                                    protected void onPreExecute() {
-                                        super.onPreExecute();
-                                        mProgressDialog = HiProgressDialog.show(getActivity(), "正在处理...");
-                                    }
-
-                                    @Override
-                                    protected void onPostExecute(Exception e) {
-                                        super.onPostExecute(e);
+                                    final Exception e = ee;
+                                    handler.post(() -> {
                                         if (mProgressDialog != null) {
                                             if (e == null)
                                                 mProgressDialog.dismiss("图片和头像缓存已经清除");
                                             else
                                                 mProgressDialog.dismissError("发生错误 : " + e.getMessage());
                                         }
-                                    }
-                                }.execute();
+                                    });
+                                });
                             }
                         })
                 .setNegativeButton(getResources().getString(android.R.string.cancel),
@@ -368,6 +406,305 @@ public class SettingNestedFragment extends BaseSettingFragment {
                             }
                         }).create();
         dialog.show();
+    }
+
+    private void showFontSelectDialog() {
+        final List<File> fonts = new ArrayList<>();
+        try {
+            File fontsDir = Utils.getFontsDir();
+            File[] files = fontsDir.listFiles();
+            Arrays.sort(files);
+            for (File file : files) {
+                fonts.add(file);
+            }
+        } catch (Exception e) {
+            Logger.e(e);
+        }
+
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View viewlayout = inflater.inflate(R.layout.dialog_font_selector, null);
+
+        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(),
+                new RecyclerItemClickListener.SimpleOnItemClickListener() {
+                });
+        FontsAdapter fontsAdapter = new FontsAdapter(getActivity(), itemClickListener);
+        fontsAdapter.setDatas(fonts);
+        final RecyclerView recyclerView = viewlayout.findViewById(R.id.rv_fonts);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(fontsAdapter);
+
+        final AppCompatButton btnNoFont = viewlayout.findViewById(R.id.btn_no_font);
+        btnNoFont.setTag("");
+        if (TextUtils.isEmpty(HiSettingsHelper.getInstance().getFont()))
+            btnNoFont.setCompoundDrawablesRelative(mCheckDrawable, null, null, null);
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback
+                = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int position = viewHolder.getAdapterPosition();
+                File font = fonts.get(position);
+                try {
+                    boolean result = font.delete();
+                    if (result) {
+                        UIUtils.toast(font.getName() + " 已经删除");
+                        fonts.remove(position);
+                        fontsAdapter.notifyItemRemoved(position);
+                        if (font.getName().equals(HiSettingsHelper.getInstance().getFont())) {
+                            HiSettingsHelper.getInstance().setFont("");
+                            bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FONT));
+                            btnNoFont.setCompoundDrawablesRelative(mCheckDrawable, null, null, null);
+                        }
+                    } else {
+                        UIUtils.toast(font.getName() + " 删除失败");
+                    }
+                } catch (Exception exception) {
+                    UIUtils.errorSnack(getView(), font.getName() + " 删除失败", exception.getMessage());
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(viewlayout);
+
+        builder.setTitle("自定义字体")
+                .setPositiveButton(getResources().getString(android.R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                .setNeutralButton("导入字体",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mGetFontFile.launch("*/*");
+                            }
+                        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        View.OnClickListener btnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String fontName = view.getTag().toString();
+                HiSettingsHelper.getInstance().setFont(fontName);
+                bindPreferenceSummaryToValue(findPreference(HiSettingsHelper.PERF_FONT));
+                dialog.dismiss();
+            }
+        };
+        fontsAdapter.setButtonClickListener(btnClickListener);
+        btnNoFont.setOnClickListener(btnClickListener);
+    }
+
+    private void importFontFile(Uri uri) {
+        if (uri == null)
+            return;
+        try {
+            DocumentFile documentFile = DocumentFile.fromSingleUri(getContext(), uri);
+
+            if (documentFile == null || documentFile.getName() == null) {
+                UIUtils.errorSnack(getView(), "无法读取字体文件", "Uri : " + uri.toString());
+                return;
+            }
+            if (!documentFile.getName().toLowerCase().endsWith(".ttf")
+                    && !documentFile.getName().toLowerCase().endsWith(".otf")) {
+                UIUtils.errorSnack(getView(),
+                        documentFile.getName() + " 不是字体文件 (支持后缀 ttf或otf)",
+                        "Uri : " + uri.toString());
+                return;
+            }
+            Utils.copy(uri, new File(Utils.getFontsDir(), documentFile.getName()));
+            showFontSelectDialog();
+        } catch (Exception e) {
+            UIUtils.errorSnack(getView(), "无法导入字体", e.getMessage());
+            Logger.e(e);
+        }
+    }
+
+    private class FontsAdapter extends BaseRvAdapter<File> {
+
+        private final LayoutInflater mInflater;
+        private final Drawable mCheckDrawable;
+        private View.OnClickListener mButtonClickListener;
+
+        FontsAdapter(Context context, RecyclerItemClickListener itemClickListener) {
+            mInflater = LayoutInflater.from(context);
+            mItemClickListener = itemClickListener;
+            mCheckDrawable = new IconicsDrawable(context, GoogleMaterial.Icon.gmd_check)
+                    .color(UIUtils.isInLightThemeMode(context) ? Color.BLACK : Color.WHITE)
+                    .sizeDp(20).paddingDp(4);
+        }
+
+        public void setButtonClickListener(View.OnClickListener listener) {
+            mButtonClickListener = listener;
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolderImpl(ViewGroup parent, int viewType) {
+            return new FontsAdapter.ViewHolderImpl(mInflater.inflate(R.layout.item_font, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolderImpl(RecyclerView.ViewHolder viewHolder, final int position) {
+            final FontsAdapter.ViewHolderImpl holder = (FontsAdapter.ViewHolderImpl) viewHolder;
+
+            File font = getItem(position);
+            SpannableStringBuilder sBuilder = new SpannableStringBuilder();
+            sBuilder.append(font.getName());
+            CalligraphyTypefaceSpan typefaceSpan
+                    = new CalligraphyTypefaceSpan(
+                    TypefaceUtils.load(getContext().getAssets(), font.getAbsolutePath()));
+            sBuilder.setSpan(typefaceSpan, 0, font.getName().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            holder.btnFont.setText(sBuilder, TextView.BufferType.SPANNABLE);
+            if (font.getName().equals(HiSettingsHelper.getInstance().getFont())) {
+                holder.btnFont.setCompoundDrawables(mCheckDrawable, null, null, null);
+            } else {
+                holder.btnFont.setCompoundDrawables(null, null, null, null);
+            }
+            holder.btnFont.setTag(font.getName());
+            holder.btnFont.setOnClickListener(mButtonClickListener);
+        }
+
+        private class ViewHolderImpl extends RecyclerView.ViewHolder {
+            AppCompatButton btnFont;
+
+            ViewHolderImpl(View itemView) {
+                super(itemView);
+                btnFont = itemView.findViewById(R.id.btn_font);
+            }
+        }
+    }
+
+    private void showCrashLogsDialog() {
+        List<File> logs = new ArrayList<>();
+        try {
+            File dir = Utils.getLogsDir();
+            File[] files = dir.listFiles();
+            if (files != null) {
+                Arrays.sort(files, (f1, f2) ->
+                        Long.compare(f2.lastModified(), f1.lastModified()));
+                logs.addAll(Arrays.asList(files));
+            }
+        } catch (Exception e) {
+            UIUtils.errorSnack(getView(), "发生错误", Utils.getStackTrace(e));
+            return;
+        }
+
+        if (logs.size() == 0) {
+            UIUtils.showMessageDialog(getContext(), "", "没有应用错误日志", false);
+            return;
+        }
+
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View viewlayout = inflater.inflate(R.layout.dialog_crash_logs, null);
+
+        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener(getActivity(),
+                new RecyclerItemClickListener.SimpleOnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        super.onItemClick(view, position);
+                        try {
+                            File logFile = logs.get(position);
+                            String content = Utils.readFileContent(logFile);
+                            UIUtils.showMessageDialog(getContext(), logFile.getName(), content, true);
+                        } catch (Exception e) {
+                            UIUtils.toast("不能打开文件 : " + e.getMessage());
+                        }
+                    }
+                });
+        BaseRvAdapter<File> logsAdapter = new LogsAdapter(getContext(), itemClickListener);
+        logsAdapter.setDatas(logs);
+        final RecyclerView recyclerView = viewlayout.findViewById(R.id.rv_logs);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(logsAdapter);
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback
+                = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int position = viewHolder.getAdapterPosition();
+                File logFile = logs.get(position);
+                try {
+                    boolean result = logFile.delete();
+                    if (result) {
+                        UIUtils.toast(logFile.getName() + " 已经删除");
+                        logs.remove(position);
+                        logsAdapter.notifyItemRemoved(position);
+                    } else {
+                        UIUtils.toast(logFile.getName() + " 删除失败");
+                    }
+                } catch (Exception exception) {
+                    UIUtils.errorSnack(getView(), logFile.getName() + " 删除失败", exception.getMessage());
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(viewlayout);
+
+        builder.setTitle(R.string.pref_crash_logs)
+                .setPositiveButton(getResources().getString(android.R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private static class LogsAdapter extends BaseRvAdapter<File> {
+
+        private final LayoutInflater mInflater;
+
+        LogsAdapter(Context context, RecyclerItemClickListener itemClickListener) {
+            mInflater = LayoutInflater.from(context);
+            mItemClickListener = itemClickListener;
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolderImpl(ViewGroup parent, int viewType) {
+            return new LogsAdapter.ViewHolderImpl(mInflater.inflate(R.layout.item_log, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolderImpl(RecyclerView.ViewHolder viewHolder, final int position) {
+            final LogsAdapter.ViewHolderImpl holder = (LogsAdapter.ViewHolderImpl) viewHolder;
+            holder.tvLog.setText(getItem(position).getName());
+        }
+
+        private class ViewHolderImpl extends RecyclerView.ViewHolder {
+            AppCompatTextView tvLog;
+
+            ViewHolderImpl(View itemView) {
+                super(itemView);
+                tvLog = itemView.findViewById(R.id.tv_log);
+            }
+        }
     }
 
 }

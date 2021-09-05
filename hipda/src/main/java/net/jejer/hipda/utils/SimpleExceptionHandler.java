@@ -1,8 +1,5 @@
 package net.jejer.hipda.utils;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.os.Looper;
 import android.widget.Toast;
 
@@ -21,15 +18,13 @@ public class SimpleExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        ClipboardManager clipboard = (ClipboardManager) HiApplication.getAppContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clipData = ClipData.newPlainText(null, Utils.getDeviceInfo() + "\n" + Utils.getStackTrace(e));
-        clipboard.setPrimaryClip(clipData);
+        Utils.saveCrashLog(e);
         new Thread() {
             @Override
             public void run() {
                 Looper.prepare();
                 Toast.makeText(HiApplication.getAppContext(),
-                        "抱歉，程序崩溃，信息已保存到粘贴板",
+                        "抱歉，程序发生错误，日志已保存",
                         Toast.LENGTH_LONG).show();
                 Looper.loop();
             }

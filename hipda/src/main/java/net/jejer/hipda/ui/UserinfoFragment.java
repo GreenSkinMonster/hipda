@@ -13,6 +13,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -50,9 +54,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Request;
 
 public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.SmsPostListener {
@@ -216,7 +217,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
         inflater.inflate(R.menu.menu_userinfo, menu);
         menu.findItem(R.id.action_send_sms).setIcon(new IconicsDrawable(getActivity(),
                 GoogleMaterial.Icon.gmd_insert_comment).actionBar()
-                .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
+                .color(UIUtils.getToolbarTextColor(getActivity())));
 
         setActionBarTitle("用户信息");
 
@@ -325,7 +326,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 return;
             }
             SimpleListItemBean item = mSimpleListAdapter.getItem(position);
-            FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), ThreadDetailFragment.LAST_PAGE, ThreadDetailFragment.LAST_FLOOR, null, -1);
+            FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), ThreadDetailFragment.LAST_PAGE, ThreadDetailFragment.LAST_FLOOR_OF_PAGE, null, -1);
         }
 
         @Override

@@ -1,23 +1,68 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="ThemeLightBase" parent="MaterialDrawerTheme.Light">
+    <style name="ThemeLightBase" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- copy from MaterialDrawerTheme.Light -->
+        <!-- Here we setting appcompat’s actionBarStyle -->
+        <item name="drawerArrowStyle">@style/MaterialDrawer.Light.DrawerArrowStyle</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/material_drawer_background</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_primary_text</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text</item>
+        <item name="material_drawer_hint_text">@color/material_drawer_hint_text</item>
+        <item name="material_drawer_hint_icon">@color/material_drawer_hint_icon</item>
+        <item name="material_drawer_divider">@color/material_drawer_divider</item>
+        <item name="material_drawer_selected">@color/material_drawer_selected</item>
+        <item name="material_drawer_selected_legacy">@color/material_drawer_selected_legacy</item>
+        <item name="material_drawer_selected_text">@color/material_drawer_selected_text</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_header_selection_text
+        </item>
+        <item name="material_drawer_header_selection_subtext">
+            @color/material_drawer_header_selection_subtext
+        </item>
+        <item name="material_drawer_legacy_style">false</item>
+        <!-- end of copy -->
     </style>
 
-    <style name="ThemeDarkBase" parent="MaterialDrawerTheme">
+    <style name="ThemeDarkBase" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- copy from MaterialDrawerTheme -->
+        <!-- Here we setting appcompat’s actionBarStyle -->
+        <item name="drawerArrowStyle">@style/MaterialDrawer.DrawerArrowStyle</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/material_drawer_dark_background</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_dark_primary_icon</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_dark_secondary_text
+        </item>
+        <item name="material_drawer_hint_text">@color/material_drawer_dark_hint_text</item>
+        <item name="material_drawer_hint_icon">@color/material_drawer_dark_hint_icon</item>
+        <item name="material_drawer_divider">@color/material_drawer_dark_divider</item>
+        <item name="material_drawer_selected">@color/material_drawer_dark_selected</item>
+        <item name="material_drawer_selected_legacy">@color/material_drawer_dark_selected_legacy
+        </item>
+        <item name="material_drawer_selected_text">@color/material_drawer_dark_selected_text</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_dark_header_selection_text
+        </item>
+        <item name="material_drawer_header_selection_subtext">
+            @color/material_drawer_dark_header_selection_subtext
+        </item>
+        <item name="material_drawer_legacy_style">false</item>
+        <!-- end of copy -->
     </style>
 
     <style name="ThemeLight" parent="ThemeLightBase">
 
-        <item name="android:windowBackground">?list_item_background</item>
+        <item name="android:windowBackground">?attr/window_background</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
-        <item name="actionBarPopupTheme">@style/MyToolbar.PopupTheme.Light</item>
+        <item name="actionBarPopupTheme">@style/MyToolbar.PopupTheme</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="actionBarMargin">0dp</item>
-
-        <item name="action_mode_text_color">@android:color/white</item>
-        <item name="fab_background_tint">@color/md_grey_400</item>
 
         <!-- MaterialDrawer : change smaller drawer item's color -->
         <item name="material_drawer_secondary_text">?material_drawer_primary_text</item>
@@ -32,19 +77,14 @@
         <item name="colorPrimaryDark">@color/md_grey_800</item>
         <item name="colorAccent">@color/hipda</item>
 
-        <item name="android:textColor">@color/textColorPrimaryLight</item>
-        <item name="android:textColorPrimary">@color/textColorPrimaryLight</item>
-        <item name="android:textColorSecondary">@color/textColorSecondaryLight</item>
-        <item name="panelMenuListTheme">@style/Theme.CompactMenu.Light</item>
+        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="panelMenuListTheme">@style/Theme.CompactMenu</item>
 
-        <item name="background">@color/day_background</item>
-        <item name="list_item_background">#FFFFFF</item>
-        <item name="list_item_divider">@color/quote_background_light</item>
-        <item name="quote_background">@drawable/quote_background_light</item>
+        <item name="background">@color/light_theme_background</item>
+        <item name="window_background">@color/window_background</item>
         <item name="emojiBackground">@color/md_grey_200</item>
-        <item name="swipe_background">@color/white</item>
-        <item name="swipe_color">@color/icon_blue</item>
-        <item name="dialog_background">@color/md_grey_100</item>
 
         <!-- Matisse begin -->
         <item name="toolbar">@style/Toolbar.Zhihu</item>
@@ -70,7 +110,7 @@
         <item name="preview.bottomToolbar.apply.textColor">
             @color/zhihu_preview_bottom_toolbar_apply
         </item>
-        <item name="listPopupWindowStyle">@style/Popup.Matisse.Light</item>
+        <item name="listPopupWindowStyle">@style/Popup.Matisse</item>
         <item name="capture.textColor">@color/zhihu_capture</item>
         <!-- Matisse end -->
     </style>
@@ -178,93 +218,24 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
         <!-- Hamburger-Icon color -->
         <item name="drawerArrowStyle">@style/MaterialDrawer.DrawerArrowStyle.Dark</item>
+        <!-- Matisse toolbar text color-->
+        <item name="album.element.color">@color/black</item>
     </style>
 
     <style name="ThemeLight.Black" parent="ThemeLight">
-        <item name="colorPrimary">#2A2A2A</item>
-        <item name="colorPrimaryDark">#2A2A2A</item>
+        <item name="colorPrimary">@color/theme_dark</item>
+        <item name="colorPrimaryDark">@color/theme_dark</item>
     </style>
 
-    <style name="ThemeDark" parent="ThemeDarkBase">
-
-        <item name="android:windowBackground">?list_item_background</item>
-        <item name="android:windowIsTranslucent">true</item>
-
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-
-        <item name="actionBarPopupTheme">@style/MyToolbar.PopupTheme.Dark</item>
-        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-        <item name="actionBarMargin">0dp</item>
-
-        <item name="action_mode_text_color">@android:color/white</item>
-        <item name="fab_background_tint">@color/md_grey_900</item>
-
-        <!-- MaterialDrawer : change smaller drawer item's color -->
-        <item name="material_drawer_secondary_text">?material_drawer_primary_text</item>
-        <item name="material_drawer_selected_text">?colorAccent</item>
-
-        <!-- change searchView suggestion background color-->
-        <item name="android:autoCompleteTextViewStyle">@style/MyAutoCompleteTextView</item>
-
-        <item name="colorPrimary">#2A2A2A</item>
-        <item name="colorPrimaryDark">#2A2A2A</item>
-        <item name="colorAccent">@color/hipda</item>
-
-        <item name="android:textColor">@color/textColorPrimaryDark</item>
-        <item name="android:textColorPrimary">@color/textColorPrimaryDark</item>
-        <item name="android:textColorSecondary">@color/textColorSecondaryDark</item>
-        <item name="panelMenuListTheme">@style/Theme.CompactMenu.Dark</item>
-
-        <item name="background">@color/night_background</item>
-        <item name="list_item_background">#1C1D1E</item>
-        <item name="list_item_divider">@color/quote_background_dark</item>
-        <item name="quote_background">@drawable/quote_background_dark</item>
-        <item name="emojiBackground">@color/md_grey_900</item>
-        <item name="swipe_background">@color/md_grey_800</item>
-        <item name="swipe_color">@color/white</item>
-        <item name="dialog_background">#2A2A2A</item>
-
-        <!-- Matisse begin -->
-        <item name="toolbar">@style/Toolbar.Dracula</item>
-        <item name="album.dropdown.title.color">@color/dracula_album_dropdown_title_text</item>
-        <item name="album.dropdown.count.color">@color/dracula_album_dropdown_count_text</item>
-        <item name="album.element.color">@android:color/white</item>
-        <item name="album.thumbnail.placeholder">@color/md_grey_900</item>
-        <item name="album.emptyView">@drawable/ic_empty_dracula</item>
-        <item name="album.emptyView.textColor">@color/dracula_album_empty_view</item>
-        <item name="item.placeholder">@color/md_grey_700</item>
-        <item name="item.checkCircle.backgroundColor">
-            @color/dracula_item_checkCircle_backgroundColor
-        </item>
-        <item name="item.checkCircle.borderColor">@color/dracula_item_checkCircle_borderColor</item>
-        <item name="page.bg">@color/md_grey_800</item>
-        <item name="bottomToolbar.bg">@color/md_grey_900</item>
-        <item name="bottomToolbar.preview.textColor">@color/dracula_bottom_toolbar_preview</item>
-        <item name="bottomToolbar.apply.textColor">@color/dracula_bottom_toolbar_apply</item>
-        <item name="preview.bottomToolbar.back.textColor">
-            @color/dracula_preview_bottom_toolbar_back_text
-        </item>
-        <item name="preview.bottomToolbar.apply.textColor">
-            @color/dracula_preview_bottom_toolbar_apply
-        </item>
-        <item name="android:listPopupWindowStyle">@style/Popup.Dracula</item>
-        <item name="listPopupWindowStyle">@style/Popup.Matisse.Dark</item>
-        <item name="capture.textColor">@color/dracula_capture</item>
-        <!-- Matisse end -->
-    </style>
-
-    <style name="ThemeBlack" parent="ThemeDark">
-        <item name="colorPrimary">#1A1A1A</item>
-        <item name="colorPrimaryDark">#1A1A1A</item>
-
-        <item name="list_item_background">@color/black</item>
-        <item name="list_item_divider">@color/quote_background_black</item>
-        <item name="quote_background">@drawable/quote_background_black</item>
-    </style>
-
-    <style name="ThemeImageViewer" parent="ThemeBlack">
-        <item name="colorPrimary">@color/md_black_1000</item>
-        <item name="colorPrimaryDark">@color/md_black_1000</item>
+    <style name="ThemeImageViewer" parent="ThemeLight">
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:navigationBarColor">@color/transparent</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>
     </style>
 
     <style name="MyAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
@@ -281,36 +252,22 @@
         <item name="color">@android:color/black</item>
     </style>
 
-    <style name="MyToolbar.PopupTheme.Light" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:textColor">?android:textColorPrimary</item>
-    </style>
-
-    <style name="MyToolbar.PopupTheme.Dark" parent="ThemeOverlay.AppCompat.Dark">
+    <style name="MyToolbar.PopupTheme" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:textColor">?android:textColorPrimary</item>
     </style>
 
     <!-- hardware menu key popup menu style -->
-    <style name="Theme.CompactMenu.Light" parent="@style/Theme.AppCompat.CompactMenu">
+    <style name="Theme.CompactMenu" parent="@style/Theme.AppCompat.CompactMenu">
         <item name="android:itemTextAppearance">
-            @style/TextAppearance.Material.CompactMenu.Light
+            @style/TextAppearance.Material.CompactMenu
         </item>
     </style>
 
-    <style name="TextAppearance.Material.CompactMenu.Light" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">@color/textColorPrimaryLight</item>
+    <style name="TextAppearance.Material.CompactMenu" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/textColorPrimary</item>
     </style>
 
-    <style name="Theme.CompactMenu.Dark" parent="@style/Theme.AppCompat.CompactMenu">
-        <item name="android:itemTextAppearance">
-            @style/TextAppearance.Material.CompactMenu.Dark
-        </item>
-    </style>
-
-    <style name="TextAppearance.Material.CompactMenu.Dark" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">@color/textColorPrimaryDark</item>
-    </style>
-
-    <style name="AppTheme.Launcher" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme.Launcher" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
         <item name="colorPrimaryDark">@color/splash_background</item>
 
@@ -319,21 +276,8 @@
         <item name="android:navigationBarColor">@color/splash_background</item>
     </style>
 
-    <!-- fix ugly Preference Category with android version < 4.4 -->
-    <style name="Preference.Category.Material">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/accent</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:layout_marginBottom">16dp</item>
-    </style>
-
-    <style name="Popup.Matisse.Light" parent="Widget.AppCompat.ListPopupWindow">
+    <style name="Popup.Matisse" parent="Widget.AppCompat.ListPopupWindow">
         <item name="android:popupBackground">@color/md_grey_100</item>
-    </style>
-
-    <style name="Popup.Matisse.Dark" parent="Widget.AppCompat.Light.ListPopupWindow">
-        <item name="android:popupBackground">@color/md_grey_800</item>
     </style>
 
     <style name="SwipeBackLayout">

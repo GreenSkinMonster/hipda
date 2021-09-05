@@ -20,6 +20,7 @@ public class DetailBean {
     private Collection<ContentImg> mImages = new ArrayList<>();
     private boolean mSelectMode;
     private boolean mHighlightMode;
+    private PollBean mPoll;
 
     public DetailBean() {
         mContents = new Contents();
@@ -272,6 +273,14 @@ public class DetailBean {
 
     public void setHighlightMode(boolean highlightMode) {
         mHighlightMode = highlightMode;
+    }
+
+    public PollBean getPoll() {
+        return mPoll;
+    }
+
+    public void setPoll(PollBean pollBean) {
+        mPoll = pollBean;
     }
 
     private String unEscapeHtml(String str) {

@@ -16,6 +16,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -54,8 +57,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import okhttp3.Request;
 
 public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPostListener {
@@ -138,7 +139,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
 
     private void sendSms(String replyText) {
         mSending = true;
-        new PostSmsAsyncTask(getActivity(), mUid, null, SmsFragment.this, null).execute(replyText);
+        new PostSmsAsyncTask(mUid, null, SmsFragment.this, null).execute(replyText);
         mEtSms.setText("");
         mCountdownButton.setEnabled(false);
         SimpleListItemBean bean = new SimpleListItemBean();
@@ -203,7 +204,7 @@ public class SmsFragment extends BaseFragment implements PostSmsAsyncTask.SmsPos
         inflater.inflate(R.menu.menu_sms_detail, menu);
         menu.findItem(R.id.action_clear_sms)
                 .setIcon(new IconicsDrawable(getActivity(), FontAwesome.Icon.faw_trash).actionBar()
-                        .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
+                        .color(UIUtils.getToolbarTextColor(getActivity())));
 
         setActionBarTitle(mAuthor);
         mEtSms.setHint(getString(R.string.txt_quick_hint) + " · " + mAuthor);

@@ -19,7 +19,7 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
 
     private View mHeaderView;
     private View mFooterView;
-    protected RecyclerItemClickListener mListener;
+    protected RecyclerItemClickListener mItemClickListener;
 
     private List<V> mDatas = new ArrayList<>();
 
@@ -78,8 +78,8 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
 
     public void removeHeaderView() {
         if (mHeaderView != null) {
-            mHeaderView = null;
             notifyItemRemoved(0);
+            mHeaderView = null;
         }
     }
 
@@ -97,8 +97,8 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
 
     public void removeFooterView() {
         if (mFooterView != null) {
-            mFooterView = null;
             notifyItemRemoved(getItemCount() - 1);
+            mFooterView = null;
         }
     }
 
@@ -134,7 +134,7 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
         }
         onBindViewHolderImpl(holder, position);
         holder.itemView.setTag(position);
-        holder.itemView.setOnTouchListener(mListener);
+        holder.itemView.setOnTouchListener(mItemClickListener);
     }
 
 }

@@ -5,23 +5,22 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DetailListBean {
-    private List<DetailBean> mDetailBeans;
+    final private List<DetailBean> mDetailBeans = new ArrayList<>();
+    final private HashMap<String, DetailBean> mPostIdMap = new HashMap<>();
+
     private int mLastPage = 1;
     private int mPage = 0;
     private String mTitle;
     private int mFid;
     private String mTid;
-    private HashMap<String, DetailBean> mPostIdBeans;
     private int mImagesCount = 0;
 
     public DetailListBean() {
-        mDetailBeans = new ArrayList<>();
-        mPostIdBeans = new HashMap<>();
     }
 
     public void add(DetailBean detailBean) {
         mDetailBeans.add(detailBean);
-        mPostIdBeans.put(detailBean.getPostId(), detailBean);
+        mPostIdMap.put(detailBean.getPostId(), detailBean);
         for (ContentImg contentImg : detailBean.getImages()) {
             contentImg.setFloor(detailBean.getFloor());
             contentImg.setAuthor(detailBean.getAuthor());
@@ -38,7 +37,7 @@ public class DetailListBean {
     }
 
     public DetailBean getPostInPage(String postId) {
-        return mPostIdBeans.get(postId);
+        return mPostIdMap.get(postId);
     }
 
     public int getLastPage() {

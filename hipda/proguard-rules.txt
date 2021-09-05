@@ -15,12 +15,8 @@
 -dontwarn okhttp3.internal.platform.ConscryptPlatform
 
 #google stuff
--dontwarn android.support.**
--keep class android.support.v7.** { *; }
--keep interface android.support.v7.** { *; }
--keep class org.apache.http.** { *; }
--dontwarn org.apache.http.**
--dontwarn android.net.**
+-keep class androidx.**
+-keep interface androidx.**
 
 -keeppackagenames org.jsoup.nodes
 -keep public class org.jsoup.** {

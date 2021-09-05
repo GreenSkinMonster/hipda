@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <attr name="list_item_background" format="color"/>
-    <attr name="list_item_divider" format="color"/>
-    <attr name="swipe_color" format="color"/>
-    <attr name="swipe_background" format="color"/>
-    <attr name="dialog_background" format="color"/>
-    <attr name="quote_background" format="reference"/>
-
-    <attr name="action_mode_text_color" format="color"/>
-    <attr name="fab_background_tint" format="color"/>
+    <attr name="window_background" format="color" />
 
     <attr name="actionBarMargin" format="dimension"/>
 

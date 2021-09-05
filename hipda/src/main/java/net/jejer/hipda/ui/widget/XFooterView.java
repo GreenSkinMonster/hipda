@@ -21,9 +21,8 @@ public class XFooterView extends RelativeLayout {
 
     public final static int STATE_HIDDEN = 0;
     public final static int STATE_LOADING = 1;
-    public final static int STATE_READY = 2;
-    public final static int STATE_END = 3;
-    public final static int STATE_ERROR = 4;
+    public final static int STATE_END = 2;
+    public final static int STATE_ERROR = 3;
 
     private View mLayout;
     private ProgressBar mProgressBar;
@@ -42,22 +41,15 @@ public class XFooterView extends RelativeLayout {
                 Utils.dpToPx(XRecyclerView.HEIGHT_IN_DP)));
         addView(mLayout);
 
-        mProgressBar = (ProgressBar) mLayout.findViewById(R.id.footer_progressbar);
+        mProgressBar = mLayout.findViewById(R.id.footer_progressbar);
         mProgressBar.getIndeterminateDrawable()
                 .setColorFilter(Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
-        mHintView = (TextView) mLayout.findViewById(R.id.footer_text);
+        mHintView = mLayout.findViewById(R.id.footer_text);
     }
 
     protected void setState(int state) {
         if (state == mState) return;
         switch (state) {
-            case STATE_READY:
-                mProgressBar.setVisibility(View.GONE);
-                mHintView.setTextColor(ColorHelper.getTextColorSecondary(getContext()));
-                mHintView.setText(R.string.footer_hint_load_next);
-                mHintView.setVisibility(View.VISIBLE);
-                break;
-
             case STATE_END:
                 mProgressBar.setVisibility(View.GONE);
                 mHintView.setTextColor(ColorHelper.getTextColorSecondary(getContext()));
@@ -89,11 +81,6 @@ public class XFooterView extends RelativeLayout {
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mLayout.getLayoutParams();
         lp.bottomMargin = margin;
         mLayout.setLayoutParams(lp);
-    }
-
-    protected int getBottomMargin() {
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mLayout.getLayoutParams();
-        return lp.bottomMargin;
     }
 
 }

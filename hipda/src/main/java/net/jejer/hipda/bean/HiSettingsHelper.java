@@ -1,16 +1,17 @@
 package net.jejer.hipda.bean;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import androidx.core.content.ContextCompat;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.service.NotiHelper;
@@ -18,25 +19,29 @@ import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.utils.Connectivity;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.Utils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class HiSettingsHelper {
-    /*
-     *
-     * NOTE! PLEASE LINE-UP WITH PREFERENCE.XML
-     *
-     * */
-    public static final String PERF_USERNAME = "PERF_USERNAME";
-    public static final String PERF_PASSWORD = "PERF_PASSWORD";
-    public static final String PERF_UID = "PERF_UID";
-    public static final String PERF_SECQUESTION = "PERF_SECQUESTION";
-    public static final String PERF_SECANSWER = "PERF_SECANSWER";
+
+    /* begin of encrypted user info */
+    private static final String PERF_USERNAME = "PERF_USERNAME";
+    private static final String PERF_PASSWORD = "PERF_PASSWORD";
+    private static final String PERF_UID = "PERF_UID";
+    private static final String PERF_SECQUESTION = "PERF_SECQUESTION";
+    private static final String PERF_SECANSWER = "PERF_SECANSWER";
+    private static final String PERF_PROFILES = "PERF_PROFILES";
+    /* end of encrypted user info */
+
     public static final String PERF_SHOWSTICKTHREADS = "PERF_SHOWSTICKTHREADS";
     public static final String PERF_WIFI_IMAGE_POLICY = "PERF_WIFI_IMAGE_POLICY";
     public static final String PERF_MOBILE_IMAGE_POLICY = "PERF_MOBILE_IMAGE_POLICY";
@@ -45,16 +50,14 @@ public class HiSettingsHelper {
     public static final String PERF_ADDTAIL = "PERF_ADDTAIL";
     public static final String PERF_TAILTEXT = "PERF_TAILTEXT";
     public static final String PERF_TAILURL = "PERF_TAILURL";
-    public static final String PERF_THEME = "PERF_THEME";
-    public static final String PERF_PRIMARY_COLOR = "PERF_PRIMARY_COLOR";
-    public static final String PERF_NIGHT_THEME = "PERF_NIGHT_THEME";
-    public static final String PERF_NIGHT_MODE = "PERF_NIGHT_MODE";
+    public static final String PERF_THEME_MODE = "PERF_THEME";
+    public static final String PERF_DARK_THEME = "PERF_NIGHT_THEME";
+    public static final String PERF_LIGHT_THEME = "PERF_DAY_THEME";
     public static final String PERF_NAVBAR_COLORED = "PERF_NAVBAR_COLORED";
     public static final String PERF_FONT = "PERF_FONT";
     public static final String PERF_FORUMS = "PERF_FORUMS2";
     public static final String PERF_FREQ_MENUS = "PERF_FREQ_MENUS";
     public static final String PERF_ENCODEUTF8 = "PERF_ENCODEUTF8";
-    public static final String PERF_OLD_BLACKLIST = "PERF_BLANKLIST_USERNAMES";
     public static final String PERF_TEXTSIZE_POST_ADJ = "PERF_TEXTSIZE_POST_ADJ";
     public static final String PERF_TEXTSIZE_TITLE_ADJ = "PERF_TEXTSIZE_TITLE_ADJ";
     public static final String PERF_SCREEN_ORIENTATION = "PERF_SCREEN_ORIENTATION";
@@ -67,6 +70,7 @@ public class HiSettingsHelper {
     public static final String PERF_AUTO_UPDATE_CHECK = "PERF_AUTO_UPDATE_CHECK";
     public static final String PERF_ABOUT = "PERF_ABOUT";
     public static final String PERF_SUPPORT = "PERF_SUPPORT";
+    public static final String PERF_CRASH_LOGS = "PERF_CRASH_LOGS";
     public static final String PERF_MAX_POSTS_IN_PAGE = "PERF_MAX_POSTS_IN_PAGE";
     public static final String PERF_POST_LINE_SPACING = "PERF_POST_LINE_SPACING";
     public static final String PERF_LAST_FORUM_ID = "PERF_LAST_FORUM_ID";
@@ -81,7 +85,6 @@ public class HiSettingsHelper {
     public static final String PERF_NOTI_SILENT_BEGIN = "PERF_NOTI_SILENT_BEGIN";
     public static final String PERF_NOTI_SILENT_END = "PERF_NOTI_SILENT_END";
     public static final String PERF_BS_TYPE_ID = "PERF_BS_TYPE_ID";
-    public static final String PERF_SAVE_FOLDER = "PERF_SAVE_FOLDER";
     public static final String PERF_CIRCLE_AVATAR = "PERF_CIRCLE_AVATAR";
     public static final String PERF_LAST_TASK_TIME = "PERF_LAST_TASK_TIME";
     public static final String PERF_CACHE_SIZE_IN_MB = "PERF_CACHE_SIZE_IN_MB";
@@ -91,13 +94,14 @@ public class HiSettingsHelper {
     public static final String PERF_MAX_UPLOAD_FILE_SIZE = "PERF_MAX_UPLOAD_FILE_SIZE";
     public static final String PERF_SHOW_TAIL = "PERF_SHOW_TAIL";
     public static final String PERF_CAMERA_PERM_ASKED = "PERF_CAMERA_PERM_ASKED";
-    public static final String PERF_SWIPE_COMPAT_MODE = "PERF_SWIPE_COMPAT_MODE";
     public static final String PERF_BLACKLIST = "PERF_BLACKLIST";
     public static final String PERF_BLACKLIST_SYNC_TIME = "PERF_BLACKLIST_SYNC_TIME";
 
-    public static final String THEME_LIGHT = "light";
-    public static final String THEME_DARK = "dark";
+    public static final String THEME_MODE_AUTO = "auto";
+    public static final String THEME_MODE_LIGHT = "light";
+    public static final String THEME_MODE_DARK = "dark";
     public static final String THEME_BLACK = "black";
+    public static final String THEME_WHITE = "white";
     public static final int MAX_TAIL_TEXT_LENGTH = 12;
 
     public static final int SMALL_IMAGE_SIZE = 500 * 1024; //500K
@@ -108,6 +112,7 @@ public class HiSettingsHelper {
 
     private Context mCtx;
     private SharedPreferences mSharedPref;
+    private SharedPreferences mEncrytedSharedPref;
 
     private String mUsername = "";
     private String mPassword = "";
@@ -124,9 +129,8 @@ public class HiSettingsHelper {
     private String mTailUrl = "";
 
     private String mTheme = "";
-    private int mPrimaryColor = 0;
-    private String mNightTheme = "";
-    private boolean mNightMode = false;
+    private String mDarkTheme = "";
+    private String mLightTheme = "";
     private boolean mNavBarColor = false;
     private String mFont = "";
     private List<Integer> mForums = new ArrayList<>();
@@ -134,7 +138,6 @@ public class HiSettingsHelper {
 
     private boolean mEncodeUtf8 = false;
 
-    private List<String> mOldBlacklists;
     private List<String> mBlacklists;
 
     private int mPostTextSizeAdj = 0;
@@ -219,7 +222,57 @@ public class HiSettingsHelper {
     private HiSettingsHelper() {
         mCtx = HiApplication.getAppContext();
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(mCtx);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                String masterKey = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+                mEncrytedSharedPref = EncryptedSharedPreferences.create(
+                        "encrypted_shared_prefs",
+                        masterKey,
+                        mCtx,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                );
+            } else {
+                mEncrytedSharedPref = mSharedPref;
+            }
+        } catch (NoClassDefFoundError | Exception e) {
+            Logger.e(e.getClass().getName() + " : " + e.getMessage() + ", use default shared preference ");
+            mEncrytedSharedPref = mSharedPref;
+        }
         reload();
+    }
+
+    public final static Theme[] DARK_THEMES = {
+            new Theme("dark", R.style.ThemeDark, R.color.theme_dark, R.color.white),
+            new Theme("black", R.style.ThemeBlack, R.color.theme_black, R.color.white)
+    };
+
+    public final static Theme[] LIGHT_THEMES = {
+            new Theme("white", R.style.ThemeLight_White, R.color.md_grey_200, R.color.black),
+            new Theme("red", R.style.ThemeLight_Red, R.color.md_red_700, R.color.white),
+            new Theme("pink", R.style.ThemeLight_Pink, R.color.md_pink_700, R.color.white),
+            new Theme("purple", R.style.ThemeLight_Purple, R.color.md_purple_700, R.color.white),
+            new Theme("deep_purple", R.style.ThemeLight_DeepPurple, R.color.md_deep_purple_700, R.color.white),
+            new Theme("indigo", R.style.ThemeLight_Orange, R.color.md_indigo_700, R.color.white),
+            new Theme("blue", R.style.ThemeLight_Blue, R.color.md_blue_700, R.color.white),
+            new Theme("light_blue", R.style.ThemeLight_LightBlue, R.color.md_light_blue_700, R.color.white),
+            new Theme("cyan", R.style.ThemeLight_Cyan, R.color.md_cyan_700, R.color.white),
+            new Theme("teal", R.style.ThemeLight_Teal, R.color.md_teal_700, R.color.white),
+            new Theme("green", R.style.ThemeLight_Green, R.color.md_green_700, R.color.white),
+            new Theme("light_green", R.style.ThemeLight_LightGreen, R.color.md_light_green_700, R.color.white),
+            new Theme("lime", R.style.ThemeLight_Lime, R.color.md_lime_700, R.color.white),
+            new Theme("yellow", R.style.ThemeLight_Yellow, R.color.md_yellow_700, R.color.white),
+            new Theme("amber", R.style.ThemeLight_Amber, R.color.md_amber_700, R.color.white),
+            new Theme("orange", R.style.ThemeLight_Orange, R.color.md_orange_700, R.color.white),
+            new Theme("deep_orange", R.style.ThemeLight_DeepOrange, R.color.md_deep_orange_700, R.color.white),
+            new Theme("brown", R.style.ThemeLight_Brown, R.color.md_brown_700, R.color.white),
+            new Theme("grey", R.style.ThemeLight_Grey, R.color.md_grey_700, R.color.white),
+            new Theme("blue_grey", R.style.ThemeLight_BlueGrey, R.color.md_blue_grey_700, R.color.white),
+            new Theme("black", R.style.ThemeLight_Black, R.color.md_black_1000, R.color.white),
+    };
+
+    public SharedPreferences getSharedPref() {
+        return mSharedPref;
     }
 
     private static class SingletonHolder {
@@ -243,9 +296,8 @@ public class HiSettingsHelper {
         getTailTextFromPref();
         getTailUrlFromPref();
         getThemeFromPref();
-        getPrimaryColorFromPref();
-        getNightThemeFromPref();
-        isNightModeFromPref();
+        getDarkThemeFromPref();
+        getLightThemeFromPref();
         isNavBarColoredFromPref();
         getFontFromPref();
         isEncodeUtf8FromPref();
@@ -262,7 +314,6 @@ public class HiSettingsHelper {
         getBSTypeIdFromPref();
         getForumServerFromPref();
         getImageHostFromPref();
-        getOldBlacklistsFromPref();
         getBlacklistsFromPref();
 
         updateMobileNetworkStatus(mCtx);
@@ -277,13 +328,13 @@ public class HiSettingsHelper {
     }
 
     private String getUsernameFromPref() {
-        mUsername = mSharedPref.getString(PERF_USERNAME, "");
+        mUsername = mEncrytedSharedPref.getString(PERF_USERNAME, "");
         return mUsername;
     }
 
     public void setUsername(String username) {
         mUsername = username;
-        SharedPreferences.Editor editor = mSharedPref.edit();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
         editor.putString(PERF_USERNAME, username).apply();
     }
 
@@ -292,13 +343,13 @@ public class HiSettingsHelper {
     }
 
     private String getPasswordFromPref() {
-        mPassword = mSharedPref.getString(PERF_PASSWORD, "");
+        mPassword = mEncrytedSharedPref.getString(PERF_PASSWORD, "");
         return mPassword;
     }
 
     public void setPassword(String password) {
         mPassword = password;
-        SharedPreferences.Editor editor = mSharedPref.edit();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
         editor.putString(PERF_PASSWORD, password).apply();
     }
 
@@ -307,13 +358,13 @@ public class HiSettingsHelper {
     }
 
     private String getUidFromPref() {
-        mUid = mSharedPref.getString(PERF_UID, "");
+        mUid = mEncrytedSharedPref.getString(PERF_UID, "");
         return mUid;
     }
 
     public void setUid(String uid) {
         mUid = uid;
-        SharedPreferences.Editor editor = mSharedPref.edit();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
         editor.putString(PERF_UID, uid).apply();
     }
 
@@ -322,13 +373,13 @@ public class HiSettingsHelper {
     }
 
     private String getSecQuestionFromPref() {
-        mSecQuestion = mSharedPref.getString(PERF_SECQUESTION, "");
+        mSecQuestion = mEncrytedSharedPref.getString(PERF_SECQUESTION, "");
         return mSecQuestion;
     }
 
     public void setSecQuestion(String secQuestion) {
         mSecQuestion = secQuestion;
-        SharedPreferences.Editor editor = mSharedPref.edit();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
         editor.putString(PERF_SECQUESTION, secQuestion).apply();
     }
 
@@ -337,14 +388,85 @@ public class HiSettingsHelper {
     }
 
     private String getSecAnswerFromPref() {
-        mSecAnswer = mSharedPref.getString(PERF_SECANSWER, "");
+        mSecAnswer = mEncrytedSharedPref.getString(PERF_SECANSWER, "");
         return mSecAnswer;
     }
 
     public void setSecAnswer(String secAnswer) {
         mSecAnswer = secAnswer;
-        SharedPreferences.Editor editor = mSharedPref.edit();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
         editor.putString(PERF_SECANSWER, secAnswer).apply();
+    }
+
+    public Map<String, Profile> getProfiles() {
+        String profilesValue = mEncrytedSharedPref.getString(PERF_PROFILES, "{}");
+        Gson gson = new Gson();
+        Type profilesType = new TypeToken<Map<String, Profile>>() {
+        }.getType();
+        Map<String, Profile> profiles;
+        try {
+            profiles = gson.fromJson(profilesValue, profilesType);
+        } catch (Exception e) {
+            profiles = new HashMap<>();
+            Logger.e(e);
+        }
+        return profiles;
+    }
+
+    public Profile getProfile(String username) {
+        return getProfiles().get(username.toUpperCase());
+    }
+
+    public void saveCurrentProfile() {
+        if (TextUtils.isEmpty(getUsername()))
+            return;
+        Profile profile = new Profile(getUsername(),
+                getPassword(),
+                getUid(),
+                getSecQuestion(),
+                getSecAnswer());
+
+        Gson gson = new Gson();
+        Type profilesType = new TypeToken<Map<String, Profile>>() {
+        }.getType();
+        Map<String, Profile> profiles = getProfiles();
+        profiles.put(profile.getUsername().toUpperCase(), profile);
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
+        String v = gson.toJson(profiles, profilesType);
+        editor.putString(PERF_PROFILES, v).apply();
+    }
+
+    public void removeProfile(String username) {
+        Map<String, Profile> profiles = getProfiles();
+        profiles.remove(username.toUpperCase());
+
+        Gson gson = new Gson();
+        Type profilesType = new TypeToken<Map<String, Profile>>() {
+        }.getType();
+        SharedPreferences.Editor editor = mEncrytedSharedPref.edit();
+        String v = gson.toJson(profiles, profilesType);
+        editor.putString(PERF_PROFILES, v).apply();
+    }
+
+    public void migrateEncrytSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mEncrytedSharedPref instanceof EncryptedSharedPreferences
+                    && !TextUtils.isEmpty(mSharedPref.getString(PERF_USERNAME, ""))) {
+                setUsername(mSharedPref.getString(PERF_USERNAME, ""));
+                setPassword(mSharedPref.getString(PERF_PASSWORD, ""));
+                setUid(mSharedPref.getString(PERF_UID, ""));
+                setSecQuestion(mSharedPref.getString(PERF_SECQUESTION, ""));
+                setSecAnswer(mSharedPref.getString(PERF_SECANSWER, ""));
+
+                SharedPreferences.Editor editor = mSharedPref.edit();
+                editor.remove(PERF_USERNAME);
+                editor.remove(PERF_PASSWORD);
+                editor.remove(PERF_UID);
+                editor.remove(PERF_SECQUESTION);
+                editor.remove(PERF_SECANSWER);
+                editor.apply();
+            }
+        }
     }
 
     public boolean isShowStickThreads() {
@@ -465,60 +587,44 @@ public class HiSettingsHelper {
     }
 
     private String getThemeFromPref() {
-        mTheme = mSharedPref.getString(PERF_THEME, THEME_LIGHT);
+        mTheme = mSharedPref.getString(PERF_THEME_MODE, THEME_MODE_LIGHT);
         return mTheme;
     }
 
     public void setTheme(String theme) {
         mTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_THEME, theme).apply();
+        editor.putString(PERF_THEME_MODE, theme).apply();
     }
 
-    public int getPrimaryColor() {
-        return mPrimaryColor;
+    public String getDarkTheme() {
+        return mDarkTheme;
     }
 
-    private int getPrimaryColorFromPref() {
-        mPrimaryColor = mSharedPref.getInt(PERF_PRIMARY_COLOR, 0);
-        return mPrimaryColor;
+    private String getDarkThemeFromPref() {
+        mDarkTheme = mSharedPref.getString(PERF_DARK_THEME, THEME_MODE_DARK);
+        return mDarkTheme;
     }
 
-    public void setPrimaryColor(int primaryColor) {
-        mPrimaryColor = primaryColor;
+    public void setDarkTheme(String theme) {
+        mDarkTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putInt(PERF_PRIMARY_COLOR, primaryColor).apply();
+        editor.putString(PERF_DARK_THEME, theme).apply();
     }
 
-    public String getNightTheme() {
-        return mNightTheme;
+    public String getLightTheme() {
+        return mLightTheme;
     }
 
-    private String getNightThemeFromPref() {
-        mNightTheme = mSharedPref.getString(PERF_NIGHT_THEME, THEME_DARK);
-        return mNightTheme;
+    private String getLightThemeFromPref() {
+        mLightTheme = mSharedPref.getString(PERF_LIGHT_THEME, THEME_WHITE);
+        return mLightTheme;
     }
 
-    public void setNightTheme(String theme) {
-        mNightTheme = theme;
+    public void setLightTheme(String theme) {
+        mLightTheme = theme;
         SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_NIGHT_THEME, theme).apply();
-    }
-
-    public boolean isNightMode() {
-        return mNightMode;
-    }
-
-    private boolean isNightModeFromPref() {
-        mNightMode = mSharedPref.getBoolean(PERF_NIGHT_MODE, false);
-        return mNightMode;
-    }
-
-    @SuppressLint("ApplySharedPref")
-    public void setNightMode(boolean nightMode) {
-        mNightMode = nightMode;
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putBoolean(PERF_NIGHT_MODE, nightMode).commit();
+        editor.putString(PERF_LIGHT_THEME, theme).apply();
     }
 
     public String getFont() {
@@ -658,34 +764,6 @@ public class HiSettingsHelper {
         return mNotiTaskEnabled;
     }
 
-    public List<String> getOldBlacklists() {
-        return mOldBlacklists;
-    }
-
-    public void setOldBlacklists(List<String> blacklists) {
-        mOldBlacklists = blacklists;
-        StringBuilder sb = new StringBuilder();
-        for (String username : blacklists) {
-            if (!TextUtils.isEmpty(username)) {
-                if (sb.length() > 0)
-                    sb.append("\n");
-                sb.append(username);
-            }
-        }
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(PERF_OLD_BLACKLIST, sb.toString()).apply();
-    }
-
-    private List<String> getOldBlacklistsFromPref() {
-        String[] usernames = mSharedPref.getString(PERF_OLD_BLACKLIST, "").split("\n");
-        mOldBlacklists = new ArrayList<>();
-        for (String username : usernames) {
-            if (!TextUtils.isEmpty(username) && !mOldBlacklists.contains(username))
-                mOldBlacklists.add(username);
-        }
-        return mOldBlacklists;
-    }
-
     public List<String> getBlacklists() {
         if (mBlacklists == null)
             mBlacklists = new ArrayList<>();
@@ -717,7 +795,7 @@ public class HiSettingsHelper {
     }
 
     public boolean isInBlacklist(String username) {
-        return mBlacklists.contains(username) || mOldBlacklists.contains(username);
+        return mBlacklists.contains(username);
     }
 
     public void addToBlacklist(String username) {
@@ -990,17 +1068,6 @@ public class HiSettingsHelper {
                 && Utils.isInTimeRange(getSilentBegin(), getSilentEnd());
     }
 
-    public String getActiveTheme() {
-        if (isNightMode() && !TextUtils.isEmpty(getNightTheme()))
-            return getNightTheme();
-        else
-            return getTheme();
-    }
-
-    public boolean isUsingLightTheme() {
-        return HiSettingsHelper.THEME_LIGHT.equals(getActiveTheme());
-    }
-
     public boolean isAppBarCollapsible() {
         return getBooleanValue(PERF_APP_BAR_COLLAPSIBLE, true);
     }
@@ -1039,28 +1106,6 @@ public class HiSettingsHelper {
 
     public void setCameraPermAsked(boolean asked) {
         setBooleanValue(PERF_CAMERA_PERM_ASKED, asked);
-    }
-
-    public boolean isHackStatusBar() {
-        return !mSharedPref.getBoolean(PERF_SWIPE_COMPAT_MODE, true);
-    }
-
-    public boolean isWhiteTheme() {
-        return THEME_LIGHT.equals(getActiveTheme())
-                && getPrimaryColor() == ContextCompat.getColor(mCtx, R.color.md_grey_200);
-    }
-
-    public int getToolbarTextColor() {
-        return isWhiteTheme() ? Color.BLACK : Color.WHITE;
-    }
-
-    public int getImageActivityTheme(Activity activity) {
-        if (isWhiteTheme()) {
-            return R.style.Matisse_Zhihu;
-        }
-        return HiUtils.getThemeValue(activity,
-                HiSettingsHelper.getInstance().getActiveTheme(),
-                HiSettingsHelper.getInstance().getPrimaryColor());
     }
 
     public String getSilentBegin() {

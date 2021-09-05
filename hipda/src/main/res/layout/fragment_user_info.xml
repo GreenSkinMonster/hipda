@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?list_item_background"
+    android:background="?attr/window_background"
     android:orientation="vertical"
     android:padding="8dp">
 
@@ -48,6 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:textColor="@color/textColorPrimary"
             android:text="搜索帖子"/>
 
     </RelativeLayout>

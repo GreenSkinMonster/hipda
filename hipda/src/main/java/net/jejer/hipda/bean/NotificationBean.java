@@ -26,6 +26,10 @@ public class NotificationBean {
         this.mContent = "";
     }
 
+    public void clearThreadCount() {
+        this.mThreadCount = 0;
+    }
+
     public int getThreadCount() {
         return mThreadCount;
     }

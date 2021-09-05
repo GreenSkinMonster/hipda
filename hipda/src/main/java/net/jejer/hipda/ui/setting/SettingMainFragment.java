@@ -2,7 +2,6 @@ package net.jejer.hipda.ui.setting;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
@@ -29,14 +28,10 @@ import java.util.Set;
 public class SettingMainFragment extends BaseSettingFragment {
 
     private int mScreenOrietation;
-    private String mTheme;
-    private int mPrimaryColor;
     private List<Integer> mForums;
     private Set<String> mFreqMenus;
-    private boolean mNavBarColored;
     private String mFont;
     static boolean mCacheCleared;
-    private boolean mNightSwitchEnabled;
     private String mForumServer;
     private boolean mCircleAvatar;
     private boolean mNotiTaskEnabled;
@@ -75,12 +70,8 @@ public class SettingMainFragment extends BaseSettingFragment {
         }
 
         mScreenOrietation = HiSettingsHelper.getInstance().getScreenOrietation();
-        mTheme = HiSettingsHelper.getInstance().getActiveTheme();
-        mPrimaryColor = HiSettingsHelper.getInstance().getPrimaryColor();
         mForums = HiSettingsHelper.getInstance().getForums();
         mFreqMenus = HiSettingsHelper.getInstance().getFreqMenus();
-        mNavBarColored = HiSettingsHelper.getInstance().isNavBarColored();
-        mNightSwitchEnabled = !TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme());
         mFont = HiSettingsHelper.getInstance().getFont();
         mForumServer = HiSettingsHelper.getInstance().getForumServer();
         mCircleAvatar = HiSettingsHelper.getInstance().isCircleAvatar();
@@ -105,9 +96,6 @@ public class SettingMainFragment extends BaseSettingFragment {
         if (HiSettingsHelper.getInstance().isCircleAvatar() != mCircleAvatar)
             GlideHelper.initDefaultFiles();
 
-        if (HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
-            HiSettingsHelper.getInstance().setNightMode(false);
-
         if (mNotiTaskEnabled != HiSettingsHelper.getInstance().isNotiTaskEnabled()) {
             NotiWorker.scheduleOrCancelWork();
         }
@@ -116,12 +104,8 @@ public class SettingMainFragment extends BaseSettingFragment {
                 || !HiSettingsHelper.getInstance().getFont().equals(mFont)) {
             HiApplication.setSettingStatus(HiApplication.RESTART);
         } else if (HiSettingsHelper.getInstance().getScreenOrietation() != mScreenOrietation
-                || !HiSettingsHelper.getInstance().getActiveTheme().equals(mTheme)
-                || (HiSettingsHelper.getInstance().isUsingLightTheme() && HiSettingsHelper.getInstance().getPrimaryColor() != mPrimaryColor)
                 || !HiSettingsHelper.getInstance().getForums().equals(mForums)
                 || !HiSettingsHelper.getInstance().getFreqMenus().equals(mFreqMenus)
-                || HiSettingsHelper.getInstance().isNavBarColored() != mNavBarColored
-                || TextUtils.isEmpty(HiSettingsHelper.getInstance().getNightTheme()) == mNightSwitchEnabled
                 || !HiSettingsHelper.getInstance().getForumServer().equals(mForumServer)) {
             HiApplication.setSettingStatus(HiApplication.RECREATE);
         } else {

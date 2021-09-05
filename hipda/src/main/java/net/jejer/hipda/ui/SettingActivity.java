@@ -1,6 +1,11 @@
 package net.jejer.hipda.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -9,9 +14,6 @@ import net.jejer.hipda.ui.setting.AboutFragment;
 import net.jejer.hipda.ui.setting.BlacklistFragment;
 import net.jejer.hipda.ui.setting.SettingMainFragment;
 import net.jejer.hipda.ui.setting.SettingNestedFragment;
-
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentManager;
 
 /**
  * Created by GreenSkinMonster on 2017-06-16.
@@ -60,4 +62,8 @@ public class SettingActivity extends SwipeBaseActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

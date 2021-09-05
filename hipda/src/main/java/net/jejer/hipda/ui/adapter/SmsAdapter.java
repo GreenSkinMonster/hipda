@@ -39,7 +39,7 @@ public class SmsAdapter extends BaseRvAdapter<SimpleListItemBean> {
         mAvatarListener = avatarListener;
         mInflater = LayoutInflater.from(fragment.getActivity());
         mFragment = fragment;
-        mListener = itemClickListener;
+        mItemClickListener = itemClickListener;
     }
 
     @Override

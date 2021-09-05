@@ -8,12 +8,6 @@
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/action_device_info"
-        android:title="@string/action_device_info"
-        android:visible="false"
-        app:showAsAction="always"/>
-
-    <item
         android:id="@+id/action_restore_content"
         android:title="@string/action_restore_content"
         app:showAsAction="never"/>

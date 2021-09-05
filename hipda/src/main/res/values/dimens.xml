@@ -16,4 +16,15 @@
     <dimen name="launch_screen_logo_bottom">16.0dip</dimen>
     <dimen name="post_type_spinner_width">100dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="theme_dialog_padding">12dp</dimen>
+    <integer name="theme_grid_column_count">6</integer>
+
+    <!-- begin of material drawer header setting -->
+    <dimen name="material_drawer_account_header_selected">64dp</dimen>
+    <dimen name="material_drawer_account_header_secondary">40dp</dimen>
+    <dimen name="material_drawer_account_header_subtext">13sp</dimen>
+    <dimen name="material_drawer_account_header_title">16sp</dimen>
+    <!-- end of material drawer header setting -->
+
 </resources>

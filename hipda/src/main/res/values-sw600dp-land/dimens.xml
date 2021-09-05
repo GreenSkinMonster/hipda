@@ -1,4 +1,3 @@
 <resources>
-    <dimen name="material_drawer_item_primary">48dp</dimen>
     <dimen name="post_type_spinner_width">150dp</dimen>
 </resources>

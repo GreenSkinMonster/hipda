@@ -2,6 +2,7 @@ package net.jejer.hipda.utils;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,6 +38,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -145,6 +148,21 @@ public class Utils {
 
     public static void copy(File src, File dst) throws IOException {
         InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+
+    public static void copy(Uri src, File dst) throws IOException {
+        ContentResolver res = HiApplication.getAppContext().getContentResolver();
+        InputStream in = res.openInputStream(src);
         OutputStream out = new FileOutputStream(dst);
 
         // Transfer bytes from in to out
@@ -270,7 +288,6 @@ public class Utils {
     }
 
     public static void restartActivity(Activity activity) {
-        ColorHelper.clear();
         activity.finish();
         Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -489,9 +506,17 @@ public class Utils {
 
     public static int parseInt(String s) {
         try {
-            return Integer.parseInt(s);
-        } catch (NumberFormatException e) {
+            return Integer.parseInt(s.trim());
+        } catch (Exception e) {
             return 0;
+        }
+    }
+
+    public static float parseFloat(String s) {
+        try {
+            return Float.parseFloat(s.trim());
+        } catch (Exception e) {
+            return 0f;
         }
     }
 
@@ -534,6 +559,18 @@ public class Utils {
         }
         reader.close();
         return sb.toString();
+    }
+
+    public static String readFileContent(File file) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            StringBuilder sb = new StringBuilder();
+            String line = reader.readLine();
+            while (line != null) {
+                sb.append(line).append(System.lineSeparator());
+                line = reader.readLine();
+            }
+            return sb.toString();
+        }
     }
 
     public static String getDeviceInfo() {
@@ -642,6 +679,35 @@ public class Utils {
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         return sw.toString();
+    }
+
+    public static File getFilesSubDir(String subDir) throws IOException {
+        File filesDir = HiApplication.getAppContext().getFilesDir();
+        File subCacheDir = new File(filesDir, subDir);
+        if (!subCacheDir.exists()) {
+            subCacheDir.mkdirs();
+        }
+        return subCacheDir;
+    }
+
+    public static File getFontsDir() throws IOException {
+        return getFilesSubDir("fonts");
+    }
+
+    public static File getLogsDir() throws IOException {
+        return getFilesSubDir("logs");
+    }
+
+    public static void saveCrashLog(Throwable t) {
+        try {
+            String dateTime = Utils.formatDate(new Date(), "yyyyMMdd-HHmmss");
+            File logFile = new File(getLogsDir(), "crash-" + dateTime + ".log");
+            FileWriter writer = new FileWriter(logFile);
+            writer.write(Utils.getDeviceInfo() + System.lineSeparator() + getStackTrace(t));
+            writer.close();
+        } catch (Exception e) {
+            Logger.e(e);
+        }
     }
 
 }

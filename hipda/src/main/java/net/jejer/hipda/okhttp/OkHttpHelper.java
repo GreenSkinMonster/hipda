@@ -48,7 +48,6 @@ public class OkHttpHelper {
     public final static int CONNECT_TIMEOUT_SECS = 10;
     public final static int READ_TIMEOUT_SECS = 10;
     public final static int WRITE_TIMEOUT_SECS = 30;
-    public final static int MAX_RETRY_TIMES = 2;
 
     public final static int FORCE_NETWORK = 1;
     public final static int FORCE_CACHE = 2;
@@ -318,7 +317,7 @@ public class OkHttpHelper {
             mCookiestore.removeAll();
     }
 
-    public boolean isLoggedIn() {
+    public boolean hasAuthCookie() {
         List<HttpCookie> cookies = mCookiestore.getCookies();
         for (HttpCookie cookie : cookies) {
             if ("cdb_auth".equals(cookie.getName())) {

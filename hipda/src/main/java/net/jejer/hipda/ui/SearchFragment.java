@@ -23,7 +23,6 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -32,6 +31,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuItemCompat;
 import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -115,7 +115,6 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
     private boolean mInloading = false;
     private int mMaxPage;
     private Drawable mIconDrawable;
-    private Drawable mIbDrawable;
 
     private TextView.OnEditorActionListener mSearchEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
@@ -156,7 +155,6 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
                 new RecyclerItemClickListener(getActivity(), new HistoryItemClickListener()));
 
         mIconDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_history).sizeDp(16).color(Color.GRAY);
-        mIbDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_close).sizeDp(12).color(Color.GRAY);
 
         loadQueries();
 
@@ -174,7 +172,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
 
         mRecyclerView.setAdapter(mSimpleListAdapter);
 
-        mSearchFilterLayout = (RelativeLayout) view.findViewById(R.id.search_filter_layout);
+        mSearchFilterLayout = view.findViewById(R.id.search_filter_layout);
         ViewCompat.setElevation(mSearchFilterLayout, Utils.dpToPx(4));
         mSearchFilterLayout.setAlpha(0);
 
@@ -195,10 +193,10 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
             }
         });
 
-        mEtAuthor = (EditText) view.findViewById(R.id.et_author);
+        mEtAuthor = view.findViewById(R.id.et_author);
         mEtAuthor.setOnEditorActionListener(mSearchEditorActionListener);
 
-        mCbFulltext = (CheckBox) view.findViewById(R.id.cb_fulltext);
+        mCbFulltext = view.findViewById(R.id.cb_fulltext);
         mCbFulltext.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -212,20 +210,39 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
             }
         });
 
-        RecyclerView rvHistory = (RecyclerView) view.findViewById(R.id.rv_history);
-        rvHistory.setHasFixedSize(true);
+        RecyclerView rvHistory = view.findViewById(R.id.rv_history);
+        rvHistory.setHasFixedSize(false);
         rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvHistory.setAdapter(mHistoryAdapter);
 
         mHistoryAdapter.setDatas(mQueries);
 
-        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        ItemTouchHelper.SimpleCallback searchHistoryItemTouchCallback
+                = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int position = viewHolder.getAdapterPosition();
+                mHistoryAdapter.getDatas().remove(position);
+                mHistoryAdapter.notifyItemRemoved(position);
+                saveQueries();
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(searchHistoryItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(rvHistory);
+
+        mSwipeLayout = view.findViewById(R.id.swipe_container);
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeColors(ColorHelper.getSwipeColor(getActivity()));
         mSwipeLayout.setProgressBackgroundColorSchemeColor(ColorHelper.getSwipeBackgroundColor(getActivity()));
         mSwipeLayout.setEnabled(false);
 
-        mLoadingView = (ContentLoadingView) view.findViewById(R.id.content_loading);
+        mLoadingView = view.findViewById(R.id.content_loading);
         mLoadingView.setState(ContentLoadingView.NO_DATA);
 
         return view;
@@ -267,7 +284,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
 
         mSearchView.setMaxWidth(Integer.MAX_VALUE);
         UIUtils.trimChildMargins(mSearchView);
-        ImageView closeButton = (ImageView) mSearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
+        ImageView closeButton = mSearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
         closeButton.setPadding(0, 0, Utils.dpToPx(4), 0);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -589,7 +606,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
             postId = item.getPid();
         } else {
             page = ThreadDetailFragment.LAST_PAGE;
-            floor = ThreadDetailFragment.LAST_FLOOR;
+            floor = ThreadDetailFragment.LAST_FLOOR_OF_PAGE;
         }
         FragmentUtils.showThreadActivity(getActivity(), false, item.getTid(), item.getTitle(), page, floor, postId, -1);
     }
@@ -698,7 +715,7 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
 
         SearchHistoryAdapter(Context context, RecyclerItemClickListener itemClickListener) {
             mInflater = LayoutInflater.from(context);
-            mListener = itemClickListener;
+            mItemClickListener = itemClickListener;
         }
 
         @Override
@@ -718,34 +735,16 @@ public class SearchFragment extends BaseFragment implements SwipeRefreshLayout.O
             } else {
                 holder.imageview.setImageDrawable(mIconDrawable);
             }
-            holder.ib_remove.setImageDrawable(mIbDrawable);
-            holder.ib_remove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mHistoryAdapter.getDatas().remove(position);
-                    mHistoryAdapter.notifyItemRemoved(position);
-                    mHistoryAdapter.notifyItemRangeChanged(position, mHistoryAdapter.getItemCount());
-                    saveQueries();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mHistoryAdapter.notifyDataSetChanged();
-                        }
-                    }, 350);
-                }
-            });
         }
 
         private class ViewHolderImpl extends RecyclerView.ViewHolder {
             TextView textview;
             ImageView imageview;
-            ImageButton ib_remove;
 
             ViewHolderImpl(View itemView) {
                 super(itemView);
-                textview = (TextView) itemView.findViewById(R.id.textview);
-                imageview = (ImageView) itemView.findViewById(R.id.icon);
-                ib_remove = (ImageButton) itemView.findViewById(R.id.ib_remove);
+                textview = itemView.findViewById(R.id.textview);
+                imageview = itemView.findViewById(R.id.icon);
             }
         }
     }

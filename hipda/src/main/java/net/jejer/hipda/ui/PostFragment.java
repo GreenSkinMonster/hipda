@@ -31,6 +31,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -79,14 +82,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-
 public class PostFragment extends BaseFragment {
     private static final int SELECT_PICTURE = 1;
 
     public static final String ARG_FID_KEY = "fid";
     public static final String ARG_TID_KEY = "tid";
+    public static final String ARG_PAGE_KEY = "page";
     public static final String ARG_PID_KEY = "pid";
     public static final String ARG_FLOOR_KEY = "floor";
     public static final String ARG_FLOOR_AUTHOR_KEY = "floor_author";
@@ -99,6 +100,7 @@ public class PostFragment extends BaseFragment {
 
     private int mFid;
     private String mTid;
+    private int mPage;
     private String mPid;
     private int mFloor;
     private String mFloorAuthor;
@@ -137,13 +139,16 @@ public class PostFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(false);
+        setHasOptionsMenu(true);
 
         if (getArguments().containsKey(ARG_FID_KEY)) {
             mFid = getArguments().getInt(ARG_FID_KEY);
         }
         if (getArguments().containsKey(ARG_TID_KEY)) {
             mTid = getArguments().getString(ARG_TID_KEY);
+        }
+        if (getArguments().containsKey(ARG_PAGE_KEY)) {
+            mPage = getArguments().getInt(ARG_PAGE_KEY);
         }
         if (getArguments().containsKey(ARG_PID_KEY)) {
             mPid = getArguments().getString(ARG_PID_KEY);
@@ -364,15 +369,7 @@ public class PostFragment extends BaseFragment {
 
         menu.findItem(R.id.action_upload_img).setIcon(new IconicsDrawable(getActivity(),
                 GoogleMaterial.Icon.gmd_add_a_photo).actionBar()
-                .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
-
-        if (HiUtils.CLIENT_TID == Utils.parseInt(mTid)) {
-            MenuItem menuItem = menu.findItem(R.id.action_device_info);
-            menuItem.setIcon(new IconicsDrawable(getActivity(),
-                    GoogleMaterial.Icon.gmd_bug_report).actionBar()
-                    .color(HiSettingsHelper.getInstance().getToolbarTextColor()));
-            menuItem.setVisible(true);
-        }
+                .color(UIUtils.getToolbarTextColor(getActivity())));
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -406,9 +403,6 @@ public class PostFragment extends BaseFragment {
                     showImageSelector();
                 }
                 return true;
-            case R.id.action_device_info:
-                showAppendDeviceInfoDialog();
-                return true;
             case R.id.action_restore_content:
                 mEtContent.requestFocus();
                 showRestoreContentDialog();
@@ -433,7 +427,7 @@ public class PostFragment extends BaseFragment {
                 .originalEnable(true)
                 .maxOriginalSize(HiSettingsHelper.getInstance().getMaxUploadFileSize() / 1024 / 1024)
                 .imageEngine(new MatisseGlideEngine())
-                .theme(HiSettingsHelper.getInstance().getImageActivityTheme(getActivity()))
+                .theme(UIUtils.getThemeValue(getActivity()))
                 .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
                 .captureStrategy(new CaptureStrategy(false, BuildConfig.APPLICATION_ID + ".provider"))
                 .forResult(SELECT_PICTURE);
@@ -531,6 +525,7 @@ public class PostFragment extends BaseFragment {
         PostBean postBean = new PostBean();
         postBean.setContent(replyText);
         postBean.setTid(mTid);
+        postBean.setPage(mPage);
         postBean.setPid(mPid);
         postBean.setFid(mFid);
         postBean.setTypeid(mTypeId);
@@ -678,8 +673,8 @@ public class PostFragment extends BaseFragment {
                     UIUtils.toast("收集信息成功");
             } else {
                 if (getView() != null) {
-                    mSnackbar = Snackbar.make(getView(), "收集信息失败 : " + message, Snackbar.LENGTH_LONG);
-                    UIUtils.setSnackbarMessageTextColor(mSnackbar, ContextCompat.getColor(getActivity(), R.color.md_yellow_500));
+                    mSnackbar = UIUtils.makeSnackbar(getView(), "收集信息失败 : " + message, Snackbar.LENGTH_LONG,
+                            ContextCompat.getColor(getContext(), R.color.md_yellow_500));
                     mSnackbar.setAction("重试", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -704,6 +699,7 @@ public class PostFragment extends BaseFragment {
             mPrePostAsyncTask = new PrePostAsyncTask(getActivity(), mPrePostListener, mMode);
             PostBean postBean = new PostBean();
             postBean.setTid(mTid);
+            postBean.setPage(mPage);
             postBean.setPid(mPid);
             postBean.setFid(mFid);
             mPrePostAsyncTask.execute(postBean);
@@ -713,9 +709,6 @@ public class PostFragment extends BaseFragment {
     private void setupPrePostInfo() {
         if (mPrePostInfo == null)
             return;
-
-        setHasOptionsMenu(true);
-        getActivity().invalidateOptionsMenu();
 
         mTypeValues = mPrePostInfo.getTypeValues();
         mTypeId = mPrePostInfo.getTypeId();

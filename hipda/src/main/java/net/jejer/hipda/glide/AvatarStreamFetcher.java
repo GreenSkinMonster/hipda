@@ -85,13 +85,9 @@ public class AvatarStreamFetcher implements DataFetcher<InputStream> {
     }
 
     private void saveAvatar(Response response, File f) {
-        InputStream is = response.body().byteStream();
-        BufferedInputStream input = null;
-        OutputStream output = null;
-
-        try {
-            input = new BufferedInputStream(is);
-            output = new FileOutputStream(f);
+        try (InputStream is = response.body().byteStream();
+             BufferedInputStream input = new BufferedInputStream(is);
+             OutputStream output = new FileOutputStream(f)) {
             int count;
             byte[] data = new byte[4096];
             while ((count = input.read(data)) != -1) {
@@ -101,13 +97,6 @@ public class AvatarStreamFetcher implements DataFetcher<InputStream> {
         } catch (Exception e) {
             if (f.exists())
                 f.delete();
-        } finally {
-            try {
-                if (input != null) input.close();
-                if (output != null) output.close();
-                if (is != null) is.close();
-            } catch (Exception ignored) {
-            }
         }
     }
 

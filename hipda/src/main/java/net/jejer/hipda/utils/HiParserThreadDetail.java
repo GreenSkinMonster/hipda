@@ -10,6 +10,8 @@ import net.jejer.hipda.bean.DetailBean;
 import net.jejer.hipda.bean.DetailBean.Contents;
 import net.jejer.hipda.bean.DetailListBean;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.bean.PollBean;
+import net.jejer.hipda.bean.PollOptionBean;
 import net.jejer.hipda.cache.SignatureContainer;
 import net.jejer.hipda.cache.SmallImages;
 import net.jejer.hipda.ui.textstyle.TextStyle;
@@ -21,6 +23,8 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 import androidx.annotation.NonNull;
@@ -192,6 +196,64 @@ public class HiParserThreadDetail {
                     details.add(detail);
                     continue;
                 }
+            }
+
+            //投票
+            try {
+                if ("1".equals(floor)) {
+                    Element pollEl = doc.select("form#poll").first();
+                    if (pollEl != null) {
+                        PollBean pollBean = new PollBean();
+                        Element pollInfoEl = pollEl.select("div.pollinfo").first();
+                        pollInfoEl.select("a").remove();
+                        pollBean.setTitle(pollInfoEl.html());
+                        Element formhashEl = pollEl.select("input[name=formhash]").first();
+                        if (formhashEl != null)
+                            pollBean.setFormhash(formhashEl.val());
+                        Element pollTimerEl = pollEl.select("p.polltimer").first();
+                        if (pollTimerEl != null) {
+                            pollBean.setTitle(pollBean.getTitle() + "<br>" + pollTimerEl.html());
+                        }
+                        if (pollInfoEl.text().trim().startsWith("多选投票")) {
+                            int maxAnswer = Utils.parseInt(Utils.getMiddleString(pollInfoEl.text(), "最多可选", "项"));
+                            if (maxAnswer > 1)
+                                pollBean.setMaxAnswer(maxAnswer);
+                        }
+
+                        List<PollOptionBean> options = new ArrayList<>();
+                        Elements optionsES = pollEl.select("div.pollchart > table > tbody > tr");
+                        for (Element optionEl : optionsES) {
+                            Element checkEl = optionEl.select("td.selector input").first();
+                            Element textEl = optionEl.select("td.polloption label").first();
+                            if (textEl != null) {
+                                PollOptionBean option = new PollOptionBean();
+                                if (checkEl != null)
+                                    option.setOptionId(checkEl.attr("value"));
+                                option.setText(textEl.text());
+                                options.add(option);
+                            } else {
+                                Element ratesTdEl = optionEl.select("td").last();
+                                if (ratesTdEl != null && options.size() > 0 && ratesTdEl.select("em").size() > 0) {
+                                    options.get(options.size() - 1).setRates(ratesTdEl.text());
+                                }
+                            }
+                        }
+                        Element lastTr = pollEl.select("div.pollchart > table > tbody > tr").last();
+                        if (lastTr != null && lastTr.select("td").size() >= 1) {
+                            Element lastTd = lastTr.select("td").last();
+                            if (lastTd != null) {
+                                lastTd.select("button").remove();
+                                pollBean.setFooter(lastTd.text());
+                            }
+                        }
+
+                        pollBean.setPollOptions(options);
+                        detail.setPoll(pollBean);
+                        pollEl.remove();
+                    }
+                }
+            } catch (Exception e) {
+                Logger.e(e);
             }
 
             //poll content

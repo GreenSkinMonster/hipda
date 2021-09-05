@@ -6,7 +6,7 @@ public class ThreadBean {
     private String mTitle;
     private String mTitleColor;
     private String mTid;
-    private boolean mIsStick;
+    private boolean mSticky;
 
     private String mAuthor;
     private String mAuthorId;
@@ -18,16 +18,13 @@ public class ThreadBean {
 
     private String mTimeCreate;
     private String mTimeUpdate;
-    private Boolean mHaveAttach;
-    private Boolean mHavePic;
+    private boolean mWithPic;
     private boolean mNew;
+    private boolean mPoll;
     private String mType;
     private int mMaxPage;
 
     public ThreadBean() {
-        mIsStick = false;
-        mHaveAttach = false;
-        mHavePic = false;
     }
 
     public String getTitle() {
@@ -51,26 +48,21 @@ public class ThreadBean {
         return mTid;
     }
 
-
     public void setTid(String mTid) {
         this.mTid = mTid;
     }
 
-
-    public boolean getIsStick() {
-        return mIsStick;
+    public boolean isSticky() {
+        return mSticky;
     }
 
-
-    public void setIsStick(boolean mIsStick) {
-        this.mIsStick = mIsStick;
+    public void setSticky(boolean sticky) {
+        this.mSticky = sticky;
     }
-
 
     public String getAuthor() {
         return mAuthor;
     }
-
 
     // return false if author is in blacklist
     public boolean setAuthor(String mAuthor) {
@@ -79,11 +71,9 @@ public class ThreadBean {
         return !HiSettingsHelper.getInstance().isInBlacklist(mAuthor);
     }
 
-
     public String getAuthorId() {
         return mAuthorId;
     }
-
 
     public void setAuthorId(String mAuthorId) {
         this.mAuthorId = mAuthorId;
@@ -101,26 +91,21 @@ public class ThreadBean {
         return mCountCmts;
     }
 
-
     public void setCountCmts(String mCountCmts) {
         this.mCountCmts = mCountCmts;
     }
-
 
     public String getCountViews() {
         return mCountViews;
     }
 
-
     public void setCountViews(String mCountViews) {
         this.mCountViews = mCountViews;
     }
 
-
     public String getTimeUpdate() {
         return mTimeUpdate;
     }
-
 
     public void setTimeUpdate(String timeUpdate) {
         mTimeUpdate = timeUpdate;
@@ -130,26 +115,16 @@ public class ThreadBean {
         return mTimeCreate;
     }
 
-
     public void setTimeCreate(String mTimeCreate) {
         this.mTimeCreate = mTimeCreate;
     }
 
-    public Boolean getHaveAttach() {
-        return mHaveAttach;
+    public boolean isWithPic() {
+        return mWithPic;
     }
 
-    public void setHaveAttach(Boolean mHaveAttach) {
-        this.mHaveAttach = mHaveAttach;
-    }
-
-
-    public Boolean getHavePic() {
-        return mHavePic;
-    }
-
-    public void setHavePic(Boolean mHavePic) {
-        this.mHavePic = mHavePic;
+    public void setWithPic(boolean mHavePic) {
+        this.mWithPic = mHavePic;
     }
 
     public boolean isNew() {
@@ -158,6 +133,14 @@ public class ThreadBean {
 
     public void setNew(boolean isNew) {
         this.mNew = isNew;
+    }
+
+    public boolean isPoll() {
+        return mPoll;
+    }
+
+    public void setPoll(boolean poll) {
+        mPoll = poll;
     }
 
     public String getAvatarUrl() {
@@ -179,7 +162,6 @@ public class ThreadBean {
     public void setType(String type) {
         mType = type;
     }
-
 
     public int getMaxPage() {
         return mMaxPage;

@@ -4,12 +4,17 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.SimpleExceptionHandler;
+import net.jejer.hipda.utils.UIUtils;
+import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
 
@@ -39,24 +44,37 @@ public class HiApplication extends Application implements Application.ActivityLi
         context = getApplicationContext();
         registerActivityLifecycleCallbacks(this);
 
-        if (HiSettingsHelper.getInstance().isErrorReportMode()) {
-            Thread.setDefaultUncaughtExceptionHandler(new SimpleExceptionHandler());
-        }
+//        if (HiSettingsHelper.getInstance().isErrorReportMode()) {
+        Thread.setDefaultUncaughtExceptionHandler(new SimpleExceptionHandler());
+//        }
 
+        UIUtils.setLightDarkThemeMode();
         updated = UpdateHelper.updateApp();
 
-        String font = HiSettingsHelper.getInstance().getFont();
-        if (new File(font).exists()) {
-            fontSet = true;
-            ViewPump.init(ViewPump.builder()
-                    .addInterceptor(new CalligraphyInterceptor(
-                            new CalligraphyConfig.Builder()
-                                    .setDefaultFontPath(font)
-                                    .setFontAttrId(R.attr.fontPath)
-                                    .build()))
-                    .build());
-        } else {
+        if (!HiSettingsHelper.getInstance().isLoginInfoValid()) {
+            OkHttpHelper.getInstance().clearCookies();
+        }
+
+        try {
+            String font = HiSettingsHelper.getInstance().getFont();
+            if (!TextUtils.isEmpty(font)) {
+                File fontFile = new File(Utils.getFontsDir(), font);
+                if (fontFile.exists()) {
+                    fontSet = true;
+                    ViewPump.init(ViewPump.builder()
+                            .addInterceptor(new CalligraphyInterceptor(
+                                    new CalligraphyConfig.Builder()
+                                            .setDefaultFontPath(fontFile.getAbsolutePath())
+                                            .setFontAttrId(R.attr.fontPath)
+                                            .build()))
+                            .build());
+                } else {
+                    HiSettingsHelper.getInstance().setFont("");
+                }
+            }
+        } catch (Exception e) {
             HiSettingsHelper.getInstance().setFont("");
+            Logger.e(e);
         }
         HiUtils.updateBaseUrls();
     }

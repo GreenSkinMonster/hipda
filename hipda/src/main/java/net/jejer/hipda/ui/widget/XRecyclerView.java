@@ -66,9 +66,6 @@ public class XRecyclerView extends RecyclerView {
         mHeaderView.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                if (mHeaderView.getState() == XHeaderView.STATE_READY) {
-                    onHeaderReady();
-                }
                 if (mHeaderView.getState() == XHeaderView.STATE_ERROR) {
                     onHeaderError();
                 }
@@ -77,9 +74,7 @@ public class XRecyclerView extends RecyclerView {
         mFooterView.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                if (mFooterView.getState() == XFooterView.STATE_READY) {
-                    onFooterReady();
-                } else if (mFooterView.getState() == XFooterView.STATE_END) {
+                if (mFooterView.getState() == XFooterView.STATE_END) {
                     atEnd();
                 } else if (mFooterView.getState() == XFooterView.STATE_ERROR) {
                     onFooterError();
@@ -132,52 +127,6 @@ public class XRecyclerView extends RecyclerView {
         mListener = listener;
     }
 
-    private void updateHeaderHeight(float delta) {
-        int topMagin = mHeaderView.getTopMargin();
-
-        if (mHeaderView.getTopMargin() > mPullDelta) {
-            stopScroll();
-            mDispatchEvent = false;
-            onHeaderReady();
-            resetHeaderHeight();
-        } else {
-            mHeaderView.setTopMargin(topMagin + (int) delta);
-        }
-    }
-
-    private void resetHeaderHeight() {
-        int topMargin = mHeaderView.getTopMargin();
-
-        if (topMargin > 0) {
-            mScrollBack = SCROLL_BACK_HEADER;
-            mScroller.startScroll(0, topMargin, 0, -topMargin, SCROLL_DURATION);
-            invalidate();
-        }
-    }
-
-    private void updateFooterHeight(float delta) {
-        int bottomMargin = mFooterView.getBottomMargin();
-
-        if (bottomMargin > mPullDelta) {
-            stopScroll();
-            mDispatchEvent = false;
-            onFooterReady();
-            resetFooterHeight();
-        } else {
-            mFooterView.setBottomMargin(bottomMargin + (int) delta);
-        }
-    }
-
-    private void resetFooterHeight() {
-        int bottomMargin = mFooterView.getBottomMargin();
-
-        if (bottomMargin > 0) {
-            mScrollBack = SCROLL_BACK_FOOTER;
-            mScroller.startScroll(0, bottomMargin, 0, -bottomMargin, SCROLL_DURATION);
-            invalidate();
-        }
-    }
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN)
@@ -186,54 +135,6 @@ public class XRecyclerView extends RecyclerView {
             return super.dispatchTouchEvent(ev);
         else
             return true;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        if (mLastY == -1) {
-            mLastY = ev.getRawY();
-        }
-
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mLastY = ev.getRawY();
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-                final float deltaY = ev.getRawY() - mLastY;
-                mLastY = ev.getRawY();
-
-                if (mHeaderView.getState() == XHeaderView.STATE_READY
-                        && mLayoutManager.findFirstVisibleItemPosition() == 0
-                        && (mHeaderView.getTopMargin() > 0 || deltaY > 0)) {
-                    // the first item is showing, header has shown or pull down.
-                    updateHeaderHeight(deltaY / OFFSET_RADIO);
-                } else if (mFooterView.getState() == XFooterView.STATE_READY
-                        && mLayoutManager.findLastVisibleItemPosition() == mAdapter.getItemCount() - 1
-                        && (mFooterView.getBottomMargin() > 0 || deltaY < 0)) {
-                    // last item, already pulled up or want to pull up.
-                    updateFooterHeight(-deltaY / OFFSET_RADIO);
-                }
-                break;
-
-            default:
-                // reset
-                mLastY = -1;
-                if (mHeaderView.getState() == XHeaderView.STATE_READY
-                        && mLayoutManager.findFirstVisibleItemPosition() == 0) {
-                    resetHeaderHeight();
-                } else if (mFooterView.getState() == XFooterView.STATE_READY
-                        && mLayoutManager.findLastVisibleItemPosition() == mAdapter.getItemCount() - 1) {
-                    resetFooterHeight();
-                }
-                break;
-        }
-        try {
-            return super.onTouchEvent(ev);
-        } catch (IndexOutOfBoundsException | IllegalArgumentException ingored) {
-            // avoid random  error
-        }
-        return true;
     }
 
     @Override
@@ -255,18 +156,6 @@ public class XRecyclerView extends RecyclerView {
             postInvalidate();
         }
         super.computeScroll();
-    }
-
-    private void onHeaderReady() {
-        if (null != mListener) {
-            mListener.onHeaderReady();
-        }
-    }
-
-    private void onFooterReady() {
-        if (null != mListener) {
-            mListener.onFooterReady();
-        }
     }
 
     private void atEnd() {
@@ -299,6 +188,10 @@ public class XRecyclerView extends RecyclerView {
         mLayoutManager.scrollToPositionWithOffset(mLayoutManager.getItemCount() - 1, 0);
     }
 
+    public void smoothScrollToTop() {
+        smoothScrollToPosition(0);
+    }
+
     public void smoothScrollToBottom() {
         smoothScrollToPosition(mLayoutManager.getItemCount() - 1);
     }
@@ -313,10 +206,6 @@ public class XRecyclerView extends RecyclerView {
     }
 
     public interface XRecyclerListener {
-        void onHeaderReady();
-
-        void onFooterReady();
-
         void atEnd();
 
         void onHeaderError();

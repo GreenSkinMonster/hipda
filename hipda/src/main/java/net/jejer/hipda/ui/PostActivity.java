@@ -4,14 +4,14 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import com.google.android.material.appbar.AppBarLayout;
-
-import net.jejer.hipda.R;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+
+import com.google.android.material.appbar.AppBarLayout;
+
+import net.jejer.hipda.R;
 
 /**
  * Created by GreenSkinMonster on 2017-06-14.
@@ -55,6 +55,7 @@ public class PostActivity extends SwipeBaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSIONS_REQUEST_CODE_BOTH: {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)

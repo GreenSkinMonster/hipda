@@ -3,14 +3,12 @@ package net.jejer.hipda.ui.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.view.View;
-
-import net.jejer.hipda.R;
-import net.jejer.hipda.bean.HiSettingsHelper;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import net.jejer.hipda.R;
 
 /**
  * Created by GreenSkinMonster on 2016-11-14.
@@ -20,16 +18,7 @@ public class SimpleDivider extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
 
     public SimpleDivider(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            String theme = HiSettingsHelper.getInstance().getActiveTheme();
-            if (HiSettingsHelper.THEME_LIGHT.equals(theme)) {
-                mDivider = ContextCompat.getDrawable(context, R.drawable.line_divider_light);
-            } else {
-                mDivider = ContextCompat.getDrawable(context, R.drawable.line_divider_dark);
-            }
-        } else {
-            mDivider = ContextCompat.getDrawable(context, R.drawable.line_divider);
-        }
+        mDivider = ContextCompat.getDrawable(context, R.drawable.line_divider);
     }
 
     @Override

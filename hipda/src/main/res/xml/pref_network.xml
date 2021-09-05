@@ -24,10 +24,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_image_more">
-        <Preference
-            android:defaultValue=""
-            android:key="PERF_SAVE_FOLDER"
-            android:title="@string/pref_title_save_folder"/>
 
         <ListPreference
             android:defaultValue="500"

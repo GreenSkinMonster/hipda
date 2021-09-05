@@ -1,16 +1,15 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/linearLayout2"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:paddingBottom="4dp"
     android:paddingLeft="@dimen/thread_detail_padding"
+    android:paddingTop="4dp"
     android:paddingRight="@dimen/thread_detail_padding"
-    android:paddingTop="4dp">
+    android:paddingBottom="4dp">
 
     <ImageView
         android:id="@+id/iv_avatar"
@@ -18,7 +17,7 @@
         android:layout_height="@dimen/avatar_size"
         android:padding="2dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_username"
@@ -30,7 +29,7 @@
         android:textColor="?attr/colorAccent"
         android:textSize="@dimen/author_text_size"
         app:layout_constraintStart_toEndOf="@+id/iv_avatar"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/time"
@@ -43,7 +42,7 @@
         android:textColor="?android:textColorSecondary"
         android:textSize="@dimen/info_text_size"
         app:layout_constraintBaseline_toBaselineOf="@+id/tv_username"
-        app:layout_constraintEnd_toStartOf="@+id/floor"/>
+        app:layout_constraintEnd_toStartOf="@+id/floor" />
 
     <TextView
         android:id="@+id/floor"
@@ -60,7 +59,7 @@
         android:textColor="?android:textColorSecondary"
         android:textSize="15sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/tv_username"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/post_status"
@@ -72,17 +71,29 @@
         android:textColor="?android:textColorSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_username"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_username" />
+
+    <LinearLayout
+        android:id="@+id/poll_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/post_status" />
 
     <LinearLayout
         android:id="@+id/content_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="6dp"
         android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/post_status"/>
+        app:layout_constraintTop_toBottomOf="@+id/poll_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

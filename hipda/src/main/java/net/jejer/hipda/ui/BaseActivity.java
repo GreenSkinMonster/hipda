@@ -2,15 +2,9 @@ package net.jejer.hipda.ui;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -18,12 +12,15 @@ import com.vanniktech.emoji.EmojiPopup;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.bean.HiSettingsHelper;
-import net.jejer.hipda.utils.ColorHelper;
-import net.jejer.hipda.utils.HiUtils;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.UUID;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 /**
@@ -44,6 +41,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSessionId = UUID.randomUUID().toString();
+        UIUtils.setActivityTheme(this);
 
         try {
             if (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT == HiSettingsHelper.getInstance().getScreenOrietation()) {
@@ -56,31 +54,13 @@ public class BaseActivity extends AppCompatActivity {
         } catch (Exception ignored) {
             //avoid android 8.0 bug
         }
-
-        int theme = HiUtils.getThemeValue(this,
-                HiSettingsHelper.getInstance().getActiveTheme(),
-                HiSettingsHelper.getInstance().getPrimaryColor());
-        setTheme(theme);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && HiSettingsHelper.getInstance().isNavBarColored()) {
-            getWindow().setNavigationBarColor(ColorHelper.getColorPrimary(this));
-            View view = getWindow().getDecorView();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (theme == R.style.ThemeLight_White) {
-                    view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-                } else {
-                    view.setSystemUiVisibility(view.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-                }
-            }
-        }
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && mAppBarLayout != null) {
-            if (HiSettingsHelper.getInstance().isWhiteTheme()) {
+        if (mAppBarLayout != null) {
+            if (UIUtils.isWhiteTheme(this)) {
                 mAppBarLayout.setStateListAnimator(null);
                 mAppBarLayout.setElevation(Utils.dpToPx(2));
             }
@@ -139,6 +119,12 @@ public class BaseActivity extends AppCompatActivity {
 
     public View getToolbar() {
         return mToolbar;
+    }
+
+    public void expandAppBar() {
+        if (mAppBarLayout != null && HiSettingsHelper.getInstance().isAppBarCollapsible()) {
+            mAppBarLayout.setExpanded(true, true);
+        }
     }
 
     @Override

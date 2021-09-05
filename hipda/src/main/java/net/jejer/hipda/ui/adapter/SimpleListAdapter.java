@@ -34,7 +34,7 @@ public class SimpleListAdapter extends BaseRvAdapter<SimpleListItemBean> {
         mInflater = LayoutInflater.from(fragment.getActivity());
         mFragment = fragment;
         mType = type;
-        mListener = itemClickListener;
+        mItemClickListener = itemClickListener;
     }
 
     @Override

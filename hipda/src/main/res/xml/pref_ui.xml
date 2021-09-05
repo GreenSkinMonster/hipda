@@ -1,38 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/pref_category_theme">
-        <ListPreference
-            android:defaultValue="light"
-            android:entries="@array/pref_title_theme_names"
-            android:entryValues="@array/pref_title_theme_values"
-            android:key="PERF_THEME"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/pref_title_theme"/>
-
-        <com.thebluealliance.spectrum.SpectrumPreferenceCompat
-            android:defaultValue="@color/md_grey_200"
-            android:key="PERF_PRIMARY_COLOR"
-            android:summary="@string/pref_summary_primary_color"
-            android:title="@string/pref_title_primary_color"
-            app:spectrum_colors="@array/material_colors"
-            app:spectrum_outlineWidth="1px" />
-
-        <ListPreference
-            android:defaultValue="dark"
-            android:entries="@array/pref_title_night_theme_names"
-            android:entryValues="@array/pref_title_night_theme_values"
-            android:key="PERF_NIGHT_THEME"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/pref_title_night_theme" />
-
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="PERF_NAVBAR_COLORED"
-            android:title="@string/pref_title_navbar_colored" />
+    <PreferenceCategory
+        android:title="@string/pref_category_theme"
+        android:summary="主题及颜色设置已移至左侧菜单上方">
 
     </PreferenceCategory>
 
@@ -61,7 +32,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_category_other">
+    <PreferenceCategory android:title="@string/pref_category_other">HiSett
         <ListPreference
             android:defaultValue="2"
             android:entries="@array/pref_screen_orientation"
@@ -69,20 +40,12 @@
             android:key="PERF_SCREEN_ORIENTATION"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_screen_orientation"/>
+            android:title="@string/pref_screen_orientation" />
 
         <SwitchPreference
             android:defaultValue="true"
             android:key="PERF_GESTURE_BACK"
             android:title="@string/pref_title_gesture_back"/>
-
-        <!--
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="PERF_SWIPE_COMPAT_MODE"
-            android:summary="@string/pref_summary_swipe_compat_mode"
-            android:title="@string/pref_title_swipe_compat_mode"/>
-            -->
 
         <SwitchPreference
             android:defaultValue="true"

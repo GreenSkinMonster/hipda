@@ -10,8 +10,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
-import androidx.appcompat.app.AlertDialog;
-
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
@@ -22,6 +20,7 @@ import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
 
+import androidx.appcompat.app.AlertDialog;
 import okhttp3.Request;
 
 /**
@@ -135,7 +134,8 @@ public class UpdateHelper {
                 if (!mCtx.isFinishing())
                     dialog.show();
             } else {
-                Dialog dialog = new AlertDialog.Builder(mCtx).setTitle("发现新版本 : " + newVersion)
+                Dialog dialog = new AlertDialog.Builder(mCtx)
+                        .setTitle("发现新版本 : " + newVersion)
                         .setMessage(updateNotes).
                                 setPositiveButton("前往Google Play",
                                         (dialog4, which) -> openGooglePlay(mCtx)).create();
@@ -171,10 +171,15 @@ public class UpdateHelper {
     }
 
     public static boolean updateApp() {
+        HiSettingsHelper.getInstance().migrateEncrytSettings();
+
         final String installedVersion = HiSettingsHelper.getInstance().getInstalledVersion();
         final String currentVersion = HiApplication.getAppVersion();
 
         if (!currentVersion.equals(installedVersion)) {
+            if (newer("5.0.00", installedVersion)) {
+
+            }
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
         }
         return newer(currentVersion, installedVersion);

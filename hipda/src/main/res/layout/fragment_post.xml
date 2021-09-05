@@ -1,9 +1,8 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?list_item_background"
+    android:background="?attr/window_background"
     android:clickable="true"
     android:orientation="vertical"
     android:paddingBottom="2dp">
@@ -20,20 +19,7 @@
         android:maxLines="1"
         android:padding="6dp"
         android:textSize="20sp"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/tv_quote_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:background="?attr/quote_background"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:padding="4dp"
-        android:text=""
-        android:textSize="17sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,7 +40,7 @@
             android:text=""
             android:textColor="@color/md_white_1000"
             android:textSize="17sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_type"
@@ -66,7 +52,7 @@
             android:text=""
             android:textColor="@color/md_white_1000"
             android:textSize="17sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_image_info"
@@ -78,7 +64,7 @@
             android:text=""
             android:textColor="@color/md_white_1000"
             android:textSize="17sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <net.jejer.hipda.ui.widget.ContentLoadingProgressBar
             android:id="@+id/preinfo_loading"
@@ -88,7 +74,7 @@
             android:layout_gravity="center_vertical"
             android:indeterminate="true"
             android:padding="4dp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </LinearLayout>
 
@@ -99,10 +85,12 @@
 
         <ImageButton
             android:id="@+id/ib_emoji_switch"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_alignParentBottom="true"
-            android:background="?android:selectableItemBackground"/>
+            android:background="@android:color/transparent"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter" />
 
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/et_reply"
@@ -119,7 +107,7 @@
             android:padding="8dp"
             android:scrollbars="vertical"
             android:textSize="16sp"
-            app:emojiSize="26sp"/>
+            app:emojiSize="26sp" />
 
         <net.jejer.hipda.ui.widget.CountdownButton
             android:id="@+id/countdown_button"
@@ -127,8 +115,21 @@
             android:layout_height="48dp"
             android:layout_alignBottom="@+id/et_reply"
             android:layout_alignParentRight="true"
-            android:padding="8dp"/>
+            android:padding="8dp" />
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_quote_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:background="@drawable/quote_background"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:padding="4dp"
+        android:text=""
+        android:textSize="17sp"
+        android:visibility="gone" />
 
 </LinearLayout>

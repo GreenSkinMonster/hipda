@@ -1,27 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="?attr/dialog_background"
-              android:gravity="center_horizontal"
-              android:orientation="vertical"
-              android:padding="16dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottome_theme_sheet_dialog_background"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="?attr/window_background"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_sample_title_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="4dp"
+            android:text="@string/sample_title_text" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/list_item_divider" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_sample_post_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="4dp"
+            android:text="@string/sample_post_text" />
+    </LinearLayout>
 
     <net.jejer.hipda.ui.widget.ValueChagerView
-        android:id="@+id/value_changer_size"
+        android:id="@+id/title_size_value_changer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:maxValue="8"
         app:minValue="-3"
-        app:title="@string/title_post_text_size_adjust"/>
+        app:title="@string/title_text_size_adjust" />
 
     <net.jejer.hipda.ui.widget.ValueChagerView
-        android:id="@+id/value_changer_ls"
+        android:id="@+id/post_size_value_changer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:maxValue="8"
+        app:minValue="-3"
+        app:title="@string/title_post_text_size_adjust" />
+
+    <net.jejer.hipda.ui.widget.ValueChagerView
+        android:id="@+id/post_spacing_value_changer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:maxValue="3"
         app:minValue="0"
-        app:title="@string/title_post_line_spacing"/>
+        app:title="@string/title_post_line_spacing" />
 
 </LinearLayout>

@@ -3,6 +3,7 @@ package net.jejer.hipda.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -15,6 +16,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -29,18 +38,12 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostSmsAsyncTask;
+import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.ui.widget.OnSingleClickListener;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.UUID;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 /**
  * a base fragment
@@ -50,8 +53,8 @@ public abstract class BaseFragment extends Fragment {
 
     public String mSessionId;
     protected EmojiPopup mEmojiPopup;
-    protected IconicsDrawable mKeyboardDrawable;
-    protected IconicsDrawable mFaceDrawable;
+    protected Drawable mKeyboardDrawable;
+    protected Drawable mFaceDrawable;
     protected FloatingActionButton mMainFab;
     protected FloatingActionButton mNotificationFab;
 
@@ -137,6 +140,12 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public void stopScroll() {
+    }
+
+    public void expandAppBar() {
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).expandAppBar();
+        }
     }
 
     @Nullable
@@ -228,7 +237,7 @@ public abstract class BaseFragment extends Fragment {
                     UIUtils.toast("请填写内容");
                     return;
                 }
-                new PostSmsAsyncTask(getActivity(), uid, recipient, listener, dialog).execute(content);
+                new PostSmsAsyncTask(uid, recipient, listener, dialog).execute(content);
                 UIUtils.hideSoftKeyboard(getActivity());
             }
         });
@@ -241,10 +250,15 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected void setUpEmojiPopup(final EmojiEditText mEtContent, final ImageButton mIbEmojiSwitch) {
-        if (mKeyboardDrawable == null)
-            mKeyboardDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_keyboard).sizeDp(28).color(Color.GRAY);
-        if (mFaceDrawable == null)
-            mFaceDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_tag_faces).sizeDp(28).color(Color.GRAY);
+        if (mKeyboardDrawable == null) {
+            mKeyboardDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.outline_keyboard_alt_24);
+            mKeyboardDrawable.setTint(Color.GRAY);
+        }
+        if (GlideHelper.getCurrentUserIcon() == null) {
+            mKeyboardDrawable = new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_tag_faces).sizeDp(28).color(Color.GRAY);
+        } else {
+            mFaceDrawable = GlideHelper.getCurrentUserIcon();
+        }
 
         mIbEmojiSwitch.setImageDrawable(mFaceDrawable);
         mIbEmojiSwitch.setOnClickListener(new View.OnClickListener() {

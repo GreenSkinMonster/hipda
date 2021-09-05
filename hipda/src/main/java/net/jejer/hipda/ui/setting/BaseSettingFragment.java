@@ -2,6 +2,7 @@ package net.jejer.hipda.ui.setting;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,6 @@ import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
-
-import com.thebluealliance.spectrum.SpectrumPreferenceCompat;
 
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.Utils;
@@ -39,7 +38,7 @@ public class BaseSettingFragment extends PreferenceFragmentCompat {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         if (view != null)
-            view.setBackgroundColor(ColorHelper.getListBackgroundColor(getActivity()));
+            view.setBackgroundColor(ColorHelper.getWindowBackgroundColor(getActivity()));
         return view;
     }
 
@@ -95,7 +94,7 @@ public class BaseSettingFragment extends PreferenceFragmentCompat {
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
-                preference.setSummary(stringValue);
+                preference.setSummary(TextUtils.isEmpty(stringValue) ? "无" : stringValue);
             }
 
             return true;
@@ -134,13 +133,6 @@ public class BaseSettingFragment extends PreferenceFragmentCompat {
                     PreferenceManager.getDefaultSharedPreferences(
                             preference.getContext()).getString(preference.getKey(),
                             ""));
-        }
-    }
-
-    @Override
-    public void onDisplayPreferenceDialog(Preference preference) {
-        if (!SpectrumPreferenceCompat.onDisplayPreferenceDialog(preference, this)) {
-            super.onDisplayPreferenceDialog(preference);
         }
     }
 

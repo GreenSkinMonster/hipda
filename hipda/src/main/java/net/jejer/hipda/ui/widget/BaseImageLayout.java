@@ -22,7 +22,6 @@ import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.glide.GlideImageEvent;
 import net.jejer.hipda.job.GlideImageJob;
 import net.jejer.hipda.job.JobMgr;
-import net.jejer.hipda.utils.UIUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -49,16 +48,9 @@ public abstract class BaseImageLayout extends RelativeLayout {
 
     public BaseImageLayout(Context context) {
         super(context);
-
-        setupClickListener();
-        setupLongClickListener();
     }
 
     protected abstract boolean isNetworkFetch();
-
-    protected abstract View.OnClickListener getOnClickListener();
-
-    protected abstract View.OnLongClickListener getOnLongClickListener();
 
     protected abstract void displayImage();
 
@@ -88,7 +80,7 @@ public abstract class BaseImageLayout extends RelativeLayout {
         }
     }
 
-    private void fetchImage(boolean networkFetch) {
+    protected void fetchImage(boolean networkFetch) {
         if (networkFetch) {
             if (mProgressBar.getCurrState() != DownloadProgressBar.STATE_INDETERMINATE)
                 mProgressBar.setIndeterminate();
@@ -145,58 +137,47 @@ public abstract class BaseImageLayout extends RelativeLayout {
     }
 
     public void stopGif() {
-        if (mCurrentViewHolder != null)
-            mCurrentViewHolder.clear();
+        if (mCurrentViewHolder != null) {
+            BaseImageLayout imageLayout = mCurrentViewHolder.get();
+            if (imageLayout != null) {
+                mCurrentViewHolder.clear();
+                stopGif(mRequestManager, imageLayout);
+            }
+        }
+    }
+
+    private static void stopGif(RequestManager requestManager, BaseImageLayout imageLayout) {
+        if (imageLayout != null && imageLayout.isAttachedToWindow()) {
+            ImageInfo imageInfo = ImageContainer.getImageInfo(imageLayout.mUrl);
+            if (imageInfo.isGif()) {
+                imageLayout.mProgressBar.setVisibility(VISIBLE);
+                requestManager.clear(imageLayout.mImageView);
+                requestManager
+                        .asBitmap()
+                        .load(imageLayout.mUrl)
+                        .transform(new GifTransformation())
+                        .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
+                        .into(imageLayout.mImageView);
+            }
+        }
+    }
+
+    protected void playGif() {
         ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-        mProgressBar.setVisibility(VISIBLE);
-        mRequestManager.clear(mImageView);
-        mRequestManager
-                .asBitmap()
-                .load(mUrl)
-                .transform(new GifTransformation())
-                .override(imageInfo.getBitmapWidth(), imageInfo.getBitmapHeight())
-                .into(mImageView);
-    }
+        BaseImageLayout lastGifLayout = mCurrentViewHolder != null ? mCurrentViewHolder.get() : null;
+        if (lastGifLayout != null) {
+            lastGifLayout.stopGif();
+        }
 
-    private void setupLongClickListener() {
-        setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-                if (imageInfo.isFail()) {
-                    UIUtils.showMessageDialog(getContext(), "错误信息", imageInfo.getMessage(), true);
-                } else if (imageInfo.isSuccess() && getOnLongClickListener() != null) {
-                    getOnLongClickListener().onLongClick(view);
+        if (!BaseImageLayout.this.equals(lastGifLayout)) {
+            if (imageInfo.isSuccess()) {
+                if (imageInfo.isGif()) {
+                    loadGif();
                 }
-                return true;
+            } else if (imageInfo.isFail() || imageInfo.isIdle()) {
+                fetchImage(true);
             }
-        });
-    }
-
-    private void setupClickListener() {
-        setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ImageInfo imageInfo = ImageContainer.getImageInfo(mUrl);
-                BaseImageLayout lastGifLayout = mCurrentViewHolder != null ? mCurrentViewHolder.get() : null;
-                if (lastGifLayout != null) {
-                    lastGifLayout.stopGif();
-                }
-
-                if (!BaseImageLayout.this.equals(lastGifLayout)) {
-                    if (imageInfo.isSuccess()) {
-                        if (imageInfo.isGif()) {
-                            loadGif();
-                        } else {
-                            if (getOnClickListener() != null)
-                                getOnClickListener().onClick(view);
-                        }
-                    } else if (imageInfo.isFail() || imageInfo.isIdle()) {
-                        fetchImage(true);
-                    }
-                }
-            }
-        });
+        }
     }
 
     @Override
