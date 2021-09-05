@@ -150,7 +150,7 @@ public class UIUtils {
             releaseNotes = e.getMessage();
         }
 
-        String info = "*** 问题反馈请到 “设置”-“客户端发布帖”，不要另开新帖或短消息。\n*** 反馈前请阅读1楼红色字体须知，提供必需的信息和详细错误描述。\n\n";
+        String info = "问题反馈请到 “设置-客户端发布帖”，务必提供系统版本和客户端版本信息。\n崩溃日志在“设置-其它-应用错误日志”中。\n\n";
 
         showMessageDialog(activity, "更新记录", info + releaseNotes, false);
     }
