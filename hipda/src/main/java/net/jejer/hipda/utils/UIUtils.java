@@ -261,8 +261,8 @@ public class UIUtils {
             }
 
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             shareIntent.setType(imageInfo.getMime());
-
             shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
             activity.startActivity(Intent.createChooser(shareIntent, "分享图片"));
         } catch (Exception e) {
