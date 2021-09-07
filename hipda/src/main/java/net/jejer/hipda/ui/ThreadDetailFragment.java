@@ -28,6 +28,14 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -88,13 +96,6 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Request;
 
 public class ThreadDetailFragment extends BaseFragment {
@@ -427,10 +428,10 @@ public class ThreadDetailFragment extends BaseFragment {
             case R.id.action_share_thread:
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = HiUtils.DetailListUrl + mTid + "\n"
-                        + "主题：" + mTitle + "\n";
+                String shareBody = "主题：" + mTitle + "\n";
                 if (mCache.get(1) != null && mCache.get(1).getAll().size() > 0)
-                    shareBody += ("作者：" + mCache.get(1).getAll().get(0).getAuthor());
+                    shareBody += ("作者：" + mCache.get(1).getAll().get(0).getAuthor()) + "\n";
+                shareBody += HiUtils.DetailListUrl + mTid;
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "分享帖子"));
                 return true;
@@ -639,9 +640,14 @@ public class ThreadDetailFragment extends BaseFragment {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
-                        String shareBody = "帖子 ：" + mTitle + "\n" +
-                                HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", detailBean.getPostId()) + "\n" +
-                                detailBean.getFloor() + "#  作者 ：" + detailBean.getAuthor() + "\n\n" +
+                        String shareBody = (detailBean.getFloor() == 1 ? "主题 ：" : "回帖 ：")
+                                + mTitle + "\n" +
+                                detailBean.getFloor() + "#  作者 ：" + detailBean.getAuthor() + "\n" +
+                                (detailBean.getFloor() == 1 ?
+                                        HiUtils.DetailListUrl + mTid :
+                                        HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", detailBean.getPostId())
+                                )
+                                + "\n\n" +
                                 detailBean.getContents().getCopyText();
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                         startActivity(Intent.createChooser(sharingIntent, "分享文字内容"));
@@ -655,10 +661,6 @@ public class ThreadDetailFragment extends BaseFragment {
                         int pos = mDetailAdapter.getPositionByPostId(detailBean.getPostId());
                         if (pos != -1)
                             mDetailAdapter.notifyItemChanged(pos);
-//                        UIUtils.showMessageDialog(getActivity(),
-//                                detailBean.getFloor() + "# " + detailBean.getAuthor(),
-//                                detailBean.getContents().getCopyText().trim(),
-//                                true);
                     }
                 });
         mGridMenu.add("reply", "回复",
