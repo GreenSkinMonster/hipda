@@ -158,7 +158,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private boolean mHeaderLoading = false;
     private boolean mFooterLoading = false;
 
-    private HiProgressDialog postProgressDialog;
+    private HiProgressDialog mPostProgressDialog;
     private ContentLoadingView mLoadingView;
     final private ThreadDetailEventCallback mEventCallback = new ThreadDetailEventCallback();
     private MenuItem mShowAllMenuItem;
@@ -1435,14 +1435,14 @@ public class ThreadDetailFragment extends BaseFragment {
                 hideQuickReply(false);
                 mMainFab.hide();
             } else {
-                postProgressDialog = HiProgressDialog.show(getActivity(), "请稍候...");
+                mPostProgressDialog = HiProgressDialog.show(getActivity(), "请稍候...");
             }
         } else if (event.mStatus == Constants.STATUS_SUCCESS) {
             mEtReply.setText("");
             hideQuickReply(true);
 
-            if (postProgressDialog != null) {
-                postProgressDialog.dismiss(message);
+            if (mPostProgressDialog != null) {
+                mPostProgressDialog.dismiss(message);
             }
             if (event.fromQuickReply)
                 mFooterLoading = false;
@@ -1464,6 +1464,12 @@ public class ThreadDetailFragment extends BaseFragment {
                     //first floor is deleted, meaning whole thread is deleted
                     ((ThreadDetailActivity) getActivity()).finishWithNoSlide();
                 } else {
+                    mCache.clear();
+                    mDetailAdapter.clear();
+                    if (mGotoFloor > 1) {
+                        mGotoFloor--;
+                        mGotoPage = mGotoFloor / HiSettingsHelper.getInstance().getMaxPostsInPage() + 1;
+                    }
                     showOrLoadPage(true);
                 }
             } else if (isInAuthorOnlyMode() && event.mMode != PostHelper.MODE_EDIT_POST) {
@@ -1498,8 +1504,8 @@ public class ThreadDetailFragment extends BaseFragment {
                 showQuickReply();
                 mRecyclerView.setFooterState(XFooterView.STATE_ERROR);
             }
-            if (postProgressDialog != null) {
-                postProgressDialog.dismissError(message);
+            if (mPostProgressDialog != null) {
+                mPostProgressDialog.dismissError(message);
             } else {
                 UIUtils.errorSnack(getView(), message, "");
             }
