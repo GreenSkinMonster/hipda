@@ -42,7 +42,7 @@ public class LoginHelper {
         LoginEvent event1 = new LoginEvent();
         event1.mManual = manual;
         event1.mStatus = Constants.STATUS_IN_PROGRESS;
-        EventBus.getDefault().post(event1);
+        EventBus.getDefault().postSticky(event1);
 
         String formhash = getFormhash();
         if (TextUtils.isEmpty(formhash))

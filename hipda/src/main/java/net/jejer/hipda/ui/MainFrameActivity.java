@@ -762,6 +762,9 @@ public class MainFrameActivity extends BaseActivity {
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(LoginEvent event) {
+
+        EventBus.getDefault().removeStickyEvent(event);
+
         if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
             if (mLoginProgressDialog == null || !mLoginProgressDialog.isShowing()) {
                 final String username = HiSettingsHelper.getInstance().getUsername();
