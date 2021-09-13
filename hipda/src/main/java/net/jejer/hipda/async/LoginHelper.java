@@ -37,6 +37,11 @@ public class LoginHelper {
     }
 
     public int login(boolean manual) {
+        if (!manual &&
+                (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUsername())
+                        || TextUtils.isEmpty(HiSettingsHelper.getInstance().getPassword())))
+            return Constants.STATUS_FAIL_ABORT;
+
         int status = Constants.STATUS_FAIL;
 
         LoginEvent event1 = new LoginEvent();
