@@ -15,6 +15,11 @@ import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.IIcon;
 
 import net.jejer.hipda.R;
+import net.jejer.hipda.bean.DetailBean;
+import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.glide.GlideHelper;
+import net.jejer.hipda.ui.BaseFragment;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.ArrayList;
@@ -32,38 +37,50 @@ import androidx.core.content.ContextCompat;
 public class SimpleGridMenu {
 
     private Context mContext;
+    private BaseFragment mFragment;
     private LayoutInflater mInflater;
-    private String mTitle;
+    private DetailBean mDetailBean;
     private AlertDialog mDialog;
     private DialogInterface.OnDismissListener mOnDismissListener;
+    private View.OnClickListener mReportListener;
+
 
     private LinkedHashMap<String, MenuItem> mMenuItems = new LinkedHashMap<>();
     private List<String> mActionKeys = new ArrayList<>();
 
-    public SimpleGridMenu(Context context) {
-        mContext = context;
+    public SimpleGridMenu(BaseFragment fragment) {
+        mContext = fragment.getActivity();
+        mFragment = fragment;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public String getTitle() {
-        return mTitle;
-    }
-
-    public void setTitle(String title) {
-        mTitle = title;
+    public void setDetailBean(DetailBean detailBean) {
+        mDetailBean = detailBean;
     }
 
     public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
         mOnDismissListener = onDismissListener;
     }
 
+    public void setReportListener(View.OnClickListener reportListener) {
+        mReportListener = reportListener;
+    }
+
     public void show() {
         View view = mInflater.inflate(R.layout.dialog_grid_menu, null);
-        GridView gridView = (GridView) view.findViewById(R.id.grid_view);
-        TextView tvTitle = (TextView) view.findViewById(R.id.tv_title);
+        GridView gridView = view.findViewById(R.id.grid_view);
+        TextView tvTitle = view.findViewById(R.id.tv_title);
+        ImageView avatarView = view.findViewById(R.id.iv_avatar);
+        ImageView reportView = view.findViewById(R.id.iv_report);
+
+        GlideHelper.loadAvatar(mFragment, avatarView, HiUtils.getAvatarUrlByUid(mDetailBean.getUid()));
 
         gridView.setAdapter(new MenuActionAdapter(mContext));
-        tvTitle.setText(mTitle);
+        tvTitle.setText(mDetailBean.getFloor() + "# " + mDetailBean.getAuthor());
+
+        if (HiSettingsHelper.getInstance().getUid().equals(mDetailBean.getUid()))
+            reportView.setVisibility(View.INVISIBLE);
+        reportView.setOnClickListener(mReportListener);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setView(view);
@@ -107,10 +124,10 @@ public class SimpleGridMenu {
             view.setTag(actionKey);
 
             final MenuItem menuItem = mMenuItems.get(actionKey);
-            TextView textView = (TextView) view.findViewById(R.id.action_text);
+            TextView textView = view.findViewById(R.id.action_text);
             textView.setText(mMenuItems.get(actionKey).actionName);
 
-            ImageView imageView = (ImageView) view.findViewById(R.id.action_image);
+            ImageView imageView = view.findViewById(R.id.action_image);
             if (menuItem.icon != null) {
                 imageView.setVisibility(View.VISIBLE);
                 int pading = Utils.dpToPx(16);
