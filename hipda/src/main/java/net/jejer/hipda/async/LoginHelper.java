@@ -142,8 +142,8 @@ public class LoginHelper {
         }
     }
 
-    public static boolean checkLoggedin(Context context, String mRsp) {
-        return !mRsp.contains(context.getString(R.string.not_login));
+    public static boolean checkLoggedin(Context context, String resp) {
+        return !resp.contains("logging.php?action=login");
     }
 
     public static boolean isLoggedIn() {
