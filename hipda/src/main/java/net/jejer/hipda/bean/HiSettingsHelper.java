@@ -92,7 +92,6 @@ public class HiSettingsHelper {
     public static final String PERF_IMAGE_HOST = "PERF_IMAGE_HOST";
     public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
     public static final String PERF_MAX_UPLOAD_FILE_SIZE = "PERF_MAX_UPLOAD_FILE_SIZE";
-    public static final String PERF_SHOW_TAIL = "PERF_SHOW_TAIL";
     public static final String PERF_CAMERA_PERM_ASKED = "PERF_CAMERA_PERM_ASKED";
     public static final String PERF_BLACKLIST = "PERF_BLACKLIST";
     public static final String PERF_BLACKLIST_SYNC_TIME = "PERF_BLACKLIST_SYNC_TIME";
@@ -1082,10 +1081,6 @@ public class HiSettingsHelper {
 
     public boolean isClickEffect() {
         return getBooleanValue(PERF_CLICK_EFFECT, Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
-    }
-
-    public boolean isShowTail() {
-        return getBooleanValue(PERF_SHOW_TAIL, false);
     }
 
     public int getMaxUploadFileSize() {

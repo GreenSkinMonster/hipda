@@ -16,11 +16,6 @@
     <PreferenceCategory android:title="@string/pref_category_tail">
         <SwitchPreference
             android:defaultValue="false"
-            android:key="PERF_SHOW_TAIL"
-            android:title="@string/pref_title_show_tail"/>
-
-        <SwitchPreference
-            android:defaultValue="false"
             android:key="PERF_ADDTAIL"
             android:title="@string/pref_title_add_tail"/>
 

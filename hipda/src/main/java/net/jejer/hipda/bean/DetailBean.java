@@ -1,5 +1,7 @@
 package net.jejer.hipda.bean;
 
+import android.text.TextUtils;
+
 import net.jejer.hipda.ui.textstyle.TextStyle;
 import net.jejer.hipda.utils.Utils;
 
@@ -63,11 +65,8 @@ public class DetailBean {
         }
 
         public void addAppMark(String text, String url) {
-            if (!HiSettingsHelper.getInstance().isShowTail()
-                    && !HiSettingsHelper.getInstance().getUid().equals(mUid))
-                return;
             String mark;
-            if (url != null && url.length() > 0) {
+            if (!TextUtils.isEmpty(url)) {
                 mark = "<appmark><a href=\"" + url + "\">" + text + "</a></appmark>";
             } else {
                 mark = "<appmark>" + text + "</appmark>";
@@ -82,15 +81,17 @@ public class DetailBean {
             }
         }
 
-        public void addLink(String text, String url) {
+        public void addLink(String text, String url, boolean smallFont) {
             String link;
             if (!url.toLowerCase().startsWith("http://")
                     && !url.toLowerCase().startsWith("https://")) {
-                url = "http://" + url;
-                link = " <a href=\"" + url + "\">" + text + "</a> ";
-            } else {
-                link = "[<a href=\"" + url + "\">" + text + "</a>]";
+                url = "https://" + url;
             }
+            link = " <a href=\"" + url + "\">"
+                    + (smallFont ? "<small>" : "")
+                    + text
+                    + (smallFont ? "</small>" : "")
+                    + "</a> ";
             if (newString) {
                 list.add(new ContentText(link));
                 lastTextIdx = list.size() - 1;

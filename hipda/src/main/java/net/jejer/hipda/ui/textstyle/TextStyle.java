@@ -17,6 +17,7 @@ public class TextStyle {
     private boolean strike;
     private boolean underline;
     private String color;
+    private boolean smallFont = false;
 
     private static Map<String, String> COLORS = new HashMap<>();
 
@@ -53,6 +54,14 @@ public class TextStyle {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    public void setSmallFont(boolean smallFont) {
+        this.smallFont = smallFont;
+    }
+
+    public boolean isSmallFont() {
+        return smallFont;
     }
 
     public boolean isItalic() {
@@ -104,11 +113,15 @@ public class TextStyle {
             sb.append("<u>");
         if (strike)
             sb.append("<strike>");
+        if (smallFont)
+            sb.append("<small>");
         if (!TextUtils.isEmpty(color))
             sb.append("<font color=").append(color).append(">");
         sb.append(text);
         if (!TextUtils.isEmpty(color))
             sb.append("</font>");
+        if (smallFont)
+            sb.append("</small>");
         if (strike)
             sb.append("</strike>");
         if (underline)
@@ -127,6 +140,7 @@ public class TextStyle {
         textStyle.strike = this.strike;
         textStyle.underline = this.underline;
         textStyle.color = this.color;
+        textStyle.smallFont = this.smallFont;
         return textStyle;
     }
 
