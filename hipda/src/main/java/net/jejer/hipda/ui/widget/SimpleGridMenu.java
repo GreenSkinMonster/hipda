@@ -73,7 +73,11 @@ public class SimpleGridMenu {
         ImageView avatarView = view.findViewById(R.id.iv_avatar);
         ImageView reportView = view.findViewById(R.id.iv_report);
 
-        GlideHelper.loadAvatar(mFragment, avatarView, HiUtils.getAvatarUrlByUid(mDetailBean.getUid()));
+        if (HiSettingsHelper.getInstance().isLoadAvatar()) {
+            GlideHelper.loadAvatar(mFragment, avatarView, HiUtils.getAvatarUrlByUid(mDetailBean.getUid()));
+        } else {
+            avatarView.setVisibility(View.GONE);
+        }
 
         gridView.setAdapter(new MenuActionAdapter(mContext));
         tvTitle.setText(mDetailBean.getFloor() + "# " + mDetailBean.getAuthor());
