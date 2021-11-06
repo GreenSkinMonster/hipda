@@ -48,7 +48,7 @@ public class BlacklistHelper {
                             UIUtils.toast(el.text());
                         } else {
                             HiSettingsHelper.getInstance().addToBlacklist(username);
-                            UIUtils.toast("已经将用户 " + username + " 添加至黑名单");
+                            UIUtils.toast("已经将用户 <" + username + "> 添加至黑名单");
                         }
                     } catch (Exception e) {
                         UIUtils.toast(OkHttpHelper.getErrorMessage(e).getMessage());
@@ -58,6 +58,31 @@ public class BlacklistHelper {
         } catch (Exception e) {
             UIUtils.toast(OkHttpHelper.getErrorMessage(e).getMessage());
         }
+    }
+
+    public static void delBlacklist(final String formhash, final String username) {
+        BlacklistHelper.delBlacklist(formhash, username, new OkHttpHelper.ResultCallback() {
+            @Override
+            public void onError(Request request, Exception e) {
+                UIUtils.toast(OkHttpHelper.getErrorMessage(e).getMessage());
+            }
+
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Document doc = Jsoup.parse(response);
+                    String errorMsg = HiParser.parseErrorMessage(doc);
+                    if (!TextUtils.isEmpty(errorMsg)) {
+                        UIUtils.toast(errorMsg);
+                    } else {
+                        HiSettingsHelper.getInstance().removeFromBlacklist(username);
+                        UIUtils.toast("已经将用户 <" + username + "> 从黑名单移除");
+                    }
+                } catch (Exception e) {
+                    UIUtils.toast(OkHttpHelper.getErrorMessage(e).getMessage());
+                }
+            }
+        });
     }
 
     public static void delBlacklist(final String formhash, final String username, OkHttpHelper.ResultCallback callback) {

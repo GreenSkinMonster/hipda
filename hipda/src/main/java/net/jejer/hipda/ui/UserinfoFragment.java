@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -91,7 +92,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
 
         if (getArguments().containsKey(ARG_USERNAME)) {
             mUsername = getArguments().getString(ARG_USERNAME);
@@ -107,6 +108,8 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setActionBarTitle("用户信息");
+
         View view = inflater.inflate(R.layout.fragment_user_info, container, false);
         view.setClickable(false);
 
@@ -219,9 +222,19 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 GoogleMaterial.Icon.gmd_insert_comment).actionBar()
                 .color(UIUtils.getToolbarTextColor(getActivity())));
 
-        setActionBarTitle("用户信息");
-
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        if (HiSettingsHelper.getInstance().isInBlacklist(mUsername)) {
+            menu.findItem(R.id.action_blacklist).setVisible(false);
+            menu.findItem(R.id.action_remove_blacklist).setVisible(true);
+        } else {
+            menu.findItem(R.id.action_blacklist).setVisible(true);
+            menu.findItem(R.id.action_remove_blacklist).setVisible(false);
+        }
+        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -235,6 +248,9 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 return true;
             case R.id.action_blacklist:
                 BlacklistHelper.addBlacklist(mFormhash, mUsername);
+                return true;
+            case R.id.action_remove_blacklist:
+                BlacklistHelper.delBlacklist(mFormhash, mUsername);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -270,6 +286,7 @@ public class UserinfoFragment extends BaseFragment implements PostSmsAsyncTask.S
                 } else {
                     mOnlineView.setVisibility(View.INVISIBLE);
                 }
+                setHasOptionsMenu(true);
             } else {
                 mDetailView.setText("解析信息失败, 请重试.");
             }
