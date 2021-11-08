@@ -33,6 +33,7 @@
     <string name="action_send_sms">发送短消息</string>
     <string name="action_clear_sms">清空短消息</string>
     <string name="action_blacklist">加入黑名单</string>
+    <string name="action_remove_blacklist">移除黑名单</string>
     <string name="action_favorites">查看收藏</string>
     <string name="action_attention">查看关注</string>
     <string name="iv_avatar">头像</string>

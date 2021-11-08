@@ -10,8 +10,11 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +26,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -87,6 +91,8 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -157,7 +163,7 @@ public class ThreadDetailFragment extends BaseFragment {
     private boolean mHeaderLoading = false;
     private boolean mFooterLoading = false;
 
-    private HiProgressDialog postProgressDialog;
+    private HiProgressDialog mPostProgressDialog;
     private ContentLoadingView mLoadingView;
     final private ThreadDetailEventCallback mEventCallback = new ThreadDetailEventCallback();
     private MenuItem mShowAllMenuItem;
@@ -427,10 +433,10 @@ public class ThreadDetailFragment extends BaseFragment {
             case R.id.action_share_thread:
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = HiUtils.DetailListUrl + mTid + "\n"
-                        + "主题：" + mTitle + "\n";
+                String shareBody = "主题：" + mTitle + "\n";
                 if (mCache.get(1) != null && mCache.get(1).getAll().size() > 0)
-                    shareBody += ("作者：" + mCache.get(1).getAll().get(0).getAuthor());
+                    shareBody += ("作者：" + mCache.get(1).getAll().get(0).getAuthor()) + "\n";
+                shareBody += HiUtils.DetailListUrl + mTid;
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "分享帖子"));
                 return true;
@@ -603,12 +609,19 @@ public class ThreadDetailFragment extends BaseFragment {
     private void showGridMenu(final DetailBean detailBean) {
         if (mGridMenu != null)
             return;
-        mGridMenu = new SimpleGridMenu(getActivity());
-        mGridMenu.setTitle(detailBean.getFloor() + "# " + detailBean.getAuthor());
+        mGridMenu = new SimpleGridMenu(this);
+        mGridMenu.setDetailBean(detailBean);
         mGridMenu.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 mGridMenu = null;
+            }
+        });
+        mGridMenu.setReportListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                mGridMenu.dismiss();
+                showReportDialog(detailBean);
             }
         });
 
@@ -639,9 +652,14 @@ public class ThreadDetailFragment extends BaseFragment {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
-                        String shareBody = "帖子 ：" + mTitle + "\n" +
-                                HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", detailBean.getPostId()) + "\n" +
-                                detailBean.getFloor() + "#  作者 ：" + detailBean.getAuthor() + "\n\n" +
+                        String shareBody = (detailBean.getFloor() == 1 ? "主题 ：" : "回帖 ：")
+                                + mTitle + "\n" +
+                                detailBean.getFloor() + "#  作者 ：" + detailBean.getAuthor() + "\n" +
+                                (detailBean.getFloor() == 1 ?
+                                        HiUtils.DetailListUrl + mTid :
+                                        HiUtils.RedirectToPostUrl.replace("{tid}", mTid).replace("{pid}", detailBean.getPostId())
+                                )
+                                + "\n\n" +
                                 detailBean.getContents().getCopyText();
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                         startActivity(Intent.createChooser(sharingIntent, "分享文字内容"));
@@ -655,10 +673,6 @@ public class ThreadDetailFragment extends BaseFragment {
                         int pos = mDetailAdapter.getPositionByPostId(detailBean.getPostId());
                         if (pos != -1)
                             mDetailAdapter.notifyItemChanged(pos);
-//                        UIUtils.showMessageDialog(getActivity(),
-//                                detailBean.getFloor() + "# " + detailBean.getAuthor(),
-//                                detailBean.getContents().getCopyText().trim(),
-//                                true);
                     }
                 });
         mGridMenu.add("reply", "回复",
@@ -980,6 +994,63 @@ public class ThreadDetailFragment extends BaseFragment {
             return true;
         }
         return false;
+    }
+
+    private void showReportDialog(final DetailBean detailBean) {
+        final LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View viewlayout = inflater.inflate(R.layout.dialog_report_post, null);
+
+        final EditText etReportReason = viewlayout.findViewById(R.id.et_report_reason);
+        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
+
+        popDialog.setTitle("举报用户 [" + detailBean.getAuthor() + "] 在 " + detailBean.getFloor() + " 楼的帖子内容");
+        popDialog.setView(viewlayout);
+        popDialog.setPositiveButton("提交", null);
+        popDialog.setNegativeButton("取消", null);
+        final AlertDialog dialog = popDialog.create();
+
+        etReportReason.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(!TextUtils.isEmpty(etReportReason.getText()));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        dialog.show();
+
+        Button theButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        theButton.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                HiProgressDialog reportDialog = HiProgressDialog.show(getActivity(), "正在处理...");
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                Handler handler = new Handler(Looper.getMainLooper());
+                executor.execute(() -> {
+                    Exception ee = null;
+                    try {
+                        Thread.sleep((long) ((Math.random() * (3333 - 1234)) + 1234));
+                    } catch (Exception ex) {
+                        ee = ex;
+                    }
+                    final Exception e = ee;
+                    handler.post(() -> {
+                        dialog.dismiss();
+                        reportDialog.dismiss("感谢您的反馈");
+                        UIUtils.hideSoftKeyboard(getActivity());
+                    });
+                });
+            }
+        });
+
+        theButton.setEnabled(false);
     }
 
     private void showSoftKeyboard() {
@@ -1433,14 +1504,14 @@ public class ThreadDetailFragment extends BaseFragment {
                 hideQuickReply(false);
                 mMainFab.hide();
             } else {
-                postProgressDialog = HiProgressDialog.show(getActivity(), "请稍候...");
+                mPostProgressDialog = HiProgressDialog.show(getActivity(), "请稍候...");
             }
         } else if (event.mStatus == Constants.STATUS_SUCCESS) {
             mEtReply.setText("");
             hideQuickReply(true);
 
-            if (postProgressDialog != null) {
-                postProgressDialog.dismiss(message);
+            if (mPostProgressDialog != null) {
+                mPostProgressDialog.dismiss(message);
             }
             if (event.fromQuickReply)
                 mFooterLoading = false;
@@ -1462,6 +1533,12 @@ public class ThreadDetailFragment extends BaseFragment {
                     //first floor is deleted, meaning whole thread is deleted
                     ((ThreadDetailActivity) getActivity()).finishWithNoSlide();
                 } else {
+                    mCache.clear();
+                    mDetailAdapter.clear();
+                    if (mGotoFloor > 1) {
+                        mGotoFloor--;
+                        mGotoPage = mGotoFloor / HiSettingsHelper.getInstance().getMaxPostsInPage() + 1;
+                    }
                     showOrLoadPage(true);
                 }
             } else if (isInAuthorOnlyMode() && event.mMode != PostHelper.MODE_EDIT_POST) {
@@ -1496,8 +1573,8 @@ public class ThreadDetailFragment extends BaseFragment {
                 showQuickReply();
                 mRecyclerView.setFooterState(XFooterView.STATE_ERROR);
             }
-            if (postProgressDialog != null) {
-                postProgressDialog.dismissError(message);
+            if (mPostProgressDialog != null) {
+                mPostProgressDialog.dismissError(message);
             } else {
                 UIUtils.errorSnack(getView(), message, "");
             }

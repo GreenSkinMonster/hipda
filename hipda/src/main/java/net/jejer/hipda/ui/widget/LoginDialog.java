@@ -67,8 +67,8 @@ public class LoginDialog extends Dialog {
             @Override
             public void onSingleClick(View v) {
 
-                if (etUsername.getText().toString().length() < 3
-                        || etPassword.getText().toString().length() < 3) {
+                if (TextUtils.isEmpty(etUsername.getText().toString())
+                        || TextUtils.isEmpty(etPassword.getText().toString())) {
                     UIUtils.toast("请填写有效用户名和密码");
                     return;
                 }

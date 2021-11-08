@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="net.jejer.hipda"
-    android:versionCode="4900"
-    android:versionName="4.9.00">
+    android:versionCode="5002"
+    android:versionName="5.0.02">
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -27,6 +27,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/ThemeLight"
+        android:hasFragileUserData="true"
         android:usesCleartextTraffic="true">
 
         <activity

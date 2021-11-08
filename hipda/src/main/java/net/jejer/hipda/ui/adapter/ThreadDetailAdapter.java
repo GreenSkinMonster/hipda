@@ -124,7 +124,7 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
         throw new RuntimeException("Don't set datas here");
     }
 
-    public void addDatas(DetailListBean detailListBean) {
+    public synchronized void addDatas(DetailListBean detailListBean) {
         final int page = detailListBean.getPage();
         if (mThreadPages.size() == 0) {
             mThreadPages.put(page, detailListBean);

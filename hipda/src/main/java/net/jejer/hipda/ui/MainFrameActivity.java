@@ -762,13 +762,19 @@ public class MainFrameActivity extends BaseActivity {
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEvent(LoginEvent event) {
+
+        EventBus.getDefault().removeStickyEvent(event);
+
         if (event.mStatus == Constants.STATUS_IN_PROGRESS) {
-            if (mLoginProgressDialog == null || !mLoginProgressDialog.isShowing()) {
-                final String username = HiSettingsHelper.getInstance().getUsername();
-                mLoginProgressDialog = HiProgressDialog.show(this, "<" + username + "> 正在登录...");
+            if (event.mManual) {
+                if (mLoginProgressDialog == null || !mLoginProgressDialog.isShowing()) {
+                    final String username = HiSettingsHelper.getInstance().getUsername();
+                    mLoginProgressDialog = HiProgressDialog.show(this, "<" + username + "> 正在登录...");
+                }
             }
         } else if (event.mStatus == Constants.STATUS_SUCCESS) {
-            UIUtils.toast("登录成功");
+            if (event.mManual)
+                UIUtils.toast("登录成功");
             Fragment fg = getSupportFragmentManager().findFragmentByTag(ThreadListFragment.class.getName());
             if (fg instanceof ThreadListFragment) {
                 fg.setHasOptionsMenu(true);
@@ -792,8 +798,11 @@ public class MainFrameActivity extends BaseActivity {
                 HiSettingsHelper.getInstance().setSecAnswer("");
             }
             updateAccountHeader();
-            if (mLoginProgressDialog != null && mLoginProgressDialog.isShowing())
+            if (mLoginProgressDialog != null && mLoginProgressDialog.isShowing()) {
                 mLoginProgressDialog.dismissError(event.mMessage);
+            } else {
+                UIUtils.errorSnack(getRootView(), event.mMessage, "");
+            }
         }
     }
 

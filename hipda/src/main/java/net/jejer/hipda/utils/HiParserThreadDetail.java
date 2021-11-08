@@ -376,21 +376,6 @@ public class HiParserThreadDetail {
     // return true for continue children, false for ignore children
     private static boolean parseNode(Node contentN, DetailBean.Contents content, int level, @NonNull TextStyleHolder textStyles) {
 
-        if (contentN.nodeName().equals("font")) {
-            Element elemFont = (Element) contentN;
-            Element elemParent = elemFont.parent();
-            if (elemFont.attr("size").equals("1")
-                    || (elemParent != null
-                    && elemParent.nodeName().equals("font")
-                    && elemParent.attr("size").equals("1"))) {
-                content.addAppMark(elemFont.text(), null);
-                return false;
-            } else {
-                textStyles.setColor(level, Utils.nullToText(elemFont.attr("color")).trim());
-                return true;
-            }
-        }
-
         if (contentN.nodeName().equals("i")    //text in an alternate voice or mood
                 || contentN.nodeName().equals("u")    //text that should be stylistically different from normal text
                 || contentN.nodeName().equals("em")    //text emphasized
@@ -398,8 +383,15 @@ public class HiParserThreadDetail {
                 || contentN.nodeName().equals("ol")    //ordered list
                 || contentN.nodeName().equals("ul")    //unordered list
                 || contentN.nodeName().equals("hr")   //a thematic change in the content(h line)
-                || contentN.nodeName().equals("blockquote")) {
+                || contentN.nodeName().equals("blockquote")
+                || contentN.nodeName().equals("font")) {
             textStyles.addStyle(level, contentN.nodeName());
+            if (contentN.nodeName().equals("font")) {
+                Element elemFont = (Element) contentN;
+                if (elemFont.attr("size").equals("1"))
+                    textStyles.setSmallFont(level, true);
+                textStyles.setColor(level, Utils.nullToText(elemFont.attr("color")).trim());
+            }
             //continue parse child node
             return true;
         } else if (contentN.nodeName().equals("strong")) {
@@ -423,8 +415,11 @@ public class HiParserThreadDetail {
             return true;
         } else if (contentN.nodeName().equals("#text")) {
             //replace  < >  to &lt; &gt; , or they will become to unsupported tag
-            String text = ((TextNode) contentN).text()
-                    .replace("<", "&lt;")
+            String text = ((TextNode) contentN).text();
+            if (TextUtils.isEmpty(text))
+                return false;
+
+            text = text.replace("<", "&lt;")
                     .replace(">", "&gt;");
 
             TextStyle ts = null;
@@ -444,7 +439,7 @@ public class HiParserThreadDetail {
                 if (url.contains("@") && !url.contains("/")) {
                     content.addEmail(url);
                 } else {
-                    content.addLink(url, url);
+                    content.addLink(url, url, ts != null && ts.isSmallFont());
                 }
                 lastPos = matcher.end();
             }
@@ -471,7 +466,7 @@ public class HiParserThreadDetail {
             return false;
         } else if (contentN.nodeName().equals("span")) {    // a section in a document
             Elements attachAES = ((Element) contentN).select("a");
-            Boolean isInternalAttach = false;
+            boolean isInternalAttach = false;
             for (int attIdx = 0; attIdx < attachAES.size(); attIdx++) {
                 Element attachAE = attachAES.get(attIdx);
                 //it is an attachment and not an image attachment
@@ -497,14 +492,8 @@ public class HiParserThreadDetail {
             String url = aE.attr("href");
             if (aE.childNodeSize() > 0 && aE.childNode(0).nodeName().equals("img")) {
                 if (!url.startsWith("javascript:"))
-                    content.addLink(url, url);
+                    content.addLink(url, url, false);
                 return true;
-            }
-
-            if (aE.childNodeSize() > 0 && aE.childNode(0).nodeName().equals("font") &&
-                    aE.childNode(0).attr("size").equals("1")) {
-                content.addAppMark(text, url);
-                return false;
             }
 
             if (url.startsWith("attachment.php?")) {
@@ -512,7 +501,16 @@ public class HiParserThreadDetail {
                 return false;
             }
 
-            content.addLink(text, url);
+            //处理小尾巴链接字体大小
+            boolean smallFont = false;
+            TextStyle ts = textStyles.getTextStyle(level - 1);
+            if (ts != null && ts.isSmallFont())
+                smallFont = true;
+            if (!smallFont && aE.childNodeSize() > 0 && aE.childNode(0).nodeName().equals("font")) {
+                if (aE.childNode(0).attr("size").equals("1"))
+                    smallFont = true;
+            }
+            content.addLink(text, url, smallFont);
             //rare case, link tag contains images
             Elements imgEs = aE.select("img");
             if (imgEs.size() > 0) {
@@ -584,9 +582,9 @@ public class HiParserThreadDetail {
                 if (!url.endsWith(".html")) {
                     url = url + ".html";
                 }
-                content.addLink("YouKu视频自动转换手机通道 " + url, url);
+                content.addLink("YouKu视频自动转换手机通道 " + url, url, false);
             } else if (url.startsWith("http")) {
-                content.addLink("FLASH VIDEO,手机可能不支持 " + url, url);
+                content.addLink("FLASH VIDEO,手机可能不支持 " + url, url, false);
             }
             return false;
         } else {
@@ -618,8 +616,7 @@ public class HiParserThreadDetail {
             //emotion added as img tag, will be parsed in TextViewWithEmoticon later
             content.addText("<img src=\"" + src + "\"/>");
         } else if (SmallImages.contains(src)) {
-            if (HiSettingsHelper.getInstance().isShowTail())
-                content.addText("<img src=\"" + src + "\"/>");
+            content.addText("<img src=\"" + src + "\"/>");
         } else if (src.contains(HiUtils.ForumImagePattern)) {
             //skip common/default/attach icons
         } else if (src.contains("data:image/")) {

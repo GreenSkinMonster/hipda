@@ -37,12 +37,17 @@ public class LoginHelper {
     }
 
     public int login(boolean manual) {
+        if (!manual &&
+                (TextUtils.isEmpty(HiSettingsHelper.getInstance().getUsername())
+                        || TextUtils.isEmpty(HiSettingsHelper.getInstance().getPassword())))
+            return Constants.STATUS_FAIL_ABORT;
+
         int status = Constants.STATUS_FAIL;
 
         LoginEvent event1 = new LoginEvent();
         event1.mManual = manual;
         event1.mStatus = Constants.STATUS_IN_PROGRESS;
-        EventBus.getDefault().post(event1);
+        EventBus.getDefault().postSticky(event1);
 
         String formhash = getFormhash();
         if (TextUtils.isEmpty(formhash))
@@ -137,8 +142,8 @@ public class LoginHelper {
         }
     }
 
-    public static boolean checkLoggedin(Context context, String mRsp) {
-        return !mRsp.contains(context.getString(R.string.not_login));
+    public static boolean checkLoggedin(Context context, String resp) {
+        return !resp.contains("logging.php?action=login");
     }
 
     public static boolean isLoggedIn() {

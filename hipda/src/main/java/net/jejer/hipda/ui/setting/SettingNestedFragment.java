@@ -52,6 +52,7 @@ import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -512,20 +513,34 @@ public class SettingNestedFragment extends BaseSettingFragment {
         if (uri == null)
             return;
         try {
+            String filename = "";
             DocumentFile documentFile = DocumentFile.fromSingleUri(getContext(), uri);
+            if (documentFile != null && documentFile.getName() != null) {
+                filename = documentFile.getName();
+            } else {
+                String uriStr = uri.toString();
+                if (uriStr.startsWith("file://")) {
+                    int lastInx = uriStr.lastIndexOf("/");
+                    if (lastInx < uriStr.length()) {
+                        filename = uriStr.substring(uriStr.lastIndexOf("/") + 1);
+                        if (filename.contains("%"))
+                            filename = URLDecoder.decode(filename, "UTF-8");
+                    }
+                }
+            }
 
-            if (documentFile == null || documentFile.getName() == null) {
+            if (TextUtils.isEmpty(filename)) {
                 UIUtils.errorSnack(getView(), "无法读取字体文件", "Uri : " + uri.toString());
                 return;
             }
-            if (!documentFile.getName().toLowerCase().endsWith(".ttf")
-                    && !documentFile.getName().toLowerCase().endsWith(".otf")) {
+
+            if (!filename.toLowerCase().endsWith(".ttf")) {
                 UIUtils.errorSnack(getView(),
-                        documentFile.getName() + " 不是字体文件 (支持后缀 ttf或otf)",
+                        filename + " 不是字体文件 (支持后缀 ttf)",
                         "Uri : " + uri.toString());
                 return;
             }
-            Utils.copy(uri, new File(Utils.getFontsDir(), documentFile.getName()));
+            Utils.copy(uri, new File(Utils.getFontsDir(), filename));
             showFontSelectDialog();
         } catch (Exception e) {
             UIUtils.errorSnack(getView(), "无法导入字体", e.getMessage());

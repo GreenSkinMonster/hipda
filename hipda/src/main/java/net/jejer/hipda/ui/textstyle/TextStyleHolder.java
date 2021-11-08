@@ -35,4 +35,9 @@ public class TextStyleHolder {
             textStyles.get(level).setColor(color);
     }
 
+    public void setSmallFont(int level, boolean smallFont) {
+        if (level > 0 && textStyles.get(level) != null)
+            textStyles.get(level).setSmallFont(smallFont);
+    }
+
 }

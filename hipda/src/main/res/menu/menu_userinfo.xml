@@ -12,4 +12,9 @@
         android:title="@string/action_blacklist"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_remove_blacklist"
+        android:title="@string/action_remove_blacklist"
+        app:showAsAction="never" />
+
 </menu>

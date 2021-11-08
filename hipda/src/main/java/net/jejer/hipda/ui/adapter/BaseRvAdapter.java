@@ -3,10 +3,10 @@ package net.jejer.hipda.ui.adapter;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by GreenSkinMonster on 2016-11-08.
@@ -78,6 +78,10 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
 
     public void removeHeaderView() {
         if (mHeaderView != null) {
+            //TODO, headerView shouldn't be cached
+            if (mHeaderView.getParent() != null) {
+                ((ViewGroup) mHeaderView.getParent()).removeView(mHeaderView);
+            }
             notifyItemRemoved(0);
             mHeaderView = null;
         }
@@ -97,6 +101,10 @@ public abstract class BaseRvAdapter<V> extends RecyclerView.Adapter {
 
     public void removeFooterView() {
         if (mFooterView != null) {
+            //TODO, footerView shouldn't be cached
+            if (mFooterView.getParent() != null) {
+                ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
+            }
             notifyItemRemoved(getItemCount() - 1);
             mFooterView = null;
         }
