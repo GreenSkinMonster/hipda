@@ -1,6 +1,5 @@
 package net.jejer.hipda.async;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import net.jejer.hipda.R;
@@ -142,8 +141,9 @@ public class LoginHelper {
         }
     }
 
-    public static boolean checkLoggedin(Context context, String resp) {
-        return !resp.contains("logging.php?action=login");
+    public static boolean checkLoggedin(Document doc) {
+        Element umenu = doc.select("div#umenu").first();
+        return umenu != null && umenu.html().contains("space.php");
     }
 
     public static boolean isLoggedIn() {

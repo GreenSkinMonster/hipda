@@ -54,20 +54,19 @@ public class ThreadListJob extends BaseJob {
         String eventDetail = "";
 
         try {
-            String resp = fetchForumList();
-            boolean loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+            Document doc = Jsoup.parse(fetchForumList());
+            boolean loggedin = LoginHelper.checkLoggedin(doc);
             if (!loggedin) {
                 int status = new LoginHelper().login();
                 if (status == Constants.STATUS_FAIL_ABORT) {
                     eventStatus = Constants.STATUS_FAIL_RELOGIN;
                     eventMessage = "请重新登录";
                 } else if (status == Constants.STATUS_SUCCESS) {
-                    resp = fetchForumList();
-                    loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+                    doc = Jsoup.parse(fetchForumList());
+                    loggedin = LoginHelper.checkLoggedin(doc);
                 }
             }
             if (loggedin) {
-                Document doc = Jsoup.parse(resp);
                 data = HiParserThreadList.parse(mCtx, doc);
                 if (!data.isParsed()) {
                     eventStatus = Constants.STATUS_FAIL_ABORT;

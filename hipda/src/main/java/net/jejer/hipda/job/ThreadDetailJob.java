@@ -67,7 +67,8 @@ public class ThreadDetailJob extends BaseJob {
 
         try {
             String resp = fetchDetail();
-            boolean loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+            Document doc = Jsoup.parse(resp);
+            boolean loggedin = LoginHelper.checkLoggedin(doc);
             if (!loggedin) {
                 int status = new LoginHelper().login();
                 if (status == Constants.STATUS_FAIL_ABORT) {
@@ -75,11 +76,11 @@ public class ThreadDetailJob extends BaseJob {
                     eventMessage = "请重新登录";
                 } else if (status == Constants.STATUS_SUCCESS) {
                     resp = fetchDetail();
-                    loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+                    doc = Jsoup.parse(resp);
+                    loggedin = LoginHelper.checkLoggedin(doc);
                 }
             }
             if (loggedin) {
-                Document doc = Jsoup.parse(resp);
                 String tid = HiUtils.isValidId(mTid) ? mTid : Utils.getMiddleString(resp, "tid = parseInt('", "')");
                 data = HiParserThreadDetail.parse(mCtx, doc, tid);
                 if (data == null || data.getCount() == 0) {

@@ -113,20 +113,19 @@ public class SimpleListJob extends BaseJob {
             }
         } else {
             try {
-                String resp = fetchSimpleList(mType);
-                boolean loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+                Document doc = Jsoup.parse(fetchSimpleList(mType));
+                boolean loggedin = LoginHelper.checkLoggedin(doc);
                 if (!loggedin) {
                     int status = new LoginHelper().login();
                     if (status == Constants.STATUS_FAIL_ABORT) {
                         eventStatus = Constants.STATUS_FAIL_RELOGIN;
                         eventMessage = "请重新登录";
                     } else if (status == Constants.STATUS_SUCCESS) {
-                        resp = fetchSimpleList(mType);
-                        loggedin = LoginHelper.checkLoggedin(mCtx, resp);
+                        doc = Jsoup.parse(fetchSimpleList(mType));
+                        loggedin = LoginHelper.checkLoggedin(doc);
                     }
                 }
                 if (loggedin) {
-                    Document doc = Jsoup.parse(resp);
                     data = HiParser.parseSimpleList(mCtx, mType, doc, (mType == TYPE_SEARCH && mSearchBean != null && mSearchBean.isFulltext()));
                     formhash = HiParser.parseFormhash(doc);
                     eventStatus = Constants.STATUS_SUCCESS;
