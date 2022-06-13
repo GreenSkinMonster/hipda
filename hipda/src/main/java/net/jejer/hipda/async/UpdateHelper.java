@@ -10,17 +10,19 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import androidx.appcompat.app.AlertDialog;
+
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.widget.HiProgressDialog;
+import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
 import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import java.util.Date;
 
-import androidx.appcompat.app.AlertDialog;
 import okhttp3.Request;
 
 /**
@@ -137,8 +139,8 @@ public class UpdateHelper {
                 Dialog dialog = new AlertDialog.Builder(mCtx)
                         .setTitle("发现新版本 : " + newVersion)
                         .setMessage(updateNotes).
-                                setPositiveButton("前往Google Play",
-                                        (dialog4, which) -> openGooglePlay(mCtx)).create();
+                        setPositiveButton("前往Google Play",
+                                (dialog4, which) -> openGooglePlay(mCtx)).create();
 
                 if (!mCtx.isFinishing())
                     dialog.show();
@@ -177,8 +179,12 @@ public class UpdateHelper {
         final String currentVersion = HiApplication.getAppVersion();
 
         if (!currentVersion.equals(installedVersion)) {
-            if (newer("5.0.00", installedVersion)) {
-
+            if (newer("5.0.03", installedVersion)) {
+                HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServer);
+                HiSettingsHelper.getInstance().setImageHost(HiUtils.ImageHost);
+                String tailUrl = HiSettingsHelper.getInstance().getTailUrl();
+                HiSettingsHelper.getInstance()
+                        .setTailUrl(HiUtils.replaceOldDomain(tailUrl));
             }
             HiSettingsHelper.getInstance().setInstalledVersion(currentVersion);
         }

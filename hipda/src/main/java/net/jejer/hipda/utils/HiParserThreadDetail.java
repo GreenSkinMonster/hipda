@@ -3,6 +3,8 @@ package net.jejer.hipda.utils;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.vdurmont.emoji.EmojiParser;
 
 import net.jejer.hipda.bean.ContentImg;
@@ -26,8 +28,6 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
-
-import androidx.annotation.NonNull;
 
 public class HiParserThreadDetail {
 
@@ -510,6 +510,8 @@ public class HiParserThreadDetail {
                 if (aE.childNode(0).attr("size").equals("1"))
                     smallFont = true;
             }
+            if (smallFont)
+                url = HiUtils.replaceOldDomain(url);
             content.addLink(text, url, smallFont);
             //rare case, link tag contains images
             Elements imgEs = aE.select("img");
