@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * Created by GreenSkinMonster on 2016-11-13.
  */
-public class XRecyclerView extends RecyclerView {
+public class XRecyclerView extends EinkRecyclerView {
 
     private final static int SCROLL_BACK_HEADER = 0;
     private final static int SCROLL_BACK_FOOTER = 1;
