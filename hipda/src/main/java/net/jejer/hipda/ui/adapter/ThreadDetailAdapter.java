@@ -322,6 +322,9 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                     tv.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                     tv.setPadding(8, 8, 8, 8);
 
+                    if(HiSettingsHelper.getInstance().isEinkMode())
+                        UIUtils.setEinkDisplayOptimize(tv);
+
                     String cnt = content.getContent();
                     if (trimBr)
                         cnt = Utils.removeLeadingBlank(cnt);

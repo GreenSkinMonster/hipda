@@ -205,6 +205,7 @@
     <string name="pref_title_fab_auto_hide">浮动按钮动态隐藏</string>
     <string name="pref_title_fab_left_side">浮动按钮放在左侧</string>
     <string name="pref_title_click_effect">列表触摸效果</string>
+    <string name="pref_title_eink_optimize">Eink操作优化</string>
     <string name="pref_title_circle_avatar">圆形头像</string>
     <string name="pref_title_blacklist">黑名单</string>
     <string name="pref_summary_blacklist">目前黑名单已经与论坛同步</string>

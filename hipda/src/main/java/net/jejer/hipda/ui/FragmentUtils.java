@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
+import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.utils.Constants;
 import net.jejer.hipda.utils.HiUtils;
@@ -214,7 +215,10 @@ public class FragmentUtils {
 
     public static Bundle getAnimBundle(Activity activity, boolean skipEnterAnim) {
         ActivityOptionsCompat options;
-        if (skipEnterAnim) {
+        if(HiSettingsHelper.getInstance().isEinkMode()){
+            options = ActivityOptionsCompat.makeCustomAnimation(activity, 0, 0);
+        }
+        else if (skipEnterAnim) {
             options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.activity_open_enter, 0);
         } else {
             options = ActivityOptionsCompat.makeCustomAnimation(activity, R.anim.slide_in_right, 0);

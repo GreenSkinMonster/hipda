@@ -1,5 +1,6 @@
 package net.jejer.hipda.ui.widget;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -9,8 +10,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.ui.SwipeBaseActivity;
 
 public class EinkRecyclerView extends RecyclerView {
+    private final static int MinTouchMoveDistance = 50;
     float mDownX;
     float mDownY;
     boolean mMultiTouchDown;
@@ -42,8 +45,8 @@ public class EinkRecyclerView extends RecyclerView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
-//        if(!HiSettingsHelper.getInstance().isEinkSwipePageModeEnabled())
-//            return super.dispatchTouchEvent(ev);
+        if(!HiSettingsHelper.getInstance().isEinkMode())
+            return super.dispatchTouchEvent(ev);
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mMultiTouchDown = false;
@@ -65,11 +68,29 @@ public class EinkRecyclerView extends RecyclerView {
                 {
                     float deltaYEink = ev.getRawY() - mDownY;
                     float deltaXEink = ev.getRawX() - mDownX;
-                    if((!mMultiTouchDown)&&Math.abs(deltaYEink)>Math.abs(deltaXEink)&&Math.abs(deltaYEink)>50) {
-                        if (deltaYEink > 50) previPage();
-                        else if (deltaYEink < -50) nextPage();
-                        ev.setAction(MotionEvent.ACTION_CANCEL);
+                    if((!mMultiTouchDown)){
+                        if(Math.abs(deltaYEink)>Math.abs(deltaXEink)) {
+                            if (deltaYEink > MinTouchMoveDistance) {
+                                previPage();
+                            }
+                            else if (deltaYEink < -MinTouchMoveDistance) {
+                                nextPage();
+                            }
+                            ev.setAction(MotionEvent.ACTION_CANCEL);
+                        }
+                        else
+                        {
+                            if(deltaXEink>MinTouchMoveDistance) {
+                                Activity activity = (Activity) getContext();
+                                if(activity instanceof SwipeBaseActivity) {
+                                    activity.finish();
+                                    ev.setAction(MotionEvent.ACTION_CANCEL);
+                                }
+                            }
+                        }
                     }
+                    if(Math.abs(deltaYEink)>MinTouchMoveDistance||Math.abs(deltaXEink)>MinTouchMoveDistance)
+                        ev.setAction(MotionEvent.ACTION_CANCEL);
                 }
                 break;
             default:

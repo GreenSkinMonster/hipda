@@ -18,6 +18,7 @@ import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.bean.ThreadBean;
 import net.jejer.hipda.glide.GlideHelper;
 import net.jejer.hipda.utils.ColorHelper;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 /**
@@ -69,6 +70,9 @@ public class ThreadItemLayout extends ConstraintLayout {
             }
         } else
             mTvTitle.setTextColor(ColorHelper.getTextColorPrimary(getContext()));
+
+        if(HiSettingsHelper.getInstance().isEinkMode())
+            UIUtils.setEinkDisplayOptimize(mTvTitle);
 
         if (!TextUtils.isEmpty(thread.getType())) {
             mTvThreadType.setText(thread.getType());

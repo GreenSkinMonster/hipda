@@ -66,6 +66,7 @@ public class HiSettingsHelper {
     public static final String PERF_FAB_LEFT_SIDE = "PERF_FAB_LEFT_SIDE";
     public static final String PERF_FAB_AUTO_HIDE = "PERF_FAB_AUTO_HIDE";
     public static final String PERF_CLICK_EFFECT = "PERF_CLICK_EFFECT";
+    public static final String PERF_EINK_OPTIMIZE = "PERF_EINK_OPTIMIZE";
     public static final String PERF_LAST_UPDATE_CHECK = "PERF_LAST_UPDATE_CHECK";
     public static final String PERF_AUTO_UPDATE_CHECK = "PERF_AUTO_UPDATE_CHECK";
     public static final String PERF_ABOUT = "PERF_ABOUT";
@@ -144,6 +145,7 @@ public class HiSettingsHelper {
     private int mTitleTextSizeAdj = 0;
     private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
     private boolean mGestureBack = true;
+    private boolean mEinkOptimize = false;
     private int mMaxPostsInPage;
     private int mLastForumId = 0;
     private boolean mErrorReportMode;
@@ -314,6 +316,7 @@ public class HiSettingsHelper {
         getForumServerFromPref();
         getImageHostFromPref();
         getBlacklistsFromPref();
+        isEinkModeFromPref();
 
         updateMobileNetworkStatus(mCtx);
     }
@@ -880,7 +883,7 @@ public class HiSettingsHelper {
     }
 
     public boolean isGestureBack() {
-        return mGestureBack;
+        return mGestureBack && !isEinkMode();
     }
 
     private boolean isGestureBackFromPref() {
@@ -1145,4 +1148,12 @@ public class HiSettingsHelper {
         setLongValue(PERF_NOTI_JOB_LAST_TIME, System.currentTimeMillis());
     }
 
+    public boolean isEinkModeFromPref(){
+        mEinkOptimize = mSharedPref.getBoolean(PERF_EINK_OPTIMIZE, false);
+        return mEinkOptimize;
+    }
+
+    public boolean isEinkMode(){
+        return mEinkOptimize;
+    }
 }

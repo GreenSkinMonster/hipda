@@ -209,6 +209,11 @@ public class UIUtils {
         textView.setLineSpacing(lineSpacingExtra, lineSpacingMultiplier);
     }
 
+    public static void setEinkDisplayOptimize(TextView textView){
+        textView.setBackgroundColor(Color.WHITE);
+        textView.setTextColor(Color.BLACK);
+    }
+
     public static void hideSoftKeyboard(Activity activity) {
         if (activity != null) {
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);

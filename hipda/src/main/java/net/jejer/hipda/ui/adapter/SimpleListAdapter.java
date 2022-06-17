@@ -15,6 +15,7 @@ import net.jejer.hipda.job.SimpleListJob;
 import net.jejer.hipda.ui.BaseFragment;
 import net.jejer.hipda.utils.ColorHelper;
 import net.jejer.hipda.utils.HtmlCompat;
+import net.jejer.hipda.utils.UIUtils;
 import net.jejer.hipda.utils.Utils;
 
 import androidx.core.content.ContextCompat;
@@ -50,6 +51,10 @@ public class SimpleListAdapter extends BaseRvAdapter<SimpleListItemBean> {
 
         holder.tv_title.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
         holder.tv_title.setText(Utils.trim(item.getTitle()));
+
+        if(HiSettingsHelper.getInstance().isEinkMode())
+            UIUtils.setEinkDisplayOptimize(holder.tv_title);
+
         if (item.isNew()) {
             holder.tv_time.setTextColor(ContextCompat.getColor(mFragment.getActivity(), R.color.red));
         } else {

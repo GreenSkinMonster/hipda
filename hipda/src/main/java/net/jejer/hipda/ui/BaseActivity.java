@@ -142,12 +142,16 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, R.anim.slide_out_right);
+        int exitAnim = R.anim.slide_out_right;
+        if(HiSettingsHelper.getInstance().isEinkMode()) exitAnim = 0;
+        overridePendingTransition(0, exitAnim);
     }
 
     public void finishWithNoSlide() {
         super.finish();
-        overridePendingTransition(0, R.anim.activity_close_exit);
+        int exitAnim = R.anim.activity_close_exit;
+        if(HiSettingsHelper.getInstance().isEinkMode()) exitAnim = 0;
+        overridePendingTransition(0, exitAnim);
     }
 
     public void finishWithDefault() {

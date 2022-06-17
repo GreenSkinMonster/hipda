@@ -67,6 +67,12 @@
             android:key="PERF_CLICK_EFFECT"
             android:title="@string/pref_title_click_effect"/>
 
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="PERF_EINK_OPTIMIZE"
+            android:title="@string/pref_title_eink_optimize"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>
