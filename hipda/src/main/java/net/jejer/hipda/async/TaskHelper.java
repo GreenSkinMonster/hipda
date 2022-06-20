@@ -29,8 +29,6 @@ import java.util.concurrent.Executors;
  */
 public class TaskHelper {
 
-    private static final String SETTING_URL = "https://coding.net/u/GreenSkinMonster/p/hipda/git/raw/master/hipda.json";
-
     public static void runDailyTask(boolean force) {
         String millis = HiSettingsHelper.getInstance()
                 .getStringValue(HiSettingsHelper.PERF_LAST_TASK_TIME, "0");
@@ -111,8 +109,8 @@ public class TaskHelper {
     }
 
     private static void updateSetting() throws Exception {
-        HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServerSsl);
-        String response = OkHttpHelper.getInstance().get(HiUtils.ForumServerSsl + "/config.php");
+        HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServer);
+        String response = OkHttpHelper.getInstance().get(HiUtils.ForumServer + "/config.php");
         Gson gson = new Gson();
         Type stringStringMap = new TypeToken<Map<String, String>>() {
         }.getType();
@@ -120,27 +118,6 @@ public class TaskHelper {
         String imageHost = map.get("CDN");
         HiSettingsHelper.getInstance().setImageHost(imageHost);
         HiUtils.updateBaseUrls();
-        HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, System.currentTimeMillis());
-    }
-
-    private static void updateCustSetting() throws Exception {
-        String response = OkHttpHelper.getInstance().get(SETTING_URL);
-        Gson gson = new Gson();
-        Type stringStringMap = new TypeToken<Map<String, String>>() {
-        }.getType();
-        Map<String, String> map = gson.fromJson(response, stringStringMap);
-        String protocol = map.get("protocol");
-        String imageHost = map.get("image_host");
-
-        if (!TextUtils.isEmpty(protocol) && !TextUtils.isEmpty(imageHost)) {
-            if ("https".equals(protocol)) {
-                HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServerSsl);
-            } else {
-                HiSettingsHelper.getInstance().setForumServer(HiUtils.ForumServer);
-            }
-            HiSettingsHelper.getInstance().setImageHost(imageHost);
-            HiUtils.updateBaseUrls();
-        }
         HiSettingsHelper.getInstance().setLongValue(HiSettingsHelper.PERF_IMAGE_HOST_UPDATE_TIME, System.currentTimeMillis());
     }
 

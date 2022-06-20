@@ -5,7 +5,7 @@
 
 **HiPDA论坛非官方客户端**
 
-论坛帖子地址 https://www.hi-pda.com/forum/viewthread.php?tid=1579403
+论坛帖子地址 https://www.4d4y.com/forum/viewthread.php?tid=1579403
 
 Google Play https://play.google.com/store/apps/details?id=net.jejer.hipda.ng
 
@@ -13,9 +13,8 @@ Google Play https://play.google.com/store/apps/details?id=net.jejer.hipda.ng
 HiPDA·NG是使用MD风格的版本，即master分支，为目前主要维护版本。  
 怪兽版则是原版风格的版本，即classic分支，已经停止功能更新，仅修复重大问题。
 
-
 多谢原作者 jejer 的分享   
-原项目发布于 https://www.hi-pda.com/forum/viewthread.php?tid=1408844
+原项目发布于 https://www.4d4y.com/forum/viewthread.php?tid=1408844
 
 # 开发者注意
 

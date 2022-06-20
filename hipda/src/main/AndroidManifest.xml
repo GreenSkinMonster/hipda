@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="net.jejer.hipda"
-    android:versionCode="5002"
-    android:versionName="5.0.02">
+    android:versionCode="5003"
+    android:versionName="5.0.03">
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -59,7 +59,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="https" />
-                <data android:host="www.hi-pda.com" />
+                <data android:host="www.4d4y.com" />
                 <data android:pathPrefix="/forum/forumdisplay.php" />
                 <data android:pathPrefix="/forum/viewthread.php" />
                 <data android:pathPrefix="/forum/gotopost.php" />

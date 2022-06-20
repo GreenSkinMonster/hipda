@@ -17,11 +17,10 @@ import java.util.Map;
 public class HiUtils {
     public static final String UserAgentPrefix = "net.jejer.hipda ";
 
-    public static final String ForumServer = "https://www.hi-pda.com";
-    public static final String ForumServerSsl = "https://www.hi-pda.com";
-    public static final String ImageHost = "https://img02.hi-pda.com";
+    public static final String ForumServer = "https://www.4d4y.com";
+    public static final String ImageHost = "https://img02.4d4y.com";
     public static final String AvatarPath = "uc_server/data/avatar/";
-    public static final String CookieDomain = "hi-pda.com";
+    public static final String CookieDomain = "4d4y.com";
     public static final String AvatarSuffix = "_avatar_middle.jpg";
     public static final String NewPMImage = "images/default/notice_newpm.gif";
     public static final String SmiliesPattern = CookieDomain + "/forum/images/smilies/";
@@ -244,5 +243,12 @@ public class HiUtils {
             }
         }
         return sb.toString();
+    }
+
+    public static String replaceOldDomain(String s) {
+        if (s != null && s.contains(".hi-pda.com")) {
+            return s.replace(".hi-pda.com", "." + CookieDomain);
+        }
+        return s;
     }
 }
