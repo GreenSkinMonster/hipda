@@ -428,7 +428,7 @@ public class PostFragment extends BaseFragment {
                 .maxOriginalSize(HiSettingsHelper.getInstance().getMaxUploadFileSize() / 1024 / 1024)
                 .imageEngine(new MatisseGlideEngine())
                 .theme(UIUtils.getThemeValue(getActivity()))
-                .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+                .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED)
                 .captureStrategy(new CaptureStrategy(false, BuildConfig.APPLICATION_ID + ".provider"))
                 .forResult(SELECT_PICTURE);
     }

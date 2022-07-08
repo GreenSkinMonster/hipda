@@ -10,18 +10,9 @@ public class UploadImage {
 
     private String mImgId;
     private Uri mUri;
-    private String mFileName;
     private Bitmap mThumb;
     private int mStatus;
     private String mMessage;
-
-    public String getFileName() {
-        return mFileName;
-    }
-
-    public void setFileName(String fileName) {
-        mFileName = fileName;
-    }
 
     public String getImgId() {
         return mImgId;

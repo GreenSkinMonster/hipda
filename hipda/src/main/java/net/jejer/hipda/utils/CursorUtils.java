@@ -1,13 +1,7 @@
 package net.jejer.hipda.utils;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
-import android.net.Uri;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
-import android.text.TextUtils;
 
 import java.io.File;
 
@@ -17,28 +11,17 @@ import java.io.File;
  */
 public class CursorUtils {
 
-    public static ImageFileInfo getImageFileInfo(Context context, Uri uri) {
-        ImageFileInfo result = getImageInfo_API19(context, uri);
-        if (result == null) {
-            result = getImageInfo_API11to18(context, uri);
-        }
-        if (result == null && uri.toString().startsWith("file:")) {
-            result = new ImageFileInfo();
-            result.setFilePath(uri.getPath());
-        }
-
-        if (result == null || TextUtils.isEmpty(result.getFilePath()))
-            return null;
-
-        File imageFile = new File(result.getFilePath());
+    public static ImageFileInfo getImageFileInfo(File imageFile) {
         if (!imageFile.exists())
             return null;
 
+        ImageFileInfo result = new ImageFileInfo();
+        result.setFilePath(imageFile.getAbsolutePath());
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
 
         //Returns null, sizes are in the options variable
-        BitmapFactory.decodeFile(result.getFilePath(), options);
+        BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
         int width = options.outWidth;
         int height = options.outHeight;
         String mime = Utils.nullToText(options.outMimeType);
@@ -74,65 +57,6 @@ public class CursorUtils {
             Logger.e(e);
         }
         return orientation;
-    }
-
-    private static ImageFileInfo getImageInfo_API19(Context context, Uri uri) {
-        ImageFileInfo result = null;
-        String[] column = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
-
-        Cursor cursor = null;
-        try {
-            String wholeID = DocumentsContract.getDocumentId(uri);
-            String id = wholeID.split(":")[1];
-            String sel = MediaStore.Images.Media._ID + "=?";
-
-            cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    column, sel, new String[]{id}, null);
-            int pathIndex = cursor.getColumnIndex(column[0]);
-            int orientationIndex = cursor.getColumnIndex(column[1]);
-
-            if (cursor.moveToFirst()) {
-                result = new ImageFileInfo();
-                if (pathIndex >= 0)
-                    result.setFilePath(cursor.getString(pathIndex));
-                if (orientationIndex >= 0)
-                    result.setOrientation(cursor.getInt(orientationIndex));
-            }
-        } catch (Exception e) {
-            return null;
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return result;
-    }
-
-
-    private static ImageFileInfo getImageInfo_API11to18(Context context, Uri contentUri) {
-        ImageFileInfo result = null;
-        String[] column = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
-
-        Cursor cursor = null;
-        try {
-            cursor = context.getContentResolver().query(contentUri, null, null, null, null);
-
-            int pathIndex = cursor.getColumnIndexOrThrow(column[0]);
-            int orientationIndex = cursor.getColumnIndexOrThrow(column[1]);
-
-            if (cursor.moveToFirst()) {
-                result = new ImageFileInfo();
-                if (pathIndex >= 0)
-                    result.setFilePath(cursor.getString(pathIndex));
-                if (orientationIndex >= 0)
-                    result.setOrientation(cursor.getInt(orientationIndex));
-            }
-        } catch (Exception e) {
-            return null;
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return result;
     }
 
 }

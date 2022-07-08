@@ -9,6 +9,7 @@ import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.okhttp.NetworkError;
 import net.jejer.hipda.okhttp.OkHttpHelper;
+import net.jejer.hipda.utils.HiParser;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Utils;
 
@@ -87,7 +88,9 @@ public class PrePostAsyncTask extends AsyncTask<PostBean, Void, PrePostInfoBean>
 
         Elements formhashES = doc.select("input[name=formhash]");
         if (formhashES.size() < 1) {
-            mMessage = "页面解析错误";
+            mMessage = HiParser.parseErrorMessage(doc);
+            if (TextUtils.isEmpty(mMessage))
+                mMessage = "页面解析错误";
             return prePostInfo;
         } else {
             prePostInfo.setFormhash(formhashES.first().attr("value"));

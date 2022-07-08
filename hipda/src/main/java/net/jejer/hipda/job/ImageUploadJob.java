@@ -37,7 +37,7 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
 
     @Override
     public void onRun() throws Throwable {
-        new UploadImgHelper(getApplicationContext(), this, mUid, mHash, mUris, mOriginal).upload();
+        new UploadImgHelper(this, mUid, mHash, mUris, mOriginal).upload();
 
         ImageUploadEvent event = new ImageUploadEvent();
         event.mSessionId = mSessionId;
@@ -58,9 +58,8 @@ public class ImageUploadJob extends BaseJob implements UploadImgHelper.UploadImg
     }
 
     @Override
-    public void itemComplete(Uri uri, int total, int current, String currentFileName, String message, String detail, String imgId, Bitmap thumbtail) {
+    public void itemComplete(Uri uri, int total, int current, String message, String detail, String imgId, Bitmap thumbtail) {
         UploadImage image = new UploadImage();
-        image.setFileName(currentFileName);
         image.setImgId(imgId);
         image.setThumb(thumbtail);
         image.setUri(uri);
