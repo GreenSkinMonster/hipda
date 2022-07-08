@@ -129,10 +129,10 @@ public class Utils {
         if (mWhitelist == null) {
             mWhitelist = new Whitelist();
             mWhitelist.addTags(
-                    "a",
-                    "br", "p",
-                    "b", "i", "strike", "strong", "u",
-                    "font")
+                            "a",
+                            "br", "p",
+                            "b", "i", "strike", "strong", "u",
+                            "font")
 
                     .addAttributes("a", "href")
                     .addAttributes("font", "color")
@@ -147,32 +147,28 @@ public class Utils {
     }
 
     public static void copy(File src, File dst) throws IOException {
-        InputStream in = new FileInputStream(src);
-        OutputStream out = new FileOutputStream(dst);
+        try (InputStream in = new FileInputStream(src);
+             OutputStream out = new FileOutputStream(dst)) {
 
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
         }
-        in.close();
-        out.close();
     }
 
     public static void copy(Uri src, File dst) throws IOException {
         ContentResolver res = HiApplication.getAppContext().getContentResolver();
-        InputStream in = res.openInputStream(src);
-        OutputStream out = new FileOutputStream(dst);
+        try (InputStream in = res.openInputStream(src);
+             OutputStream out = new FileOutputStream(dst)) {
 
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
         }
-        in.close();
-        out.close();
     }
 
     public static String getImageFileName(String prefix, String mime) {
@@ -310,6 +306,16 @@ public class Utils {
                     f.delete();
                 }
             }
+        }
+    }
+
+    public static void cleanTempUploadFiles() {
+        try {
+            File uploadDir = Utils.getUploadDir();
+            for (File f : uploadDir.listFiles()) {
+                f.delete();
+            }
+        } catch (Exception ignored) {
         }
     }
 
@@ -681,7 +687,7 @@ public class Utils {
         return sw.toString();
     }
 
-    public static File getFilesSubDir(String subDir) throws IOException {
+    public static File getFilesSubDir(String subDir) {
         File filesDir = HiApplication.getAppContext().getFilesDir();
         File subCacheDir = new File(filesDir, subDir);
         if (!subCacheDir.exists()) {
@@ -690,12 +696,16 @@ public class Utils {
         return subCacheDir;
     }
 
-    public static File getFontsDir() throws IOException {
+    public static File getFontsDir() {
         return getFilesSubDir("fonts");
     }
 
-    public static File getLogsDir() throws IOException {
+    public static File getLogsDir() {
         return getFilesSubDir("logs");
+    }
+
+    public static File getUploadDir() {
+        return getFilesSubDir("upload");
     }
 
     public static void saveCrashLog(Throwable t) {

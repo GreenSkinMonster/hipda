@@ -46,6 +46,7 @@ public class TaskHelper {
                     ContentDao.cleanup();
                     HistoryDao.cleanup();
                     Utils.cleanPictures();
+                    Utils.cleanTempUploadFiles();
                     //FavoriteHelper.getInstance().fetchMyFavorites();
                     //FavoriteHelper.getInstance().fetchMyAttention();
                 }

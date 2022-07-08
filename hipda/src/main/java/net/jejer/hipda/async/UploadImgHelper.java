@@ -20,6 +20,7 @@ import net.jejer.hipda.utils.Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -99,13 +100,31 @@ public class UploadImgHelper {
         mThumb = null;
         mMessage = "";
         mCurrentFileName = "";
+        File tmpFile = null;
 
         ImageFileInfo imageFileInfo = CursorUtils.getImageFileInfo(mCtx, uri);
+        if (imageFileInfo == null) {
+            try {
+                tmpFile = new File(Utils.getUploadDir() + File.separator + System.currentTimeMillis());
+                Utils.copy(uri, tmpFile);
+            } catch (Exception e) {
+                mMessage = "无法获取图片信息";
+                mDetail = "\n" + uri.toString()
+                        + "\n" + Utils.getStackTrace(e);
+                Logger.e(e);
+            }
+            if (tmpFile == null || !tmpFile.exists()) {
+                return null;
+            }
+            imageFileInfo = new ImageFileInfo();
+            imageFileInfo.setFilePath(tmpFile.getAbsolutePath());
+        }
         mCurrentFileName = imageFileInfo.getFileName();
 
         ByteArrayOutputStream baos = getImageStream(uri, imageFileInfo);
         if (baos == null) {
-            mMessage = "处理图片发生错误";
+            if (TextUtils.isEmpty(mMessage))
+                mMessage = "处理图片发生错误";
             return null;
         }
 
@@ -160,6 +179,8 @@ public class UploadImgHelper {
         } finally {
             try {
                 baos.close();
+                if (tmpFile != null && tmpFile.exists())
+                    tmpFile.delete();
             } catch (IOException ignored) {
             }
         }
@@ -178,6 +199,9 @@ public class UploadImgHelper {
             bitmap = MediaStore.Images.Media.getBitmap(mCtx.getContentResolver(), uri);
         } catch (Exception e) {
             mMessage = "无法获取图片 : " + e.getMessage();
+            mDetail = "\n" + Utils.getDeviceInfo()
+                    + "\n " + uri.toString()
+                    + "\n" + Utils.getStackTrace(e);
             return null;
         }
 

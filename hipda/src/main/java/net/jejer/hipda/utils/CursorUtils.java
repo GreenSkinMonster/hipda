@@ -1,12 +1,10 @@
 package net.jejer.hipda.utils;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -20,24 +18,21 @@ import java.io.File;
 public class CursorUtils {
 
     public static ImageFileInfo getImageFileInfo(Context context, Uri uri) {
-        ImageFileInfo result;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT || uri.toString().startsWith("content://media")) {
+        ImageFileInfo result = getImageInfo_API19(context, uri);
+        if (result == null) {
             result = getImageInfo_API11to18(context, uri);
-            if (result == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                result = getImageInfo_API19(context, uri);
-            }
-        } else {
-            result = getImageInfo_API19(context, uri);
-            if (result == null) {
-                result = getImageInfo_API11to18(context, uri);
-            }
         }
+        if (result == null && uri.toString().startsWith("file:")) {
+            result = new ImageFileInfo();
+            result.setFilePath(uri.getPath());
+        }
+
         if (result == null || TextUtils.isEmpty(result.getFilePath()))
-            return new ImageFileInfo();
+            return null;
 
         File imageFile = new File(result.getFilePath());
         if (!imageFile.exists())
-            return new ImageFileInfo();
+            return null;
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -81,9 +76,8 @@ public class CursorUtils {
         return orientation;
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     private static ImageFileInfo getImageInfo_API19(Context context, Uri uri) {
-        ImageFileInfo result = new ImageFileInfo();
+        ImageFileInfo result = null;
         String[] column = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
 
         Cursor cursor = null;
@@ -98,13 +92,13 @@ public class CursorUtils {
             int orientationIndex = cursor.getColumnIndex(column[1]);
 
             if (cursor.moveToFirst()) {
+                result = new ImageFileInfo();
                 if (pathIndex >= 0)
                     result.setFilePath(cursor.getString(pathIndex));
                 if (orientationIndex >= 0)
                     result.setOrientation(cursor.getInt(orientationIndex));
             }
         } catch (Exception e) {
-            Logger.e(e);
             return null;
         } finally {
             if (cursor != null)
@@ -115,7 +109,7 @@ public class CursorUtils {
 
 
     private static ImageFileInfo getImageInfo_API11to18(Context context, Uri contentUri) {
-        ImageFileInfo result = new ImageFileInfo();
+        ImageFileInfo result = null;
         String[] column = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
 
         Cursor cursor = null;
@@ -126,13 +120,13 @@ public class CursorUtils {
             int orientationIndex = cursor.getColumnIndexOrThrow(column[1]);
 
             if (cursor.moveToFirst()) {
+                result = new ImageFileInfo();
                 if (pathIndex >= 0)
                     result.setFilePath(cursor.getString(pathIndex));
                 if (orientationIndex >= 0)
                     result.setOrientation(cursor.getInt(orientationIndex));
             }
         } catch (Exception e) {
-            Logger.e(e);
             return null;
         } finally {
             if (cursor != null)
