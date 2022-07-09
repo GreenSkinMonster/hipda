@@ -26,6 +26,9 @@ public class CursorUtils {
         int height = options.outHeight;
         String mime = Utils.nullToText(options.outMimeType);
 
+        if (width <= 0 || height <= 0)
+            return null;
+
         result.setMime(mime);
         result.setFileSize(imageFile.length());
         result.setWidth(width);

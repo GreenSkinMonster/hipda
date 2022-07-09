@@ -23,6 +23,7 @@
     <string name="action_thread_list_settings">版面设置</string>
     <string name="action_open_by_url">打开站内地址</string>
     <string name="action_upload_img">上传图片</string>
+    <string name="action_upload_img2">上传图片(旧)</string>
     <string name="action_delete_post">删除本帖</string>
     <string name="action_restore_content">恢复输入内容</string>
     <string name="action_device_info">追加系统信息</string>

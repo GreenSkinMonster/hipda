@@ -31,6 +31,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
@@ -135,6 +137,8 @@ public class PostFragment extends BaseFragment {
     private long mLastSavedTime = -1;
     private boolean mDeleteMode = false;
 
+    private ActivityResultLauncher<String> mImageSelector;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,6 +175,10 @@ public class PostFragment extends BaseFragment {
         if (getArguments().containsKey(ARG_PARENT_ID)) {
             mParentSessionId = getArguments().getString(ARG_PARENT_ID);
         }
+
+        mImageSelector = registerForActivityResult(
+                new ActivityResultContracts.GetMultipleContents(),
+                this::processSelectedImages);
     }
 
     @Override
@@ -397,9 +405,14 @@ public class PostFragment extends BaseFragment {
                     fetchPrePostInfo(false);
                     UIUtils.toast("请等待信息收集结束再选择图片");
                 } else {
-                    if (UIUtils.askForBothPermissions(getActivity()))
-                        return true;
-
+                    showImageSelectorSystem();
+                }
+                return true;
+            case R.id.action_upload_img2:
+                if (mPrePostInfo == null) {
+                    fetchPrePostInfo(false);
+                    UIUtils.toast("请等待信息收集结束再选择图片");
+                } else {
                     showImageSelector();
                 }
                 return true;
@@ -415,9 +428,16 @@ public class PostFragment extends BaseFragment {
         }
     }
 
-    protected void showImageSelector() {
+    protected void showImageSelectorSystem() {
         mContentPosition = mEtContent.getSelectionStart();
+        mImageSelector.launch("image/*");
+    }
 
+    protected void showImageSelector() {
+        if (UIUtils.askForBothPermissions(getActivity()))
+            return;
+
+        mContentPosition = mEtContent.getSelectionStart();
         Matisse.from(this)
                 .choose(MimeType.ofImage())
                 .countable(true)
@@ -551,34 +571,46 @@ public class PostFragment extends BaseFragment {
         }, 2000);
 
         if (resultCode == Activity.RESULT_OK && requestCode == SELECT_PICTURE) {
-            boolean duplicate = false;
-            Collection<Uri> uris = new ArrayList<>();
+            boolean original = Matisse.obtainOriginalState(intent);
 
             List<Uri> selects = Matisse.obtainResult(intent);
-            for (Uri uri : selects) {
-                if (!mUploadImages.containsKey(uri)) {
-                    uris.add(uri);
-                } else {
-                    duplicate = true;
-                }
-            }
+            processSelectedImages(selects, original);
+        }
+    }
 
-            if (uris.size() == 0) {
-                if (duplicate) {
-                    UIUtils.toast("选择的图片重复");
-                } else {
-                    UIUtils.toast("无法获取图片信息");
-                }
-                return;
-            }
+    private void processSelectedImages(List<Uri> selects) {
+        processSelectedImages(selects, false);
+    }
 
-            boolean original = Matisse.obtainOriginalState(intent);
-            mProgressDialog = HiProgressDialog.show(getActivity(), "正在上传...");
-            if (mPrePostInfo != null) {
-                JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), uris.toArray(new Uri[0]), original));
+    private void processSelectedImages(List<Uri> selects, boolean original) {
+        if (selects.size() == 0)
+            return;
+
+        boolean duplicate = false;
+        Collection<Uri> uris = new ArrayList<>();
+
+        for (Uri uri : selects) {
+            if (!mUploadImages.containsKey(uri)) {
+                uris.add(uri);
             } else {
-                UIUtils.toast("无法获取发帖信息");
+                duplicate = true;
             }
+        }
+
+        if (uris.size() == 0) {
+            if (duplicate) {
+                UIUtils.toast("选择的图片重复");
+            } else {
+                UIUtils.toast("无法获取图片信息");
+            }
+            return;
+        }
+
+        mProgressDialog = HiProgressDialog.show(getActivity(), "正在上传...");
+        if (mPrePostInfo != null) {
+            JobMgr.addJob(new ImageUploadJob(mSessionId, mPrePostInfo.getUid(), mPrePostInfo.getHash(), uris.toArray(new Uri[0]), original));
+        } else {
+            UIUtils.toast("无法获取发帖信息");
         }
     }
 
@@ -860,8 +892,8 @@ public class PostFragment extends BaseFragment {
 
     private void imageDone(ImageUploadEvent event) {
         UploadImage image = event.mImage;
-        mUploadImages.put(image.getUri(), image);
         if (isValidImgId(image.getImgId())) {
+            mUploadImages.put(image.getUri(), image);
             mEmojiPopup.addImage(image.getImgId(), image.getThumb());
             appendImage(image.getImgId());
         } else {
