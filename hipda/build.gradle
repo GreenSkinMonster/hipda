@@ -83,6 +83,7 @@ dependencies {
     //implementation 'com.zhihu.android:matisse:0.5.2-beta4'
     implementation 'it.sephiroth.android.library.imagezoom:library:1.0.4'
     implementation(name: 'matisse-release-0.5.3-beta3', ext: 'aar')
+    implementation 'id.zelory:compressor:2.1.1'
 
     //implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':emoji')

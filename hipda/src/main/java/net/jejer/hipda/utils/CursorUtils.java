@@ -1,7 +1,9 @@
 package net.jejer.hipda.utils;
 
 import android.graphics.BitmapFactory;
-import android.media.ExifInterface;
+import android.text.TextUtils;
+
+import androidx.exifinterface.media.ExifInterface;
 
 import java.io.File;
 
@@ -20,13 +22,12 @@ public class CursorUtils {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
 
-        //Returns null, sizes are in the options variable
         BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
         int width = options.outWidth;
         int height = options.outHeight;
         String mime = Utils.nullToText(options.outMimeType);
 
-        if (width <= 0 || height <= 0)
+        if (TextUtils.isEmpty(mime) || width <= 0 || height <= 0)
             return null;
 
         result.setMime(mime);

@@ -579,7 +579,7 @@ public class PostFragment extends BaseFragment {
     }
 
     private void processSelectedImages(List<Uri> selects) {
-        processSelectedImages(selects, false);
+        processSelectedImages(selects, true);
     }
 
     private void processSelectedImages(List<Uri> selects, boolean original) {
