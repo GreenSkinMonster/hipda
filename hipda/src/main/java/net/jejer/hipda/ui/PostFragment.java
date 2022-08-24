@@ -1,13 +1,8 @@
 package net.jejer.hipda.ui;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,11 +37,7 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vdurmont.emoji.EmojiParser;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
-import net.jejer.hipda.BuildConfig;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.PostHelper;
 import net.jejer.hipda.async.PrePostAsyncTask;
@@ -56,7 +47,6 @@ import net.jejer.hipda.bean.PostBean;
 import net.jejer.hipda.bean.PrePostInfoBean;
 import net.jejer.hipda.db.Content;
 import net.jejer.hipda.db.ContentDao;
-import net.jejer.hipda.glide.MatisseGlideEngine;
 import net.jejer.hipda.job.ImageUploadEvent;
 import net.jejer.hipda.job.ImageUploadJob;
 import net.jejer.hipda.job.JobMgr;
@@ -85,7 +75,6 @@ import java.util.List;
 import java.util.Map;
 
 public class PostFragment extends BaseFragment {
-    private static final int SELECT_PICTURE = 1;
 
     public static final String ARG_FID_KEY = "fid";
     public static final String ARG_TID_KEY = "tid";
@@ -405,14 +394,6 @@ public class PostFragment extends BaseFragment {
                     fetchPrePostInfo(false);
                     UIUtils.toast("请等待信息收集结束再选择图片");
                 } else {
-                    showImageSelectorSystem();
-                }
-                return true;
-            case R.id.action_upload_img2:
-                if (mPrePostInfo == null) {
-                    fetchPrePostInfo(false);
-                    UIUtils.toast("请等待信息收集结束再选择图片");
-                } else {
                     showImageSelector();
                 }
                 return true;
@@ -428,29 +409,9 @@ public class PostFragment extends BaseFragment {
         }
     }
 
-    protected void showImageSelectorSystem() {
+    protected void showImageSelector() {
         mContentPosition = mEtContent.getSelectionStart();
         mImageSelector.launch("image/*");
-    }
-
-    protected void showImageSelector() {
-        if (UIUtils.askForBothPermissions(getActivity()))
-            return;
-
-        mContentPosition = mEtContent.getSelectionStart();
-        Matisse.from(this)
-                .choose(MimeType.ofImage())
-                .countable(true)
-                .maxSelectable(9)
-                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                .thumbnailScale(0.85f)
-                .originalEnable(true)
-                .maxOriginalSize(HiSettingsHelper.getInstance().getMaxUploadFileSize() / 1024 / 1024)
-                .imageEngine(new MatisseGlideEngine())
-                .theme(UIUtils.getThemeValue(getActivity()))
-                .capture(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED)
-                .captureStrategy(new CaptureStrategy(false, BuildConfig.APPLICATION_ID + ".provider"))
-                .forResult(SELECT_PICTURE);
     }
 
     private void postReply() {
@@ -555,27 +516,6 @@ public class PostFragment extends BaseFragment {
 
         JobMgr.addJob(new PostJob(mParentSessionId, mMode, mPrePostInfo, postBean, false));
         getActivity().finish();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        //avoid double click select button
-        if (mImageUploading) {
-            return;
-        }
-        mImageUploading = true;
-        (new Handler()).postDelayed(new Runnable() {
-            public void run() {
-                mImageUploading = false;
-            }
-        }, 2000);
-
-        if (resultCode == Activity.RESULT_OK && requestCode == SELECT_PICTURE) {
-            boolean original = Matisse.obtainOriginalState(intent);
-
-            List<Uri> selects = Matisse.obtainResult(intent);
-            processSelectedImages(selects, original);
-        }
     }
 
     private void processSelectedImages(List<Uri> selects) {

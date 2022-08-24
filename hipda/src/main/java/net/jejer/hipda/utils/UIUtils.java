@@ -187,7 +187,7 @@ public class UIUtils {
         }
         if (perms != null) {
             ActivityCompat.requestPermissions(activity, perms,
-                    PostActivity.PERMISSIONS_REQUEST_CODE_BOTH);
+                    PostActivity.PERMISSIONS_REQUEST_CODE_STORAGE);
             return true;
         }
         return false;

@@ -19,7 +19,7 @@ import net.jejer.hipda.R;
 
 public class PostActivity extends SwipeBaseActivity {
 
-    public final static int PERMISSIONS_REQUEST_CODE_BOTH = 201;
+    public final static int PERMISSIONS_REQUEST_CODE_STORAGE = 201;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class PostActivity extends SwipeBaseActivity {
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case PERMISSIONS_REQUEST_CODE_BOTH: {
+            case PERMISSIONS_REQUEST_CODE_STORAGE: {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
                     PostFragment fragment = (PostFragment) getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
