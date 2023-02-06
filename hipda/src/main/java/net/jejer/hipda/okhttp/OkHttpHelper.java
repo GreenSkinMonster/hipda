@@ -77,6 +77,7 @@ public class OkHttpHelper {
         builder.connectTimeout(OkHttpHelper.CONNECT_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .readTimeout(OkHttpHelper.READ_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .writeTimeout(OkHttpHelper.WRITE_TIMEOUT_SECS, TimeUnit.SECONDS)
+                .dns(CachedDns.getInstance())
                 .cache(cache)
                 .cookieJar(cookieJar);
 

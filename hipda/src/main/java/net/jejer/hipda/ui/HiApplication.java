@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import net.jejer.hipda.R;
 import net.jejer.hipda.async.UpdateHelper;
 import net.jejer.hipda.bean.HiSettingsHelper;
+import net.jejer.hipda.okhttp.CachedDns;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.utils.HiUtils;
 import net.jejer.hipda.utils.Logger;
@@ -145,6 +146,7 @@ public class HiApplication extends Application implements Application.ActivityLi
     public void onActivityDestroyed(Activity activity) {
         if (activity instanceof MainFrameActivity) {
             mainActivityCount--;
+            CachedDns.getInstance().clearCache();
         }
     }
 

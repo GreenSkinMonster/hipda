@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 
 import net.jejer.hipda.bean.HiSettingsHelper;
 import net.jejer.hipda.cache.ImageInfo;
+import net.jejer.hipda.okhttp.CachedDns;
 import net.jejer.hipda.okhttp.OkHttpHelper;
 import net.jejer.hipda.okhttp.ProgressListener;
 import net.jejer.hipda.okhttp.ProgressResponseBody;
@@ -68,7 +69,8 @@ public class MyGlideModule extends AppGlideModule {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(OkHttpHelper.CONNECT_TIMEOUT_SECS, TimeUnit.SECONDS)
                 .readTimeout(OkHttpHelper.READ_TIMEOUT_SECS, TimeUnit.SECONDS)
-                .writeTimeout(OkHttpHelper.WRITE_TIMEOUT_SECS, TimeUnit.SECONDS);
+                .writeTimeout(OkHttpHelper.WRITE_TIMEOUT_SECS, TimeUnit.SECONDS)
+                .dns(CachedDns.getInstance());
 
         if (Logger.isDebug()) {
             //builder.addInterceptor(new LoggingInterceptor());
