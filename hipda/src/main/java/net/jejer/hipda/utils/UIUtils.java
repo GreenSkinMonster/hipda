@@ -46,7 +46,6 @@ import net.jejer.hipda.cache.ImageContainer;
 import net.jejer.hipda.cache.ImageInfo;
 import net.jejer.hipda.ui.HiApplication;
 import net.jejer.hipda.ui.MainFrameActivity;
-import net.jejer.hipda.ui.PostActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -163,31 +162,6 @@ public class UIUtils {
                 ActivityCompat.requestPermissions((Activity) ctx,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MainFrameActivity.PERMISSIONS_REQUEST_CODE_STORAGE);
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean askForBothPermissions(Activity activity) {
-        boolean askCamera = !HiSettingsHelper.getInstance().isCameraPermAsked()
-                && ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED;
-        boolean askStorage = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED;
-        String[] perms = null;
-        if (askCamera && askStorage) {
-            HiSettingsHelper.getInstance().setCameraPermAsked(true);
-            perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        } else if (askCamera) {
-            HiSettingsHelper.getInstance().setCameraPermAsked(true);
-            perms = new String[]{Manifest.permission.CAMERA};
-        } else if (askStorage) {
-            perms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            UIUtils.toast("需要授予 \"存储空间\" 权限");
-        }
-        if (perms != null) {
-            ActivityCompat.requestPermissions(activity, perms,
-                    PostActivity.PERMISSIONS_REQUEST_CODE_STORAGE);
             return true;
         }
         return false;

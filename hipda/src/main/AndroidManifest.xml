@@ -8,16 +8,12 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
 
     <uses-sdk tools:overrideLibrary="androidx.security" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".ui.HiApplication"
@@ -32,7 +28,6 @@
         <activity
             android:name=".ui.MainFrameActivity"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
             android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

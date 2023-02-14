@@ -92,7 +92,6 @@ public class HiSettingsHelper {
     public static final String PERF_IMAGE_HOST = "PERF_IMAGE_HOST";
     public static final String PERF_IMAGE_HOST_UPDATE_TIME = "PERF_IMAGE_HOST_UPDATE_TIME";
     public static final String PERF_MAX_UPLOAD_FILE_SIZE = "PERF_MAX_UPLOAD_FILE_SIZE";
-    public static final String PERF_CAMERA_PERM_ASKED = "PERF_CAMERA_PERM_ASKED";
     public static final String PERF_BLACKLIST = "PERF_BLACKLIST";
     public static final String PERF_BLACKLIST_SYNC_TIME = "PERF_BLACKLIST_SYNC_TIME";
 
@@ -1093,14 +1092,6 @@ public class HiSettingsHelper {
 
     public boolean isCircleAvatar() {
         return getBooleanValue(PERF_CIRCLE_AVATAR, true);
-    }
-
-    public boolean isCameraPermAsked() {
-        return getBooleanValue(PERF_CAMERA_PERM_ASKED, false);
-    }
-
-    public void setCameraPermAsked(boolean asked) {
-        setBooleanValue(PERF_CAMERA_PERM_ASKED, asked);
     }
 
     public String getSilentBegin() {
