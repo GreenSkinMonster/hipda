@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.LayerDrawable;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.SparseArray;
@@ -18,7 +19,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatTextView;
@@ -503,13 +503,13 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
             if (options != null && options.size() > 1) {
                 boolean voteable = !TextUtils.isEmpty(options.get(0).getOptionId());
                 for (PollOptionBean option : options) {
-                    RelativeLayout optionLayout = (RelativeLayout) mInflater.inflate(R.layout.item_poll_option, null, false);
+                    ViewGroup optionLayout = (ViewGroup) mInflater.inflate(R.layout.item_poll_option, null, false);
+                    final LayerDrawable progressBg = (LayerDrawable) optionLayout.getBackground();
 
                     CheckBox checkBox = optionLayout.findViewById(R.id.cb_option);
                     RadioButton radioButton = optionLayout.findViewById(R.id.rb_option);
                     TextView tvText = optionLayout.findViewById(R.id.tv_text);
                     TextView tvRates = optionLayout.findViewById(R.id.tv_rates);
-                    View vRatePercent = optionLayout.findViewById(R.id.rate_percent);
 
                     if (voteable) {
                         voteable = !TextUtils.isEmpty(option.getOptionId());
@@ -522,6 +522,12 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                             checkBox.setTextColor(ColorHelper.getTextColorPrimary(mCtx));
                             checkBox.setTag(option.getOptionId());
                             checkBox.setOnClickListener(onOptionButtonCheckedListener);
+                            tvRates.setOnClickListener(new OnSingleClickListener() {
+                                @Override
+                                public void onSingleClick(View v) {
+                                    checkBox.performClick();
+                                }
+                            });
                             mPollOptionsHolder.put(checkBox, null);
                         } else {
                             checkBox.setVisibility(View.GONE);
@@ -532,30 +538,33 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                             radioButton.setTextColor(ColorHelper.getTextColorPrimary(mCtx));
                             radioButton.setTag(option.getOptionId());
                             radioButton.setOnClickListener(onOptionButtonCheckedListener);
+                            tvRates.setOnClickListener(new OnSingleClickListener() {
+                                @Override
+                                public void onSingleClick(View v) {
+                                    radioButton.performClick();
+                                }
+                            });
                             mPollOptionsHolder.put(radioButton, null);
                         }
                     } else {
                         checkBox.setVisibility(View.GONE);
                         radioButton.setVisibility(View.GONE);
+                        tvRates.setOnClickListener(null);
                         tvText.setText(option.getText());
                         tvText.setTextSize(HiSettingsHelper.getInstance().getPostTextSize());
                     }
 
                     tvRates.setText(option.getRates());
-                    tvRates.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
+                    tvRates.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 4);
                     int indexOfP = option.getRates().indexOf('%');
                     if (indexOfP > 0) {
                         float percent = Utils.parseFloat(option.getRates().substring(0, indexOfP)) / 100f;
-                        vRatePercent.setVisibility(View.VISIBLE);
-                        vRatePercent.setBackgroundColor(ContextCompat.getColor(mCtx, ColorHelper.getRandomColor()));
-                        ViewGroup.LayoutParams layoutParams = vRatePercent.getLayoutParams();
-                        if (percent <= 0)
-                            layoutParams.width = pxOf4Dp / 2;
-                        else
-                            layoutParams.width = (int) (layoutFullWidth * percent);
-                        vRatePercent.setLayoutParams(layoutParams);
+                        int perLevel = (int) (10000 * percent);
+                        progressBg.getDrawable(0).setLevel(perLevel);
+                        progressBg.getDrawable(1).setLevel(10000);
                     } else {
-                        vRatePercent.setVisibility(View.GONE);
+                        progressBg.getDrawable(0).setLevel(0);
+                        progressBg.getDrawable(1).setLevel(10000);
                     }
                     holder.pollView.addView(optionLayout);
                 }
@@ -573,14 +582,15 @@ public class ThreadDetailAdapter extends BaseRvAdapter<DetailBean> {
                 if (voteable) {
                     TextView button = new AppCompatTextView(mCtx);
                     button.setText("投票");
-                    button.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() - 1);
-                    button.setBackground(ContextCompat.getDrawable(mCtx, R.drawable.lable_background));
+                    button.setTextSize(HiSettingsHelper.getInstance().getPostTextSize() + 1);
+                    button.setBackground(ContextCompat.getDrawable(mCtx, R.drawable.vote_button_background));
                     button.setEnabled(false);
                     button.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
                     LinearLayout.LayoutParams layoutParams
                             = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     layoutParams.setMargins(pxOf4Dp, 4 * pxOf4Dp, pxOf4Dp, pxOf4Dp);
                     button.setLayoutParams(layoutParams);
+                    button.setPadding(4 * pxOf4Dp, 2 * pxOf4Dp, 4 * pxOf4Dp, 2 * pxOf4Dp);
                     button.setOnClickListener(new OnSingleClickListener() {
                         @Override
                         public void onSingleClick(View v) {

@@ -11,6 +11,9 @@
     <item name="background_grey" type="color">#3E808080</item>
     <item name="background_silver" type="color">#3EC0C0C0</item>
 
+    <item name="vote_grey" type="color">#3E808080</item>
+    <item name="vote_highlight" type="color">#4433B6EA</item>
+
     <item name="colorAccent" type="color">@color/hipda</item>
     <item name="textColorPrimary" type="color">#333333</item>
     <item name="textColorSecondary" type="color">#999999</item>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:bottom="2dp"
+        android:top="2dp">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="8dp" />
+                <solid android:color="@color/vote_highlight" />
+            </shape>
+        </clip>
+    </item>
+    <item
+        android:bottom="2dp"
+        android:top="2dp">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="8dp" />
+                <solid android:color="@color/vote_grey" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>
