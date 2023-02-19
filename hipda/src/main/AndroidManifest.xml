@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="net.jejer.hipda"
-    android:versionCode="5004"
-    android:versionName="5.0.04">
+    android:versionCode="5005"
+    android:versionName="5.0.05">
 
     <uses-feature
         android:name="android.hardware.touchscreen"
